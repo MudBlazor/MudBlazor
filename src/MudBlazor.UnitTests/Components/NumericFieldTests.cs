@@ -135,7 +135,7 @@ namespace MudBlazor.UnitTests.Components
             await input.InputAsync(new ChangeEventArgs() { Value = "100" });
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
-            numericField.Immediate.Should().BeTrue();
+            numericField.EffectiveImmediate.Should().BeTrue();
             //input value has changed, but elapsed time is 0, so Value should not change in NumericField
             numericField.ReadValue.Should().BeNull();
             numericField.ReadText.Should().Be("100");
@@ -783,6 +783,41 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1234.000"));
         }
 
+        /// <summary>
+        /// A debounced field commits from oninput just like an Immediate one, so its own value echo must not rewrite the text the user is still typing.
+        /// </summary>
+        [Test]
+        public async Task NumericField_Debounced_ValueEcho_DoesNotRewriteTextWhileTyping()
+        {
+            // The debounce commit echoes back through the parent binding, and that echo used to reformat mid-typing because the suppression read Immediate, which a debounced field leaves false.
+            // "1." became "1", so continuing with "50" produced 150 instead of 1.50.
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 200d)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US")));
+
+            comp.Instance.Immediate.Should().BeFalse();
+            comp.Instance.EffectiveImmediate.Should().BeTrue("a debounced field still commits from oninput");
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "1" });
+            await comp.Find("input").InputAsync("1");
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "." });
+            await comp.Find("input").InputAsync("1.");
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(300));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1d));
+
+            // The parent's two-way binding hands the committed value straight back.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1d));
+
+            comp.Instance.ReadText.Should().Be("1.", "the trailing separator the user typed must survive the echo");
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "5" });
+            await comp.Find("input").InputAsync("1.5");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(300));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1.5d));
+        }
+
         [Test]
         public async Task NumericField_Immediate_WithCulture_CanTypeZeroAfterDecimalPoint()
         {
@@ -875,6 +910,30 @@ namespace MudBlazor.UnitTests.Components
                 await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
                 input.GetAttribute("value").Should().Be("3.145");
             }
+        }
+
+        /// <summary>
+        /// Testing that <see cref="MudBaseInput{T}.EffectiveImmediate"/> reflects the Immediate and Debounce state of this component.
+        /// </summary>
+        /// <remarks>Added for <a href="https://github.com/MudBlazor/MudBlazor/pull/13610">PR #13610</a></remarks>
+        [Test]
+        public void NumericField_EffectiveImmediate_Should_Reflect_Immediate_And_Debounced_State()
+        {
+            Context.Render<MudNumericField<int>>()
+                .Instance.EffectiveImmediate.Should().BeFalse();
+
+            Context.Render<MudNumericField<int>>(parameters => parameters
+                    .Add(x => x.Immediate, true))
+                .Instance.EffectiveImmediate.Should().BeTrue();
+
+            Context.Render<MudNumericField<int>>(parameters => parameters
+                    .Add(x => x.DebounceInterval, 500))
+                .Instance.EffectiveImmediate.Should().BeTrue();
+
+            Context.Render<MudNumericField<int>>(parameters => parameters
+                    .Add(x => x.Immediate, true)
+                    .Add(x => x.DebounceInterval, 500))
+                .Instance.EffectiveImmediate.Should().BeTrue();
         }
 
         [TestCaseSource(nameof(TypeCases))]
@@ -1329,6 +1388,24 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Markup.Should().NotContain("pattern");
             field.GetAttribute("type").Should().Be("text");
+        }
+
+        /// <summary>
+        /// Existing quantifiers and end anchors are preserved while single-key patterns remain repeatable (#13646).
+        /// </summary>
+        [TestCase("", "")]
+        [TestCase(@"[0-9,.\-]", @"[0-9,.\-]*")]
+        [TestCase(@"[0-9,.\-]*", @"[0-9,.\-]*")]
+        [TestCase(@"[0-9]+", @"[0-9]+")]
+        [TestCase(@"[0-9]?", @"[0-9]?")]
+        [TestCase(@"[0-9]{1,3}", @"[0-9]{1,3}")]
+        [TestCase(@"^-?[0-9.,]*$", @"^-?[0-9.,]*$")]
+        public void NumericField_Should_RenderEffectivePattern(string pattern, string expectedPattern)
+        {
+            var comp = Context.Render<MudNumericField<decimal>>(parameters => parameters
+                .Add(x => x.Pattern, pattern));
+
+            comp.Find("input").GetAttribute("pattern").Should().Be(expectedPattern);
         }
 
         [Test]

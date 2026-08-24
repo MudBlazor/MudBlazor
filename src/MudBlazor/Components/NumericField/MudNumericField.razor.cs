@@ -174,6 +174,27 @@ namespace MudBlazor
 
         private string EffectiveKeyFilterPattern => (Pattern ?? DefaultKeyFilterPattern).TrimEnd('*');
 
+        private string? EffectivePattern
+        {
+            get
+            {
+                if (Pattern is null)
+                {
+                    return null;
+                }
+
+                var trimmed = Pattern.TrimEnd('*');
+                if (trimmed.Length == 0)
+                {
+                    return trimmed;
+                }
+
+                return trimmed[^1] is '+' or '?' or '}' or '$'
+                    ? trimmed
+                    : trimmed + "*";
+            }
+        }
+
         /// <inheritdoc />
         public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
 

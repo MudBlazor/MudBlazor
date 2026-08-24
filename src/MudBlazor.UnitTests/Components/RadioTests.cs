@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Radio;
 using MudBlazor.UnitTests.TestComponents.RadioGroup;
 using MudBlazor.UnitTests.Utilities;
+using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -44,7 +45,7 @@ namespace MudBlazor.UnitTests.Components
             var r2 = comp.Find(".r2");
             r2.GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element1 = comp.Find(".r2 label.mud-radio span.mud-typography");
-            element1.HasAttribute("aria-hidden").Should().BeTrue();
+            element1.GetAttribute("aria-hidden").Should().Be("true");
             var input1 = comp.Find(".r2 label.mud-radio input");
             var input1ForId = input1.GetAttribute("aria-labelledby");
             comp.Find($".r2 label.mud-radio #{input1ForId}").Should().NotBeNull();
@@ -59,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
             var r4 = comp.Find(".r4");
             r4.GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element3 = comp.Find(".r4 label.mud-radio span.mud-typography");
-            element3.HasAttribute("aria-hidden").Should().BeTrue();
+            element3.GetAttribute("aria-hidden").Should().Be("true");
             var input3 = comp.Find(".r4 label.mud-radio input");
             var input3ForId = input3.GetAttribute("aria-labelledby");
             comp.Find($".r4 label.mud-radio #{input3ForId}").Should().NotBeNull();
@@ -353,6 +354,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A mismatched group must leave the typed parent null rather than fail the cast.
+        /// </summary>
+        [Test]
+        public void Radio_TypeMismatch_ShouldNotLeaveACastThatThrows()
+        {
+            var radio = new MudRadio<string>();
+            var group = new MudRadioGroup<char>();
+
+            // The cascade is assigned before the group rejects it, so the mismatched parent stays behind.
+            var assign = () => radio.IMudRadioGroup = group;
+            assign.Should().Throw<GenericTypeMismatchException>();
+
+            radio.MudRadioGroup.Should().BeNull();
+        }
+
+        /// <summary>
         /// Tests the Disabled property of the MudRadio
         /// </summary>
         [Test]
@@ -532,6 +549,30 @@ namespace MudBlazor.UnitTests.Components
 
             var comp2 = Context.Render<MudRadio<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
+        }
+
+        /// <summary>
+        /// A radiogroup cannot carry the native required attribute, so aria-required is its only required-ness signal and callers must be able to set it.
+        /// </summary>
+        [Test]
+        public void RadioGroup_Should_LetUserAttributesOverrideAriaRequired()
+        {
+            var comp = Context.Render<MudRadioGroup<string>>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-required", "true" } }));
+
+            comp.Find("div[role=radiogroup]").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Without a caller-supplied value the radiogroup still announces required-ness from the parameter.
+        /// </summary>
+        [Test]
+        public void RadioGroup_Should_ComputeAriaRequiredFromParameter()
+        {
+            var comp = Context.Render<MudRadioGroup<string>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("div[role=radiogroup]").GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

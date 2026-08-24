@@ -32,8 +32,21 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <BunVersion>1.3.14</BunVersion>
+    <BunVersion>1.4.0</BunVersion>
     <BunToolRestore>dotnet tool restore --tool-manifest ../../.config/dotnet-tools.json</BunToolRestore>
     <BunWrapper>dotnet tool run bun -- wrapper --version $(BunVersion) --path ../../tools --silent --</BunWrapper>
+    <BunInstall>$(BunWrapper) install --frozen-lockfile</BunInstall>
   </PropertyGroup>
+
+  <!--
+    Shared inputs for every Bun-built asset: the dependency graph and the toolchain version.
+    Projects that build web assets add these to their own WebAssetInputs, plus their local build.mjs or build.mts.
+    Without them the incremental Inputs/Outputs check only watches .js and .scss sources, so changing a dependency or the Bun version leaves the previously built assets in place and the build silently ships stale output.
+    This file is listed because it defines BunVersion, which selects the Bun binary that emits the bundle.
+  -->
+  <ItemGroup>
+    <BunToolchainInputs Include="$(MSBuildThisFileDirectory)package.json" />
+    <BunToolchainInputs Include="$(MSBuildThisFileDirectory)bun.lock" />
+    <BunToolchainInputs Include="$(MSBuildThisFileFullPath)" />
+  </ItemGroup>
 </Project>

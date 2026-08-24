@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -6,18 +6,18 @@
  * Generic browser/window operations exposed to the JS API service.
  * Centralizes direct browser API dependencies behind one interop surface.
  */
-class MudWindow {
+export default class MudWindow {
     /**
      * Copies text to the system clipboard.
      */
-    copyToClipboard (text) {
+    copyToClipboard (text: string) {
         navigator.clipboard.writeText(text);
     }
 
     /**
      * Replaces an element className by element ID.
      */
-    changeCssById (id, css) {
+    changeCssById (id: string, css: string) {
         const element = document.getElementById(id);
         if (element) {
             element.className = css;
@@ -26,27 +26,26 @@ class MudWindow {
 
     /**
      * Updates a CSS style property for an element by ID.
+     * The C# side declares the value as object, and the only caller passes an int, so a number arrives here as a number.
      */
-    updateStyleProperty (elementId, propertyName, value) {
+    updateStyleProperty (elementId: string, propertyName: string, value: string | number) {
         const element = document.getElementById(elementId);
         if (element) {
-            element.style.setProperty(propertyName, value);
+            element.style.setProperty(propertyName, String(value));
         }
     }
 
     /**
      * Updates a CSS variable on the document root.
      */
-    changeGlobalCssVariable (name, newValue) {
+    changeGlobalCssVariable (name: string, newValue: string) {
         document.documentElement.style.setProperty(name, newValue);
     }
 
     /**
-     * Opens a new browser window/tab with the provided argument.
+     * Opens a new browser window/tab with the provided URL.
      */
-    open (args) {
-        window.open(args);
+    open (url: string) {
+        window.open(url);
     }
 }
-
-window.mudWindow = new MudWindow();

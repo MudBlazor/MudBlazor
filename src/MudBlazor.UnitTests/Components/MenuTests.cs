@@ -19,6 +19,35 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class MenuTests : BunitTest
     {
+        /// <summary>
+        /// A left-click menu must not register a contextmenu DOM listener, so a right-click cannot cost a round-trip.
+        /// </summary>
+        [Test]
+        public async Task Menu_LeftClickActivation_RegistersNoContextMenuListener()
+        {
+            var comp = Context.Render<MudMenu>(parameters => parameters.Add(p => p.Label, "Menu"));
+            var root = comp.Find("div.mud-menu");
+
+            var contextMenu = async () => await root.ContextMenuAsync(new MouseEventArgs { Button = 2 });
+
+            await contextMenu.Should().ThrowAsync<MissingEventHandlerException>();
+        }
+
+        /// <summary>
+        /// A right-click menu keeps its contextmenu DOM listener.
+        /// </summary>
+        [Test]
+        public async Task Menu_RightClickActivation_RegistersContextMenuListener()
+        {
+            var comp = Context.Render<MudMenu>(parameters => parameters
+                .Add(p => p.Label, "Menu")
+                .Add(p => p.ActivationEvent, MouseEvent.RightClick));
+
+            var contextMenu = async () => await comp.Find("div.mud-menu").ContextMenuAsync(new MouseEventArgs { Button = 2 });
+
+            await contextMenu.Should().NotThrowAsync();
+        }
+
         [Test]
         public async Task OpenMenu_ClickFirstItem_CheckClosed()
         {
@@ -57,6 +86,21 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
             await comp.InvokeAsync(() => menu.Instance.ToggleMenuAsync(new TouchEventArgs()));
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+        }
+
+        /// <summary>
+        /// Menu items still receive their element reference, which submenu positioning and focus rely on.
+        /// </summary>
+        [Test]
+        public async Task OpenMenu_ItemsCaptureElementReference()
+        {
+            var comp = Context.Render<MenuTest1>();
+
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
+
+            var items = comp.FindComponents<MudMenuItem>();
+            items.Should().NotBeEmpty();
+            items.Select(x => x.Instance.ElementReference.Id).Should().OnlyContain(x => !string.IsNullOrEmpty(x));
         }
 
         [Test]
@@ -1185,6 +1229,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Menu_RegisterItem_IgnoresDuplicatesAndResetsAfterClose()
+        {
+            var comp = Context.Render<MudMenu>();
+            var menu = comp.Instance;
+            var first = new object();
+            var second = new object();
+
+            menu.RegisterItem(first);
+            menu.RegisterItem(first);
+            menu.RegisterItem(second);
+
+            var menuItems = (IReadOnlyList<object>)typeof(MudMenu)
+                .GetField("_menuItems", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(menu)!;
+
+            menuItems.Should().Equal(first, second);
+
+            await comp.InvokeAsync(menu.CloseMenuAsync);
+
+            menuItems.Should().BeEmpty();
+
+            menu.RegisterItem(first);
+            menu.RegisterItem(first);
+            menu.RegisterItem(second);
+            menuItems.Should().Equal(first, second);
+        }
+
+        [Test]
         public async Task NestedMenu_SubMenuArrow_PointsRightInLtr()
         {
             var comp = Context.Render<MenuWithNestingTest>();
@@ -1508,6 +1580,30 @@ namespace MudBlazor.UnitTests.Components
 
             popoverOpenDuringClick.Should().BeTrue();
             await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-popover-open").Count.Should().Be(0));
+        }
+
+        /// <summary>
+        /// A custom activator spells out aria-expanded as an explicit true or false token.
+        /// </summary>
+        [Test]
+        public async Task ActivatorContent_AriaExpanded_ReflectsOpenState()
+        {
+            Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudMenu>(parameters => parameters
+                .Add(p => p.ActivatorContent, _ => builder =>
+                {
+                    builder.OpenElement(0, "span");
+                    builder.AddContent(1, "Activate");
+                    builder.CloseElement();
+                }));
+
+            // A bare attribute renders with an empty value, which assistive technology resolves to the
+            // aria-expanded default, so the token has to be spelled out.
+            comp.Find("div[role=\"button\"]").GetAttribute("aria-expanded").Should().Be("false");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Open, true));
+
+            comp.Find("div[role=\"button\"]").GetAttribute("aria-expanded").Should().Be("true");
         }
     }
 }

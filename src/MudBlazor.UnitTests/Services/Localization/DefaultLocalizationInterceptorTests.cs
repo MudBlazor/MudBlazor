@@ -35,7 +35,7 @@ public class DefaultLocalizationInterceptorTests
         {
             var translation = internalMudLocalizer[resource.Key];
 
-            translation.Value.Should().Be(resource.Value);
+            translation.Should().Be(resource.Value);
         }
     }
 
@@ -59,7 +59,7 @@ public class DefaultLocalizationInterceptorTests
         var result = internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty];
 
         // Assert
-        result.Value.Should().Be(LanguageResource.ResourceManager.GetString(LanguageResource.MudDataGrid_IsEmpty), "We default to english despite MudLocalizer, the value should be the one from the LanguageResource.");
+        result.Should().Be(LanguageResource.ResourceManager.GetString(LanguageResource.MudDataGrid_IsEmpty), "We default to english despite MudLocalizer, the value should be the one from the LanguageResource.");
     }
 
     [Test]
@@ -81,7 +81,7 @@ public class DefaultLocalizationInterceptorTests
         var result = internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty];
 
         // Assert
-        result.Value.Should().Be("XXX", "The UICulture is not English therefore the value is the one from the Mock.");
+        result.Should().Be("XXX", "The UICulture is not English therefore the value is the one from the Mock.");
     }
 
     [Test]
@@ -106,7 +106,7 @@ public class DefaultLocalizationInterceptorTests
         var result = internalMudLocalizer["TemplateString", "le monde"];
 
         // Assert
-        result.Value.Should().Be("Bonjour le monde!", "The value should be the template string with the provided parameter.");
+        result.Should().Be("Bonjour le monde!", "The value should be the template string with the provided parameter.");
     }
 
     [Test]
@@ -133,7 +133,7 @@ public class DefaultLocalizationInterceptorTests
 
         // Assert
         var expectedValue = GetResourceString(LanguageResource.MudBaseDatePicker_PrevMonth, "2024");
-        result.Value.Should().Be(expectedValue);
+        result.Should().Be(expectedValue);
     }
 
     [Test]
@@ -159,7 +159,7 @@ public class DefaultLocalizationInterceptorTests
 
         // Assert
         var expectedValue = GetResourceString(LanguageResource.MudColorPicker_ModeSwitch);
-        result.Value.Should().Be(expectedValue);
+        result.Should().Be(expectedValue);
     }
 
     [Test]
@@ -183,7 +183,7 @@ public class DefaultLocalizationInterceptorTests
 
         // Assert
         var expectedValue = GetResourceString(LanguageResource.MudBaseDatePicker_PrevMonth, "2024");
-        result.Value.Should().Be(expectedValue, "The value should be the template string with the provided parameter.");
+        result.Should().Be(expectedValue, "The value should be the template string with the provided parameter.");
     }
 
     [Test]
@@ -212,9 +212,12 @@ public class DefaultLocalizationInterceptorTests
 
         // Act
         LocalizedString result;
+        string value;
         try
         {
-            result = internalMudLocalizer[LanguageResource.MudDataGrid_Clear];
+            // ResourceNotFound is read from the interceptor because InternalMudLocalizer's indexer returns the value only.
+            result = defaultLocalizationInterceptor.Handle(LanguageResource.MudDataGrid_Clear);
+            value = internalMudLocalizer[LanguageResource.MudDataGrid_Clear];
         }
         finally
         {
@@ -224,7 +227,7 @@ public class DefaultLocalizationInterceptorTests
         // Assert
         satelliteProbes.Should().Be(0, "the invariant-culture lookup must not probe for a culture-specific satellite assembly");
         result.ResourceNotFound.Should().BeFalse();
-        result.Value.Should().Be("Clear", "the built-in English fallback is still returned under a non-English UI culture");
+        value.Should().Be("Clear", "the built-in English fallback is still returned under a non-English UI culture");
     }
 
     private static string GetResourceString(string key, params object[] parameters)

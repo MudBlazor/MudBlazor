@@ -419,17 +419,48 @@ namespace MudBlazor
 
         private bool? GetCheckBoxStateTriState()
         {
-            var allChildrenChecked = GetChildItemsRecursive().All(x => x.GetState<bool>(nameof(Selected)));
-            var noChildrenChecked = GetChildItemsRecursive().All(x => !x.GetState<bool>(nameof(Selected)));
-            if (allChildrenChecked && _selectedState)
+            var hasSelectedDescendant = _selectedState.Value;
+            var hasUnselectedDescendant = !_selectedState.Value;
+
+            foreach (var child in _childItems)
             {
-                return true;
+                Traverse(child);
+                if (hasSelectedDescendant && hasUnselectedDescendant)
+                {
+                    break;
+                }
             }
-            if (noChildrenChecked && !_selectedState)
+
+            if (hasSelectedDescendant && hasUnselectedDescendant)
             {
-                return false;
+                return null;
             }
-            return null;
+
+            return hasSelectedDescendant;
+
+            void Traverse(MudTreeViewItem<T> item)
+            {
+                if (item.GetState<bool>(nameof(Selected)))
+                {
+                    hasSelectedDescendant = true;
+                }
+                else
+                {
+                    hasUnselectedDescendant = true;
+                }
+
+                if (!hasSelectedDescendant || !hasUnselectedDescendant)
+                {
+                    foreach (var child in item._childItems)
+                    {
+                        Traverse(child);
+                        if (hasSelectedDescendant && hasUnselectedDescendant)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -611,7 +642,7 @@ namespace MudBlazor
 
         private void RemoveChild(MudTreeViewItem<T> item) => _childItems.Remove(item);
 
-        internal List<MudTreeViewItem<T>> ChildItems => _childItems.ToList();
+        internal IReadOnlyCollection<MudTreeViewItem<T>> ChildItems => _childItems;
 
         private bool HasIcon => (_expandedState && (!string.IsNullOrWhiteSpace(IconExpanded) || !string.IsNullOrWhiteSpace(Icon))) || (!_expandedState && !string.IsNullOrWhiteSpace(Icon));
 

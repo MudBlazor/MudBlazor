@@ -186,6 +186,31 @@ namespace MudBlazor.UnitTests.Components
             picker.Date.Should().Be(null);
         }
 
+        /// <summary>
+        /// The clear button leaves Text as an empty string even when the SetDateAsync debounce window has already elapsed between the input clearing its text and the picker running ClearAsync.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_Should_Clear_WhenDebounceWindowElapsed()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            // A single clear-button click reaches SetDateAsync twice: once from the input emptying its text, and once from ClearAsync.
+            // On a loaded machine the second call can land after the 100ms debounce window, which used to overwrite the already-empty Text with null.
+            // Auto-advancing the clock on every read reproduces that slow machine deterministically.
+            timeProvider.AutoAdvanceAmount = TimeSpan.FromMilliseconds(150);
+
+            var comp = Context.Render<MudDatePicker>();
+            var picker = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Clearable, true)
+                .Add(p => p.Date, new DateTime(2020, 10, 26)));
+            picker.Date.Should().Be(new DateTime(2020, 10, 26));
+
+            await comp.Find(".mud-input-clear-button").ClickAsync();
+
+            picker.Text.Should().Be("");
+            picker.Date.Should().Be(null);
+        }
+
         [Test]
         public async Task DataPicker_ShouldClearText_WhenDateSetNull()
         {
@@ -1204,6 +1229,26 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Mask, mask));
 
             comp.Instance.Mask.Should().BeSameAs(mask);
+        }
+
+        /// <summary>
+        /// Setting the bound date to null from code must clear the masked input, not just the Date and Text properties: https://github.com/MudBlazor/MudBlazor/issues/12822.
+        /// </summary>
+        [Test]
+        public async Task Mask_ClearingDateFromCode_ClearsTheInput()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Mask, new DateMask("dd/MM/yyyy"))
+                .Add(p => p.Date, new DateTime(2026, 6, 15)));
+
+            comp.Find("input").GetAttribute("value").Should().NotBeNullOrEmpty();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, (DateTime?)null));
+
+            comp.Instance.Date.Should().BeNull();
+            comp.Instance.Text.Should().BeNullOrEmpty();
+            comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
         }
 
         [Test]

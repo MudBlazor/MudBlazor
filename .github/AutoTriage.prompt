@@ -103,8 +103,16 @@ Purpose: Capture essential details early on open threads so maintainers can act 
 - Do not revive dormant threads (no human comments for >=28 days); maintainers will decide whether to re-engage.
 
 ### Gate 2 — Evaluate essential gaps (first-touch threads only)
-- When no maintainer is involved and you are the first triager, scan the issue/PR for objective blockers that prevent confirming, reproducing, scoping, or reviewing the change. Blockers include: missing reproduction, unknown environment, link-only reports without a written summary, visual-only reports without written expected vs. actual behavior, unclear enhancement scope/justification, missing PR rationale/problem statement, or a vague PR title/description that cannot be made specific from available context.
-- If the report already contains enough written information to understand and act without inferring intent from links or media alone, take no action.
+- When no maintainer is involved and you are the first triager, scan the issue/PR for objective blockers that prevent confirming, reproducing, scoping, or reviewing the change. Blockers include: missing reproduction, unknown environment, link-only reports without a written summary, visual-only reports without written expected vs. actual behavior, missing visual proof for a visually identifiable problem or change (see Visual Proof below), unclear enhancement scope/justification, missing PR rationale/problem statement, or a vague PR title/description that cannot be made specific from available context.
+- If the report already contains enough written information to understand and act without inferring intent from links or media alone, and Visual Proof below is satisfied, take no action; polished formatting and claimed test results do not by themselves satisfy these gates.
+
+### Visual Proof
+- Decide whether the problem or change produces a visible difference in the rendered UI or its interactive behavior. Lean toward "yes" when the symptom or result is user-visible, even if the fix itself is pure logic; if you cannot tell what the change affects or how to observe it, apply `needs: info` and ask for clarification instead.
+- If yes and no media proof is present, request it:
+  - Issues: ask for a screenshot or short video of the problem even when a valid reproduction link is provided — media shows what is wrong at a glance while the reproduction lets maintainers debug it. Apply `needs: visuals` only when there is also no valid reproduction; an issue with a valid reproduction keeps the request comment-only so it is not routed into stale handling or excluded from `good first issue`. A missing reproduction is its own Gate 2 blocker (`needs: example`).
+  - Pull requests: a before and after video from the author's own run of the change, with `needs: visuals`; still screenshots suffice only for purely static appearance changes with no interaction involved.
+  - Only attached media counts as proof for pull requests: written before/after descriptions, links the reviewer must run or modify themselves, diffs, and claimed test results are not substitutes.
+- Do not request visuals for problems or changes with no visible rendering effect (e.g. build, CI, docs wording, pure tests), nor for crashes and exceptions best shown by logs even though the failure is user-visible.
 
 ### Action — Compose the request comment
 - Post one concise checklist covering only the blocking items and requesting the minimum written context needed to make any links/visuals actionable.
@@ -115,7 +123,7 @@ Purpose: Capture essential details early on open threads so maintainers can act 
 - Bugs: brief written summary of the problem (required when only a link is provided), minimal reproduction (prefer `https://try.mudblazor.com/snippet/XXXX`), exact steps, expected vs. actual behavior, environment versions, last-known-good vs. first-broken release, relevant logs or visuals.
 - Visual/UI issues: screenshot or video plus written expected vs. actual behavior, browser/OS/zoom/DPI, theme or contrast settings, reproduction link/snippet.
 - Enhancements: problem statement and goal, why current behavior is insufficient, scope or constraints, comparable examples, related components, alternatives considered.
-- Pull Requests: explanation of what changed, why the change is needed, the problem it resolves, and for bug fixes, a linked issue, reproduction path, or test showing the bug.
+- Pull Requests: explanation of what changed, why the change is needed, the problem it resolves, and for bug fixes, a linked issue, reproduction path, or test showing the bug; for visually identifiable changes, a before/after video (screenshots for purely static changes).
 
 ### Needs Labeling Rules
 
@@ -124,7 +132,7 @@ Valid `needs:` labels and when to apply them:
 - `needs: example`: A usage example is absent (e.g. reproduction link or code snippet) — logic is described but not shown.
 - `needs: info`: This issue/PR lacks key context or is too unclear to act on without maintainer inference (e.g. link-only or screenshot/video-only reports without a written summary, missing goal/setup/environment, unclear enhancement scope/justification, or missing explanation of pull request changes and rationale).
 - `needs: tests`: A maintainer has explicitly asked for associated test cases to be added to this pull request.
-- `needs: visuals`: This issue/PR needs screenshots or video to demonstrate UI bugs or design changes. For PRs, static visual changes need screenshots and moving parts need video.
+- `needs: visuals`: This issue/PR needs screenshots or video to demonstrate UI bugs or design changes. For issues, request media even when a reproduction link is provided, but apply the label only when neither media nor a valid reproduction is present. For PRs, a before/after video is the default; screenshots suffice only for purely static appearance changes.
 
 Rules for `needs:` labels:
 - When you post an information request as the first triager, add the matching `needs:` label(s) if they are not already present.
@@ -216,7 +224,7 @@ If no response is received, it will be automatically closed.
 ```
 
 ### Pull Requests Only
-- Never close pull requests due to staleness
+- Close pull requests that have been stale for >=168 consecutive days
 
 Mark pull requests as `stale` while ALL conditions are met:
 - Has any `needs:` label
@@ -235,5 +243,6 @@ This pull request has been marked as stale due to inactivity.
 ## 10. Quick Reference Examples
 - Reproduction: "A link like https://try.mudblazor.com/snippet/XXXX or a minimal repo often helps confirm and debug."
 - Details: "Including MudBlazor version, .NET version, browser(s), and whether it worked in a prior version can help determine if it's a regression."
-- Visual issue: "A screenshot or short video can help confirm the layout/visual concern."
+- Visual issue: "Could you post a screenshot or short video showing the problem? Seeing it alongside the reproduction makes it much faster to confirm."
+- PR visual proof: "Could you post a before and after video showing the fix from your own run?"
 - Usage redirect: "This issue tracker is for bugs and feature requests. For usage questions, please ask in [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or the [Discord community](https://discord.gg/mudblazor)."

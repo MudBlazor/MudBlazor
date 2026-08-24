@@ -7,14 +7,17 @@
         ":ignoreModulesAndTests",
         "mergeConfidence:all-badges"
     ],
-    "ignoreDeps": [
-        "dotnet-sdk"
-    ],
     "labels": [
         "dependency",
         "build"
     ],
     "commitMessagePrefix": "Build: ",
+    "lockFileMaintenance": {
+        "enabled": true
+    },
+    "constraints": {
+        "bun": "1.4.0"
+    },
     "vulnerabilityAlerts": {
         "enabled": true,
         "addLabels": [
@@ -25,6 +28,18 @@
         ]
     },
     "packageRules": [
+        {
+            "description": "A new SDK feature band means a new compiler, so it arrives as its own reviewable PR pinned to the band floor (x.y.z00). In-band servicing patches reach CI automatically and get no PR.",
+            "matchDatasources": [
+                "dotnet-version"
+            ],
+            "matchPackageNames": [
+                "dotnet-sdk"
+            ],
+            "allowedVersions": "/^\\d+\\.\\d+\\.\\d00$/",
+            "groupName": "dotnet sdk feature band",
+            "groupSlug": "dotnet-sdk-feature-band"
+        },
         {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis**"
@@ -67,21 +82,31 @@
             "enabled": false
         },
         {
-            "description": "Group Bun toolchain updates and request Bun reviewer.",
-            "matchManagers": [
-                "custom.regex"
-            ],
+            "description": "Group Bun toolchain updates. BunDotNet.Cli is pinned in .config/dotnet-tools.json, which the built-in nuget manager reads.",
             "matchPackageNames": [
                 "bun",
                 "BunDotNet.Cli"
             ],
             "matchFileNames": [
-                "src/Directory.Build.props"
+                "src/Directory.Build.props",
+                ".config/dotnet-tools.json"
             ],
             "groupName": "bun toolchain",
             "groupSlug": "bun-toolchain",
             "separateMajorMinor": false,
             "separateMultipleMajor": false,
+            "reviewers": [
+                "meenzen"
+            ]
+        },
+        {
+            "description": "eslint and sass decide the bytes in MudBlazor.min.js and MudBlazor.min.css, so pin them. Lock file maintenance is enabled at the top level, where Renovate actually reads it, and refreshes the transitives that pinning cannot reach. constraints.bun must track BunVersion: lock file maintenance regenerates bun.lock from scratch, and a newer bun writes lockfileVersion 2, which the pinned bun cannot read.",
+            "matchManagers": [
+                "bun"
+            ],
+            "rangeStrategy": "pin",
+            "groupName": "bun dependencies",
+            "groupSlug": "bun-dependencies",
             "reviewers": [
                 "meenzen"
             ]
@@ -115,17 +140,6 @@
             ],
             "depNameTemplate": "bun",
             "datasourceTemplate": "npm"
-        },
-        {
-            "customType": "regex",
-            "managerFilePatterns": [
-                "/(^|/)Directory\\.Build\\.props$/"
-            ],
-            "matchStrings": [
-                "<BunDotNetVersion>(?<currentValue>.*?)</BunDotNetVersion>"
-            ],
-            "depNameTemplate": "BunDotNet.Cli",
-            "datasourceTemplate": "nuget"
         }
     ]
 }

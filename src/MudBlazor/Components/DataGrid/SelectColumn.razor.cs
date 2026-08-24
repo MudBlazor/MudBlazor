@@ -85,7 +85,7 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
     {
         return new Dictionary<string, object>(1)
         {
-            ["aria-label"] = Localizer[LanguageResource.MudDataGrid_SelectAllRows].Value
+            ["aria-label"] = Localizer[LanguageResource.MudDataGrid_SelectAllRows]
         };
     }
 
@@ -97,7 +97,7 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
             return ariaLabel;
         }
 
-        return Localizer[LanguageResource.MudDataGrid_SelectRow].Value;
+        return Localizer[LanguageResource.MudDataGrid_SelectRow];
     }
 
     private string? GetCustomAriaLabel(T item)

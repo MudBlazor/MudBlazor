@@ -156,6 +156,97 @@ public class FabMenuTests : BunitTest
         item.ClassList.Should().NotContain(absentClass2);
     }
 
+    /// <summary>
+    /// A MudFabMenuItem with no explicit Variant should inherit the Variant from its parent MudFabMenu.
+    /// </summary>
+    [TestCase(Variant.Filled, "mud-fab-filled", "mud-fab-outlined", "mud-fab-text")]
+    [TestCase(Variant.Outlined, "mud-fab-outlined", "mud-fab-filled", "mud-fab-text")]
+    [TestCase(Variant.Text, "mud-fab-text", "mud-fab-filled", "mud-fab-outlined")]
+    public void MudFabMenuItem_ShouldInheritVariantFromMenu(Variant menuVariant, string expectedClass, string absentClass1, string absentClass2)
+    {
+        var comp = Context.Render<MudFabMenu>(parameters => parameters
+            .Add(p => p.Variant, menuVariant)
+            .Add(p => p.StartIcon, Icons.Material.Filled.Add)
+            .AddChildContent<MudFabMenuItem>(item => item
+                .Add(p => p.StartIcon, Icons.Material.Filled.Edit)));
+
+        var item = comp.Find(".mud-fab-menu-item");
+        item.ClassList.Should().Contain(expectedClass);
+        item.ClassList.Should().NotContain(absentClass1);
+        item.ClassList.Should().NotContain(absentClass2);
+    }
+
+    /// <summary>
+    /// A MudFabMenuItem with an explicit Variant should use its own Variant, overriding the parent MudFabMenu's Variant.
+    /// </summary>
+    [TestCase(Variant.Outlined, Variant.Filled, "mud-fab-filled", "mud-fab-outlined", "mud-fab-text")]
+    [TestCase(Variant.Text, Variant.Outlined, "mud-fab-outlined", "mud-fab-filled", "mud-fab-text")]
+    [TestCase(Variant.Filled, Variant.Text, "mud-fab-text", "mud-fab-filled", "mud-fab-outlined")]
+    public void MudFabMenuItem_ExplicitVariantOverridesMenuVariant(
+        Variant menuVariant, Variant itemVariant, string expectedClass, string absentClass1, string absentClass2)
+    {
+        var comp = Context.Render<MudFabMenu>(parameters => parameters
+            .Add(p => p.Variant, menuVariant)
+            .Add(p => p.StartIcon, Icons.Material.Filled.Add)
+            .AddChildContent<MudFabMenuItem>(item => item
+                .Add(p => p.Variant, itemVariant)
+                .Add(p => p.StartIcon, Icons.Material.Filled.Edit)));
+
+        var item = comp.Find(".mud-fab-menu-item");
+        item.ClassList.Should().Contain(expectedClass);
+        item.ClassList.Should().NotContain(absentClass1);
+        item.ClassList.Should().NotContain(absentClass2);
+    }
+
+    /// <summary>
+    /// Multiple MudFabMenuItems in the same menu can each have a different explicit Variant.
+    /// </summary>
+    [Test]
+    public void MudFabMenu_ItemsCanHaveDifferentVariants()
+    {
+        var comp = Context.Render<MudFabMenu>(parameters => parameters
+            .Add(p => p.Variant, Variant.Outlined)
+            .Add(p => p.StartIcon, Icons.Material.Filled.Add)
+            .AddChildContent(builder =>
+            {
+                builder.OpenComponent<MudFabMenuItem>(0);
+                builder.AddAttribute(1, "Variant", Variant.Filled);
+                builder.AddAttribute(2, "StartIcon", Icons.Material.Filled.LooksOne);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudFabMenuItem>(3);
+                builder.AddAttribute(4, "Variant", Variant.Outlined);
+                builder.AddAttribute(5, "StartIcon", Icons.Material.Filled.LooksTwo);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudFabMenuItem>(6);
+                builder.AddAttribute(7, "Variant", Variant.Text);
+                builder.AddAttribute(8, "StartIcon", Icons.Material.Filled.Looks3);
+                builder.CloseComponent();
+            }));
+
+        var items = comp.FindAll(".mud-fab-menu-item");
+        items.Count.Should().Be(3);
+        items[0].ClassList.Should().Contain("mud-fab-filled").And.NotContain("mud-fab-outlined").And.NotContain("mud-fab-text");
+        items[1].ClassList.Should().Contain("mud-fab-outlined").And.NotContain("mud-fab-filled").And.NotContain("mud-fab-text");
+        items[2].ClassList.Should().Contain("mud-fab-text").And.NotContain("mud-fab-filled").And.NotContain("mud-fab-outlined");
+    }
+
+    /// <summary>
+    /// A MudFabMenuItem with no explicit Variant and no parent MudFabMenu should default to Variant.Filled.
+    /// </summary>
+    [Test]
+    public void MudFabMenuItem_DefaultsToFilledWhenNoMenuCascade()
+    {
+        var comp = Context.Render<MudFabMenuItem>(parameters => parameters
+            .Add(p => p.StartIcon, Icons.Material.Filled.Edit));
+
+        var item = comp.Find(".mud-fab-menu-item");
+        item.ClassList.Should().Contain("mud-fab-filled");
+        item.ClassList.Should().NotContain("mud-fab-outlined");
+        item.ClassList.Should().NotContain("mud-fab-text");
+    }
+
     [Test]
     [Combinatorial]
     public void FabMenuItem_ShouldRenderAnchorIfHrefIsSet(
@@ -177,5 +268,21 @@ public class FabMenuTests : BunitTest
 
         var expectedRel = rel ?? (target == "_blank" ? "noopener" : null);
         item.GetAttribute("rel").Should().Be(expectedRel);
+    }
+
+    [TestCase(false, 0)]
+    [TestCase(true, 1)]
+    public async Task FabMenuItem_ShouldNotPropagateClickIfFalse(bool propagateClick, int expectedContainerClickCount)
+    {
+        var comp = Context.Render<FabMenuItemClickPropagationTest>(parameters => parameters.Add(param => param.ClickPropagation, propagateClick));
+
+        var item = comp.Find(".mud-fab-menu-item");
+        await item.ClickAsync();
+
+        await comp.WaitForAssertionAsync(() =>
+        {
+            comp.Instance.ItemClickedCount.Should().Be(1);
+            comp.Instance.ContainerClickedCount.Should().Be(expectedContainerClickCount);
+        });
     }
 }

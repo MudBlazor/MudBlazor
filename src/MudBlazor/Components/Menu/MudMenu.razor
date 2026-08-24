@@ -7,7 +7,7 @@
      style="@Style"
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
-     @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick && ActivatorContent is null ? ToggleMenuAsync : (args => Task.CompletedTask))"
+     @oncontextmenu="@ContextMenuCallback"
      @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)"
      @oncontextmenu:stopPropagation="@(ActivationEvent == MouseEvent.RightClick)"
      @onkeydown="TrackKeyboardInteraction">
@@ -26,7 +26,7 @@
                  tabindex="0"
                  role="button"
                  aria-haspopup="true"
-                 aria-expanded="@_openState.Value">
+                 aria-expanded="@_openState.Value.ToString().ToLowerInvariant()">
                 @ActivatorContent(_menuContext)
             </div>
         }
@@ -39,7 +39,7 @@
                          AutoClose="false"
                          HideSubMenuArrow="true"
                          aria-haspopup="true"
-                         aria-expanded="@_openState.Value"
+                         aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
                          aria-label="@AriaLabel">
                 @ActivatorContent(_menuContext)
             </MudMenuItem>

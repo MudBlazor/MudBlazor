@@ -92,6 +92,11 @@ namespace MudBlazor
         public bool FullWidth { get; set; }
 
         /// <summary>
+        /// For inheritors: determines if the Immediate state is set.
+        /// </summary>
+        protected internal virtual bool EffectiveImmediate => Immediate;
+
+        /// <summary>
         /// Changes the <see cref="Value"/> as soon as input is received.
         /// </summary>
         /// <remarks>
@@ -479,34 +484,26 @@ namespace MudBlazor
 
             if (ReadOnly)
             {
+                // Readonly inputs never validate, but they can still be focused and blurred.
+                await OnBlur.InvokeAsync(obj);
+
                 return;
             }
-
-            // all the OnBlur parents (TextField, MudMask, NumericField, DateRange, etc) currently point to this method
-            // which causes this method to be fired repeatedly, we can use the obj.Type of FocusedEventArgs to track it
 
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
                 if (_validated)
                 {
-                    if (OnBlur.HasDelegate)
-                    {
-                        obj.Type += ".additional";
-                        await OnBlur.InvokeAsync(obj);
-                    }
+                    await OnBlur.InvokeAsync(obj);
+                }
+                else if (OnBlur.HasDelegate)
+                {
+                    await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
                 }
                 else
                 {
-                    if (OnBlur.HasDelegate)
-                    {
-                        obj.Type += ".additional";
-                        await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
-                    }
-                    else
-                    {
-                        await ValidateValue();
-                    }
+                    await ValidateValue();
                 }
             }
         }
@@ -573,12 +570,11 @@ namespace MudBlazor
             {
                 var forceTextUpdate = _forceTextUpdate;
                 _forceTextUpdate = false;
-                // Do not reformat the displayed text from Value on this input's own Immediate ValueChanged
-                // echo (the @bind round-trip mid-typing). On Blazor Server the echo can land between
-                // keystrokes and would reformat while the user is typing, corrupting input (#13002; also
-                // completes #13266/#13250 on Server, which #13311 only fixed for the synchronous case).
-                // External value changes, non-Immediate commits, and explicit forced updates still refresh.
-                if (forceTextUpdate || !(Immediate && arg.IsChildOriginatedChange))
+                // Do not reformat the displayed text from Value on this input's own live ValueChanged echo, the @bind round-trip mid-typing.
+                // On Blazor Server the echo can land between keystrokes and would reformat while the user is typing, corrupting input (#13002; also completes #13266/#13250 on Server, which #13311 only fixed for the synchronous case).
+                // A debounced input commits from oninput too, so it needs the same suppression even though its own Immediate parameter is false.
+                // External value changes, committed non-live changes, and explicit forced updates still refresh.
+                if (forceTextUpdate || !(EffectiveImmediate && arg.IsChildOriginatedChange))
                 {
                     await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
                 }

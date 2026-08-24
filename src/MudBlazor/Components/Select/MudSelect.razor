@@ -48,7 +48,6 @@
                           ClearIcon="@ClearIcon"
                           OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
                           @attributes="GetInputUserAttributes()"
-                          OnBlur="@OnBlurAsync"
                           ShrinkLabel="@(ShrinkLabel || CanRenderValue)"
                           InputId="@InputElementId"
                           Required="@Required">
@@ -125,6 +124,7 @@
                                              Text="@SelectAllText"
                                              OnClick="SelectAllClickAsync"
                                              OnClickPreventDefault="true"
+                                             KeyboardEnabled="false"
                                              Dense="@Dense"
                                              Class="mb-2" />
                                 <MudDivider />

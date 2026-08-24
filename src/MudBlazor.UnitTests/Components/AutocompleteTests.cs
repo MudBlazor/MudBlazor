@@ -21,6 +21,25 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class AutocompleteTests : BunitTest
     {
+        /// <summary>
+        /// Autocomplete owns result keyboard navigation without installing an interceptor for every result.
+        /// </summary>
+        [Test]
+        public async Task AutocompleteResults_DoNotRegisterKeyInterceptors()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.SearchFunc, (_, _) => Task.FromResult<IEnumerable<string>>(["one", "two", "three"])));
+
+            await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "o" });
+            await provider.WaitForAssertionAsync(() => provider.FindComponents<MudListItem<string>>().Should().HaveCount(3));
+
+            provider.FindComponents<MudListItem<string>>().Should().OnlyContain(x => !x.Instance.KeyboardEnabled);
+            keyInterceptorService.ObserversCount.Should().Be(0);
+        }
+
         [Test]
         public async Task Autocomplete_Should_Handle_Converter_WithStrict()
         {
@@ -211,14 +230,13 @@ namespace MudBlazor.UnitTests.Components
             // check initial state
             autocomplete.ReadValue.Should().Be("Alabama");
             autocomplete.ReadText.Should().Be("Alabama");
-            // set a value the search won't find
+            // set a value the search won't find; the menu stays closed because the search returns nothing
             await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(a => a.Text, "Austria"));
-            // Open must be true to properly simulate a user clicking outside of the component, which is what the next ToggleMenu call below does.
-            await autocompleteComponent.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
-            // now trigger the coercion by closing the menu
-            await comp.InvokeAsync(autocomplete.ToggleMenuAsync);
+            await autocompleteComponent.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
+            // now trigger the coercion by leaving the input, as happens when the user clicks outside of the component
+            await comp.Find("input").BlurAsync(new FocusEventArgs());
+            await autocompleteComponent.WaitForAssertionAsync(() => autocomplete.ReadText.Should().Be("Alabama"));
             autocomplete.ReadValue.Should().Be("Alabama");
-            autocomplete.ReadText.Should().Be("Alabama");
         }
 
         /// <summary>
@@ -1303,6 +1321,46 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SearchFuncCallCount.Should().Be(0);
         }
 
+        /// <summary>
+        /// Keeps disabled-item state aligned when unlimited results are replaced.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Update_DisabledItems_When_UnlimitedResultsChange()
+        {
+            var firstResults = new[] { "Enabled 1", "Disabled 1", "Enabled 2" };
+            var secondResults = new[] { "Disabled 2", "Enabled 3" };
+            var provider = Context.Render<MudPopoverProvider>();
+            var autocomplete = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.MaxItems, null)
+                .Add(x => x.ItemDisabledFunc, item => item.StartsWith("Disabled", StringComparison.Ordinal))
+                .Add(x => x.SearchFunc, (value, _) => Task.FromResult<IEnumerable<string>>(
+                    value == "empty" ? [] : value == "second" ? secondResults : firstResults)));
+
+            await autocomplete.Find("input").InputAsync("first");
+            await provider.WaitForAssertionAsync(() =>
+            {
+                provider.FindComponents<MudListItem<string>>().Count.Should().Be(3);
+                provider.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
+            });
+
+            await autocomplete.Find("input").InputAsync("empty");
+            await provider.WaitForAssertionAsync(() => provider.FindComponents<MudListItem<string>>().Should().BeEmpty());
+
+            await autocomplete.Find("input").InputAsync("second");
+            await provider.WaitForAssertionAsync(() =>
+            {
+                provider.FindComponents<MudListItem<string>>().Count.Should().Be(2);
+                provider.FindComponents<MudListItem<string>>().Count(x => x.Instance.Disabled).Should().Be(1);
+                provider.FindComponents<MudListItem<string>>().Single(x => x.Markup.Contains("Disabled 2")).Instance.Disabled.Should().BeTrue();
+                provider.FindComponents<MudListItem<string>>().Single(x => x.Markup.Contains("Enabled 3")).Instance.Disabled.Should().BeFalse();
+            });
+
+            await autocomplete.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await autocomplete.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            await autocomplete.WaitForAssertionAsync(() => autocomplete.Instance.ReadValue.Should().Be("Enabled 3"));
+        }
+
         [Test]
         public async Task Autocomplete_Should_Not_Select_Disabled_Item()
         {
@@ -1465,7 +1523,8 @@ namespace MudBlazor.UnitTests.Components
             await autocompleteComponent.Find("input").InputAsync("abc");
             await comp.InvokeAsync(async () => await autocomplete.SelectAsync());
             await comp.InvokeAsync(async () => await autocomplete.SelectRangeAsync(0, 1));
-            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
+            // "abc" matches nothing, so the menu stays closed
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
 
             await autocompleteComponent.Find("input").InputAsync("");
             await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
@@ -1841,6 +1900,89 @@ namespace MudBlazor.UnitTests.Components
             items2.Count(s => s.Find(listItemQuerySelector).ClassList.Contains(selectedItemClassName)).Should().Be(1);
         }
 
+        // https://github.com/MudBlazor/MudBlazor/issues/13358
+        // With Strict="false" and a value type whose default is a valid item (e.g. an enum with a 0 member), only the actually-selected item should be highlighted, not also the default-valued item.
+        [Test]
+        public async Task AutocompleteStrictFalse_ValueType_HighlightsOnlySelectedItem()
+        {
+            var listItemQuerySelector = "div.mud-list-item";
+            var selectedItemClassName = "mud-selected-item";
+
+            var comp = Context.Render<AutocompleteEnumStrictFalseTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteEnumStrictFalseTest.TestEnum>>();
+            var autocomplete = autocompleteComponent.Instance;
+
+            // Search for and select "Third" (value 2), which is not the default (First = 0).
+            await autocompleteComponent.Find("input").InputAsync("Third");
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.WaitForAssertionAsync(() => autocomplete.Value.Should().Be(AutocompleteEnumStrictFalseTest.TestEnum.Third));
+
+            // Reopen the menu; searchingWhileSelected returns all items with "Third" centered and selected.
+            await comp.InvokeAsync(autocomplete.OpenMenuAsync);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            // Only "Third" should be highlighted. The default (First = 0) item must not also be highlighted.
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var selectedItems = comp.FindAll($"{listItemQuerySelector}.{selectedItemClassName}");
+                selectedItems.Count.Should().Be(1);
+                selectedItems[0].TextContent.Should().Contain("Third");
+            });
+        }
+
+        // https://github.com/MudBlazor/MudBlazor/issues/13358
+        // When the selected value drops out of refreshed results, no row should be highlighted.
+        // In particular the default-valued (First = 0) item must not be highlighted as a fallback.
+        [Test]
+        public async Task AutocompleteStrictFalse_ValueType_SelectedItemRemovedOnRefresh_HighlightsNothing()
+        {
+            var listItemQuerySelector = "div.mud-list-item";
+            var selectedItemClassName = "mud-selected-item";
+
+            var comp = Context.Render<AutocompleteEnumStrictFalseTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteEnumStrictFalseTest.TestEnum>>();
+            var autocomplete = autocompleteComponent.Instance;
+
+            // Search for and select "Third" (value 2), which is not the default (First = 0).
+            await autocompleteComponent.Find("input").InputAsync("Third");
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await autocompleteComponent.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.WaitForAssertionAsync(() => autocomplete.Value.Should().Be(AutocompleteEnumStrictFalseTest.TestEnum.Third));
+
+            // Drop the selected item from the source so the refreshed results no longer contain it, while First (0) remains.
+            comp.Instance.Source.Remove(AutocompleteEnumStrictFalseTest.TestEnum.Third);
+
+            // Reopen; the selected value is gone (index -1), so nothing should be highlighted.
+            await comp.InvokeAsync(autocomplete.OpenMenuAsync);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll(listItemQuerySelector).Count.Should().Be(4); // First, Second, Fourth, Fifth
+                comp.FindAll($"{listItemQuerySelector}.{selectedItemClassName}").Count.Should().Be(0);
+            });
+        }
+
+        // A consumer can put a typed MudListItem<T> in BeforeItemsTemplate/AfterItemsTemplate.
+        // It sits under the internal list, so it must keep finding the cascading MudList<T> to inherit Dense, and must not be selected just because its value is default(T).
+        [Test]
+        public async Task Autocomplete_TypedListItemInBeforeItemsTemplate_InheritsListCascade()
+        {
+            var comp = Context.Render<AutocompleteBeforeItemsListItemTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<AutocompleteBeforeItemsListItemTest.Season>>();
+
+            await comp.InvokeAsync(autocompleteComponent.Instance.OpenMenuAsync);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var beforeItem = comp.Find("div.before-item");
+                beforeItem.ClassList.Should().Contain("mud-list-item-dense");
+                beforeItem.ClassList.Should().NotContain("mud-selected-item");
+            });
+        }
+
         [Test]
         public async Task Autocomplete_Should_Not_Throw_When_SearchFunc_Is_Null()
         {
@@ -2004,31 +2146,100 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// BeforeItemsTemplate should not render when there are no items
+        /// The menu should stay closed when the search returns no items even though BeforeItemsTemplate is set
         /// </summary>
         [Test]
         public async Task Autocomplete_Should_Not_LoadListStartWhenSet()
         {
             var comp = Context.Render<AutocompleteListStartRendersTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+            var returnedItemsCount = -1;
+            await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(a => a.ReturnedItemsCountChanged, (int count) => returnedItemsCount = count));
 
             await comp.Find("div.mud-input-control").FocusAsync();
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await comp.WaitForAssertionAsync(() => returnedItemsCount.Should().Be(0));
 
-            comp.Find("div.mud-popover").InnerHtml.Should().BeEmpty();
+            autocompleteComponent.Instance.Open.Should().BeFalse();
+            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
         }
 
         /// <summary>
-        /// AfterItemsTemplate should not render when there are no items
+        /// The menu should stay closed when the search returns no items even though AfterItemsTemplate is set
         /// </summary>
         [Test]
         public async Task Autocomplete_Should_Not_LoadListEndWhenSet()
         {
             var comp = Context.Render<AutocompleteListEndRendersTest>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+            var returnedItemsCount = -1;
+            await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(a => a.ReturnedItemsCountChanged, (int count) => returnedItemsCount = count));
 
             await comp.Find("div.mud-input-control").FocusAsync();
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await comp.WaitForAssertionAsync(() => returnedItemsCount.Should().Be(0));
 
-            comp.Find("div.mud-popover").InnerHtml.Should().BeEmpty();
+            autocompleteComponent.Instance.Open.Should().BeFalse();
+            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
+        }
+
+        /// <summary>
+        /// The menu should close instead of staying invisibly open when a search returns no items and no NoItemsTemplate is set (#13360)
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_StayClosed_When_SearchReturnsNoItems()
+        {
+            var comp = Context.Render<AutocompleteTest1>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompleteComponent.Instance;
+            await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DebounceInterval, 0));
+
+            await comp.Find("input").InputAsync("Calif");
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeTrue());
+
+            await comp.Find("input").InputAsync("Califxyz");
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
+            comp.FindAll(".mud-overlay").Should().BeEmpty();
+            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
+        }
+
+        /// <summary>
+        /// Clicking the clear button after a search that returned no items should not open the menu (#13360)
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Clear_AfterEmptySearch_Should_NotOpenMenu()
+        {
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.Clearable, true)
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.SearchFunc, (text, _) => Task.FromResult(new[] { "Alabama", "Alaska" }.Where(state => state.Contains(text ?? string.Empty, StringComparison.OrdinalIgnoreCase)))));
+
+            await comp.Find("input").InputAsync("xyz");
+            await comp.WaitForAssertionAsync(() => comp.Instance.Open.Should().BeFalse());
+
+            await comp.Find("button.mud-input-clear-button").MouseDownAsync();
+            await comp.InvokeAsync(() => comp.Instance.HandleClearButtonAsync(new MouseEventArgs()));
+            comp.Instance.Open.Should().BeFalse();
+            comp.Instance.ReadText.Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Pressing Enter while the menu is closed after an empty search should still coerce the value when CoerceValue is on (#13360)
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Enter_AfterEmptySearch_Should_CoerceValue()
+        {
+            var comp = Context.Render<AutocompleteTest1>();
+            var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
+            var autocomplete = autocompleteComponent.Instance;
+            await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.CoerceValue, true)
+                .Add(x => x.Immediate, false));
+
+            await comp.Find("input").InputAsync("Austria");
+            await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
+
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.WaitForAssertionAsync(() => autocomplete.ReadValue.Should().Be("Austria"));
         }
 
         [Test]
@@ -2509,7 +2720,8 @@ namespace MudBlazor.UnitTests.Components
                 eventCallbackFactory.Create<MouseEventArgs>(this, (e) => { }) : default;
 
             var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
-                .Add(p => p.OnAdornmentClick, _delegate));
+                .Add(p => p.OnAdornmentClick, _delegate)
+                .Add(p => p.SearchFunc, (_, _) => Task.FromResult<IEnumerable<string>>(["Foo", "Bar"])));
 
             var autocompleteInstance = comp.Instance;
             autocompleteInstance.OnAdornmentClick.HasDelegate.Should().Be(attachDelegate);
@@ -2523,7 +2735,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task Autocomplete_OpenOnFocusShouldWork(bool openOnFocus)
         {
             var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
-                .Add(p => p.OpenOnFocus, openOnFocus));
+                .Add(p => p.OpenOnFocus, openOnFocus)
+                .Add(p => p.SearchFunc, (_, _) => Task.FromResult<IEnumerable<string>>(["Foo", "Bar"])));
             await comp.Find("input").FocusAsync();
 
             await comp.WaitForAssertionAsync(() => comp.Instance.Open.Should().Be(openOnFocus, $"OpenOnFocus should set Open to {openOnFocus} after input Focus"));
@@ -2600,8 +2813,173 @@ namespace MudBlazor.UnitTests.Components
         public async Task Autocomplete_OpenChanged_HandleClearButton()
         {
             var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>();
+
+            //Trigger the focus of the autocomplete using the clear button. 
+            await comp.Find("button.mud-input-clear-button").MouseDownAsync();
+
             await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.HandleClearButtonAsync(new()));
             comp.Instance.OpenedCount.Should().Be(0);
+            comp.Instance.ClosedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_Remain_Open_On_ClearButton_Usage()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>();
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+
+            //Trigger the focus of the autocomplete using the clear button. 
+            await comp.Find("button.mud-input-clear-button").MouseDownAsync();
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.HandleClearButtonAsync(new()));
+            comp.Instance.OpenedCount.Should().Be(1);
+            comp.Instance.ClosedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Autocomplete_Should_Remain_Closed_On_ClearButton_Usage()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>();
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.CloseMenuAsync());
+
+            //Trigger the focus of the autocomplete using the clear button. 
+            await comp.Find("button.mud-input-clear-button").MouseDownAsync();
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.HandleClearButtonAsync(new()));
+            comp.Instance.OpenedCount.Should().Be(1);
+            comp.Instance.ClosedCount.Should().Be(1);
+            comp.Instance.ClearCount.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Clicking the clear button without a preceding mousedown, as with element.click(), must not open the menu (follow-up to #13529).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Remain_Closed_On_Programmatic_ClearButton_Click()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0));
+
+            await comp.Find("button.mud-input-clear-button").ClickAsync(new());
+
+            comp.Instance.Autocomplete.Open.Should().BeFalse();
+            comp.Instance.OpenedCount.Should().Be(0);
+            comp.Instance.ClosedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+        }
+
+        /// <summary>
+        /// A full pointer interaction on the clear button, mousedown followed by click through the input's own handler, must not open a closed menu (follow-up to #13529).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Remain_Closed_On_Pointer_ClearButton_Interaction()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0));
+
+            var button = comp.Find("button.mud-input-clear-button");
+            await button.MouseDownAsync(new());
+            await button.ClickAsync(new());
+
+            comp.Instance.Autocomplete.Open.Should().BeFalse();
+            comp.Instance.OpenedCount.Should().Be(0);
+            comp.Instance.ClosedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Enter activates the clear button on keydown and its keyup lands on the input focused by the clear handler; that stray keyup must not reopen the menu, while a subsequent full Enter keystroke still opens it (follow-up to #13529).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Remain_Closed_On_Enter_ClearButton_Activation()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0));
+            var input = comp.Find("input");
+
+            // Enter on the focused clear button: the click fires on keydown with no mousedown,
+            // then the keyup lands on the input because the clear handler moved focus there.
+            await comp.Find("button.mud-input-clear-button").ClickAsync(new());
+            await input.KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            comp.Instance.Autocomplete.Open.Should().BeFalse();
+            comp.Instance.OpenedCount.Should().Be(0);
+            comp.Instance.ClearCount.Should().Be(1);
+
+            // A genuine Enter keystroke on the input still opens the menu.
+            await input.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await input.KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            comp.Instance.Autocomplete.Open.Should().BeTrue();
+            comp.Instance.OpenedCount.Should().Be(1);
+        }
+
+        /// <summary>
+        /// The stray Enter keyup must stay suppressed even when it arrives while an asynchronous clear callback is still pending (follow-up to #13529).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Remain_Closed_On_Enter_ClearButton_Activation_With_Pending_Callback()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.GateClear, true));
+
+            // Enter fires the click on keydown; the gated callback keeps the clear transaction pending.
+            var clickTask = comp.Find("button.mud-input-clear-button").ClickAsync(new());
+            comp.Instance.ClearCount.Should().Be(1, "the click must have reached the gated clear callback");
+
+            // The keyup lands on the input while the clear callback is still awaited.
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            comp.Instance.ClearGate.SetResult();
+            await clickTask;
+
+            comp.Instance.Autocomplete.Open.Should().BeFalse();
+            comp.Instance.OpenedCount.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Enter on the clear button while the menu is open must not let the stray keyup select the highlighted item and restore the cleared value (follow-up to #13529).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Not_Select_On_Enter_ClearButton_Activation_While_Open()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0));
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+
+            await comp.Find("button.mud-input-clear-button").ClickAsync(new());
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            comp.Instance.Autocomplete.Open.Should().BeTrue();
+            comp.Instance.Autocomplete.Value.Should().BeNull();
+            comp.Instance.ClearCount.Should().Be(1);
+        }
+
+        /// <summary>
+        /// A full pointer interaction on the clear button while the menu is open must keep it open (#13528).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_Should_Remain_Open_On_Pointer_ClearButton_Interaction()
+        {
+            var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0));
+
+            await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
+
+            var button = comp.Find("button.mud-input-clear-button");
+            await button.MouseDownAsync(new());
+            await button.ClickAsync(new());
+
+            comp.Instance.Autocomplete.Open.Should().BeTrue();
+            comp.Instance.OpenedCount.Should().Be(1);
             comp.Instance.ClosedCount.Should().Be(0);
             comp.Instance.ClearCount.Should().Be(1);
         }

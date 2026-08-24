@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net9.0;$(PrimaryTargetFramework)</TargetFrameworks>
@@ -19,14 +19,14 @@
     <RepositoryUrl>https://github.com/MudBlazor/MudBlazor</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
-  
+
   <PropertyGroup>
     <IsTrimmable>true</IsTrimmable>
     <TrimMode>link</TrimMode>
@@ -104,8 +104,13 @@
 
   <ItemGroup>
     <JsAssetInputs Include="TScripts/**/*.js" />
+    <TsAssetInputs Include="TScripts/**/*.ts" />
     <ScssAssetInputs Include="Styles/**/*.scss" />
-    <WebAssetInputs Include="@(JsAssetInputs);@(ScssAssetInputs)" />
+    <BuildScriptInputs Include="build.mts" />
+    <BuildScriptInputs Include="../eslint.config.ts" />
+    <BuildScriptInputs Include="../tsconfig.json" />
+    <BuildScriptInputs Include="tsconfig.json" />
+    <WebAssetInputs Include="@(JsAssetInputs);@(TsAssetInputs);@(ScssAssetInputs);@(BuildScriptInputs);@(BunToolchainInputs)" />
     <UpToDateCheckInput Include="@(WebAssetInputs)" />
     <WebAssetOutputs Include="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.js.map;wwwroot/MudBlazor.min.css" />
   </ItemGroup>
@@ -128,7 +133,10 @@
     <Exec Command="$(BunToolRestore)"
           WorkingDirectory="$(MSBuildProjectDirectory)" />
 
-    <Exec Command="$(BunWrapper) run build.mjs"
+    <Exec Command="$(BunInstall)"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+
+    <Exec Command="$(BunWrapper) run build.mts"
           WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
 
@@ -147,7 +155,10 @@
     <Exec Command="$(BunToolRestore)"
           WorkingDirectory="$(MSBuildProjectDirectory)" />
 
-    <Exec Command="$(BunWrapper) run build.mjs"
+    <Exec Command="$(BunInstall)"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+
+    <Exec Command="$(BunWrapper) run build.mts"
           WorkingDirectory="$(MSBuildProjectDirectory)" />
   </Target>
 
@@ -171,11 +182,11 @@
     <ProjectReference Include="..\MudBlazor.Analyzers\MudBlazor.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     <ProjectReference Include="..\MudBlazor.Analyzers.CodeFixes\MudBlazor.Analyzers.CodeFixes.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
-  
+
   <PropertyGroup>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
-  
+
   <!--Add analyzer to build output so it works transitively -->
   <Target Name="_AddAnalyzersToOutput">
     <!--Limit to one copy (MudBlazor is multi targeted) analyzers are .net standard 2.0 -->
@@ -186,10 +197,11 @@
       <TfmSpecificPackageFile Include="..\Directory.Build.targets" Pack="true" PackagePath="build\$(PackageId).targets" />
     </ItemGroup>
   </Target>
-  
+
   <!--Dont Include in build output-->
   <ItemGroup>
-    <Content Remove="build.mjs" />
+    <Content Remove="build.mts" />
+    <Content Remove="tsconfig.json" />
     <Content Remove="wwwroot/DoNotRemove.txt" />
     <Content Remove="wwwroot/css/MudBlazor.css" />
     <!--macOS hidden file (causes problems with dotnet pack)-->
@@ -206,7 +218,7 @@
     <!--We need to make internal types to be visible for mocking-->
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>
-  
+
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
