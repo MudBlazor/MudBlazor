@@ -354,7 +354,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A mismatched group must leave the typed parent null rather than fail the cast, because DisposeAsyncCore reads it while tearing the rejected radio down and an InvalidCastException there takes a Blazor Server circuit down before the diagnostic is ever shown.
+        /// A mismatched group must leave the typed parent null rather than fail the cast.
         /// </summary>
         [Test]
         public void Radio_TypeMismatch_ShouldNotLeaveACastThatThrows()
