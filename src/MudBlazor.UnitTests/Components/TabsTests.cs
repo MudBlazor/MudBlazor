@@ -2061,5 +2061,19 @@ namespace MudBlazor.UnitTests.Components
                     "scroll button disabled state should remain unchanged when the parent form is re-enabled");
             });
         }
+
+        /// <summary>
+        /// A key press on a tab's close button must raise CloseTab once, even though the event also reaches the tab header that wraps it.
+        /// </summary>
+        [Test]
+        public async Task DynamicTabs_CloseKeyOnCloseButton_ShouldRaiseCloseTabOnce()
+        {
+            var comp = Context.Render<DynamicTabsWithKeyTest>();
+            var closeButton = comp.FindAll(".mud-tab button")[1];
+
+            await closeButton.KeyDownAsync(new KeyboardEventArgs { Key = "Delete" });
+
+            comp.Instance.CloseCalls.Should().Be(1);
+        }
     }
 }
