@@ -15,6 +15,20 @@
         <MudMenuItem>Unreachable</MudMenuItem>
     </MudSplitButton>
 
+    @foreach (var size in new[] { Size.Small, Size.Medium, Size.Large })
+    {
+        <MudSplitButton Label="@($"Size {size}")" Size="@size" Variant="Variant.Outlined" Color="Color.Primary">
+            <MudMenuItem>Action</MudMenuItem>
+        </MudSplitButton>
+    }
+
+    <MudSplitButton Label="A deliberately long primary label that should not squash the toggle"
+                    FullWidth="true"
+                    Variant="Variant.Filled"
+                    Color="Color.Tertiary">
+        <MudMenuItem>Action</MudMenuItem>
+    </MudSplitButton>
+
     <MudText Typo="Typo.body2">Last action: @_last</MudText>
 </MudStack>
 
