@@ -1,10 +1,10 @@
 ﻿using AwesomeAssertions;
-using MudBlazor.Utilities.Exceptions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Radio;
 using MudBlazor.UnitTests.TestComponents.RadioGroup;
 using MudBlazor.UnitTests.Utilities;
+using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
