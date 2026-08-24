@@ -14,6 +14,23 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class SelectTests : BunitTest
     {
+        /// <summary>
+        /// Select owns popup keyboard navigation without installing an interceptor for every option.
+        /// </summary>
+        [Test]
+        public async Task SelectOptions_DoNotRegisterKeyInterceptors()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectTest1>();
+            var observersWhileClosed = keyInterceptorService.ObserversCount;
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindComponents<MudListItem<string>>().Should().HaveCount(4));
+
+            comp.FindComponents<MudListItem<string>>().Should().OnlyContain(x => !x.Instance.KeyboardEnabled);
+            keyInterceptorService.ObserversCount.Should().Be(observersWhileClosed);
+        }
+
         [Test]
         public async Task Select_CheckListClass()
         {
