@@ -4,7 +4,9 @@
 
 using System.Text.RegularExpressions;
 using AwesomeAssertions;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Compiler;
+using MudBlazor.Docs.Services;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Docs.Documentation;
@@ -23,6 +25,8 @@ public class LlmsTxtTests
 {
     private static readonly Regex LinkPattern = new(@"\[([^\]]+)\]\(([^)\s]+)\)", RegexOptions.Compiled);
 
+    private const string SiteRoot = "https://mudblazor.com";
+
     private static string LlmsTxtPath => Path.Combine(Paths.SrcDirPath, "MudBlazor.Docs.Wasm", "wwwroot", "llms.txt");
 
     private static string ReadLlmsTxt()
@@ -35,6 +39,57 @@ public class LlmsTxtTests
     private static string[] ReadLlmsTxtLines()
     {
         return ReadLlmsTxt().Split('\n').Select(line => line.TrimEnd('\r')).ToArray();
+    }
+
+    /// <summary>
+    /// Collects every route literal a docs page declares, truncating parameterized templates at the first placeholder.
+    /// </summary>
+    /// <remarks>
+    /// <c>/api/{TypeName}</c> cannot be matched literally, so it contributes <c>/api</c> and any link
+    /// beneath it resolves against that prefix.
+    /// </remarks>
+    private static HashSet<string> GetDocsRouteTemplates()
+    {
+        var routes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var type in typeof(MenuService).Assembly.GetTypes().Where(typeof(IComponent).IsAssignableFrom))
+        {
+            foreach (RouteAttribute route in type.GetCustomAttributes(typeof(RouteAttribute), inherit: false))
+            {
+                var template = route.Template;
+                var placeholder = template.IndexOf('{');
+                if (placeholder >= 0)
+                {
+                    template = template[..placeholder].TrimEnd('/');
+                }
+
+                routes.Add(Normalize(template));
+            }
+        }
+
+        return routes;
+    }
+
+    /// <summary>
+    /// Lowercases a route or link path and drops a single trailing slash so both sides compare alike.
+    /// </summary>
+    private static string Normalize(string path)
+    {
+        var normalized = path.ToLowerInvariant();
+
+        return normalized.Length > 1 ? normalized.TrimEnd('/') : normalized;
+    }
+
+    /// <summary>
+    /// Collects the site-relative paths of every mudblazor.com link in llms.txt.
+    /// </summary>
+    private static List<string> GetLinkedSitePaths()
+    {
+        return LinkPattern.Matches(ReadLlmsTxt())
+            .Select(match => match.Groups[2].Value)
+            .Where(url => url.StartsWith(SiteRoot, StringComparison.OrdinalIgnoreCase))
+            .Select(url => Normalize(new Uri(url).AbsolutePath))
+            .ToList();
     }
 
     /// <summary>
@@ -80,5 +135,20 @@ public class LlmsTxtTests
             match.Groups[2].Value.Should().MatchRegex("^https?://",
                 "llms.txt is fetched standalone, so relative links cannot be resolved");
         }
+    }
+
+    /// <summary>
+    /// Verifies every mudblazor.com link in llms.txt points at a route the docs site actually serves.
+    /// </summary>
+    [Test]
+    public void SiteLinksResolveToDocsRoutes()
+    {
+        var routes = GetDocsRouteTemplates();
+        routes.Should().NotBeEmpty("the docs assembly declares routed pages");
+
+        var deadLinks = GetLinkedSitePaths().Where(path => !routes.Contains(path)).ToList();
+
+        deadLinks.Should().BeEmpty(
+            "every llms.txt link must resolve; a renamed docs route fails here instead of rotting silently");
     }
 }

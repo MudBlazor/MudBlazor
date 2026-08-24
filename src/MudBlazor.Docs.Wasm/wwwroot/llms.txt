@@ -10,3 +10,59 @@ The documentation site is a Blazor WebAssembly app, so pages are rendered client
 - [Usage](https://mudblazor.com/getting-started/usage): The providers, imports, and minimal layout a MudBlazor app needs before anything renders.
 - [Layouts](https://mudblazor.com/getting-started/layouts): Compose an app shell from MudLayout, MudAppBar, MudDrawer, and MudMainContent.
 - [Wireframes](https://mudblazor.com/getting-started/wireframes): Copy-paste starting points for common page shapes.
+
+## Components
+
+- [API index](https://mudblazor.com/api): Generated reference for every documented type — the complete component listing. Start here to find a component not named below.
+- [Button](https://mudblazor.com/components/button): Filled, outlined, and text buttons, icons, and loading state.
+- [Text Field](https://mudblazor.com/components/textfield): The base text input, including validation, adornments, and masking.
+- [Select](https://mudblazor.com/components/select): Single and multi-select dropdown bound to a value or a collection.
+- [Autocomplete](https://mudblazor.com/components/autocomplete): Async search-as-you-type input backed by a user-supplied search function.
+- [Form](https://mudblazor.com/components/form): MudForm and EditForm validation, including FluentValidation.
+- [Data Grid](https://mudblazor.com/components/datagrid): Sorting, filtering, grouping, virtualization, editing, and server-side data.
+- [Table](https://mudblazor.com/components/table): The simpler tabular component, with client- and server-side paging.
+- [Dialog](https://mudblazor.com/components/dialog): Modal dialogs shown through IDialogService, with results and custom content.
+- [Snackbar](https://mudblazor.com/components/snackbar): Transient notifications shown through ISnackbar.
+- [Charts](https://mudblazor.com/components/charts): Bar, line, pie, donut, heatmap, radar, sankey, scatter, and time-series charts.
+
+## Features
+
+- [Icons](https://mudblazor.com/features/icons): The bundled Material icon set and how to supply custom SVG icons.
+- [Colors](https://mudblazor.com/features/colors): The Color enum and the Material palette behind it.
+- [Breakpoints](https://mudblazor.com/features/breakpoints): Responsive breakpoints and the MudHidden and IBreakpointService APIs.
+- [Parameter State](https://mudblazor.com/features/parameterstate): The ParameterState framework every component uses for parameter change handling.
+- [Localization](https://mudblazor.com/features/localization): Translating built-in component strings.
+- [RTL Languages](https://mudblazor.com/features/rtl-languages): Right-to-left layout support.
+- [Analyzers](https://mudblazor.com/features/analyzers): The MudBlazor Roslyn analyzers and what they catch.
+- [Services](https://mudblazor.com/features/services): The injectable services MudBlazor registers.
+
+## Customization
+
+- [Overview](https://mudblazor.com/customization/overview): How MudTheme, palettes, typography, and CSS variables fit together.
+- [Palette](https://mudblazor.com/customization/palette): Define light and dark palettes.
+- [Typography](https://mudblazor.com/customization/typography): Override the type scale.
+- [Default theme](https://mudblazor.com/customization/default-theme): Every value the default MudTheme ships with.
+- [Globals](https://mudblazor.com/customization/globals): MudGlobal defaults that change component behavior application-wide.
+
+## CSS utilities
+
+- [Spacing](https://mudblazor.com/utilities/spacing): Margin and padding utility classes.
+- [Display](https://mudblazor.com/utilities/display): Display and responsive-visibility utilities.
+- [Flex](https://mudblazor.com/utilities/flex): Flexbox utilities — direction, wrap, grow, shrink, and alignment.
+- [Border Radius](https://mudblazor.com/utilities/border-radius): Corner-rounding utilities.
+
+## Project
+
+- [Introduction](https://mudblazor.com/mud/introduction): What MudBlazor is and the philosophy behind it.
+- [Releases](https://mudblazor.com/mud/project/releases): Release notes and version history.
+- [Contribution guide](https://mudblazor.com/mud/community/contribution): How to contribute code, docs, or tests.
+- [Getting help](https://mudblazor.com/mud/community/getting-help): Where to ask questions.
+- [Reporting bugs](https://mudblazor.com/mud/community/reporting-bugs): What a usable bug report needs.
+
+## Optional
+
+- [GitHub repository](https://github.com/MudBlazor/MudBlazor): Source, issues, and discussions.
+- [Try MudBlazor](https://try.mudblazor.com/): In-browser playground for MudBlazor snippets.
+- [NuGet package](https://www.nuget.org/packages/MudBlazor/): The published MudBlazor package.
+- [Discord](https://discord.gg/mudblazor): Community chat.
+- [Community extensions](https://mudblazor.com/mud/community/extensions): Third-party components built on MudBlazor.
