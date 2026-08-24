@@ -330,7 +330,11 @@ namespace MudBlazor
             {
                 try
                 {
-                    return Num.To<T>((double)(currentDecimal + (stepDecimal * (decimal)factor)));
+                    var nextDecimal = currentDecimal + (stepDecimal * (decimal)factor);
+                    // Decimal preserves zero's sign, so canonicalize it before converting back to float or double.
+                    if (nextDecimal == decimal.Zero)
+                        nextDecimal = decimal.Zero;
+                    return Num.To<T>((double)nextDecimal);
                 }
                 catch (OverflowException)
                 {

@@ -280,6 +280,62 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").GetAttribute("value").Should().Be("0.16");
         }
 
+        /// <summary>
+        /// Fractional double steps reaching zero should produce positive zero from either direction.
+        /// </summary>
+        [TestCase(-0.2, true, TestName = "NumericField_Double_IncrementFromNegativeFraction_ZeroHasPositiveSign")]
+        [TestCase(0.2, false, TestName = "NumericField_Double_DecrementFromPositiveFraction_ZeroHasPositiveSign")]
+        public async Task NumericField_Double_FractionalStep_ZeroHasPositiveSign(double value, bool increment)
+        {
+            var changedValueBits = BitConverter.DoubleToInt64Bits(value);
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, value)
+                .Add(x => x.Step, 0.1)
+                .Add(x => x.ValueChanged, changedValue => changedValueBits = BitConverter.DoubleToInt64Bits(changedValue)));
+            var numericField = comp.Instance;
+
+            for (var i = 0; i < 2; i++)
+            {
+                if (increment)
+                    await comp.InvokeAsync(() => numericField.Increment());
+                else
+                    await comp.InvokeAsync(() => numericField.Decrement());
+            }
+
+            BitConverter.DoubleToInt64Bits(numericField.ReadValue).Should().Be(0L);
+            changedValueBits.Should().Be(0L);
+            comp.Find("input").GetAttribute("value").Should().Be("0");
+        }
+
+        /// <summary>
+        /// Fractional float steps reaching zero should produce positive zero from either direction.
+        /// </summary>
+        [TestCase(-0.2f, true, TestName = "NumericField_Float_IncrementFromNegativeFraction_ZeroHasPositiveSign")]
+        [TestCase(0.2f, false, TestName = "NumericField_Float_DecrementFromPositiveFraction_ZeroHasPositiveSign")]
+        public async Task NumericField_Float_FractionalStep_ZeroHasPositiveSign(float value, bool increment)
+        {
+            var changedValueBits = BitConverter.SingleToInt32Bits(value);
+            var comp = Context.Render<MudNumericField<float>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, value)
+                .Add(x => x.Step, 0.1f)
+                .Add(x => x.ValueChanged, changedValue => changedValueBits = BitConverter.SingleToInt32Bits(changedValue)));
+            var numericField = comp.Instance;
+
+            for (var i = 0; i < 2; i++)
+            {
+                if (increment)
+                    await comp.InvokeAsync(() => numericField.Increment());
+                else
+                    await comp.InvokeAsync(() => numericField.Decrement());
+            }
+
+            BitConverter.SingleToInt32Bits(numericField.ReadValue).Should().Be(0);
+            changedValueBits.Should().Be(0);
+            comp.Find("input").GetAttribute("value").Should().Be("0");
+        }
+
         // Values beyond decimal range must fall back to double arithmetic instead of overflowing.
         [Test]
         public async Task NumericField_Double_BeyondDecimalRange_ShouldStillStep()
