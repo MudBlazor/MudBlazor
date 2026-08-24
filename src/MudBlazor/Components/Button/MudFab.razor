@@ -1,7 +1,8 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseButton
 
-<MudElement @bind-Ref="@_elementReference"
+<MudElement Ref="@_elementReference"
+            RefChanged="@_captureElementReference"
             HtmlTag="@HtmlTag"
             Class="@Classname"
             Style="@Style"
