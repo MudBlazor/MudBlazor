@@ -128,8 +128,10 @@ namespace MudBlazor
             range = NormalizeDateRange(range);
 
             // Text that fails to convert leaves the range null, so a null assignment looks like a no-op and the bad text would stick.
-            // Run it anyway while text remains, as MudDatePicker does.
-            if (_dateRange != range || (range is null && !string.IsNullOrEmpty(Text)))
+            // Run it anyway while text remains, as MudDatePicker does, but not while that text is the edit the user is making right now:
+            // a two-way bound DateRange echoes the null straight back, and clearing there would throw away the half of the range that still parses.
+            var textIsLiveUserEdit = _rangeText is not null && string.Equals(Text, RangeUtility.Join(_rangeText.Start, _rangeText.End), StringComparison.Ordinal);
+            if (_dateRange != range || (range is null && !string.IsNullOrEmpty(Text) && !textIsLiveUserEdit))
             {
                 var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && Enumerable
                     .Range(0, int.MaxValue)

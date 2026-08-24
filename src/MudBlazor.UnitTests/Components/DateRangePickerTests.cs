@@ -943,6 +943,35 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A start date that fails to convert must not take the end date with it, because the null range echoes back through a two-way binding while the user is still editing.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ShouldKeepTheOtherHalf_WhenOneInputFailsToConvert()
+        {
+            var start = new DateTime(2020, 10, 26);
+            var end = new DateTime(2020, 10, 30);
+            var comp = Context.Render<MudDateRangePicker>();
+            var picker = comp.Instance;
+
+            await comp.FindAll("input")[0].ChangeAsync(start.ToShortDateString());
+            await comp.FindAll("input")[1].ChangeAsync(end.ToShortDateString());
+            picker.DateRange.Should().Be(new DateRange(start, end));
+
+            await comp.FindAll("input")[0].ChangeAsync("INVALID");
+            picker.DateRange.Should().BeNull("the range no longer converts");
+
+            // The two-way binding hands that null straight back while the user is still in the field.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DateRange, null));
+
+            ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be("INVALID", "the text the user typed must stay put");
+            ((IHtmlInputElement)comp.FindAll("input")[1]).Value.Should().Be(end.ToShortDateString(), "the end date still converts and was not edited");
+
+            // Fixing the start recovers the whole range rather than only half of it.
+            await comp.FindAll("input")[0].ChangeAsync(start.ToShortDateString());
+            picker.DateRange.Should().Be(new DateRange(start, end));
+        }
+
+        /// <summary>
         /// Setting DateRange to null clears text that failed to convert, which is the only way out of the conversion error.
         /// </summary>
         [Test]
