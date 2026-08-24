@@ -22,8 +22,7 @@ public class DefaultConverterTests
     /// Every type in the built-in table must resolve to its own converter, including the nullable variants.
     /// </summary>
     /// <remarks>
-    /// A type that resolves to nothing falls through to the ToString fallback, whose ConvertBack silently returns
-    /// default, so only a round trip catches a wrong entry in the table.
+    /// A type that resolves to nothing falls through to the ToString fallback, whose ConvertBack silently returns default, so only a round trip catches a wrong entry in the table.
     /// </remarks>
     [Test]
     public void DefaultConverter_ShouldRoundTripEveryBuiltInType()

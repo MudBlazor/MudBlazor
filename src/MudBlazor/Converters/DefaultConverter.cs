@@ -51,10 +51,8 @@ public sealed class DefaultConverter<T> : IReversibleConverter<T?, string?>, ICu
     /// Registers the built-in converter for <typeparamref name="T"/>, if there is one.
     /// </summary>
     /// <remarks>
-    /// The dispatcher resolves a single handler for <c>typeof(T)</c> when it is built and drops every other registration,
-    /// so registering the whole table would build about forty converters and their culture and format closures per instance to keep one.
-    /// Do NOT pass Culture or Format directly (<c>new NumberConverter&lt;int&gt;(Culture, Format)</c>): the dispatcher captures the
-    /// field values at registration time, while <c>() =&gt; Culture()</c> reads the latest property value on every conversion.
+    /// The dispatcher resolves a single handler for <c>typeof(T)</c> when it is built and drops every other registration, so registering the whole table would build about forty converters and their culture and format closures per instance to keep one.
+    /// Do NOT pass Culture or Format directly (<c>new NumberConverter&lt;int&gt;(Culture, Format)</c>): the dispatcher captures the field values at registration time, while <c>() =&gt; Culture()</c> reads the latest property value on every conversion.
     /// </remarks>
     private void AddBuiltInConverter(IReversibleDispatcherBuilder<T?, string?> builder)
     {
