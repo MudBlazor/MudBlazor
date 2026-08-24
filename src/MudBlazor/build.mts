@@ -111,9 +111,9 @@ async function test() {
         stdout: "ignore",
         stderr: "ignore",
     });
-    await proc.exited;
+    const exitCode = await proc.exited;
 
-    if (proc.exitCode !== 0) {
+    if (exitCode !== 0) {
         // The bun test runner is very verbose, so we re-run it with stdout/stderr attached to the console to show the errors.
         const retryProc = Bun.spawn({
             cmd: [bunExecutable, "test"],
@@ -121,10 +121,10 @@ async function test() {
             stdout: "inherit",
             stderr: "inherit",
         });
-        await retryProc.exited;
+        const exitCode = await retryProc.exited;
 
-        if (retryProc.exitCode !== 0) {
-            process.exit(retryProc.exitCode);
+        if (exitCode !== 0) {
+            process.exit(exitCode);
         } else {
             console.error(
                 "Tests failed, but re-run succeeded. This should never happen.",
