@@ -35,7 +35,6 @@
                                        Class="@CloseIconClass"
                                        Style="@CloseIconStyle"
                                        OnClick="() => CloseTab.InvokeAsync(context)"
-                                       @onkeydown="@(e => HandleTabKeyDownAsync(e, context))"
                                        aria-label="@Localizer[LanguageResource.MudTabs_CloseTab]"/>
                     </MudTooltip>
                 }
@@ -45,7 +44,6 @@
                                    Class="@CloseIconClass"
                                    Style="@CloseIconStyle"
                                    OnClick="() => CloseTab.InvokeAsync(context)"
-                                   @onkeydown="@(e => HandleTabKeyDownAsync(e, context))"
                                    aria-label="@Localizer[LanguageResource.MudTabs_CloseTab]" />
                 }
             }
