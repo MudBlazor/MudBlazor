@@ -11,6 +11,8 @@
  *   fix: Apply ESLint fixes.
  */
 
+/// <reference types="bun" />
+
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -28,223 +30,225 @@ const scssInputDir = path.dirname(scssInput);
 const scssOutput = path.join(scriptDirectory, "wwwroot/MudBlazor.min.css");
 
 type TimingEntry = {
-  step: string;
-  ms: number;
+    step: string;
+    ms: number;
 };
 const timings: TimingEntry[] = [];
 function startTimer(label: string) {
-  return {
-    label,
-    start: process.hrtime.bigint(),
-    stop() {
-      const end = process.hrtime.bigint();
-      const duration = Number(end - this.start) / 1e6;
-      const entry = { step: this.label, ms: Math.round(duration * 100) / 100 };
-      timings.push(entry);
-      return entry;
-    },
-  };
+    return {
+        label,
+        start: process.hrtime.bigint(),
+        stop() {
+            const end = process.hrtime.bigint();
+            const duration = Number(end - this.start) / 1e6;
+            const entry = { step: this.label, ms: Math.round(duration * 100) / 100 };
+            timings.push(entry);
+            return entry;
+        },
+    };
 }
 function printTimings() {
-  if (timings.length === 0) return;
-  console.log("Timings:");
-  for (const timing of timings) {
-    console.log(`  ${timing.step}: ${timing.ms} ms`);
-  }
-  timings.length = 0;
+    if (timings.length === 0) return;
+    console.log("Timings:");
+    for (const timing of timings) {
+        console.log(`  ${timing.step}: ${timing.ms} ms`);
+    }
+    timings.length = 0;
 }
 
 async function buildJS() {
-  console.log("Building JS bundle", jsEntrypoint);
-  const timer = startTimer("build-js");
+    console.log("Building JS bundle", jsEntrypoint);
+    const timer = startTimer("build-js");
 
-  if (!fs.existsSync(jsEntrypoint)) {
-    console.error("JS entrypoint missing:", jsEntrypoint);
-    process.exit(1);
-  }
+    if (!fs.existsSync(jsEntrypoint)) {
+        console.error("JS entrypoint missing:", jsEntrypoint);
+        process.exit(1);
+    }
 
-  await Bun.build({
-    entrypoints: [jsEntrypoint],
-    outdir: path.dirname(jsOutputFile),
-    minify: true,
-    format: "iife", // Keep bundle scope isolated so repeated/parallel script loads cannot clash on minified symbol names (#12728).
-    target: "browser",
-    naming: {
-      entry: path.basename(jsOutputFile),
-    },
-    sourcemap: "linked",
-  });
+    await Bun.build({
+        entrypoints: [jsEntrypoint],
+        outdir: path.dirname(jsOutputFile),
+        minify: true,
+        format: "iife", // Keep bundle scope isolated so repeated/parallel script loads cannot clash on minified symbol names (#12728).
+        target: "browser",
+        naming: {
+            entry: path.basename(jsOutputFile),
+        },
+        sourcemap: "linked",
+    });
 
-  timer.stop();
+    timer.stop();
 }
 
 async function typecheck() {
-  console.log("Typechecking Scripts");
-  const timer = startTimer("typescript");
+    console.log("Typechecking Scripts");
+    const timer = startTimer("typescript");
 
-  const proc = Bun.spawn({
-    cmd: [bunExecutable, "run", "tsc"],
-    cwd: scriptDirectory,
-    stdout: "inherit",
-    stderr: "inherit",
-  });
+    const proc = Bun.spawn({
+        cmd: [bunExecutable, "run", "tsc"],
+        cwd: scriptDirectory,
+        stdout: "inherit",
+        stderr: "inherit",
+    });
 
-  await proc.exited;
-  if (proc.exitCode !== 0) {
-    process.exit(proc.exitCode);
-  }
+    // exitCode is null when tsc is killed by a signal, and process.exit(null) exits 0.
+    // The awaited value is always a number and carries the conventional 128+n for signals.
+    const exitCode = await proc.exited;
+    if (exitCode !== 0) {
+        process.exit(exitCode);
+    }
 
-  timer.stop();
+    timer.stop();
 }
 
 async function test() {
-  console.log("Running Tests");
-  const timer = startTimer("tests");
+    console.log("Running Tests");
+    const timer = startTimer("tests");
 
-  const proc = Bun.spawn({
-    cmd: [bunExecutable, "test"],
-    cwd: scriptDirectory,
-    stdout: "ignore",
-    stderr: "ignore",
-  });
-  await proc.exited;
-
-  if (proc.exitCode !== 0) {
-    // The bun test runner is very verbose, so we re-run it with stdout/stderr attached to the console to show the errors.
-    const retryProc = Bun.spawn({
-      cmd: [bunExecutable, "test"],
-      cwd: scriptDirectory,
-      stdout: "inherit",
-      stderr: "inherit",
+    const proc = Bun.spawn({
+        cmd: [bunExecutable, "test"],
+        cwd: scriptDirectory,
+        stdout: "ignore",
+        stderr: "ignore",
     });
-    await retryProc.exited;
+    await proc.exited;
 
-    if (retryProc.exitCode !== 0) {
-      process.exit(retryProc.exitCode);
-    } else {
-      console.error(
-        "Tests failed, but re-run succeeded. This should never happen.",
-      );
-      process.exit(1);
+    if (proc.exitCode !== 0) {
+        // The bun test runner is very verbose, so we re-run it with stdout/stderr attached to the console to show the errors.
+        const retryProc = Bun.spawn({
+            cmd: [bunExecutable, "test"],
+            cwd: scriptDirectory,
+            stdout: "inherit",
+            stderr: "inherit",
+        });
+        await retryProc.exited;
+
+        if (retryProc.exitCode !== 0) {
+            process.exit(retryProc.exitCode);
+        } else {
+            console.error(
+                "Tests failed, but re-run succeeded. This should never happen.",
+            );
+            process.exit(1);
+        }
     }
-  }
 
-  timer.stop();
+    timer.stop();
 }
 
 async function eslint() {
-  console.log("Linting Scripts");
-  const timer = startTimer("eslint");
+    console.log("Linting Scripts");
+    const timer = startTimer("eslint");
 
-  const fix = process.argv.includes("fix");
-  const eslint = new ESLint({ fix: fix });
-  const results = await eslint.lintFiles([
-    // todo: add this once eslint supports TypeScript 7
-    //path.join(jsDirectory, "**/*.ts")
-    //scriptFilename,
-    path.join(jsDirectory, "**/*.js"),
-  ]);
+    const fix = process.argv.includes("fix");
+    const eslint = new ESLint({ fix: fix });
+    const results = await eslint.lintFiles([
+        // todo: add this once eslint supports TypeScript 7
+        //path.join(jsDirectory, "**/*.ts")
+        //scriptFilename,
+        path.join(jsDirectory, "**/*.js"),
+    ]);
 
-  if (fix) {
-    await ESLint.outputFixes(results);
-  }
+    if (fix) {
+        await ESLint.outputFixes(results);
+    }
 
-  const formatter = await eslint.loadFormatter("stylish");
-  const resultText = await formatter.format(results);
+    const formatter = await eslint.loadFormatter("stylish");
+    const resultText = await formatter.format(results);
 
-  if (resultText.trim().length > 0) {
-    console.log(resultText);
-  }
+    if (resultText.trim().length > 0) {
+        console.log(resultText);
+    }
 
-  const totalErrors = results.reduce((sum, r) => sum + (r.errorCount || 0), 0);
-  const totalWarnings = results.reduce(
-    (sum, r) => sum + (r.warningCount || 0),
-    0,
-  );
+    const totalErrors = results.reduce((sum, r) => sum + (r.errorCount || 0), 0);
+    const totalWarnings = results.reduce(
+        (sum, r) => sum + (r.warningCount || 0),
+        0,
+    );
 
-  if (totalErrors > 0 || totalWarnings > 0) {
-    process.exit(1);
-  }
+    if (totalErrors > 0 || totalWarnings > 0) {
+        process.exit(1);
+    }
 
-  timer.stop();
+    timer.stop();
 }
 
 function buildSCSS() {
-  console.log("Building SCSS bundle", scssInput);
-  const timer = startTimer("build-scss");
+    console.log("Building SCSS bundle", scssInput);
+    const timer = startTimer("build-scss");
 
-  const result = sass.compile(scssInput, {
-    style: "compressed",
-    sourceMap: false,
-    silenceDeprecations: ["import", "global-builtin"],
-  });
+    const result = sass.compile(scssInput, {
+        style: "compressed",
+        sourceMap: false,
+        silenceDeprecations: ["import", "global-builtin"],
+    });
 
-  // Write SCSS bundle
-  console.log("Writing SCSS bundle", scssOutput);
-  fs.mkdirSync(path.dirname(scssOutput), { recursive: true });
-  fs.writeFileSync(scssOutput, result.css);
+    // Write SCSS bundle
+    console.log("Writing SCSS bundle", scssOutput);
+    fs.mkdirSync(path.dirname(scssOutput), { recursive: true });
+    fs.writeFileSync(scssOutput, result.css);
 
-  timer.stop();
+    timer.stop();
 }
 
 async function buildAll() {
-  await eslint();
-  await typecheck();
-  await test();
-  await buildJS();
-  buildSCSS();
-  printTimings();
+    await eslint();
+    await typecheck();
+    await test();
+    await buildJS();
+    buildSCSS();
+    printTimings();
 }
 
 if (process.argv.includes("watch")) {
-  console.log("Initial build...");
-  try {
-    await buildAll();
-  } catch (e) {
-    console.error("Initial build failed:", e);
-  }
+    console.log("Initial build...");
+    try {
+        await buildAll();
+    } catch (e) {
+        console.error("Initial build failed:", e);
+    }
 
-  console.log("Watching for changes, press Ctrl+C to stop...");
+    console.log("Watching for changes, press Ctrl+C to stop...");
 
-  const jsWatcher = fs.watch(
-    jsDirectory,
-    { recursive: true },
-    async (eventType, filename) => {
-      console.log(`JS file changed: ${eventType} ${filename}`);
-      try {
-        await eslint();
-        await typecheck();
-        await test();
-        await buildJS();
-        printTimings();
-      } catch (e) {
-        console.error("JS build failed:", e);
-      }
-    },
-  );
+    const jsWatcher = fs.watch(
+        jsDirectory,
+        { recursive: true },
+        async (eventType, filename) => {
+            console.log(`JS file changed: ${eventType} ${filename}`);
+            try {
+                await eslint();
+                await typecheck();
+                await test();
+                await buildJS();
+                printTimings();
+            } catch (e) {
+                console.error("JS build failed:", e);
+            }
+        },
+    );
 
-  const scssWatcher = fs.watch(
-    scssInputDir,
-    { recursive: true },
-    (eventType, filename) => {
-      if (filename?.endsWith(".scss")) {
-        console.log(`SCSS file changed: ${eventType} ${filename}`);
-        try {
-          buildSCSS();
-          printTimings();
-        } catch (e) {
-          console.error("SCSS build failed:", e);
-        }
-      }
-    },
-  );
+    const scssWatcher = fs.watch(
+        scssInputDir,
+        { recursive: true },
+        (eventType, filename) => {
+            if (filename?.endsWith(".scss")) {
+                console.log(`SCSS file changed: ${eventType} ${filename}`);
+                try {
+                    buildSCSS();
+                    printTimings();
+                } catch (e) {
+                    console.error("SCSS build failed:", e);
+                }
+            }
+        },
+    );
 
-  process.on("SIGINT", () => {
-    console.log("Stopping...");
-    jsWatcher.close();
-    scssWatcher.close();
-    process.exit(0);
-  });
+    process.on("SIGINT", () => {
+        console.log("Stopping...");
+        jsWatcher.close();
+        scssWatcher.close();
+        process.exit(0);
+    });
 } else {
-  await buildAll();
+    await buildAll();
 }

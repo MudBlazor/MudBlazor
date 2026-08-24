@@ -26,11 +26,12 @@ export default class MudWindow {
 
     /**
      * Updates a CSS style property for an element by ID.
+     * The C# side declares the value as object, and the only caller passes an int, so a number arrives here as a number.
      */
-    updateStyleProperty (elementId: string, propertyName: string, value: string) {
+    updateStyleProperty (elementId: string, propertyName: string, value: string | number) {
         const element = document.getElementById(elementId);
         if (element) {
-            element.style.setProperty(propertyName, value);
+            element.style.setProperty(propertyName, String(value));
         }
     }
 
@@ -42,9 +43,9 @@ export default class MudWindow {
     }
 
     /**
-     * Opens a new browser window/tab with the provided argument.
+     * Opens a new browser window/tab with the provided URL.
      */
-    open (args: any) {
-        window.open(args);
+    open (url: string) {
+        window.open(url);
     }
 }

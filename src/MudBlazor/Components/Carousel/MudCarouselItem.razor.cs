@@ -85,7 +85,7 @@ namespace MudBlazor
         /// <summary>
         /// Displays this item.
         /// </summary>
-        public bool Visible => Parent is not null && (Parent.LastContainer == this || Parent.SelectedIndex == Parent.Items.IndexOf(this));
+        public bool Visible => Parent is not null && (Parent.LastContainer == this || Parent.SelectedContainer == this);
 
         /// <inheritdoc />
         protected override Task OnInitializedAsync()

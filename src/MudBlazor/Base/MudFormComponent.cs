@@ -14,6 +14,7 @@ using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities.Comparer;
 using MudBlazor.Utilities.Converter.Base;
+using MudBlazor.Utilities.Expressions;
 using static System.String;
 
 namespace MudBlazor
@@ -906,8 +907,15 @@ namespace MudBlazor
             InjectCultureAndFormatToConverter(GetCulture, GetFormat);
             if (For is not null && For != _currentFor)
             {
-                // For is a fresh expression instance on every render for an inline lambda, so only do the reflection and rebinding work when the field it points at actually changed.
-                var fieldIdentifier = FieldIdentifier.Create(For);
+                // For is a fresh expression instance on every render for an inline lambda, so the reference check above never holds and this runs on every parameter set.
+                // FieldIdentifier.Create compiles the expression for anything deeper than model.Property, so resolve the member chain directly and only fall back for exotic shapes.
+                // The resolver reports false without having evaluated anything, so the fallback never runs a user getter a second time.
+                if (!FieldIdentifierResolver.TryCreate(For, out var fieldIdentifier))
+                {
+                    fieldIdentifier = FieldIdentifier.Create(For);
+                }
+
+                // Only do the reflection and rebinding work when the field it points at actually changed.
                 if (!_fieldIdentifier.Equals(fieldIdentifier))
                 {
                     // Extract validation attributes

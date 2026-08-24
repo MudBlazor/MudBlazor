@@ -20,14 +20,37 @@ charset = utf-8-bom
 # XML project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
 indent_size = 2
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
 
 # XML config files
-[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
+[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct,xml}]
 indent_size = 2
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# The Visual Studio resource designer owns the layout of .resx files: it re-emits the ResX schema comment with trailing whitespace and no final newline on every save. Leave those two alone so the designer and the repo do not fight.
+[*.resx]
+insert_final_newline = unset
+trim_trailing_whitespace = false
 
 # JSON files
 [*.json]
 indent_size = 2
+# RFC 8259 says an implementation must not add a byte order mark to JSON text.
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# HTML files
+[*.html]
+indent_size = 4
+# UTF-8 needs no BOM to be read as UTF-8, and most of these are charset-less fragments.
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
 
 # Powershell files
 [*.ps1]
@@ -40,6 +63,7 @@ indent_size = 2
 
 # Sassy CSS - CSS preprocessor
 [*.scss]
+# charset is utf-8 without a BOM: Sass already decodes stylesheets as UTF-8, so a BOM is redundant, and the EditorConfig spec discourages utf-8-bom.
 charset = utf-8
 indent_size = 2
 end_of_line = lf
@@ -47,7 +71,9 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 
 # JavaScript / TypeScript files
-[*.{js,mjs,ts}]
+[*.{js,cjs,mjs,ts,cts,mts}]
+# charset is utf-8 without a BOM: the EditorConfig spec discourages utf-8-bom, and unlike C# nothing in this toolchain expects one here.
+charset = utf-8
 indent_size = 4
 end_of_line = lf
 insert_final_newline = true

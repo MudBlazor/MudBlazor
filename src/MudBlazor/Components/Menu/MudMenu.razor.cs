@@ -34,6 +34,7 @@ namespace MudBlazor
         private MudIconButton? _iconButtonActivator;
         private ElementReference _menuWrapperRef;
         private readonly List<object> _menuItems = [];
+        private readonly HashSet<object> _registeredItems = [];
         private readonly string _elementId = Identifier.Create("menu");
         private DateTimeOffset _lastKeyboardActivation = DateTimeOffset.MinValue;
         private readonly MenuContext _menuContext;
@@ -514,6 +515,7 @@ namespace MudBlazor
             _focusedIndex = -1;
             _lastInteractionWasKeyboard = false;
             _menuItems.Clear();
+            _registeredItems.Clear();
             await Task.Yield();
 
             if (_openState.Value)
@@ -620,6 +622,13 @@ namespace MudBlazor
             // Open transiently so it will close when the pointer leaves its bounds.
             await OpenMenuAsync(args, true);
         }
+
+        // Only wire oncontextmenu when right-click actually activates this menu.
+        // The no-op lambda this replaces was still a live delegate, so every menu registered a real DOM listener that did nothing, which on Blazor Server turns every right-click inside a menu into a wasted network round-trip.
+        private EventCallback<MouseEventArgs> ContextMenuCallback =>
+            ActivationEvent == MouseEvent.RightClick && ActivatorContent is null
+                ? EventCallback.Factory.Create<MouseEventArgs>(this, ToggleMenuAsync)
+                : default;
 
         /// <summary>
         /// Toggles the menu's open or closed state.
@@ -1068,7 +1077,7 @@ namespace MudBlazor
         /// </summary>
         internal void RegisterItem(object item)
         {
-            if (!_menuItems.Contains(item))
+            if (_registeredItems.Add(item))
             {
                 _menuItems.Add(item);
             }

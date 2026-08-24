@@ -102,7 +102,7 @@
                             {
                                 <MudVirtualize Enabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                     @{
-                                        var itemIndex = FilteredItems.ToList().IndexOf(item);
+                                        var itemIndex = GetFilteredItemIndex(item);
                                         var generatedRowId = itemIndex != -1 ? $"{_tableId}_row_{itemIndex}" : null;
                                         var rowClass = new CssBuilder(RowClass)
                                             .AddClass(RowClassFunc?.Invoke(item, itemIndex))
@@ -219,7 +219,7 @@
         RenderFragment<T> child() => item =>
             @<text>
                  @{
-                     var itemIndexForId = FilteredItems.ToList().IndexOf(item);
+                     var itemIndexForId = GetFilteredItemIndex(item);
                      var generatedRowId = itemIndexForId != -1 ? $"{_tableId}_row_{itemIndexForId}" : null;
 
                      var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, itemIndexForId)).AddClass(customClass, !string.IsNullOrEmpty(customClass)).AddClass("mud-table-row-clickable", OnRowClick.HasDelegate && !IsRowDisabled(item)).Build();

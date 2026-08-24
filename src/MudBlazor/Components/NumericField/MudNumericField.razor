@@ -53,7 +53,7 @@
                           max="@(_maxHasValue ? FormatParam(_max) : null)"
                           step="@(_stepHasValue ? FormatParam(_step) : "any")"
                           InputMode="@InputMode"
-                          Pattern="@(Pattern == null ? null : Pattern!.TrimEnd('*')+"*")"
+                          Pattern="@EffectivePattern"
                           OnAdornmentClick="@OnAdornmentClick"
                           OnBlur="@OnBlurredAsync"
                           OnKeyDown="@HandleKeyDownAsync"

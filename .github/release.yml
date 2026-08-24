@@ -13,6 +13,9 @@ changelog:
     - title: Bug Fixes
       labels:
         - bug
+    - title: Performance
+      labels:
+        - performance
     - title: Other Changes
       labels:
         - "*"

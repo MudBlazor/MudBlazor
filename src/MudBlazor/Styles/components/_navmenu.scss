@@ -247,8 +247,9 @@
 
 .mud-drawer--closed.mud-drawer-mini {
   & > .mud-drawer-content > .mud-navmenu {
+    // Visually hidden instead of display: none so the link keeps its accessible name.
     & .mud-nav-link .mud-icon-root:first-child + .mud-nav-link-text {
-      display: none;
+      @include sr-only;
     }
   }
 

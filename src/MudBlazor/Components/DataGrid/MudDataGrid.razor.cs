@@ -60,6 +60,9 @@ namespace MudBlazor
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
         private readonly ParameterState<bool> _expandSingleRowState;
 
+        private const string PrePrefix = "__mud_dg_pre__:";
+        private const string PostPrefix = "__mud_dg_post__:";
+
         /// <summary>
         /// Holds the editors of the row being edited, which are the only controls a commit validates.
         /// </summary>
@@ -152,6 +155,7 @@ namespace MudBlazor
         protected string TableClass =>
             new CssBuilder("mud-table-container")
                 .AddClass("cursor-col-resize", when: IsResizing)
+                .AddClass("overflow-visible-table", when: ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
                 .Build();
 
         protected string HeadClassname =>
@@ -246,6 +250,24 @@ namespace MudBlazor
 
         internal static bool RenderedColumnsItemsSelector(Column<T> item, string dropZone) => item?.PropertyName == dropZone;
 
+        private static void Move<TItem>(List<TItem> list, int fromIndex, int toIndex, int positionModifier)
+        {
+            if (fromIndex == toIndex)
+            {
+                return;
+            }
+
+            var item = list[fromIndex];
+            list.RemoveAt(fromIndex);
+
+            if (fromIndex < toIndex)
+            {
+                toIndex--;
+            }
+
+            list.Insert(toIndex + positionModifier, item);
+        }
+
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
         {
             (list[indexB], list[indexA]) = (list[indexA], list[indexB]);
@@ -257,23 +279,37 @@ namespace MudBlazor
             dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
 
             var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item?.PropertyName);
-            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.DropzoneIdentifier);
+            var destinationPropertyName = dropItem.DropzoneIdentifier;
+            if (ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
+            {
+                if (dropItem.DropzoneIdentifier.StartsWith(PrePrefix, StringComparison.Ordinal))
+                {
+                    destinationPropertyName = dropItem.DropzoneIdentifier[PrePrefix.Length..];
+                }
+                else if (dropItem.DropzoneIdentifier.StartsWith(PostPrefix, StringComparison.Ordinal))
+                {
+                    destinationPropertyName = dropItem.DropzoneIdentifier[PostPrefix.Length..];
+                }
+            }
+
+            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == destinationPropertyName);
             if (dragAndDropSource != null && dragAndDropDestination != null)
             {
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
                 var dragAndDropDestinationIndex = RenderedColumns.IndexOf(dragAndDropDestination);
 
-                Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+                if (ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
+                {
+                    var position = dropItem.DropzoneIdentifier.StartsWith(PostPrefix, StringComparison.Ordinal) ? 1 : 0;
+                    Move(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex, position);
+                }
+                else
+                {
+                    Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+                }
 
                 Debug.Assert(dragAndDropSource.HeaderCell is not null);
                 Debug.Assert(dragAndDropDestination.HeaderCell is not null);
-
-                // swap source / destination
-                var dest = dragAndDropDestination.HeaderCell.Width;
-                var src = dragAndDropSource.HeaderCell.Width;
-
-                dragAndDropSource.HeaderCell.Width = dest;
-                dragAndDropDestination.HeaderCell.Width = src;
 
                 StateHasChanged();
             }
@@ -298,8 +334,6 @@ namespace MudBlazor
         #region Notify Children Delegates
 
         internal Action<Dictionary<string, SortDefinition<T>>, HashSet<string>?>? SortChangedEvent { get; set; }
-        internal Action<HashSet<T>>? SelectedItemsChangedEvent { get; set; }
-        internal Action<bool>? SelectedAllItemsChangedEvent { get; set; }
         internal Action? StartedEditingItemEvent { get; set; }
         internal Action? EditingCanceledEvent { get; set; }
 
@@ -1040,13 +1074,12 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Fires SelectedItemsChanged event and invokes SelectedItemsChangedEvent.
+        /// Publishes the current selection so bound parameters and their change callbacks see it.
         /// </summary>
         private async Task FireSelectionChangedEventsAsync()
         {
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
             await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
-            SelectedItemsChangedEvent?.Invoke(Selection);
         }
 
         private void ApplyInitialExpansionForNewItems(NotifyCollectionChangedEventArgs e)
@@ -1427,6 +1460,16 @@ namespace MudBlazor
         /// <remarks>Can be overridden by using the column level GroupTemplate, defaults to <c>null</c>.</remarks>
         [Parameter]
         public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
+
+        /// <summary>
+        /// The behavior of the grid when the user reorders column headers via drag and drop.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>DataGridDragAndDropColumnReorderMode.Swap</c>.
+        /// This mode applies to header drag-and-drop reordering. Reordering from the columns panel uses insert-by-index behavior.
+        /// </remarks>
+        [Parameter]
+        public DataGridDragAndDropColumnReorderMode ColumnReorderMode { get; set; } = DataGridDragAndDropColumnReorderMode.Swap;
 
         #endregion
 
@@ -1931,21 +1974,6 @@ namespace MudBlazor
                        FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty;
         }
 
-        private Task OnColumnFilterInputKeyDownAsync(KeyboardEventArgs args, Column<T>? column)
-        {
-            if (column is null)
-            {
-                return Task.CompletedTask;
-            }
-
-            return args.Key switch
-            {
-                "Enter" => column.FilterContext.HeaderCell?.ApplyFilterAsync() ?? Task.CompletedTask,
-                "Escape" => column.FilterContext.HeaderCell?.ClearFilterAsync() ?? Task.CompletedTask,
-                _ => Task.CompletedTask
-            };
-        }
-
         private async Task ApplyFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
         {
             if (FilterDefinitions.All(x => x.Id != filterDefinition.Id))
@@ -2137,7 +2165,6 @@ namespace MudBlazor
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
             await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
-            await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
         }
@@ -2180,8 +2207,6 @@ namespace MudBlazor
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
             await InvokeAsync(() => _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer)));
-            await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
-            await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
 
             await InvokeAsync(StateHasChanged);
         }
@@ -2210,14 +2235,22 @@ namespace MudBlazor
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
             await InvokeAsync(() => _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer)));
-            await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
         }
 
         private SelectColumn<T>? GetSelectColumn()
         {
-            return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
+            // Called once per rendered row, so avoid the LINQ iterator; RenderedColumns is a List and foreach uses its struct enumerator.
+            foreach (var column in RenderedColumns)
+            {
+                if (column is SelectColumn<T> selectColumn)
+                {
+                    return selectColumn;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -2241,15 +2274,40 @@ namespace MudBlazor
         /// <param name="items">The rows the checkbox covers, e.g. all displayed rows for the header checkbox or a group's rows for a group footer checkbox.</param>
         internal bool? GetSelectionState(IEnumerable<T> items)
         {
-            var selectableItems = GetSelectableItems(items).ToList();
-            var selectedCount = selectableItems.Count(Selection.Contains);
-
-            if (selectedCount == 0)
+            // The checkbox covers every filtered row, not just the visible page, so walk the rows once and stop as soon as the answer cannot change.
+            if (Selection.Count == 0)
             {
                 return false;
             }
 
-            return selectedCount == selectableItems.Count ? true : null;
+            var selectColumn = GetSelectColumn();
+            var anySelected = false;
+            var anyUnselected = false;
+
+            foreach (var item in items)
+            {
+                if (IsRowSelectionDisabled(item, selectColumn))
+                {
+                    continue;
+                }
+
+                if (Selection.Contains(item))
+                {
+                    anySelected = true;
+                }
+                else
+                {
+                    anyUnselected = true;
+                }
+
+                if (anySelected && anyUnselected)
+                {
+                    return null;
+                }
+            }
+
+            // No selectable row is selected, or every one of them is.
+            return anySelected;
         }
 
         internal bool? GetRowSelectionState(T item)
@@ -2478,15 +2536,23 @@ namespace MudBlazor
             return CellContextMenuClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
         }
 
+        // The lambdas live in their own methods because the compiler allocates a closure on entry to whichever method
+        // declares one, even when the branch that needs it is never taken.
         private EventCallback<MouseEventArgs> GetCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
             => CellClick.HasDelegate
-                ? EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellClickedAsync(args, item, rowIndex, colIndex, column))
-                : EventCallback<MouseEventArgs>.Empty;
+                ? CreateCellClickCallback(item, rowIndex, colIndex, column)
+                : default;
+
+        private EventCallback<MouseEventArgs> CreateCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellClickedAsync(args, item, rowIndex, colIndex, column));
 
         private EventCallback<MouseEventArgs> GetCellContextMenuClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
             => CellContextMenuClick.HasDelegate
-                ? EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column))
-                : EventCallback<MouseEventArgs>.Empty;
+                ? CreateCellContextMenuClickCallback(item, rowIndex, colIndex, column)
+                : default;
+
+        private EventCallback<MouseEventArgs> CreateCellContextMenuClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column));
 
         /// <summary>
         /// Gets the total count of filtered items in the data grid.

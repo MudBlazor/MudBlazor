@@ -15,6 +15,25 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TableTests : BunitTest
     {
+        /// <summary>
+        /// A row's index is its position in the filtered items, and duplicates resolve to the first match.
+        /// </summary>
+        [Test]
+        public void TableRowIndex_IsPositionInFilteredItems()
+        {
+            var comp = Context.Render<TableRowIndexTest>();
+
+            // "a" appears twice, so the third row resolves to the first match, matching List.IndexOf.
+            comp.Instance.SeenIndexes.Should().Equal(0, 1, 0, 3);
+
+            var rowIds = comp.FindAll("tbody tr").Select(row => row.Id).ToList();
+            rowIds.Should().HaveCount(4);
+            rowIds[0].Should().EndWith("_row_0");
+            rowIds[1].Should().EndWith("_row_1");
+            rowIds[2].Should().EndWith("_row_0");
+            rowIds[3].Should().EndWith("_row_3");
+        }
+
         [Test]
         public async Task CustomTableClass()
         {
@@ -1654,7 +1673,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("input").Should().NotBeEmpty();
 
             // A value that passes the async rule commits and leaves edit mode.
-            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "B" });
+            // The value is set through the field rather than the DOM because the async rule re-renders the row, which re-registers the input's onchange handler while bUnit keeps serving the element it parsed before that render.
+            // The clicks either side still go through the DOM.
+            await comp.InvokeAsync(() => comp.FindComponent<MudTextField<string>>().Instance.ValueChanged.InvokeAsync("B"));
             await comp.Find("button[aria-label=\"Commit edit\"]").ClickAsync();
             comp.Instance.CommitCount.Should().Be(1);
             comp.FindAll("input").Should().BeEmpty();
@@ -2873,6 +2894,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Uses the selection hash set when its comparer matches the table comparer.
+        /// </summary>
+        [Test]
+        public async Task IsCheckedRow_UsesHashSetWithMatchingComparer()
+        {
+            var comparer = new CountingIntComparer();
+            var comp = Context.Render<TestableMudTable<int>>();
+            var table = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Comparer, comparer));
+            table.Context.Selection.UnionWith(Enumerable.Range(0, 100));
+            comparer.Reset();
+
+            table.IsRowChecked(50).Should().BeTrue();
+            comparer.EqualsCalls.Should().Be(1);
+            comparer.GetHashCodeCalls.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Uses the table comparer when externally supplied selection has a different comparer.
+        /// </summary>
+        [Test]
+        public async Task IsCheckedRow_UsesTableComparerWithMismatchedSelectionComparer()
+        {
+            var comparer = StringComparer.OrdinalIgnoreCase;
+            var comp = Context.Render<TestableMudTable<string>>();
+            var table = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Comparer, comparer)
+                .Add(x => x.SelectedItems, new HashSet<string>(["selected"], StringComparer.Ordinal)));
+
+            table.IsRowChecked("SELECTED").Should().BeTrue();
+        }
+
+        /// <summary>
         /// Using a virtualized table with multiselection must preserve checked items
         /// </summary>
         [Test]
@@ -3552,6 +3607,35 @@ namespace MudBlazor.UnitTests.Components
 
             rows[0].ClassList.Should().NotContain("mud-table-row-disabled");
             rows[0].GetAttribute("aria-disabled").Should().Be("false");
+        }
+
+        private sealed class TestableMudTable<T> : MudTable<T>
+        {
+            public bool IsRowChecked(T item) => IsCheckedRow(item);
+        }
+
+        private sealed class CountingIntComparer : IEqualityComparer<int>
+        {
+            public int EqualsCalls { get; private set; }
+            public int GetHashCodeCalls { get; private set; }
+
+            public bool Equals(int x, int y)
+            {
+                EqualsCalls++;
+                return x == y;
+            }
+
+            public int GetHashCode(int obj)
+            {
+                GetHashCodeCalls++;
+                return obj;
+            }
+
+            public void Reset()
+            {
+                EqualsCalls = 0;
+                GetHashCodeCalls = 0;
+            }
         }
     }
 }
