@@ -1,4 +1,4 @@
-﻿<!--https://docs.microsoft.com/visualstudio/msbuild/msbuild-reference -->
+<!--https://docs.microsoft.com/visualstudio/msbuild/msbuild-reference -->
 <!--Use: dotnet msbuild -preprocess:<fileName>.xml to evaluate this project-->
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
@@ -87,7 +87,8 @@
   <!-- Only rebuild web assets if any of the source files have changed -->
   <ItemGroup>
     <ScssAssetInputs Include="Styles/**/*.scss" />
-    <WebAssetInputs Include="@(ScssAssetInputs)" />
+    <BuildScriptInputs Include="build.mjs" />
+    <WebAssetInputs Include="@(ScssAssetInputs);@(BuildScriptInputs);@(BunToolchainInputs)" />
     <UpToDateCheckInput Include="@(WebAssetInputs)" />
   </ItemGroup>
 
@@ -108,6 +109,9 @@
              Text="Building MudBlazor.Docs web assets (inner build, TFM: $(TargetFramework))" />
 
     <Exec Command="$(BunToolRestore)"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+
+    <Exec Command="$(BunInstall)"
           WorkingDirectory="$(MSBuildProjectDirectory)" />
 
     <Exec Command="$(BunWrapper) run build.mjs"

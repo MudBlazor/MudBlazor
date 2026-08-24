@@ -1,5 +1,7 @@
 ﻿using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
@@ -71,6 +73,56 @@ public class InputTests : BunitTest
         {
             comp.Find("div.mud-input").ClassList.Should().NotContain("mud-input-full-width");
         }
+    }
+
+    [Test]
+    public async Task MudInputIsClearingShouldRespectMouseState()
+    {
+        var comp = Context.Render<MudInput<string>>(parameters => parameters
+            .Add(x => x.Clearable, true)
+            .Add(x => x.Value, "Some value")
+        );
+
+        var button = comp.Find("div.mud-input .mud-input-clear-button");
+        button.Should().NotBeNull();
+        await button.MouseDownAsync();
+        comp.Instance.IsClearing.Should().BeTrue();
+        await button.ClickAsync();
+        comp.Instance.IsClearing.Should().BeFalse();
+
+        comp = Context.Render<MudInput<string>>(parameters => parameters
+            .Add(x => x.Clearable, true)
+            .Add(x => x.Value, "Some value")
+        );
+
+        button = comp.Find("div.mud-input .mud-input-clear-button");
+
+        await button.MouseDownAsync();
+        comp.Instance.IsClearing.Should().BeTrue();
+        await button.MouseLeaveAsync();
+        comp.Instance.IsClearing.Should().BeFalse();
+    }
+
+    /// <summary>
+    /// IsClearing must reset even when the OnClearButtonClick handler throws, so later interactions are not suppressed.
+    /// </summary>
+    [Test]
+    public async Task MudInputIsClearingShouldResetWhenClearHandlerThrows()
+    {
+        var comp = Context.Render<MudInput<string>>(parameters => parameters
+            .Add(x => x.Clearable, true)
+            .Add(x => x.Value, "Some value")
+            .Add(x => x.OnClearButtonClick, new EventCallback<MouseEventArgs>(null, (Action)(() => throw new InvalidOperationException("boom"))))
+        );
+
+        var button = comp.Find("div.mud-input .mud-input-clear-button");
+        await button.MouseDownAsync();
+        comp.Instance.IsClearing.Should().BeTrue();
+
+        await comp.Invoking(c => button.ClickAsync(new MouseEventArgs()))
+            .Should().ThrowAsync<InvalidOperationException>();
+
+        comp.Instance.IsClearing.Should().BeFalse();
     }
 
     /// <summary>

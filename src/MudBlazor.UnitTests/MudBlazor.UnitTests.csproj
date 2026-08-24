@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>$(PrimaryTargetFramework)</TargetFramework>
@@ -8,13 +8,13 @@
          The default Workstation GC serializes those allocations across the parallel fixtures on a single heap; Server GC gives each core its own heap. -->
     <ServerGarbageCollection>true</ServerGarbageCollection>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <Using Include="MudBlazor.UnitTests.Shared" />
     <Using Include="MudBlazor.UnitTests.Shared.Mocks" />
     <Using Include="MudBlazor.UnitTests.Shared.Extensions" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <!--We need to make internal types to be visible for mocking-->
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
@@ -23,7 +23,7 @@
   <ItemGroup>
     <PackageReference Include="coverlet.MTP" Version="10.0.1" />
     <PackageReference Include="JunitXml.TestLogger" Version="8.0.0" />
-    <PackageReference Include="AwesomeAssertions" Version="9.5.0" />
+    <PackageReference Include="AwesomeAssertions" Version="9.6.0" />
     <PackageReference Include="Microsoft.Testing.Extensions.HangDump" Version="2.3.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="6.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />

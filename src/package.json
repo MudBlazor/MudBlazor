@@ -1,7 +1,10 @@
 {
   "dependencies": {
-    "eslint": "^10.0.0",
-    "sass": "^1.97.2"
+    "@types/bun": "1.4.0",
+    "@types/node": "26.2.0",
+    "eslint": "10.9.0",
+    "sass": "1.103.1",
+    "typescript": "7.0.2"
   },
   "trustedDependencies": ["sass"]
 }

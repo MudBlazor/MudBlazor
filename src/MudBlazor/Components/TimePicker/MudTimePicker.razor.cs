@@ -159,7 +159,9 @@ namespace MudBlazor
         /// <param name="suppressInteraction">When <c>true</c>, the change is treated as programmatic and does not mark the picker touched or fire <c>FieldChanged</c>.</param>
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue, bool suppressInteraction = false)
         {
-            if (_value != time)
+            // Text that fails to convert leaves the value null, so a null assignment looks like a no-op and the bad text would stick.
+            // Run it anyway while text remains, as MudDatePicker does.
+            if (_value != time || (time is null && !string.IsNullOrEmpty(Text)))
             {
                 if (!suppressInteraction)
                 {
@@ -169,6 +171,7 @@ namespace MudBlazor
                 _value = time;
                 if (updateValue)
                 {
+                    ResetConverterErrors();
                     await SetTextAsync(ConvertSet(_value), false);
                 }
 

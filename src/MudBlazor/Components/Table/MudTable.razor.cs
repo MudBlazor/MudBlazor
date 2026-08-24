@@ -423,10 +423,13 @@ namespace MudBlazor
 
         /// <summary>
         /// Checks if the row is selected.
-        /// If there is set a Comparer, uses the comparer, otherwise uses a direct contains
+        /// Uses a hash set lookup when the selection comparer matches the table comparer.
+        /// Otherwise, uses the table comparer to check each selected item.
         /// </summary>
         protected bool IsCheckedRow(T item) =>
-            _comparer is not null ? Context.Selection.Any(x => _comparer.Equals(x, item)) : Context.Selection.Contains(item);
+            _comparer is null || ReferenceEquals(Context.Selection.Comparer, _comparer)
+                ? Context.Selection.Contains(item)
+                : Context.Selection.Any(x => _comparer.Equals(x, item));
 
         /// <summary>
         /// The comparer used to determine selected items.
@@ -672,6 +675,34 @@ namespace MudBlazor
             {
                 _editingItem = item;
             }
+        }
+
+        /// <summary>
+        /// Gets the position of an item within <see cref="FilteredItems"/>, or <c>-1</c> when it is not present.
+        /// </summary>
+        /// <remarks>
+        /// Equivalent to <c>FilteredItems.ToList().IndexOf(item)</c> without copying the filtered list, which the row markup would otherwise do once per rendered row.
+        /// </remarks>
+        internal int GetFilteredItemIndex(T item)
+        {
+            var filteredItems = FilteredItems;
+            if (filteredItems is IList<T> list)
+            {
+                return list.IndexOf(item);
+            }
+
+            var index = 0;
+            foreach (var candidate in filteredItems)
+            {
+                if (EqualityComparer<T>.Default.Equals(candidate, item))
+                {
+                    return index;
+                }
+
+                index++;
+            }
+
+            return -1;
         }
 
         /// <summary>

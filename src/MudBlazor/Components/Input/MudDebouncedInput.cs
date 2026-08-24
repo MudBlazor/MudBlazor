@@ -90,6 +90,16 @@ namespace MudBlazor
             await base.ValidateValue();
         }
 
+        /// <inheritdoc />
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            // The DebounceInterval change handler only runs for values that arrive through the ParameterView.
+            // A value coming from a property initializer or from the constructor of a derived component never
+            // does, so seed the debouncer here from the initial value.
+            _debouncer ??= CreateDebouncer(DebounceInterval);
+        }
+
         private async Task OnDebounceIntervalChangedAsync(ParameterChangedEventArgs<double> args)
         {
             if (args.Value <= 0)
@@ -103,7 +113,7 @@ namespace MudBlazor
             // Create debouncer if we don't have one
             if (_debouncer is null)
             {
-                _debouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(args.Value), false, TimeProvider);
+                _debouncer = CreateDebouncer(args.Value);
             }
             else
             {
@@ -115,6 +125,10 @@ namespace MudBlazor
                 }
             }
         }
+
+        private DebounceDispatcher? CreateDebouncer(double intervalMilliseconds) => intervalMilliseconds > 0
+            ? new DebounceDispatcher(TimeSpan.FromMilliseconds(intervalMilliseconds), false, TimeProvider)
+            : null;
 
         private async Task<bool> SynchronizePendingValueForValidationAsync()
         {
