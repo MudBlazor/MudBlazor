@@ -71,7 +71,8 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
 
 describe("legacy script globals", () => {
     test.each(expectedWindowGlobals)("window.%s is a %s", (name, type) => {
-        expect(window).toHaveProperty(name);
-        expect(typeof (window as unknown as Record<string, unknown>)[name]).toBe(type);
+        let globalValue = (window as unknown as Record<string, unknown>)[name];
+        expect(globalValue).not.toBeNull();
+        expect(typeof globalValue).toBe(type);
     });
 });
