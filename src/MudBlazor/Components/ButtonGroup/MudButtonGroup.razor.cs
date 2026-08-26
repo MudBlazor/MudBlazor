@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -121,6 +122,23 @@ namespace MudBlazor
         internal bool NoneButtonIsStreched()
         {
             return !_renderedButtons.Any(b => b.FullWidth);
+        }
+
+        /// <inheritdoc />
+        protected override void BuildRenderTree(RenderTreeBuilder builder)
+        {
+            UserAttributes.TryAdd("role", "group");
+
+            builder.OpenElement(0, "div");
+            builder.AddMultipleAttributes(1, UserAttributes!);
+            builder.AddAttribute(2, "class", Classname);
+            builder.AddAttribute(3, "style", Style);
+            builder.OpenComponent<CascadingValue<MudButtonGroup>>(4);
+            builder.AddComponentParameter(5, "IsFixed", true);
+            builder.AddComponentParameter(6, "Value", this);
+            builder.AddComponentParameter(7, "ChildContent", ChildContent);
+            builder.CloseComponent();
+            builder.CloseElement();
         }
     }
 }
