@@ -1458,7 +1458,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var renders = 0;
             Context.Render<MudTreeView<string>>(parameters => parameters
-                .Add(x => x.ChildContent, BuildItems(() => renders++)));
+                .Add(x => x.ChildContent, BuildItems(_ => renders++)));
 
             renders.Should().Be(3);
         }
@@ -1476,24 +1476,47 @@ namespace MudBlazor.UnitTests.Components
             var renders = 0;
             Context.Render<MudTreeView<string>>(parameters => parameters
                 .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
-                .Add(x => x.ChildContent, BuildItems(() => renders++)));
+                .Add(x => x.ChildContent, BuildItems(_ => renders++)));
 
             renders.Should().Be(3);
         }
 
+
+        /// <summary>
+        /// Selecting an item must re-render only that item, not every sibling.
+        /// </summary>
+        /// <remarks>
+        /// The tree refreshes the selection state of every item whenever the selection changes.
+        /// A sibling whose own state did not change has nothing new to show, and this guards the click path that the mount tests above do not reach.
+        /// </remarks>
+        [Test]
+        public void TreeView_SelectOneSibling_RendersOnlyChangedItem()
+        {
+            var renders = new int[3];
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.ChildContent, BuildItems(index => renders[index]++)));
+
+            var afterMount = (int[])renders.Clone();
+            comp.FindAll(".mud-treeview-item-content")[0].Click();
+
+            renders[0].Should().Be(afterMount[0] + 1, "the selected item has a new state to show");
+            renders[1].Should().Be(afterMount[1], "sibling 1 did not change and should not have re-rendered");
+            renders[2].Should().Be(afterMount[2], "sibling 2 did not change and should not have re-rendered");
+        }
         /// <summary>
         /// Builds three sibling items whose body content reports every time it is rendered.
         /// </summary>
-        /// <param name="onRender">Called once per item render.</param>
-        private static RenderFragment BuildItems(Action onRender) => builder =>
+        /// <param name="onRender">Called with the item's index once per render of that item.</param>
+        private static RenderFragment BuildItems(Action<int> onRender) => builder =>
         {
             for (var i = 0; i < 3; i++)
             {
-                builder.OpenComponent<MudTreeViewItem<string>>(i * 3);
-                builder.AddComponentParameter((i * 3) + 1, nameof(MudTreeViewItem<string>.Value), $"item{i}");
-                builder.AddComponentParameter((i * 3) + 2, nameof(MudTreeViewItem<string>.BodyContent), (RenderFragment<MudTreeViewItem<string>>)(item => content =>
+                var index = i;
+                builder.OpenComponent<MudTreeViewItem<string>>(index * 3);
+                builder.AddComponentParameter((index * 3) + 1, nameof(MudTreeViewItem<string>.Value), $"item{index}");
+                builder.AddComponentParameter((index * 3) + 2, nameof(MudTreeViewItem<string>.BodyContent), (RenderFragment<MudTreeViewItem<string>>)(item => content =>
                 {
-                    onRender();
+                    onRender(index);
                     content.AddContent(0, item.Value);
                 }));
                 builder.CloseComponent();
