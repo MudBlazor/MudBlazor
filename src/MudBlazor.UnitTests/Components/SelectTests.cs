@@ -1,6 +1,7 @@
 ﻿using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
@@ -29,6 +30,48 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindComponents<MudListItem<string>>().Should().OnlyContain(x => !x.Instance.KeyboardEnabled);
             keyInterceptorService.ObserversCount.Should().Be(observersWhileClosed);
+        }
+
+        /// <summary>
+        /// A select with nothing to present must build its option list once, not twice (#13519).
+        /// </summary>
+        /// <remarks>
+        /// MudSelect renders ChildContent twice per pass, once for the popup list and once for the shadow items.
+        /// A second render on mount would double that, and no item can be diffed away because each one is handed a fresh ChildContent delegate.
+        /// </remarks>
+        [Test]
+        public void Select_WithoutResolvableValue_BuildsItemsOnce()
+        {
+            var passes = 0;
+            Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.ChildContent, builder =>
+                {
+                    passes++;
+                    builder.OpenComponent<MudSelectItem<string>>(0);
+                    builder.AddComponentParameter(1, nameof(MudSelectItem<string>.Value), "Espresso");
+                    builder.CloseComponent();
+                }));
+
+            passes.Should().Be(2);
+        }
+
+        /// <summary>
+        /// A select whose value resolves to an item still renders that item's content, which is why the extra render on mount exists.
+        /// </summary>
+        [Test]
+        public void Select_WithResolvableValue_RendersTheSelectedItemContent()
+        {
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.Value, "Espresso")
+                .Add(x => x.ChildContent, builder =>
+                {
+                    builder.OpenComponent<MudSelectItem<string>>(0);
+                    builder.AddComponentParameter(1, nameof(MudSelectItem<string>.Value), "Espresso");
+                    builder.AddComponentParameter(2, nameof(MudSelectItem<string>.ChildContent), (RenderFragment)(content => content.AddContent(0, "A short black")));
+                    builder.CloseComponent();
+                }));
+
+            comp.Markup.Should().Contain("A short black");
         }
 
         [Test]
