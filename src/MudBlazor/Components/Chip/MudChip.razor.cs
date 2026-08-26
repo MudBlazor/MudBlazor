@@ -38,10 +38,22 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         return ChipSet.OnChipSelectedChangedAsync(this, args.Value);
     }
 
+    /// <summary>
+    /// Updates whether this chip is selected.
+    /// </summary>
+    /// <remarks>
+    /// The set walks every chip whenever the selection changes, so rendering unconditionally rebuilt the whole set to move one check mark.
+    /// Nothing this chip renders depends on another chip, so a chip whose own state did not change has nothing new to show.
+    /// </remarks>
+    /// <param name="selected">Whether this chip is now selected.</param>
     internal async Task UpdateSelectionStateAsync(bool selected)
     {
+        var wasSelected = SelectedState.Value;
         await SelectedState.SetValueAsync(selected);
-        StateHasChanged();
+        if (SelectedState.Value != wasSelected)
+        {
+            StateHasChanged();
+        }
     }
 
     /// <summary>
@@ -456,7 +468,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         }
         if (ChipSet != null)
         {
-            await SelectedState.SetValueAsync(!SelectedState.Value);
+            // Go through the same helper as the set does, so this chip renders because its own state changed rather than relying on the set to sweep every chip.
+            await UpdateSelectionStateAsync(!SelectedState.Value);
             await ChipSet.OnChipSelectedChangedAsync(this, SelectedState.Value);
         }
 

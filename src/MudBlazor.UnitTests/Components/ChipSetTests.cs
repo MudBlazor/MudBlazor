@@ -1,5 +1,6 @@
 ﻿using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.ChipSet;
 using NUnit.Framework;
@@ -547,6 +548,45 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("#chip-2").KeyDown("Backspace");
             onCloseCount.Should().Be(0);
             comp.FindComponent<MudChipSet<string>>().Instance.SelectedValues.Should().HaveCount(0);
+        }
+        /// <summary>
+        /// Clicking one chip must re-render only that chip, not every chip in the set.
+        /// </summary>
+        /// <remarks>
+        /// The set walks every chip whenever the selection changes, and each chip used to render unconditionally in response.
+        /// Nothing a chip renders depends on another chip, so the ones whose own state did not change have nothing new to show.
+        /// </remarks>
+        [Test]
+        public void ChipSet_SelectingOneChip_RendersOnlyThatChip()
+        {
+            const int Count = 10;
+            var passes = new int[Count];
+            var comp = Context.Render<MudChipSet<int>>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.SingleSelection)
+                .Add(x => x.ChildContent, builder =>
+                {
+                    for (var i = 0; i < Count; i++)
+                    {
+                        var index = i;
+                        builder.OpenComponent<MudChip<int>>(index * 4);
+                        builder.AddComponentParameter((index * 4) + 1, nameof(MudChip<int>.Value), index);
+                        builder.AddComponentParameter((index * 4) + 2, nameof(MudChip<int>.ChildContent), (RenderFragment)(content =>
+                        {
+                            passes[index]++;
+                            content.AddContent(0, index);
+                        }));
+                        builder.CloseComponent();
+                    }
+                }));
+
+            var afterMount = (int[])passes.Clone();
+            comp.FindAll(".mud-chip")[0].Click();
+
+            passes[0].Should().Be(afterMount[0] + 1, "the clicked chip has a new selected state to show");
+            for (var i = 1; i < Count; i++)
+            {
+                passes[i].Should().Be(afterMount[i], $"chip {i} did not change and should not have re-rendered");
+            }
         }
     }
 }
