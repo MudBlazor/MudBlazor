@@ -8,24 +8,11 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-
 /// <summary>
 /// Manages layout of its child items along the vertical or horizontal axis with optional spacing.
 /// </summary>
 public partial class MudStack : MudComponentBase
 {
-    /// <inheritdoc />
-    protected override void BuildRenderTree(RenderTreeBuilder builder)
-    {
-        builder.OpenElement(0, HtmlTag);
-        builder.AddAttribute(1, "role", Role);
-        builder.AddMultipleAttributes(2, UserAttributes!);
-        builder.AddAttribute(3, "class", Classname);
-        builder.AddAttribute(4, "style", Style);
-        builder.AddContent(5, ChildContent);
-        builder.CloseElement();
-    }
-
     private string? Role =>
         string.Equals(HtmlTag, "div", StringComparison.OrdinalIgnoreCase)
             ? "group"
@@ -199,4 +186,16 @@ public partial class MudStack : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public string HtmlTag { get; set; } = "div";
+
+    /// <inheritdoc />
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        builder.OpenElement(0, HtmlTag);
+        builder.AddAttribute(1, "role", Role);
+        builder.AddMultipleAttributes(2, UserAttributes!);
+        builder.AddAttribute(3, "class", Classname);
+        builder.AddAttribute(4, "style", Style);
+        builder.AddContent(5, ChildContent);
+        builder.CloseElement();
+    }
 }
