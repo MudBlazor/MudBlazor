@@ -1,6 +1,6 @@
 ﻿using AwesomeAssertions;
-using Microsoft.AspNetCore.Components;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.ChipSet;
 using NUnit.Framework;
