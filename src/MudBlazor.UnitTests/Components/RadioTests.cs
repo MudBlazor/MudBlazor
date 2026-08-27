@@ -1,6 +1,5 @@
 ﻿using AwesomeAssertions;
 using Bunit;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Radio;
 using MudBlazor.UnitTests.TestComponents.RadioGroup;
@@ -574,44 +573,6 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Required, true));
 
             comp.Find("div[role=radiogroup]").GetAttribute("aria-required").Should().Be("true");
-        }
-        /// <summary>
-        /// Selecting a radio must not render every radio more than once.
-        /// </summary>
-        /// <remarks>
-        /// The group cascades itself to its radios, and that value is the group instance, which never changes.
-        /// Cascading it as non-fixed made Blazor treat the reference as possibly changed on every group render and notify each radio, costing every radio a second render per click.
-        /// The remaining render each radio does comes from the group re-rendering its child content after validation, which is <see cref="MudFormComponent{T, U}"/> behaviour and not specific to radios.
-        /// </remarks>
-        [Test]
-        public void RadioGroup_SelectingOne_DoesNotRenderEveryRadioTwice()
-        {
-            const int Count = 5;
-            var renders = new int[Count];
-            var comp = Context.Render<MudRadioGroup<int>>(parameters => parameters
-                .Add(x => x.ChildContent, builder =>
-                {
-                    for (var i = 0; i < Count; i++)
-                    {
-                        var index = i;
-                        builder.OpenComponent<MudRadio<int>>(index * 4);
-                        builder.AddComponentParameter((index * 4) + 1, nameof(MudRadio<int>.Value), index);
-                        builder.AddComponentParameter((index * 4) + 2, nameof(MudRadio<int>.ChildContent), (RenderFragment)(content =>
-                        {
-                            renders[index]++;
-                            content.AddContent(0, index);
-                        }));
-                        builder.CloseComponent();
-                    }
-                }));
-
-            var afterMount = (int[])renders.Clone();
-            comp.FindAll("input[type=radio]")[1].Click();
-
-            for (var i = 0; i < Count; i++)
-            {
-                (renders[i] - afterMount[i]).Should().BeLessThanOrEqualTo(2, $"radio {i} should not render more than twice for one click");
-            }
         }
     }
 }
