@@ -755,6 +755,8 @@ namespace MudBlazor
                 Context.Selection.Remove(item);
             }
 
+            Context.UpdateRowCheckBoxes();
+
             if (SelectedItemsChanged.HasDelegate)
             {
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
