@@ -230,6 +230,50 @@ public class DefaultLocalizationInterceptorTests
         value.Should().Be("Clear", "the built-in English fallback is still returned under a non-English UI culture");
     }
 
+    /// <summary>
+    /// Repeated lookups of a built-in key are served from the cache and stay on the invariant value.
+    /// </summary>
+    [Test]
+    [NonParallelizable]
+    [SetUICulture("sv-SE")]
+    public void DefaultEnglishLookup_RepeatedReads_StayOnTheInvariantValue()
+    {
+        // Arrange
+        var interceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null);
+
+        // Act
+        var first = interceptor.Handle(LanguageResource.MudDataGrid_Clear);
+        var second = interceptor.Handle(LanguageResource.MudDataGrid_Clear);
+
+        // Assert
+        first.ResourceNotFound.Should().BeFalse();
+        second.ResourceNotFound.Should().BeFalse();
+        second.Value.Should().Be(first.Value).And.Be("Clear");
+    }
+
+    /// <summary>
+    /// A key that is not a resource must keep reporting itself as missing, so it is never served from the cache.
+    /// </summary>
+    /// <remarks>
+    /// Callers pass arbitrary strings through this path, such as a conversion exception message, so caching a miss would let the cache grow without bound.
+    /// </remarks>
+    [Test]
+    public void UnknownKey_RepeatedReads_KeepReportingResourceNotFound()
+    {
+        // Arrange
+        var interceptor = new DefaultLocalizationInterceptor(NullLoggerFactory.Instance, mudLocalizer: null);
+        const string UnknownKey = "This is not a resource key, it is an exception message.";
+
+        // Act
+        var first = interceptor.Handle(UnknownKey);
+        var second = interceptor.Handle(UnknownKey);
+
+        // Assert
+        first.ResourceNotFound.Should().BeTrue();
+        second.ResourceNotFound.Should().BeTrue();
+        second.Value.Should().Be(UnknownKey);
+    }
+
     private static string GetResourceString(string key, params object[] parameters)
     {
         var resourceString = LanguageResource.GetResourceString(key) ?? string.Empty;
