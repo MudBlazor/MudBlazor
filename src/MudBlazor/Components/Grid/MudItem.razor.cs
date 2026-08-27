@@ -14,16 +14,41 @@ namespace MudBlazor;
 /// <seealso cref="MudGrid"/>
 public partial class MudItem : MudComponentBase
 {
-    protected string Classname =>
-        new CssBuilder("mud-grid-item")
-            .AddClass($"mud-grid-item-xs-{xs}", xs != 0)
-            .AddClass($"mud-grid-item-sm-{sm}", sm != 0)
-            .AddClass($"mud-grid-item-md-{md}", md != 0)
-            .AddClass($"mud-grid-item-lg-{lg}", lg != 0)
-            .AddClass($"mud-grid-item-xl-{xl}", xl != 0)
-            .AddClass($"mud-grid-item-xxl-{xxl}", xxl != 0)
-            .AddClass(Class)
-            .Build();
+    protected string Classname
+    {
+        get
+        {
+            // Only the breakpoints that are set build a string.
+            // Passing the interpolated class as an argument builds it whether or not the condition holds, and most items set one breakpoint out of six.
+            var builder = new CssBuilder("mud-grid-item");
+            if (xs != 0)
+            {
+                builder.AddClass($"mud-grid-item-xs-{xs}");
+            }
+            if (sm != 0)
+            {
+                builder.AddClass($"mud-grid-item-sm-{sm}");
+            }
+            if (md != 0)
+            {
+                builder.AddClass($"mud-grid-item-md-{md}");
+            }
+            if (lg != 0)
+            {
+                builder.AddClass($"mud-grid-item-lg-{lg}");
+            }
+            if (xl != 0)
+            {
+                builder.AddClass($"mud-grid-item-xl-{xl}");
+            }
+            if (xxl != 0)
+            {
+                builder.AddClass($"mud-grid-item-xxl-{xxl}");
+            }
+
+            return builder.AddClass(Class).Build();
+        }
+    }
 
     [CascadingParameter]
     private MudGrid? Parent { get; set; }
