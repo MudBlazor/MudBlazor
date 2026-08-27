@@ -755,8 +755,6 @@ namespace MudBlazor
                 Context.Selection.Remove(item);
             }
 
-            // Push the new state to the group, header and footer checkboxes directly.
-            // They used to pick it up from the table re-rendering every row, which cost a render per row to change one.
             Context.UpdateRowCheckBoxes();
 
             if (SelectedItemsChanged.HasDelegate)
