@@ -1,0 +1,14 @@
+<MudTable Items="_items" MultiSelection="true">
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "the select-all checkbox must track individual row checkboxes even when SelectedItems is not bound.";
+
+    private readonly int[] _items = [0, 1, 2, 3];
+}
