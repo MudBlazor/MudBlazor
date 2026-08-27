@@ -65,10 +65,10 @@ namespace MudBlazor.Interfaces
         /// 3. A <c>Func&lt;T,IEnumerable&lt;string&gt;&gt;</c> or <c>Func&lt;T,Task&lt;IEnumerable&lt;string&gt;&gt;&gt;</c> function.  Returns an empty list if valid, or a list of validation errors.
         /// </para>
         /// <para>
-        /// 3. A <c>Func&lt;object,string,IEnumerable&lt;string&gt;&gt;</c> or <c>Func&lt;object,string,Task&lt;IEnumerable&lt;string&gt;&gt;&gt;</c> function.  Given the form model and path to the member, returns an empty list if valid, or a list of validation errors.
+        /// 4. A <c>Func&lt;object,string,IEnumerable&lt;string&gt;&gt;</c> or <c>Func&lt;object,string,Task&lt;IEnumerable&lt;string&gt;&gt;&gt;</c> function.  Given the form model and path to the member, returns an empty list if valid, or a list of validation errors.
         /// </para>
         /// <para>
-        /// 4. A <see cref="ValidationAttribute"/> object.
+        /// 5. A <see cref="ValidationAttribute"/> object.
         /// </para>
         /// </remarks>
         object? Validation { get; set; }
