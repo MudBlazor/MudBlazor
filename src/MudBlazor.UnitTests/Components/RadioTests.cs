@@ -613,5 +613,66 @@ namespace MudBlazor.UnitTests.Components
                 (renders[i] - afterMount[i]).Should().BeLessThanOrEqualTo(2, $"radio {i} should not render more than twice for one click");
             }
         }
+
+        /// <summary>
+        /// Validating the group must update the error styling on radios that have no child content.
+        /// </summary>
+        /// <remarks>
+        /// The group cascades itself as a fixed value, so radios are never notified through the cascade,
+        /// and validation re-renders only the group. A radio whose parameters are all constant therefore
+        /// has no reason of its own to re-render, and would keep showing the pre-validation styling.
+        /// Radios written with child content re-render anyway, so they do not exercise this.
+        /// </remarks>
+        [Test]
+        public async Task RadioGroup_Validate_UpdatesErrorStyling_OnRadiosWithoutChildContent()
+        {
+            var comp = Context.Render<MudRadioGroup<string>>(parameters => parameters
+                .Add(x => x.Required, true)
+                .AddChildContent<MudRadio<string>>(r => r
+                    .Add(x => x.Value, "a")
+                    .Add(x => x.Label, "A"))
+                .AddChildContent<MudRadio<string>>(r => r
+                    .Add(x => x.Value, "b")
+                    .Add(x => x.Label, "B")));
+
+            var icons = comp.FindAll("span.mud-button-root");
+            icons.Should().HaveCount(2);
+            foreach (var icon in icons)
+            {
+                icon.ClassList.Should().NotContain("mud-error-text");
+            }
+
+            await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
+
+            comp.Instance.HasErrors.Should().BeTrue("a required group with no value is invalid");
+            foreach (var icon in comp.FindAll("span.mud-button-root"))
+            {
+                icon.ClassList.Should().Contain("mud-error-text");
+            }
+        }
+
+        /// <summary>
+        /// Changing the group's name at runtime must reach the name attribute each radio renders.
+        /// </summary>
+        /// <remarks>
+        /// Same cause as <see cref="RadioGroup_Validate_UpdatesErrorStyling_OnRadiosWithoutChildContent"/>:
+        /// the name comes from the fixed cascade, so the group has to push the change to its radios.
+        /// A stale name breaks native radio grouping.
+        /// </remarks>
+        [Test]
+        public async Task RadioGroup_Name_ChangeReachesRadios()
+        {
+            var comp = Context.Render<MudRadioGroup<string>>(parameters => parameters
+                .Add(x => x.Name, "before")
+                .AddChildContent<MudRadio<string>>(r => r
+                    .Add(x => x.Value, "a")
+                    .Add(x => x.Label, "A")));
+
+            comp.Find("input[type=radio]").GetAttribute("name").Should().Be("before");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Name, "after"));
+
+            comp.Find("input[type=radio]").GetAttribute("name").Should().Be("after");
+        }
     }
 }

@@ -145,6 +145,16 @@ namespace MudBlazor
 
         internal MudRadioGroup<T>? MudRadioGroup => IMudRadioGroup as MudRadioGroup<T>;
 
+        /// <summary>
+        /// Re-renders this radio after a change to the group state it displays.
+        /// </summary>
+        /// <remarks>
+        /// The group cascades itself as a fixed value, so a radio is never notified through the cascade.
+        /// It still renders the group's <c>HasErrors</c> and <c>Name</c>, and a radio whose own parameters
+        /// are all constant has no other reason to re-render, so the group pushes those changes here.
+        /// </remarks>
+        internal void NotifyGroupStateChanged() => StateHasChanged();
+
         internal void SetChecked(bool value)
         {
             if (Checked != value)

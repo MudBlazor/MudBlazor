@@ -17,6 +17,8 @@ namespace MudBlazor
     {
         private MudRadio<T>? _selectedRadio;
         private readonly HashSet<MudRadio<T>> _radios = new();
+        private bool _lastPushedHasErrors;
+        private string? _lastPushedName;
 
         protected string Classname =>
             new CssBuilder("mud-input-control-boolean-input")
@@ -168,6 +170,37 @@ namespace MudBlazor
                 {
                     await SetSelectedOptionAsync(GetValueOrDefault(_selectedRadio), false);
                 }
+            }
+        }
+
+        /// <inheritdoc />
+        protected override void OnAfterRender(bool firstRender)
+        {
+            base.OnAfterRender(firstRender);
+
+            // Radios render this group's error state and name, but the cascade is fixed, so nothing tells
+            // them when either changes. Push it the way SetChecked is already pushed, and only on a real
+            // change, so an unchanged render still costs the radios nothing.
+            if (firstRender)
+            {
+                // The radios read the current values during their own first render.
+                _lastPushedHasErrors = HasErrors;
+                _lastPushedName = Name;
+
+                return;
+            }
+
+            if (_lastPushedHasErrors == HasErrors && _lastPushedName == Name)
+            {
+                return;
+            }
+
+            _lastPushedHasErrors = HasErrors;
+            _lastPushedName = Name;
+
+            foreach (var radio in _radios)
+            {
+                radio.NotifyGroupStateChanged();
             }
         }
 
