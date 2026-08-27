@@ -88,6 +88,21 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
         }
 
+        /// <summary>
+        /// Menu items still receive their element reference, which submenu positioning and focus rely on.
+        /// </summary>
+        [Test]
+        public async Task OpenMenu_ItemsCaptureElementReference()
+        {
+            var comp = Context.Render<MenuTest1>();
+
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
+
+            var items = comp.FindComponents<MudMenuItem>();
+            items.Should().NotBeEmpty();
+            items.Select(x => x.Instance.ElementReference.Id).Should().OnlyContain(x => !string.IsNullOrEmpty(x));
+        }
+
         [Test]
         public async Task OpenMenu_ClickSecondItem_CheckClosed()
         {

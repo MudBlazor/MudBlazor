@@ -10,6 +10,13 @@ namespace MudBlazor
     /// <seealso cref="MudMenu" />
     public partial class MudMenuItem : MudComponentBase
     {
+        private readonly EventCallback<ElementReference> _captureElementReference;
+
+        public MudMenuItem()
+        {
+            _captureElementReference = MudElement.CaptureRef(reference => ElementReference = reference);
+        }
+
         [Inject]
         protected NavigationManager UriHelper { get; set; } = null!;
 

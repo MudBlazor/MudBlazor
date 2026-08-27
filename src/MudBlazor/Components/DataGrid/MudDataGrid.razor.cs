@@ -179,6 +179,14 @@ namespace MudBlazor
                 .AddStyle("left", "0px", when: HasStickyColumns)
                 .Build();
 
+        protected string ColumnsPanelClassname =>
+            new CssBuilder()
+                .AddClass("mud-data-grid-columns-panel")
+                .AddClass("px-2")
+                .AddClass("mud-popover-position-override")
+                .AddClass("mud-data-grid-columns-panel-dense", when: Dense)
+                .Build();
+
         protected override void OnParametersSet()
         {
             base.OnParametersSet();

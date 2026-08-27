@@ -721,6 +721,9 @@ namespace MudBlazor
         /// <summary>
         /// Opens the drop-down of items, or refreshes the list if it is already open.
         /// </summary>
+        /// <remarks>
+        /// The drop-down stays closed when the search returns no items and no <see cref="NoItemsTemplate"/> is set.
+        /// </remarks>
         public async Task OpenMenuAsync()
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(ReadText) || ReadText.Length < MinCharacters))
@@ -837,7 +840,13 @@ namespace MudBlazor
                 _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices[0] : -1;
             }
 
-            if (_isFocused || !wasFocused)
+            // An empty result with no NoItemsTemplate would render an invisible zero-height popover, so keep the menu closed instead (#13360).
+            var hasPopoverContent = _items.Length != 0 || NoItemsTemplate is not null;
+            if (!hasPopoverContent)
+            {
+                Open = false;
+            }
+            else if (_isFocused || !wasFocused)
             {
                 // Open after the search has finished if we're still focused (UI), or were never focused in the first place (programmatically).
                 Open = true;
@@ -969,6 +978,12 @@ namespace MudBlazor
                     }
                     else
                     {
+                        // The menu stays closed when a search finds nothing, so Enter must coerce the value here rather than through OnEnterKeyAsync.
+                        // When Immediate is enabled the value was already coerced by TextChanged.
+                        if (!Immediate)
+                        {
+                            await CoerceValueToTextAsync();
+                        }
                         await OpenMenuAsync();
                     }
                     break;
@@ -1200,6 +1215,9 @@ namespace MudBlazor
                 await OnBlur.InvokeAsync(args);
                 return;
             }
+
+            // A genuine leave with the menu closed (such as after a search returned nothing) can't rely on the overlay close to revert the text, so coerce it here.
+            await CoerceTextToValueAsync();
 
             await base.OnBlurredAsync(args);
         }
