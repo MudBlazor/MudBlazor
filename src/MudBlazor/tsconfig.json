@@ -5,6 +5,7 @@
   },
   "include": [
     "build.mts",
+    "test-setup.ts",
     "TScripts/**/*"
   ]
 }

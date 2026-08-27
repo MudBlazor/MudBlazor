@@ -86,7 +86,7 @@ Run restore only when restore inputs changed (`*.csproj`, `src/Directory.Build.*
 
 If `.config/dotnet-tools.json` changes, run `dotnet tool restore --tool-manifest .config/dotnet-tools.json`.
 
-If `src/package.json`, `src/bun.lock`, `src/eslint.config.ts`, `src/Directory.Build.props`, any `tsconfig.json` or a project's build script (`build.mjs` or `build.mts`) changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
+If `src/package.json`, `src/bun.lock`, `src/eslint.config.ts`, `src/Directory.Build.props`, any `tsconfig.json`, `src/MudBlazor/bunfig.toml`, `src/MudBlazor/test-setup.ts`, or a project's build script (`build.mjs` or `build.mts`) changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
 
 ### Default local loop for C# or Razor component changes
 
@@ -325,7 +325,8 @@ Verify with bUnit assertions on roles and `aria-*` attributes before and after i
 - Break comment lines at sentence boundaries, one sentence per line, instead of wrapping at a column width.
 - Do not use `#region`.
 - A helper used by only one method should be a `static` local function inside that method. Reserve private members for helpers shared across multiple methods.
-- Keep `src/MudBlazor/TScripts/entrypoint.ts` in sync with files in `src/MudBlazor/TScripts/` except `entrypoint.ts`.
+- Keep `src/MudBlazor/TScripts/entrypoint.ts` in sync with files in `src/MudBlazor/TScripts/`, except `entrypoint.ts` itself and `*.test.ts` files.
+- Test files are run by `bun test` and must never be imported by `entrypoint.ts`, which would pull the test runner into the shipped bundle.
 
 ## When Verification Fails
 

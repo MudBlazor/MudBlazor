@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Microsoft.Extensions.Localization;
@@ -68,23 +69,65 @@ public abstract class AbstractLocalizationInterceptor : ILocalizationInterceptor
     /// </summary>
     private sealed class InvariantLanguageResourceLocalizer(IStringLocalizer inner) : IStringLocalizer
     {
+        // Reading always happens under the invariant culture, so a key's value never changes and can be cached.
+        // Only found keys are cached, because callers also pass arbitrary strings such as a conversion exception message and those must not accumulate.
+        private readonly ConcurrentDictionary<string, LocalizedString> _cache = new(StringComparer.Ordinal);
+
+        // The swap is repeated per member rather than shared through a Func, which would allocate a closure on every lookup.
+        // Components read localized strings while rendering, so this runs in the render loop.
+        // Each swap and restore is synchronous with no await in between, so the culture never leaks to another flow.
         public LocalizedString this[string name]
-            => ReadInvariant(() => inner[name]);
+        {
+            get
+            {
+                if (_cache.TryGetValue(name, out var cached))
+                {
+                    return cached;
+                }
+
+                var previous = CultureInfo.CurrentUICulture;
+                CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+                try
+                {
+                    var localized = inner[name];
+                    if (!localized.ResourceNotFound)
+                    {
+                        _cache[name] = localized;
+                    }
+
+                    return localized;
+                }
+                finally
+                {
+                    CultureInfo.CurrentUICulture = previous;
+                }
+            }
+        }
 
         public LocalizedString this[string name, params object[] arguments]
-            => ReadInvariant(() => inner[name, arguments]);
+        {
+            get
+            {
+                var previous = CultureInfo.CurrentUICulture;
+                CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
+                try
+                {
+                    return inner[name, arguments];
+                }
+                finally
+                {
+                    CultureInfo.CurrentUICulture = previous;
+                }
+            }
+        }
 
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
-            => ReadInvariant(() => inner.GetAllStrings(includeParentCultures).ToList());
-
-        private static T ReadInvariant<T>(Func<T> read)
         {
-            // Synchronous swap/restore with no await in between, so the culture never leaks to another flow.
             var previous = CultureInfo.CurrentUICulture;
             CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
             try
             {
-                return read();
+                return inner.GetAllStrings(includeParentCultures).ToList();
             }
             finally
             {

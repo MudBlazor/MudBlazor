@@ -104,6 +104,22 @@ public class InputTests : BunitTest
     }
 
     /// <summary>
+    /// The clear button must stop its own mousedown, because the components that host it, such as MudSelect and the pickers, open on that event.
+    /// </summary>
+    [Test]
+    public void MudInputClearButtonShouldStopMouseDownPropagation()
+    {
+        var comp = Context.Render<MudInput<string>>(parameters => parameters
+            .Add(x => x.Clearable, true)
+            .Add(x => x.Value, "Some value")
+        );
+
+        var button = comp.Find("div.mud-input .mud-input-clear-button");
+
+        button.HasAttribute("blazor:onmousedown:stopPropagation").Should().BeTrue();
+    }
+
+    /// <summary>
     /// IsClearing must reset even when the OnClearButtonClick handler throws, so later interactions are not suppressed.
     /// </summary>
     [Test]

@@ -3637,5 +3637,35 @@ namespace MudBlazor.UnitTests.Components
                 GetHashCodeCalls = 0;
             }
         }
+        /// <summary>
+        /// The select-all checkbox must follow the rows as they are checked one at a time.
+        /// </summary>
+        /// <remarks>
+        /// The header used to pick this up only because changing one row re-rendered the whole table.
+        /// This case binds nothing, because a bound <c>SelectedItems</c> re-renders the table anyway and hides the problem.
+        /// </remarks>
+        [Test]
+        public void TableMultiSelection_CheckingRowsIndividually_UpdatesSelectAllCheckbox()
+        {
+            var comp = Context.Render<TableMultiSelectionHeaderStateTest>();
+            var header = () => comp.Find("thead .mud-checkbox span").ClassList;
+            var rowBoxes = () => comp.FindAll("tbody .mud-checkbox input");
+            var rowCount = rowBoxes().Count;
+
+            header().Should().Contain("mud-checkbox-false");
+
+            rowBoxes()[0].Change(true);
+            header().Should().Contain("mud-checkbox-null", "some but not all rows are selected");
+
+            for (var i = 1; i < rowCount; i++)
+            {
+                rowBoxes()[i].Change(true);
+            }
+
+            header().Should().Contain("mud-checkbox-true", "every row is selected");
+
+            rowBoxes()[0].Change(false);
+            header().Should().Contain("mud-checkbox-null", "a row was deselected again");
+        }
     }
 }
