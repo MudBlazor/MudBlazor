@@ -18,8 +18,7 @@ public partial class MudItem : MudComponentBase
     {
         get
         {
-            // Only the breakpoints that are set build a string.
-            // Passing the interpolated class as an argument builds it whether or not the condition holds, and most items set one breakpoint out of six.
+            // Only the breakpoints that are set build a string (#13738).
             var builder = new CssBuilder("mud-grid-item");
             if (xs != 0)
             {
