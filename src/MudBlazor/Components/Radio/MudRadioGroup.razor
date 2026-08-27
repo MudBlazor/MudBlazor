@@ -8,7 +8,7 @@
 
 <MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorId="@ErrorIdState.Value" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
-        <CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="true">
+        <CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="false">
             <CascadingValue TValue="bool" Name="ParentDisabled" Value="@GetDisabledState()">
                 <CascadingValue TValue="bool" Name="ParentReadOnly" Value="@GetReadOnlyState()">
                     <div role="radiogroup" aria-required="@Required.ToString().ToLowerInvariant()" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle">
