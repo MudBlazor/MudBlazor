@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -47,6 +48,21 @@ namespace MudBlazor
         private void OnRightToLeftParameterChange()
         {
             UserAttributes["dir"] = RightToLeft ? "rtl" : "ltr";
+        }
+
+        /// <inheritdoc />
+        protected override void BuildRenderTree(RenderTreeBuilder builder)
+        {
+            builder.OpenElement(0, "div");
+            builder.AddMultipleAttributes(1, UserAttributes!);
+            builder.AddAttribute(2, "class", Classname);
+            builder.AddAttribute(3, "style", Style);
+            builder.OpenComponent<CascadingValue<bool>>(4);
+            builder.AddComponentParameter(5, "Name", "RightToLeft");
+            builder.AddComponentParameter(6, "Value", RightToLeft);
+            builder.AddComponentParameter(7, "ChildContent", ChildContent);
+            builder.CloseComponent();
+            builder.CloseElement();
         }
     }
 }

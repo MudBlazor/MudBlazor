@@ -10,7 +10,8 @@
             ClickPropagation="false"
             @attributes="UserAttributes"
             @onclick="OnClickHandlerAsync"
-            @bind-Ref="ElementReference"
+            Ref="ElementReference"
+            RefChanged="_captureElementReference"
             tabindex="@(!GetDisabled() ? "0" : "-1")"
             aria-disabled="@(GetDisabled() ? "true" : "false")">
 

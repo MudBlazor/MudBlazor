@@ -107,9 +107,11 @@
     <TsAssetInputs Include="TScripts/**/*.ts" />
     <ScssAssetInputs Include="Styles/**/*.scss" />
     <BuildScriptInputs Include="build.mts" />
+    <BuildScriptInputs Include="bunfig.toml" />
+    <BuildScriptInputs Include="test-setup.ts" />
+    <BuildScriptInputs Include="tsconfig.json" />
     <BuildScriptInputs Include="../eslint.config.ts" />
     <BuildScriptInputs Include="../tsconfig.json" />
-    <BuildScriptInputs Include="tsconfig.json" />
     <WebAssetInputs Include="@(JsAssetInputs);@(TsAssetInputs);@(ScssAssetInputs);@(BuildScriptInputs);@(BunToolchainInputs)" />
     <UpToDateCheckInput Include="@(WebAssetInputs)" />
     <WebAssetOutputs Include="wwwroot/MudBlazor.min.js;wwwroot/MudBlazor.min.js.map;wwwroot/MudBlazor.min.css" />

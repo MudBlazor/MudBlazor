@@ -1475,10 +1475,10 @@ namespace MudBlazor
             {
                 UpdateFitContent();
             }
-            else if (firstRender)
+            else if (firstRender && (CanRenderValue || IsValueInList))
             {
-                // we need to render the initial Value which is not possible without the items
-                // which supply the RenderFragment. So in this case, a second render is necessary
+                // The first render runs before the shadow items register, so the value presenter could not resolve then.
+                // Only render again when the value now resolves to an item; otherwise the second pass rebuilds every item to produce the same output.
                 StateHasChanged();
             }
 

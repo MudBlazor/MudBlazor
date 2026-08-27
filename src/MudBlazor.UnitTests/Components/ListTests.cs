@@ -953,6 +953,36 @@ namespace MudBlazor.UnitTests.Components
             list.GetAttribute("aria-multiselectable").Should().Be("false");
         }
 
+        /// <summary>
+        /// Capturing an item's element reference must not cost that item a second render (#13519).
+        /// </summary>
+        [Test]
+        public void ListItems_RenderOnce_WhenElementReferenceIsCaptured()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
+
+            comp.FindComponents<MudListItem<string>>().Select(x => x.RenderCount).Should().AllBeEquivalentTo(1);
+        }
+
+        /// <summary>
+        /// An item still receives its element reference, so keyboard navigation can move focus onto it.
+        /// </summary>
+        [Test]
+        public async Task ListItem_FocusesCapturedElement()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
+            var cortado = comp.FindComponents<MudListItem<string>>()
+                .Single(x => x.Instance.Text == "Cortado").Instance;
+
+            var focus = async () => await comp.InvokeAsync(() => cortado.FocusAsync());
+
+            await focus.Should().NotThrowAsync();
+        }
+
         private static bool? CheckBoxValue(IRenderedComponent<ListMultiSelectionTest> comp, string text) =>
             comp.FindComponents<MudListItem<string>>()
                 .Single(x => x.Instance.Text == text)

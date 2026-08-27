@@ -26,8 +26,8 @@ namespace MudBlazor
             .AddClass($"mud-button-{Variant.ToStringFast(true)}-size-{Size.ToStringFast(true)}", AsButton)
             .AddClass($"mud-ripple", Ripple)
             .AddClass($"mud-ripple-icon", Ripple && !AsButton)
-            .AddClass($"mud-icon-button-size-{Size.ToStringFast(true)}", when: () => Size != Size.Medium)
-            .AddClass($"mud-icon-button-edge-{Edge.ToStringFast(true)}", when: () => Edge != Edge.False)
+            .AddClass($"mud-icon-button-size-{Size.ToStringFast(true)}", Size != Size.Medium)
+            .AddClass($"mud-icon-button-edge-{Edge.ToStringFast(true)}", Edge != Edge.False)
             .AddClass($"mud-button-disable-elevation", !DropShadow)
             .AddClass(Class)
             .Build();
