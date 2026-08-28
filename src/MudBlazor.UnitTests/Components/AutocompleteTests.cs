@@ -11,10 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
+using MudBlazor.Resources;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Autocomplete;
 using NUnit.Framework;
-using static MudBlazor.UnitTests.TestComponents.Autocomplete.AutocompleteSetParametersInitialization;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -875,9 +875,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Required_ValidatesOnBlur()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MudAutocomplete<string>>(a => a
                 .Add(x => x.Required, true)
-                .Add(x => x.RequiredError, "Required")
+                .Add(x => x.RequiredError, localizer[LanguageResource.MudFormComponent_Required])
                 .Add(x => x.DebounceInterval, 0)
                 .Add(x => x.SearchFunc, (s, t) => Task.FromResult<IEnumerable<string>>(new[] { "a", "b" })));
             var ac = comp.Instance;
@@ -890,7 +891,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 ac.Touched.Should().BeTrue("leaving an empty required autocomplete validates it (#5489)");
                 ac.HasErrors.Should().BeTrue();
-                ac.ValidationErrors.Should().Contain("Required");
+                ac.ValidationErrors.Should().Contain(localizer[LanguageResource.MudFormComponent_Required]);
             });
         }
 
@@ -900,9 +901,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Required_PreFilledValue_IsValidOnBlur()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MudAutocomplete<string>>(a => a
                 .Add(x => x.Required, true)
-                .Add(x => x.RequiredError, "Required")
+                .Add(x => x.RequiredError, localizer[LanguageResource.MudFormComponent_Required])
                 .Add(x => x.Value, "a")
                 .Add(x => x.DebounceInterval, 0)
                 .Add(x => x.SearchFunc, (s, t) => Task.FromResult<IEnumerable<string>>(new[] { "a", "b" })));
@@ -923,9 +925,10 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Required_NonImmediate_ValidatesOnBlur()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MudAutocomplete<string>>(a => a
                 .Add(x => x.Required, true)
-                .Add(x => x.RequiredError, "Required")
+                .Add(x => x.RequiredError, localizer[LanguageResource.MudFormComponent_Required])
                 .Add(x => x.Immediate, false)
                 .Add(x => x.DebounceInterval, 0)
                 .Add(x => x.SearchFunc, (s, t) => Task.FromResult<IEnumerable<string>>(new[] { "a", "b" })));
@@ -939,7 +942,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 ac.Touched.Should().BeTrue("leaving an empty required autocomplete validates it, even when Immediate is off (#5489)");
                 ac.HasErrors.Should().BeTrue();
-                ac.ValidationErrors.Should().Contain("Required");
+                ac.ValidationErrors.Should().Contain(localizer[LanguageResource.MudFormComponent_Required]);
             });
         }
 
@@ -1008,6 +1011,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Autocomplete_Should_SetRequiredTrue()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<AutocompleteRequiredTest>();
 
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
@@ -1016,7 +1020,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(autocomplete.ValidateAsync);
 
-            autocomplete.ValidationErrors.First().Should().Be("Required");
+            autocomplete.ValidationErrors.First().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         /// <summary>
