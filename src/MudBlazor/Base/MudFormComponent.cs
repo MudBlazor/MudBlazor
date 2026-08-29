@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
+using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities.Comparer;
 using MudBlazor.Utilities.Converter.Base;
@@ -88,7 +89,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
-        public string RequiredError { get; set; } = "Required";
+        public string RequiredError { get; set; } = string.Empty;
 
         /// <summary>
         /// The text displayed if the <see cref="Error"/> property is <c>true</c>.
@@ -962,6 +963,7 @@ namespace MudBlazor
 
         protected override Task OnInitializedAsync()
         {
+            RequiredError = string.IsNullOrEmpty(RequiredError) ? Localizer[LanguageResource.MudFormComponent_Required] : RequiredError;
             RegisterAsFormComponent();
             return base.OnInitializedAsync();
         }
