@@ -5809,6 +5809,37 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("th .sort-direction-icon")[1].ClassList.Contains("mud-direction-asc").Should().Be(false);
         }
 
+        /// <summary>
+        /// Ensures caller-provided sort definitions survive initial single-sort mode binding (#9021) but are cleared by later mode changes.
+        /// </summary>
+        [Test]
+        public async Task DataGridSortDefinitionsPreservedOnInitialSingleModeRender()
+        {
+            var items = new[]
+            {
+                new TestModel1("B", 42),
+                new TestModel1("A", 73),
+                new TestModel1("C", 33)
+            };
+            var sortDefinitions = new Dictionary<string, SortDefinition<TestModel1>>
+            {
+                ["Name"] = new("Name", false, 0, item => item.Name)
+            };
+
+            var dataGrid = Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.SortMode, SortMode.Single)
+                .Add(x => x.SortDefinitions, sortDefinitions));
+
+            dataGrid.Instance.SortDefinitions.Should().ContainKey("Name");
+            dataGrid.Instance.Sort(items).Select(x => x.Name).Should().ContainInOrder("A", "B", "C");
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SortMode, SortMode.Multiple));
+
+            dataGrid.Instance.SortDefinitions.Should().BeEmpty();
+            dataGrid.Instance.Sort(items).Should().ContainInOrder(items);
+        }
+
         [Test]
         public async Task DataGridParentAndChildSamePropertyNameSort()
         {
