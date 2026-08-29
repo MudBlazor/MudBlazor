@@ -16,6 +16,42 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class ListTests : BunitTest
     {
+        /// <summary>
+        /// List items install their own key interceptor by default.
+        /// </summary>
+        [Test]
+        public void ListItems_RegisterKeyInterceptorsByDefault()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+
+            Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
+
+            keyInterceptorService.ObserversCount.Should().Be(2);
+        }
+
+        /// <summary>
+        /// Items skip their key interceptor when keyboard handling is delegated to a parent component.
+        /// </summary>
+        [Test]
+        public async Task KeyboardDisabled_SkipsAndRemovesKeyInterceptor()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudListItem<string>>(parameters => parameters
+                .Add(x => x.KeyboardEnabled, false));
+
+            keyInterceptorService.ObserversCount.Should().Be(0);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.KeyboardEnabled, true));
+            keyInterceptorService.ObserversCount.Should().Be(1);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.KeyboardEnabled, false));
+            keyInterceptorService.ObserversCount.Should().Be(0);
+        }
+
         [Test]
         public async Task ListItem_RendersText_AndSecondaryText()
         {
@@ -769,6 +805,70 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [TestCase(1, "Alpha")]
+        [TestCase(-1, "Charlie")]
+        public async Task FocusAdjacentItem_WithDisabledCurrentItem_FocusesBoundaryItem(int direction, string expectedText)
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Alpha"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Bravo").Add(x => x.Disabled, true))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Charlie")));
+            var list = comp.Instance;
+            var currentItem = comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Bravo").Instance;
+
+            await comp.InvokeAsync(() => list.FocusAdjacentItemAsync(currentItem, direction));
+
+            await comp.WaitForAssertionAsync(() => comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == expectedText)
+                .Find("div.mud-list-item").GetAttribute("tabindex").Should().Be("0"));
+        }
+
+        [Test]
+        [TestCase(1, "Alpha")]
+        [TestCase(-1, "Charlie")]
+        public async Task FocusAdjacentItem_WithUnregisteredCurrentItem_FocusesBoundaryItem(int direction, string expectedText)
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Alpha"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Charlie")));
+            var otherList = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Unregistered")));
+            var currentItem = otherList.FindComponent<MudListItem<string>>().Instance;
+
+            await comp.InvokeAsync(() => comp.Instance.FocusAdjacentItemAsync(currentItem, direction));
+
+            await comp.WaitForAssertionAsync(() => comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == expectedText)
+                .Find("div.mud-list-item").GetAttribute("tabindex").Should().Be("0"));
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(-1)]
+        public async Task FocusAdjacentItem_WithNoEnabledItems_DoesNothing(int direction)
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Alpha").Add(x => x.Disabled, true))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Bravo").Add(x => x.Disabled, true)));
+
+            await comp.Instance.FocusAdjacentItemAsync(comp.FindComponents<MudListItem<string>>()[0].Instance, direction);
+
+            comp.FindAll("div.mud-list-item").Should().OnlyContain(item => item.GetAttribute("tabindex") == "-1");
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task FocusBoundaryItem_WithNoEnabledItems_DoesNothing(bool first)
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Alpha").Add(x => x.Disabled, true))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Bravo").Add(x => x.Disabled, true)));
+
+            await comp.Instance.FocusBoundaryItemAsync(first);
+
+            comp.FindAll("div.mud-list-item").Should().OnlyContain(item => item.GetAttribute("tabindex") == "-1");
+        }
+
+        [Test]
         public async Task Keyboard_Space_TogglesMultiSelection_WithCheckboxesHiddenFromTabOrder()
         {
             var comp = Context.Render<ListAccessibilityTest>(x => x.Add(c => c.SelectionMode, SelectionMode.MultiSelection));
@@ -862,6 +962,36 @@ namespace MudBlazor.UnitTests.Components
             var list = comp.Find("div.mud-list");
             list.GetAttribute("role").Should().Be("group");
             list.GetAttribute("aria-multiselectable").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Capturing an item's element reference must not cost that item a second render (#13519).
+        /// </summary>
+        [Test]
+        public void ListItems_RenderOnce_WhenElementReferenceIsCaptured()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
+
+            comp.FindComponents<MudListItem<string>>().Select(x => x.RenderCount).Should().AllBeEquivalentTo(1);
+        }
+
+        /// <summary>
+        /// An item still receives its element reference, so keyboard navigation can move focus onto it.
+        /// </summary>
+        [Test]
+        public async Task ListItem_FocusesCapturedElement()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
+            var cortado = comp.FindComponents<MudListItem<string>>()
+                .Single(x => x.Instance.Text == "Cortado").Instance;
+
+            var focus = async () => await comp.InvokeAsync(() => cortado.FocusAsync());
+
+            await focus.Should().NotThrowAsync();
         }
 
         private static bool? CheckBoxValue(IRenderedComponent<ListMultiSelectionTest> comp, string value) =>

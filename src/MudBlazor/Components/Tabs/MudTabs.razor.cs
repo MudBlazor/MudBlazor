@@ -925,10 +925,10 @@ namespace MudBlazor
         private string GetTabClass(MudTabPanel panel)
         {
             var tabClass = new CssBuilder("mud-tab")
-              .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
+              .AddClass($"mud-tab-active", panel == ActivePanel)
               .AddClass($"mud-disabled", IsPanelDisabled(panel))
               .AddClass($"mud-ripple", Ripple)
-              .AddClass(ActiveTabClass, when: () => panel == ActivePanel)
+              .AddClass(ActiveTabClass, panel == ActivePanel)
               .AddClass(TabButtonsClass)
               .AddClass(panel.Classname)
               .Build();

@@ -844,8 +844,9 @@ namespace MudBlazor
                     //Warning. Here the Converter was not set yet
                     if (MultiSelectionTextFunc != null)
                     {
-                        await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                            selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
+                        var convertedValues = _selectedValues.Select(ConvertSet).ToList();
+                        await SetCustomizedTextAsync(string.Join(Delimiter, convertedValues),
+                            selectedConvertedValues: convertedValues,
                             multiSelectionTextFunc: MultiSelectionTextFunc);
                     }
                     else
@@ -1016,8 +1017,9 @@ namespace MudBlazor
 
             if (MultiSelectionTextFunc != null)
             {
-                await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                    selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
+                var convertedValues = _selectedValues.Select(ConvertSet).ToList();
+                await SetCustomizedTextAsync(string.Join(Delimiter, convertedValues),
+                    selectedConvertedValues: convertedValues,
                     multiSelectionTextFunc: MultiSelectionTextFunc);
             }
             else
@@ -1473,10 +1475,10 @@ namespace MudBlazor
             {
                 UpdateFitContent();
             }
-            else if (firstRender)
+            else if (firstRender && (CanRenderValue || IsValueInList))
             {
-                // we need to render the initial Value which is not possible without the items
-                // which supply the RenderFragment. So in this case, a second render is necessary
+                // The first render runs before the shadow items register, so the value presenter could not resolve then.
+                // Only render again when the value now resolves to an item; otherwise the second pass rebuilds every item to produce the same output.
                 StateHasChanged();
             }
 
@@ -1602,11 +1604,15 @@ namespace MudBlazor
             // a comma separated list of selected values
             if (MultiSelectionTextFunc != null)
             {
-                return MultiSelection
-                    ? SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                        selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
-                        multiSelectionTextFunc: MultiSelectionTextFunc)
-                    : base.UpdateTextPropertyAsync(updateValue);
+                if (MultiSelection)
+                {
+                    var convertedValues = _selectedValues.Select(ConvertSet).ToList();
+                    return SetCustomizedTextAsync(string.Join(Delimiter, convertedValues),
+                        selectedConvertedValues: convertedValues,
+                        multiSelectionTextFunc: MultiSelectionTextFunc);
+                }
+
+                return base.UpdateTextPropertyAsync(updateValue);
             }
 
             return MultiSelection

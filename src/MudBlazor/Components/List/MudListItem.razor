@@ -22,7 +22,8 @@
             target="@Target"
             PreventDefault="@GetPreventDefault()"
             ClickPropagation="@GetClickPropagation()"
-            @bind-Ref="_elementReference">
+            Ref="_elementReference"
+            RefChanged="_captureElementReference">
 
     @if (AvatarContent is not null)
     {

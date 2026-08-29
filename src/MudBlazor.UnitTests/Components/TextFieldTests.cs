@@ -11,6 +11,7 @@ using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Extensions;
+using MudBlazor.Resources;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Field;
 using MudBlazor.UnitTests.TestComponents.Form;
@@ -577,13 +578,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task RequiredTextField_Should_ReuseGeneratedErrorIdWhileInvalid()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MudTextField<string>>(parameters => parameters.Add(p => p.Required, true));
 
             await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
 
             var firstErrorId = comp.Find("input").GetAttribute("aria-describedby");
             firstErrorId.Should().NotBeNullOrWhiteSpace();
-            comp.Find($"[id='{firstErrorId}']").TextContent.Should().Be("Required");
+            comp.Find($"[id='{firstErrorId}']").TextContent.Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
 
@@ -1305,6 +1307,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextField_OnlyValidateIfDirty_WithNonDefaultInitialValue_ShouldNotValidateOnBlur()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Value, string.Empty)
                 .Add(p => p.Required, true)
@@ -1320,12 +1323,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").ChangeAsync("");
             await comp.Find("input").BlurAsync();
             comp.FindAll("div.mud-input-error").Count.Should().BeGreaterThan(0);
-            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         [Test]
         public async Task TextField_OnlyValidateIfDirty_Is_False_Should_HaveInputErrorWhenFocusChanged()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MudTextField<int?>>(parameters => parameters
                 .Add(p => p.Required, true)
                 .Add(p => p.OnlyValidateIfDirty, false));
@@ -1334,7 +1338,7 @@ namespace MudBlazor.UnitTests.Components
             // user does not change input value but changes focus
             await comp.Find("input").BlurAsync();
             comp.FindAll("div.mud-input-error").Count.Should().Be(3);
-            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             // user puts in a invalid integer value
             await comp.Find("input").ChangeAsync("invalid");
@@ -1349,7 +1353,7 @@ namespace MudBlazor.UnitTests.Components
             // user does not change input value but changes focus
             await comp.Find("input").BlurAsync();
             comp.FindAll("div.mud-input-error").Count.Should().Be(3);
-            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             // user corrects input
             await comp.Find("input").ChangeAsync(55);

@@ -22,9 +22,11 @@ namespace MudBlazor
         internal string ElementId { get; } = Identifier.Create("list-item");
 
         private readonly ParameterState<bool> _expandedState;
+        private readonly EventCallback<ElementReference> _captureElementReference;
 
         public MudListItem()
         {
+            _captureElementReference = MudElement.CaptureRef(reference => _elementReference = reference);
             using var registerScope = CreateRegisterScope();
             _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
                 .WithParameter(() => Expanded)
@@ -141,6 +143,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Ripple { get; set; } = true;
+
+        /// <summary>
+        /// Allows this item to handle keyboard input.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Set to <c>false</c> when a parent component owns keyboard navigation, which avoids a key interceptor per item.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool KeyboardEnabled { get; set; } = true;
 
         /// <summary>
         /// The icon to display for this list item.
@@ -304,39 +316,43 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            var effectiveElementId = GetEffectiveElementId(ElementId);
+            var effectiveElementId = KeyboardEnabled ? GetEffectiveElementId(ElementId) : null;
 
-            if (firstRender || !string.Equals(_subscribedElementId, effectiveElementId, StringComparison.Ordinal))
+            if (!string.Equals(_subscribedElementId, effectiveElementId, StringComparison.Ordinal))
             {
                 if (!string.IsNullOrEmpty(_subscribedElementId))
                 {
                     await KeyInterceptorService.UnsubscribeAsync(_subscribedElementId);
+                    _subscribedElementId = null;
                 }
 
-                var options = new KeyInterceptorOptions(
-                    [
-                        // prevent scrolling page
-                        new(" ", preventDown: "key+none", preventUp: "key+none"),
-                        // prevent scrolling page and move focus to previous item
-                        new("ArrowUp", preventDown: "key+none"),
-                        // prevent scrolling page and move focus to next item
-                        new("ArrowDown", preventDown: "key+none"),
-                        new("Home", preventDown: "key+none"),
-                        new("End", preventDown: "key+none"),
-                        new("Enter", preventDown: "key+none"),
-                        new("NumpadEnter", preventDown: "key+none")
-                    ]);
+                if (effectiveElementId is not null)
+                {
+                    var options = new KeyInterceptorOptions(
+                        [
+                            // prevent scrolling page
+                            new(" ", preventDown: "key+none", preventUp: "key+none"),
+                            // prevent scrolling page and move focus to previous item
+                            new("ArrowUp", preventDown: "key+none"),
+                            // prevent scrolling page and move focus to next item
+                            new("ArrowDown", preventDown: "key+none"),
+                            new("Home", preventDown: "key+none"),
+                            new("End", preventDown: "key+none"),
+                            new("Enter", preventDown: "key+none"),
+                            new("NumpadEnter", preventDown: "key+none")
+                        ]);
 
-                await KeyInterceptorService.SubscribeAsync(effectiveElementId, options, keys => keys
-                    .When(CanHandleKeys, builder => builder
-                        .OnKeyDown("ArrowDown", HandleArrowDownAsync)
-                        .OnKeyDown("ArrowUp", HandleArrowUpAsync)
-                        .OnKeyDown("Home", HandleHomeAsync)
-                        .OnKeyDown("End", HandleEndAsync)
-                        .OnKeyDown(" ", HandleSpaceAsync)
-                        .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)));
+                    await KeyInterceptorService.SubscribeAsync(effectiveElementId, options, keys => keys
+                        .When(CanHandleKeys, builder => builder
+                            .OnKeyDown("ArrowDown", HandleArrowDownAsync)
+                            .OnKeyDown("ArrowUp", HandleArrowUpAsync)
+                            .OnKeyDown("Home", HandleHomeAsync)
+                            .OnKeyDown("End", HandleEndAsync)
+                            .OnKeyDown(" ", HandleSpaceAsync)
+                            .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)));
 
-                _subscribedElementId = effectiveElementId;
+                    _subscribedElementId = effectiveElementId;
+                }
             }
 
             await base.OnAfterRenderAsync(firstRender);

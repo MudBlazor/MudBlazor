@@ -88,6 +88,21 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
         }
 
+        /// <summary>
+        /// Menu items still receive their element reference, which submenu positioning and focus rely on.
+        /// </summary>
+        [Test]
+        public async Task OpenMenu_ItemsCaptureElementReference()
+        {
+            var comp = Context.Render<MenuTest1>();
+
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
+
+            var items = comp.FindComponents<MudMenuItem>();
+            items.Should().NotBeEmpty();
+            items.Select(x => x.Instance.ElementReference.Id).Should().OnlyContain(x => !string.IsNullOrEmpty(x));
+        }
+
         [Test]
         public async Task OpenMenu_ClickSecondItem_CheckClosed()
         {
@@ -1211,6 +1226,34 @@ namespace MudBlazor.UnitTests.Components
             // Verify that the component is using the global defaults
             // Modal should be null (using PopoverOptions defaults)
             menu.Instance.Modal.Should().BeNull();
+        }
+
+        [Test]
+        public async Task Menu_RegisterItem_IgnoresDuplicatesAndResetsAfterClose()
+        {
+            var comp = Context.Render<MudMenu>();
+            var menu = comp.Instance;
+            var first = new object();
+            var second = new object();
+
+            menu.RegisterItem(first);
+            menu.RegisterItem(first);
+            menu.RegisterItem(second);
+
+            var menuItems = (IReadOnlyList<object>)typeof(MudMenu)
+                .GetField("_menuItems", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(menu)!;
+
+            menuItems.Should().Equal(first, second);
+
+            await comp.InvokeAsync(menu.CloseMenuAsync);
+
+            menuItems.Should().BeEmpty();
+
+            menu.RegisterItem(first);
+            menu.RegisterItem(first);
+            menu.RegisterItem(second);
+            menuItems.Should().Equal(first, second);
         }
 
         [Test]

@@ -582,12 +582,11 @@ namespace MudBlazor
             {
                 var forceTextUpdate = _forceTextUpdate;
                 _forceTextUpdate = false;
-                // Do not reformat the displayed text from Value on this input's own Immediate ValueChanged
-                // echo (the @bind round-trip mid-typing). On Blazor Server the echo can land between
-                // keystrokes and would reformat while the user is typing, corrupting input (#13002; also
-                // completes #13266/#13250 on Server, which #13311 only fixed for the synchronous case).
-                // External value changes, non-Immediate commits, and explicit forced updates still refresh.
-                if (forceTextUpdate || !(Immediate && arg.IsChildOriginatedChange))
+                // Do not reformat the displayed text from Value on this input's own live ValueChanged echo, the @bind round-trip mid-typing.
+                // On Blazor Server the echo can land between keystrokes and would reformat while the user is typing, corrupting input (#13002; also completes #13266/#13250 on Server, which #13311 only fixed for the synchronous case).
+                // A debounced input commits from oninput too, so it needs the same suppression even though its own Immediate parameter is false.
+                // External value changes, committed non-live changes, and explicit forced updates still refresh.
+                if (forceTextUpdate || !(EffectiveImmediate && arg.IsChildOriginatedChange))
                 {
                     await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
                 }
