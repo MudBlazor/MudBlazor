@@ -25,8 +25,8 @@ namespace MudBlazor.UnitTests.Components
             var keyInterceptorService = Context.AddKeyInterceptorService();
 
             Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso"))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Espresso"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Cortado")));
 
             keyInterceptorService.ObserversCount.Should().Be(2);
         }
@@ -295,8 +295,8 @@ namespace MudBlazor.UnitTests.Components
         public void ValueType_WithoutSelectedValue_SelectsNothing()
         {
             var comp = Context.Render<MudList<TestEnum>>(builder => builder
-                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.Zero).Add(x => x.Text, "Zero"))
-                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.One).Add(x => x.Text, "One")));
+                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.Zero).AddChildContent("Zero"))
+                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.One).AddChildContent("One")));
 
             comp.FindAll("div.mud-list-item.mud-selected-item").Should().BeEmpty();
         }
@@ -307,8 +307,8 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudList<TestEnum>>(builder => builder
                 .Add(x => x.SelectedValue, TestEnum.Zero)
-                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.Zero).Add(x => x.Text, "Zero"))
-                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.One).Add(x => x.Text, "One")));
+                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.Zero).AddChildContent("Zero"))
+                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.One).AddChildContent("One")));
 
             var selected = comp.FindAll("div.mud-list-item.mud-selected-item");
             selected.Count.Should().Be(1);
@@ -322,8 +322,8 @@ namespace MudBlazor.UnitTests.Components
             var raised = new List<TestEnum>();
             var comp = Context.Render<MudList<TestEnum>>(builder => builder
                 .Add(x => x.SelectedValueChanged, v => raised.Add(v))
-                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.Zero).Add(x => x.Text, "Zero"))
-                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.One).Add(x => x.Text, "One")));
+                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.Zero).AddChildContent("Zero"))
+                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.One).AddChildContent("One")));
 
             comp.FindAll("div.mud-list-item.mud-selected-item").Should().BeEmpty();
 
@@ -346,8 +346,8 @@ namespace MudBlazor.UnitTests.Components
             var raised = new List<TestEnum>();
             var comp = Context.Render<MudList<TestEnum>>(builder => builder
                 .Add(x => x.SelectedValueChanged, v => raised.Add(v))
-                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.Zero).Add(x => x.Text, "Zero"))
-                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.One).Add(x => x.Text, "One")));
+                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.Zero).AddChildContent("Zero"))
+                .AddChildContent<MudListItem<TestEnum>>(item => item.Add(x => x.Value, TestEnum.One).AddChildContent("One")));
 
             await comp.FindAll("div.mud-list-item")[1].ClickAsync(new MouseEventArgs());
 
@@ -807,36 +807,36 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         [TestCase(1, "Alpha")]
         [TestCase(-1, "Charlie")]
-        public async Task FocusAdjacentItem_WithDisabledCurrentItem_FocusesBoundaryItem(int direction, string expectedText)
+        public async Task FocusAdjacentItem_WithDisabledCurrentItem_FocusesBoundaryItem(int direction, string expectedValue)
         {
             var comp = Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Alpha"))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Bravo").Add(x => x.Disabled, true))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Charlie")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Alpha"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Bravo").Add(x => x.Disabled, true))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Charlie")));
             var list = comp.Instance;
-            var currentItem = comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Bravo").Instance;
+            var currentItem = comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Value == "Bravo").Instance;
 
             await comp.InvokeAsync(() => list.FocusAdjacentItemAsync(currentItem, direction));
 
-            await comp.WaitForAssertionAsync(() => comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == expectedText)
+            await comp.WaitForAssertionAsync(() => comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Value == expectedValue)
                 .Find("div.mud-list-item").GetAttribute("tabindex").Should().Be("0"));
         }
 
         [Test]
         [TestCase(1, "Alpha")]
         [TestCase(-1, "Charlie")]
-        public async Task FocusAdjacentItem_WithUnregisteredCurrentItem_FocusesBoundaryItem(int direction, string expectedText)
+        public async Task FocusAdjacentItem_WithUnregisteredCurrentItem_FocusesBoundaryItem(int direction, string expectedValue)
         {
             var comp = Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Alpha"))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Charlie")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Alpha"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Charlie")));
             var otherList = Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Unregistered")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Unregistered")));
             var currentItem = otherList.FindComponent<MudListItem<string>>().Instance;
 
             await comp.InvokeAsync(() => comp.Instance.FocusAdjacentItemAsync(currentItem, direction));
 
-            await comp.WaitForAssertionAsync(() => comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == expectedText)
+            await comp.WaitForAssertionAsync(() => comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Value == expectedValue)
                 .Find("div.mud-list-item").GetAttribute("tabindex").Should().Be("0"));
         }
 
@@ -846,8 +846,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task FocusAdjacentItem_WithNoEnabledItems_DoesNothing(int direction)
         {
             var comp = Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Alpha").Add(x => x.Disabled, true))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Bravo").Add(x => x.Disabled, true)));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Alpha").Add(x => x.Disabled, true))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Bravo").Add(x => x.Disabled, true)));
 
             await comp.Instance.FocusAdjacentItemAsync(comp.FindComponents<MudListItem<string>>()[0].Instance, direction);
 
@@ -860,8 +860,8 @@ namespace MudBlazor.UnitTests.Components
         public async Task FocusBoundaryItem_WithNoEnabledItems_DoesNothing(bool first)
         {
             var comp = Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Alpha").Add(x => x.Disabled, true))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Bravo").Add(x => x.Disabled, true)));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Alpha").Add(x => x.Disabled, true))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Bravo").Add(x => x.Disabled, true)));
 
             await comp.Instance.FocusBoundaryItemAsync(first);
 
@@ -971,8 +971,8 @@ namespace MudBlazor.UnitTests.Components
         public void ListItems_RenderOnce_WhenElementReferenceIsCaptured()
         {
             var comp = Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso"))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Espresso"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Cortado")));
 
             comp.FindComponents<MudListItem<string>>().Select(x => x.RenderCount).Should().AllBeEquivalentTo(1);
         }
@@ -984,10 +984,10 @@ namespace MudBlazor.UnitTests.Components
         public async Task ListItem_FocusesCapturedElement()
         {
             var comp = Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso"))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Espresso"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Value, "Cortado")));
             var cortado = comp.FindComponents<MudListItem<string>>()
-                .Single(x => x.Instance.Text == "Cortado").Instance;
+                .Single(x => x.Instance.Value == "Cortado").Instance;
 
             var focus = async () => await comp.InvokeAsync(() => cortado.FocusAsync());
 
