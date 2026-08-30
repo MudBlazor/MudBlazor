@@ -1,11 +1,9 @@
 ﻿
-using System.Threading.Tasks;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Interfaces;
-using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.Shared.Mocks;
+using MudBlazor.Resources;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -23,11 +21,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void DefaultValues()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MudPageContentNavigation>();
 
             comp.Instance.ActiveSection.Should().BeNull();
             comp.Instance.Sections.Should().BeEmpty();
-            comp.Instance.Headline.Should().Be("Contents");
+            comp.Instance.Headline.Should().Be(localizer[LanguageResource.MudPageContentNavigation_NavMenu]);
             comp.Instance.SectionClassSelector.Should().BeNullOrEmpty();
 
             comp.Nodes.Should().ContainSingle();

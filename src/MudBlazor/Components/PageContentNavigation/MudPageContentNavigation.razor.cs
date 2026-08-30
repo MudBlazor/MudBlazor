@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
+using MudBlazor.Resources;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -20,6 +21,9 @@ namespace MudBlazor
         [Inject]
         private IScrollSpyFactory ScrollSpyFactory { get; set; } = null!;
 
+        [Inject]
+        private InternalMudLocalizer Localizer { get; set; } = null!;
+
         /// <summary>
         /// The displayed section within the MudPageContentNavigation
         /// </summary>
@@ -34,7 +38,7 @@ namespace MudBlazor
         /// The text displayed about the section links. Defaults to "Contents"
         /// </summary>
         [Parameter]
-        public string Headline { get; set; } = "Contents";
+        public string Headline { get; set; } = string.Empty;
 
         /// <summary>
         /// The CSS selector used to identify the scroll container
@@ -162,6 +166,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            Headline = string.IsNullOrEmpty(Headline) ? Localizer[LanguageResource.MudPageContentNavigation_NavMenu] : Headline;
             _scrollSpy = ScrollSpyFactory.Create();
         }
 
