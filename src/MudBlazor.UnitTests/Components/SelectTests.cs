@@ -886,6 +886,7 @@ namespace MudBlazor.UnitTests.Components
             var conversionCount = 0;
             var countingConversions = false;
             IReadOnlyList<string> capturedValues = null;
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var provider = Context.Render<MudPopoverProvider>();
             var comp = Context.Render<MudSelect<string>>(parameters => parameters
                 .Add(x => x.MultiSelection, true)
@@ -918,6 +919,7 @@ namespace MudBlazor.UnitTests.Components
             conversionCount.Should().Be(2);
             capturedValues.Should().Equal("one", "two");
             select.ReadText.Should().Be("one|two");
+            select.SelectAllText.Should().Be(localizer[LanguageResource.MudSelect_SelectAll]);
         }
 
         /// <summary>
@@ -992,6 +994,7 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>();
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
+            select.Instance.SelectAllText.Should().Be("Select all felines");
             // Open the menu
             await input.MouseDownAsync();
             menu.ClassList.Should().Contain("mud-popover-open");
@@ -1027,6 +1030,7 @@ namespace MudBlazor.UnitTests.Components
             var select = comp.FindComponent<MudSelect<string>>();
             var menu = comp.Find("div.mud-popover");
             var input = comp.Find("div.mud-input-control");
+            select.Instance.SelectAllText.Should().Be("Select all felines");
             // Open the menu
             await input.MouseDownAsync();
             menu.ClassList.Should().Contain("mud-popover-open");

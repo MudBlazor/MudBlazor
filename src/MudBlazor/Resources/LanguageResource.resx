@@ -270,6 +270,9 @@
   <data name="MudChip_Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="MudSelect_SelectAll" xml:space="preserve">
+    <value>Select all</value>
+  </data>
   <data name="MudColorPicker_Close" xml:space="preserve">
     <value>Close</value>
   </data>
