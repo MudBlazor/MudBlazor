@@ -90,7 +90,7 @@
             "rangeStrategy": "pin"
         },
         {
-            "description": "Everything that feeds the Bun asset build moves as one branch: the pinned dev dependencies in package.json, the BunVersion that selects the Bun binary, and the BunDotNet.Cli tool that fetches it. Splitting them let two open PRs rewrite bun.lock at the same time, so merging either one left the other stale. The Monday window and the three-day grace period trade a few days of latency for a single reviewable PR that skips releases pulled in their first days. groupSingleUpdates keeps the group title on the weeks only one package moves.",
+            "description": "Everything that feeds the Bun asset build moves as one branch: the pinned dev dependencies in package.json, the BunVersion that selects the Bun binary, and the BunDotNet.Cli tool that fetches it. Splitting them let two open PRs rewrite bun.lock at the same time, so merging either one left the other stale. The window is the six hours after midnight UTC on Saturday, wide enough to survive a missed Renovate run and closing before the daily AutoTriage sweep at 06:00, so the PR is waiting rather than landing mid-review. With the three-day grace period that trades a few days of latency for a single reviewable PR that skips releases pulled in their first days. groupSingleUpdates keeps the group title on the weeks only one package moves.",
             "matchFileNames": [
                 "src/package.json",
                 "src/Directory.Build.props",
@@ -100,7 +100,7 @@
             "groupName": "bun",
             "groupSlug": "bun",
             "schedule": [
-                "* 0-3 * * 1"
+                "* 0-5 * * 6"
             ],
             "minimumReleaseAge": "3 days",
             "groupSingleUpdates": true,
@@ -125,6 +125,17 @@
             "separateMultipleMajor": false
         },
         {
+            "description": "The Bun group is scoped by file, and .config/dotnet-tools.json is a nuget manifest, so the nuget lock file maintenance update for it would otherwise inherit the Bun group name and grace period. That splits it away from the rest of the nuget lock file work and pins a stability check yellow forever, because a maintenance update carries no release timestamp. Reset every maintenance update to Renovate's own defaults here, leaving the nuget lock file work on the cadence it had before the Bun group existed; the rule below opts only the Bun lock file back in.",
+            "matchUpdateTypes": [
+                "lockFileMaintenance"
+            ],
+            "groupName": null,
+            "minimumReleaseAge": null,
+            "schedule": [
+                "before 4am on monday"
+            ]
+        },
+        {
             "description": "Renovate refuses to put lock file maintenance in a branch with any other update type, so this is the one Bun PR that cannot join the group above. It is also the only thing that ever moves a transitive in bun.lock, because the bun manager does not implement updateLockedDependency. Clearing minimumReleaseAge is required, not cosmetic: a maintenance update carries no release timestamp, so inheriting the group's grace period would pin a stability status check to yellow forever. constraints.bun must keep tracking BunVersion: maintenance regenerates bun.lock from scratch, and a newer bun writes lockfileVersion 2, which the pinned bun cannot read.",
             "matchUpdateTypes": [
                 "lockFileMaintenance"
@@ -135,7 +146,7 @@
             "groupName": "bun lock file",
             "groupSlug": "bun-lock-file",
             "schedule": [
-                "* 0-3 1-7 * 1"
+                "* 0-5 1-7 * 6"
             ],
             "minimumReleaseAge": null,
             "groupSingleUpdates": false,
