@@ -90,6 +90,16 @@
             "rangeStrategy": "pin"
         },
         {
+            "description": "constraints.bun is already owned by the second custom manager at the end of this file, which reads it through the npm datasource so it resolves to the same version as BunVersion. Renovate 44 also ships a built-in renovate-config manager that reads the same line as a containerbase tool constraint from github-releases, so one field ended up with two owners in one branch, resolving against two different release feeds. Those feeds do disagree: the GitHub release is cut before the npm publish, sometimes by an hour or more, and 1.1.23 was released on GitHub and never published to npm at all. When they disagree Renovate keeps the built-in answer, drops the custom one with an info-level log line that reaches neither the pull request nor the dashboard, and the commit then sets constraints.bun to a version BunVersion is not moving to. Disable the one dependency rather than the manager, which stays useful for a pinned remote preset or another tool constraint added here later. matchDepNames is what makes this match: the dependency's package name is oven-sh/bun, so matchPackageNames would silently never fire.",
+            "matchManagers": [
+                "renovate-config"
+            ],
+            "matchDepNames": [
+                "bun"
+            ],
+            "enabled": false
+        },
+        {
             "description": "Everything that feeds the Bun asset build moves as one branch: the pinned dev dependencies in package.json, the BunVersion that selects the Bun binary, and the BunDotNet.Cli tool that fetches it. Splitting them let two open PRs rewrite bun.lock at the same time, so merging either one left the other stale. The window is the six hours after midnight UTC on Saturday, wide enough to survive a missed Renovate run and closing before the daily AutoTriage sweep at 06:00, so the PR is waiting rather than landing mid-review. With the three-day grace period that trades a few days of latency for a single reviewable PR that skips releases pulled in their first days. groupSingleUpdates keeps the group title on the weeks only one package moves.",
             "matchFileNames": [
                 "src/package.json",
@@ -125,12 +135,13 @@
             "separateMultipleMajor": false
         },
         {
-            "description": "The Bun group is scoped by file, and .config/dotnet-tools.json is a nuget manifest, so the nuget lock file maintenance update for it would otherwise inherit the Bun group name and grace period. That splits it away from the rest of the nuget lock file work and pins a stability check yellow forever, because a maintenance update carries no release timestamp. Reset every maintenance update to Renovate's own defaults here, leaving the nuget lock file work on the cadence it had before the Bun group existed; the rule below opts only the Bun lock file back in.",
+            "description": "The Bun group is scoped by file, and .config/dotnet-tools.json is a nuget manifest, so the nuget lock file maintenance update for it would otherwise inherit the Bun group name, grace period and reviewer. The group name splits it away from the rest of the nuget lock file work, and the grace period pins a stability check yellow forever because a maintenance update carries no release timestamp. The reviewer has to be cleared by hand as well: it is not a group setting, so clearing the group name leaves it on the update, and whether it reaches the pull request depends on which manifest the shared nuget branch happens to take its settings from. Clear it here rather than resting on that ordering. groupSlug and groupSingleUpdates need no reset because Renovate only reads them while a group name is set, and an empty list clears reviewers because Renovate replaces that option rather than merging it; a merged list such as addLabels would need null instead. This leaves the nuget lock file work on the cadence it had before the Bun group existed; the rule below opts only the Bun lock file back in.",
             "matchUpdateTypes": [
                 "lockFileMaintenance"
             ],
             "groupName": null,
             "minimumReleaseAge": null,
+            "reviewers": [],
             "schedule": [
                 "before 4am on monday"
             ]
