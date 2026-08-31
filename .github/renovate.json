@@ -12,6 +12,7 @@
         "build"
     ],
     "commitMessagePrefix": "Build: ",
+    "timezone": "Etc/UTC",
     "lockFileMaintenance": {
         "enabled": true
     },
@@ -82,31 +83,60 @@
             "enabled": false
         },
         {
-            "description": "Group Bun toolchain updates. BunDotNet.Cli is pinned in .config/dotnet-tools.json, which the built-in nuget manager reads.",
+            "description": "eslint and sass decide the bytes in MudBlazor.min.js and MudBlazor.min.css, so pin them rather than tracking a range.",
+            "matchManagers": [
+                "bun"
+            ],
+            "rangeStrategy": "pin"
+        },
+        {
+            "description": "Everything that feeds the Bun asset build moves as one branch: the pinned dev dependencies in package.json, the BunVersion that selects the Bun binary, and the BunDotNet.Cli tool that fetches it. Splitting them let two open PRs rewrite bun.lock at the same time, so merging either one left the other stale. The Monday window and the three-day grace period trade a few days of latency for a single reviewable PR that skips releases pulled in their first days. groupSingleUpdates keeps the group title on the weeks only one package moves.",
+            "matchFileNames": [
+                "src/package.json",
+                "src/Directory.Build.props",
+                ".config/dotnet-tools.json",
+                ".github/renovate.json"
+            ],
+            "groupName": "bun",
+            "groupSlug": "bun",
+            "schedule": [
+                "* 0-3 * * 1"
+            ],
+            "minimumReleaseAge": "3 days",
+            "groupSingleUpdates": true,
+            "reviewers": [
+                "meenzen"
+            ]
+        },
+        {
+            "description": "Bun and the tool that downloads it are the same release, so a major arrives as one bump rather than a separate PR. This stays off the npm packages above: clearing separateMajorMinor collapses the version lookup to a single latest bucket, so a breaking sass or typescript major would suppress the safe patch on the current line and hold the weekly PR red.",
             "matchPackageNames": [
                 "bun",
                 "BunDotNet.Cli"
             ],
             "matchFileNames": [
                 "src/Directory.Build.props",
-                ".config/dotnet-tools.json"
+                ".config/dotnet-tools.json",
+                ".github/renovate.json"
             ],
-            "groupName": "bun toolchain",
-            "groupSlug": "bun-toolchain",
             "separateMajorMinor": false,
-            "separateMultipleMajor": false,
-            "reviewers": [
-                "meenzen"
-            ]
+            "separateMultipleMajor": false
         },
         {
-            "description": "eslint and sass decide the bytes in MudBlazor.min.js and MudBlazor.min.css, so pin them. Lock file maintenance is enabled at the top level, where Renovate actually reads it, and refreshes the transitives that pinning cannot reach. constraints.bun must track BunVersion: lock file maintenance regenerates bun.lock from scratch, and a newer bun writes lockfileVersion 2, which the pinned bun cannot read.",
-            "matchManagers": [
-                "bun"
+            "description": "Renovate refuses to put lock file maintenance in a branch with any other update type, so this is the one Bun PR that cannot join the group above. It is also the only thing that ever moves a transitive in bun.lock, because the bun manager does not implement updateLockedDependency. Clearing minimumReleaseAge is required, not cosmetic: a maintenance update carries no release timestamp, so inheriting the group's grace period would pin a stability status check to yellow forever. constraints.bun must keep tracking BunVersion: maintenance regenerates bun.lock from scratch, and a newer bun writes lockfileVersion 2, which the pinned bun cannot read.",
+            "matchUpdateTypes": [
+                "lockFileMaintenance"
             ],
-            "rangeStrategy": "pin",
-            "groupName": "bun dependencies",
-            "groupSlug": "bun-dependencies",
+            "matchFileNames": [
+                "src/package.json"
+            ],
+            "groupName": "bun lock file",
+            "groupSlug": "bun-lock-file",
+            "schedule": [
+                "* 0-3 1-7 * 1"
+            ],
+            "minimumReleaseAge": null,
+            "groupSingleUpdates": false,
             "reviewers": [
                 "meenzen"
             ]
@@ -137,6 +167,18 @@
             ],
             "matchStrings": [
                 "<BunVersion>(?<currentValue>.*?)</BunVersion>"
+            ],
+            "depNameTemplate": "bun",
+            "datasourceTemplate": "npm"
+        },
+        {
+            "description": "constraints.bun selects the Bun that regenerates bun.lock, so it has to move in the same commit as BunVersion. Reading it back out of this file is the only way Renovate can own both halves; left to a human it drifts, and a newer Bun writes lockfileVersion 2 that the pinned Bun cannot read.",
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/^\\.github/renovate\\.json$/"
+            ],
+            "matchStrings": [
+                "\"constraints\":\\s*\\{[^}]*?\"bun\":\\s*\"(?<currentValue>[^\"]+)\""
             ],
             "depNameTemplate": "bun",
             "datasourceTemplate": "npm"
