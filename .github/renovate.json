@@ -109,15 +109,17 @@
             ]
         },
         {
-            "description": "Bun and the tool that downloads it are the same release, so a major arrives as one bump rather than a separate PR. This stays off the npm packages above: clearing separateMajorMinor collapses the version lookup to a single latest bucket, so a breaking sass or typescript major would suppress the safe patch on the current line and hold the weekly PR red.",
+            "description": "Bun, the tool that downloads it, and its type definitions are one release train, so a major arrives as a single bump rather than splitting a 2.0 runtime away from 1.x types. This stays off the other npm packages: clearing separateMajorMinor collapses the version lookup to a single latest bucket, so a breaking sass or typescript major would suppress the safe patch on the current line and hold the weekly PR red.",
             "matchPackageNames": [
                 "bun",
-                "BunDotNet.Cli"
+                "BunDotNet.Cli",
+                "@types/bun"
             ],
             "matchFileNames": [
                 "src/Directory.Build.props",
                 ".config/dotnet-tools.json",
-                ".github/renovate.json"
+                ".github/renovate.json",
+                "src/package.json"
             ],
             "separateMajorMinor": false,
             "separateMultipleMajor": false
