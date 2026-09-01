@@ -107,6 +107,8 @@ namespace MudBlazor
 
         private string GetPanelClass() => new CssBuilder("page-content-navigation").AddClass(Class).Build();
 
+        private string ResolvedHeadline() => string.IsNullOrEmpty(Headline) ? Localizer[LanguageResource.MudPageContentNavigation_NavMenu] : Headline;
+
         /// <summary>
         /// Scrolls to a section based on the fragment of the uri. If there is no fragment, no scroll will occurred
         /// </summary>
@@ -166,7 +168,6 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            Headline = string.IsNullOrEmpty(Headline) ? Localizer[LanguageResource.MudPageContentNavigation_NavMenu] : Headline;
             _scrollSpy = ScrollSpyFactory.Create();
         }
 
