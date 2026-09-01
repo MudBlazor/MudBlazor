@@ -950,6 +950,8 @@ namespace MudBlazor
             return InvokeAsync(StateHasChanged);
         }
 
+        private string ResolvedSelectAllText() => string.IsNullOrEmpty(SelectAllText) ? Localizer[LanguageResource.MudSelect_SelectAll] : SelectAllText;
+
         private void UpdateSelectAllChecked()
         {
             if (MultiSelection && SelectAll)
@@ -1418,7 +1420,6 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
-            SelectAllText = string.IsNullOrEmpty(SelectAllText) ? Localizer[LanguageResource.MudSelect_SelectAll] : SelectAllText;
             base.OnInitialized();
             UpdateIcon();
         }

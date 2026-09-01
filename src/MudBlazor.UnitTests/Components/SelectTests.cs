@@ -912,6 +912,9 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.Find("div.mud-input-control").MouseDownAsync();
             await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+            var selectAllItem = provider.FindComponent<MudListItem<string>>();
+            selectAllItem.Instance.Text.Should().Be(localizer[LanguageResource.MudSelect_SelectAll]);
+
             conversionCount = 0;
             countingConversions = true;
             await provider.FindAll("div.mud-list-item")[0].ClickAsync();
@@ -919,7 +922,7 @@ namespace MudBlazor.UnitTests.Components
             conversionCount.Should().Be(2);
             capturedValues.Should().Equal("one", "two");
             select.ReadText.Should().Be("one|two");
-            select.SelectAllText.Should().Be(localizer[LanguageResource.MudSelect_SelectAll]);
+            select.SelectAllText.Should().Be("");
         }
 
         /// <summary>
@@ -1002,6 +1005,7 @@ namespace MudBlazor.UnitTests.Components
             // get the first (select all item) and check if it is selected
             var selectAllItem = comp.FindComponent<MudListItem<string>>();
             selectAllItem.Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\"/>");
+            selectAllItem.Instance.Text.Should().Be("Select all felines");
 
             // Check that all normal select items are actually selected
             var items = comp.FindComponents<MudSelectItem<string>>().Where(x => x.Instance.HideContent == false).ToArray();
@@ -1037,6 +1041,7 @@ namespace MudBlazor.UnitTests.Components
             // Check that the icon corresponds to an unchecked checkbox
             var mudListItem = comp.FindComponent<MudListItem<string>>();
             mudListItem.Instance.Icon.Should().Be("<path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z\"/>");
+            mudListItem.Instance.Text.Should().Be("Select all felines");
         }
 
         [Test]
