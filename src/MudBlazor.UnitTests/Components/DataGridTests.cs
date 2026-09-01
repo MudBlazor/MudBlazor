@@ -2157,9 +2157,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => rebuiltGrid.Instance.OpenFilters());
 
-            var selectedValuePresenter = popoverProvider.Find(".filters-panel .filter-field div.mud-input-slot");
-            selectedValuePresenter.GetAttribute("style").Should().Contain("display:inline");
-            selectedValuePresenter.TrimmedText().Should().Be("Name");
+            popoverProvider.Find(".filters-panel .filter-field .mud-select-input").TrimmedText().Should().Be("Name");
         }
 
         [Test]
