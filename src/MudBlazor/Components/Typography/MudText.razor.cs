@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
@@ -95,6 +96,17 @@ public partial class MudText : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Text.Behavior)]
     public string? HtmlTag { get; set; }
+
+    /// <inheritdoc />
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        builder.OpenElement(0, GetActualTag());
+        builder.AddMultipleAttributes(1, UserAttributes!);
+        builder.AddAttribute(2, "class", Classname);
+        builder.AddAttribute(3, "style", Style);
+        builder.AddContent(4, ChildContent);
+        builder.CloseElement();
+    }
 
     private string GetActualTag() => string.IsNullOrEmpty(HtmlTag) ? GetTagName(Typo) : HtmlTag;
 

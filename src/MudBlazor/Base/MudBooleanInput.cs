@@ -8,7 +8,7 @@ using MudBlazor.State;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a form input component which stores a boolean value.
+    /// Base class for form inputs backed by a boolean value, such as <see cref="MudCheckBox{T}"/>, <see cref="MudSwitch{T}"/>, and <see cref="MudRadio{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this component.</typeparam>
     public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
@@ -133,6 +133,21 @@ namespace MudBlazor
         protected virtual Task OnChange(ChangeEventArgs args)
         {
             return SetBoolValueAsync((bool?)args.Value, true);
+        }
+
+        protected Dictionary<string, object?> GetInputAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["tabindex"] = GetDisabledState() ? -1 : 0
+            };
+
+            foreach (var userAttribute in UserAttributes)
+            {
+                attributes[userAttribute.Key] = userAttribute.Value;
+            }
+
+            return attributes;
         }
 
         protected Task SetBoolValueAsync(bool? value, bool? markAsTouched = null)

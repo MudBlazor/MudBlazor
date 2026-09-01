@@ -1,53 +1,47 @@
 ﻿@page "/"
+@page "/viewer/{*Path}"
 @using System.Reflection
-@using FuzzySharp
 @inject NavigationManager NavManager
+@inject ISearchService SearchService
 @implements IDisposable
 
 <MudThemeProvider Theme="@_customTheme" IsDarkMode="@_isDarkMode" />
 
 <MudLayout>
     <MudRTLProvider RightToLeft="_rightToLeft">
+        @* chrome=none hides the viewer UI (drawer + header) while keeping theme/RTL/popover/dialog/snackbar intact. *@
+        @if (!_chromeless)
+        {
         <MudDrawer Open="@_drawerOpen" Overlay="false" Variant="DrawerVariant.Responsive" ClipMode="DrawerClipMode.Never" Breakpoint="Breakpoint.Sm" Class="test-viewer-drawer">
             <div class="test-viewer-drawer-inner">
                 <div class="test-viewer-sidebar-header">
-                    <MudText Typo="Typo.subtitle1" Class="test-viewer-title">MudBlazor Test Viewer</MudText>
+                    <MudText Class="test-viewer-title">MudBlazor Test Viewer</MudText>
                     <MudSpacer />
                     <MudTooltip Text="@ThemeLabel">
                         <MudIconButton Icon="@ThemeIcon" OnClick="ToggleTheme" aria-label="@ThemeLabel" />
                     </MudTooltip>
                     <MudTooltip Text="@(_rightToLeft ? "Left-to-right" : "Right-to-left")">
-                        <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="() => _rightToLeft = !_rightToLeft" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" Edge="Edge.End" />
+                        <MudIconButton Icon="@(_rightToLeft ? @Icons.Material.Filled.FormatTextdirectionLToR : @Icons.Material.Filled.FormatTextdirectionRToL)" OnClick="ToggleRtl" aria-label="@(_rightToLeft ? "Left-to-right" : "Right-to-left")" Edge="Edge.End" />
                     </MudTooltip>
                 </div>
 
                 <div class="test-viewer-search">
-                    <MudTextField T="string" @bind-Value="SearchText" Immediate="true" DebounceInterval="0"
+                    <MudTextField T="string" @bind-Value="SearchText" Immediate="true" DebounceInterval="150"
                                   Placeholder="Search tests…" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense"
                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
-
-                    <MudText Typo="Typo.caption" Class="mud-text-secondary">
-                        @_filteredCountLabel
-                    </MudText>
                 </div>
-
-                <div class="test-viewer-divider" />
 
                 <div class="test-viewer-results">
                     <MudVirtualize Items="@_filteredEntries" Enabled="true" Context="entry">
                         <MudButton Variant="Variant.Text" Color="Color.Inherit" FullWidth="true"
                                    Class="@GetEntryClass(entry)" OnClick="() => Select(entry.Type)">
                             <div class="test-viewer-result-row">
-                                <MudText Typo="Typo.body2" Class="test-viewer-entry-name">@entry.DisplayName</MudText>
-                                @if (!string.IsNullOrWhiteSpace(entry.Category))
-                                {
-                                    <MudText Typo="Typo.caption" Class="mud-text-secondary test-viewer-entry-category">@entry.Category</MudText>
-                                }
+                                <MudText Typo="Typo.body2" Class="test-viewer-entry-name">@entry.RouteKey</MudText>
                             </div>
                         </MudButton>
                     </MudVirtualize>
 
-                    @if (_canShowAllLink)
+                    @if (_remainingResultsCount > 0)
                     {
                         <div class="test-viewer-show-all">
                             <MudLink Href="#" OnClick="ShowAllResults" Typo="Typo.caption">
@@ -58,15 +52,13 @@
                 </div>
             </div>
         </MudDrawer>
+        }
 
         <MudMainContent Class="test-viewer-main">
+            @if (!_chromeless)
+            {
             <div class="test-viewer-header">
-                @if (_selectedType is null)
-                {
-                    <MudText Typo="Typo.h6">No test selected</MudText>
-                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Use the search to quickly open a test component.</MudText>
-                }
-                else
+                @if (_selectedType is not null)
                 {
                     <div class="test-viewer-title-row">
                         <MudText Typo="Typo.h6">@GetTitleForDisplay(_selectedType)</MudText>
@@ -74,25 +66,72 @@
                     </div>
                     <MudText Typo="Typo.body2" Class="mud-text-secondary">@GetDescriptionForDisplay(_selectedType)</MudText>
                 }
+                else if (_notFoundComponent is not null)
+                {
+                    <MudText Typo="Typo.h6">Component not found</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Nothing is registered for that path or name.</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.h6">No test selected</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Use the search to quickly find a test component.</MudText>
+                }
             </div>
+            }
 
-            <div class="test-viewer-surface">
+            <div class="test-viewer-surface" data-viewer-theme="@(_isDarkMode ? "dark" : "light")" data-viewer-dir="@(_rightToLeft ? "rtl" : "ltr")" data-viewer-chrome="@(_chromeless ? "none" : "full")">
                 @if (_selectedType is not null)
                 {
                     @* Prevent double popovers! *@
                     <CascadingValue Name="UsePopoverProvider" Value="false" IsFixed="true">
-                        @TestComponent()
+                        @* Keyed by the selected type so switching components starts a fresh, non-errored boundary. *@
+                        <ErrorBoundary @key="_selectedType">
+                            <ChildContent>
+                                @* Positive readiness marker so tooling can wait on a mounted, non-errored component. *@
+                                <div class="test-viewer-ready" data-viewer-state="ready">
+                                    @TestComponent()
+                                </div>
+                            </ChildContent>
+                            <ErrorContent Context="exception">
+                                <div class="test-viewer-error" data-viewer-state="error">
+                                    <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                                        @GetTitleForDisplay(_selectedType) threw @exception.GetType().Name
+                                    </MudAlert>
+                                    <pre class="test-viewer-error-detail">@exception.ToString()</pre>
+                                </div>
+                            </ErrorContent>
+                        </ErrorBoundary>
                     </CascadingValue>
+                }
+                else if (_notFoundComponent is not null)
+                {
+                    <div class="test-viewer-notfound" data-viewer-state="not-found">
+                        <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">
+                            No test component matches <code>@_notFoundComponent</code>.
+                        </MudAlert>
+                        @{
+                            var suggestions = GetSuggestions(_notFoundComponent);
+                        }
+                        @if (suggestions.Count > 0)
+                        {
+                            <MudText Typo="Typo.body2" Class="mud-text-secondary">Did you mean:</MudText>
+                            <div class="test-viewer-notfound-suggestions">
+                                @foreach (var suggestion in suggestions)
+                                {
+                                    <MudButton Variant="Variant.Text" Color="Color.Primary" Class="test-viewer-entry"
+                                               OnClick="() => Select(suggestion.Type)">
+                                        @suggestion.RouteKey
+                                    </MudButton>
+                                }
+                            </div>
+                        }
+                    </div>
                 }
             </div>
         </MudMainContent>
     </MudRTLProvider>
 </MudLayout>
 <style>
-    .test-viewer-title {
-        color: var(--mud-palette-text-primary);
-    }
-
     .test-viewer-drawer {
         overflow: hidden;
     }
@@ -101,38 +140,29 @@
         height: 100%;
         display: flex;
         flex-direction: column;
+        padding-top: 4px;
     }
 
     .test-viewer-sidebar-header {
-        padding: 10px 12px 0 12px;
+        padding: 0 16px 0 16px;
         display: flex;
         align-items: center;
-    }
-
-    .test-viewer-search {
-        padding: 0 12px 12px 12px;
-        display: grid;
-        gap: 6px;
-    }
-
-    .test-viewer-divider {
-        height: 1px;
-        background: var(--mud-palette-divider);
-        margin: 0 12px;
     }
 
     .test-viewer-results {
         flex: 1;
         overflow: auto;
-        scrollbar-gutter: stable;
+        scrollbar-width: none;
+    }
+
+    .test-viewer-results::-webkit-scrollbar {
+        display: none;
     }
 
     .test-viewer-result-row {
         width: 100%;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
+        display: flex;
         align-items: start;
-        gap: 12px;
         text-align: start;
     }
 
@@ -142,22 +172,12 @@
         overflow-wrap: anywhere;
     }
 
-    .test-viewer-entry-category {
-        max-width: 140px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        text-align: end;
-    }
-
     .test-viewer-show-all {
         padding: 10px 12px 6px 12px;
     }
 
     .test-viewer-entry {
         justify-content: flex-start;
-        padding: 8px 0 8px 0;
-        padding-inline-start: 12px;
         border-radius: var(--mud-default-borderradius);
         text-transform: none;
     }
@@ -172,20 +192,24 @@
     }
 
     .test-viewer-main {
-        padding: 0 12px 12px 12px;
+        padding: 0 16px 16px 16px;
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 16px;
         height: 100vh;
     }
 
     .test-viewer-header {
-        padding: 12px 4px 0 4px;
+        padding: 16px 4px 0 4px;
     }
 
     .test-viewer-surface {
         flex: 1;
         overflow: auto;
+    }
+
+    .test-viewer-ready {
+        display: contents;
     }
 
     .test-viewer-title-row {
@@ -198,36 +222,75 @@
         font-family: monospace;
         opacity: 0.6;
     }
+
+    .test-viewer-error,
+    .test-viewer-notfound {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        max-width: 900px;
+    }
+
+    .test-viewer-error-detail {
+        margin: 0;
+        padding: 12px;
+        border-radius: var(--mud-default-borderradius);
+        background: var(--mud-palette-background-grey);
+        color: var(--mud-palette-text-primary);
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 0.8rem;
+    }
+
+    .test-viewer-notfound-suggestions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
 </style>
 
 @code {
 
+    // Backs the "/viewer/{*Path}" catch-all route. Parsed from the URI in ParseUrl rather than read directly.
+    [Parameter]
+    public string? Path { get; set; }
+
     private bool _rightToLeft;
     private Type? _selectedType;
+    private string? _notFoundComponent;
     private bool _drawerOpen = true;
     private string _searchText = string.Empty;
     private TestEntry[] _entries = [];
     private TestEntry[] _filteredEntries = [];
     private Type[] _availableComponentTypes = [];
     private Dictionary<Type, TestEntry> _entryByType = [];
-    private string _filteredCountLabel = string.Empty;
-    private int _totalMatchCount;
+    private Dictionary<string, Type> _typeByRouteKey = new(StringComparer.OrdinalIgnoreCase);
     private int _remainingResultsCount;
     private bool _showAllResults;
-    private bool _canShowAllLink;
     private CancellationTokenSource? _searchCts;
-    private Task? _searchTask;
     private bool _isDarkMode;
+    private bool _chromeless;
     private readonly MudTheme _customTheme = new()
     {
         LayoutProperties = new LayoutProperties
         {
-            DrawerWidthLeft = "340px",
-            DrawerWidthRight = "340px"
+            DrawerWidthLeft = "300px",
+            DrawerWidthRight = "300px"
         }
     };
 
-    private void ToggleTheme() => _isDarkMode = !_isDarkMode;
+    private void ToggleTheme()
+    {
+        _isDarkMode = !_isDarkMode;
+        UpdateUrl(replace: true);
+    }
+
+    private void ToggleRtl()
+    {
+        _rightToLeft = !_rightToLeft;
+        UpdateUrl(replace: true);
+    }
 
     private string ThemeIcon => _isDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
 
@@ -238,6 +301,8 @@
         get => _searchText;
         set
         {
+            value ??= string.Empty;
+
             if (string.Equals(_searchText, value, StringComparison.Ordinal))
             {
                 return;
@@ -255,21 +320,32 @@
 
         _availableComponentTypes = GetTestComponentTypes().ToArray();
 
+        // Everything discovered is routable...
+        _typeByRouteKey = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
+        foreach (var type in _availableComponentTypes)
+        {
+            // Route keys are unique by construction (one file per path); TryAdd guards against any future clash.
+            _typeByRouteKey.TryAdd(RouteKey(type), type);
+        }
+
+        // ...but [ViewerHidden] helpers are kept out of the sidebar listing.
         _entries = _availableComponentTypes
+            .Where(type => !type.IsDefined(typeof(ViewerHiddenAttribute), inherit: false))
             .Select(CreateEntry)
             .OrderBy(x => x.Name)
             .ToArray();
 
         _entryByType = _entries.ToDictionary(x => x.Type, x => x);
+
         StartSearch();
 
-        ParseQueryString();
+        ParseUrl();
         NavManager.LocationChanged += HandleLocationChanged;
     }
 
     private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        ParseQueryString();
+        ParseUrl();
         StateHasChanged();
     }
 
@@ -280,41 +356,71 @@
         _searchCts?.Dispose();
     }
 
-    private void ParseQueryString()
+    private void ParseUrl()
     {
         var uri = new Uri(NavManager.Uri);
-        var query = uri.Query;
 
-        if (string.IsNullOrEmpty(query))
+        // Viewer/harness state lives in the query string; component identity is the path "/viewer/<route-key>".
+        _isDarkMode = string.Equals(GetQueryValue(uri.Query, "theme"), "dark", StringComparison.OrdinalIgnoreCase);
+        _rightToLeft = string.Equals(GetQueryValue(uri.Query, "dir"), "rtl", StringComparison.OrdinalIgnoreCase);
+        _chromeless = string.Equals(GetQueryValue(uri.Query, "chrome"), "none", StringComparison.OrdinalIgnoreCase);
+
+        var routeKey = ExtractRouteKey(uri.AbsolutePath);
+
+        if (string.IsNullOrEmpty(routeKey))
+        {
+            // Landing page ("/"): keep any existing selection, clear a stale not-found.
+            _notFoundComponent = null;
             return;
+        }
+
+        if (_typeByRouteKey.TryGetValue(routeKey, out var resolved))
+        {
+            _selectedType = resolved;
+            _notFoundComponent = null;
+        }
+        else
+        {
+            // Addressed explicitly but nothing matches: show a distinct error, not the empty state.
+            _selectedType = null;
+            _notFoundComponent = routeKey;
+        }
+    }
+
+    private static string? ExtractRouteKey(string absolutePath)
+    {
+        const string prefix = "/viewer/";
+        if (!absolutePath.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        var key = absolutePath.Substring(prefix.Length).Trim('/');
+        return string.IsNullOrEmpty(key) ? null : Uri.UnescapeDataString(key);
+    }
+
+    private static string? GetQueryValue(string query, string key)
+    {
+        if (string.IsNullOrEmpty(query))
+        {
+            return null;
+        }
 
         if (query.StartsWith('?'))
-            query = query.Substring(1);
-
-        var queryParams = query.Split('&');
-
-        foreach (var param in queryParams)
         {
-            var parts = param.Split('=');
-            if (parts.Length == 2)
+            query = query.Substring(1);
+        }
+
+        foreach (var param in query.Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var parts = param.Split('=', 2);
+            if (parts.Length == 2 && string.Equals(parts[0], key, StringComparison.OrdinalIgnoreCase))
             {
-                var key = parts[0];
-                var value = Uri.UnescapeDataString(parts[1]);
-
-                if (string.Equals(key, "component", StringComparison.OrdinalIgnoreCase))
-                {
-                    var componentType = _availableComponentTypes.FirstOrDefault(t =>
-                        t.Name.Equals(value, StringComparison.OrdinalIgnoreCase));
-
-                    if (componentType != null)
-                    {
-                        _selectedType = componentType;
-                        StateHasChanged();
-                        break;
-                    }
-                }
+                return Uri.UnescapeDataString(parts[1]);
             }
         }
+
+        return null;
     }
 
     private void Select(Type componentType)
@@ -325,21 +431,55 @@
         }
 
         _selectedType = componentType;
-        UpdateQueryString(componentType);
+        _notFoundComponent = null;
+        // Selecting a component pushes history; current visual params (theme/dir/chrome) are preserved.
+        UpdateUrl(replace: false);
     }
 
-    private void UpdateQueryString(Type componentType)
+    // Canonical identity in the path ("/viewer/<route-key>"); viewer/harness state stays in the query.
+    private string BuildViewerUrl()
     {
-        if (componentType == null) return;
+        var key = _selectedType is not null ? RouteKey(_selectedType) : _notFoundComponent;
+        var path = string.IsNullOrEmpty(key) ? "/" : $"/viewer/{EscapeRouteKey(key)}";
 
-        var uri = new Uri(NavManager.Uri);
-        var baseUrl = uri.GetLeftPart(UriPartial.Path);
+        var parameters = new List<string>();
 
-        // Create the new query string
-        var newUrl = $"{baseUrl}?component={componentType.Name}";
+        if (_isDarkMode)
+        {
+            parameters.Add("theme=dark");
+        }
 
-        // Update URL without navigation (false parameter)
-        NavManager.NavigateTo(newUrl, false);
+        if (_rightToLeft)
+        {
+            parameters.Add("dir=rtl");
+        }
+
+        if (_chromeless)
+        {
+            parameters.Add("chrome=none");
+        }
+
+        return parameters.Count == 0 ? path : $"{path}?{string.Join('&', parameters)}";
+    }
+
+    // Route key relative to TestComponents, e.g. "Menu/MenuTest1" (unique per file).
+    private static string RouteKey(Type type)
+    {
+        var ns = type.Namespace ?? string.Empty;
+        const string marker = "TestComponents.";
+        var index = ns.IndexOf(marker, StringComparison.Ordinal);
+        var folder = index >= 0 ? ns[(index + marker.Length)..].Replace('.', '/') : string.Empty;
+        return string.IsNullOrEmpty(folder) ? type.Name : $"{folder}/{type.Name}";
+    }
+
+    // Escape each segment (so a generic-arity backtick survives the round trip) while keeping the slashes.
+    private static string EscapeRouteKey(string key)
+        => string.Join('/', key.Split('/').Select(Uri.EscapeDataString));
+
+    private void UpdateUrl(bool replace)
+    {
+        // Toggles use replace:true so dark/RTL clicks do not spam browser history.
+        NavManager.NavigateTo(BuildViewerUrl(), forceLoad: false, replace: replace);
     }
 
     private RenderFragment TestComponent() => builder =>
@@ -355,8 +495,11 @@
 
     private static IEnumerable<Type> GetTestComponentTypes()
     {
+        // Discover by location: anything under a TestComponents namespace. A few legacy components
+        // override @namespace away from their folder, so also keep the historical "name contains Test".
         var types = typeof(Program).Assembly.GetTypes()
-            .Where(type => type.Name.Contains("Test"))
+            .Where(type => type.Namespace?.Contains("TestComponents", StringComparison.Ordinal) == true
+                           || type.Name.Contains("Test"))
             .Where(type => !type.Name.StartsWith("<"))
             .Where(type => type.GetInterfaces().Contains(typeof(IComponent)))
             .OrderBy(type => type.Name);
@@ -373,7 +516,7 @@
         var category = type.Namespace?.Split('.').LastOrDefault() ?? string.Empty;
         var description = GetDescriptionOrNull(type);
         var filePath = GetFilePath(type);
-        return new TestEntry(type, type.Name, GetDisplayName(type.Name), category, description, filePath);
+        return new TestEntry(type, type.Name, GetDisplayName(type.Name), category, description, filePath, RouteKey(type));
     }
 
     private static string GetFilePath(Type type)
@@ -432,103 +575,58 @@
         return GetDisplayName(type.Name);
     }
 
+    private IReadOnlyList<TestEntry> GetSuggestions(string requested)
+    {
+        if (_entries.Length == 0 || string.IsNullOrWhiteSpace(requested))
+        {
+            return [];
+        }
+
+        return SearchService
+            .Search(_entries, e => new[] { e.Name, e.RouteKey }, requested)
+            .Take(5)
+            .ToList();
+    }
+
     private void StartSearch()
     {
         _searchCts?.Cancel();
         _searchCts?.Dispose();
         _searchCts = new CancellationTokenSource();
-        _searchTask = RecomputeFilteredEntriesAsync(_searchCts.Token);
+        _ = RecomputeFilteredEntriesAsync(_searchCts.Token);
     }
 
     private async Task RecomputeFilteredEntriesAsync(CancellationToken token)
     {
         try
         {
-            _totalMatchCount = 0;
             _remainingResultsCount = 0;
-            _canShowAllLink = false;
 
             if (_entries.Length == 0)
             {
                 _filteredEntries = [];
-                _filteredCountLabel = string.Empty;
                 await InvokeAsync(StateHasChanged);
                 return;
-            }
-
-            if (string.IsNullOrWhiteSpace(_searchText))
-            {
-                _filteredEntries = _entries;
-                _filteredCountLabel = $"{_entries.Length} tests";
-                _totalMatchCount = _entries.Length;
-                await InvokeAsync(StateHasChanged);
-                return;
-            }
-
-            var query = _searchText.Trim();
-            _filteredCountLabel = "Searching…";
-            await InvokeAsync(StateHasChanged);
-
-            const int threshold = 35;
-            const int defaultLimit = 20;
-
-            var top = new List<(TestEntry Entry, int Score)>(defaultLimit);
-            List<(TestEntry Entry, int Score)>? all = _showAllResults ? new List<(TestEntry Entry, int Score)>() : null;
-
-            for (var i = 0; i < _entries.Length; i++)
-            {
-                token.ThrowIfCancellationRequested();
-                var entry = _entries[i];
-                var score = GetSearchScore(query, entry);
-                if (score < threshold)
-                {
-                    if (i % 25 == 0)
-                    {
-                        await Task.Yield();
-                    }
-                    continue;
-                }
-
-                _totalMatchCount++;
-
-                if (all is not null)
-                {
-                    all.Add((entry, score));
-                }
-                else
-                {
-                    InsertTopK(top, (entry, score), defaultLimit);
-                }
-
-                if (i % 25 == 0)
-                {
-                    await Task.Yield();
-                }
             }
 
             token.ThrowIfCancellationRequested();
 
-            IReadOnlyList<(TestEntry Entry, int Score)> final = all ?? top;
-            var ordered = final
-                .OrderByDescending(x => x.Score)
-                .ThenBy(x => x.Entry.Name)
-                .Select(x => x.Entry)
-                .ToArray();
+            var query = _searchText.Trim();
 
-            _filteredEntries = ordered;
-            _filteredCountLabel = _totalMatchCount switch
+            if (query.Length == 0)
             {
-                0 => "No matches",
-                1 => "1 match",
-                _ => $"{_totalMatchCount} matches"
-            };
-
-            if (!_showAllResults)
-            {
-                _filteredEntries = _filteredEntries.Take(defaultLimit).ToArray();
-                _remainingResultsCount = Math.Max(0, _totalMatchCount - _filteredEntries.Length);
-                _canShowAllLink = _remainingResultsCount > 0;
+                _filteredEntries = _entries;
+                await InvokeAsync(StateHasChanged);
+                return;
             }
+
+            await Task.Yield();
+            token.ThrowIfCancellationRequested();
+
+            const int defaultLimit = 20;
+            var results = SearchService.Search(_entries, e => new[] { e.Name, e.RouteKey }, query);
+            _filteredEntries = _showAllResults ? [.. results] : [.. results.Take(defaultLimit)];
+            _remainingResultsCount = _showAllResults ? 0 : Math.Max(0, results.Count - _filteredEntries.Length);
 
             await InvokeAsync(StateHasChanged);
         }
@@ -538,66 +636,10 @@
         }
     }
 
-    private static void InsertTopK(List<(TestEntry Entry, int Score)> list, (TestEntry Entry, int Score) candidate, int k)
-    {
-        if (list.Count == 0)
-        {
-            list.Add(candidate);
-            return;
-        }
-
-        var inserted = false;
-        for (var i = 0; i < list.Count; i++)
-        {
-            if (candidate.Score > list[i].Score)
-            {
-                list.Insert(i, candidate);
-                inserted = true;
-                break;
-            }
-        }
-
-        if (!inserted)
-        {
-            if (list.Count < k)
-            {
-                list.Add(candidate);
-            }
-        }
-
-        if (list.Count > k)
-        {
-            list.RemoveAt(list.Count - 1);
-        }
-    }
-
     private void ShowAllResults(MouseEventArgs args)
     {
         _showAllResults = true;
         StartSearch();
-    }
-
-    private int GetSearchScore(string query, TestEntry entry)
-    {
-        // Combining multiple fuzzy signals reduces false positives from any single algorithm.
-        var nameRatio = Fuzz.Ratio(entry.Name, query);
-        var nameTokenSort = Fuzz.TokenSortRatio(entry.Name, query);
-        var namePartial = Fuzz.PartialRatio(entry.Name, query);
-        var nameScore = (int)Math.Round(nameRatio * 0.55 + nameTokenSort * 0.25 + namePartial * 0.20);
-
-        var categoryScore = string.IsNullOrWhiteSpace(entry.Category) ? 0 : Fuzz.PartialTokenSortRatio(entry.Category, query);
-
-        // Name relevance should dominate because category text is broad and can otherwise outrank intended test names.
-        var combined = (int)Math.Round(nameScore * 0.93 + categoryScore * 0.07);
-
-        if (!string.IsNullOrWhiteSpace(entry.Description))
-        {
-            var descriptionScore = Fuzz.PartialTokenSortRatio(entry.Description, query);
-            // Descriptions are helpful fallback context but should not overpower name intent.
-            combined = Math.Max(combined, (int)Math.Round(nameScore * 0.92 + descriptionScore * 0.08));
-        }
-
-        return combined;
     }
 
     private string GetEntryClass(TestEntry entry)
@@ -610,5 +652,5 @@
         return "test-viewer-entry";
     }
 
-    private sealed record TestEntry(Type Type, string Name, string DisplayName, string Category, string? Description, string FilePath);
+    private sealed record TestEntry(Type Type, string Name, string DisplayName, string Category, string? Description, string FilePath, string RouteKey);
 }

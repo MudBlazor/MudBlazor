@@ -5,9 +5,10 @@
 @typeparam T
 @typeparam TChartOptions
 
-<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height" viewBox="0 0 @ViewBoxWidth.ToStr() @ViewBoxHeight.ToStr()"
+<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" 
+     width="@(MatchBoundsToSize ? "100%" : Width)" height="@Height" viewBox="0 0 @ViewBoxWidth.ToStr() @ViewBoxHeight.ToStr()"
      style="@HoveredStylename">
-    <Filters/>
+    <Filters />
 
     <g class="mud-charts-grid">
         @if (XAxisTitle is not null)
@@ -53,8 +54,15 @@
             var verticalLineValue = VerticalValues[i];
             var x = verticalLineValue.X.ToStr();
             var y = verticalLineValue.Y.ToStr();
-            var rotation = (-ChartOptions?.XAxisLabelRotation ?? 0).ToString();
-            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value}</text>")
+            var rotationValue = ChartOptions?.XAxisLabelRotation ?? 0;
+            var rotation = (-rotationValue).ToString();
+            var textAnchor = Math.Sign(rotationValue) switch
+            {
+                1 => "end",
+                -1 => "start",
+                _ => "middle"
+            };
+            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='{textAnchor}' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value}</text>")
         }
     </g>
     <g class="@($"mud-charts-{ChartType?.ToString().ToLower()}-series")">

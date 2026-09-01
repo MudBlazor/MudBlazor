@@ -3,7 +3,7 @@
 @typeparam T
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
-    <div class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation>
+    <div id="@_componentId" class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation>
         <MudInputControl Label="@Label"
                          Variant="@Variant"
                          HelperId="@GetHelperId()"
@@ -30,7 +30,7 @@
                           Value="@ReadText" Underline="@Underline"
                           Disabled="@GetDisabledState()"
                           ReadOnly="@GetReadOnlyState()"
-                          Error="@ErrorState.Value"
+                          Error="@HasErrors"
                           ErrorId="@ErrorIdState.Value"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
@@ -92,11 +92,11 @@
                             {
                                 var item = _items[index];
                                 bool isSelected = index == _selectedListItemIndex;
-                                bool isDisabled = !_enabledItemIndices.Contains(index);
+                                bool isDisabled = _itemDisabled[index];
                                 bool showSelectedTemplate = ItemSelectedTemplate is not null && isSelected;
                                 bool showDisabledTemplate = ItemDisabledTemplate is not null && isDisabled;
                                 var captureIndex = index;
-                                <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" OnClick="@(async () => await ListItemOnClickAsync(item))" OnClickPreventDefault="true" Class="@GetListItemClassname(isSelected)">
+                                <MudListItem T="T" Value="@item" @key="@item" id="@GetListItemId(captureIndex)" Disabled="@(isDisabled)" KeyboardEnabled="false" OnClick="@(async () => await ListItemOnClickAsync(item))" OnClickPreventDefault="true" Class="@GetListItemClassname(isSelected)">
                                     @if (showDisabledTemplate)
                                     {
                                         @ItemDisabledTemplate!(item)
@@ -143,6 +143,7 @@
 
 <MudOverlay AutoClose
             Visible="Open"
+            data-modeless-ignore-element-id="@_componentId"
             OnClosed="OnOverlayClosedAsync"
             LockScroll="@LockScroll"
             Modal="@GetModal()" />

@@ -5,9 +5,12 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for collecting start and end values which define a range.
+    /// Collects start and end values that define a range using two input fields, as used by the <see cref="MudDateRangePicker"/>.
     /// </summary>
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
+    /// <seealso cref="MudBaseInput{T}" />
+    /// <seealso cref="MudDateRangePicker" />
+    /// <seealso cref="MudInput{T}" />
     public partial class MudRangeInput<T> : MudBaseInput<Range<T>>
     {
         private string? _textStart;
@@ -61,6 +64,26 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public string? PlaceholderEnd { get; set; }
+
+        /// <summary>
+        /// The accessible name for the starting input field.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized <c>Start</c> label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? StartInputAriaLabel { get; set; }
+
+        /// <summary>
+        /// The accessible name for the ending input field.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized <c>End</c> label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? EndInputAriaLabel { get; set; }
 
         /// <summary>
         /// Occurs when the Clear button is clicked.

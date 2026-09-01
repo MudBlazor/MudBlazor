@@ -7,7 +7,7 @@
 #pragma warning disable CS0618 // Type or member is obsolete
 }
 
-<span tabindex="@(Disabled ? -1 : 0)" role="radiogroup" aria-readonly="@(ReadOnly.ToString().ToLower())"
+<span tabindex="@(Disabled ? -1 : 0)" role="radiogroup" aria-readonly="@(ReadOnly.ToString().ToLowerInvariant())"
       @onkeydown="HandleKeyDownAsync" @attributes="UserAttributes" class="@ClassName" style="@Style">
     <CascadingValue Value="this">
         @for (var i = 1; i <= MaxValue; i++)

@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for selecting date, time, and color values.
+    /// Base class for MudBlazor pickers such as <see cref="MudDatePicker"/>, <see cref="MudTimePicker"/>, and <see cref="MudColorPicker"/>.
     /// </summary>
     /// <typeparam name="T">The type of value being chosen.</typeparam>
     /// <seealso cref="MudPickerContent" />
@@ -18,6 +18,8 @@ namespace MudBlazor
     public abstract partial class MudPicker<T> : MudFormComponent<T, string>
     {
         private string? _text;
+        private string? _lastTextParameter;
+        private bool _textParameterInitialized;
         private bool _pickerSquare;
         private ElementReference _pickerInlineRef;
         private bool _keyInterceptorObserving;
@@ -217,7 +219,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Clearable { get; set; } = false;
+        public bool Clearable { get; set; }
 
         /// <summary>
         /// Custom clear icon when <see cref="Clearable"/> is enabled.
@@ -268,7 +270,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Editable { get; set; } = false;
+        public bool Editable { get; set; }
 
         /// <summary>
         /// The ID of the input element.
@@ -393,7 +395,24 @@ namespace MudBlazor
         public virtual string? Text
         {
             get => _text;
-            set => SetTextAsync(value, true).CatchAndLog();
+            set
+            {
+                // This setter is the parameter-write path (Blazor assigns it during SetParametersAsync).
+                // Only re-parse when the incoming parameter actually differs from the last one supplied.
+                // The old behavior compared against _text, which drifts as the user picks values, so a
+                // parent re-supplying the same literal Text every render re-ran StringValueChanged and
+                // pushed a conflicting value back; combined with a bound Time/Date, that spun an infinite
+                // render loop and froze the page (#13439). This mirrors ParameterState: a parameter the
+                // parent does not change is applied once. User edits go through WriteTextAsync, not here.
+                if (_textParameterInitialized && value == _lastTextParameter)
+                {
+                    return;
+                }
+
+                _lastTextParameter = value;
+                _textParameterInitialized = true;
+                SetTextAsync(value, true).CatchAndLog();
+            }
         }
 
         /// <summary>
@@ -650,7 +669,8 @@ namespace MudBlazor
                 .HookKeyDown(OnHandleKeyDownAsync)
                 .When(CanHandleKeys, builder => builder
                     .OnKeyDown("Backspace", HandleBackspaceAsync)
-                    .OnKeyDownAny(["Escape", "Tab"], () => CloseAsync(false))));
+                    .OnKeyDown("Escape", () => CloseAsync(false))
+                    .OnKeyDown("Tab", () => CloseAsync(Open && PickerActions == null))));
         }
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
@@ -744,11 +764,9 @@ namespace MudBlazor
         // A proxy for components that will utilize ParameterState
         // Since for ParameterState we don't want to write directly from the Text property, but we have other components that inherit from MudPicker
         // In future when all Pickers will use ParameterState, we can remove this.
-        protected virtual Task WriteTextAsync(string? value)
-        {
-            Text = value;
-            return Task.CompletedTask;
-        }
+        // Goes straight to SetTextAsync rather than through the Text parameter setter so a user edit is
+        // never mistaken for a repeated parameter and skipped by that setter's idempotency guard (#13439).
+        protected virtual Task WriteTextAsync(string? value) => SetTextAsync(value, true);
 
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()

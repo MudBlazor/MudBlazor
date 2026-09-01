@@ -423,10 +423,13 @@ namespace MudBlazor
 
         /// <summary>
         /// Checks if the row is selected.
-        /// If there is set a Comparer, uses the comparer, otherwise uses a direct contains
+        /// Uses a hash set lookup when the selection comparer matches the table comparer.
+        /// Otherwise, uses the table comparer to check each selected item.
         /// </summary>
         protected bool IsCheckedRow(T item) =>
-            _comparer is not null ? Context.Selection.Any(x => _comparer.Equals(x, item)) : Context.Selection.Contains(item);
+            _comparer is null || ReferenceEquals(Context.Selection.Comparer, _comparer)
+                ? Context.Selection.Contains(item)
+                : Context.Selection.Any(x => _comparer.Equals(x, item));
 
         /// <summary>
         /// The comparer used to determine selected items.
@@ -586,6 +589,16 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Renders the built-in loading progress bar.
+        /// </summary>
+        /// <remarks>
+        /// Custom loading content (<see cref="LoadingContent"/> or <see cref="LoadingContentBody"/>) replaces the progress bar when it is displayed, which is when the current page has no items.
+        /// When items are still present, for example during a refresh, the progress bar is shown instead.
+        /// </remarks>
+        private bool ShowLoadingProgress =>
+            Loading && (CurrentPageItems.Any() || (LoadingContent is null && LoadingContentBody is null));
+
         protected IEnumerable<T> CurrentPageItems
         {
             get
@@ -605,7 +618,7 @@ namespace MudBlazor
                     {
                         lastPageNo -= 1;
                     }
-                    CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
+                    SetCurrentPage(lastPageNo < CurrentPage ? lastPageNo : CurrentPage);
                 }
 
                 return GetItemsOfPage(CurrentPage, RowsPerPage);
@@ -665,6 +678,34 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Gets the position of an item within <see cref="FilteredItems"/>, or <c>-1</c> when it is not present.
+        /// </summary>
+        /// <remarks>
+        /// Equivalent to <c>FilteredItems.ToList().IndexOf(item)</c> without copying the filtered list, which the row markup would otherwise do once per rendered row.
+        /// </remarks>
+        internal int GetFilteredItemIndex(T item)
+        {
+            var filteredItems = FilteredItems;
+            if (filteredItems is IList<T> list)
+            {
+                return list.IndexOf(item);
+            }
+
+            var index = 0;
+            foreach (var candidate in filteredItems)
+            {
+                if (EqualityComparer<T>.Default.Equals(candidate, item))
+                {
+                    return index;
+                }
+
+                index++;
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// Gets whether <see cref="Items"/> contains the specified item.
         /// </summary>
         /// <param name="item">The item to find.</param>
@@ -713,6 +754,8 @@ namespace MudBlazor
             {
                 Context.Selection.Remove(item);
             }
+
+            Context.UpdateRowCheckBoxes();
 
             if (SelectedItemsChanged.HasDelegate)
             {
@@ -798,7 +841,7 @@ namespace MudBlazor
 
             if (CurrentPage * RowsPerPage > _serverData.TotalItems)
             {
-                CurrentPage = 0;
+                SetCurrentPage(0);
             }
 
             Loading = false;

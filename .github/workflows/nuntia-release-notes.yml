@@ -20,7 +20,7 @@ on:
       model:
         description: "Gemini model (use pro for best results)"
         required: true
-        default: "gemini-3-flash-preview"
+        default: "gemini-3.7-flash"
 
 jobs:
   release-notes:
@@ -30,7 +30,7 @@ jobs:
       issues: read
       pull-requests: read
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Generate release notes
         id: nuntia
         uses: danielchalmers/Nuntia@main

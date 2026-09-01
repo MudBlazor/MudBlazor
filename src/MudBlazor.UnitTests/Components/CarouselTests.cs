@@ -1,6 +1,7 @@
 ﻿using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Time.Testing;
 using MudBlazor.UnitTests.TestComponents.Carousel;
 using NUnit.Framework;
 
@@ -171,6 +172,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Carousel_AutoCycle()
         {
+            var timeProvider = Context.AddFakeTimeProvider();
             var comp = Context.Render<MudCarousel<object>>();
             // print the generated html
             // adding some pages
@@ -185,15 +187,24 @@ namespace MudBlazor.UnitTests.Components
             for (var interval = 150; interval <= 300; interval += 150)
             {
                 await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.AutoCycleTime, TimeSpan.FromMilliseconds(interval)));
-                await Task.Delay(interval);
-                await comp.WaitForAssertionAsync(() => comp.Instance.SelectedIndex.Should().Be(1), TimeSpan.FromMilliseconds(3000));
-                comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
-                await Task.Delay(interval);
-                await comp.WaitForAssertionAsync(() => comp.Instance.SelectedIndex.Should().Be(2), TimeSpan.FromMilliseconds(3000));
-                comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
-                await Task.Delay(interval);
-                await comp.WaitForAssertionAsync(() => comp.Instance.SelectedIndex.Should().Be(0), TimeSpan.FromMilliseconds(3000));
-                comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
+                timeProvider.Advance(TimeSpan.FromMilliseconds(interval));
+                await comp.WaitForAssertionAsync(() =>
+                {
+                    comp.Instance.SelectedIndex.Should().Be(1);
+                    comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[1]);
+                });
+                timeProvider.Advance(TimeSpan.FromMilliseconds(interval));
+                await comp.WaitForAssertionAsync(() =>
+                {
+                    comp.Instance.SelectedIndex.Should().Be(2);
+                    comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[2]);
+                });
+                timeProvider.Advance(TimeSpan.FromMilliseconds(interval));
+                await comp.WaitForAssertionAsync(() =>
+                {
+                    comp.Instance.SelectedIndex.Should().Be(0);
+                    comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
+                });
             }
         }
 
@@ -333,6 +344,38 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ArrowsColor, null));
             comp.FindAll("button.mud-inherit-text").Count.Should().Be(2);
             comp.FindAll("button.mud-primary-text").Count.Should().Be(0);
+        }
+
+        [Test]
+        public void Carousel_SelectsFirstItemAddedAfterFirstRender()
+        {
+            var source = new List<string>();
+            var selectedIndexes = new List<int>();
+            var comp = Context.Render<MudCarousel<string>>(parameters => parameters
+                .Add(p => p.ItemsSource, source)
+                .Add(p => p.AutoCycle, false)
+                .Add(p => p.SelectedIndexChanged, index => selectedIndexes.Add(index)));
+
+            comp.Instance.SelectedIndex.Should().Be(-1);
+            comp.FindAll("div.mud-carousel-item").Count.Should().Be(0);
+
+            // The first item to arrive after an empty first render must become the selected one.
+            source.Add("Item 1");
+            comp.Render();
+
+            comp.Instance.Items.Count.Should().Be(1);
+            comp.Instance.SelectedIndex.Should().Be(0);
+            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
+            comp.FindAll("div.mud-carousel-item").Count.Should().Be(1);
+            selectedIndexes.Should().Equal(0);
+
+            // Later items must not steal the selection.
+            source.Add("Item 2");
+            comp.Render();
+
+            comp.Instance.Items.Count.Should().Be(2);
+            comp.Instance.SelectedIndex.Should().Be(0);
+            selectedIndexes.Should().Equal(0);
         }
     }
 }

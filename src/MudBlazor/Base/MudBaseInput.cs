@@ -6,7 +6,7 @@ using MudBlazor.State;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a base class for designing form input components.
+    /// Base class for MudBlazor form input components such as <see cref="MudTextField{T}"/>, <see cref="MudNumericField{T}"/>, and <see cref="MudSelect{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item being input.</typeparam>
     public abstract class MudBaseInput<T> : MudFormComponent<T, string>
@@ -90,6 +90,11 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public bool FullWidth { get; set; }
+
+        /// <summary>
+        /// For inheritors: determines if the Immediate state is set.
+        /// </summary>
+        protected internal virtual bool EffectiveImmediate => Immediate;
 
         /// <summary>
         /// Changes the <see cref="Value"/> as soon as input is received.
@@ -447,6 +452,13 @@ namespace MudBlazor
         public virtual ValueTask FocusAsync() => ValueTask.CompletedTask;
 
         /// <summary>
+        /// When overridden, obtains focus for this input, optionally preventing the browser from scrolling it into view.
+        /// </summary>
+        /// <param name="preventScroll">When <c>true</c>, the browser does not scroll the newly focused element into view.</param>
+        /// <returns>A <see cref="ValueTask" /> object.</returns>
+        internal virtual ValueTask FocusAsync(bool preventScroll) => FocusAsync();
+
+        /// <summary>
         /// When overridden, releases focus from this input.
         /// </summary>
         /// <returns>A <see cref="ValueTask" /> object.</returns>
@@ -472,34 +484,26 @@ namespace MudBlazor
 
             if (ReadOnly)
             {
+                // Readonly inputs never validate, but they can still be focused and blurred.
+                await OnBlur.InvokeAsync(obj);
+
                 return;
             }
-
-            // all the OnBlur parents (TextField, MudMask, NumericField, DateRange, etc) currently point to this method
-            // which causes this method to be fired repeatedly, we can use the obj.Type of FocusedEventArgs to track it
 
             if (!OnlyValidateIfDirty || _isDirty)
             {
                 Touched = true;
                 if (_validated)
                 {
-                    if (OnBlur.HasDelegate)
-                    {
-                        obj.Type += ".additional";
-                        await OnBlur.InvokeAsync(obj);
-                    }
+                    await OnBlur.InvokeAsync(obj);
+                }
+                else if (OnBlur.HasDelegate)
+                {
+                    await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
                 }
                 else
                 {
-                    if (OnBlur.HasDelegate)
-                    {
-                        obj.Type += ".additional";
-                        await BeginValidationAfterAsync(OnBlur.InvokeAsync(obj));
-                    }
-                    else
-                    {
-                        await BeginValidateAsync();
-                    }
+                    await ValidateValue();
                 }
             }
         }
@@ -546,22 +550,47 @@ namespace MudBlazor
                 await UpdateTextPropertyAsync(false);
             }
 
-            FieldChanged(value);
+            // Only user interaction notifies the form; the validation below runs either way.
+            if (!_suppressInteractionEffects)
+            {
+                FieldChanged(value);
+            }
             await BeginValidateAsync();
         }
 
         private async Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T?> arg)
         {
             _validated = false;
+            var wasTouched = Touched;
 
             // When Value changes from parent, update Text from Value
             // But only if Text is not also being set in the same parameter update
             // Check ParameterView to see if Text is also present
             if (!arg.ParameterView.Contains<string?>(nameof(Text)))
             {
-                // Always update text when Value changes (TextUpdateSuppression removed)
+                var forceTextUpdate = _forceTextUpdate;
                 _forceTextUpdate = false;
-                await UpdateTextPropertyAsync(false);
+                // Do not reformat the displayed text from Value on this input's own live ValueChanged echo, the @bind round-trip mid-typing.
+                // On Blazor Server the echo can land between keystrokes and would reformat while the user is typing, corrupting input (#13002; also completes #13266/#13250 on Server, which #13311 only fixed for the synchronous case).
+                // A debounced input commits from oninput too, so it needs the same suppression even though its own Immediate parameter is false.
+                // External value changes, committed non-live changes, and explicit forced updates still refresh.
+                if (forceTextUpdate || !(EffectiveImmediate && arg.IsChildOriginatedChange))
+                {
+                    await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
+                }
+            }
+
+            // Notify the form that the field has changed and trigger re-validation
+            // Only do this after the field has been touched.
+            // Skip when the change is this input's own ValueChanged echo (the parent's @bind round-trip):
+            // that user edit already validated once in SetValueAndUpdateTextAsync, so re-validating here
+            // would run the validation func twice for every keystroke on Immediate + @bind-Value inputs
+            // (#13174). Genuine external programmatic value changes are not child-originated and still
+            // re-validate, preserving the #12012 fix.
+            if (wasTouched && !arg.IsChildOriginatedChange)
+            {
+                FieldChanged(arg.Value);
+                await BeginValidateAsync();
             }
         }
 
@@ -602,14 +631,14 @@ namespace MudBlazor
         protected override async Task OnCultureAndFormatChangedAsync()
         {
             await base.OnCultureAndFormatChangedAsync();
-            await UpdateTextPropertyAsync(false);
+            await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
         }
 
         /// <inheritdoc />
         protected override async Task OnConverterChangedAsync()
         {
             await base.OnConverterChangedAsync();
-            await UpdateTextPropertyAsync(false);
+            await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
         }
 
         protected override async Task ValidateValue()
@@ -627,9 +656,9 @@ namespace MudBlazor
 
             // Because the way the Value setter is built, it won't cause an update if the incoming Value is
             // equal to the initial value. This is why we force an update to the Text property here.
-            if (typeof(T) != typeof(string))
+            if (typeof(T) != typeof(string) && string.IsNullOrWhiteSpace(ReadText))
             {
-                await UpdateTextPropertyAsync(false);
+                await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
             }
 
             if (Label == null && For != null)
@@ -661,7 +690,7 @@ namespace MudBlazor
         {
             var hasText = parameters.Contains<string>(nameof(Text));
             var hasValue = parameters.Contains<T>(nameof(Value));
-
+            var currentValue = ReadValue;
             await base.SetParametersAsync(parameters);
 
             // Refresh Text from Value if Value is present but Text is not
@@ -670,9 +699,17 @@ namespace MudBlazor
             // but we need to update Text even when Value is passed unchanged (for formatting)
             if (hasValue && !hasText)
             {
+                var valueChanged = !EqualityComparer<T?>.Default.Equals(currentValue, ReadValue);
+
+                // Preserve in-progress user text across parent rerenders until Value actually changes.
+                if (_isFocused && !valueChanged && !_forceTextUpdate)
+                {
+                    return;
+                }
+
                 // Always update text when Value changes (TextUpdateSuppression removed)
                 _forceTextUpdate = false;
-                await UpdateTextPropertyAsync(false);
+                await SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false));
             }
         }
 
@@ -682,7 +719,7 @@ namespace MudBlazor
             //Only focus automatically after the first render cycle!
             if (firstRender && AutoFocus)
             {
-                await FocusAsync();
+                await FocusAsync(preventScroll: true);
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -715,6 +752,15 @@ namespace MudBlazor
             _isDirty = false;
             _validated = false;
             await base.ResetValueAsync();
+        }
+
+        /// <inheritdoc />
+        public override Task ResetValidationAsync()
+        {
+            // Clear _validated so the next blur re-runs validation.
+            // Otherwise OnBlurredAsync short-circuits on the stale flag and a required error never reappears (#11503).
+            _validated = false;
+            return base.ResetValidationAsync();
         }
 
         protected string? GetHelperId()
@@ -759,17 +805,18 @@ namespace MudBlazor
 
         protected virtual async Task SetTextAndUpdateValueAsync(string? text, bool updateValue = true)
         {
+            // Mark touched before the equality short-circuit: on Blazor Server the suppressed ValueChanged echo can set the text first, so a genuine interaction that arrives with the text already in sync would otherwise skip the Touched write and leave a required field untouched on its first change (#13389).
+            if (!string.IsNullOrEmpty(text) && !_suppressInteractionEffects)
+            {
+                Touched = true;
+            }
+
             if (ReadText == text)
             {
                 return;
             }
 
             _validated = false;
-
-            if (!string.IsNullOrEmpty(text))
-            {
-                Touched = true;
-            }
 
             await _textState.SetValueAsync(text);
             if (updateValue)
@@ -778,22 +825,23 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
+        private Task OnTextParameterChangedAsync(ParameterChangedEventArgs<string?> arg)
         {
-            _validated = false;
-
-            if (!string.IsNullOrEmpty(arg.Value))
+            // A Text parameter change is always parameter-driven (a user edit updates Text via the internal
+            // state without re-triggering this handler), so it must not touch the input. The whole handler
+            // runs suppressed, so the gated Touched write in UpdateValuePropertyAsync's chain is skipped.
+            return SuppressInteractionEffectsWhileAsync(async () =>
             {
-                Touched = true;
-            }
+                _validated = false;
 
-            // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
-            // But only if Value is not also being set in the same parameter update
-            // Check ParameterView to see if Value is also present
-            if (!arg.ParameterView.Contains<T?>(nameof(Value)))
-            {
-                await UpdateValuePropertyAsync(updateText: false);
-            }
+                // When Text changes from parent, update Value from Text using UpdateValuePropertyAsync
+                // But only if Value is not also being set in the same parameter update
+                // Check ParameterView to see if Value is also present
+                if (!arg.ParameterView.Contains<T?>(nameof(Value)))
+                {
+                    await UpdateValuePropertyAsync(updateText: false);
+                }
+            });
         }
 
         private async Task UpdateInputIdStateAsync()

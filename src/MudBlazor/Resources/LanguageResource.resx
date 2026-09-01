@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -130,7 +130,7 @@
     <value>Cancel</value>
   </data>
   <data name="MudDataGrid_Loading" xml:space="preserve">
-    <value>Loading...</value>
+    <value>Loading…</value>
   </data>
   <data name="MudDataGrid_Save" xml:space="preserve">
     <value>Save</value>
@@ -309,6 +309,9 @@
   <data name="MudBaseDatePicker_NextMonth" xml:space="preserve">
     <value>Next month {0}</value>
   </data>
+  <data name="MudFormComponent_Required" xml:space="preserve">
+    <value>Required</value>
+  </data>
   <data name="MudPagination_CurrentPage" xml:space="preserve">
     <value>Current page {0}</value>
   </data>
@@ -351,11 +354,23 @@
   <data name="MudInput_Increment" xml:space="preserve">
     <value>Increment</value>
   </data>
+  <data name="MudRangeInput_Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="MudRangeInput_End" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="MudDateRangePicker_Start" xml:space="preserve">
+    <value>Start date</value>
+  </data>
+  <data name="MudDateRangePicker_End" xml:space="preserve">
+    <value>End date</value>
+  </data>
   <data name="MudPageContentNavigation_NavMenu" xml:space="preserve">
     <value>Contents</value>
   </data>
   <data name="MudTable_Loading" xml:space="preserve">
-    <value>Loading...</value>
+    <value>Loading…</value>
   </data>
   <data name="MudTable_ExpandGroup" xml:space="preserve">
     <value>Expand group</value>
@@ -422,6 +437,12 @@
   </data>
   <data name="MudDataGrid_RemoveFilter" xml:space="preserve">
     <value>Remove filter</value>
+  </data>
+  <data name="MudDataGrid_SelectRow" xml:space="preserve">
+    <value>Select row</value>
+  </data>
+  <data name="MudDataGrid_SelectAllRows" xml:space="preserve">
+    <value>Select all rows</value>
   </data>
   <data name="MudDataGridPager_FirstPage" xml:space="preserve">
     <value>First page</value>

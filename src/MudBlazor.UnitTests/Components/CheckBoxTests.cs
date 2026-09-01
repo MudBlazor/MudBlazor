@@ -373,16 +373,86 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [TestCase(Color.Secondary, Color.Error)]
+        [TestCase(Color.Info, Color.Warning)]
+        public void CheckBoxColor_ReadOnly_ShouldKeepColor(Color color, Color uncheckedColor)
+        {
+            // #9524: a read-only checkbox keeps Color/UncheckedColor (only Disabled greys out),
+            // while the interactive hover class stays suppressed.
+            var uncheckedComp = Context.Render<MudCheckBox<bool>>(x => x
+                .Add(c => c.Color, color)
+                .Add(c => c.UncheckedColor, uncheckedColor)
+                .Add(c => c.ReadOnly, true)
+                .Add(c => c.Value, false));
+            var uncheckedIcon = uncheckedComp.Find(".mud-button-root.mud-icon-button");
+            uncheckedIcon.ClassList.Should().Contain($"mud-{uncheckedColor.ToStringFast(true)}-text");
+            uncheckedIcon.ClassList.Should().NotContain($"hover:mud-{uncheckedColor.ToStringFast(true)}-hover");
+
+            var checkedComp = Context.Render<MudCheckBox<bool>>(x => x
+                .Add(c => c.Color, color)
+                .Add(c => c.UncheckedColor, uncheckedColor)
+                .Add(c => c.ReadOnly, true)
+                .Add(c => c.Value, true));
+            var checkedIcon = checkedComp.Find(".mud-button-root.mud-icon-button");
+            checkedIcon.ClassList.Should().Contain($"mud-{color.ToStringFast(true)}-text");
+            checkedIcon.ClassList.Should().NotContain($"hover:mud-{color.ToStringFast(true)}-hover");
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CheckBoxColor_ReadOnlyWithoutUncheckedColor_ShouldKeepColor(bool value)
+        {
+            // #9524: with only Color set, a read-only checkbox keeps that color in both states.
+            var comp = Context.Render<MudCheckBox<bool>>(x => x
+                .Add(c => c.Color, Color.Success)
+                .Add(c => c.ReadOnly, true)
+                .Add(c => c.Value, value));
+            comp.Find(".mud-button-root.mud-icon-button").ClassList.Should().Contain("mud-success-text");
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CheckBoxColor_Disabled_ShouldDropColorClass(bool value)
+        {
+            // #9524: Disabled (unlike ReadOnly) greys out, so no color utility class is emitted in either state.
+            var comp = Context.Render<MudCheckBox<bool>>(x => x
+                .Add(c => c.Color, Color.Success)
+                .Add(c => c.UncheckedColor, Color.Error)
+                .Add(c => c.Disabled, true)
+                .Add(c => c.Value, value));
+            var icon = comp.Find(".mud-button-root.mud-icon-button");
+            icon.ClassList.Should().NotContain("mud-error-text");
+            icon.ClassList.Should().NotContain("mud-success-text");
+        }
+
+        [Test]
+        public void CheckBoxColor_Indeterminate_ShouldUseUncheckedColor()
+        {
+            // #9524: UncheckedColor is documented to apply when Value is false or null, so the
+            // indeterminate (null) tri-state must use UncheckedColor rather than no color at all.
+            var comp = Context.Render<MudCheckBox<bool?>>(x => x
+                .Add(c => c.TriState, true)
+                .Add(c => c.Color, Color.Success)
+                .Add(c => c.UncheckedColor, Color.Error)
+                .Add(c => c.Value, null));
+            var icon = comp.Find(".mud-button-root.mud-icon-button");
+            icon.ClassList.Should().Contain("mud-error-text");
+            icon.ClassList.Should().NotContain("mud-success-text");
+        }
+
+        [Test]
         public void CheckBoxDisabled()
         {
-            var comp = Context.Render<CheckboxLabelTest>();
+            var comp = Context.Render<CheckBoxLabelTest>();
             comp.FindAll("label.mud-checkbox")[3].ClassList.Should().Contain("mud-disabled"); // 4rd checkbox
         }
 
         [Test]
         public void CheckBoxLabelPlacement()
         {
-            var comp = Context.Render<CheckboxLabelTest>();
+            var comp = Context.Render<CheckBoxLabelTest>();
 
             comp.FindAll("label.mud-checkbox")[2].ClassList.Should().Contain("mud-input-content-placement-start"); // 3rd checkbox: Placement.Start
         }
@@ -439,6 +509,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void CheckBox_Respects_Custom_TabIndex()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters.AddUnmatched("tabindex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void CheckBox_Uses_Default_TabIndex_When_Enabled()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>();
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        public void CheckBox_Uses_Default_TabIndex_When_Disabled()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters.Add(x => x.Disabled, true));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void CheckBox_Respects_Custom_TabIndex_CaseInsensitive()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters.AddUnmatched("TabIndex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
         public void ReadOnlyDisabled_ShouldNot_Hover()
         {
             Context.Render<MudCheckBox<bool>>(self => self.Add(x => x.ReadOnly, false)).Find("span").ClassList.Should().Contain("hover:mud-default-hover");
@@ -463,7 +565,7 @@ namespace MudBlazor.UnitTests.Components
             // checkbox two should have both a valid label with aria-hidden, an input with arialabelledby and the labelledby element
             checkboxes[1].GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element1 = comp.Find(".cb2 label.mud-checkbox span.mud-typography");
-            element1.HasAttribute("aria-hidden").Should().BeTrue();
+            element1.GetAttribute("aria-hidden").Should().Be("true");
             var input1 = comp.Find(".cb2 label.mud-checkbox input");
             var input1ForId = input1.GetAttribute("aria-labelledby");
             comp.Find($".cb2 label.mud-checkbox #{input1ForId}").Should().NotBeNull();
@@ -476,7 +578,7 @@ namespace MudBlazor.UnitTests.Components
             // checkbox four should look identical to two except this time it's with ChildContent
             checkboxes[3].GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element3 = comp.Find(".cb4 label.mud-checkbox span.mud-typography");
-            element3.HasAttribute("aria-hidden").Should().BeTrue();
+            element3.GetAttribute("aria-hidden").Should().Be("true");
             var input3 = comp.Find(".cb4 label.mud-checkbox input");
             var input3ForId = input3.GetAttribute("aria-labelledby");
             comp.Find($".cb4 label.mud-checkbox #{input3ForId}").Should().NotBeNull();

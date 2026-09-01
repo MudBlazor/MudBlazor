@@ -19,13 +19,14 @@
                        multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
                        accept="@Accept"
                        disabled="@(GetDisabledState())"
+                       aria-required="@Required.ToString().ToLowerInvariant()"
                        @attributes="UserAttributes"
-                       @ondrop="OnDragResetAsync"
-                       @ondragleave="OnDragResetAsync"
-                       @ondragend="OnDragResetAsync"
+                       @ondragenter="OnDragEnterAsync"
+                       @ondrop="OnDropAsync"
+                       @ondragleave="OnDragLeaveAsync"
+                       @ondragend="OnDragEndAsync"
                        id="@GetInputId(localIndex)"
-                       required="@Required"
-                       aria-required="@Required.ToString().ToLowerInvariant()" />
+                       required="@Required" />
         }
         @if (CustomContent == null)
         {
@@ -54,7 +55,7 @@
         else
         {
             <CascadingValue Name="ParentDisabled" Value="GetDisabledState()">
-                <div>
+                <div class="mud-file-upload-custom-content">
                     @CustomContent(this)
                 </div>
             </CascadingValue>
@@ -68,7 +69,7 @@
         }
         else
         {
-            <div class="mud-file-upload-files mt-1">
+            <div class="mud-file-upload-files mud-file-upload-files-default-template">
                 <!-- Make sure there is at least one file -->
                 @if (!EqualityComparer<T>.Default.Equals(_filesState.Value, default))
                 {

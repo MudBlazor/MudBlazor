@@ -17,6 +17,12 @@
                     @ToolBarContent
                 </MudToolBar>
             }
+            @if (PagerContent != null && (PagerPosition == PagerPosition.Top || PagerPosition == PagerPosition.TopAndBottom))
+            {
+                <div class="mud-table-pagination mud-table-pagination-top">
+                    @PagerContent
+                </div>
+            }
             @if (Context.SortLabels.Any())
             {
                 <div Class="mud-table-smalldevices-sortselect">
@@ -31,7 +37,7 @@
                 </div>
             }
             <div id="@_tableId" class="mud-table-container @TableContainerClass" style="@TableContainerStyle @(GetHorizontalScrollbarStyle())">
-                <table class="@TableClassname" aria-label="@AriaLabel">
+                <table @attributes="GetTableAttributes()" class="@TableClassname">
                     @if (ColGroup != null)
                     {
                         <colgroup>
@@ -59,7 +65,7 @@
                                     }
                                 </MudTHeadRow>
                             }
-                            @if (Loading)
+                            @if (ShowLoadingProgress)
                             {
                                 <tr class="mud-table-loading-row">
                                     <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
@@ -69,7 +75,7 @@
                             }
                         </thead>
                     }
-                    else if (Loading)
+                    else if (ShowLoadingProgress)
                     {
                         <thead class="@HeadClassname">
                             <tr class="mud-table-loading-row">
@@ -96,7 +102,7 @@
                             {
                                 <MudVirtualize Enabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
                                     @{
-                                        var itemIndex = FilteredItems.ToList().IndexOf(item);
+                                        var itemIndex = GetFilteredItemIndex(item);
                                         var generatedRowId = itemIndex != -1 ? $"{_tableId}_row_{itemIndex}" : null;
                                         var rowClass = new CssBuilder(RowClass)
                                             .AddClass(RowClassFunc?.Invoke(item, itemIndex))
@@ -107,7 +113,7 @@
                                     <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId"
                                            Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
                                            Disabled="IsRowDisabled(item)" DisabledClass="@DisabledRowClass" Checked="@(IsCheckedRow(item))"
-                                           CheckedChanged="@(value => OnRowCheckboxChanged(value, item))">
+                                           CheckedChanged="@(this.AsNonRenderingEventHandler<bool>(value => OnRowCheckboxChanged(value, item)))">
                                         @if (!ReadOnly && Editable && Equals(_editingItem, item))
                                         {
                                             <CascadingValue Value="@Validator" IsFixed="true">
@@ -190,7 +196,7 @@
                     }
                 </table>
             </div>
-            @if (PagerContent != null)
+            @if (PagerContent != null && (PagerPosition == PagerPosition.Bottom || PagerPosition == PagerPosition.TopAndBottom))
             {
                 <div class="mud-table-pagination">
                     @PagerContent
@@ -213,7 +219,7 @@
         RenderFragment<T> child() => item =>
             @<text>
                  @{
-                     var itemIndexForId = FilteredItems.ToList().IndexOf(item);
+                     var itemIndexForId = GetFilteredItemIndex(item);
                      var generatedRowId = itemIndexForId != -1 ? $"{_tableId}_row_{itemIndexForId}" : null;
 
                      var rowClass = new CssBuilder(RowClass).AddClass(RowClassFunc?.Invoke(item, itemIndexForId)).AddClass(customClass, !string.IsNullOrEmpty(customClass)).AddClass("mud-table-row-clickable", OnRowClick.HasDelegate && !IsRowDisabled(item)).Build();
@@ -221,7 +227,7 @@
                  }
                  <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId" Checkable="MultiSelection" SelectionChangeable="SelectionChangeable"
                         Editable="IsItemEditable(item)" Expandable="expandable" Disabled="IsRowDisabled(item)" DisabledClass="@DisabledRowClass"
-                        Checked="Context.Selection.Contains(item)" CheckedChanged="((value) => { OnRowCheckboxChanged(value, item); })">
+                        Checked="Context.Selection.Contains(item)" CheckedChanged="@(this.AsNonRenderingEventHandler<bool>(value => OnRowCheckboxChanged(value, item)))">
                      @if (!ReadOnly && Editable && Equals(_editingItem, item))
                      {
                          <CascadingValue Value="@Validator" IsFixed="true">

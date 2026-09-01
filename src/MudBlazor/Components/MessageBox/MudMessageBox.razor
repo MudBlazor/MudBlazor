@@ -28,39 +28,66 @@
     </DialogContent>
     <DialogActions>
         <div tabindex="-1" class="d-contents">
-            <MudFocusTrap DefaultFocus="DefaultFocus.LastChild">
-                @if (CancelButton is not null)
-                {
-                    <CascadingValue Value="@_cancelCallback">
-                        @CancelButton
-                    </CascadingValue>
-                }
-                else if (!string.IsNullOrWhiteSpace(CancelText))
-                {
-                    <MudButton Class="mud-message-box__cancel-button" OnClick="OnCancelClicked">@CancelText</MudButton>
-                }
-                @if (NoButton is not null)
-                {
-                    <CascadingValue Value="@_noCallback">
-                        @NoButton
-                    </CascadingValue>
-                }
-                else if (!string.IsNullOrWhiteSpace(NoText))
-                {
-                    <MudButton Class="mud-message-box__no-button" OnClick="OnNoClicked">@NoText</MudButton>
-                }
-                @if (YesButton is not null)
-                {
-                    <CascadingValue Value="@_yesCallback">
-                        @YesButton
-                    </CascadingValue>
-                }
-                else if (!string.IsNullOrWhiteSpace(YesText))
-                {
-                    <MudButton Class="mud-message-box__yes-button" Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
-                }
-            </MudFocusTrap>
+            @if (IsButtonOrderReversed)
+            {
+                <MudFocusTrap DefaultFocus="DefaultFocus.FirstChild">
+                    @YesButtonFragment
+                    @NoButtonFragment
+                    @CancelButtonFragment
+                </MudFocusTrap>
+            }
+            else
+            {
+                <MudFocusTrap DefaultFocus="DefaultFocus.LastChild">
+                    @CancelButtonFragment
+                    @NoButtonFragment
+                    @YesButtonFragment
+                </MudFocusTrap>
+            }
         </div>
-
     </DialogActions>
 </MudDialog>
+
+@code {
+    private RenderFragment CancelButtonFragment => 
+    @<text>
+        @if (CancelButton is not null)
+        {
+            <CascadingValue Value="@_cancelCallback">
+                @CancelButton
+            </CascadingValue>
+        }
+        else if (!string.IsNullOrWhiteSpace(CancelText))
+        {
+            <MudButton Class="mud-message-box__cancel-button" OnClick="OnCancelClicked">@CancelText</MudButton>
+        }
+    </text>;
+
+    private RenderFragment NoButtonFragment =>
+    @<text>
+        @if (NoButton is not null)
+        {
+            <CascadingValue Value="@_noCallback">
+                @NoButton
+            </CascadingValue>
+        }
+        else if (!string.IsNullOrWhiteSpace(NoText))
+        {
+            <MudButton Class="mud-message-box__no-button" OnClick="OnNoClicked">@NoText</MudButton>
+        }
+    </text>;
+
+    private RenderFragment YesButtonFragment =>
+    @<text>
+        @if (YesButton is not null)
+        {
+            <CascadingValue Value="@_yesCallback">
+                @YesButton
+            </CascadingValue>
+        }
+        else if (!string.IsNullOrWhiteSpace(YesText))
+        {
+            <MudButton Class="mud-message-box__yes-button" Color="Color.Primary" OnClick="OnYesClicked">@YesText</MudButton>
+        }
+    </text>;
+}

@@ -8,6 +8,19 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class ButtonGroupTests : BunitTest
     {
+        /// <summary>
+        /// The group renders its own element and still cascades itself to the buttons inside it.
+        /// </summary>
+        [Test]
+        public void ButtonGroup_ShouldRenderItsElementAndCascadeToItsButtons()
+        {
+            var comp = Context.Render<ButtonGroupWithThreeButtons>(
+                parameters => parameters.Add(c => c.ButtonGroupFullWidth, true));
+
+            comp.Find("div.mud-button-group-root").GetAttribute("role").Should().Be("group");
+            comp.FindAll(".mud-button-root.mud-width-full").Count.Should().Be(3);
+        }
+
         [Test]
         public void WithFullWidthAndNoneButtonIsStreched_ThenAllButtonsStreched()
         {

@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -10,6 +10,33 @@ class MudElementReference {
     constructor() {
         this.listenerId = 0;
         this.eventListeners = {};
+    }
+
+    /**
+     * Some input types (e.g., "email" and "number") can surface caret APIs but still throw at runtime when selecting ranges.
+     */
+    _supportsTextSelection(element) {
+        if (!element) {
+            return false;
+        }
+
+        const tagName = element.tagName?.toUpperCase();
+        if (tagName === 'TEXTAREA') {
+            return true;
+        }
+
+        if (tagName !== 'INPUT') {
+            return typeof element.setSelectionRange === 'function'
+                || !!element.createTextRange
+                || typeof element.selectionStart === 'number';
+        }
+
+        const type = (element.type || 'text').toLowerCase();
+        return type === 'text'
+            || type === 'search'
+            || type === 'tel'
+            || type === 'url'
+            || type === 'password';
     }
 
     /**
@@ -93,17 +120,19 @@ class MudElementReference {
     selectRange(element, pos1, pos2) {
         if (element)
         {
-            if (element.createTextRange) {
-                const selRange = element.createTextRange();
-                selRange.collapse(true);
-                selRange.moveStart('character', pos1);
-                selRange.moveEnd('character', pos2);
-                selRange.select();
-            } else if (element.setSelectionRange) {
-                element.setSelectionRange(pos1, pos2);
-            } else if (element.selectionStart) {
-                element.selectionStart = pos1;
-                element.selectionEnd = pos2;
+            if (this._supportsTextSelection(element)) {
+                if (element.createTextRange) {
+                    const selRange = element.createTextRange();
+                    selRange.collapse(true);
+                    selRange.moveStart('character', pos1);
+                    selRange.moveEnd('character', pos2);
+                    selRange.select();
+                } else if (element.setSelectionRange) {
+                    element.setSelectionRange(pos1, pos2);
+                } else if (element.selectionStart) {
+                    element.selectionStart = pos1;
+                    element.selectionEnd = pos2;
+                }
             }
             element.focus();
         }
@@ -203,31 +232,47 @@ class MudElementReference {
         }
     }
 
-    // ios doesn't trigger Blazor/React/Other dom style blur event so add a base event listener here
-    // that will trigger with IOS Done button and regular blur events
+    // Some virtual keyboard flows can dismiss focus without Blazor observing the blur.
+    // Bridge only those fallback cases and keep normal focus-to-control transitions on Blazor's native path.
     /**
      * Attaches a blur bridge that calls back into .NET.
-     * Used to normalize blur behavior on iOS virtual keyboard flows.
+     * Used as a fallback when blur doesn't move focus to another interactive element.
      */
     addOnBlurEvent(element, dotNetReference) {
         if (!element) return;
 
         element._mudBlurHandler = function (e) {
-            if (!element || !document.contains(element)) {
-                // iOS keyboard flows can blur after disposal; clean up to prevent stale callbacks.
-                window.mudElementRef.removeOnBlurEvent(element);
-                return;
-            }
-            e.preventDefault();
+            const relatedTarget = e.relatedTarget;
 
-            if (dotNetReference) {
-                dotNetReference.invokeMethodAsync('CallOnBlurredAsync').catch(err => {
-                    console.warn("Error invoking CallOnBlurredAsync, possibly disposed:", err);
+            window.setTimeout(() => {
+                if (!element || !document.contains(element)) {
+                    // Virtual keyboard flows can blur after disposal; clean up to prevent stale callbacks.
                     window.mudElementRef.removeOnBlurEvent(element);
-                });
-            } else {
-                console.error("No dotNetReference found for iosKeyboardFocus");
-            }
+                    return;
+                }
+
+                const activeElement = document.activeElement;
+                const nextFocusedElement = relatedTarget && document.contains(relatedTarget)
+                    ? relatedTarget
+                    : activeElement;
+                const movedFocusToAnotherElement = !!nextFocusedElement
+                    && nextFocusedElement !== element
+                    && nextFocusedElement !== document.body
+                    && nextFocusedElement !== document.documentElement;
+
+                if (movedFocusToAnotherElement) {
+                    return;
+                }
+
+                if (dotNetReference) {
+                    dotNetReference.invokeMethodAsync('CallOnBlurredAsync').catch(err => {
+                        console.warn("Error invoking CallOnBlurredAsync, possibly disposed:", err);
+                        window.mudElementRef.removeOnBlurEvent(element);
+                    });
+                } else {
+                    console.error("No dotNetReference found for blur fallback");
+                }
+            }, 0);
         };
 
         element.addEventListener('blur', element._mudBlurHandler);

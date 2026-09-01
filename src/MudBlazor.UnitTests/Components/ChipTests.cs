@@ -4,6 +4,7 @@
 
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Chip;
 using NUnit.Framework;
 
@@ -26,6 +27,75 @@ namespace MudBlazor.UnitTests.Components
             chip.GetAttribute("target").Should().BeNull();
             chip.GetAttribute("type").Should().BeNull();
             chip.GetAttribute("rel").Should().BeNull();
+        }
+
+        [Test]
+        public void Chip_PlainChips_ShouldNotSubscribeToKeyInterceptor()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+
+            for (var i = 0; i < 20; i++)
+            {
+                Context.Render<MudChip<string>>();
+            }
+
+            keyInterceptorService.ObserversCount.Should().Be(0);
+        }
+
+        [Test]
+        public void Chip_InteractiveChips_ShouldSubscribeToKeyInterceptor()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+
+            Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.OnClick, () => { }));
+            Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.OnClose, () => { }));
+
+            keyInterceptorService.ObserversCount.Should().Be(2);
+        }
+
+        [Test]
+        public async Task Chip_KeyInterceptorSubscription_ShouldFollowParameterTransitions()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudChip<string>>();
+
+            keyInterceptorService.ObserversCount.Should().Be(0);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.OnClick, () => { }));
+            keyInterceptorService.ObserversCount.Should().Be(1);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Disabled, true));
+            keyInterceptorService.ObserversCount.Should().Be(0);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Disabled, false));
+            keyInterceptorService.ObserversCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Chip_KeyboardInterceptor_ShouldInvokeClickAndClose()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var clicked = 0;
+            var closed = 0;
+            var clickable = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.OnClick, () => clicked++)
+                .Add(p => p.OnClose, () => { }));
+            var closable = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.OnClose, () => closed++));
+            var clickableId = clickable.Find(".mud-chip-container").GetAttribute("id")!;
+            var closableId = closable.Find(".mud-chip-container").GetAttribute("id")!;
+
+            await clickable.InvokeAsync(() => keyInterceptorService.OnKeyDown(clickableId, new KeyboardEventArgs { Key = " " }));
+            await closable.InvokeAsync(() => keyInterceptorService.OnKeyDown(closableId, new KeyboardEventArgs { Key = "Delete" }));
+            await closable.InvokeAsync(() => keyInterceptorService.OnKeyDown(closableId, new KeyboardEventArgs { Key = "Backspace" }));
+
+            clicked.Should().Be(1);
+            closed.Should().Be(2);
         }
 
         [Test]

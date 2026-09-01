@@ -5,7 +5,7 @@
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents the options for a line chart that has axes.
+/// Line and area chart options such as stroke width, data markers, interpolation, and per-series display overrides.
 /// </summary>
 public interface IAxisLineChartOptions : IAxisChartOptions
 {
@@ -29,6 +29,14 @@ public interface IAxisLineChartOptions : IAxisChartOptions
     /// Defaults to <c>false</c>
     /// </remarks>
     public bool YAxisRequireZeroPoint { get; set; }
+
+    /// <summary>
+    /// Prevent negative overshoots if all Y values are non-negative
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>
+    /// </remarks>
+    public bool ClampToZero { get; set; }
 
     /// <summary>
     /// The style of line to use for the chart <see cref="LineDisplayType.Line"/> or <see cref="LineDisplayType.Area"/>

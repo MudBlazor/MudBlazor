@@ -6,10 +6,23 @@ using static System.String;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a base class for designing button components.
+    /// Base class for clickable button components such as <see cref="MudButton"/>, <see cref="MudFab"/>, and <see cref="MudIconButton"/>.
     /// </summary>
     public abstract class MudBaseButton : MudComponentBase
     {
+        /// <summary>
+        /// Stores the rendered element reference without re-rendering this button.
+        /// </summary>
+        /// <remarks>
+        /// Only the button markup in this assembly binds it, so it stays off the public API surface.
+        /// </remarks>
+        private protected readonly EventCallback<ElementReference> _captureElementReference;
+
+        protected MudBaseButton()
+        {
+            _captureElementReference = MudElement.CaptureRef(reference => _elementReference = reference);
+        }
+
         /// <summary>
         /// The custom activation behavior.
         /// </summary>

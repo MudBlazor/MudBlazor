@@ -1,0 +1,10 @@
+{
+  "sdk": {
+    "version": "10.0.400",
+    "rollForward": "latestPatch",
+    "errorMessage": "MudBlazor pins the .NET SDK to the feature band in global.json - any equal or newer patch of that band works. Install it from https://dotnet.microsoft.com/download/dotnet and run 'dotnet --list-sdks' to see what you have."
+  },
+  "test": {
+    "runner": "Microsoft.Testing.Platform"
+  }
+}

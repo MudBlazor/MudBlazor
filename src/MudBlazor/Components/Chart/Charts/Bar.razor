@@ -15,6 +15,9 @@
                        Height="@Height"
                        ViewBoxWidth="_boundWidth"
                        ViewBoxHeight="_boundHeight"
+                       @bind-XAxisLabelSize="XAxisLabelSize"
+                       @bind-YAxisLabelSize="YAxisLabelSize"
+                       MatchBoundsToSize="@MatchBoundsToSize"
                        ChartClass="mud-chart-bar"
                        ChartSeries="@ChartSeries"
                        ChartLabels="@ChartLabels"
@@ -61,6 +64,26 @@
             builder.AddAttribute(seq++, "d", bar.Data);
             builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create(this, () => OnBarMouseOver(bar)));
             builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnBarMouseOut));
+            builder.CloseElement();
+        }
+
+        if (ChartOptions!.ShowValues)
+        {
+            builder.OpenElement(seq++, "g");
+            builder.AddAttribute(seq++, "class", "mud-charts-value-labels");
+
+            foreach (var label in _valueLabels)
+            {
+                builder.OpenElement(seq++, "text");
+                builder.AddAttribute(seq++, "class", "mud-chart-value-label");
+                builder.AddAttribute(seq++, "x", ToS(label.X));
+                builder.AddAttribute(seq++, "y", ToS(label.Y));
+                builder.AddAttribute(seq++, "font-size", $"{ToS(ValueLabelFontSize)}px");
+                builder.AddAttribute(seq++, "text-anchor", "middle");
+                builder.AddContent(seq++, label.Value);
+                builder.CloseElement();
+            }
+
             builder.CloseElement();
         }
     };

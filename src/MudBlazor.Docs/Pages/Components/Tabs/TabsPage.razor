@@ -226,5 +226,18 @@
             </SectionSubGroups>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Keep Panels Alive">
+                <Description>
+                    By default, tab panels are removed when switching to another tab and rerendered once the tab is selected again.
+                    This behavior can be changed by setting the <CodeInline>KeepPanelsAlive</CodeInline> property to <CodeInline>true</CodeInline>. Then, all tabs are rendered at once and inactive tab panels only get hidden but not destroyed.
+                    The <CodeInline>LazyLoadPanels</CodeInline> property additionally allows rendering tab panels only once they get activated. This property requires <CodeInline>KeepPanelsAlive</CodeInline> to also be <CodeInline>true</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsKeepPanelsAliveExample)" ShowCode="false" Block="true">
+                <TabsKeepPanelsAliveExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

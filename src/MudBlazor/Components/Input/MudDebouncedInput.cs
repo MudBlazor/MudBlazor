@@ -5,7 +5,7 @@ using MudBlazor.Utilities.Debounce;
 namespace MudBlazor
 {
     /// <summary>
-    /// A base class for designing input components which update after a delay.
+    /// Base class for MudBlazor inputs that wait for typing to pause before updating their value, such as <see cref="MudTextField{T}"/> and <see cref="MudNumericField{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
     public abstract class MudDebouncedInput<T> : MudBaseInput<T>
@@ -39,6 +39,9 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
+
+        /// <inheritdoc />
+        protected internal override bool EffectiveImmediate => Immediate || DebounceInterval > 0;
 
         /// <inheritdoc />
         protected override Task UpdateTextPropertyAsync(bool updateValue)
@@ -77,16 +80,24 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        protected override void OnParametersSet()
+        protected override async Task ValidateValue()
         {
-            base.OnParametersSet();
-            // if input is to be debounced, makes sense to bind the change of the text to oninput
-            // so we set Immediate to true
-            if (DebounceInterval > 0)
+            if (await SynchronizePendingValueForValidationAsync())
             {
-                // TODO: Don't write to parameter directly
-                Immediate = true;
+                return;
             }
+
+            await base.ValidateValue();
+        }
+
+        /// <inheritdoc />
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            // The DebounceInterval change handler only runs for values that arrive through the ParameterView.
+            // A value coming from a property initializer or from the constructor of a derived component never
+            // does, so seed the debouncer here from the initial value.
+            _debouncer ??= CreateDebouncer(DebounceInterval);
         }
 
         private async Task OnDebounceIntervalChangedAsync(ParameterChangedEventArgs<double> args)
@@ -102,7 +113,7 @@ namespace MudBlazor
             // Create debouncer if we don't have one
             if (_debouncer is null)
             {
-                _debouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(args.Value), false, TimeProvider);
+                _debouncer = CreateDebouncer(args.Value);
             }
             else
             {
@@ -113,6 +124,33 @@ namespace MudBlazor
                     await _debouncer.UpdateIntervalAsync(TimeSpan.FromMilliseconds(args.Value));
                 }
             }
+        }
+
+        private DebounceDispatcher? CreateDebouncer(double intervalMilliseconds) => intervalMilliseconds > 0
+            ? new DebounceDispatcher(TimeSpan.FromMilliseconds(intervalMilliseconds), false, TimeProvider)
+            : null;
+
+        private async Task<bool> SynchronizePendingValueForValidationAsync()
+        {
+            if (DebounceInterval <= 0 || _debouncer is null || !_debouncer.IsPending)
+            {
+                return false;
+            }
+
+            var pendingValue = ConvertGet(ReadText);
+            var pendingValueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue, pendingValue);
+
+            await _debouncer.CancelAsync();
+
+            if (!pendingValueChanged)
+            {
+                return false;
+            }
+
+            // SetValueAndUpdateTextAsync already triggers FieldChanged and BeginValidateAsync,
+            // so the synced validation happens there and this call can stop.
+            await SetValueAndUpdateTextAsync(pendingValue, updateText: false);
+            return true;
         }
 
         private Task OnDebouncedUpdate()

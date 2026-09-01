@@ -9,8 +9,6 @@ using Bunit;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.NumericField;
@@ -19,7 +17,6 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
-    [NonParallelizable]
     public class NumericFieldTests : BunitTest
     {
         // TestCaseSource does not know about "Nullable<T>" so having values as Nullable<T> does not make sense here
@@ -138,7 +135,7 @@ namespace MudBlazor.UnitTests.Components
             await input.InputAsync(new ChangeEventArgs() { Value = "100" });
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
-            numericField.Immediate.Should().BeTrue();
+            numericField.EffectiveImmediate.Should().BeTrue();
             //input value has changed, but elapsed time is 0, so Value should not change in NumericField
             numericField.ReadValue.Should().BeNull();
             numericField.ReadText.Should().Be("100");
@@ -236,6 +233,216 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").ChangeAsync(decimal.MinValue);
             numericField.ReadValue.Should().Be(decimal.MinValue);
             numericField.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+        }
+
+        // Regression test for #6762: 0 + 0.1 * 3 used to display "0.30000000000000004".
+        [Test]
+        public async Task NumericField_Double_FractionalStep_ShouldNotIntroducePrecisionError()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 0.0)
+                .Add(x => x.Step, 0.1));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+            await comp.InvokeAsync(() => numericField.Increment());
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(0.3);
+            comp.Find("input").GetAttribute("value").Should().Be("0.3");
+
+            // decrement back across 0.0 must land exactly on zero, not 1.38e-16.
+            await comp.InvokeAsync(() => numericField.Decrement());
+            await comp.InvokeAsync(() => numericField.Decrement());
+            await comp.InvokeAsync(() => numericField.Decrement());
+
+            numericField.ReadValue.Should().Be(0.0);
+            comp.Find("input").GetAttribute("value").Should().Be("0");
+        }
+
+        // Regression test for #6762: same as the double case but for float.
+        // Steps deep enough (0.01 x 16) to expose float noise: converting via the widened double renders
+        // "0.16000001" here, so the decimal conversion must come from the float's own 7-digit value.
+        [Test]
+        public async Task NumericField_Float_FractionalStep_ShouldNotIntroducePrecisionError()
+        {
+            var comp = Context.Render<MudNumericField<float>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 0f)
+                .Add(x => x.Step, 0.01f));
+            var numericField = comp.Instance;
+
+            for (var i = 0; i < 16; i++)
+                await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(0.16f);
+            comp.Find("input").GetAttribute("value").Should().Be("0.16");
+        }
+
+        /// <summary>
+        /// Fractional double steps reaching zero should produce positive zero from either direction.
+        /// </summary>
+        [TestCase(-0.2, true, TestName = "NumericField_Double_IncrementFromNegativeFraction_ZeroHasPositiveSign")]
+        [TestCase(0.2, false, TestName = "NumericField_Double_DecrementFromPositiveFraction_ZeroHasPositiveSign")]
+        public async Task NumericField_Double_FractionalStep_ZeroHasPositiveSign(double value, bool increment)
+        {
+            var changedValueBits = BitConverter.DoubleToInt64Bits(value);
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, value)
+                .Add(x => x.Step, 0.1)
+                .Add(x => x.ValueChanged, changedValue => changedValueBits = BitConverter.DoubleToInt64Bits(changedValue)));
+            var numericField = comp.Instance;
+
+            for (var i = 0; i < 2; i++)
+            {
+                if (increment)
+                    await comp.InvokeAsync(() => numericField.Increment());
+                else
+                    await comp.InvokeAsync(() => numericField.Decrement());
+            }
+
+            BitConverter.DoubleToInt64Bits(numericField.ReadValue).Should().Be(0L);
+            changedValueBits.Should().Be(0L);
+            comp.Find("input").GetAttribute("value").Should().Be("0");
+        }
+
+        /// <summary>
+        /// Fractional float steps reaching zero should produce positive zero from either direction.
+        /// </summary>
+        [TestCase(-0.2f, true, TestName = "NumericField_Float_IncrementFromNegativeFraction_ZeroHasPositiveSign")]
+        [TestCase(0.2f, false, TestName = "NumericField_Float_DecrementFromPositiveFraction_ZeroHasPositiveSign")]
+        public async Task NumericField_Float_FractionalStep_ZeroHasPositiveSign(float value, bool increment)
+        {
+            var changedValueBits = BitConverter.SingleToInt32Bits(value);
+            var comp = Context.Render<MudNumericField<float>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, value)
+                .Add(x => x.Step, 0.1f)
+                .Add(x => x.ValueChanged, changedValue => changedValueBits = BitConverter.SingleToInt32Bits(changedValue)));
+            var numericField = comp.Instance;
+
+            for (var i = 0; i < 2; i++)
+            {
+                if (increment)
+                    await comp.InvokeAsync(() => numericField.Increment());
+                else
+                    await comp.InvokeAsync(() => numericField.Decrement());
+            }
+
+            BitConverter.SingleToInt32Bits(numericField.ReadValue).Should().Be(0);
+            changedValueBits.Should().Be(0);
+            comp.Find("input").GetAttribute("value").Should().Be("0");
+        }
+
+        // Values beyond decimal range must fall back to double arithmetic instead of overflowing.
+        [Test]
+        public async Task NumericField_Double_BeyondDecimalRange_ShouldStillStep()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 1e300)
+                .Add(x => x.Step, 1e300));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(2e300);
+        }
+
+        // A value with more significant digits than the decimal conversion keeps must step in double arithmetic.
+        // The lossy round trip used to land below the original value and trip the overflow clamp, jumping to double.MaxValue.
+        [Test]
+        public async Task NumericField_Double_PrecisionBeyondDecimal_ShouldUseDoubleArithmetic()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, Math.PI)
+                .Add(x => x.Step, 5e-16));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(Math.PI + 5e-16);
+        }
+
+        // Stepping by zero must be a no-op regardless of the value's precision.
+        [Test]
+        public async Task NumericField_Double_ZeroStep_ShouldNotChangeValue()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, Math.PI)
+                .Add(x => x.Step, 0.0));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(Math.PI);
+        }
+
+        // A sum that exceeds decimal's range while both operands fit must fall back to double arithmetic instead of clamping.
+        [Test]
+        public async Task NumericField_Double_SumBeyondDecimalRange_ShouldStillStep()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 7e28)
+                .Add(x => x.Step, 7e28));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(7e28 + 7e28);
+        }
+
+        // The doubles nearest decimal.MinValue/MaxValue pass a lenient range check but overflow when converted; they must not clamp or flip sign.
+        [Test]
+        public async Task NumericField_Double_NearDecimalBoundary_ShouldNotClamp()
+        {
+            var boundary = (double)decimal.MinValue;
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, boundary)
+                .Add(x => x.Step, 0.0));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(boundary);
+        }
+
+        // Steps smaller than decimal's epsilon must not collapse to zero, and values that small must not corrupt when stepped.
+        [Test]
+        public async Task NumericField_Double_StepBelowDecimalEpsilon_ShouldStillStep()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 0.0)
+                .Add(x => x.Step, 1e-30));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+            numericField.ReadValue.Should().Be(1e-30);
+
+            await comp.InvokeAsync(() => numericField.Increment());
+            numericField.ReadValue.Should().Be(1e-30 + 1e-30);
+        }
+
+        // Float variant of the sub-epsilon step: 1e-30f is a valid float but converts to 0m.
+        [Test]
+        public async Task NumericField_Float_StepBelowDecimalEpsilon_ShouldStillStep()
+        {
+            var comp = Context.Render<MudNumericField<float>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Value, 0f)
+                .Add(x => x.Step, 1e-30f));
+            var numericField = comp.Instance;
+
+            await comp.InvokeAsync(() => numericField.Increment());
+
+            numericField.ReadValue.Should().Be(1e-30f);
         }
 
         /// <summary>
@@ -370,6 +577,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Programmatically resetting Value (e.g. from an OnKeyDown handler) while the field is focused must
+        /// update the displayed text, not only the bound Value. Regression test for #8565 / #10486: on Blazor
+        /// Server the rendered input kept the typed text because the old TextUpdateSuppression skipped the
+        /// _internalText refresh while focused. The key assertion is on the rendered value attribute, since
+        /// ReadText already updated correctly even when the bug was present.
+        /// </summary>
+        [Test]
+        public async Task NumericField_Should_UpdateDisplayedTextOnBoundValueChange_WhenFocused()
+        {
+            var comp = Context.Render<NumericFieldUpdateViaBindingTest>();
+            var input = comp.FindComponent<MudInput<string>>();
+
+            // Focus the field (sets _isFocused = true, the condition that used to suppress the text refresh).
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "a", Type = "keydown", });
+
+            // Simulate the user typing a value (Immediate => commits on input).
+            await comp.Find("input").InputAsync(new ChangeEventArgs() { Value = "123" });
+
+            comp.Find("#value-display").TrimmedText().Should().Be("value: 123");
+            input.Instance.ReadText.Should().Be("123");
+            comp.Find("input").GetAttribute("value").Should().Be("123");
+
+            // Hit Enter: the handler resets the bound value to 0 while the field is still focused.
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+
+            await comp.WaitForAssertionAsync(() => comp.Find("#value-display").TrimmedText().Should().Be("value: 0"));
+            await comp.WaitForAssertionAsync(() => input.Instance.ReadText.Should().Be("0"));
+            // Crucial assertion: the displayed text (rendered value attribute) must reflect the reset and not
+            // keep the typed "123". This is what regressed on Server in #8565 / #10486.
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("0"));
+        }
+
+        /// <summary>
         /// KeyDown disabled, should not do anything
         /// </summary>
         [Test]
@@ -407,98 +647,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1234.56));
             await comp.Find("input").KeyUpAsync(new KeyboardEventArgs() { Key = "9", Type = "keyup", });
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1234.56));
-        }
-
-        /// <summary>
-        /// MouseWheel actions should work
-        /// </summary>
-        [Test]
-        public async Task NumericField_MouseWheel()
-        {
-            var comp = Context.Render<MudNumericField<double>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1234.56));
-            var numericField = comp.Instance;
-
-            //MouseWheel up
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1235.56));
-
-            //MouseWheel down
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-
-            //Invert MouseWheel
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.InvertMouseWheel, true));
-
-            //MouseWheel up
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1233.56));
-
-            //MouseWheel down
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-
-            //Try with different step
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, 0.5));
-
-            //MouseWheel up
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.06));
-
-            //MouseWheel down
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-
-            //MouseWheel without Shift doesn't do anything
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = 77, ShiftKey = false });
-            await comp.Find("input").WheelAsync(new WheelEventArgs() { DeltaY = -17, ShiftKey = false });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-        }
-
-        /// <summary>
-        /// MouseWheel actions should work on Firefox
-        /// </summary>
-        [Test]
-        public async Task NumericField_Wheel_Firefox()
-        {
-            var comp = Context.Render<MudNumericField<double>>();
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1234.56));
-            var numericField = comp.Instance;
-
-            //MouseWheel up
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1235.56));
-
-            //MouseWheel down
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-
-            //Invert MouseWheel
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.InvertMouseWheel, true));
-
-            //MouseWheel up
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1233.56));
-
-            //MouseWheel down
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-
-            //Try with different step
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, 0.5));
-
-            //MouseWheel up
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.06));
-
-            //MouseWheel down
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = 1, ShiftKey = true });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
-
-            //MouseWheel without Shift doesn't do anything
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = 77, ShiftKey = false });
-            comp.Find("input").Wheel(new WheelEventArgs() { DeltaY = -17, ShiftKey = false });
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(1234.56));
         }
 
         /// <summary>
@@ -604,8 +752,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NumericField_Immediate_Should_Reformat_Repeated_Input_With_F3()
+        public async Task NumericField_Immediate_Should_Not_Reformat_While_Typing_But_Format_On_Blur_With_F3()
         {
+            // Regression test for #13266 / #13002 / #13250: with Immediate=true and a Format, the field
+            // must NOT reformat the text on every keystroke (which jumped the caret and made multi-digit
+            // entry impossible). The parsed value stays correct while typing; the format is applied on blur.
             var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
                 .Add(x => x.Immediate, true)
                 .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
@@ -613,15 +764,147 @@ namespace MudBlazor.UnitTests.Components
 
             var input = comp.Find("input");
 
+            // While the user is typing (oninput), the raw text is preserved, not reformatted to "3.145".
             await input.InputAsync("3.14514515415414515");
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
+            comp.Instance.ReadText.Should().Be("3.14514515415414515");
+            input.GetAttribute("value").Should().Be("3.14514515415414515");
+
+            // On blur the value is reformatted with the supplied format.
+            await input.BlurAsync();
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
             input.GetAttribute("value").Should().Be("3.145");
+        }
 
-            await input.InputAsync("3.145145154154145159");
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("3.145"));
-            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.145145154154145159d));
-            input.GetAttribute("value").Should().Be("3.145");
+        // Simulate a user typing one character at a time, appending each keystroke to whatever is
+        // currently displayed in the input (cursor-at-end), exactly like a browser does.
+        private static async Task TypeCharByCharAsync(IRenderedComponent<MudNumericField<double?>> comp, string toType)
+        {
+            IElement Input() => comp.Find("input");
+            foreach (var ch in toType)
+            {
+                var current = Input().GetAttribute("value") ?? string.Empty;
+                await Input().InputAsync(current + ch);
+            }
+        }
+
+        [Test]
+        public async Task NumericField_Immediate_WithFormat_TypingMultiDigit_IsNotReformattedMidway()
+        {
+            // #13266: typing "1234" one character at a time with Immediate=true and Format="F3" must
+            // build up the value 1234, not collapse to 1 because the field reformatted to "1.000"
+            // after the first keystroke (which moved the caret to the end and ate every later digit).
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Format, "F3"));
+
+            await TypeCharByCharAsync(comp, "1234");
+
+            comp.Instance.ReadText.Should().Be("1234", "the raw text is preserved while typing");
+            comp.Instance.ReadValue.Should().Be(1234d);
+
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1234.000"));
+            comp.Instance.ReadValue.Should().Be(1234d);
+        }
+
+        [Test]
+        public async Task NumericField_Immediate_Format_TwoWayBound_RawWhileTyping_FormatsOnBlur()
+        {
+            // #13266 completion on Blazor Server: with a two-way @bind-Value the value echoes back through
+            // the parent and previously reformatted the text mid-typing (the wrapper never tracked focus,
+            // so the SetParametersAsync "preserve user text" guard never engaged). Simulate real typing
+            // (keydown sets focus, then input) and assert the raw text is preserved while typing and only
+            // formatted on blur. Keydown is the key difference from the one-way test above.
+            double? bound = null;
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Format, "F3")
+                .Bind(x => x.Value, bound, v => bound = v));
+
+            foreach (var ch in "1234")
+            {
+                var current = comp.Find("input").GetAttribute("value") ?? string.Empty;
+                await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = ch.ToString() });
+                await comp.Find("input").InputAsync(current + ch);
+            }
+
+            comp.Instance.ReadText.Should().Be("1234", "the raw text is preserved while typing");
+            bound.Should().Be(1234d);
+
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1234.000"));
+        }
+
+        /// <summary>
+        /// A debounced field commits from oninput just like an Immediate one, so its own value echo must not rewrite the text the user is still typing.
+        /// </summary>
+        [Test]
+        public async Task NumericField_Debounced_ValueEcho_DoesNotRewriteTextWhileTyping()
+        {
+            // The debounce commit echoes back through the parent binding, and that echo used to reformat mid-typing because the suppression read Immediate, which a debounced field leaves false.
+            // "1." became "1", so continuing with "50" produced 150 instead of 1.50.
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 200d)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US")));
+
+            comp.Instance.Immediate.Should().BeFalse();
+            comp.Instance.EffectiveImmediate.Should().BeTrue("a debounced field still commits from oninput");
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "1" });
+            await comp.Find("input").InputAsync("1");
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "." });
+            await comp.Find("input").InputAsync("1.");
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(300));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1d));
+
+            // The parent's two-way binding hands the committed value straight back.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 1d));
+
+            comp.Instance.ReadText.Should().Be("1.", "the trailing separator the user typed must survive the echo");
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "5" });
+            await comp.Find("input").InputAsync("1.5");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(300));
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1.5d));
+        }
+
+        [Test]
+        public async Task NumericField_Immediate_WithCulture_CanTypeZeroAfterDecimalPoint()
+        {
+            // #13250: with Immediate=true and an explicit Culture (as the DataGrid numeric filter uses),
+            // typing "1.008" one character at a time must produce 1.008. Previously the "." and the
+            // leading "0" were stripped by the mid-typing reformat, turning the input into 1008.
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US")));
+
+            await TypeCharByCharAsync(comp, "1.008");
+
+            comp.Instance.ReadText.Should().Be("1.008", "the raw text is preserved while typing");
+            comp.Instance.ReadValue.Should().Be(1.008d);
+        }
+
+        [Test]
+        public async Task NumericField_Immediate_WithPattern_IsNotReformattedWhileTyping()
+        {
+            // Covers the Pattern trigger of UsesManagedFormatting (the Format and Culture triggers are
+            // covered by the two tests above). Typing "1.5" one character at a time with Immediate must
+            // not strip the "." mid-entry.
+            var comp = Context.Render<MudNumericField<double?>>(parameters => parameters
+                .Add(x => x.Immediate, true)
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(x => x.Pattern, @"[0-9.\-]"));
+
+            await TypeCharByCharAsync(comp, "1.5");
+
+            comp.Instance.ReadText.Should().Be("1.5", "the raw text is preserved while typing");
+            comp.Instance.ReadValue.Should().Be(1.5d);
         }
 
         [Test]
@@ -683,6 +966,30 @@ namespace MudBlazor.UnitTests.Components
                 await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(3.14514515415414515d));
                 input.GetAttribute("value").Should().Be("3.145");
             }
+        }
+
+        /// <summary>
+        /// Testing that <see cref="MudBaseInput{T}.EffectiveImmediate"/> reflects the Immediate and Debounce state of this component.
+        /// </summary>
+        /// <remarks>Added for <a href="https://github.com/MudBlazor/MudBlazor/pull/13610">PR #13610</a></remarks>
+        [Test]
+        public void NumericField_EffectiveImmediate_Should_Reflect_Immediate_And_Debounced_State()
+        {
+            Context.Render<MudNumericField<int>>()
+                .Instance.EffectiveImmediate.Should().BeFalse();
+
+            Context.Render<MudNumericField<int>>(parameters => parameters
+                    .Add(x => x.Immediate, true))
+                .Instance.EffectiveImmediate.Should().BeTrue();
+
+            Context.Render<MudNumericField<int>>(parameters => parameters
+                    .Add(x => x.DebounceInterval, 500))
+                .Instance.EffectiveImmediate.Should().BeTrue();
+
+            Context.Render<MudNumericField<int>>(parameters => parameters
+                    .Add(x => x.Immediate, true)
+                    .Add(x => x.DebounceInterval, 500))
+                .Instance.EffectiveImmediate.Should().BeTrue();
         }
 
         [TestCaseSource(nameof(TypeCases))]
@@ -762,6 +1069,22 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.Increment());
             await comp.InvokeAsync(() => comp.Instance.Decrement());
             comp.Instance.ReadValue.Should().Be(value);
+        }
+
+        [Test]
+        public async Task NumericField_SpinButtonsShouldFocusInput()
+        {
+            var comp = Context.Render<MudNumericField<int>>(parameters => parameters
+                .Add(x => x.HideSpinButtons, false)
+                .Add(x => x.Value, 5)
+                .Add(x => x.Step, 1));
+
+            await comp.FindAll(".mud-input-numeric-spin .mud-button-root")[0].TriggerEventAsync("onpointerdown", new PointerEventArgs());
+            await comp.FindAll(".mud-input-numeric-spin .mud-button-root")[1].TriggerEventAsync("onpointerdown", new PointerEventArgs());
+
+            Context.JSInterop.Invocations
+                .Count(x => x.Identifier == "Blazor._internal.domWrapper.focus")
+                .Should().Be(2);
         }
 
         [TestCaseSource(nameof(TypeCases))]
@@ -924,40 +1247,37 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text.
         /// </summary>
-        // TODO: Re-enable parallel execution. This test intermittently causes test-host hangs under full parallel coverage runs.
         [Test]
+        // Debounce-render test: the interleaved external re-render churns the input's event-handler IDs and the
+        // post-debounce render can race under heavy parallel CPU contention, so this runs serially (deterministic;
+        // no deadlock after the redesign).
         [NonParallelizable]
         public async Task DebouncedNumericFieldRerender()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
 
             var comp = Context.Render<DebouncedNumericFieldRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
-            IElement DelayedRerenderButton() => comp.Find("button#re-render");
             IElement Input() => comp.Find("input");
             var converter = new DefaultConverter<int>();
-            await Input().InputAsync("1");
+            var currentText = "1";
+            await Input().InputAsync(currentText);
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            // trigger delayed re-render
-            await DelayedRerenderButton().ClickAsync();
-            // imitate "typing in progress" by extending the debounce interval until component re-renders
-            var elapsedTime = 0;
-            var currentText = "1";
-            while (elapsedTime < comp.Instance.RerenderDelay)
+            // imitate "typing in progress" with an external re-render interleaved before the debounce commits
+            for (var i = 0; i < 4; i++)
             {
-                var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "2";
                 await Input().InputAsync(currentText);
-                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
-                elapsedTime += delay;
+                // external re-render while the user is mid-typing (before debounce commits)
+                await comp.InvokeAsync(comp.Instance.TriggerExternalRerender);
+                // advance by less than the debounce interval so it does NOT commit mid-typing
+                timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval / 2));
             }
             // after the final debounce, the value should be updated without swallowing any user input
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
-            comp.Instance.Value.Should().Be(converter.ConvertBack(currentText));
-            numericField.ReadText.Should().Be(currentText);
+            comp.WaitForAssertion(() => comp.Instance.Value.Should().Be(converter.ConvertBack(currentText)));
+            comp.WaitForAssertion(() => numericField.ReadText.Should().Be(currentText));
         }
 
         [Test]
@@ -975,38 +1295,36 @@ namespace MudBlazor.UnitTests.Components
         /// Validate that a re-render of a debounced numeric field does not cause a loss of uncommitted text while changing culture.
         /// </summary>
         [Test]
+        // Converter-change mid-debounce: the post-debounce reinterpretation render can exceed the default WaitForAssertion
+        // timeout under heavy parallel CPU contention, so this runs serially (deterministic; no deadlock after the redesign).
+        [NonParallelizable]
         public async Task DebouncedNumericFieldCultureChangeRerender()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
 
-            var comp = Context.Render<DebouncedNumericFieldCultureChangeRerenderTest>();
+            var comp = Context.Render<NumericFieldCultureChangeTest>();
             var numericField = comp.FindComponent<MudNumericField<double>>().Instance;
-            var delayedCultureChange = comp.Find("button#culture-change");
+            IElement Input() => comp.Find("input");
             // ensure text is updated on initialize
             numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
-            // trigger the culture change
-            await delayedCultureChange.ClickAsync();
-            // imitate "typing in progress" by extending the debounce interval until component re-renders
-            var elapsedTime = 0;
+            // change the culture while typing is in progress (runs on the renderer dispatcher synchronously, avoiding the deadlock)
+            await comp.InvokeAsync(comp.Instance.ApplyCultureChange);
+            // imitate "typing in progress" by advancing only half the debounce interval each iteration so it never commits mid-typing
             var currentText = comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture);
-            while (elapsedTime < comp.Instance.RerenderDelay)
+            for (var i = 0; i < 4; i++)
             {
-                var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "2";
-                await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
-                timeProvider.Advance(TimeSpan.FromMilliseconds(delay));
-                elapsedTime += delay;
+                await Input().InputAsync(new ChangeEventArgs { Value = currentText });
+                timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval / 2));
             }
-            // after the culture change delay has elapsed, the uncommitted text is retained (with the old culture)
+            // after the culture change, the uncommitted text is retained (with the old culture)
             numericField.ReadText.Should().Be(currentText);
-            // once debounce occurs, both value and text are translated into the new culture
+            // once the final debounce occurs, both value and text are translated into the new culture
             // e.g. 1.00222222 (one comma something in en-US) turns into 100.222.222 (hundred million something in de-DE)
-            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval * 2));
-            await Task.Delay(10); // Give the debouncer's InvokeAsync a chance to complete
-            numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture));
+            timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
+            comp.WaitForAssertion(() => numericField.ReadText.Should().Be(comp.Instance.Value.ToString(comp.Instance.Format, comp.Instance.Culture)));
         }
 
         /// <summary>
@@ -1108,13 +1426,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task Should_render_appropriate_type()
+        public async Task Should_render_text_input_and_only_emit_pattern_when_explicitly_set()
         {
             var comp = Context.Render<NumericFieldRenderTest>();
             var field = comp.Find("#num-field-id");
 
             comp.Markup.Should().NotContain("pattern");
-            field.GetAttribute("type").Should().Be("number");
+            field.GetAttribute("type").Should().Be("text");
 
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.UsePattern, true));
@@ -1125,7 +1443,57 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.UsePattern, false));
 
             comp.Markup.Should().NotContain("pattern");
-            field.GetAttribute("type").Should().Be("number");
+            field.GetAttribute("type").Should().Be("text");
+        }
+
+        /// <summary>
+        /// Existing quantifiers and end anchors are preserved while single-key patterns remain repeatable (#13646).
+        /// </summary>
+        [TestCase("", "")]
+        [TestCase(@"[0-9,.\-]", @"[0-9,.\-]*")]
+        [TestCase(@"[0-9,.\-]*", @"[0-9,.\-]*")]
+        [TestCase(@"[0-9]+", @"[0-9]+")]
+        [TestCase(@"[0-9]?", @"[0-9]?")]
+        [TestCase(@"[0-9]{1,3}", @"[0-9]{1,3}")]
+        [TestCase(@"^-?[0-9.,]*$", @"^-?[0-9.,]*$")]
+        public void NumericField_Should_RenderEffectivePattern(string pattern, string expectedPattern)
+        {
+            var comp = Context.Render<MudNumericField<decimal>>(parameters => parameters
+                .Add(x => x.Pattern, pattern));
+
+            comp.Find("input").GetAttribute("pattern").Should().Be(expectedPattern);
+        }
+
+        [Test]
+        public void NumericField_Should_RenderSpinbuttonAriaAttributes()
+        {
+            var comp = Context.Render<MudNumericField<int>>(parameters => parameters
+                .Add(p => p.Value, 4)
+                .Add(p => p.Min, 1)
+                .Add(p => p.Max, 10));
+
+            var input = comp.Find("input");
+
+            input.GetAttribute("type").Should().Be("text");
+            input.GetAttribute("role").Should().Be("spinbutton");
+            input.GetAttribute("aria-valuenow").Should().Be("4");
+            input.GetAttribute("aria-valuemin").Should().Be("1");
+            input.GetAttribute("aria-valuemax").Should().Be("10");
+            input.HasAttribute("aria-valuetext").Should().BeFalse();
+        }
+
+        [Test]
+        public void NumericField_Should_RenderAriaValueText_WhenFormattedTextDiffers()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(p => p.Value, 1234.56)
+                .Add(p => p.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Add(p => p.Format, "N2"));
+
+            var input = comp.Find("input");
+
+            input.GetAttribute("aria-valuenow").Should().Be("1234.56");
+            input.GetAttribute("aria-valuetext").Should().Be("1,234.56");
         }
 
         [Test]
@@ -1141,6 +1509,21 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(123.45M));
             numericField.Instance.ReadText.Should().Be("123.45");
             numericField.Instance.GetState(x => x.Culture).Name.Should().Be("");
+        }
+
+        [Test]
+        [SetUICulture("ru-RU")]
+        public async Task Should_apply_explicit_current_ui_culture()
+        {
+            var comp = Context.Render<MudNumericField<decimal>>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.GetCultureInfo("ru-RU")));
+
+            await comp.Find("input").ChangeAsync("123,45");
+            await comp.Find("input").BlurAsync();
+
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(123.45M));
+            comp.Instance.ReadText.Should().Be("123,45");
+            comp.Instance.Culture.Name.Should().Be("ru-RU");
         }
 
         [Test]
@@ -1238,6 +1621,8 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.ConversionErrorMessage.Should().NotBeNullOrEmpty();
             comp.Find("#error-id").InnerHtml.Should().Be(comp.Instance.ConversionErrorMessage);
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be("error-id");
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
         }
 
         [TestCase(Adornment.Start)]
@@ -1350,6 +1735,29 @@ namespace MudBlazor.UnitTests.Components
                 numericField.ConversionError.Should().Be(false);
                 numericField.ConversionErrorMessage.Should().BeNull();
             });
+        }
+
+        [Test]
+        public void AutoFocus_ShouldFocusWithoutScrolling()
+        {
+            Context.Render<MudNumericField<int>>(parameters => parameters
+                .Add(p => p.AutoFocus, true));
+
+            var focusInvocation = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Single();
+            var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
+            preventScroll.Should().BeTrue();
+        }
+
+        [Test]
+        public async Task FocusAsync_ShouldFocusWithScrolling()
+        {
+            var comp = Context.Render<MudNumericField<int>>();
+
+            await comp.InvokeAsync(async () => await comp.Instance.FocusAsync());
+
+            var focusInvocation = Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Single();
+            var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
+            preventScroll.Should().BeFalse();
         }
     }
 }

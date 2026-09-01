@@ -5,7 +5,9 @@
 using System.Globalization;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Extensions;
@@ -447,6 +449,47 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Ensures first-class drag callbacks are invoked together with internal drag state handling.
+        /// </summary>
+        [Test]
+        public async Task FileUpload_DragAndDrop_Should_Invoke_FirstClass_Drag_Callbacks()
+        {
+            var dragEnterCalls = 0;
+            var dragLeaveCalls = 0;
+            var dropCalls = 0;
+            var dragEndCalls = 0;
+
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(x => x.DragAndDrop, true)
+                .Add(x => x.OnDragEnter, EventCallback.Factory.Create<DragEventArgs>(this, (DragEventArgs _) => dragEnterCalls++))
+                .Add(x => x.OnDragLeave, EventCallback.Factory.Create<DragEventArgs>(this, (DragEventArgs _) => dragLeaveCalls++))
+                .Add(x => x.OnDrop, EventCallback.Factory.Create<DragEventArgs>(this, (DragEventArgs _) => dropCalls++))
+                .Add(x => x.OnDragEnd, EventCallback.Factory.Create<DragEventArgs>(this, (DragEventArgs _) => dragEndCalls++)));
+
+            await comp.Find(".mud-file-upload-dragarea").DragEnterAsync();
+            dragEnterCalls.Should().Be(1);
+            comp.Find(".mud-file-upload-dragarea").ClassList.Should().Contain("mud-border-primary");
+
+            await comp.Find("input").DragLeaveAsync();
+
+            dragLeaveCalls.Should().Be(1);
+            comp.Find(".mud-file-upload-dragarea").ClassList.Should().NotContain("mud-border-primary");
+
+            await comp.Find("input").DragEnterAsync();
+            dragEnterCalls.Should().Be(2);
+            comp.Find(".mud-file-upload-dragarea").ClassList.Should().Contain("mud-border-primary");
+
+            await comp.Find("input").DropAsync(new DragEventArgs());
+            dropCalls.Should().Be(1);
+            comp.Find(".mud-file-upload-dragarea").ClassList.Should().NotContain("mud-border-primary");
+
+            await comp.Find("input").DragEnterAsync();
+            await comp.Find("input").DragEndAsync();
+            dragEndCalls.Should().Be(1);
+            comp.Find(".mud-file-upload-dragarea").ClassList.Should().NotContain("mud-border-primary");
+        }
+
+        /// <summary>
         /// Ensures the default drag-and-drop activator uses a semantic button.
         /// </summary>
         [Test]
@@ -569,44 +612,6 @@ namespace MudBlazor.UnitTests.Components
             // Re-render and verify
             comp.Render();
             comp.Markup.Should().Contain("Selected files: 2");
-        }
-
-        /// <summary>
-        /// The wrapper must apply spacing class "mt-1" 
-        /// if and only if no SelectedTemplate is provided.
-        /// </summary>
-        [Test]
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        public void FileUpload_FilesContainer_TopSpacing_Should_Depend_On_SelectedTemplate(
-            bool hasSelectedTemplate,
-            bool expectedMt1)
-        {
-            // Arrange
-            IReadOnlyList<IBrowserFile> files =
-            [
-                new DummyBrowserFile("a.txt", DateTimeOffset.Now, 0, "text/plain", [])
-            ];
-
-            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters =>
-            {
-                parameters.Add(x => x.Files, files);
-
-                if (hasSelectedTemplate)
-                {
-                    parameters.Add(x => x.SelectedTemplate, context => builder =>
-                    {
-                        builder.AddContent(0, $"Selected files: {context?.Count ?? 0}");
-                    });
-                }
-            });
-
-            // Act
-            var wrapper = comp.Find(".mud-file-upload-files");
-            var hasMt1 = wrapper.ClassList.Contains("mt-1");
-
-            // Assert
-            hasMt1.Should().Be(expectedMt1);
         }
 
         /// <summary>
@@ -858,6 +863,32 @@ namespace MudBlazor.UnitTests.Components
             fileUpload.GetState(x => x.Error).Should().BeFalse(); // Errors should be cleared
             fileUpload.GetState(x => x.ErrorText).Should().BeNullOrEmpty(); // ErrorText should be cleared
             fileUpload.ValidationErrors.Should().BeEmpty(); // ValidationErrors related to MaxFileSize should be cleared
+        }
+
+        /// <summary>
+        /// A caller-supplied aria-required should win over the computed value, and required should still follow the parameter.
+        /// </summary>
+        [Test]
+        public void FileUpload_Should_LetUserAttributesOverrideAriaRequired()
+        {
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-required", "true" } }));
+
+            var input = comp.Find("input[type=file]");
+            input.GetAttribute("aria-required").Should().Be("true");
+            input.HasAttribute("required").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The generated per-input id stays component-owned so the file picker interop keeps working.
+        /// </summary>
+        [Test]
+        public void FileUpload_Should_KeepGeneratedInputId()
+        {
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "id", "caller-id" } }));
+
+            comp.Find("input[type=file]").GetAttribute("id").Should().NotBe("caller-id");
         }
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Radio;
 using MudBlazor.UnitTests.TestComponents.RadioGroup;
 using MudBlazor.UnitTests.Utilities;
+using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -44,7 +45,7 @@ namespace MudBlazor.UnitTests.Components
             var r2 = comp.Find(".r2");
             r2.GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element1 = comp.Find(".r2 label.mud-radio span.mud-typography");
-            element1.HasAttribute("aria-hidden").Should().BeTrue();
+            element1.GetAttribute("aria-hidden").Should().Be("true");
             var input1 = comp.Find(".r2 label.mud-radio input");
             var input1ForId = input1.GetAttribute("aria-labelledby");
             comp.Find($".r2 label.mud-radio #{input1ForId}").Should().NotBeNull();
@@ -59,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
             var r4 = comp.Find(".r4");
             r4.GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element3 = comp.Find(".r4 label.mud-radio span.mud-typography");
-            element3.HasAttribute("aria-hidden").Should().BeTrue();
+            element3.GetAttribute("aria-hidden").Should().Be("true");
             var input3 = comp.Find(".r4 label.mud-radio input");
             var input3ForId = input3.GetAttribute("aria-labelledby");
             comp.Find($".r4 label.mud-radio #{input3ForId}").Should().NotBeNull();
@@ -274,10 +275,52 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
             await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be("1"));
 
+            // Backspace is not a standard radio interaction and no longer clears the selection.
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be("1"));
 
             //Can't tabbed around the radios in test.
+        }
+
+        [Test]
+        public async Task RadioGroup_ResetAsync_ResetsToDefault()
+        {
+            // #11369: ResetAsync must reset the group to default(T) consistently, and re-selection must still work.
+
+            // Non-nullable bool: default is false, so resetting selects the "false" radio.
+            var boolGroup = Context.Render<MudRadioGroup<bool>>(self => self
+                .Add(x => x.Value, true)
+                .AddChildContent<MudRadio<bool>>(r => r.Add(x => x.Value, true))
+                .AddChildContent<MudRadio<bool>>(r => r.Add(x => x.Value, false)));
+
+            await boolGroup.InvokeAsync(() => boolGroup.Instance.ResetAsync());
+            boolGroup.Instance.Value.Should().BeFalse();
+            boolGroup.FindAll("input.mud-radio-input[checked]").Count.Should().Be(1);
+
+            // Re-selecting right after a reset still updates the value (the #11369 symptom).
+            await boolGroup.FindAll("input.mud-radio-input")[0].ClickAsync(new MouseEventArgs());
+            boolGroup.Instance.Value.Should().BeTrue();
+
+            // Nullable with a matching null option: resets to null and selects that option.
+            var nullableWithNull = Context.Render<MudRadioGroup<bool?>>(self => self
+                .Add(x => x.Value, false)
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, true))
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, false))
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, (bool?)null)));
+
+            await nullableWithNull.InvokeAsync(() => nullableWithNull.Instance.ResetAsync());
+            nullableWithNull.Instance.Value.Should().BeNull();
+            nullableWithNull.FindAll("input.mud-radio-input[checked]").Count.Should().Be(1);
+
+            // Nullable without a null option: resets to null and clears the selection entirely.
+            var nullableNoNull = Context.Render<MudRadioGroup<bool?>>(self => self
+                .Add(x => x.Value, false)
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, true))
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, false)));
+
+            await nullableNoNull.InvokeAsync(() => nullableNoNull.Instance.ResetAsync());
+            nullableNoNull.Instance.Value.Should().BeNull();
+            nullableNoNull.FindAll("input.mud-radio-input[checked]").Count.Should().Be(0);
         }
 
         [Test]
@@ -308,6 +351,22 @@ namespace MudBlazor.UnitTests.Components
             {
                 typeof(MudBlazor.Utilities.Exceptions.GenericTypeMismatchException).Should().Be(ex.InnerException.GetType());
             }
+        }
+
+        /// <summary>
+        /// A mismatched group must leave the typed parent null rather than fail the cast.
+        /// </summary>
+        [Test]
+        public void Radio_TypeMismatch_ShouldNotLeaveACastThatThrows()
+        {
+            var radio = new MudRadio<string>();
+            var group = new MudRadioGroup<char>();
+
+            // The cascade is assigned before the group rejects it, so the mismatched parent stays behind.
+            var assign = () => radio.IMudRadioGroup = group;
+            assign.Should().Throw<GenericTypeMismatchException>();
+
+            radio.MudRadioGroup.Should().BeNull();
         }
 
         /// <summary>
@@ -361,47 +420,66 @@ namespace MudBlazor.UnitTests.Components
             radioGroup.FindAll(".mud-radio > span.mud-readonly").Count.Should().Be(4);
         }
 
-        /// <summary>
-        /// Optional RadioGroup should not have required attribute and aria-required should be false.
-        /// </summary>
         [Test]
-        public void OptionalRadioGroup_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        public void OptionalRadioGroup_Should_HaveAriaRequiredFalse()
         {
             var comp = Context.Render<RadioGroupRequiredTest>();
 
-            comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeFalse();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("false");
         }
 
-        /// <summary>
-        /// Required RadioGroup should have required and aria-required attributes.
-        /// </summary>
         [Test]
-        public void RequiredRadioGroup_Should_HaveRequiredAndAriaRequiredAttributes()
+        public void RequiredRadioGroup_Should_HaveAriaRequiredTrue()
         {
             var comp = Context.Render<RadioGroupRequiredTest>(parameters => parameters
                 .Add(p => p.Required, true));
 
-            comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeTrue();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("true");
         }
 
-        /// <summary>
-        /// Required and aria-required RadioGroup attributes should be dynamic.
-        /// </summary>
         [Test]
-        public async Task RequiredAndAriaRequiredRadioGroupAttributes_Should_BeDynamic()
+        public async Task RadioGroupAriaRequired_Should_BeDynamic()
         {
             var comp = Context.Render<RadioGroupRequiredTest>();
 
-            comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeFalse();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("false");
 
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
-            comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeTrue();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        [Test]
+        public void Radio_Respects_Custom_TabIndex()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.AddUnmatched("tabindex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void Radio_Uses_Default_TabIndex_When_Enabled()
+        {
+            var comp = Context.Render<MudRadio<bool>>();
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        public void Radio_Uses_Default_TabIndex_When_Disabled()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.Add(x => x.Disabled, true));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void Radio_Respects_Custom_TabIndex_CaseInsensitive()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.AddUnmatched("TabIndex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
         }
 
         [Test]
@@ -437,6 +515,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void RadioColor_ReadOnly_ShouldKeepColor()
+        {
+            // #9524: a read-only radio keeps Color/UncheckedColor (only Disabled greys out),
+            // while the interactive hover class stays suppressed.
+            var comp = Context.Render<MudRadioGroup<int>>(self => self
+                .Add(x => x.ReadOnly, true)
+                .Add(x => x.Value, 1)
+                .AddChildContent<MudRadio<int>>(r => r
+                    .Add(x => x.Value, 1)
+                    .Add(x => x.Color, Color.Success)
+                    .Add(x => x.UncheckedColor, Color.Error))
+                .AddChildContent<MudRadio<int>>(r => r
+                    .Add(x => x.Value, 2)
+                    .Add(x => x.Color, Color.Success)
+                    .Add(x => x.UncheckedColor, Color.Error)));
+
+            var icons = comp.FindAll("span.mud-button-root");
+            // first radio is checked -> Color; second is unchecked -> UncheckedColor
+            icons[0].ClassList.Should().Contain("mud-success-text");
+            icons[0].ClassList.Should().NotContain("hover:mud-success-hover");
+            icons[1].ClassList.Should().Contain("mud-error-text");
+            icons[1].ClassList.Should().NotContain("hover:mud-error-hover");
+        }
+
+        [Test]
         public void RadioLabel()
         {
             var value = new DisplayNameLabelClass();
@@ -446,6 +549,30 @@ namespace MudBlazor.UnitTests.Components
 
             var comp2 = Context.Render<MudRadio<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
             comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
+        }
+
+        /// <summary>
+        /// A radiogroup cannot carry the native required attribute, so aria-required is its only required-ness signal and callers must be able to set it.
+        /// </summary>
+        [Test]
+        public void RadioGroup_Should_LetUserAttributesOverrideAriaRequired()
+        {
+            var comp = Context.Render<MudRadioGroup<string>>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-required", "true" } }));
+
+            comp.Find("div[role=radiogroup]").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Without a caller-supplied value the radiogroup still announces required-ness from the parameter.
+        /// </summary>
+        [Test]
+        public void RadioGroup_Should_ComputeAriaRequiredFromParameter()
+        {
+            var comp = Context.Render<MudRadioGroup<string>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("div[role=radiogroup]").GetAttribute("aria-required").Should().Be("true");
         }
     }
 }

@@ -4,6 +4,7 @@
 
 using System.Globalization;
 using AwesomeAssertions;
+using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
 #nullable enable
@@ -12,6 +13,16 @@ namespace MudBlazor.UnitTests.Converters
     [TestFixture]
     public class DefaultConverterLegacyTests
     {
+        [Test]
+        public void DefaultConverter_ObjectFallback_ConvertBack_ReturnsDefault()
+        {
+            var converter = new DefaultConverter<LegacyObject>();
+
+            converter.Convert(new LegacyObject("Hydrogen")).Should().Be("Hydrogen");
+            converter.ConvertBack("Hydrogen").Should().BeNull();
+            converter.ConvertBack(null).Should().BeNull();
+        }
+
         [Test]
         public void DefaultConverter_String_ValidCases()
         {
@@ -39,6 +50,11 @@ namespace MudBlazor.UnitTests.Converters
             c2.ConvertBack("").Should().Be(null);
             c2.ConvertBack(null).Should().Be(null);
             c2.Convert(null).Should().Be(null);
+        }
+
+        private sealed class LegacyObject(string value)
+        {
+            public override string ToString() => value;
         }
 
         [Test]
@@ -366,6 +382,19 @@ namespace MudBlazor.UnitTests.Converters
 
             var c1 = new DefaultConverter<object>();
             c1.Convert(notImplementedType).Should().Be(notImplementedType.ToString());
+        }
+
+        [Test]
+        public void DefaultConverter_Numeric_ConvertBack_Whitespace_IsNotTreatedAsEmpty()
+        {
+            // Empty/null short-circuits to zero/null, but whitespace goes through TryParse and fails.
+            var c1 = new DefaultConverter<int>();
+            var actNonNullable = () => c1.ConvertBack("   ");
+            actNonNullable.Should().Throw<ConversionException>();
+
+            var c2 = new DefaultConverter<int?>();
+            var actNullable = () => c2.ConvertBack("   ");
+            actNullable.Should().Throw<ConversionException>();
         }
 
         private enum YesNoMaybe { Maybe, Yes, No }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -31,7 +31,7 @@ window.getTabbableElements = (element) => {
 // Legacy serializer kept on `window` for JS interop payload normalization in browser-only call paths.
 // Source inspiration: https://github.com/RemiBou/BrowserInterop
 function serializeParameter(data, spec) {
-    if (typeof data == "undefined" ||
+    if (data === undefined ||
         data === null) {
         return null;
     }
@@ -109,6 +109,34 @@ window.mudGetSvgBBox = (svgElement) => {
         width: bbox.width,
         height: bbox.height
     };
+};
+
+/**
+ * Returns whether or not the element has a parent with a defined height,
+ * either via explicit height or constrained layout context.
+ */
+window.hasDefinedParentHeight = (element) => {
+    const parent = element?.parentElement;
+
+    if (!parent) return false;
+
+    const style = window.getComputedStyle(parent);
+
+    // Explicit height via inline or computed (not auto)
+    const hasExplicitHeight =
+        parent.style.height && parent.style.height !== 'auto';
+
+    // Check for flex/grid constraints
+    const isFlexOrGrid =
+        style.display.includes('flex') ||
+        style.display.includes('grid');
+
+    // Check if height is constrained via layout context
+    const hasConstrainedHeight =
+        style.height !== 'auto' &&
+        style.maxHeight !== 'none';
+
+    return hasExplicitHeight || (hasConstrainedHeight && isFlexOrGrid);
 };
 
 /**

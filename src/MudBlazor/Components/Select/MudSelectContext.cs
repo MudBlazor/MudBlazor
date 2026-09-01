@@ -4,6 +4,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using MudBlazor.Extensions;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
@@ -51,6 +52,11 @@ internal sealed class MudSelectContext<T>
     /// Gets the current selected values.
     /// </summary>
     public IReadOnlyCollection<T?> SelectedValues => _select.GetSelectedValues() ?? Array.Empty<T?>();
+
+    /// <summary>
+    /// Gets the user-supplied value comparer from the parent <see cref="MudSelect{T}"/>, if any.
+    /// </summary>
+    public IEqualityComparer<T?>? Comparer => _select.Comparer;
 
     /// <summary>
     /// Registers an item as visible in the dropdown list.
@@ -106,6 +112,7 @@ internal sealed class MudSelectContext<T>
         }
 
         _shadowLookup[item.Value] = item;
+        _select.InvalidateFitContent();
     }
 
     /// <summary>
@@ -120,22 +127,117 @@ internal sealed class MudSelectContext<T>
         }
 
         _shadowLookup.Remove(item.Value);
+        _select.InvalidateFitContent();
+    }
+
+    /// <summary>
+    /// Updates the visible-item lookup when a registered item's <see cref="MudSelectItem{T}.Value"/> parameter changes.
+    /// </summary>
+    /// <remarks>
+    /// The lookup is keyed by value captured at registration time. When the value parameter is later mutated
+    /// (e.g. the parent swaps the underlying data collection while reusing the same component instances),
+    /// the old key would otherwise point to a stale <see cref="MudSelectItem{T}"/> reference and the new value
+    /// would not be found at all.
+    /// </remarks>
+    public void OnItemValueChanged(MudSelectItem<T> item, T? oldValue, T? newValue)
+    {
+        var oldKey = new NullableObject<T?>(oldValue);
+        if (_valueLookup.TryGetValue(oldKey, out var existing) && ReferenceEquals(existing, item))
+        {
+            _valueLookup.Remove(oldKey);
+        }
+
+        _valueLookup[newValue] = item;
+    }
+
+    /// <summary>
+    /// Updates the shadow lookup when a registered shadow item's <see cref="MudSelectItem{T}.Value"/> parameter changes.
+    /// </summary>
+    /// <remarks>
+    /// Also requests a re-render of the parent <see cref="MudSelect{T}"/>: <c>GetSelectedValuePresenter</c> runs
+    /// during the parent's render pass, before child <c>SetParametersAsync</c> has propagated the new value,
+    /// so a second render is needed for the correct <see cref="MudSelectItem{T}.ChildContent"/> to be emitted.
+    /// </remarks>
+    public void OnShadowItemValueChanged(MudSelectItem<T> item, T? oldValue, T? newValue)
+    {
+        var oldKey = new NullableObject<T?>(oldValue);
+        if (_shadowLookup.TryGetValue(oldKey, out var existing) && ReferenceEquals(existing, item))
+        {
+            _shadowLookup.Remove(oldKey);
+        }
+
+        _shadowLookup[newValue] = item;
+        _select.InvalidateFitContent();
+
+        // Re-render only when the changed value is the one shown by the selected-value presenter
+        // (single selection only). An unconditional StateHasChanged loops forever when an item's
+        // Value is a fresh reference each render, e.g. an inline Value="@(new ...)" (#13281).
+        if (!_select.MultiSelection)
+        {
+            var comparer = Comparer ?? EqualityComparer<T?>.Default;
+            if (comparer.Equals(oldValue, _select.ReadValue) || comparer.Equals(newValue, _select.ReadValue))
+            {
+                ((IMudStateHasChanged)_select).StateHasChanged();
+            }
+        }
     }
 
     /// <summary>
     /// Attempts to get an item by its value from visible items.
     /// </summary>
+    /// <remarks>
+    /// When a custom <see cref="Comparer"/> is set the lookup honors it via a linear scan;
+    /// otherwise the fast dictionary lookup (default equality) is used. This keeps value-to-item
+    /// resolution consistent with the comparer-aware selection state.
+    /// </remarks>
     public bool TryGetItemByValue(T? value, [NotNullWhen(true)] out MudSelectItem<T>? item)
     {
-        return _valueLookup.TryGetValue(value, out item);
+        var comparer = Comparer;
+        if (comparer is null)
+        {
+            return _valueLookup.TryGetValue(value, out item);
+        }
+
+        foreach (var candidate in _items)
+        {
+            if (comparer.Equals(candidate.Value, value))
+            {
+                item = candidate;
+                return true;
+            }
+        }
+
+        item = null;
+        return false;
     }
 
     /// <summary>
     /// Attempts to get an item by its value from all items (including shadow items).
     /// </summary>
+    /// <remarks>
+    /// When a custom <see cref="Comparer"/> is set the lookup honors it via a linear scan;
+    /// otherwise the fast dictionary lookup (default equality) is used. This keeps value-to-item
+    /// resolution consistent with the comparer-aware selection state.
+    /// </remarks>
     public bool TryGetShadowItemByValue(T? value, [NotNullWhen(true)] out MudSelectItem<T>? item)
     {
-        return _shadowLookup.TryGetValue(value, out item);
+        var comparer = Comparer;
+        if (comparer is null)
+        {
+            return _shadowLookup.TryGetValue(value, out item);
+        }
+
+        foreach (var candidate in _shadowLookup.Values)
+        {
+            if (comparer.Equals(candidate.Value, value))
+            {
+                item = candidate;
+                return true;
+            }
+        }
+
+        item = null;
+        return false;
     }
 
     /// <summary>

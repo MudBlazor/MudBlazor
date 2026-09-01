@@ -160,6 +160,31 @@ public class DebounceDispatcherTests
     }
 
     [Test]
+    public async Task DebounceAsync_PreCancelledToken_ReturnsWithoutExecuting()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        using var debounceDispatcher = new DebounceDispatcher(100, false, timeProvider);
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+        var executed = false;
+        Task Invoke()
+        {
+            executed = true;
+            return Task.CompletedTask;
+        }
+
+        // Act - token is already cancelled before the call; the guard short-circuits before scheduling
+        var task = debounceDispatcher.DebounceAsync(Invoke, cts.Token);
+
+        // Assert - completes synchronously, action never runs, nothing pending
+        task.IsCompleted.Should().BeTrue();
+        await task;
+        executed.Should().BeFalse();
+        debounceDispatcher.IsPending.Should().BeFalse();
+    }
+
+    [Test]
     public async Task DebounceAsync_CancelMethod_CancelsPendingOperation()
     {
         // Arrange
@@ -218,6 +243,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
+    [CancelAfter(5000)]
     public async Task DebounceAsync_Dispose_CancelsPendingOperation()
     {
         // Arrange
@@ -234,7 +260,7 @@ public class DebounceDispatcherTests
         debounceDispatcher.Dispose();
 
         // Assert - should complete silently without throwing
-        await task.WaitAsync(TimeSpan.FromSeconds(5));
+        await task.WaitAsync(TestContext.CurrentContext.CancellationToken);
         executed.Should().BeFalse();
     }
 
@@ -404,12 +430,12 @@ public class DebounceDispatcherTests
         // Arrange
         var timeProvider = new FakeTimeProvider();
         using var debounceDispatcher = new DebounceDispatcher(50, false, timeProvider);
-        var firstStarted = new TaskCompletionSource<bool>();
-        var firstCanComplete = new TaskCompletionSource<bool>();
+        var firstStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var firstCanComplete = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
         async Task LongRunningAction()
         {
-            firstStarted.SetResult(true);
+            firstStarted.TrySetResult();
             await firstCanComplete.Task;
         }
 
@@ -418,10 +444,10 @@ public class DebounceDispatcherTests
         // Act
         var firstTask = debounceDispatcher.DebounceAsync(LongRunningAction);
         timeProvider.Advance(TimeSpan.FromMilliseconds(50));
-        await firstStarted.Task; // Wait for first action to start
+        await firstStarted.Task.WaitAsync(TestContext.CurrentContext.CancellationToken); // Wait for first action to start
 
         // Allow first to complete
-        firstCanComplete.SetResult(true);
+        firstCanComplete.TrySetResult();
         await firstTask;
 
         // Now start a new debounce - should work fine
@@ -818,6 +844,7 @@ public class DebounceDispatcherTests
 
     [Test]
     [Explicit]
+    [CancelAfter(10000)]
     public async Task Cancel_Race_Stress_NoUnhandledExceptions()
     {
         var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(50));
@@ -834,7 +861,7 @@ public class DebounceDispatcherTests
             });
         }
 
-        var act = async () => await Task.WhenAll(tasks).WaitAsync(TimeSpan.FromSeconds(10));
+        var act = async () => await Task.WhenAll(tasks).WaitAsync(TestContext.CurrentContext.CancellationToken);
 
         await act.Should().NotThrowAsync();
     }
@@ -876,6 +903,7 @@ public class DebounceDispatcherTests
 
     [Test]
     [Explicit]
+    [CancelAfter(10000)]
     public async Task CancelAsync_Race_Stress_NoUnhandledExceptions()
     {
         var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(50));
@@ -891,7 +919,7 @@ public class DebounceDispatcherTests
             });
         }
 
-        var act = async () => await Task.WhenAll(tasks).WaitAsync(TimeSpan.FromSeconds(10));
+        var act = async () => await Task.WhenAll(tasks).WaitAsync(TestContext.CurrentContext.CancellationToken);
 
         await act.Should().NotThrowAsync();
     }
@@ -932,6 +960,7 @@ public class DebounceDispatcherTests
     }
 
     [Test]
+    [CancelAfter(5000)]
     public async Task Dispose_ConcurrentWithDebounceCalls_DoesNotHangOrThrow()
     {
         var dispatcher = new DebounceDispatcher(TimeSpan.FromMilliseconds(50));
@@ -945,7 +974,7 @@ public class DebounceDispatcherTests
 
         var disposer = Task.Run(() => dispatcher.Dispose());
 
-        var act = async () => await Task.WhenAll(workers.Append(disposer)).WaitAsync(TimeSpan.FromSeconds(5));
+        var act = async () => await Task.WhenAll(workers.Append(disposer)).WaitAsync(TestContext.CurrentContext.CancellationToken);
 
         await act.Should().NotThrowAsync();
     }

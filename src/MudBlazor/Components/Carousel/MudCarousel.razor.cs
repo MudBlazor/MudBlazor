@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a set of slides which transition after a delay.
+    /// Carousels cycle through a set of slides or images, transitioning automatically or when the user swipes, clicks arrows, or selects a bullet.
     /// </summary>
     /// <typeparam name="TData">The kind of item to display.</typeparam>
     /// <seealso cref="MudCarouselItem" />
@@ -255,6 +255,9 @@ namespace MudBlazor
 
             if (Items.Count - 1 == SelectedIndex)
                 _currentColor = item.Color;
+
+            if (SelectedIndex < 0)
+                MoveTo(0);
 
             StateHasChanged();
         }

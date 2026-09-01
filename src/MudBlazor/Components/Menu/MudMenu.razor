@@ -1,18 +1,20 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes"
+<div id="@FieldId"
+     @attributes="UserAttributes"
      class="@Classname"
      style="@Style"
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
-     @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick && ActivatorContent is null ? ToggleMenuAsync : null)!)"
-     @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick && ActivatorContent is null)"
-     @oncontextmenu:stopPropagation="@(ActivationEvent == MouseEvent.RightClick && ActivatorContent is null)"
+     @oncontextmenu="@ContextMenuCallback"
+     @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)"
+     @oncontextmenu:stopPropagation="@(ActivationEvent == MouseEvent.RightClick)"
      @onkeydown="TrackKeyboardInteraction">
     @if (GetActivatorHidden())
     {
-        @* No content was set so no need to render anything *@
+        // The branch must exist so a menu with no activator falls through to nothing.
+        // Without it the arms below would render a blank button.
     }
     else if (ActivatorContent is not null)
     {
@@ -24,7 +26,7 @@
                  tabindex="0"
                  role="button"
                  aria-haspopup="true"
-                 aria-expanded="@_openState.Value">
+                 aria-expanded="@_openState.Value.ToString().ToLowerInvariant()">
                 @ActivatorContent(_menuContext)
             </div>
         }
@@ -37,7 +39,7 @@
                          AutoClose="false"
                          HideSubMenuArrow="true"
                          aria-haspopup="true"
-                         aria-expanded="@_openState.Value"
+                         aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
                          aria-label="@AriaLabel">
                 @ActivatorContent(_menuContext)
             </MudMenuItem>
@@ -106,6 +108,7 @@
                 Duration="@GetTransitionDuration()">
         <CascadingValue Value="@this">
             <div id="@_elementId"
+                 class="mud-menu-list-wrapper"
                  data-testid="menu-wrapper"
                  @ref="_menuWrapperRef"
                  @onkeydown="HandleKeyDownAsync"
@@ -123,6 +126,7 @@
     {
         <MudOverlay Visible="_openState.Value && !_isTransient"
                     AutoClose
+                    data-modeless-ignore-element-id="@FieldId"
                     OnClosed="CloseMenuAsync"
                     LockScroll="LockScroll"
                     Modal="@GetModal()" />

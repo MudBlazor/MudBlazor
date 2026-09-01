@@ -12,7 +12,8 @@ using MudBlazor.Interpolation;
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents a base class for axis-based line charts.
+/// Base class for line-based charts such as <see cref="Line{T}"/>, <see cref="ScatterPlot{T}"/>, and <see cref="TimeSeries{T}"/>.
+/// Generates the SVG line paths, area fills, and data-point markers, with optional interpolation.
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 /// <typeparam name="TOptions">The type of options for the chart.</typeparam>
@@ -44,6 +45,13 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     /// Indicates whether the chart should be interpolated.
     /// </summary>
     protected abstract bool ShouldInterpolate { get; }
+
+    /// <summary>
+    /// When <c>true</c>, data points are always added to <see cref="ChartDataPoints"/> regardless of
+    /// <see cref="IChartOptions.ShowToolTips"/>. Override to <c>true</c> for charts (e.g. scatter plot)
+    /// that use <see cref="ChartDataPoints"/> to render visible markers, not only tooltips.
+    /// </summary>
+    protected virtual bool ShouldAlwaysPopulateDataPoints => false;
 
     /// <summary>
     /// Gets the data value for a specific series and data point.
@@ -103,15 +111,19 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         VerticalLines.Clear();
         VerticalValues.Clear();
 
-        if (numVerticalLines == 0 || !Series.Any(x => x.Data.Values.Any()))
+        if (numVerticalLines == 0 || !Series.Any(x => x.Data.Count != 0))
+        {
             return;
+        }
 
         for (var i = 0; i < numVerticalLines; i++)
         {
             var x = startOffset + HorizontalStartSpace + (i * horizontalSpace);
 
             if (x > _boundWidth - HorizontalEndSpace)
+            {
                 break; // we are out of bounds
+            }
 
             var line = new SvgPath
             {
@@ -146,14 +158,18 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         ChartDataPoints.Clear();
 
         if (Series.Count == 0)
+        {
             return;
+        }
 
         for (var i = 0; i < Series.Count; i++)
         {
             var series = Series[i];
 
             if (!series.Visible || !series.Data.Points.Any())
+            {
                 continue;
+            }
 
             var chartLine = new StringBuilder();
             var chartDataCircles = new List<SvgCircle>();
@@ -162,7 +178,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             var overrideSettings = GetSeriesDisplayOverride(series);
             var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;
 
-            var interpolationEnabled = ShouldInterpolate && interpolationOption is not InterpolationOption.Straight and not null;
+            var interpolationEnabled = ShouldInterpolate && interpolationOption is not InterpolationOption.Straight and not null && series.Data.Count > 2;
 
             var (firstPointX, firstPointY, lastPointX) = interpolationEnabled
                 ? GenerateInterpolatedLines(i, chartLine, chartDataCircles, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace)
@@ -219,7 +235,9 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 firstPointY = y;
             }
             else
+            {
                 chartLine.Append(" L ");
+            }
 
             if (j == dataLength - 1)
             {
@@ -230,7 +248,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             chartLine.Append(' ');
             chartLine.Append(ToS(y));
 
-            if (ChartOptions?.ShowToolTips == true)
+            if (ChartOptions?.ShowToolTips == true || ShouldAlwaysPopulateDataPoints)
             {
                 chartDataCircles.Add(new SvgCircle
                 {
@@ -272,10 +290,19 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         const int InterpolationResolution = 10;
         var interpolator = CreateInterpolator(seriesIndex, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
 
+        var series = Series[seriesIndex];
+        var isPositiveOnly = series.Data.All(v => v >= T.Zero);
+        var zeroPointY = GetYForZeroPoint(lowestHorizontalLine);
+
         for (var j = 0; j < interpolator.InterpolatedYs.Length; j++)
         {
             var x = interpolator.InterpolatedXs[j];
             var y = interpolator.InterpolatedYs[j];
+
+            if (ChartOptions?.ClampToZero is true && isPositiveOnly && y > zeroPointY)
+            {
+                y = zeroPointY;
+            }
 
             if (j == 0)
             {
@@ -284,7 +311,9 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 firstPointY = y;
             }
             else
+            {
                 chartLine.Append(" L ");
+            }
 
             if (j == interpolator.InterpolatedYs.Length - 1)
             {
@@ -435,7 +464,9 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         HoveredDataPointPath = hoveredPoint;
 
         if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
+        {
             chart.StateHasChanged();
+        }
     }
 
     /// <summary>
@@ -446,6 +477,8 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         HoveredDataPointPath = null;
 
         if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
+        {
             chart.StateHasChanged();
+        }
     }
 }

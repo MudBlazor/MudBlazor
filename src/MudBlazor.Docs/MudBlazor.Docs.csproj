@@ -1,9 +1,10 @@
-﻿<!--https://docs.microsoft.com/visualstudio/msbuild/msbuild-reference -->
+<!--https://docs.microsoft.com/visualstudio/msbuild/msbuild-reference -->
 <!--Use: dotnet msbuild -preprocess:<fileName>.xml to evaluate this project-->
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>$(PrimaryTargetFramework)</TargetFramework>
+    <EnumGenerator_ForceInternal>true</EnumGenerator_ForceInternal>
   </PropertyGroup>
 
   <!--Analyzer Config-->
@@ -14,9 +15,13 @@
 
   <!--Execute the code generator-->
   <Target Name="GenerateDocs" BeforeTargets="BeforeBuild" DependsOnTargets="ResolveProjectReferences" Condition="'$(DesignTimeBuild)' != 'true'">
+    <!--MudBlazor's reference assembly: byte-stable unless the public API changes, so the generator can skip the API-doc reflection after method-body-only edits.-->
+    <PropertyGroup>
+      <_MudBlazorRefAssembly>$(MSBuildThisFileDirectory)../MudBlazor/obj/$(Configuration)/$(TargetFramework)/ref/MudBlazor.dll</_MudBlazorRefAssembly>
+    </PropertyGroup>
     <!--Command-line for the code generator-->
     <Message Text="Generating Docs" Importance="high" />
-    <Exec Command="dotnet run --configuration $(Configuration) --no-build --project &quot;$(MSBuildThisFileDirectory)../MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj&quot;" />
+    <Exec Command="dotnet run --configuration $(Configuration) --no-build --project &quot;$(MSBuildThisFileDirectory)../MudBlazor.Docs.Compiler/MudBlazor.Docs.Compiler.csproj&quot; -- &quot;$(_MudBlazorRefAssembly)&quot;" />
   </Target>
 
   <!--Add Content that is being generated as part of the build cycle-->
@@ -58,13 +63,12 @@
     <PackageReference Include="Blazor-Analytics" Version="4.0.0" />
     <PackageReference Include="BytexDigital.Blazor.Components.CookieConsent" Version="1.2.1" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
-    <PackageReference Include="FuzzySharp" Version="2.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="10.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.3" />
-    <PackageReference Include="Markdig" Version="1.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="10.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="10.0.11" />
+    <PackageReference Include="Markdig" Version="1.2.0" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
-    <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta20" PrivateAssets="all" />
+    <PackageReference Include="NetEscapades.EnumGenerators.Generators" Version="1.0.0-beta21" PrivateAssets="all" />
   </ItemGroup>
 
   <!--Project dependencies-->
@@ -83,7 +87,8 @@
   <!-- Only rebuild web assets if any of the source files have changed -->
   <ItemGroup>
     <ScssAssetInputs Include="Styles/**/*.scss" />
-    <WebAssetInputs Include="@(ScssAssetInputs)" />
+    <BuildScriptInputs Include="build.mjs" />
+    <WebAssetInputs Include="@(ScssAssetInputs);@(BuildScriptInputs);@(BunToolchainInputs)" />
     <UpToDateCheckInput Include="@(WebAssetInputs)" />
   </ItemGroup>
 
@@ -92,7 +97,9 @@
           Condition="'$(IsCrossTargetingBuild)' != 'true'
                 AND '$(DesignTimeBuild)' != 'true'
                 AND '$(WebAssetsBuilt)' != 'true'
-                AND '$(SkipBunCompile)' != 'true'">
+                AND '$(SkipBunCompile)' != 'true'"
+          Inputs="@(WebAssetInputs)"
+          Outputs="wwwroot/MudBlazorDocs.min.css">
 
     <PropertyGroup>
       <WebAssetsBuilt>true</WebAssetsBuilt>
@@ -102,6 +109,9 @@
              Text="Building MudBlazor.Docs web assets (inner build, TFM: $(TargetFramework))" />
 
     <Exec Command="$(BunToolRestore)"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+
+    <Exec Command="$(BunInstall)"
           WorkingDirectory="$(MSBuildProjectDirectory)" />
 
     <Exec Command="$(BunWrapper) run build.mjs"

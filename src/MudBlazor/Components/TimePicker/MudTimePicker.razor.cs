@@ -8,22 +8,21 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Resources;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     /// <summary>
-    /// Provides a simple way to select time values.
+    /// Selects a time of day from a clock shown in a drop-down, dialog, or inline.
     /// </summary>
-    /// <seealso cref="MudDatePicker"/>
-    /// <seealso cref="MudDateRangePicker"/>
+    /// <seealso cref="MudDatePicker" />
+    /// <seealso cref="MudDateRangePicker" />
     public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
-        private bool _amPm = false;
         private OpenTo _currentView;
         private string? _clockElementReferenceId;
         private readonly SetTime _timeSet = new();
-        private string _timeFormat = string.Empty;
         private readonly Lazy<DotNetObjectReference<MudTimePicker>> _dotNetReferenceLazy;
 
         [Inject]
@@ -38,6 +37,13 @@ namespace MudBlazor
         {
             AdornmentIcon = Icons.Material.Filled.AccessTime;
             _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudTimePicker>>(CreateDotNetObjectReference);
+            using var registerScope = CreateRegisterScope();
+            registerScope.RegisterParameter<bool>(nameof(AmPm))
+                .WithParameter(() => AmPm)
+                .WithChangeHandler(FormatChangedAsync);
+            registerScope.RegisterParameter<string?>(nameof(TimeFormat))
+                .WithParameter(() => TimeFormat)
+                .WithChangeHandler(FormatChangedAsync);
         }
 
         internal TimeSpan? TimeIntermediate { get; private set; }
@@ -103,24 +109,9 @@ namespace MudBlazor
         /// When <c>true</c>, hours 1-12 are displayed with an AM or PM marker.<br />
         /// When <c>false</c>, hours 0-23 are displayed.<br />
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool AmPm
-        {
-            get => _amPm;
-            set
-            {
-                if (value == _amPm)
-                {
-                    return;
-                }
-
-                _amPm = value;
-
-                Touched = true;
-                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
-            }
-        }
+        public bool AmPm { get; set; }
 
         /// <summary>
         /// The format applied to time values.
@@ -134,24 +125,9 @@ namespace MudBlazor
         /// * <c>tt</c> for AM/PM markers.<br />
         /// For example: <c>h:mm tt</c> would display <c>6:32 PM</c>, and <c>HH:mm</c> would display <c>18:32</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public string TimeFormat
-        {
-            get => _timeFormat;
-            set
-            {
-                if (_timeFormat == value)
-                {
-                    return;
-                }
-
-                _timeFormat = value;
-
-                Touched = true;
-                SetTextAsync(ConvertSet(_value), false).CatchAndLog();
-            }
-        }
+        public string TimeFormat { get; set; } = string.Empty;
 
         /// <summary>
         /// The currently selected time.
@@ -164,7 +140,9 @@ namespace MudBlazor
         public TimeSpan? Time
         {
             get => _value;
-            set => SetTimeAsync(value, true).CatchAndLog();
+            // Programmatic parameter assignment; pass suppression explicitly so it cannot leak across the
+            // awaits inside SetTimeAsync into a concurrent user clock pick on Blazor Server (PR #13328 review).
+            set => SetTimeAsync(value, updateValue: true, suppressInteraction: true).CatchAndLog();
         }
 
         /// <summary>
@@ -178,22 +156,32 @@ namespace MudBlazor
         /// </summary>
         /// <param name="time">The new value to set.</param>
         /// <param name="updateValue">When <c>true</c>, the <c>Text</c> will also be updated.</param>
-        protected async Task SetTimeAsync(TimeSpan? time, bool updateValue)
+        /// <param name="suppressInteraction">When <c>true</c>, the change is treated as programmatic and does not mark the picker touched or fire <c>FieldChanged</c>.</param>
+        protected async Task SetTimeAsync(TimeSpan? time, bool updateValue, bool suppressInteraction = false)
         {
-            if (_value != time)
+            // Text that fails to convert leaves the value null, so a null assignment looks like a no-op and the bad text would stick.
+            // Run it anyway while text remains, as MudDatePicker does.
+            if (_value != time || (time is null && !string.IsNullOrEmpty(Text)))
             {
-                Touched = true;
+                if (!suppressInteraction)
+                {
+                    Touched = true;
+                }
                 TimeIntermediate = time;
                 _value = time;
                 if (updateValue)
                 {
+                    ResetConverterErrors();
                     await SetTextAsync(ConvertSet(_value), false);
                 }
 
                 UpdateTimeSetFromTime();
                 await TimeChanged.InvokeAsync(_value);
                 await BeginValidateAsync();
-                FieldChanged(_value);
+                if (!suppressInteraction)
+                {
+                    FieldChanged(_value);
+                }
             }
         }
 
@@ -228,9 +216,9 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
-            Time = TimeIntermediate;
-
-            return Task.CompletedTask;
+            // Commit via SetTimeAsync directly, NOT the Time setter: the setter is suppressed, but a submit
+            // is a user commit that must touch and fire FieldChanged (as MudDatePicker/MudDateRangePicker do).
+            return SetTimeAsync(TimeIntermediate, updateValue: true);
         }
 
         /// <inheritdoc />
@@ -827,6 +815,12 @@ namespace MudBlazor
 
                 await UpdateTimeAsync();
             }
+        }
+
+        private Task FormatChangedAsync()
+        {
+            Touched = true;
+            return SetTextAsync(ConvertSet(_value), false);
         }
 
         /// <inheritdoc />

@@ -4,19 +4,23 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a column in a <see cref="MudDataGrid{T}"/> which can be expanded to show additional information.
+/// Adds an expand or collapse button to each <see cref="MudDataGrid{T}"/> row, revealing nested detail content when expanded.
 /// </summary>
 /// <typeparam name="T">The kind of item managed by the column.</typeparam>
-/// <seealso cref="Column{T}"/>
-/// <seealso cref="MudDataGrid{T}"/>
+/// <seealso cref="Column{T}" />
+/// <seealso cref="MudDataGrid{T}" />
 /// <remarks>
 /// This component wraps an internal <see cref="TemplateColumn{T}"/>. If it is ever refactored to derive from <see cref="Column{T}"/>,
 /// keep its ordering behavior pinned ahead of reorderable columns instead of exposing a user-configurable <c>Order</c>. e.g. Hide Order
 /// </remarks>
+/// <seealso cref="PropertyColumn{T, TProperty}" />
+/// <seealso cref="SelectColumn{T}" />
+/// <seealso cref="TemplateColumn{T}" />
 public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
 {
     /// <summary>
@@ -147,6 +151,12 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// </remarks>
     [Parameter]
     public Func<T, bool>? InitiallyExpandedFunc { get; set; }
+
+    /// <summary>
+    /// Occurs when hierarchy visibility is toggled for an item in this column.
+    /// </summary>
+    [Parameter]
+    public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
 #nullable disable
 
     private string GetGroupIcon(CellContext<T> context)

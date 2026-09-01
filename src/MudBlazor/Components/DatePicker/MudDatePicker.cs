@@ -6,9 +6,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a picker for dates.
+    /// Selects a single date from a calendar shown in a drop-down, dialog, or inline.
     /// </summary>
-    /// <seealso cref="MudDateRangePicker"/>
+    /// <seealso cref="MudDateRangePicker" />
+    /// <seealso cref="MudTimePicker" />
     public class MudDatePicker : MudBaseDatePicker
     {
         private DateTime? _selectedDate;
@@ -27,7 +28,10 @@ namespace MudBlazor
         public DateTime? Date
         {
             get => _value;
-            set => SetDateAsync(value, true).CatchAndLog();
+            // Assigning Date from the parameter is programmatic, not user interaction. Pass the suppression
+            // as an explicit argument (NOT an instance flag) so it cannot leak across the awaits inside
+            // SetDateAsync into a concurrent user calendar pick on Blazor Server (PR #13328 review).
+            set => SetDateAsync(value, updateValue: true, forceUpdate: false, suppressInteraction: true).CatchAndLog();
         }
 
         private DateTimeOffset _lastSetTime = DateTimeOffset.MinValue;
@@ -36,7 +40,7 @@ namespace MudBlazor
         protected Task SetDateAsync(DateTime? date, bool updateValue)
             => SetDateAsync(date, updateValue, false);
 
-        protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate)
+        protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate, bool suppressInteraction = false)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
             {
@@ -60,9 +64,15 @@ namespace MudBlazor
             // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
             // will be null. We need to check if the text has been set my the user and if so handle tha validation
             // without this the UI doesn't display a validation error correctly
-            if (_value != date || (date is null && Text != null))
+            // Empty text is not user input that failed to convert, so it must not re-enter this branch.
+            // A clear-button click empties the text before ClearAsync runs, so re-entering would overwrite Text with null once the debounce window above had closed.
+            // That would leave the observable result dependent on the wall clock.
+            if (_value != date || (date is null && !string.IsNullOrEmpty(Text)))
             {
-                Touched = true;
+                if (!suppressInteraction)
+                {
+                    Touched = true;
+                }
 
                 HighlightedDate = date;
 
@@ -88,7 +98,10 @@ namespace MudBlazor
 
                 await DateChanged.InvokeAsync(_value);
                 await BeginValidateAsync();
-                FieldChanged(_value);
+                if (!suppressInteraction)
+                {
+                    FieldChanged(_value);
+                }
             }
             else if (forceUpdate)
             {
@@ -118,7 +131,8 @@ namespace MudBlazor
         {
             var b = new CssBuilder("mud-day");
             b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
-            if (day < GetMonthStart(month) || day > GetMonthEnd(month))
+            b.AddClass("mud-adjacent-month", IsAdjacentMonthDay(month, day));
+            if (IsHiddenAdjacentMonthDay(month, day))
                 return b.AddClass("mud-hidden").Build();
             if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToStringFast(true)}").Build();
@@ -138,7 +152,7 @@ namespace MudBlazor
             _selectedDate = dateTime;
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
             {
-                await Task.Run(() => InvokeAsync(SubmitAsync));
+                await SubmitAsync();
 
                 if (PickerVariant != PickerVariant.Static)
                 {
@@ -392,7 +406,7 @@ namespace MudBlazor
 
                     break;
                 case "ArrowDown":
-                    if (Open == false && Editable == false)
+                    if (!Open && !Editable)
                     {
                         Open = true;
                     }

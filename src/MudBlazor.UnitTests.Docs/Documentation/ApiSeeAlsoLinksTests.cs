@@ -16,7 +16,7 @@ namespace MudBlazor.UnitTests.Docs.Documentation;
 public sealed class ApiSeeAlsoLinksTests : BunitTest
 {
     /// <summary>
-    /// Ensures that a mode of <see cref="ApiMemberTableMode.SeeAlso"/> renders properly for a type without see-also links.
+    /// Renders <see cref="ApiMemberTableMode.SeeAlso"/> when see-also links exist.
     /// </summary>
     /// <remarks>
     /// At the time of writing this test, there are see-also links for <see cref="MudButton"/>.
@@ -27,15 +27,16 @@ public sealed class ApiSeeAlsoLinksTests : BunitTest
         // Get a type with see-also links
         var mudButton = ApiDocumentation.GetType("MudBlazor.MudButton");
         using var comp = Context.Render<ApiSeeAlsoLinks>(parameters => parameters.Add(x => x.Type, mudButton));
-        // There should be a see-also link to MudButtonGroup
-        comp.Markup.Should().Contain("<a href=\"/api/MudButtonGroup\"");
-        comp.Markup.Should().Contain("class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">MudButtonGroup</a>");
-        // There should NOT be a message saying no members are found  
-        comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No see-also links match the current filters.</div>");
+
+        comp.Markup.Should().Contain("<a href=\"/api/MudButtonGroup\"", "There should be a see-also link to MudButtonGroup");
+
+        comp.Markup.Should().Contain("class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">MudButtonGroup</a>", "There should be a see-also link to MudButtonGroup");
+
+        comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No see-also links match the current filters.</div>", "There should NOT be a message saying no members are found");
     }
 
     /// <summary>
-    /// Ensures that a mode of <see cref="ApiMemberTableMode.SeeAlso"/> renders properly for a type without see-also links.
+    /// Renders the empty state in <see cref="ApiMemberTableMode.SeeAlso"/> when no see-also links exist.
     /// </summary>
     /// <remarks>
     /// At the time of writing this test, there are no see-also links for <see cref="MudAlert"/>.
@@ -46,7 +47,7 @@ public sealed class ApiSeeAlsoLinksTests : BunitTest
         // Get a type with no see-also links
         var mudAlert = ApiDocumentation.GetType("MudBlazor.MudAlert");
         using var comp = Context.Render<ApiSeeAlsoLinks>(parameters => parameters.Add(x => x.Type, mudAlert));
-        // There should be a message saying no members are found  
-        comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No see-also links match the current filters.</div>");
+
+        comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No see-also links match the current filters.</div>", "the current assertion expects no empty-state message");
     }
 }

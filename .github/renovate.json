@@ -12,6 +12,13 @@
         "build"
     ],
     "commitMessagePrefix": "Build: ",
+    "timezone": "Etc/UTC",
+    "lockFileMaintenance": {
+        "enabled": true
+    },
+    "constraints": {
+        "bun": "1.4.0"
+    },
     "vulnerabilityAlerts": {
         "enabled": true,
         "addLabels": [
@@ -22,6 +29,18 @@
         ]
     },
     "packageRules": [
+        {
+            "description": "A new SDK feature band means a new compiler, so it arrives as its own reviewable PR pinned to the band floor (x.y.z00). In-band servicing patches reach CI automatically and get no PR.",
+            "matchDatasources": [
+                "dotnet-version"
+            ],
+            "matchPackageNames": [
+                "dotnet-sdk"
+            ],
+            "allowedVersions": "/^\\d+\\.\\d+\\.\\d00$/",
+            "groupName": "dotnet sdk feature band",
+            "groupSlug": "dotnet-sdk-feature-band"
+        },
         {
             "matchPackageNames": [
                 "Microsoft.CodeAnalysis**"
@@ -44,14 +63,14 @@
             "enabled": false
         },
         {
-            "description": "Keep updates in draft while release age is unknown or immature.",
-            "matchJsonata": [
-                "$exists(newVersionAgeInDays) = false or newVersionAgeInDays < 14"
+            "description": "Shipped analyzer targets Roslyn 4.x; keep the build-time authoring-rules package on the matching 3.x line.",
+            "matchFileNames": [
+                "src/MudBlazor.Analyzers/MudBlazor.Analyzers.csproj"
             ],
-            "draftPR": true,
-            "prBodyNotes": [
-                "> [!WARNING]\n> Target version is either under 14 days old or does not publish a reliable release timestamp yet."
-            ]
+            "matchPackageNames": [
+                "Microsoft.CodeAnalysis.Analyzers"
+            ],
+            "allowedVersions": "<4.0.0"
         },
         {
             "matchFileNames": [
@@ -64,24 +83,104 @@
             "enabled": false
         },
         {
-            "description": "Group Bun toolchain updates and request Bun reviewer.",
+            "description": "eslint and sass decide the bytes in MudBlazor.min.js and MudBlazor.min.css, so pin them rather than tracking a range.",
             "matchManagers": [
-                "custom.regex"
+                "bun"
             ],
-            "matchPackageNames": [
-                "bun",
-                "BunDotNet.Cli"
+            "rangeStrategy": "pin"
+        },
+        {
+            "description": "The built-in renovate-config manager reads this same constraint from GitHub releases, so the field had two owners on two feeds. matchDepNames is load-bearing: that dependency's package name is oven-sh/bun.",
+            "matchManagers": [
+                "renovate-config"
             ],
+            "matchDepNames": [
+                "bun"
+            ],
+            "enabled": false
+        },
+        {
+            "description": "One branch for everything that feeds the Bun build, so two open PRs can never rewrite bun.lock at once. The Saturday window closes before the 06:00 AutoTriage sweep, and groupSingleUpdates keeps the group title on weeks when only one package moves.",
             "matchFileNames": [
-                "src/Directory.Build.props"
+                "src/package.json",
+                "src/Directory.Build.props",
+                ".config/dotnet-tools.json",
+                ".github/renovate.json"
             ],
-            "groupName": "bun toolchain",
-            "groupSlug": "bun-toolchain",
-            "separateMajorMinor": false,
-            "separateMultipleMajor": false,
+            "groupName": "bun",
+            "groupSlug": "bun",
+            "schedule": [
+                "* 0-5 * * 6"
+            ],
+            "minimumReleaseAge": "3 days",
+            "groupSingleUpdates": true,
             "reviewers": [
                 "meenzen"
             ]
+        },
+        {
+            "description": "Bun, the tool that downloads it and its type definitions are one release train. Keep this off the other npm packages: clearing separateMajorMinor collapses the lookup to a single bucket, so a major would suppress the safe patch on the current line.",
+            "matchPackageNames": [
+                "bun",
+                "BunDotNet.Cli",
+                "@types/bun"
+            ],
+            "matchFileNames": [
+                "src/Directory.Build.props",
+                ".config/dotnet-tools.json",
+                ".github/renovate.json",
+                "src/package.json"
+            ],
+            "separateMajorMinor": false,
+            "separateMultipleMajor": false
+        },
+        {
+            "description": "Undo the Bun group's reach into other managers' maintenance updates, since .config/dotnet-tools.json is a nuget manifest. reviewers is not a group setting, so clearing the group name leaves it behind; groupSlug and groupSingleUpdates need no reset because they are read only while a group name is set.",
+            "matchUpdateTypes": [
+                "lockFileMaintenance"
+            ],
+            "groupName": null,
+            "minimumReleaseAge": null,
+            "reviewers": [],
+            "schedule": [
+                "before 4am on monday"
+            ]
+        },
+        {
+            "description": "Renovate will not put lock file maintenance in a branch with anything else, so this cannot join the group above. It is also the only thing that moves a transitive in bun.lock, because the bun manager has no updateLockedDependency.",
+            "matchUpdateTypes": [
+                "lockFileMaintenance"
+            ],
+            "matchFileNames": [
+                "src/package.json"
+            ],
+            "groupName": "bun lock file",
+            "groupSlug": "bun-lock-file",
+            "schedule": [
+                "* 0-5 1-7 * 6"
+            ],
+            "minimumReleaseAge": null,
+            "groupSingleUpdates": false,
+            "reviewers": [
+                "meenzen"
+            ]
+        },
+        {
+            "description": "Group the Microsoft.Testing.Platform runner stack; these packages move and break together. Majors stay separate so breaking changes arrive alone.",
+            "matchPackageNames": [
+                "Microsoft.NET.Test.Sdk",
+                "Microsoft.Testing**",
+                "nunit",
+                "NUnit3TestAdapter",
+                "coverlet**",
+                "JunitXml.TestLogger"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "patch"
+            ],
+            "groupName": "test platform",
+            "groupSlug": "test-platform"
         }
     ],
     "customManagers": [
@@ -97,15 +196,16 @@
             "datasourceTemplate": "npm"
         },
         {
+            "description": "Keeps constraints.bun on the same npm feed as BunVersion, so the Bun that regenerates bun.lock cannot drift from the one that builds the assets.",
             "customType": "regex",
             "managerFilePatterns": [
-                "/(^|/)Directory\\.Build\\.props$/"
+                "/^\\.github/renovate\\.json$/"
             ],
             "matchStrings": [
-                "<BunDotNetVersion>(?<currentValue>.*?)</BunDotNetVersion>"
+                "\"constraints\":\\s*\\{[^}]*?\"bun\":\\s*\"(?<currentValue>[^\"]+)\""
             ],
-            "depNameTemplate": "BunDotNet.Cli",
-            "datasourceTemplate": "nuget"
+            "depNameTemplate": "bun",
+            "datasourceTemplate": "npm"
         }
     ]
 }

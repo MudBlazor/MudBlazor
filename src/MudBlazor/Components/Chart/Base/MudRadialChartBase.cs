@@ -14,7 +14,8 @@ using MudBlazor.Utilities.Debounce;
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents a base class for radial charts.
+/// Base class for radial charts such as <see cref="Pie{T}"/>, <see cref="Donut{T}"/>, <see cref="Radar{T}"/>, and <see cref="Rose{T}"/>.
+/// Aggregates and normalizes series data into circular segments and legends.
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 /// <typeparam name="TOptions">The type of options for the chart.</typeparam>
@@ -162,21 +163,26 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     {
         return ChartLabels.Length > 0
             ? ChartLabels.Length
-            : ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty()
-                          .Max(x => x?.Data?.Values.Count ?? 0);
+            : ChartSeries.Where(x => x.Data is not null).DefaultIfEmpty()
+                          .Max(x => x?.Data?.Count ?? 0);
     }
 
     private T[] AggregateByLabel(T[] aggregated)
     {
         foreach (var series in ChartSeries.Where(s => s.Visible))
         {
-            var values = series.Data?.Values ?? [];
+            var values = series.Data;
+
+            if (values is null)
+            {
+                continue;
+            }
 
             for (var i = 0; i < values.Count; i++)
             {
                 if (!HiddenIndices.Contains(i) && i < aggregated.Length)
                 {
-                    aggregated[i] += values[i];
+                    aggregated[i] += values.GetValue(i);
                 }
             }
         }
@@ -195,7 +201,7 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
                 continue;
             }
 
-            aggregated[index] = series.Data?.Values.SumGeneric() ?? T.Zero;
+            aggregated[index] = series.Data is null ? T.Zero : series.Data.Aggregate(T.Zero, static (sum, value) => sum + value);
         }
 
         return aggregated;

@@ -23,6 +23,12 @@ namespace MudBlazor
         private readonly string _elementId = Identifier.Create("radio");
         private readonly string _ariaId = Identifier.Create("radio-aria-");
 
+        public MudRadio()
+        {
+            // The MudRadioGroup is the form participant; individual radios must not register (#11540).
+            SubscribeToParentForm = false;
+        }
+
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass("mud-readonly", GetReadOnlyState())
@@ -38,8 +44,10 @@ namespace MudBlazor
 
         protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass("mud-ripple mud-ripple-radio", Ripple && !GetDisabledState() && !GetReadOnlyState())
-            .AddClass($"mud-{Color.ToStringFast(true)}-text hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
-            .AddClass($"mud-{UncheckedColor?.ToStringFast(true)}-text hover:mud-{UncheckedColor?.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && Checked == false)
+            .AddClass($"mud-{Color.ToStringFast(true)}-text", !GetDisabledState() && (UncheckedColor == null || Checked))
+            .AddClass($"mud-{UncheckedColor?.ToStringFast(true)}-text", !GetDisabledState() && UncheckedColor != null && !Checked)
+            .AddClass($"hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || Checked))
+            .AddClass($"hover:mud-{UncheckedColor?.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && !Checked)
             .AddClass("mud-radio-dense", Dense)
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass("mud-readonly", GetReadOnlyState())
@@ -135,7 +143,7 @@ namespace MudBlazor
 
         internal bool Checked { get; private set; }
 
-        internal MudRadioGroup<T>? MudRadioGroup => (MudRadioGroup<T>?)IMudRadioGroup;
+        internal MudRadioGroup<T>? MudRadioGroup => IMudRadioGroup as MudRadioGroup<T>;
 
         internal void SetChecked(bool value)
         {
@@ -181,14 +189,6 @@ namespace MudBlazor
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState() && !(MudRadioGroup?.GetReadOnlyState() ?? false);
 
-        private async Task HandleBackspaceAsync()
-        {
-            if (MudRadioGroup is not null)
-            {
-                await MudRadioGroup.ResetAsync();
-            }
-        }
-
         /// <inheritdoc />
         protected override async Task OnInitializedAsync()
         {
@@ -211,14 +211,12 @@ namespace MudBlazor
                         // prevent scrolling page
                         new(" ", preventDown: "key+none", preventUp: "key+none"),
                         new("Enter", preventDown: "key+none"),
-                        new("NumpadEnter", preventDown: "key+none"),
-                        new("Backspace", preventDown: "key+none")
+                        new("NumpadEnter", preventDown: "key+none")
                     ]);
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
                     .When(CanHandleKeys, builder => builder
-                        .OnKeyDownAny(["Enter", "NumpadEnter", " "], SelectAsync)
-                        .OnKeyDown("Backspace", HandleBackspaceAsync)));
+                        .OnKeyDownAny(["Enter", "NumpadEnter", " "], SelectAsync)));
             }
 
             await base.OnAfterRenderAsync(firstRender);

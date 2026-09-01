@@ -6,15 +6,19 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a picker for a range of dates.
+    /// Selects a start and end date range from a calendar shown in a drop-down, dialog, or inline.
     /// </summary>
-    /// <seealso cref="MudDatePicker"/>
+    /// <seealso cref="DateRange" />
+    /// <seealso cref="MudDatePicker" />
+    /// <seealso cref="MudTimePicker" />
     public partial class MudDateRangePicker : MudBaseDatePicker
     {
         private readonly ParameterState<bool> _allowDisabledDatesInCountState;
         private DateTime? _firstDate, _secondDate, _minValidDate, _maxValidDate;
         private DateRange? _dateRange;
         private Range<string>? _rangeText;
+        private int _rangeTextEdit;
+        private int _echoPendingForEdit = -1;
 
         /// <summary>
         /// Creates a new instance.
@@ -104,7 +108,9 @@ namespace MudBlazor
         public DateRange? DateRange
         {
             get => _dateRange;
-            set => SetDateRangeAsync(value, true).CatchAndLog();
+            // Programmatic parameter assignment; pass suppression explicitly so it cannot leak across the
+            // awaits inside SetDateRangeAsync into a concurrent user calendar pick on Blazor Server (PR #13328 review).
+            set => SetDateRangeAsync(value, updateValue: true, suppressInteraction: true).CatchAndLog();
         }
 
         /// <summary>
@@ -117,12 +123,18 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool AllowDisabledDatesInRange { get; set; } = false;
 
-        protected async Task SetDateRangeAsync(DateRange? range, bool updateValue)
+        protected async Task SetDateRangeAsync(DateRange? range, bool updateValue, bool suppressInteraction = false)
         {
             // Normalize the DateRange before exception is thrown
             range = NormalizeDateRange(range);
 
-            if (_dateRange != range)
+            // Text that fails to convert leaves the range null, so a null assignment looks like a no-op and the bad text would stick.
+            // Run it anyway while text remains, as MudDatePicker does, except for the null a two-way binding hands straight back from the edit that produced it.
+            // Only the assignment right after that edit can be the echo, so consuming the marker leaves a later deliberate null free to clear.
+            var isEditEcho = _echoPendingForEdit == _rangeTextEdit;
+            _echoPendingForEdit = -1;
+
+            if (_dateRange != range || (range is null && !string.IsNullOrEmpty(Text) && !isEditEcho))
             {
                 var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && Enumerable
                     .Range(0, int.MaxValue)
@@ -137,7 +149,10 @@ namespace MudBlazor
                     return;
                 }
 
-                Touched = true;
+                if (!suppressInteraction)
+                {
+                    Touched = true;
+                }
 
                 if (range?.Start is not null && StartMonth == null)
                     PickerMonth = new DateTime(GetCulture().Calendar.GetYear(range.Start.Value), GetCulture().Calendar.GetMonth(range.Start.Value), 1, GetCulture().Calendar);
@@ -165,7 +180,10 @@ namespace MudBlazor
 
                 await DateRangeChanged.InvokeAsync(_dateRange);
                 await BeginValidateAsync();
-                FieldChanged(_value);
+                if (!suppressInteraction)
+                {
+                    FieldChanged(_value);
+                }
             }
         }
 
@@ -179,7 +197,29 @@ namespace MudBlazor
 
                 Touched = true;
                 _rangeText = value;
-                SetDateRangeAsync(ParseDateRangeValue(value?.Start, value?.End), false).CatchAndLog();
+                // The range input binds its Value rather than its Text, so nothing else writes MudPicker.Text on the user-input path.
+                // Without this, Text only tracked programmatic DateRange assignments and went stale on typing and on the clear button.
+                ApplyRangeTextAsync(value, ++_rangeTextEdit).CatchAndLog();
+
+                async Task ApplyRangeTextAsync(Range<string>? rangeText, int edit)
+                {
+                    // The range goes first so it lands before any consumer callback can yield, as it did before Text was written here at all.
+                    await SetDateRangeAsync(rangeText is null ? null : ParseDateRangeValue(rangeText.Start, rangeText.End), false);
+
+                    // A handler on that callback can yield long enough for a newer edit to overtake this one.
+                    // Writing Text now would leave it describing an edit the range no longer reflects.
+                    if (edit != _rangeTextEdit)
+                    {
+                        return;
+                    }
+
+                    await SetTextAsync(rangeText is null ? null : RangeUtility.Join(rangeText.Start, rangeText.End), callback: false);
+
+                    if (_dateRange is null && DateRangeChanged.HasDelegate)
+                    {
+                        _echoPendingForEdit = edit;
+                    }
+                }
             }
         }
 
@@ -254,7 +294,7 @@ namespace MudBlazor
             var selectedDate = _firstDate.Value;
             var validDateRange = GetValidDateRange(selectedDate);
 
-            return base.IsDayDisabled(date) || IsDateOutOfRange(date, selectedDate, validDateRange);
+            return base.IsDayDisabled(date) || IsDateOutOfRange(date, validDateRange);
         }
 
         private DateRange GetValidDateRange(DateTime selectedDate)
@@ -276,12 +316,11 @@ namespace MudBlazor
             return new DateRange(start, end);
         }
 
-        private static bool IsDateOutOfRange(DateTime date, DateTime selectedDate, DateRange validRange)
+        private static bool IsDateOutOfRange(DateTime date, DateRange validRange)
         {
-            var isNotSelectedDate = date < selectedDate || date > selectedDate;
             var isOutsideValidRange = date < validRange.Start || date > validRange.End;
 
-            return isNotSelectedDate && isOutsideValidRange;
+            return isOutsideValidRange;
         }
 
         private DateTime GetMaxSelectableDate(DateTime startDate, int maxDays)
@@ -356,9 +395,11 @@ namespace MudBlazor
 
         protected override string GetDayClasses(int month, DateTime day)
         {
+            var today = TimeProvider.GetLocalNow().Date;
             var b = new CssBuilder("mud-day");
             b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
-            if (day < GetMonthStart(month) || day > GetMonthEnd(month))
+            b.AddClass("mud-adjacent-month", IsAdjacentMonthDay(month, day));
+            if (IsHiddenAdjacentMonthDay(month, day))
             {
                 return b.AddClass("mud-hidden").Build();
             }
@@ -373,7 +414,7 @@ namespace MudBlazor
                 return b
                     .AddClass("mud-range")
                     .AddClass("mud-range-between")
-                    .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == DateTime.Today)
+                    .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == today)
                     .Build();
             }
 
@@ -410,14 +451,14 @@ namespace MudBlazor
 
             if (_firstDate?.Date < day)
             {
-                return b.AddClass("mud-range", _secondDate is null && day != DateTime.Today)
+                return b.AddClass("mud-range", _secondDate is null && day != today)
                     .AddClass("mud-range-selection")
                     .AddClass($"mud-range-selection-{Color.ToStringFast(true)}", _firstDate is not null)
-                    .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == DateTime.Today)
+                    .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == today)
                     .Build();
             }
 
-            if (day == DateTime.Today)
+            if (day == today)
             {
                 return b.AddClass("mud-current")
                     .AddClass($"mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}")
@@ -483,11 +524,11 @@ namespace MudBlazor
 
         protected override Task ResetValueAsync() => ClearAsync();
 
-        public override Task ClearAsync(bool close = true)
+        public override async Task ClearAsync(bool close = true)
         {
-            DateRange = null;
+            await SetDateRangeAsync(null, true);
             _firstDate = _secondDate = null;
-            return base.ClearAsync(close);
+            await base.ClearAsync(close);
         }
 
         protected override string GetTitleDateString()
@@ -502,13 +543,23 @@ namespace MudBlazor
 
         protected override DateTime GetCalendarStartOfMonth()
         {
-            var date = StartMonth ?? DateRange?.Start ?? DateTime.Today;
+            var date = StartMonth ?? DateRange?.Start ?? TimeProvider.GetLocalNow().Date;
             return date.StartOfMonth(GetCulture());
+        }
+
+        protected override async Task OnYearClickedAsync(int year)
+        {
+            await base.OnYearClickedAsync(year);
+
+            if (DateRange?.Start is null && _firstDate is null)
+            {
+                HighlightedDate = PickerMonth;
+            }
         }
 
         protected override int GetCalendarYear(DateTime yearDate)
         {
-            var date = DateRange?.Start ?? DateTime.Today;
+            var date = DateRange?.Start ?? TimeProvider.GetLocalNow().Date;
             var diff = GetCulture().Calendar.GetYear(date) - GetCulture().Calendar.GetYear(yearDate);
             var calenderYear = GetCulture().Calendar.GetYear(date);
             return calenderYear - diff;

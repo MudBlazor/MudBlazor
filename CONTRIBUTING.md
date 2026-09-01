@@ -18,6 +18,7 @@
     - [Example of a bad Parameter definition](#example-of-a-bad-parameter-definition)
     - [Example of a good Parameter definition](#example-of-a-good-parameter-definition)
     - [Can I share change handlers between parameters?](#can-i-share-change-handlers-between-parameters)
+    - [Does the change handler run for the parameter's initial value?](#does-the-change-handler-run-for-the-parameters-initial-value)
     - [What about the bad parameters all over the MudBlazor code base?](#what-about-the-bad-parameters-all-over-the-mudblazor-code-base)
   - [Avoid overwriting parameters in Blazor Components](#avoid-overwriting-parameters-in-blazor-components)
     - [Example of a bad code](#example-of-a-bad-code)
@@ -52,7 +53,13 @@ Please make sure that you follow our [code of conduct](/CODE_OF_CONDUCT.md)
 
 ## Minimal Prerequisites to Compile from Source
 
--   [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+-   [.NET SDK](https://dotnet.microsoft.com/download/dotnet) (see `global.json` for the pinned feature band; any patch of that band works — it can build the older targets too)
+
+The `MudBlazor` library multi-targets net8.0, net9.0, and net10.0. `dotnet test` and IDE builds only compile the framework that is needed (the tests build just net10.0), but a direct `dotnet build src/MudBlazor` compiles all three. For a faster single-framework build while developing, pass `-f`:
+
+```bash
+dotnet build src/MudBlazor -f net10.0
+```
 
 ## Pull Requests
 - Your Pull Request (PR) must only consist of one topic. It is better to split Pull Requests with more than one feature or bug fix in separate Pull Requests
@@ -228,6 +235,44 @@ Yes, if you pass them as a method group like in the example below, shared parame
 ```
 
 **NB**: if you pass lambda functions as change handlers they will be called once each for every changed parameter even if they contain the same code!
+
+### Does the change handler run for the parameter's initial value?
+
+No. A change handler only fires for values that arrive through the `ParameterView`, i.e. values written in
+razor markup by the consumer. It does **not** fire for a value that the component already carries, such as:
+
+```c#
+// property initializer
+[Parameter] public double DebounceInterval { get; set; } = 1000;
+```
+
+```razor
+@* a derived component assigning the inherited parameter in its constructor *@
+@inherits MudTextField<T>
+
+@code {
+    public MyTextField()
+    {
+        DebounceInterval = 1000;
+    }
+}
+```
+
+In both cases the parameter is absent from the `ParameterView` (or, if the consumer happens to pass the same
+value, it is present but unchanged), so no change is detected and the handler is skipped.
+
+This only matters when the handler has a side effect that must also apply to the initial value, for example
+creating a timer or a dispatcher. Seed that state from `OnInitialized` in addition to the change handler:
+
+```c#
+protected override void OnInitialized()
+{
+    base.OnInitialized();
+    _debouncer ??= CreateDebouncer(DebounceInterval);
+}
+```
+
+See `MudDebouncedInput<T>` and `MudColorPicker` for the pattern in practice.
 
 ### What about the bad parameters all over the MudBlazor code base?
 

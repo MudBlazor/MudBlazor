@@ -5,6 +5,7 @@
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Components.Highlighter; // Added for FragmentInfo
+using MudBlazor.Utilities;
 // Removed: using static MudBlazor.Components.Highlighter.Splitter; 
 // We will call Splitter methods statically: Splitter.GetFragments, Splitter.GetHtmlAwareFragments
 
@@ -12,7 +13,7 @@ namespace MudBlazor;
 
 
 /// <summary>
-/// A component which highlights words or phrases within text.
+/// Highlights occurrences of one or more search terms within a block of text, wrapping each match in a <c>mark</c> element.
 /// </summary>
 public partial class MudHighlighter : MudComponentBase
 {
@@ -96,5 +97,5 @@ public partial class MudHighlighter : MudComponentBase
 
     bool IsMatch(string fragment) => !string.IsNullOrWhiteSpace(fragment) &&
                                      !string.IsNullOrWhiteSpace(_regex) &&
-                                     Regex.IsMatch(fragment, _regex, CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase);
+                                     Regex.IsMatch(fragment, _regex, CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase, RegexDefaults.MatchTimeout);
 }

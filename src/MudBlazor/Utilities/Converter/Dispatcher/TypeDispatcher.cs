@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using System.Runtime.ExceptionServices;
-using MudBlazor.Resources;
+﻿using MudBlazor.Resources;
 using MudBlazor.Utilities.Exceptions;
 
 namespace MudBlazor.Utilities.Converter.Dispatcher;
@@ -43,15 +41,23 @@ public static class TypeDispatcher
 
 internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
 {
-    private readonly Dictionary<Type, Delegate> _handlers;
+    private readonly Func<TIn, TOut>? _forward;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TypeDispatcher{TIn,TOut}"/> class.
     /// </summary>
-    /// <param name="handlers">A pre-populated map of concrete input <see cref="Type"/> to conversion delegates.</param>
-    protected TypeDispatcher(Dictionary<Type, Delegate> handlers)
+    /// <param name="forward">The resolved forward delegate for <typeparamref name="TIn"/>, or <c>null</c> when no converter is registered.</param>
+    protected TypeDispatcher(Func<TIn, TOut>? forward) => _forward = forward;
+
+    internal static Func<TIn, TOut>? ResolveForwardHandler(Dictionary<Type, Delegate> handlers)
     {
-        _handlers = handlers;
+        var runtimeType = typeof(TIn);
+        if (handlers.TryGetValue(runtimeType, out var del))
+        {
+            return del as Func<TIn, TOut> ?? (input => (TOut)del.DynamicInvoke(input)!);
+        }
+
+        return null;
     }
 
     /// <inheritdoc />
@@ -61,19 +67,12 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
     /// </exception>
     public TOut Convert(TIn input)
     {
-        var runtimeType = typeof(TIn);
-
-        if (_handlers.TryGetValue(runtimeType, out var del))
+        if (_forward is not null)
         {
-            try
-            {
-                return (TOut)del.DynamicInvoke(input)!;
-            }
-            catch (TargetInvocationException ex) when (ex.InnerException is not null)
-            {
-                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-            }
+            return _forward(input);
         }
+
+        var runtimeType = typeof(TIn);
 
         throw new ConversionException(LanguageResource.Converter_ConversionNotImplemented, [runtimeType], new InvalidOperationException($"No converter registered for {runtimeType}"));
     }
@@ -96,18 +95,7 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
             ArgumentNullException.ThrowIfNull(specificType);
             ArgumentNullException.ThrowIfNull(converter);
 
-            var convType = converter.GetType();
-
-            var convertMethodInterface = typeof(IConverter<,>).MakeGenericType(specificType, typeof(TOut));
-            if (!convertMethodInterface.IsAssignableFrom(convType))
-            {
-                throw new InvalidOperationException($"Converter type {convType.FullName} does not implement Convert({specificType})");
-            }
-
-            var convertMethod = convertMethodInterface.GetMethod(nameof(IConverter<TIn, TOut>.Convert), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-            // Cannot be null since we already verified the interface is implemented
-            var forwardDelegate = convertMethod!.CreateDelegate(typeof(Func<,>).MakeGenericType(specificType, typeof(TOut)), converter);
+            var forwardDelegate = DelegateHelper.CreateForwardDelegate<TIn, TOut>(specificType, converter);
 
             AddHandler(specificType, forwardDelegate);
 
@@ -137,6 +125,10 @@ internal class TypeDispatcher<TIn, TOut> : IConverter<TIn, TOut>
         }
 
         /// <inheritdoc />
-        public IConverter<TIn, TOut> Build() => new TypeDispatcher<TIn, TOut>(_handlers);
+        public IConverter<TIn, TOut> Build()
+        {
+            var forward = ResolveForwardHandler(_handlers);
+            return new TypeDispatcher<TIn, TOut>(forward);
+        }
     }
 }

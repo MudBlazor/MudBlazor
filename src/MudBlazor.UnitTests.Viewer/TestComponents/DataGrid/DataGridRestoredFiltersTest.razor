@@ -1,0 +1,21 @@
+﻿@if (Visible)
+{
+    <MudDataGrid Items="@_items"
+                 Filterable="true"
+                 FilterMode="DataGridFilterMode.Simple"
+                 FilterDefinitions="@_filterDefinitions">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" />
+        </Columns>
+    </MudDataGrid>
+}
+
+@code {
+    private readonly List<IFilterDefinition<Item>> _filterDefinitions = [];
+    private readonly List<Item> _items = [new("Alice")];
+
+    [Parameter]
+    public bool Visible { get; set; } = true;
+
+    public record Item(string Name);
+}

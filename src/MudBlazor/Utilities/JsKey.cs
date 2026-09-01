@@ -113,5 +113,8 @@ public enum JsKey
     BracketLeft,
     Backslash,
     BracketRight,
-    Quote
+    Quote,
+    NumpadEnter,
+    NumpadEqual,
+    NumpadComma
 }

@@ -19,24 +19,20 @@ jobs:
   format-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Cache NuGet packages
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           key: ${{ github.repository }}-nuget-${{ hashFiles('**/*.csproj') }}
           path: ${{ env.NUGET_PACKAGES }}
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 10.x
+        uses: actions/setup-dotnet@v6
 
       - name: Restore dependencies
         working-directory: src
         run: dotnet restore
-
-      - uses: xt0rted/dotnet-format-problem-matcher@v1
 
       - name: Determine changed files
         id: changed-files
@@ -71,7 +67,7 @@ jobs:
           ]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Build and Restore ${{ matrix.project-path }}
         uses: ./.github/actions/build
@@ -79,7 +75,22 @@ jobs:
           project-path: ${{ matrix.project-path }}
 
       - name: Test ${{ matrix.project-path }}
-        run: dotnet test ${{ matrix.project-path }} -c Release --no-build --blame-hang --blame-hang-timeout 60s /property:GenerateFullPaths=true /consoleloggerparameters:NoSummary /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:ExcludeByAttribute='ExcludeFromCodeCoverageAttribute' /p:ExcludeByAttribute='CompilerGeneratedAttribute' /p:ExcludeByFile='**/*.g.cs' /p:Include='[MudBlazor]*' /p:SkipAutoProps=true /p:CoverletOutput='./TestResults/' --logger "junit;LogFilePath=junit.xml"
+        run: |
+          dotnet test \
+          --project ${{ matrix.project-path }} \
+          -c Release \
+          --no-build \
+          --hangdump \
+          --hangdump-timeout 60s \
+          --coverlet \
+          --coverlet-exclude-by-attribute "ExcludeFromCodeCoverageAttribute" \
+          --coverlet-exclude-by-attribute "CompilerGeneratedAttribute" \
+          --coverlet-exclude-by-file "**/*.g.cs" \
+          --coverlet-include "[MudBlazor]*" \
+          --coverlet-skip-auto-props \
+          --report-spekt-junit \
+          --report-spekt-junit-filename junit.xml \
+          --results-directory ${{ matrix.project-path }}/TestResults
 
       - name: Extract project name
         id: project
@@ -93,26 +104,26 @@ jobs:
         with:
           name: coverage-report-${{ steps.project.outputs.name }}
           path: |
-            ${{ matrix.project-path }}/TestResults/coverage.cobertura.xml
-            ${{ matrix.project-path }}/junit.xml
+            ${{ matrix.project-path }}/TestResults/coverage.cobertura.*.xml
+            ${{ matrix.project-path }}/TestResults/junit.xml
 
   upload-codecov:
     needs: build-test
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Download coverage report
         uses: actions/download-artifact@v8
 
       - name: Publish coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Publish test results
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           report_type: test_results
@@ -126,7 +137,7 @@ jobs:
         project-path: ["src/MudBlazor.Docs.WasmHost", "src/MudBlazor.Docs.Server"]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Build and Restore ${{ matrix.project-path }}
         uses: ./.github/actions/build

@@ -94,11 +94,20 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// The horizontal start space buffer for the chart.
     /// </summary>
     protected const double HorizontalStartSpaceBuffer = 10.0;
+    protected const double MinHorizontalStartSpace = 30.0;
+    protected const double YAxisTitleSpace = 20.0;
+    protected const double MinVerticalStartSpace = 30.0;
+    protected const double DefaultXAxisLabelHeight = 20.0;
+    protected const double DefaultYAxisLabelWidth = 0.0;
+    protected const double RotatedXAxisLabelBuffer = 10.0;
+    protected const double YAxisLabelXOffset = 10.0;
+    protected const double YAxisLabelYOffset = 5.0;
 
     /// <summary>
     /// The horizontal start space for the chart.
     /// </summary>
-    protected double HorizontalStartSpace => Math.Max(HorizontalStartSpaceBuffer + Math.Ceiling(_yAxisLabelSize?.Width ?? 0), 30) + (ChartOptions?.YAxisTitle != null ? 20 : 0);
+    protected double HorizontalStartSpace => Math.Max(HorizontalStartSpaceBuffer + Math.Ceiling(YAxisLabelSize?.Width ?? DefaultYAxisLabelWidth), MinHorizontalStartSpace)
+        + (!string.IsNullOrWhiteSpace(ChartOptions?.YAxisTitle) ? YAxisTitleSpace : 0);
     /// <summary>
     /// The horizontal end space for the chart.
     /// </summary>
@@ -111,7 +120,21 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// <summary>
     /// The vertical start space for the chart.
     /// </summary>
-    protected double VerticalStartSpace => Math.Max(VerticalStartSpaceBuffer + (_xAxisLabelSize?.Height ?? 0), 30);
+    protected double VerticalStartSpace
+    {
+        get
+        {
+            var rotation = ChartOptions?.XAxisLabelRotation ?? 0;
+            var height = XAxisLabelSize?.Height ?? DefaultXAxisLabelHeight;
+            if (Math.Abs(rotation % 360) < Epsilon)
+            {
+                return Math.Max(VerticalStartSpaceBuffer + height, MinVerticalStartSpace);
+            }
+
+            return Math.Max(VerticalStartSpaceBuffer + height + RotatedXAxisLabelBuffer, MinVerticalStartSpace);
+        }
+    }
+
     /// <summary>
     /// The vertical end space for the chart.
     /// </summary>
@@ -120,7 +143,20 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// <summary>
     /// Gets the offset for the X-axis labels.
     /// </summary>
-    protected double XAxisLabelOffset => Math.Ceiling(_xAxisLabelSize?.Height ?? 20) / 2;
+    protected double XAxisLabelOffset
+    {
+        get
+        {
+            var rotation = ChartOptions?.XAxisLabelRotation ?? 0;
+            var height = Math.Ceiling(XAxisLabelSize?.Height ?? DefaultXAxisLabelHeight);
+            if (Math.Abs(rotation % 360) < Epsilon)
+            {
+                return height / 2;
+            }
+
+            return height + RotatedXAxisLabelBuffer;
+        }
+    }
 
     /// <summary>
     /// The palette used for the legends.
@@ -135,8 +171,16 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     protected double _boundWidth = BoundWidthDefault;
     protected double _boundHeight = BoundHeightDefault;
     private ElementSize? _elementSize;
-    protected ElementSize? _yAxisLabelSize;
-    protected ElementSize? _xAxisLabelSize;
+
+    /// <summary>
+    /// The size of the Y-axis labels.
+    /// </summary>
+    protected ElementSize? YAxisLabelSize { get; set; }
+
+    /// <summary>
+    /// The size of the X-axis labels.
+    /// </summary>
+    protected ElementSize? XAxisLabelSize { get; set; }
 
     private readonly DotNetObjectReference<MudAxisChartBase<T, TOptions>> _dotNetObjectReference;
 
@@ -172,7 +216,10 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     {
         base.OnParametersSet();
 
-        if (MatchBoundsToSize && _elementSize is null) return;
+        if (MatchBoundsToSize && _elementSize is null)
+        {
+            return;
+        }
 
         RebuildChart();
     }
@@ -227,16 +274,18 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
 
         if (MatchBoundsToSize)
         {
-
-            var isWidthFixed = Width.AsSpan().Trim().EndsWith("px");
-            var isHeightFixed = Height.AsSpan().Trim().EndsWith("px");
-
             if (_elementSize is not null)
             {
-                _boundWidth = _elementSize.Width > 0 ? _elementSize.Width : BoundWidthDefault;
-                _boundHeight = isHeightFixed ? _elementSize.Height : BoundHeightDefault;
+                _boundWidth = _elementSize.Width > 0
+                    ? _elementSize.Width
+                    : BoundWidthDefault;
+
+                _boundHeight = _elementSize.Height > 0
+                    ? _elementSize.Height
+                    : BoundHeightDefault;
             }
-            else if (isWidthFixed && isHeightFixed
+            else if (Width.AsSpan().Trim().EndsWith("px", StringComparison.OrdinalIgnoreCase)
+                && Height.AsSpan().Trim().EndsWith("px", StringComparison.OrdinalIgnoreCase)
                 && double.TryParse(Width.AsSpan(0, Width.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var width)
                 && double.TryParse(Height.AsSpan(0, Height.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var height))
             {
@@ -271,8 +320,8 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
             var startGridY = T.CreateSaturating(lowestHorizontalLine + i) * gridYUnits;
             var lineValue = new SvgText()
             {
-                X = HorizontalStartSpace - 10,
-                Y = _boundHeight - y + 5,
+                X = HorizontalStartSpace - YAxisLabelXOffset,
+                Y = _boundHeight - y + YAxisLabelYOffset,
                 Value = BuildYAxisValueString(startGridY)
             };
             HorizontalValues.Add(lineValue);
@@ -339,7 +388,9 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     protected static string FormatTooltipText(string? format, ChartSeries<T> series, SvgPath path)
     {
         if (string.IsNullOrWhiteSpace(format))
+        {
             return string.Empty;
+        }
 
         return format
             .Replace("{{SERIES_NAME}}", series.Name)
@@ -355,12 +406,16 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     public void OnElementSizeChanged(ElementSize elementSize)
     {
         if (elementSize is null || elementSize.Timestamp <= _elementSize?.Timestamp)
+        {
             return;
+        }
 
         _elementSize = elementSize;
 
         if (!MatchBoundsToSize)
+        {
             return;
+        }
 
         if (Math.Abs(_boundWidth - _elementSize.Width) < Epsilon &&
             Math.Abs(_boundHeight - _elementSize.Height) < Epsilon)

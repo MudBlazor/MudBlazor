@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a floating action button.
+    /// Floating action buttons (FABs) trigger the primary action on a page and float above content in a circular or extended shape.
     /// </summary>
     /// <remarks>
     /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,
@@ -12,18 +12,31 @@ namespace MudBlazor
     /// You can directly add attributes like <c>title</c> or <c>aria-label</c>.
     /// </remarks>
     /// <seealso cref="MudButton" />
+    /// <seealso cref="MudFabMenu" />
     /// <seealso cref="MudIconButton" />
     /// <seealso cref="MudToggleIconButton" />
     public partial class MudFab : MudBaseButton
     {
         protected string Classname => new CssBuilder("mud-button-root mud-fab")
             .AddClass($"mud-fab-extended", !string.IsNullOrEmpty(Label))
-            .AddClass($"mud-fab-{Color.ToStringFast(true)}")
+            .AddClass($"mud-fab-{Variant.ToStringFast(true)}")
+            .AddClass($"mud-fab-{Variant.ToStringFast(true)}-{Color.ToStringFast(true)}")
+            .AddClass($"mud-fab-{Color.ToStringFast(true)}", Variant == Variant.Filled)
             .AddClass($"mud-fab-size-{Size.ToStringFast(true)}")
             .AddClass($"mud-ripple", Ripple && !GetDisabledState())
             .AddClass($"mud-fab-disable-elevation", !DropShadow)
             .AddClass(Class)
             .Build();
+
+        /// <summary>
+        /// The display variation to use.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Filled"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Button.Appearance)]
+        public Variant Variant { get; set; } = Variant.Filled;
 
         /// <summary>
         /// The color of the button.

@@ -3,8 +3,12 @@
 <MudDataGrid T="Item" Items="@_items" EditMode="@DataGridEditMode.Cell"
              RowClick="@OnRowClick"
              RowContextMenuClick="@OnRowContextMenuClick"
+             CellClick="@OnCellClick"
+             CellContextMenuClick="@OnCellContextMenuClick"
+             SortChanged="@OnSortChanged"
              SelectedItemChanged="@OnSelectedItemChanged"
              SelectedItemsChanged="@OnSelectedItemsChanged"
+             FilterChanged="@OnFilterChanged"
              CommittedItemChanges="@OnCommittedItemChanges"
              StartedEditingItem="@OnStartedEditingItem"
              CanceledEditingItem="@OnCanceledEditingItem"
@@ -24,10 +28,19 @@
         new Item("C")
     };
 
+    public List<string> EventOrder { get; } = new();
+
     public bool RowClicked { get; set; }
     public bool RowContextMenuClicked { get; set; }
+    public bool CellClicked { get; set; }
+    public bool CellContextMenuClicked { get; set; }
+    public DataGridCellClickEventArgs<Item>? LastCellClickArgs { get; set; }
+    public DataGridCellClickEventArgs<Item>? LastCellContextMenuClickArgs { get; set; }
+    public bool SortChanged { get; set; }
     public bool SelectedItemChanged { get; set; }
     public bool SelectedItemsChanged { get; set; }
+    public bool FilterChanged { get; set; }
+    public int FilterChangedCallCount { get; set; }
     public bool CommittedItemChanges { get; set; }
     public bool StartedEditingItem { get; set; }
     public bool CanceledEditingItem { get; set; }
@@ -35,6 +48,7 @@
     private void OnRowClick(DataGridRowClickEventArgs<Item> args)
     {
         RowClicked = true;
+        EventOrder.Add(nameof(OnRowClick));
     }
 
     private void OnRowContextMenuClick(DataGridRowClickEventArgs<Item> args)
@@ -42,14 +56,39 @@
         RowContextMenuClicked = true;
     }
 
+    private void OnCellClick(DataGridCellClickEventArgs<Item> args)
+    {
+        CellClicked = true;
+        LastCellClickArgs = args;
+        EventOrder.Add(nameof(OnCellClick));
+    }
+
+    private void OnCellContextMenuClick(DataGridCellClickEventArgs<Item> args)
+    {
+        CellContextMenuClicked = true;
+        LastCellContextMenuClickArgs = args;
+    }
+
+    private void OnSortChanged(Dictionary<string, SortDefinition<Item>> sorts)
+    {
+        SortChanged = true;
+    }
+
     private void OnSelectedItemChanged(Item item)
     {
         SelectedItemChanged = true;
+        EventOrder.Add(nameof(OnSelectedItemChanged));
     }
 
     private void OnSelectedItemsChanged(HashSet<Item> items)
     {
         SelectedItemsChanged = true;
+    }
+
+    private void OnFilterChanged(IReadOnlyCollection<IFilterDefinition<Item>> _)
+    {
+        FilterChanged = true;
+        FilterChangedCallCount++;
     }
 
     private Task<DataGridEditFormAction> OnCommittedItemChanges(Item item)
@@ -61,6 +100,7 @@
     private void OnStartedEditingItem(Item item)
     {
         StartedEditingItem = true;
+        EventOrder.Add(nameof(OnStartedEditingItem));
     }
 
     private void OnCanceledEditingItem(Item item)

@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -129,6 +129,11 @@ class MudPointerEventsNone {
                 break;
             }
 
+            if (this._shouldIgnorePointerEvent(element, event.target)) {
+                this.logger("Ignoring pointer event for element", element.id);
+                continue;
+            }
+
             matchingIds.push(element.id);
         }
 
@@ -139,6 +144,16 @@ class MudPointerEventsNone {
 
         this.logger("Raising", raiseMethod, "for matching element(s):", matchingIds);
         this.dotnet.invokeMethodAsync(raiseMethod, matchingIds);
+    }
+
+    _shouldIgnorePointerEvent(element, target) {
+        const ignoreElementId = element.dataset.modelessIgnoreElementId;
+        if (!ignoreElementId || !(target instanceof Element)) {
+            return false;
+        }
+
+        const ignoreElement = document.getElementById(ignoreElementId);
+        return !!ignoreElement && ignoreElement.contains(target);
     }
 
     /**

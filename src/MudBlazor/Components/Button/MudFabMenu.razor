@@ -8,13 +8,14 @@
      @ontouchstart="@OnTouchStart"
      @attributes="UserAttributes"
      role="menu">
-    <div class="@ClassnameMenu" style="@MenuStyle" @onclick="@OnMenuClickAsync">
+    <div class="@ClassnameMenu" style="@MenuStyle" @onclick="@OnMenuClickAsync" @onclick:stopPropagation="@(!@ClickPropagation)">
         <CascadingValue Value="@this">
             @ChildContent
         </CascadingValue>
     </div>
     <MudFab Class="@ClassnameFab"
             Style="@ButtonStyle"
+            Variant="@Variant"
             Color="@Color"
             Size="@Size"
             StartIcon="@_startIcon"

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a popover component.
+/// A popover surface that displays floating content anchored over the page, implemented by <see cref="MudPopoverBase"/> and managed by the <see cref="IPopoverService"/>.
 /// </summary>
 public interface IPopover
 {

@@ -16,6 +16,6 @@ internal partial class BoolConverter
 
         public bool? ConvertBack(bool? value) => value;
 
-        public static readonly BoolIdentity Instance = new();
+        public static BoolIdentity Instance { get; } = new();
     }
 }

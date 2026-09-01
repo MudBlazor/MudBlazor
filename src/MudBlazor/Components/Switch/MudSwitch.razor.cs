@@ -32,8 +32,10 @@ namespace MudBlazor
 
         protected string SwitchClassname => new CssBuilder("mud-button-root mud-icon-button mud-switch-base")
             .AddClass($"mud-ripple mud-ripple-switch", Ripple && !GetReadOnlyState() && !GetDisabledState())
-            .AddClass($"mud-{Color.ToStringFast(true)}-text hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == true)
-            .AddClass($"mud-{UncheckedColor.ToStringFast(true)}-text hover:mud-{UncheckedColor.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == false)
+            .AddClass($"mud-{Color.ToStringFast(true)}-text", !GetDisabledState() && BoolValue == true)
+            .AddClass($"mud-{UncheckedColor.ToStringFast(true)}-text", !GetDisabledState() && BoolValue == false)
+            .AddClass($"hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == true)
+            .AddClass($"hover:mud-{UncheckedColor.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && BoolValue == false)
             .AddClass($"mud-switch-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
             .AddClass($"mud-checked", BoolValue)
@@ -52,6 +54,13 @@ namespace MudBlazor
         protected string SpanClassname => new CssBuilder("mud-switch-span")
             .AddClass($"mud-switch-span-{Size.ToStringFast(true)}")
             .Build();
+
+        protected string AriaCheckedState => BoolValue switch
+        {
+            true => "true",
+            false => "false",
+            null => "mixed"
+        };
 
         /// <summary>
         /// The color of this switch when in an unchecked state.

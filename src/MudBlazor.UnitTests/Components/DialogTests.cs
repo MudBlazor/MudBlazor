@@ -13,6 +13,8 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
+    // Shares DialogRender's static OnInitializedCount and exercises async inline-dialog timing that
+    // deadlocks/flakes under NUnit parallel execution. Kept serial by design (accepted limitation); see #13188 / #13297.
     [NonParallelizable]
     public class DialogTests : BunitTest
     {
@@ -90,6 +92,34 @@ namespace MudBlazor.UnitTests.Components
             result.Data.Should().BeNull();
             result.DataType.Should().BeNull();
             result.Canceled.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The title-less ShowAsync overloads forward options and parameters like their titled counterparts.
+        /// </summary>
+        [Test]
+        public async Task ShowAsync_TitlelessOverloads_ForwardOptionsAndParameters()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+
+            var options = new DialogOptions { FullWidth = true };
+
+            // ShowAsync<T>(DialogOptions) applies the options with no title.
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogOkCancel>(options));
+            dialogReference.Should().NotBe(null);
+            comp.Find("div.mud-dialog-container").Should().NotBe(null);
+            comp.FindAll(".mud-dialog-width-full").Should().NotBeEmpty();
+            await comp.InvokeAsync(() => comp.Instance.DismissAll());
+
+            // ShowAsync<T>(DialogParameters, DialogOptions) applies both with no title.
+            var parameters = new DialogParameters<DialogWithParameters> { { x => x.TestValue, "test" } };
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogWithParameters>(parameters, options));
+            dialogReference.Should().NotBe(null);
+            comp.FindComponent<MudInput<string>>().Instance.ReadText.Should().Be("test");
+            comp.FindAll(".mud-dialog-width-full").Should().NotBeEmpty();
         }
 
         /// <summary>
@@ -971,6 +1001,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ShowAsyncWithParametersOnly_ShouldPassParameters()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            comp.Markup.Trim().Should().BeEmpty();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+
+            var parameters = new DialogParameters<DialogWithParameters>
+            {
+                { x => x.TestValue, "test" },
+                { x => x.ColorTest, Color.Error }
+            };
+            IDialogReference dialogReference = null!;
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogWithParameters>(parameters));
+            dialogReference.Should().NotBe(null);
+
+            var textField = comp.FindComponent<MudInput<string>>().Instance;
+            textField.ReadText.Should().Be("test");
+            ((DialogWithParameters)dialogReference.Dialog).ColorTest.Should().Be(Color.Error);
+        }
+
+        [Test]
         public async Task ShowGeneric_ShouldProvideDefaultOptions_WhenOverloadIsCalled()
         {
             // Arrange
@@ -1303,6 +1355,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task DialogWithTitleShouldLinkDialogToTitleForAssistiveTechnologies()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>("Dialog title"));
+
+            var dialog = comp.Find("div[role='dialog']");
+            var labelledBy = dialog.GetAttribute("aria-labelledby");
+            labelledBy.Should().NotBeNullOrWhiteSpace();
+
+            var title = comp.Find("div.mud-dialog-title");
+            title.GetAttribute("id").Should().Be(labelledBy);
+            title.TrimmedText().Should().Contain("Dialog title");
+        }
+
+        [Test]
+        public async Task DialogWithoutHeaderShouldNotRenderAriaLabelledBy()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>(string.Empty, new DialogOptions { NoHeader = true }));
+
+            var dialog = comp.Find("div[role='dialog']");
+            dialog.GetAttribute("aria-labelledby").Should().BeNull();
+            comp.FindAll("div.mud-dialog-title").Should().BeEmpty();
+        }
+
+        [Test]
         public async Task DialogWithNestedDialogOptionShouldNotReset()
         {
             var comp = Context.Render<MudDialogProvider>();
@@ -1515,23 +1597,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => service.Close(dialogReference));
         }
 
-        [Test]
-        public async Task CloseButton_ShouldHavePreventDefaultOnMouseDownAttribute()
-        {
-            // Arrange
-            var comp = Context.Render<MudDialogProvider>();
-            var service = Context.Services.GetRequiredService<IDialogService>();
-
-            // Act
-            await comp.InvokeAsync(async () =>
-                await service.ShowAsync<DialogOkCancel>("Custom title", new DialogOptions { CloseButton = true }));
-
-            // Assert
-            var closeBtn = comp.Find(".mud-button-close");
-            closeBtn.Should().NotBeNull();
-            closeBtn.GetAttribute("blazor:onmousedown:preventdefault").Should().Be("");
-        }
-
         /// <summary>
         /// InjectOptions() should set the options of the calling IDialogReference.
         /// </summary>
@@ -1694,6 +1759,36 @@ namespace MudBlazor.UnitTests.Components
 
             var changedFragment = navigationManager.ToAbsoluteUri($"{currentRoute}#{Guid.NewGuid()}").AbsolutePath;
             provider.Instance.HasRouteChanged(changedFragment).Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Closing an earlier dialog must not re-instantiate later dialogs that remain open.
+        /// Reproduces #13231 (closing a parent dialog reopens/re-renders a still-open child dialog).
+        /// </summary>
+        [Test]
+        public async Task ClosingEarlierDialog_ShouldNotReinstantiateLaterDialogs()
+        {
+            DialogReinstantiationInner.InitCount = 0;
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            IDialogReference first = null;
+            IDialogReference second = null;
+            await comp.InvokeAsync(async () => first = await service.ShowAsync<DialogOkCancel>("First"));
+            await comp.InvokeAsync(async () => second = await service.ShowAsync<DialogReinstantiationInner>("Second"));
+
+            // Both dialogs are open and the inner dialog has been constructed exactly once.
+            comp.FindAll("div.mud-dialog-container").Count.Should().Be(2);
+            DialogReinstantiationInner.InitCount.Should().Be(1);
+
+            // Close the FIRST (earlier) dialog while the second remains open.
+            await comp.InvokeAsync(() => first.Close());
+
+            // The second dialog must still be open and must NOT have been reconstructed.
+            comp.FindAll("div.mud-dialog-container").Count.Should().Be(1);
+            DialogReinstantiationInner.InitCount.Should().Be(1);
+
+            second.Should().NotBeNull();
         }
     }
     internal class CustomDialogService : DialogService

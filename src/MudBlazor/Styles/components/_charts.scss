@@ -84,10 +84,17 @@
       }
 
       & .mud-input-control {
-        width: 35px !important;
+        width: auto !important;
       }
     }
   }
+}
+
+.mud-chart-fill-bounds {
+  height: 100%;
+  width: 100%;
+  min-height: unset;
+  min-width: unset;
 }
 
 .mud-charts-yaxis {
@@ -100,6 +107,11 @@
 
 .mud-chart-axis-label {
   fill: var(--mud-palette-text-primary);
+}
+
+.mud-chart-value-label {
+  fill: var(--mud-palette-text-primary);
+  user-select: none;
 }
 
 .mud-chart-donut {

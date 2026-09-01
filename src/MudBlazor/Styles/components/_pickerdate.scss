@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-picker-datepicker-toolbar {
   align-items: flex-start;
@@ -291,6 +291,10 @@
       &:hover {
         background-color: var(--mud-palette-action-default-hover);
       }
+    }
+
+    &.mud-adjacent-month {
+      color: var(--mud-palette-text-secondary);
     }
 
     &.mud-hidden {

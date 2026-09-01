@@ -59,7 +59,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
         {
-            var comp = Context.Render<ExpansionPanelExpandedMultipleWithoutMultipleExpansionSetTest>();
+            var comp = Context.Render<ExpansionPanelMultiUnsetTest>();
 
             //click in the three headers
             //foreach (var header in comp.FindAll(".mud-expand-panel-header"))
@@ -352,6 +352,25 @@ namespace MudBlazor.UnitTests.Components
             // Try to expand with Space key - should be ignored
             await header.KeyDownAsync(new KeyboardEventArgs { Key = " " });
             comp.Markup.Should().NotContain("mud-panel-expanded");
+        }
+
+        /// <summary>
+        /// Tests that a disabled panel puts "mud-disabled" on the header only, so the global ".mud-disabled .mud-icon-root" rule cannot grey out icons the user nests in the panel body (#11453).
+        /// </summary>
+        [Test]
+        public async Task MudExpansionPanel_Disabled_AppliesDisabledClassToHeaderOnly()
+        {
+            var comp = Context.Render<MudExpansionPanel>(parameters => parameters
+                .Add(p => p.Text, "Panel"));
+
+            comp.Find(".mud-expand-panel").ClassList.Should().NotContain("mud-disabled");
+            comp.Find(".mud-expand-panel-header").ClassList.Should().NotContain("mud-disabled");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Disabled, true));
+
+            comp.Find(".mud-expand-panel").ClassList.Should().NotContain("mud-disabled");
+            comp.Find(".mud-expand-panel-header").ClassList.Should().Contain("mud-disabled");
         }
 
         /// <summary>
