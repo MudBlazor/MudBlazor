@@ -2130,6 +2130,36 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Restored filter definitions use the rebuilt column presenter reported in issues #11178 and #12276.
+        /// </summary>
+        [Test]
+        public async Task RestoredFilterDefinitionsUseCurrentColumnPresenter()
+        {
+            var popoverProvider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<DataGridRestoredFiltersTest>();
+            var originalGrid = comp.FindComponent<MudDataGrid<DataGridRestoredFiltersTest.Item>>();
+
+            await comp.InvokeAsync(() => originalGrid.Instance.AddFilter());
+            var savedDefinition = originalGrid.Instance.FilterDefinitions.Should().ContainSingle().Subject;
+            var originalColumn = originalGrid.Instance.RenderedColumns.Should().ContainSingle().Subject;
+            savedDefinition.Column.Should().BeSameAs(originalColumn);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Visible, false));
+            comp.FindComponents<MudDataGrid<DataGridRestoredFiltersTest.Item>>().Should().BeEmpty();
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Visible, true));
+
+            var rebuiltGrid = comp.FindComponent<MudDataGrid<DataGridRestoredFiltersTest.Item>>();
+            var currentColumn = rebuiltGrid.Instance.RenderedColumns.Should().ContainSingle().Subject;
+            currentColumn.Should().NotBeSameAs(originalColumn);
+            rebuiltGrid.Instance.FilterDefinitions.Should().ContainSingle().Which.Should().BeSameAs(savedDefinition);
+            savedDefinition.Column.Should().BeSameAs(originalColumn);
+
+            await comp.InvokeAsync(() => rebuiltGrid.Instance.OpenFilters());
+
+            popoverProvider.Find(".filters-panel .filter-field .mud-select-input").TrimmedText().Should().Be("Name");
+        }
+
         [Test]
         public async Task DataGridCommittedItemChangedOccursAfterSourceItemUpdateInFormEdit()
         {
