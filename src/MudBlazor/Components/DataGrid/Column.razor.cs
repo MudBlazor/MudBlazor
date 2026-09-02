@@ -133,12 +133,14 @@ namespace MudBlazor
         /// Defaults to <c>null</c>. When unset, the declaration order is used.
         /// </remarks>
         [Parameter, ParameterState]
+        [Category(CategoryTypes.DataGrid.Behavior)]
         public int? Order { get; set; }
 
         /// <summary>
         /// Occurs when the <see cref="Order"/> property has changed.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Behavior)]
         public EventCallback<int?> OrderChanged { get; set; }
 
         /// <summary>

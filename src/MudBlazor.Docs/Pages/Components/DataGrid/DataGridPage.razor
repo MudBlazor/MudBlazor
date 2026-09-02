@@ -481,8 +481,6 @@
         <DocsPageSection>
             <SectionHeader Title="Column Reordering">
                 <Description>
-                    Reorder columns through direct drag-and-drop, the columns panel, or bound <CodeInline>Order</CodeInline> values.
-                    The examples below group the three related patterns for column ordering.
                     To enable Column Reordering via Drag and Drop, set the <CodeInline>DragDropColumnReordering</CodeInline> parameter to true. Columns can override this parameter with their <CodeInline>DragAndDropEnabled</CodeInline> parameter if necessary.
                     Header drag-and-drop behavior is controlled by <CodeInline>ColumnReorderMode</CodeInline> using <CodeInline>DataGridDragAndDropColumnReorderMode</CodeInline>:
                     <CodeInline>DataGridDragAndDropColumnReorderMode.Swap</CodeInline> (default) swaps the dragged column with the target column, while <CodeInline>DataGridDragAndDropColumnReorderMode.Insert</CodeInline> inserts the dragged column at the target position and shifts intermediate columns.
@@ -491,43 +489,41 @@
                     to your own CSS classes.
                 </Description>
             </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumReorderingExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridColumReorderingExample />
+            </SectionContent>
+        </DocsPageSection>
 
-            <DocsPageSection>
-                <SectionHeader Title="Drag and Drop Columns">
-                    <Description>
-                        The first example keeps focus on drag-and-drop column reordering.
-                    </Description>
-                </SectionHeader>
-                <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumReorderingExample)" ShowCode="false" Block="true" FullWidth="true">
-                    <DataGridColumReorderingExample />
-                </SectionContent>
-            </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Columns Panel">
+                <Description>
+                    The <CodeInline>&lt;MudDataGrid></CodeInline> can open a columns panel using <CodeInline>ShowColumnsPanel</CodeInline>.
+                    The panel allows the re-ordering, hiding, filtering and grouping of columns. The enabled functionality matches the grid and column options except column re-ordering.
+                    <br><br>
+                    Column re-ordering is enabled in the panel using the <CodeInline>ColumnsPanelReordering</CodeInline> property. Re-ordering is on an insert basis, so it does not respect the column level <CodeInline>DragAndDropEnabled</CodeInline> property which swaps columns.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnsPanelExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridColumnsPanelExample />
+            </SectionContent>
+        </DocsPageSection>
 
-            <DocsPageSection>
-                <SectionHeader Title="Columns Panel">
-                    <Description>
-                        The second example demonstrates reordering from the columns panel.
-                    </Description>
-                </SectionHeader>
-                <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnsPanelExample)" ShowCode="false" Block="true" FullWidth="true">
-                    <DataGridColumnsPanelExample />
-                </SectionContent>
-            </DocsPageSection>
-
-            <DocsPageSection>
-                <SectionHeader Title="Order State">
-                    <Description>
-                        The last example uses bound <CodeInline>Order</CodeInline> values with save, reset, and restore behavior.
-                        <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-                            <div>* <CodeInline>HierarchyColumn</CodeInline> is pinned and does not participate in <CodeInline>Order</CodeInline> state.</div>
-                            <div>* <CodeInline>(unset)</CodeInline> indicates a null order value.</div>
-                        </MudAlert>
-                    </Description>
-                </SectionHeader>
-                <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnOrderStateExample)" ShowCode="false" Block="true" FullWidth="true">
-                    <DataGridColumnOrderStateExample />
-                </SectionContent>
-            </DocsPageSection>
+        <DocsPageSection>
+            <SectionHeader Title="Column Order State">
+                <Description>
+                    Bind a column's <CodeInline>Order</CodeInline> and <CodeInline>OrderChanged</CodeInline> parameters to save and restore its position.
+                    Header, columns-panel, and arrow reorders update the bound values and raise <CodeInline>ColumnOrderChanged</CodeInline> once when the position changes.
+                    Parameter-driven restoration is silent, and resetting every value to <CodeInline>null</CodeInline> restores declaration order and default placement without replacing the null values.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        <div>* <CodeInline>HierarchyColumn</CodeInline> stays pinned and does not participate in <CodeInline>Order</CodeInline> state.</div>
+                        <div>* An unordered <CodeInline>SelectColumn</CodeInline> stays leading after the Hierarchy column until explicitly ordered or displaced by a user reorder.</div>
+                        <div>* <CodeInline>(unset)</CodeInline> indicates a null order value.</div>
+                    </MudAlert>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnOrderStateExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridColumnOrderStateExample />
+            </SectionContent>
         </DocsPageSection>
 
         <DocsPageSection>

@@ -1,6 +1,8 @@
 ﻿<MudDataGrid Items="@Items"
              DragDropColumnReordering="true"
              ColumnsPanelReordering="true"
+             ShowMenuIcon="true"
+             ColumnReorderMode="@ColumnReorderMode"
              ColumnOrderChanged="@((DataGridColumnOrderChangedEventArgs<Model> args) => OnColumnOrderChanged(args))">
     <Columns>
         @if (ShowHierarchy)
@@ -23,6 +25,12 @@
         <PropertyColumn Property="x => x.Status" Title="Status" @bind-Order="StatusOrder" />
     </Columns>
 </MudDataGrid>
+
+<div class="d-flex gap-2 mt-3">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveOrders">Save layout</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ResetOrders">Reset layout</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="RestoreOrders">Restore layout</MudButton>
+</div>
 
 <MudPaper Class="mt-3">
     @foreach (var row in GetOrderRows())
@@ -65,6 +73,9 @@
     public bool BindAgeOrder { get; set; } = true;
 
     [Parameter]
+    public DataGridDragAndDropColumnReorderMode ColumnReorderMode { get; set; } = DataGridDragAndDropColumnReorderMode.Insert;
+
+    [Parameter]
     public int? InitialNameOrder { get; set; }
 
     [Parameter]
@@ -84,6 +95,8 @@
 
     public string StatusText { get; private set; } = "Reorder columns to update the bound Order state shown below.";
 
+    private (int? Select, int? Name, int? Age, int? Status) _savedOrders;
+
     protected override void OnInitialized()
     {
         NameOrder = InitialNameOrder;
@@ -100,6 +113,24 @@
         SelectOrder = selectOrder;
         StatusText = "Order values updated.";
         StateHasChanged();
+    }
+
+    private void SaveOrders()
+    {
+        _savedOrders = (SelectOrder, NameOrder, AgeOrder, StatusOrder);
+        StatusText = "Layout saved.";
+    }
+
+    private void ResetOrders()
+    {
+        SetOrders(null, null, null, null);
+        StatusText = "Layout reset to null order values and default placement.";
+    }
+
+    private void RestoreOrders()
+    {
+        SetOrders(_savedOrders.Name, _savedOrders.Age, _savedOrders.Status, _savedOrders.Select);
+        StatusText = "Saved layout restored without a grid callback.";
     }
 
     private Task OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Model> args)
