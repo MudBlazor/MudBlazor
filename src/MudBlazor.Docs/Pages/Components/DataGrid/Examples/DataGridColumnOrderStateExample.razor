@@ -23,7 +23,7 @@
     <MudPaper Class="mt-3" Style="width: 420px; max-width: 100%;">
         <div class="d-flex align-center justify-space-between px-4 py-2 gap-4">
             <MudText Typo="Typo.body1" Class="flex-grow-0" Style="min-width: 130px;">Select</MudText>
-            <MudSelect T="int?" @bind-Value="_selectOrder" Dense="true" Style="min-width: 160px; max-width: 220px;">
+            <MudSelect T="int?" @bind-Value="_selectOrder" Dense="true" aria-label="Select column order" Style="min-width: 160px; max-width: 220px;">
                 <MudSelectItem T="int?" Value="@((int?)null)">(unset)</MudSelectItem>
                 <MudSelectItem T="int?" Value="0">0</MudSelectItem>
                 <MudSelectItem T="int?" Value="1">1</MudSelectItem>
@@ -34,7 +34,7 @@
         </div>
         <div class="d-flex align-center justify-space-between px-4 py-2 gap-4">
             <MudText Typo="Typo.body1" Class="flex-grow-0" Style="min-width: 130px;">Name</MudText>
-            <MudSelect T="int?" @bind-Value="_nameOrder" Dense="true" Style="min-width: 160px; max-width: 220px;">
+            <MudSelect T="int?" @bind-Value="_nameOrder" Dense="true" aria-label="Name column order" Style="min-width: 160px; max-width: 220px;">
                 <MudSelectItem T="int?" Value="@((int?)null)">(unset)</MudSelectItem>
                 <MudSelectItem T="int?" Value="0">0</MudSelectItem>
                 <MudSelectItem T="int?" Value="1">1</MudSelectItem>
@@ -45,7 +45,7 @@
         </div>
         <div class="d-flex align-center justify-space-between px-4 py-2 gap-4">
             <MudText Typo="Typo.body1" Class="flex-grow-0" Style="min-width: 130px;">Age</MudText>
-            <MudSelect T="int?" @bind-Value="_ageOrder" Dense="true" Style="min-width: 160px; max-width: 220px;">
+            <MudSelect T="int?" @bind-Value="_ageOrder" Dense="true" aria-label="Age column order" Style="min-width: 160px; max-width: 220px;">
                 <MudSelectItem T="int?" Value="@((int?)null)">(unset)</MudSelectItem>
                 <MudSelectItem T="int?" Value="0">0</MudSelectItem>
                 <MudSelectItem T="int?" Value="1">1</MudSelectItem>
@@ -56,7 +56,7 @@
         </div>
         <div class="d-flex align-center justify-space-between px-4 py-2 gap-4">
             <MudText Typo="Typo.body1" Class="flex-grow-0" Style="min-width: 130px;">Role</MudText>
-            <MudSelect T="int?" @bind-Value="_roleOrder" Dense="true" Style="min-width: 160px; max-width: 220px;">
+            <MudSelect T="int?" @bind-Value="_roleOrder" Dense="true" aria-label="Role column order" Style="min-width: 160px; max-width: 220px;">
                 <MudSelectItem T="int?" Value="@((int?)null)">(unset)</MudSelectItem>
                 <MudSelectItem T="int?" Value="0">0</MudSelectItem>
                 <MudSelectItem T="int?" Value="1">1</MudSelectItem>
