@@ -1673,7 +1673,7 @@ namespace MudBlazor
             await base.SetParametersAsync(parameters);
 
             VirtualItemsProviderInitialize();
-            if (parameters.TryGetValue(nameof(SortMode), out SortMode sortMode) && sortMode != sortModeBefore)
+            if (_isFirstRendered && parameters.TryGetValue(nameof(SortMode), out SortMode sortMode) && sortMode != sortModeBefore)
                 await ClearCurrentSortings();
         }
 

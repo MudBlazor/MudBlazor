@@ -3,7 +3,9 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Extensions;
+using MudBlazor.Resources;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Select;
 using MudBlazor.UnitTests.TestData;
@@ -1337,11 +1339,12 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Select_Should_SetRequiredTrue()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<SelectRequiredTest>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
             select.Required.Should().BeTrue();
             await comp.InvokeAsync(() => select.ValidateAsync());
-            select.ValidationErrors.First().Should().Be("Required");
+            select.ValidationErrors.First().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         /// <summary>
@@ -1350,6 +1353,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Select_Required_Should_ShowValidationError_OnFocusOut()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<SelectRequiredTest>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
             select.Required.Should().BeTrue();
@@ -1358,7 +1362,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await comp.Find($"#{select.ElementId}").TriggerEventAsync("onfocusout", new FocusEventArgs()));
             select.Touched.Should().BeTrue();
             select.HasErrors.Should().BeTrue();
-            select.ValidationErrors.First().Should().Be("Required");
+            select.ValidationErrors.First().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         /// <summary>
@@ -1871,17 +1875,18 @@ namespace MudBlazor.UnitTests.Components
         {
             //1a. Check When SelectedItems is empty - Validation Should Fail
             //Check on String type
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MultiSelectTestRequiredValue>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
             select.Required.Should().BeTrue();
             await comp.InvokeAsync(() => select.ValidateAsync());
-            select.ValidationErrors.First().Should().Be("Required");
+            select.ValidationErrors.First().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             //1b. Check on T type - MultiSelect of T(e.g. class object)
             var selectWithT = comp.FindComponent<MudSelect<MultiSelectTestRequiredValue.TestClass>>().Instance;
             selectWithT.Required.Should().BeTrue();
             await comp.InvokeAsync(() => selectWithT.ValidateAsync());
-            selectWithT.ValidationErrors.First().Should().Be("Required");
+            selectWithT.ValidationErrors.First().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             //2a. Now check when SelectedItems is greater than one - Validation Should Pass
             var inputs = comp.FindAll("div.mud-input-control");
@@ -1904,14 +1909,15 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MultiSelectClearAndReset()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MultiSelectTestRequiredValue>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
             select.Required.Should().BeTrue();
             await comp.InvokeAsync(() => select.ValidateAsync());
-            select.ValidationErrors.First().Should().Be("Required");
+            select.ValidationErrors.First().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             await comp.Find("#clear-string").ClickAsync();
-            select.ValidationErrors.First().Should().Be("Required");
+            select.ValidationErrors.First().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             await comp.Find("#reset-string").ClickAsync();
             select.ValidationErrors.Should().BeEmpty();
@@ -1930,7 +1936,7 @@ namespace MudBlazor.UnitTests.Components
 
             select.Value.Should().BeNullOrEmpty();
             select.GetState(x => x.SelectedValues).Should().BeEmpty();
-            select.ValidationErrors.First().Should().Be("Required");
+            select.ValidationErrors.First().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             //test resetting string values
             inputs = comp.FindAll("div.mud-input-control");
@@ -1951,10 +1957,10 @@ namespace MudBlazor.UnitTests.Components
             var select2 = comp.FindComponent<MudSelect<MultiSelectTestRequiredValue.TestClass>>().Instance;
             select2.Required.Should().BeTrue();
             await comp.InvokeAsync(() => select2.ValidateAsync());
-            select2.ValidationErrors.First().Should().Be("Required");
+            select2.ValidationErrors.First().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             await comp.Find("#clear-object").ClickAsync();
-            select2.ValidationErrors.First().Should().Be("Required");
+            select2.ValidationErrors.First().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             await comp.Find("#reset-object").ClickAsync();
             select2.ValidationErrors.Should().BeEmpty();
@@ -1970,7 +1976,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("#clear-object").ClickAsync();
 
             select2.SelectedValues.Should().BeEmpty();
-            select2.ValidationErrors.First().Should().Be("Required");
+            select2.ValidationErrors.First().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             //test resetting object values
             inputs = comp.FindAll("div.mud-input-control");
