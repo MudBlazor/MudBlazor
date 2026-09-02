@@ -1,7 +1,9 @@
-﻿using Bunit;
+﻿using AwesomeAssertions;
+using Bunit;
 using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Docs.Examples;
 using MudBlazor.Docs.Services;
 using MudBlazor.Services;
 using MudBlazor.UnitTests.Docs.Mocks;
@@ -54,6 +56,20 @@ namespace MudBlazor.UnitTests.Docs.Generated
                 _ctx.Dispose();
             }
             catch (Exception) { /*ignore, may fail because of dispose in the middle of a (second) render pass*/ }
+        }
+
+        /// <summary>
+        /// The column-order example gives each order selector a unique accessible name.
+        /// </summary>
+        [Test]
+        public void DataGridColumnOrderStateExampleNamesOrderSelectors()
+        {
+            var component = _ctx.Render<DataGridColumnOrderStateExample>();
+
+            component.FindAll("input[role='combobox']")
+                .Select(x => x.GetAttribute("aria-label"))
+                .Should()
+                .Equal("Select column order", "Name column order", "Age column order", "Role column order");
         }
     }
 }

@@ -15,8 +15,7 @@ namespace MudBlazor;
 /// <seealso cref="Column{T}" />
 /// <seealso cref="MudDataGrid{T}" />
 /// <remarks>
-/// This component wraps an internal <see cref="TemplateColumn{T}"/>. If it is ever refactored to derive from <see cref="Column{T}"/>,
-/// keep its ordering behavior pinned ahead of reorderable columns instead of exposing a user-configurable <c>Order</c>. e.g. Hide Order
+/// This column remains pinned before reorderable columns and does not expose configurable order state.
 /// </remarks>
 /// <seealso cref="PropertyColumn{T, TProperty}" />
 /// <seealso cref="SelectColumn{T}" />
