@@ -12,6 +12,7 @@
         "build"
     ],
     "commitMessagePrefix": "Build: ",
+    "timezone": "Etc/UTC",
     "lockFileMaintenance": {
         "enabled": true
     },
@@ -82,31 +83,84 @@
             "enabled": false
         },
         {
-            "description": "Group Bun toolchain updates. BunDotNet.Cli is pinned in .config/dotnet-tools.json, which the built-in nuget manager reads.",
-            "matchPackageNames": [
-                "bun",
-                "BunDotNet.Cli"
+            "description": "eslint and sass decide the bytes in MudBlazor.min.js and MudBlazor.min.css, so pin them rather than tracking a range.",
+            "matchManagers": [
+                "bun"
             ],
+            "rangeStrategy": "pin"
+        },
+        {
+            "description": "The built-in renovate-config manager reads this same constraint from GitHub releases, so the field had two owners on two feeds. matchDepNames is load-bearing: that dependency's package name is oven-sh/bun.",
+            "matchManagers": [
+                "renovate-config"
+            ],
+            "matchDepNames": [
+                "bun"
+            ],
+            "enabled": false
+        },
+        {
+            "description": "One branch for everything that feeds the Bun build, so two open PRs can never rewrite bun.lock at once. The Saturday window closes before the 06:00 AutoTriage sweep, and groupSingleUpdates keeps the group title on weeks when only one package moves.",
             "matchFileNames": [
+                "src/package.json",
                 "src/Directory.Build.props",
-                ".config/dotnet-tools.json"
+                ".config/dotnet-tools.json",
+                ".github/renovate.json"
             ],
-            "groupName": "bun toolchain",
-            "groupSlug": "bun-toolchain",
-            "separateMajorMinor": false,
-            "separateMultipleMajor": false,
+            "groupName": "bun",
+            "groupSlug": "bun",
+            "schedule": [
+                "* 0-5 * * 6"
+            ],
+            "minimumReleaseAge": "3 days",
+            "groupSingleUpdates": true,
             "reviewers": [
                 "meenzen"
             ]
         },
         {
-            "description": "eslint and sass decide the bytes in MudBlazor.min.js and MudBlazor.min.css, so pin them. Lock file maintenance is enabled at the top level, where Renovate actually reads it, and refreshes the transitives that pinning cannot reach. constraints.bun must track BunVersion: lock file maintenance regenerates bun.lock from scratch, and a newer bun writes lockfileVersion 2, which the pinned bun cannot read.",
-            "matchManagers": [
-                "bun"
+            "description": "Bun, the tool that downloads it and its type definitions are one release train. Keep this off the other npm packages: clearing separateMajorMinor collapses the lookup to a single bucket, so a major would suppress the safe patch on the current line.",
+            "matchPackageNames": [
+                "bun",
+                "BunDotNet.Cli",
+                "@types/bun"
             ],
-            "rangeStrategy": "pin",
-            "groupName": "bun dependencies",
-            "groupSlug": "bun-dependencies",
+            "matchFileNames": [
+                "src/Directory.Build.props",
+                ".config/dotnet-tools.json",
+                ".github/renovate.json",
+                "src/package.json"
+            ],
+            "separateMajorMinor": false,
+            "separateMultipleMajor": false
+        },
+        {
+            "description": "Undo the Bun group's reach into other managers' maintenance updates, since .config/dotnet-tools.json is a nuget manifest. reviewers is not a group setting, so clearing the group name leaves it behind; groupSlug and groupSingleUpdates need no reset because they are read only while a group name is set.",
+            "matchUpdateTypes": [
+                "lockFileMaintenance"
+            ],
+            "groupName": null,
+            "minimumReleaseAge": null,
+            "reviewers": [],
+            "schedule": [
+                "before 4am on monday"
+            ]
+        },
+        {
+            "description": "Renovate will not put lock file maintenance in a branch with anything else, so this cannot join the group above. It is also the only thing that moves a transitive in bun.lock, because the bun manager has no updateLockedDependency.",
+            "matchUpdateTypes": [
+                "lockFileMaintenance"
+            ],
+            "matchFileNames": [
+                "src/package.json"
+            ],
+            "groupName": "bun lock file",
+            "groupSlug": "bun-lock-file",
+            "schedule": [
+                "* 0-5 1-7 * 6"
+            ],
+            "minimumReleaseAge": null,
+            "groupSingleUpdates": false,
             "reviewers": [
                 "meenzen"
             ]
@@ -137,6 +191,18 @@
             ],
             "matchStrings": [
                 "<BunVersion>(?<currentValue>.*?)</BunVersion>"
+            ],
+            "depNameTemplate": "bun",
+            "datasourceTemplate": "npm"
+        },
+        {
+            "description": "Keeps constraints.bun on the same npm feed as BunVersion, so the Bun that regenerates bun.lock cannot drift from the one that builds the assets.",
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/^\\.github/renovate\\.json$/"
+            ],
+            "matchStrings": [
+                "\"constraints\":\\s*\\{[^}]*?\"bun\":\\s*\"(?<currentValue>[^\"]+)\""
             ],
             "depNameTemplate": "bun",
             "datasourceTemplate": "npm"

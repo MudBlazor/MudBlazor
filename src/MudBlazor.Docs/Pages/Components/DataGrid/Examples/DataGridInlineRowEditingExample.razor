@@ -68,34 +68,36 @@
         </PropertyColumn>
 
         @* Actions column - shows Edit button or Save/Cancel buttons based on edit state *@
-        <TemplateColumn CellClass="d-flex justify-end">
+        <TemplateColumn>
             <CellTemplate>
-                @if (context.IsEditing)
-                {
-                    <MudIconButton Size="Size.Small"
-                                   Icon="@Icons.Material.Filled.Check"
-                                   Color="Color.Success"
-                                   aria-label="Save changes"
-                                   OnClick="@context.Actions.CommitEditingItemAsync" />
-                    <MudIconButton Size="Size.Small"
-                                   Icon="@Icons.Material.Filled.Close"
-                                   Color="Color.Error"
-                                   aria-label="Cancel editing"
-                                   OnClick="@context.Actions.CancelEditingItemAsync" />
-                }
-                else
-                {
-                    <MudIconButton Size="Size.Small"
-                                   Icon="@Icons.Material.Outlined.Edit"
-                                   Disabled="@_isEditing"
-                                   aria-label="Edit row"
-                                   OnClick="@context.Actions.StartEditingItemAsync" />
-                    <MudIconButton Size="Size.Small"
-                                   Icon="@Icons.Material.Outlined.Delete"
-                                   Disabled="@_isEditing"
-                                   aria-label="Delete row"
-                                   OnClick="@(() => DeleteItem(context.Item))" />
-                }
+                <MudStack Row Spacing="0" Justify="Justify.FlexEnd">
+                    @if (context.IsEditing)
+                    {
+                        <MudIconButton Size="Size.Small"
+                                       Icon="@Icons.Material.Filled.Check"
+                                       Color="Color.Success"
+                                       aria-label="Save changes"
+                                       OnClick="@context.Actions.CommitEditingItemAsync" />
+                        <MudIconButton Size="Size.Small"
+                                       Icon="@Icons.Material.Filled.Close"
+                                       Color="Color.Error"
+                                       aria-label="Cancel editing"
+                                       OnClick="@context.Actions.CancelEditingItemAsync" />
+                    }
+                    else
+                    {
+                        <MudIconButton Size="Size.Small"
+                                       Icon="@Icons.Material.Outlined.Edit"
+                                       Disabled="@_isEditing"
+                                       aria-label="Edit row"
+                                       OnClick="@context.Actions.StartEditingItemAsync" />
+                        <MudIconButton Size="Size.Small"
+                                       Icon="@Icons.Material.Outlined.Delete"
+                                       Disabled="@_isEditing"
+                                       aria-label="Delete row"
+                                       OnClick="@(() => DeleteItem(context.Item))" />
+                    }
+                </MudStack>
             </CellTemplate>
         </TemplateColumn>
     </Columns>
