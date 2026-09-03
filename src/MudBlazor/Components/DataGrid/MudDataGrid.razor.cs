@@ -472,8 +472,11 @@ namespace MudBlazor
         public EventCallback<FormFieldChangedEventArgs> FormFieldChanged { get; set; }
 
         /// <summary>
-        /// Occurs when the rendered column order has changed.
+        /// Occurs when a column is successfully reordered by the user.
         /// </summary>
+        /// <remarks>
+        /// This event is not raised when column order is restored through the <see cref="Column{T}.Order"/> parameter.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Behavior)]
         public EventCallback<DataGridColumnOrderChangedEventArgs<T>> ColumnOrderChanged { get; set; }
