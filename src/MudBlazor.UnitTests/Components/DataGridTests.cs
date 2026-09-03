@@ -6246,6 +6246,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Duplicate explicit order values use normalized placement without changing bound state or raising a callback.
+        /// </summary>
+        [Test]
+        public async Task DataGridOrderParameterNormalizesDuplicateExplicitStateSilently()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(nameOrder: 2, ageOrder: 2, statusOrder: 0));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Status", "Age", "Name");
+                comp.Instance.NameOrder.Should().Be(2);
+                comp.Instance.AgeOrder.Should().Be(2);
+                comp.Instance.StatusOrder.Should().Be(0);
+                comp.Instance.CallbackCount.Should().Be(0);
+                comp.Instance.LastArgs.Should().BeNull();
+            });
+        }
+
+        /// <summary>
         /// The columns-panel arrow updates bound order state and raises one callback.
         /// </summary>
         [Test]
@@ -6623,10 +6645,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Conditional Select removal and re-addition preserves the established relative column order.
+        /// Conditional Select removal normalizes the remaining explicit orders and re-addition restores the full order.
         /// </summary>
         [Test]
-        public async Task DataGridConditionalSelectPreservesOrderAcrossRemoval()
+        public async Task DataGridConditionalSelectNormalizesRemovalAndRestoresOrderOnReAddition()
         {
             var popoverProvider = Context.Render<MudPopoverProvider>();
             var comp = Context.Render<DataGridColumnOrderStateTest>();
@@ -6657,7 +6679,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.ShowSelect, false));
 
             dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
-            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Age", "Status");
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Status", "Age");
 
             await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.ShowSelect, true));

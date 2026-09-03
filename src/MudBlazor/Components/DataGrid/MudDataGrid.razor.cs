@@ -3012,7 +3012,8 @@ namespace MudBlazor
 
             static IEnumerable<Column<T>> OrderByExplicitState(List<Column<T>> columns)
             {
-                if (columns.All(x => x._orderState.Value is not null))
+                if (columns.All(x => x._orderState.Value is not null)
+                    && columns.Select(x => x._orderState.Value!.Value).Order().SequenceEqual(Enumerable.Range(0, columns.Count)))
                 {
                     return columns
                         .OrderBy(x => x._orderState.Value)
