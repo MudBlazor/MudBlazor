@@ -68,9 +68,9 @@
                             @if (ShowLoadingProgress)
                             {
                                 <tr class="mud-table-loading-row">
-                                    <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
+                                    <td colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
                                         <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" aria-label="@Localizer[LanguageResource.MudTable_Loading]" />
-                                    </th>
+                                    </td>
                                 </tr>
                             }
                         </thead>
@@ -79,9 +79,9 @@
                     {
                         <thead class="@HeadClassname">
                             <tr class="mud-table-loading-row">
-                                <th colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
+                                <td colspan="1000" class="@(CurrentPageItems.Any() || (LoadingContent is not null || LoadingContentBody is not null) ? "mud-table-loading" : "")">
                                     <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" aria-label="@Localizer[LanguageResource.MudTable_Loading]" />
-                                </th>
+                                </td>
                             </tr>
                         </thead>
                     }
@@ -156,7 +156,7 @@
                             else if (Loading ? LoadingContent != null : NoRecordsContent != null)
                             {
                                 <tr>
-                                    <th colspan="1000" class="mud-table-empty-row">
+                                    <td colspan="1000" class="mud-table-empty-row">
                                         <div Class="my-3">
                                             @if (Loading)
                                             {
@@ -167,7 +167,7 @@
                                                 @NoRecordsContent
                                             }
                                         </div>
-                                    </th>
+                                    </td>
                                 </tr>
                             }
                         }
