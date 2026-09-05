@@ -1,6 +1,10 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
+@* Text is obsolete (removed in v10, #12556) but still rendered here for v9 back-compat. *@
+@{
+#pragma warning disable CS0618
+}
 
 <MudElement HtmlTag="@HtmlTag"
             id="@ElementId"
@@ -65,13 +69,14 @@
             else
             {
                 @Text
-                @if (!string.IsNullOrEmpty(SecondaryText))
-                {
-                    <br />
-                    <MudText Class="mud-list-item-secondary-text" Typo="Typo.subtitle2">
-                        @SecondaryText
-                    </MudText>
-                }
+            }
+            @* SecondaryText renders alongside child content or Text so it keeps working once Text is removed in v10 (#12556). *@
+            @if (!string.IsNullOrEmpty(SecondaryText))
+            {
+                <br />
+                <MudText Class="mud-list-item-secondary-text" Typo="Typo.subtitle2">
+                    @SecondaryText
+                </MudText>
             }
         </MudText>
     </div>

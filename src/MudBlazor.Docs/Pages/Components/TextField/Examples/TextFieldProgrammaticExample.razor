@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
-<MudTextField @ref="_textField" T="string" Label="Programmatic control" Lines="3" Variant="Variant.Outlined" Text="@SampleText" HelperText="@($"Caret position: {_caretPosition}")" />
+<MudTextField @ref="_textField" T="string" Label="Programmatic control" Lines="3" Variant="Variant.Outlined" @bind-Value="_text" Immediate="true" HelperText="@($"Caret position: {_caretPosition}")" />
 <MudStack Row="true" Wrap="Wrap.Wrap" Class="mt-2">
     <MudButton OnClick="FocusFieldAsync" Color="Color.Primary">Focus</MudButton>
     <MudButton OnClick="SelectAllAsync" Color="Color.Primary">Select all</MudButton>
@@ -11,7 +11,7 @@
 </MudStack>
 
 @code {
-    private const string SampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+    private string _text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
     private MudTextField<string> _textField;
     private int _caretPosition = -1;
 

@@ -5,11 +5,11 @@
 </div>
 
 <MudChipSet T="string" CheckMark Class="mt-12">
-    <MudChip Text="None" OnClick="@(() => SetImageFit(ObjectFit.None))" SelectedColor="Color.Primary" />
-    <MudChip Text="Cover" OnClick="@(() => SetImageFit(ObjectFit.Cover))" SelectedColor="Color.Primary" Default="true"/>
-    <MudChip Text="Contain" OnClick="@(() => SetImageFit(ObjectFit.Contain))" SelectedColor="Color.Primary" />
-    <MudChip Text="Fill" OnClick="@(() => SetImageFit(ObjectFit.Fill))" SelectedColor="Color.Primary" />
-    <MudChip Text="ScaleDown" OnClick="@(() => SetImageFit(ObjectFit.ScaleDown))" SelectedColor="Color.Primary" />
+    <MudChip Value='"None"' OnClick="@(() => SetImageFit(ObjectFit.None))" SelectedColor="Color.Primary" />
+    <MudChip Value='"Cover"' OnClick="@(() => SetImageFit(ObjectFit.Cover))" SelectedColor="Color.Primary" Default="true"/>
+    <MudChip Value='"Contain"' OnClick="@(() => SetImageFit(ObjectFit.Contain))" SelectedColor="Color.Primary" />
+    <MudChip Value='"Fill"' OnClick="@(() => SetImageFit(ObjectFit.Fill))" SelectedColor="Color.Primary" />
+    <MudChip Value='"ScaleDown"' OnClick="@(() => SetImageFit(ObjectFit.ScaleDown))" SelectedColor="Color.Primary" />
 </MudChipSet>
 
 @code {

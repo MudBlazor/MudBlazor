@@ -84,9 +84,10 @@ namespace MudBlazor
         /// The text shown for this item.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>. Should be set if the displayed text differs from <c>Value?.ToString()</c>.<br />
+        /// Deprecated and removed in v10. Set <see cref="Value"/> instead, and use <see cref="ChildContent"/> when the displayed text differs from the value. See https://github.com/MudBlazor/MudBlazor/issues/12556.<br />
         /// Only shows if <see cref="ChildContent"/> is not set.
         /// </remarks>
+        [Obsolete("Text is being removed in v10; set Value instead, and use ChildContent when the displayed text differs from the value. https://github.com/MudBlazor/MudBlazor/issues/12556")]
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? Text { get; set; }
@@ -95,7 +96,7 @@ namespace MudBlazor
         /// The custom content shown for this item.
         /// </summary>
         /// <remarks>
-        /// The provided <c>boolean</c> parameter is <c>true</c> when this item is selected. When set, <see cref="Text"/> will not be displayed.
+        /// The provided <c>boolean</c> parameter is <c>true</c> when this item is selected. When set, the item's text will not be displayed.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]

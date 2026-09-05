@@ -3,9 +3,9 @@
          SelectionMode="@SelectionMode"
          @bind-SelectedValue="_selectedValue"
          @bind-SelectedValues="_selectedValues">
-    <MudListItem Text="Alpha" />
-    <MudListItem Text="Bravo" Disabled="@IncludeDisabledItem" />
-    <MudListItem Text="Charlie" />
+    <MudListItem Value='"Alpha"'>Alpha</MudListItem>
+    <MudListItem Value='"Bravo"' Disabled="@IncludeDisabledItem">Bravo</MudListItem>
+    <MudListItem Value='"Charlie"'>Charlie</MudListItem>
 </MudList>
 
 <p class="selected-value">@(_selectedValue ?? string.Empty)</p>

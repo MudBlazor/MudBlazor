@@ -5,9 +5,9 @@
         <MudText>Single Selection</MudText>
         <MudText>Value: @_value1</MudText>
         <MudToggleGroup T="string" SelectionMode="SelectionMode.SingleSelection" @bind-Value="_value1" Color="Color.Primary" CheckMark FixedContent>
-            <MudToggleItem Value="@("Yes")" Text="Yes" />
-            <MudToggleItem Value="@("No")" Text="No" />
-            <MudToggleItem Value="@("Don't know")" Text="Don't know" />
+            <MudToggleItem Value='"Yes"'>Yes</MudToggleItem>
+            <MudToggleItem Value='"No"'>No</MudToggleItem>
+            <MudToggleItem Value="@("Don't know")">Don't know</MudToggleItem>
         </MudToggleGroup>
     </MudStack>
 
@@ -17,9 +17,9 @@
         <MudText>Multi Selection</MudText>
         <MudText>Values: @string.Join(", ", _value2 ?? new List<string>())</MudText>
         <MudToggleGroup T="string" SelectionMode="SelectionMode.MultiSelection" @bind-Values="_value2" Color="Color.Secondary" CheckMark>
-            <MudToggleItem Value="@("Extra Bag")" UnselectedIcon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox"/>
-            <MudToggleItem Value="@("Vegan Menu")" UnselectedIcon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox" />
-            <MudToggleItem Value="@("Carbon Offset")" UnselectedIcon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox" />
+            <MudToggleItem Value='"Extra Bag"' UnselectedIcon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox"/>
+            <MudToggleItem Value='"Vegan Menu"' UnselectedIcon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox" />
+            <MudToggleItem Value='"Carbon Offset"' UnselectedIcon="@Icons.Material.Filled.CheckBoxOutlineBlank" SelectedIcon="@Icons.Material.Filled.CheckBox" />
         </MudToggleGroup>
     </MudStack>
 
@@ -29,9 +29,9 @@
         <MudText>Toggle Selection</MudText>
         <MudText>Value: @(_value3 == null ? "null" : _value3.ToString())</MudText>
         <MudToggleGroup T="int?" SelectionMode="SelectionMode.ToggleSelection" @bind-Value="_value3" Color="Color.Tertiary" CheckMark>
-            <MudToggleItem Value="@((int?)1)" Text="Coffee (1)" />
-            <MudToggleItem Value="@((int?)2)" Text="Tee (2)" />
-            <MudToggleItem Value="@((int?)3)" Text="Water (3)" />
+            <MudToggleItem Value="@((int?)1)">Coffee (1)</MudToggleItem>
+            <MudToggleItem Value="@((int?)2)">Tee (2)</MudToggleItem>
+            <MudToggleItem Value="@((int?)3)">Water (3)</MudToggleItem>
         </MudToggleGroup>
     </MudStack>
 </MudStack>

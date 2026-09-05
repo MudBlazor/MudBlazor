@@ -1,6 +1,10 @@
 ﻿@namespace MudBlazor
 @inherits MudBaseInput<T>
 @typeparam T
+@* TextChanged on the inner MudInput is obsolete (removed in v10, #12556) but still used here for v9 back-compat. *@
+@{
+#pragma warning disable CS0618
+}
 
 <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
     <div id="@_componentId" class="@AutocompleteClassname" @onclick:stopPropagation @onmousedown:stopPropagation>

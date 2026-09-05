@@ -2,11 +2,11 @@
 
 <MudPaper Width="300px">
     <MudList T="string">
-        <MudListItem Text="Inbox" Icon="@Icons.Material.Filled.Inbox" />
-        <MudListItem Text="Sent" Icon="@Icons.Material.Filled.Send" />
-        <MudListItem Text="Drafts" Disabled="true" IconColor="Color.Info" Icon="@Icons.Material.Filled.Drafts" />
+        <MudListItem Value='"Inbox"' Icon="@Icons.Material.Filled.Inbox">Inbox</MudListItem>
+        <MudListItem Value='"Sent"' Icon="@Icons.Material.Filled.Send">Sent</MudListItem>
+        <MudListItem Value='"Drafts"' Disabled="true" IconColor="Color.Info" Icon="@Icons.Material.Filled.Drafts">Drafts</MudListItem>
         <MudDivider />
-        <MudListItem Text="Trash" SecondaryText="Removed e-mails" />
-        <MudListItem Text="Spam" SecondaryText="E-mails from common providers" />
+        <MudListItem Value='"Trash"' SecondaryText="Removed e-mails">Trash</MudListItem>
+        <MudListItem Value='"Spam"' SecondaryText="E-mails from common providers">Spam</MudListItem>
     </MudList>
 </MudPaper>
