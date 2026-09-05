@@ -27,6 +27,8 @@
 
     <input @ref="_elementReferenceStart"
            aria-required="@Required.ToString().ToLowerInvariant()"
+           aria-invalid="@(HasErrors ? "true" : null)"
+           aria-describedby="@GetAriaDescribedByString()"
            @attributes="UserAttributes"
            id="@(string.IsNullOrEmpty(InputElementId) ? null : $"{InputElementId}-start")"
            type="@InputTypeString"
@@ -46,6 +48,8 @@
     <MudIcon Class="mud-range-input-separator mud-flip-x-rtl" Icon="@SeparatorIcon" Color="@Color.Default" />
     <input @ref="_elementReferenceEnd"
            aria-required="@Required.ToString().ToLowerInvariant()"
+           aria-invalid="@(HasErrors ? "true" : null)"
+           aria-describedby="@GetAriaDescribedByString()"
            @attributes="UserAttributes"
            id="@(string.IsNullOrEmpty(InputElementId) ? null : $"{InputElementId}-end")"
            type="@InputTypeString"
