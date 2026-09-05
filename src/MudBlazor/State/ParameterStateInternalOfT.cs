@@ -121,7 +121,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
         _getParameterValueFunc = getParameterValueFunc;
         _eventCallbackFunc = eventCallbackFunc;
         _parameterChangedHandler = parameterChangedHandler;
-        _comparer = comparer ?? new ParameterEqualityComparerSwappable<T>(() => EqualityComparer<T>.Default);
+        _comparer = comparer ?? ParameterEqualityComparerSwappable<T>.Default;
     }
 
     /// <inheritdoc/>
