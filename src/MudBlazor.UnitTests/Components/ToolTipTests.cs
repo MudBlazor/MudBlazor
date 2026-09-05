@@ -65,6 +65,10 @@ namespace MudBlazor.UnitTests.Components
             popoverContentNode().TextContent.Should().Be("my tooltip content text");
             popoverContentNode().ClassList.Should().Contain("d-flex");
 
+            var textWrapper = popoverContentNode().Children.Should().ContainSingle().Subject;
+            textWrapper.ClassList.Should().Contain("mud-tooltip-text");
+            textWrapper.TextContent.Should().Be("my tooltip content text");
+
             tooltipComp.GetState(x => x.Visible).Should().BeTrue();
 
             //trigger pointerleave
