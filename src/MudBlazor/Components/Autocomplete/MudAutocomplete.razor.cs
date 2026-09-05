@@ -16,6 +16,7 @@ namespace MudBlazor
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
         /// </summary>
         private readonly string _componentId = Identifier.Create();
+        private readonly string _listboxId = Identifier.Create("listbox");
 
         private bool _isCleared;
         private bool _isProcessingValue;
@@ -1066,6 +1067,34 @@ namespace MudBlazor
         private string GetListItemId(in int index)
         {
             return $"{_componentId}_item{index}";
+        }
+
+        /// <summary>
+        /// Builds fallback combobox attributes for the text input so caller-supplied values still win.
+        /// </summary>
+        /// <remarks>
+        /// The suggestion list only exists in the DOM while it is open and has items, so the list and the highlighted option are referenced only then.
+        /// </remarks>
+        private Dictionary<string, object?> GetInputAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+            var listRendered = _open && _items is { Length: > 0 };
+            attributes.TryAdd("role", "combobox");
+            attributes.TryAdd("aria-autocomplete", "list");
+            attributes.TryAdd("aria-haspopup", "listbox");
+            attributes.TryAdd("aria-expanded", listRendered ? "true" : "false");
+
+            if (listRendered)
+            {
+                attributes.TryAdd("aria-controls", _listboxId);
+
+                if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items!.Length)
+                {
+                    attributes.TryAdd("aria-activedescendant", GetListItemId(_selectedListItemIndex));
+                }
+            }
+
+            return attributes;
         }
 
         internal async Task OnEnterKeyAsync()
