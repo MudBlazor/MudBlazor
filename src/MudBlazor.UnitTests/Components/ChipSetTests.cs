@@ -628,5 +628,51 @@ namespace MudBlazor.UnitTests.Components
             chip.GetAttribute("aria-pressed").Should().Be("true");
             chip.GetAttribute("aria-disabled").Should().Be("true");
         }
+
+        /// <summary>
+        /// A read-only set still reports each chip as a button with its selection state, but not as disabled.
+        /// </summary>
+        [Test]
+        public void ChipSet_ReadOnly_ShouldKeepButtonSemanticsWithoutDisabledState()
+        {
+            var comp = Context.Render<MudChipSet<string>>(parameters => parameters
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.SelectedValue, "Milk")
+                .Add(p => p.ChildContent, builder =>
+                {
+                    builder.OpenComponent<MudChip<string>>(0);
+                    builder.AddAttribute(1, nameof(MudChip<string>.Value), "Milk");
+                    builder.CloseComponent();
+                }));
+
+            var chip = comp.Find(".mud-chip");
+            chip.TagName.Should().Be("DIV");
+            chip.GetAttribute("role").Should().Be("button");
+            chip.GetAttribute("aria-pressed").Should().Be("true");
+            chip.HasAttribute("aria-disabled").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A chip that renders as a link inside a set is not a toggle button, so it carries no aria-pressed.
+        /// </summary>
+        [Test]
+        public void ChipSet_AnchorChip_ShouldNotExposeToggleState()
+        {
+            var comp = Context.Render<MudChipSet<string>>(parameters => parameters
+                .Add(p => p.ChildContent, builder =>
+                {
+                    builder.OpenComponent<MudChip<string>>(0);
+                    builder.AddAttribute(1, nameof(MudChip<string>.Value), "Milk");
+                    builder.AddAttribute(2, nameof(MudChip<string>.Href), "https://example.com");
+                    // A clickable chip is always a button; only a non-clickable one falls back to the anchor.
+                    builder.AddAttribute(3, nameof(MudChip<string>.Disabled), true);
+                    builder.CloseComponent();
+                }));
+
+            var chip = comp.Find(".mud-chip");
+            chip.TagName.Should().Be("A");
+            chip.HasAttribute("role").Should().BeFalse();
+            chip.HasAttribute("aria-pressed").Should().BeFalse();
+        }
     }
 }
