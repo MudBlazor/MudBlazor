@@ -17,7 +17,8 @@
 
 @code {
     private RenderFragment OverlayFragment => 
-        @<div @attributes="UserAttributes"
+        @<div aria-hidden="@(ChildContent is null ? "true" : null)"
+              @attributes="UserAttributes"
               id="@_elementId"
               class="@Classname"
               style="@Styles"

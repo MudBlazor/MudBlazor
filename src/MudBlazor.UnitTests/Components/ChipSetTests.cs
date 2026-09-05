@@ -1,6 +1,7 @@
 ﻿using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.ChipSet;
 using NUnit.Framework;
@@ -587,6 +588,45 @@ namespace MudBlazor.UnitTests.Components
             {
                 passes[i].Should().Be(afterMount[i], $"chip {i} did not change and should not have re-rendered");
             }
+        }
+
+        /// <summary>
+        /// Chips in a set report their selection through aria-pressed.
+        /// </summary>
+        [Test]
+        public async Task ChipSet_ShouldExposeSelectedStateViaAriaPressed()
+        {
+            var comp = Context.Render<ChipSetSingleSelectionTest>();
+
+            comp.FindAll(".mud-chip").Should().OnlyContain(chip => chip.GetAttribute("aria-pressed") == "false");
+
+            await comp.FindAll(".mud-chip")[0].ClickAsync(new MouseEventArgs());
+
+            comp.FindAll(".mud-chip")[0].GetAttribute("aria-pressed").Should().Be("true");
+            comp.FindAll(".mud-chip")[1].GetAttribute("aria-pressed").Should().Be("false");
+        }
+
+        /// <summary>
+        /// A disabled chip in a set keeps its button role, selection state, and disabled state.
+        /// </summary>
+        [Test]
+        public void ChipSet_DisabledChip_ShouldKeepButtonSemantics()
+        {
+            var comp = Context.Render<MudChipSet<string>>(parameters => parameters
+                .Add(p => p.SelectedValue, "Milk")
+                .Add(p => p.ChildContent, builder =>
+                {
+                    builder.OpenComponent<MudChip<string>>(0);
+                    builder.AddAttribute(1, nameof(MudChip<string>.Value), "Milk");
+                    builder.AddAttribute(2, nameof(MudChip<string>.Disabled), true);
+                    builder.CloseComponent();
+                }));
+
+            var chip = comp.Find(".mud-chip");
+            chip.TagName.Should().Be("DIV");
+            chip.GetAttribute("role").Should().Be("button");
+            chip.GetAttribute("aria-pressed").Should().Be("true");
+            chip.GetAttribute("aria-disabled").Should().Be("true");
         }
     }
 }

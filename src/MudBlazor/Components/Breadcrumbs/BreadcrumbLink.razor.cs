@@ -28,6 +28,11 @@ public partial class BreadcrumbLink
     [CascadingParameter]
     public MudBreadcrumbs? Parent { get; set; }
 
+    /// <summary>
+    /// Whether this item is the last one in the trail and therefore represents the current page.
+    /// </summary>
+    private bool IsCurrentPage => Item is not null && Parent?.Items is { Count: > 0 } items && ReferenceEquals(items[^1], Item);
+
     private string Classname => new CssBuilder("mud-breadcrumb-item")
         .AddClass("mud-disabled", Item?.Disabled)
         .Build();

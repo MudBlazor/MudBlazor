@@ -304,5 +304,24 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() => MudBreadcrumbs.GetItemClassname(comp.Instance.Items[1]).Should().Be("mud-breadcrumb-item"));
         }
+
+        /// <summary>
+        /// The last breadcrumb is marked as the current page.
+        /// </summary>
+        [Test]
+        public void MudBreadcrumbs_ShouldMarkLastItemAsCurrentPage()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
+            {
+                new("Link 1", "link1"),
+                new("Link 2", "link2"),
+                new("Link 3", "link3", disabled: true)
+            }));
+
+            var links = comp.FindAll("li.mud-breadcrumb-item > a");
+            links[0].HasAttribute("aria-current").Should().BeFalse();
+            links[1].HasAttribute("aria-current").Should().BeFalse();
+            links[2].GetAttribute("aria-current").Should().Be("page");
+        }
     }
 }
