@@ -63,7 +63,7 @@
                 @if (PickerVariant == PickerVariant.Inline)
                 {
                     <MudPopover Class="@PopoverClassname" Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" RelativeWidth="@(RelativeWidth)" Paper="false">
-                        <div @ref="_pickerInlineRef" class="@PickerInlineClassname" role="dialog" aria-label="@GetPopupAriaLabel()">
+                        <div @ref="_pickerInlineRef" class="@PickerInlineClassname" role="@GetPopupRole()" aria-label="@GetPopupAriaLabel()" aria-labelledby="@GetPopupAriaLabelledBy()">
                             <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                                 <div class="@PickerContainerClassname">
                                     @if (PickerContent != null)
@@ -101,7 +101,7 @@
                 else if (Open && PickerVariant == PickerVariant.Dialog)
                 {
                     <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" DarkBackground="true" Class="mud-overlay-dialog">
-                        <MudPaper role="dialog" aria-modal="true" aria-label="@GetPopupAriaLabel()" @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
+                        <MudPaper role="@GetPopupRole()" aria-label="@GetPopupAriaLabel()" aria-labelledby="@GetPopupAriaLabelledBy()" @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                             <div class="@PickerContainerClassname">
                                 @if (PickerContent != null)
                                 {

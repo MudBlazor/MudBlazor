@@ -2258,11 +2258,12 @@ namespace MudBlazor.UnitTests.Components
             return comp;
         }
 
+
         /// <summary>
-        /// The inline popup is a dialog named after the field so its purpose is announced when it opens.
+        /// The inline popup is a dialog named after the field label so its purpose is announced when it opens.
         /// </summary>
         [Test]
-        public async Task Open_PopupIsNamedDialog()
+        public async Task Open_PopupIsNamedDialogAfterLabel()
         {
             var comp = await OpenPicker();
             var picker = comp.FindComponent<MudDatePicker>();
@@ -2271,6 +2272,75 @@ namespace MudBlazor.UnitTests.Components
             var popup = comp.Find("div.mud-picker-inline-paper");
             popup.GetAttribute("role").Should().Be("dialog");
             popup.GetAttribute("aria-label").Should().Be("Start date");
+            popup.HasAttribute("aria-labelledby").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A popup with nothing to name it is not announced as a dialog, because an unnamed dialog tells the user nothing.
+        /// </summary>
+        [Test]
+        public async Task Open_PopupWithoutNameIsNotADialog()
+        {
+            var comp = await OpenPicker();
+
+            var popup = comp.Find("div.mud-picker-inline-paper");
+            popup.HasAttribute("role").Should().BeFalse();
+            popup.HasAttribute("aria-label").Should().BeFalse();
+            popup.HasAttribute("aria-labelledby").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// PopupAriaLabel names the popup ahead of the field label.
+        /// </summary>
+        [Test]
+        public async Task Open_PopupAriaLabelWinsOverLabel()
+        {
+            var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDatePicker>();
+            await picker.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Label, "Start date")
+                .Add(x => x.PopupAriaLabel, "Choose the start date"));
+
+            var popup = comp.Find("div.mud-picker-inline-paper");
+            popup.GetAttribute("role").Should().Be("dialog");
+            popup.GetAttribute("aria-label").Should().Be("Choose the start date");
+        }
+
+        /// <summary>
+        /// PopupAriaLabelledBy names the popup by an element and suppresses the text fallbacks.
+        /// </summary>
+        [Test]
+        public async Task Open_PopupAriaLabelledByWinsOverEverything()
+        {
+            var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDatePicker>();
+            await picker.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Label, "Start date")
+                .Add(x => x.PopupAriaLabel, "Ignored")
+                .Add(x => x.PopupAriaLabelledBy, "trip-heading"));
+
+            var popup = comp.Find("div.mud-picker-inline-paper");
+            popup.GetAttribute("role").Should().Be("dialog");
+            popup.GetAttribute("aria-labelledby").Should().Be("trip-heading");
+            popup.HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The dialog variant is announced as a named dialog but not as modal, because the picker has no focus trap to back that claim.
+        /// </summary>
+        [Test]
+        public async Task DialogVariant_PopupIsNamedDialogWithoutModalClaim()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Dialog)
+                .Add(x => x.Label, "Start date"));
+
+            await comp.InvokeAsync(() => comp.Instance.OpenAsync());
+
+            var popup = comp.Find("div.mud-overlay-dialog div.mud-picker-paper");
+            popup.GetAttribute("role").Should().Be("dialog");
+            popup.GetAttribute("aria-label").Should().Be("Start date");
+            popup.HasAttribute("aria-modal").Should().BeFalse();
         }
     }
 }
