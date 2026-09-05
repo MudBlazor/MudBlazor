@@ -3713,5 +3713,36 @@ namespace MudBlazor.UnitTests.Components
             LabelOf(inputs[1]).Should().Be("Select group");
             LabelOf(inputs[2]).Should().Be("Select row");
         }
+
+        /// <summary>
+        /// The placeholder row shown while a table has no records is a data cell, so the column headers refer to data cells (#13762).
+        /// </summary>
+        [Test]
+        public void NoRecordsContent_RendersAsDataCell()
+        {
+            var comp = Context.Render<MudTable<string>>(parameters => parameters
+                .Add(p => p.Items, Array.Empty<string>())
+                .Add(p => p.HeaderContent, "<th>Name</th>")
+                .Add(p => p.NoRecordsContent, "No records"));
+
+            comp.Find("tbody td.mud-table-empty-row").TextContent.Trim().Should().Be("No records");
+            comp.FindAll("tbody th").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// The loading indicator row is made of data cells for the same reason as the empty row (#13762).
+        /// </summary>
+        [Test]
+        public void LoadingRow_RendersAsDataCell()
+        {
+            var comp = Context.Render<MudTable<string>>(parameters => parameters
+                .Add(p => p.Items, Array.Empty<string>())
+                .Add(p => p.Loading, true)
+                .Add(p => p.HeaderContent, "<th>Name</th>"));
+
+            comp.Find("tr.mud-table-loading-row > td").Should().NotBeNull();
+            comp.FindAll("tr.mud-table-loading-row > th").Should().BeEmpty();
+        }
+
     }
 }
