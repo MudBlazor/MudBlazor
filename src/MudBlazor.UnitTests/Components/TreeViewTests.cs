@@ -1446,6 +1446,58 @@ namespace MudBlazor.UnitTests.Components
             await arrows()[1].ClickAsync();
             comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (6)"));
         }
+
+        /// <summary>
+        /// Verifies that turning on the root's <see cref="MudTreeView{T}.Disabled"/> at runtime reaches items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeDisabled_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+            comp.Find(".lvl3.mud-treeview-item").ClassList.Should().NotContain("mud-treeview-item-disabled");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
+
+            comp.Find(".lvl1.mud-treeview-item").ClassList.Should().Contain("mud-treeview-item-disabled");
+            comp.Find(".lvl2.mud-treeview-item").ClassList.Should().Contain("mud-treeview-item-disabled");
+            comp.Find(".lvl3.mud-treeview-item").ClassList.Should().Contain("mud-treeview-item-disabled");
+            foreach (var input in comp.FindAll(".mud-treeview-item-checkbox input"))
+            {
+                input.HasAttribute("disabled").Should().BeTrue();
+            }
+        }
+
+        /// <summary>
+        /// Verifies that turning on the root's <see cref="MudTreeView{T}.ReadOnly"/> at runtime reaches items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeReadOnly_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+            comp.Find(".lvl3 .mud-treeview-item-content").ClassList.Should().Contain("cursor-pointer");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ReadOnly, true));
+
+            comp.Find(".lvl1 .mud-treeview-item-content").ClassList.Should().NotContain("cursor-pointer");
+            comp.Find(".lvl2 .mud-treeview-item-content").ClassList.Should().NotContain("cursor-pointer");
+            comp.Find(".lvl3 .mud-treeview-item-content").ClassList.Should().NotContain("cursor-pointer");
+        }
+
+        /// <summary>
+        /// Verifies that switching the root's <see cref="MudTreeView{T}.SelectionMode"/> at runtime gives every item a checkbox.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeSelectionMode_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.SingleSelection));
+            comp.FindAll(".mud-treeview-item-checkbox").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+
+            comp.FindAll(".mud-treeview-item-checkbox").Count.Should().Be(3);
+        }
         /// <summary>
         /// Mounting a tree must render each item once, not twice.
         /// </summary>
