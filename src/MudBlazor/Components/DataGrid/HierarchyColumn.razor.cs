@@ -14,6 +14,9 @@ namespace MudBlazor;
 /// <typeparam name="T">The kind of item managed by the column.</typeparam>
 /// <seealso cref="Column{T}" />
 /// <seealso cref="MudDataGrid{T}" />
+/// <remarks>
+/// This column remains pinned before reorderable columns and does not expose configurable order state.
+/// </remarks>
 /// <seealso cref="PropertyColumn{T, TProperty}" />
 /// <seealso cref="SelectColumn{T}" />
 /// <seealso cref="TemplateColumn{T}" />

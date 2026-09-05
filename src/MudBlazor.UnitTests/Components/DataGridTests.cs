@@ -4732,7 +4732,7 @@ namespace MudBlazor.UnitTests.Components
         //    dataGrid.FindAll(".mud-input-control-input-container").Count.Should().Be(2);
         //    dataGrid.Instance.RenderedColumns[0].Filterable = false;
         //    await comp.InvokeAsync(dataGrid.Instance.ExternalStateHasChanged);
-        //    //If the column is visible and Filterable is false there still shouldďbe the cell
+        //    //If the column is visible and Filterable is false there still should be the cell
         //    //without the input
         //    dataGrid.FindAll(".mud-table-cell.filter-header-cell").Count.Should().Be(2);
         //    dataGrid.FindAll(".mud-input-control-input-container").Count.Should().Be(1);
@@ -6226,6 +6226,469 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[2].InnerHtml.Should().Be("Age");
             newHeaderValues[3].InnerHtml.Should().Be("Hired");
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
+        }
+
+        /// <summary>
+        /// Initial bound order values determine the rendered column order.
+        /// </summary>
+        [Test]
+        public async Task DataGridOrderParameterSetsInitialRenderedOrder()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(nameOrder: 1, ageOrder: 0, statusOrder: 2));
+
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Age", "Name", "Status");
+            });
+        }
+
+        /// <summary>
+        /// Duplicate explicit order values use normalized placement without changing bound state or raising a callback.
+        /// </summary>
+        [Test]
+        public async Task DataGridOrderParameterNormalizesDuplicateExplicitStateSilently()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(nameOrder: 2, ageOrder: 2, statusOrder: 0));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Status", "Age", "Name");
+                comp.Instance.NameOrder.Should().Be(2);
+                comp.Instance.AgeOrder.Should().Be(2);
+                comp.Instance.StatusOrder.Should().Be(0);
+                comp.Instance.CallbackCount.Should().Be(0);
+                comp.Instance.LastArgs.Should().BeNull();
+            });
+        }
+
+        /// <summary>
+        /// The columns-panel arrow updates bound order state and raises one callback.
+        /// </summary>
+        [Test]
+        public async Task DataGridArrowReorderUpdatesBoundStateAndRaisesOneCallback()
+        {
+            var popoverProvider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
+            var statusItem = popoverProvider.FindAll(".mud-data-grid-columns-panel .mud-drop-item")
+                .Single(x => x.TextContent.Contains("Status", StringComparison.Ordinal));
+            var moveUpButton = statusItem.QuerySelector("button[title='Move up']");
+            moveUpButton.Should().NotBeNull();
+            await moveUpButton!.ClickAsync(new MouseEventArgs());
+
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            comp.Instance.CallbackCount.Should().Be(1);
+            comp.Instance.LastArgs.Should().NotBeNull();
+            comp.Instance.LastArgs!.Column.PropertyName.Should().Be("Status");
+            comp.Instance.LastArgs.PreviousIndex.Should().Be(2);
+            comp.Instance.LastArgs.CurrentIndex.Should().Be(1);
+            comp.Instance.LastArgs.Columns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Status", "Age");
+            comp.Instance.StatusOrder.Should().Be(1);
+            comp.Instance.AgeOrder.Should().Be(2);
+        }
+
+        /// <summary>
+        /// A partial explicit order positions that column without materializing unset bound values.
+        /// </summary>
+        [Test]
+        public async Task DataGridOrderParameterPreservesPartialExplicitState()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.InitialAgeOrder, 2));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Status", "Age");
+                comp.Instance.AgeOrder.Should().Be(2);
+                comp.Instance.NameOrder.Should().BeNull();
+                comp.Instance.StatusOrder.Should().BeNull();
+            });
+        }
+
+        /// <summary>
+        /// Header drag-and-drop updates bound order state and raises one callback with the final snapshot.
+        /// </summary>
+        [Test]
+        [TestCase(DataGridDragAndDropColumnReorderMode.Swap, "Name", "Status", 0, 2, "Status", "Age", "Name")]
+        [TestCase(DataGridDragAndDropColumnReorderMode.Insert, "Status", "Age", 2, 1, "Name", "Status", "Age")]
+        public async Task DataGridHeaderReorderUpdatesBoundStateAndRaisesOneCallback(
+            DataGridDragAndDropColumnReorderMode reorderMode,
+            string sourceIdentifier,
+            string destinationIdentifier,
+            int previousIndex,
+            int currentIndex,
+            string firstColumn,
+            string secondColumn,
+            string thirdColumn)
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ColumnReorderMode, reorderMode));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var sourceItem = dataGrid.FindAll(".mud-drop-zone")
+                .Single(x => x.GetAttribute("identifier") == sourceIdentifier)
+                .Children[0];
+            await sourceItem.DragStartAsync(new DragEventArgs());
+
+            var destinationItem = dataGrid.FindAll(".mud-drop-zone")
+                .Single(x => x.GetAttribute("identifier") == destinationIdentifier)
+                .Children[0];
+            await destinationItem.DropAsync(new DragEventArgs());
+
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder(firstColumn, secondColumn, thirdColumn);
+            comp.Instance.NameOrder.Should().Be(dataGrid.Instance.RenderedColumns.FindIndex(x => x.PropertyName == "Name"));
+            comp.Instance.AgeOrder.Should().Be(dataGrid.Instance.RenderedColumns.FindIndex(x => x.PropertyName == "Age"));
+            comp.Instance.StatusOrder.Should().Be(dataGrid.Instance.RenderedColumns.FindIndex(x => x.PropertyName == "Status"));
+            comp.Instance.CallbackCount.Should().Be(1);
+            comp.Instance.LastArgs.Should().NotBeNull();
+            comp.Instance.LastArgs!.Column.PropertyName.Should().Be(sourceIdentifier);
+            comp.Instance.LastArgs.PreviousIndex.Should().Be(previousIndex);
+            comp.Instance.LastArgs.CurrentIndex.Should().Be(currentIndex);
+            comp.Instance.LastArgs.Columns.Select(x => x.PropertyName).Should().ContainInOrder(firstColumn, secondColumn, thirdColumn);
+        }
+
+        /// <summary>
+        /// Dropping a header on itself leaves bound values unset and raises no callback.
+        /// </summary>
+        [Test]
+        [TestCase(DataGridDragAndDropColumnReorderMode.Swap)]
+        [TestCase(DataGridDragAndDropColumnReorderMode.Insert)]
+        public async Task DataGridHeaderNoOpDropLeavesBoundStateAndCallbackUntouched(DataGridDragAndDropColumnReorderMode reorderMode)
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ColumnReorderMode, reorderMode));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var sourceItem = dataGrid.FindAll(".mud-drop-zone")
+                .Single(x => x.GetAttribute("identifier") == "Name")
+                .Children[0];
+            await sourceItem.DragStartAsync(new DragEventArgs());
+
+            var destinationItem = dataGrid.FindAll(".mud-drop-zone")
+                .Single(x => x.GetAttribute("identifier") == "Name")
+                .Children[0];
+            await destinationItem.DropAsync(new DragEventArgs());
+
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Age", "Status");
+            comp.Instance.NameOrder.Should().BeNull();
+            comp.Instance.AgeOrder.Should().BeNull();
+            comp.Instance.StatusOrder.Should().BeNull();
+            comp.Instance.CallbackCount.Should().Be(0);
+            comp.Instance.LastArgs.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Resetting every order to null restores declaration and default Select placement without another callback.
+        /// </summary>
+        [Test]
+        public async Task DataGridAllNullResetRestoresDefaultPlacementSilently()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowSelect, true)
+                .Add(x => x.ColumnReorderMode, DataGridDragAndDropColumnReorderMode.Insert));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var sourceItem = dataGrid.FindAll(".mud-drop-zone")
+                .Single(x => x.GetAttribute("identifier") == "Status")
+                .Children[0];
+            await sourceItem.DragStartAsync(new DragEventArgs());
+
+            var destinationItem = dataGrid.FindAll(".mud-drop-zone")
+                .Single(x => x.GetAttribute("identifier") == "Name")
+                .Children[0];
+            await destinationItem.DropAsync(new DragEventArgs());
+            comp.Instance.CallbackCount.Should().Be(1);
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(null, null, null, null));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+                dataGrid.Instance.RenderedColumns[0].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+                dataGrid.Instance.RenderedColumns.Skip(1).Select(x => x.PropertyName).Should().ContainInOrder("Name", "Age", "Status");
+                comp.Instance.SelectOrder.Should().BeNull();
+                comp.Instance.NameOrder.Should().BeNull();
+                comp.Instance.AgeOrder.Should().BeNull();
+                comp.Instance.StatusOrder.Should().BeNull();
+                comp.Instance.CallbackCount.Should().Be(1);
+            });
+        }
+
+        /// <summary>
+        /// Columns-panel drag-and-drop updates bound order state and raises one callback.
+        /// </summary>
+        [Test]
+        public async Task DataGridColumnsPanelReorderUpdatesBoundStateAndRaisesOneCallback()
+        {
+            var popoverProvider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
+            var statusItem = popoverProvider.FindAll(".mud-data-grid-columns-panel .mud-drop-item")
+                .Single(x => x.TextContent.Contains("Status", StringComparison.Ordinal));
+            await statusItem.DragStartAsync(new DragEventArgs());
+
+            var nameItem = popoverProvider.FindAll(".mud-data-grid-columns-panel .mud-drop-item")
+                .Single(x => x.TextContent.Contains("Name", StringComparison.Ordinal));
+            await nameItem.DragEnterAsync(new DragEventArgs());
+
+            var columnsPanelDropZone = popoverProvider.Find(".mud-data-grid-columns-panel .mud-drop-zone");
+            await columnsPanelDropZone.DropAsync(new DragEventArgs());
+
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            comp.Instance.CallbackCount.Should().Be(1);
+            comp.Instance.LastArgs.Should().NotBeNull();
+            comp.Instance.LastArgs!.Column.PropertyName.Should().Be("Status");
+            comp.Instance.LastArgs.PreviousIndex.Should().Be(2);
+            comp.Instance.LastArgs.CurrentIndex.Should().Be(1);
+            comp.Instance.LastArgs.Columns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Status", "Age");
+        }
+
+        /// <summary>
+        /// Parameter-driven restoration reorders columns without raising the grid callback.
+        /// </summary>
+        [Test]
+        public async Task DataGridOrderParameterRestoreIsSilent()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(nameOrder: 2, ageOrder: 1, statusOrder: 0));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Status", "Age", "Name");
+                comp.Instance.StatusOrder.Should().Be(0);
+                comp.Instance.AgeOrder.Should().Be(1);
+                comp.Instance.NameOrder.Should().Be(2);
+                comp.Instance.CallbackCount.Should().Be(0);
+                comp.Instance.LastArgs.Should().BeNull();
+            });
+        }
+
+        /// <summary>
+        /// An unordered Select column defaults to the leading position.
+        /// </summary>
+        [Test]
+        public void DataGridSelectColumnDefaultsFirstWhenOrderUnset()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowSelect, true));
+
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            dataGrid.Instance.RenderedColumns[0].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Skip(1).Select(x => x.PropertyName).Should().ContainInOrder("Name", "Age", "Status");
+            comp.Instance.SelectOrder.Should().BeNull();
+        }
+
+        /// <summary>
+        /// An unordered Select column defaults immediately after a pinned Hierarchy column.
+        /// </summary>
+        [Test]
+        public void DataGridSelectColumnDefaultsAfterHierarchyWhenOrderUnset()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowHierarchy, true)
+                .Add(x => x.ShowSelect, true));
+
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            dataGrid.Instance.RenderedColumns[0].Tag.Should().Be("hierarchy-column");
+            dataGrid.Instance.RenderedColumns[1].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Skip(2).Select(x => x.PropertyName).Should().ContainInOrder("Name", "Age", "Status");
+            comp.Instance.SelectOrder.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Moving a column ahead of the default Select column materializes the resulting explicit order.
+        /// </summary>
+        [Test]
+        public async Task DataGridReorderAheadOfUnsetSelectMaterializesOrderState()
+        {
+            var popoverProvider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowSelect, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
+            var nameItem = popoverProvider.FindAll(".mud-data-grid-columns-panel .mud-drop-item")
+                .Single(x => x.TextContent.Contains("Name", StringComparison.Ordinal));
+            var moveUpButton = nameItem.QuerySelector("button[title='Move up']");
+            moveUpButton.Should().NotBeNull();
+            await moveUpButton!.ClickAsync(new MouseEventArgs());
+
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns[0].PropertyName.Should().Be("Name");
+            dataGrid.Instance.RenderedColumns[1].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+            comp.Instance.NameOrder.Should().Be(0);
+            comp.Instance.SelectOrder.Should().Be(1);
+            comp.Instance.AgeOrder.Should().Be(2);
+            comp.Instance.StatusOrder.Should().Be(3);
+            comp.Instance.CallbackCount.Should().Be(1);
+            comp.Instance.LastArgs.Should().NotBeNull();
+            comp.Instance.LastArgs!.Columns[0].PropertyName.Should().Be("Name");
+        }
+
+        /// <summary>
+        /// Parameter restoration keeps an unordered Select leading and remains silent.
+        /// </summary>
+        [Test]
+        public async Task DataGridOrderParameterRestoreKeepsDefaultSelectLeadingSilently()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowSelect, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(nameOrder: 2, ageOrder: 0, statusOrder: 1));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.RenderedColumns[0].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+                dataGrid.Instance.RenderedColumns.Skip(1).Select(x => x.PropertyName).Should().ContainInOrder("Age", "Status", "Name");
+                comp.Instance.SelectOrder.Should().BeNull();
+                comp.Instance.AgeOrder.Should().Be(0);
+                comp.Instance.StatusOrder.Should().Be(1);
+                comp.Instance.NameOrder.Should().Be(2);
+                comp.Instance.CallbackCount.Should().Be(0);
+                comp.Instance.LastArgs.Should().BeNull();
+            });
+        }
+
+        /// <summary>
+        /// Reordering with an unbound column preserves rendered order and updates only bound values.
+        /// </summary>
+        [Test]
+        public async Task DataGridReorderWithUnboundColumnUpdatesOnlyBoundState()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.BindAgeOrder, false));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.DropContainerHasChanged();
+
+            var sourceItem = dataGrid.FindAll(".mud-drop-zone")
+                .Single(x => x.GetAttribute("identifier") == "Status")
+                .Children[0];
+            await sourceItem.DragStartAsync(new DragEventArgs());
+
+            var destinationItem = dataGrid.FindAll(".mud-drop-zone")
+                .Single(x => x.GetAttribute("identifier") == "Age")
+                .Children[0];
+            await destinationItem.DropAsync(new DragEventArgs());
+
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Status", "Age");
+            comp.Instance.NameOrder.Should().Be(0);
+            comp.Instance.AgeOrder.Should().BeNull();
+            comp.Instance.StatusOrder.Should().Be(1);
+            comp.Instance.LastArgs.Should().NotBeNull();
+            comp.Instance.LastArgs!.Columns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Status", "Age");
+        }
+
+        /// <summary>
+        /// A newly rendered grid restores the column order from persisted bound values.
+        /// </summary>
+        [Test]
+        public async Task DataGridReopenedRestoresColumnOrderFromBoundState()
+        {
+            var popoverProvider = Context.Render<MudPopoverProvider>();
+            var firstComp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowSelect, true));
+            var firstGrid = firstComp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await firstGrid.InvokeAsync(() => firstGrid.Instance.ShowColumnsPanel());
+            var nameItem = popoverProvider.FindAll(".mud-data-grid-columns-panel .mud-drop-item")
+                .Single(x => x.TextContent.Contains("Name", StringComparison.Ordinal));
+            var moveUpButton = nameItem.QuerySelector("button[title='Move up']");
+            moveUpButton.Should().NotBeNull();
+            await moveUpButton!.ClickAsync(new MouseEventArgs());
+
+            firstComp.Instance.LastArgs.Should().NotBeNull();
+            var selectOrder = firstComp.Instance.SelectOrder;
+            var nameOrder = firstComp.Instance.NameOrder;
+            var ageOrder = firstComp.Instance.AgeOrder;
+            var statusOrder = firstComp.Instance.StatusOrder;
+
+            firstComp.Dispose();
+
+            var restoredComp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.ShowSelect, true)
+                .Add(x => x.InitialSelectOrder, selectOrder)
+                .Add(x => x.InitialNameOrder, nameOrder)
+                .Add(x => x.InitialAgeOrder, ageOrder)
+                .Add(x => x.InitialStatusOrder, statusOrder));
+            var restoredGrid = restoredComp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            restoredGrid.Instance.RenderedColumns[0].PropertyName.Should().Be("Name");
+            restoredGrid.Instance.RenderedColumns[1].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+            restoredGrid.Instance.RenderedColumns[2].PropertyName.Should().Be("Age");
+            restoredGrid.Instance.RenderedColumns[3].PropertyName.Should().Be("Status");
+            restoredComp.Instance.SelectOrder.Should().Be(selectOrder);
+            restoredComp.Instance.NameOrder.Should().Be(nameOrder);
+            restoredComp.Instance.AgeOrder.Should().Be(ageOrder);
+            restoredComp.Instance.StatusOrder.Should().Be(statusOrder);
+        }
+
+        /// <summary>
+        /// Conditional Select removal normalizes the remaining explicit orders and re-addition restores the full order.
+        /// </summary>
+        [Test]
+        public async Task DataGridConditionalSelectNormalizesRemovalAndRestoresOrderOnReAddition()
+        {
+            var popoverProvider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Age", "Status");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ShowSelect, true));
+
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns[0].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
+            var nameItem = popoverProvider.FindAll(".mud-data-grid-columns-panel .mud-drop-item")
+                .Single(x => x.TextContent.Contains("Name", StringComparison.Ordinal));
+            var moveUpButton = nameItem.QuerySelector("button[title='Move up']");
+            moveUpButton.Should().NotBeNull();
+            await moveUpButton!.ClickAsync(new MouseEventArgs());
+
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns[0].PropertyName.Should().Be("Name");
+            dataGrid.Instance.RenderedColumns[1].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+            comp.Instance.NameOrder.Should().Be(0);
+            comp.Instance.SelectOrder.Should().Be(1);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ShowSelect, false));
+
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Name", "Status", "Age");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ShowSelect, true));
+
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns[0].PropertyName.Should().Be("Name");
+            dataGrid.Instance.RenderedColumns[1].Should().BeOfType<SelectColumn<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns[2].PropertyName.Should().Be("Age");
+            dataGrid.Instance.RenderedColumns[3].PropertyName.Should().Be("Status");
         }
 
         [Test]
