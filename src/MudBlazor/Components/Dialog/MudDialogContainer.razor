@@ -8,7 +8,7 @@
 
 <div @attributes="UserAttributes" id="@ElementId" class="mud-dialog-container @GetPosition()">
     <MudOverlay Visible="true" OnClick="HandleBackgroundClickAsync" Class="@BackgroundClassname" DarkBackground="true" @onmouseup="OnMouseUpAsync" />
-    <div @ref="_dialogContainerReference" id="_@Id.ToString("N")" role="dialog" aria-modal="true" aria-labelledby="@GetAriaLabelledBy()" aria-label="@GetAriaLabel()" class="@Classname" style="@Style" tabindex="-1">
+    <div @ref="_dialogContainerReference" id="_@Id.ToString("N")" role="dialog" aria-modal="true" aria-labelledby="@(GetHideHeader() ? null : $"_{Id:N}_title")" aria-label="@(GetHideHeader() && !string.IsNullOrWhiteSpace(_titleState.Value) ? _titleState.Value : null)" class="@Classname" style="@Style" tabindex="-1">
         @if (!GetHideHeader())
         {
             <div id="@($"_{Id:N}_title")" class="@TitleClassname">

@@ -187,37 +187,6 @@ namespace MudBlazor
                 await RefocusDialogAsync();
         }
 
-        /// <summary>
-        /// The element that names the dialog: an explicit <see cref="MudDialog.AriaLabelledBy"/>, else the title bar when it is shown and no <see cref="MudDialog.AriaLabel"/> replaces it.
-        /// </summary>
-        private string? GetAriaLabelledBy()
-        {
-            if (!string.IsNullOrWhiteSpace(_dialog?.AriaLabelledBy))
-            {
-                return _dialog.AriaLabelledBy;
-            }
-
-            return GetHideHeader() || !string.IsNullOrWhiteSpace(_dialog?.AriaLabel) ? null : $"_{Id:N}_title";
-        }
-
-        /// <summary>
-        /// The text that names the dialog when no element does: an explicit <see cref="MudDialog.AriaLabel"/>, else the title while the header is hidden.
-        /// </summary>
-        private string? GetAriaLabel()
-        {
-            if (!string.IsNullOrWhiteSpace(_dialog?.AriaLabelledBy))
-            {
-                return null;
-            }
-
-            if (!string.IsNullOrWhiteSpace(_dialog?.AriaLabel))
-            {
-                return _dialog.AriaLabel;
-            }
-
-            return GetHideHeader() && !string.IsNullOrWhiteSpace(_titleState.Value) ? _titleState.Value : null;
-        }
-
         private bool GetHideHeader()
         {
             if (GetDialogOptionsOrDefault.NoHeader.HasValue)
