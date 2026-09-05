@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex flex-wrap gap-4 align-center">
+    <MudSplitButton Label="Save"
+                    StartIcon="@Icons.Material.Filled.Save"
+                    Color="Color.Primary"
+                    Variant="Variant.Filled"
+                    ToggleAriaLabel="More save options">
+        <MudMenuItem Icon="@Icons.Material.Filled.Drafts">Save as draft</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Filled.Public">Save and publish</MudMenuItem>
+    </MudSplitButton>
+
+    <MudSplitButton Label="More"
+                    ToggleIcon="@Icons.Material.Filled.MoreVert"
+                    ToggleAriaLabel="More export formats"
+                    Color="Color.Secondary"
+                    Variant="Variant.Outlined"
+                    Size="Size.Small">
+        <MudMenuItem>Export as CSV</MudMenuItem>
+        <MudMenuItem>Export as PDF</MudMenuItem>
+    </MudSplitButton>
+
+    <MudSplitButton Label="Publish"
+                    Color="Color.Tertiary"
+                    Variant="Variant.Filled"
+                    ToggleDisabled="true">
+        <MudMenuItem>Unreachable while ToggleDisabled</MudMenuItem>
+    </MudSplitButton>
+</div>

@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSplitButton Label="Reply" Color="Color.Primary" Variant="Variant.Outlined" OnClick="@(() => Send("Reply"))">
+    <MudMenuItem OnClick="@(() => Send("Reply All"))">Reply All</MudMenuItem>
+    <MudMenuItem OnClick="@(() => Send("Forward"))">Forward</MudMenuItem>
+    <MudDivider />
+    <MudMenuItem OnClick="@(() => Send("Reply & Delete"))">Reply &amp; Delete</MudMenuItem>
+</MudSplitButton>
+
+<MudText Class="mt-3" Typo="Typo.body2">Sent: @_sent</MudText>
+
+@code {
+    private string _sent = "nothing yet";
+
+    private void Send(string action) => _sent = action;
+}

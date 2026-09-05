@@ -61,6 +61,8 @@
                        Ripple="@Ripple"
                        DropShadow="@DropShadow"
                        OnClick="@ToggleMenuAsync"
+                       aria-haspopup="true"
+                       aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
                        aria-label="@AriaLabel">
                 @Label
             </MudButton>
@@ -92,6 +94,8 @@
                        Ripple="@Ripple"
                        DropShadow="@DropShadow"
                        OnClick="@ToggleMenuAsync"
+                       aria-haspopup="true"
+                       aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
                        aria-label="@AriaLabel" />
     }
 

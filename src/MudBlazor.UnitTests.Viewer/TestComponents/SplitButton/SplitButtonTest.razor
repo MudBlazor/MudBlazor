@@ -1,0 +1,37 @@
+﻿<MudStack Spacing="4">
+    <MudSplitButton Label="Reply" Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => _last = "Reply")">
+        <MudMenuItem OnClick="@(() => _last = "Reply All")">Reply All</MudMenuItem>
+        <MudMenuItem OnClick="@(() => _last = "Forward")">Forward</MudMenuItem>
+        <MudDivider />
+        <MudMenuItem OnClick="@(() => _last = "Reply & Delete")">Reply &amp; Delete</MudMenuItem>
+    </MudSplitButton>
+
+    <MudSplitButton Label="Save" Variant="Variant.Filled" Color="Color.Secondary" ToggleAriaLabel="More save options">
+        <MudMenuItem>Save as draft</MudMenuItem>
+        <MudMenuItem>Save and publish</MudMenuItem>
+    </MudSplitButton>
+
+    <MudSplitButton Label="Disabled" Variant="Variant.Filled" Disabled="true">
+        <MudMenuItem>Unreachable</MudMenuItem>
+    </MudSplitButton>
+
+    @foreach (var size in new[] { Size.Small, Size.Medium, Size.Large })
+    {
+        <MudSplitButton Label="@($"Size {size}")" Size="@size" Variant="Variant.Outlined" Color="Color.Primary">
+            <MudMenuItem>Action</MudMenuItem>
+        </MudSplitButton>
+    }
+
+    <MudSplitButton Label="A deliberately long primary label that should not squash the toggle"
+                    FullWidth="true"
+                    Variant="Variant.Filled"
+                    Color="Color.Tertiary">
+        <MudMenuItem>Action</MudMenuItem>
+    </MudSplitButton>
+
+    <MudText Typo="Typo.body2">Last action: @_last</MudText>
+</MudStack>
+
+@code {
+    private string _last = "none";
+}
