@@ -3676,6 +3676,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Content derived from the selection, such as the toolbar and row classes, must follow the row checkboxes.
+        /// </summary>
+        /// <remarks>
+        /// <c>ToolBarContent</c> and <c>RowClassFunc</c> are evaluated while the table renders, so skipping that
+        /// render leaves them showing the previous selection. A bound <c>SelectedItems</c> hides the problem.
+        /// </remarks>
+        [Test]
+        public void TableMultiSelection_SelectionDerivedContent_FollowsRowCheckbox()
+        {
+            var comp = Context.Render<TableSelectionDerivedContentTest>();
+
+            comp.Find("#selected-count").TextContent.Trim().Should().Be("0");
+            comp.FindAll("tbody tr")[0].ClassList.Should().NotContain("row-selected");
+
+            comp.FindAll("tbody .mud-checkbox input")[0].Change(true);
+
+            comp.Find("#selected-count").TextContent.Trim().Should().Be("1");
+            comp.FindAll("tbody tr")[0].ClassList.Should().Contain("row-selected");
+        }
+
+        /// <summary>
         /// Row selection checkboxes have a localized accessible name.
         /// </summary>
         [Test]

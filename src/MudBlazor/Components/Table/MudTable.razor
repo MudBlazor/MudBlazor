@@ -113,7 +113,7 @@
                                     <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId"
                                            Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
                                            Disabled="IsRowDisabled(item)" DisabledClass="@DisabledRowClass" Checked="@(IsCheckedRow(item))"
-                                           CheckedChanged="@(this.AsNonRenderingEventHandler<bool>(value => OnRowCheckboxChanged(value, item)))">
+                                           CheckedChanged="@(value => OnRowCheckboxChanged(value, item))">
                                         @if (!ReadOnly && Editable && Equals(_editingItem, item))
                                         {
                                             <CascadingValue Value="@Validator" IsFixed="true">
@@ -227,7 +227,7 @@
                  }
                  <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId" Checkable="MultiSelection" SelectionChangeable="SelectionChangeable"
                         Editable="IsItemEditable(item)" Expandable="expandable" Disabled="IsRowDisabled(item)" DisabledClass="@DisabledRowClass"
-                        Checked="Context.Selection.Contains(item)" CheckedChanged="@(this.AsNonRenderingEventHandler<bool>(value => OnRowCheckboxChanged(value, item)))">
+                        Checked="Context.Selection.Contains(item)" CheckedChanged="@(value => OnRowCheckboxChanged(value, item))">
                      @if (!ReadOnly && Editable && Equals(_editingItem, item))
                      {
                          <CascadingValue Value="@Validator" IsFixed="true">
