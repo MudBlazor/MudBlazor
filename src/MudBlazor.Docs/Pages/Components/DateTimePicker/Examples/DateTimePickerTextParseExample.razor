@@ -1,0 +1,40 @@
+﻿@using System.Globalization
+@namespace MudBlazor.Docs.Examples
+
+<MudDateTimePicker Label="Flexible Date" Editable="true" DateTime="date" ImmediateText="true" Placeholder="day.month.year hours:minutes:seconds" DateTimeFormat="@dateFormat" TextChanged="DatePickerTextChanged" HelperText="@bound" Clearable="true" />
+
+@code {
+    DateTime? date = null;
+    string dateFormat = "dd.MM.yyyy hh:mm:ss";
+    string bound = "not set";
+
+    private void DatePickerTextChanged(string value)
+    {
+        Console.WriteLine(value);
+        if (value == null || value.Length < 6)
+        {
+            date = null;
+        }
+        else
+        {
+            string[] formats = { "ddMMyy hh:mm:ss", "dd.MM.yyyy hh:mm:ss", "dd.M.yyyy hh:m:s", "d.MM.yyyy h:mm:ss", "d.M.yyyy h:m:ss", "dd.MM.yy hh:mm:ss", "dd.M.yy h:m:s", "d.MM.yy h:m:s", "d.M.yy h:m:s" };
+            if (DateTime.TryParseExact(value, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime validDate))
+            {
+                date = validDate;
+            }
+            else
+            {
+                date = null;
+            }
+        }
+
+        if (date.HasValue)
+        {
+            bound = date.Value.ToString(dateFormat); 
+        }
+        else
+        {
+            bound = "not set";
+        }
+    }
+}
