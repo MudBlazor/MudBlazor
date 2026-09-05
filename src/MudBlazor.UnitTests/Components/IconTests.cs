@@ -128,5 +128,46 @@ namespace MudBlazor.UnitTests.Components
             icon.HasAttribute("aria-hidden").Should().BeFalse();
             icon.GetAttribute("aria-label").Should().Be("Database");
         }
+
+        /// <summary>
+        /// A bound aria-label that resolves to null or blank text yields no accessible name, so the icon stays hidden.
+        /// </summary>
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("   ")]
+        public void ShouldStayHiddenWhenAriaLabelIsBlank(string ariaLabel)
+        {
+            var comp = Context.Render<MudIcon>(parameters => parameters
+                .Add(p => p.Icon, "material-symbols-outlined/database")
+                .AddUnmatched("aria-label", ariaLabel));
+
+            comp.Find("span").GetAttribute("aria-hidden").Should().Be("true");
+        }
+
+        /// <summary>
+        /// A blank aria-labelledby is no reference at all, so the icon stays hidden.
+        /// </summary>
+        [Test]
+        public void ShouldStayHiddenWhenAriaLabelledByIsBlank()
+        {
+            var comp = Context.Render<MudIcon>(parameters => parameters
+                .Add(p => p.Icon, Icons.Material.Filled.Warning)
+                .AddUnmatched("aria-labelledby", " "));
+
+            comp.Find("svg").GetAttribute("aria-hidden").Should().Be("true");
+        }
+
+        /// <summary>
+        /// A whitespace title renders no usable name, so the icon stays hidden.
+        /// </summary>
+        [Test]
+        public void ShouldStayHiddenWhenTitleIsBlank()
+        {
+            var comp = Context.Render<MudIcon>(parameters => parameters
+                .Add(p => p.Icon, Icons.Material.Filled.Warning)
+                .Add(p => p.Title, "  "));
+
+            comp.Find("svg").GetAttribute("aria-hidden").Should().Be("true");
+        }
     }
 }

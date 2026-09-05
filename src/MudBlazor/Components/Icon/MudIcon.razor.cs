@@ -99,14 +99,16 @@ namespace MudBlazor
         /// </summary>
         private string? GetAriaHidden()
         {
-            if (!string.IsNullOrEmpty(Title))
+            if (!string.IsNullOrWhiteSpace(Title))
             {
                 return null;
             }
 
-            foreach (var key in UserAttributes.Keys)
+            foreach (var (key, value) in UserAttributes)
             {
-                if (key.Equals("aria-label", StringComparison.OrdinalIgnoreCase) || key.Equals("aria-labelledby", StringComparison.OrdinalIgnoreCase))
+                // A bound attribute can carry null or blank text, which yields no accessible name, so only a usable value exposes the icon.
+                if ((key.Equals("aria-label", StringComparison.OrdinalIgnoreCase) || key.Equals("aria-labelledby", StringComparison.OrdinalIgnoreCase))
+                    && !string.IsNullOrWhiteSpace(value?.ToString()))
                 {
                     return null;
                 }
