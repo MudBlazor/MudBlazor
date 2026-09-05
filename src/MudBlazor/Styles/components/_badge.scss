@@ -101,10 +101,14 @@
   &.mud-badge-icon {
     width: 20px;
     height: 20px;
+    line-height: normal;
 
     & .mud-icon-badge {
       color: inherit;
       font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
