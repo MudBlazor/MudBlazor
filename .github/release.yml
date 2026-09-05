@@ -13,6 +13,9 @@ changelog:
     - title: Bug Fixes
       labels:
         - bug
+    - title: Accessibility
+      labels:
+        - accessibility
     - title: Performance
       labels:
         - performance
