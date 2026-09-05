@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Components
             tooltipComp.GetState(x => x.Visible).Should().BeFalse();
 
             //trigger pointerover
-            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
+            await comp.InvokeAsync(() => comp.FindComponent<MudTooltip>().Instance.OnHoverChangedAsync(true));
 
             popoverContentNode().TextContent.Should().Be("my tooltip content text");
             popoverContentNode().ClassList.Should().Contain("d-flex");
@@ -70,7 +70,7 @@ namespace MudBlazor.UnitTests.Components
             //trigger pointerleave
             if (!usingFocusout)
             {
-                await button.ParentElement.PointerLeaveAsync(new PointerEventArgs());
+                await comp.InvokeAsync(() => comp.FindComponent<MudTooltip>().Instance.OnHoverChangedAsync(false));
             }
             else
             {
@@ -124,7 +124,7 @@ namespace MudBlazor.UnitTests.Components
             popoverContentNode.Children.Should().BeEmpty();
 
             //trigger pointerover
-            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
+            await comp.InvokeAsync(() => comp.FindComponent<MudTooltip>().Instance.OnHoverChangedAsync(true));
 
             //content should be visible
             popoverContentNode.ClassList.Should().Contain("mud-tooltip");
@@ -135,7 +135,7 @@ namespace MudBlazor.UnitTests.Components
             //trigger pointerleave
             if (!usingFocusout)
             {
-                await button.ParentElement.PointerLeaveAsync(new PointerEventArgs());
+                await comp.InvokeAsync(() => comp.FindComponent<MudTooltip>().Instance.OnHoverChangedAsync(false));
             }
             else
             {
@@ -166,7 +166,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TooltipPopoverClassPropertyTest>();
 
             var button = comp.Find("button");
-            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
+            await comp.InvokeAsync(() => comp.FindComponent<MudTooltip>().Instance.OnHoverChangedAsync(true));
 
             var wrapperDivNode = comp.Find("#my-tooltip-content").ParentElement;
 
@@ -182,7 +182,7 @@ namespace MudBlazor.UnitTests.Components
             p.Add(x => x.Arrow, arrowValue));
 
             var button = comp.Find("button");
-            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
+            await comp.InvokeAsync(() => comp.FindComponent<MudTooltip>().Instance.OnHoverChangedAsync(true));
 
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement.ParentElement;
 
@@ -200,7 +200,7 @@ namespace MudBlazor.UnitTests.Components
             p.Add(x => x.Color, colorValue));
 
             var button = comp.Find("button");
-            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
+            await comp.InvokeAsync(() => comp.FindComponent<MudTooltip>().Instance.OnHoverChangedAsync(true));
 
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement.ParentElement;
 
@@ -221,7 +221,7 @@ namespace MudBlazor.UnitTests.Components
             });
 
             var button = comp.Find("button");
-            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
+            await comp.InvokeAsync(() => comp.FindComponent<MudTooltip>().Instance.OnHoverChangedAsync(true));
 
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement.ParentElement;
 
@@ -251,7 +251,7 @@ namespace MudBlazor.UnitTests.Components
             });
 
             var button = comp.Find("button");
-            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
+            await comp.InvokeAsync(() => comp.FindComponent<MudTooltip>().Instance.OnHoverChangedAsync(true));
 
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement.ParentElement;
 
@@ -303,7 +303,7 @@ namespace MudBlazor.UnitTests.Components
 
             if (!usingFocusout)
             {
-                await button.ParentElement.PointerLeaveAsync(new PointerEventArgs());
+                await comp.InvokeAsync(() => comp.FindComponent<MudTooltip>().Instance.OnHoverChangedAsync(false));
             }
             else
             {
@@ -355,7 +355,7 @@ namespace MudBlazor.UnitTests.Components
             });
 
             var button = comp.Find("button");
-            await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
+            await comp.InvokeAsync(() => comp.FindComponent<MudTooltip>().Instance.OnHoverChangedAsync(true));
             comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
         }
 
@@ -376,21 +376,12 @@ namespace MudBlazor.UnitTests.Components
             var tooltip = comp.Instance;
             tooltip.Should().NotBeNull();
 
-            await tooltip.HandlePointerEnterAsync();
+            await comp.InvokeAsync(() => tooltip.OnHoverChangedAsync(true));
             tooltip.GetState(x => x.Visible).Should().Be(showOnHover);
 
             if (showOnHover)
             {
-                await tooltip.HandlePointerLeaveAsync();
-                tooltip.GetState(x => x.Visible).Should().Be(!showOnHover);
-            }
-
-            await div.PointerEnterAsync(new PointerEventArgs());
-            tooltip.GetState(x => x.Visible).Should().Be(showOnHover);
-
-            if (showOnHover)
-            {
-                await div.PointerLeaveAsync(new PointerEventArgs());
+                await comp.InvokeAsync(() => tooltip.OnHoverChangedAsync(false));
                 tooltip.GetState(x => x.Visible).Should().Be(!showOnHover);
             }
         }
@@ -408,9 +399,8 @@ namespace MudBlazor.UnitTests.Components
             var initialCount = complexComp.RenderCount;
             initialCount.Should().Be(1);
 
-            // Simulate hover via bUnit's event trigger
-            var div = comp.Find(".mud-tooltip-root");
-            await div.PointerEnterAsync(new PointerEventArgs());
+            // Simulate hover
+            await comp.InvokeAsync(() => comp.Instance.OnHoverChangedAsync(true));
 
             // Verify that the tooltip is now visible
             comp.Instance.GetState(x => x.Visible).Should().BeTrue();

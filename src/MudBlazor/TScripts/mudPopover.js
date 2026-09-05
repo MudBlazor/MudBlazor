@@ -244,6 +244,24 @@ window.mudpopoverHelper = {
         return true;
     },
 
+    // Resolves the rect the popover should anchor to. Inline tooltips wrap their content in a
+    // display:contents element (issue #1167) which has no box of its own, so anchor to the wrapped
+    // content (everything in the wrapper up to the popover marker) instead of the box-less wrapper.
+    getAnchorBoundingRect: function (popoverNode) {
+        const parent = popoverNode.parentNode;
+        if (parent?.classList?.contains('mud-tooltip-inline')) {
+            const range = document.createRange();
+            range.setStart(parent, 0);
+            range.setEndBefore(popoverNode);
+            const rect = range.getBoundingClientRect();
+            // Fall back to the wrapper for text-only/empty content with no measurable box.
+            if (rect && (rect.width > 0 || rect.height > 0)) {
+                return rect;
+            }
+        }
+        return parent.getBoundingClientRect();
+    },
+
     // primary positioning method
     placePopover: function (popoverNode, classSelector) {
         // parentNode is the calling element, mudmenu/tooltip/etc not the parent popover if it's a child popover
@@ -265,7 +283,7 @@ window.mudpopoverHelper = {
             if (classSelector && !classList.contains(classSelector)) return;
 
             // Batch DOM reads
-            let boundingRect = popoverNode.parentNode.getBoundingClientRect();
+            let boundingRect = window.mudpopoverHelper.getAnchorBoundingRect(popoverNode);
             if (!window.mudpopoverHelper.isInViewport(popoverNode, boundingRect)) {
                 // if the parentNode isn't visible at all we stop
                 return;
