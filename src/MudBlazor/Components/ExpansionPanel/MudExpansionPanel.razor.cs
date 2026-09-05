@@ -17,9 +17,16 @@ namespace MudBlazor
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
         internal readonly ParameterState<bool> _expandedState;
+        private readonly string _headerId = Identifier.Create("panel-header");
+        private readonly string _contentId = Identifier.Create("panel-content");
 
         [CascadingParameter]
         private MudExpansionPanels? Parent { get; set; }
+
+        /// <summary>
+        /// Whether the content region exists in the DOM, which decides whether the header may reference it.
+        /// </summary>
+        private bool IsContentRendered => KeepContentAlive || _expandedState.Value;
 
         protected string Classname =>
             new CssBuilder("mud-expand-panel")

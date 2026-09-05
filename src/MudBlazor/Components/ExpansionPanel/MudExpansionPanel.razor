@@ -2,7 +2,15 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    <div class="@HeaderClassname" @onclick="ToggleExpansionAsync" tabindex="@(Disabled ? null : "0")" @onkeydown="HandleKeyDownAsync">
+    <div id="@_headerId"
+         class="@HeaderClassname"
+         role="button"
+         tabindex="@(Disabled ? null : "0")"
+         aria-expanded="@_expandedState.Value.ToString().ToLowerInvariant()"
+         aria-controls="@(IsContentRendered ? _contentId : null)"
+         aria-disabled="@Disabled.ToString().ToLowerInvariant()"
+         @onclick="ToggleExpansionAsync"
+         @onkeydown="HandleKeyDownAsync">
         <div class="mud-expand-panel-text">
             @if (TitleContent is not null)
             {
@@ -19,9 +27,9 @@
         }
     </div>
     <MudCollapse Expanded="_expandedState.Value" MaxHeight="@MaxHeight">
-        @if (KeepContentAlive || _expandedState.Value)
+        @if (IsContentRendered)
         {
-            <div class="@PanelContentClassname">
+            <div id="@_contentId" class="@PanelContentClassname" role="region" aria-labelledby="@_headerId">
                 @ChildContent
             </div>
         }

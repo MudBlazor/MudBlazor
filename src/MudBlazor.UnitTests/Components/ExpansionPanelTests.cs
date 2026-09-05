@@ -450,5 +450,66 @@ namespace MudBlazor.UnitTests.Components
             var content = comp.Find(".mud-expand-panel-content");
             content.ClassList.Should().NotContain("mud-expand-panel-gutters");
         }
+
+        /// <summary>
+        /// The header is a button that states its expanded state and owns the region it controls.
+        /// </summary>
+        [Test]
+        public async Task ExpansionPanel_Header_ExposesAccordionSemantics()
+        {
+            var comp = Context.Render<ExpansionPanelExpansionsTest>();
+            IElement Header() => comp.FindAll(".mud-expand-panel-header")[0];
+            IElement Region() => comp.FindAll(".mud-expand-panel-content")[0];
+
+            Header().GetAttribute("role").Should().Be("button");
+            Header().GetAttribute("aria-expanded").Should().Be("false");
+            Header().GetAttribute("aria-disabled").Should().Be("false");
+            Header().Id.Should().NotBeNullOrEmpty();
+            Region().GetAttribute("role").Should().Be("region");
+            Region().GetAttribute("aria-labelledby").Should().Be(Header().Id);
+            Header().GetAttribute("aria-controls").Should().Be(Region().Id);
+
+            await Header().ClickAsync();
+
+            Header().GetAttribute("aria-expanded").Should().Be("true");
+        }
+
+        /// <summary>
+        /// A header only references its region while the region exists in the DOM.
+        /// </summary>
+        [Test]
+        public async Task ExpansionPanel_WithoutKeptContent_ReferencesRegionOnlyWhileRendered()
+        {
+            var comp = Context.Render<MudExpansionPanels>(parameters => parameters
+                .AddChildContent<MudExpansionPanel>(panel => panel
+                    .Add(p => p.Text, "Details")
+                    .Add(p => p.KeepContentAlive, false)
+                    .AddChildContent("Body")));
+            IElement Header() => comp.Find(".mud-expand-panel-header");
+
+            comp.FindAll(".mud-expand-panel-content").Should().BeEmpty();
+            Header().HasAttribute("aria-controls").Should().BeFalse();
+
+            await Header().ClickAsync();
+
+            comp.WaitForAssertion(() => Header().GetAttribute("aria-controls").Should().Be(comp.Find(".mud-expand-panel-content").Id));
+        }
+
+        /// <summary>
+        /// A disabled header is announced as disabled and leaves the tab order.
+        /// </summary>
+        [Test]
+        public void ExpansionPanel_Disabled_HeaderIsAnnouncedDisabled()
+        {
+            var comp = Context.Render<MudExpansionPanels>(parameters => parameters
+                .AddChildContent<MudExpansionPanel>(panel => panel
+                    .Add(p => p.Text, "Details")
+                    .Add(p => p.Disabled, true)
+                    .AddChildContent("Body")));
+
+            var header = comp.Find(".mud-expand-panel-header");
+            header.GetAttribute("aria-disabled").Should().Be("true");
+            header.HasAttribute("tabindex").Should().BeFalse();
+        }
     }
 }
