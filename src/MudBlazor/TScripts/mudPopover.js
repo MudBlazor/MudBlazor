@@ -760,6 +760,18 @@ window.mudpopoverHelper = {
 
         return maxZIndex;
     },
+    
+    triggerPopoverState: function (element, open) {
+
+        // Showing an already open popover or hiding an already closed popover will error, so we check the current state before trying to change it
+        const isOpen = element.matches(":popover-open");
+
+        if (open && !isOpen) {
+            try { element.showPopover(); } catch { }
+        } else if (!open && isOpen) {
+            try { element.hidePopover(); } catch { }
+        }
+    },
 
     popoverOverlayUpdates: function () {
         let highestTickItem = null;
@@ -1245,6 +1257,25 @@ class MudPopover {
         this.clearCloseTimer(id);
         this.createObservers(id);
         this.schedulePopoverUpdate(id, true);
+    }
+
+    synchroniseAll(states) {
+        if (!Array.isArray(states)) return;
+
+        for (const s of states) {
+            const element = document.getElementById(s.id);
+            if (!element) continue;
+
+            window.mudpopoverHelper.triggerPopoverState(element, s.open);
+        }
+    }
+    synchronise(id, open) {
+        if (!id) return;
+
+        const element = document.getElementById(id);
+        if (!element) return;
+
+        window.mudpopoverHelper.triggerPopoverState(element, open);
     }
 
     /**

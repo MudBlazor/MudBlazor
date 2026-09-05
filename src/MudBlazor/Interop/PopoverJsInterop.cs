@@ -30,6 +30,16 @@ internal class PopoverJsInterop
         return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.disconnect", cancellationToken, id);
     }
 
+    public ValueTask<bool> SynchroniseAll((string id, bool open)[] states, CancellationToken cancellationToken = default)
+    {
+        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.synchroniseAll", cancellationToken, states);
+    }
+
+    public ValueTask<bool> Synchronise(string id, bool open, CancellationToken cancellationToken = default)
+    {
+        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.synchronise", cancellationToken, id, open);
+    }
+
     public ValueTask<(bool success, int value)> CountProviders(CancellationToken cancellationToken = default)
     {
         return _jsRuntime.InvokeAsyncWithErrorHandling<int>("mudpopoverHelper.countProviders", cancellationToken);
