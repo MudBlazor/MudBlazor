@@ -92,35 +92,19 @@ class MudHotkeyListener {
         const pressedModifiers = new Set();
 
         if (e.ctrlKey) {
-            if (e.code === "ControlRight" || e.location === KeyboardEvent.DOM_KEY_LOCATION_RIGHT) {
-                pressedModifiers.add("ControlRight");
-            } else {
-                pressedModifiers.add("ControlLeft");
-            }
+            pressedModifiers.add("Control");
         }
 
         if (e.shiftKey) {
-            if (e.code === "ShiftRight" || e.location === KeyboardEvent.DOM_KEY_LOCATION_RIGHT) {
-                pressedModifiers.add("ShiftRight");
-            } else {
-                pressedModifiers.add("ShiftLeft");
-            }
+            pressedModifiers.add("Shift");
         }
 
         if (e.altKey) {
-            if (e.code === "AltRight" || e.location === KeyboardEvent.DOM_KEY_LOCATION_RIGHT) {
-                pressedModifiers.add("AltRight");
-            } else {
-                pressedModifiers.add("AltLeft");
-            }
+            pressedModifiers.add("Alt");
         }
 
         if (e.metaKey) {
-            if (e.code === "MetaRight" || e.location === KeyboardEvent.DOM_KEY_LOCATION_RIGHT) {
-                pressedModifiers.add("MetaRight");
-            } else {
-                pressedModifiers.add("MetaLeft");
-            }
+            pressedModifiers.add("Meta");
         }
 
         return pressedModifiers;
