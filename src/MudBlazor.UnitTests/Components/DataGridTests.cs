@@ -6062,6 +6062,27 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
         }
 
+        /// <summary>
+        /// Clicking a row with <c>SelectOnRowClick</c> disabled still raises <c>RowClick</c> while leaving the selection untouched (#10792).
+        /// </summary>
+        [Test]
+        public async Task RowClickFiresWhenSelectOnRowClickDisabled()
+        {
+            var clickedItems = new List<DataGridMultiSelectionTest.Item>();
+            var comp = Context.Render<DataGridMultiSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultiSelectionTest.Item>>();
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectOnRowClick, false)
+                .Add(x => x.RowClick, args => clickedItems.Add(args.Item)));
+
+            await dataGrid.FindAll("tbody.mud-table-body td")[1].ClickAsync();
+
+            clickedItems.Should().ContainSingle().Which.Name.Should().Be("A");
+            dataGrid.Instance.GetState(x => x.SelectedItem).Should().BeNull();
+            dataGrid.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+            dataGrid.FindAll(".mud-checkbox-true").Should().BeEmpty();
+        }
+
         [Test]
         public async Task DataGridDragAndDrop_SwapMode()
         {
