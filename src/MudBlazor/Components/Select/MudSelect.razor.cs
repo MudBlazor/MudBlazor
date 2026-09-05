@@ -961,7 +961,7 @@ namespace MudBlazor
             if (MultiSelection && SelectAll)
             {
                 var enabledValues = new HashSet<T?>(Items
-                    .Where(x => !x.Disabled && HasNonNullValue(x.Value))
+                    .Where(x => !x.Disabled && x.Value is not null)
                     .Select(x => x.Value), Comparer);
                 var selectedEnabledValuesCount = _selectedValues.Count(enabledValues.Contains);
 
@@ -1006,24 +1006,33 @@ namespace MudBlazor
                 return;
             }
 
-            var disabledValues = new HashSet<T?>(Items
+            var disabledValues = Items
                 .Where(x => x.Disabled)
-                .Select(x => x.Value), Comparer);
-            var selectedValues = new HashSet<T?>(_selectedValues.Where(disabledValues.Contains), Comparer);
+                .Select(x => x.Value);
+            Func<T?, bool> disabledValueClause = x => disabledValues.Contains(x, Comparer);
 
             if (selectAll)
             {
-                selectedValues.UnionWith(Items
-                    .Where(x => !x.Disabled && HasNonNullValue(x.Value))
-                    .Select(x => x.Value));
+                // Select all non disabled item but keeping disabled if already selected
+                var itemsSelection = _selectedValues
+                    .Where(disabledValueClause)
+                    .Union(Items.Where(x => !x.Disabled && x.Value is not null)
+                        .Select(x => x.Value)
+                        );
+                _selectedValues = new HashSet<T?>(itemsSelection, Comparer);
             }
-            else if (selectedValues.Count == 0)
+            // if any selected element is disabled but deselect all selection is requested, do not clear
+            else if (!_selectedValues
+                     .Any(disabledValueClause))
             {
                 await ClearAsync();
                 return;
             }
-
-            _selectedValues = new HashSet<T?>(selectedValues, Comparer);
+            // keep only Disabled items selected
+            else
+            {
+                _selectedValues = new HashSet<T?>(_selectedValues.Where(disabledValueClause), Comparer);
+            }
 
             if (MultiSelectionTextFunc != null)
             {
@@ -1038,7 +1047,7 @@ namespace MudBlazor
             }
 
             UpdateSelectAllChecked();
-            _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
+            StateHasChanged(); // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
             await UpdateSelectedValuesStateAsync();
             FieldChanged(_selectedValues);
             await BeginValidateAsync();
@@ -1048,8 +1057,6 @@ namespace MudBlazor
                 SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false).CatchAndLog();
             }
         }
-
-        private static bool HasNonNullValue(T? value) => !ReferenceEquals(value, null);
 
         private async Task OnFocusOutAsync(FocusEventArgs args)
         {
