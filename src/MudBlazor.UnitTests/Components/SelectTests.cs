@@ -2646,5 +2646,19 @@ namespace MudBlazor.UnitTests.Components
             var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
             preventScroll.Should().BeFalse();
         }
+
+        /// <summary>
+        /// A closed select omits aria-controls because its listbox is not rendered (#13760).
+        /// </summary>
+        [Test]
+        public void Select_ShouldNotReferenceListbox_WhileClosed()
+        {
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters.Add(p => p.Label, "Closed select"));
+
+            var input = comp.Find("input");
+            input.GetAttribute("aria-expanded").Should().Be("false");
+            // The listbox is not rendered while closed, so aria-controls would be a dangling reference.
+            input.HasAttribute("aria-controls").Should().BeFalse();
+        }
     }
 }
