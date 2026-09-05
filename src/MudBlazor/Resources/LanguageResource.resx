@@ -336,6 +336,9 @@
   <data name="MudRatingItem_Label" xml:space="preserve">
     <value>{0} rating</value>
   </data>
+  <data name="MudRating_Label" xml:space="preserve">
+    <value>Rating</value>
+  </data>
   <data name="MudCarousel_Index" xml:space="preserve">
     <value>Index {0}</value>
   </data>
