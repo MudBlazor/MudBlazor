@@ -83,6 +83,8 @@
 
   & .mud-dialog-title {
     z-index: +1;
+    align-items: center;
+    justify-content: space-between;
     flex: 0 0 auto;
     margin: 0;
     padding: 16px 24px;
@@ -98,11 +100,25 @@
       border-radius: 0
     }
 
-    & .mud-button-close {
-      top: 8px;
-      right: 8px;
-      position: absolute;
+    &:not(.mud-button-close) {
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
     }
+
+    & .mud-button-close {
+      flex-shrink: 0;
+      position: relative;
+      margin-inline-end: -12px;
+    }
+  }
+
+  .mud-dialog-title:has(.mud-button-close) {
+    padding-top: 8px;
+    padding-inline-end: 20px;
+    padding-bottom: 4px;
   }
 
   & .mud-dialog-content {
