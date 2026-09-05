@@ -98,5 +98,35 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Markup.Should().Be("<span class=\"mud-icon-root mud-icon-size-medium material-symbols-outlined\" aria-hidden=\"true\" role=\"img\"></span>");
         }
+
+        /// <summary>
+        /// An icon with a title carries meaning of its own, so it is not hidden from assistive technology.
+        /// </summary>
+        [Test]
+        public void ShouldExposeIconWithTitle()
+        {
+            var comp = Context.Render<MudIcon>(parameters => parameters
+                .Add(p => p.Icon, Icons.Material.Filled.Warning)
+                .Add(p => p.Title, "Warning"));
+
+            var svg = comp.Find("svg");
+            svg.HasAttribute("aria-hidden").Should().BeFalse();
+            svg.QuerySelector("title")!.TextContent.Should().Be("Warning");
+        }
+
+        /// <summary>
+        /// An icon given an aria-label by the caller is exposed instead of hidden.
+        /// </summary>
+        [Test]
+        public void ShouldExposeIconWithAriaLabel()
+        {
+            var comp = Context.Render<MudIcon>(parameters => parameters
+                .Add(p => p.Icon, "material-symbols-outlined/database")
+                .AddUnmatched("aria-label", "Database"));
+
+            var icon = comp.Find("span");
+            icon.HasAttribute("aria-hidden").Should().BeFalse();
+            icon.GetAttribute("aria-label").Should().Be("Database");
+        }
     }
 }
