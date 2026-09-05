@@ -2257,5 +2257,20 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.PickerMonth?.Month.Should().Be(12);
             return comp;
         }
+
+        /// <summary>
+        /// The inline popup is a dialog named after the field so its purpose is announced when it opens.
+        /// </summary>
+        [Test]
+        public async Task Open_PopupIsNamedDialog()
+        {
+            var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDatePicker>();
+            await picker.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Label, "Start date"));
+
+            var popup = comp.Find("div.mud-picker-inline-paper");
+            popup.GetAttribute("role").Should().Be("dialog");
+            popup.GetAttribute("aria-label").Should().Be("Start date");
+        }
     }
 }

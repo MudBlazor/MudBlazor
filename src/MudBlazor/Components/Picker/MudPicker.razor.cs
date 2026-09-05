@@ -26,6 +26,14 @@ namespace MudBlazor
 
         internal string ElementId { get; } = Identifier.Create("picker");
 
+        /// <summary>
+        /// Names the popup dialog after the field it belongs to, falling back to the placeholder when there is no label.
+        /// </summary>
+        private string? GetPopupAriaLabel()
+        {
+            return string.IsNullOrWhiteSpace(Label) ? (string.IsNullOrWhiteSpace(Placeholder) ? null : Placeholder) : Label;
+        }
+
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
