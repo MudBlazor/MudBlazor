@@ -570,4 +570,10 @@
   <data name="MudExitPrompt_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="MudBreadcrumbs_Label" xml:space="preserve">
+    <value>Breadcrumb</value>
+  </data>
+  <data name="MudSplitPanel_ResizePanels" xml:space="preserve">
+    <value>Resize panels</value>
+  </data>
 </root>
