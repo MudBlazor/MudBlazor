@@ -82,14 +82,24 @@ namespace MudBlazor
         public bool Required { get; set; }
 
         /// <summary>
-        /// The text displayed during validation if no input was given.
+        /// The error text displayed during validation when <see cref="Required"/> is <see langword="true" /> and no input was given.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>"Required"</c>.  This text is only shown when <see cref="Required"/> is <c>true</c>.
+        /// If left empty, a localized default message is used instead. 
+        /// See <see cref="ResolvedRequiredErrorText"/> for the logic that resolves the effective text to display.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
         public string RequiredError { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Returns the effective error text to display when a required value is missing,
+        /// falling back to a localized default message if <see cref="RequiredError"/> has not been set.
+        /// </summary>
+        /// <returns>
+        /// The value of <see cref="RequiredError"/> if it is not empty; otherwise, the localized default message.
+        /// </returns>
+        protected string ResolvedRequiredErrorText() => string.IsNullOrEmpty(RequiredError) ? Localizer[LanguageResource.MudFormComponent_Required] : RequiredError;
 
         /// <summary>
         /// The text displayed if the <see cref="Error"/> property is <c>true</c>.
@@ -413,7 +423,7 @@ namespace MudBlazor
                 {
                     if (Touched && !HasValue(ReadValue))
                     {
-                        errors.Add(RequiredError);
+                        errors.Add(ResolvedRequiredErrorText());
                     }
                 }
             }
@@ -963,7 +973,6 @@ namespace MudBlazor
 
         protected override Task OnInitializedAsync()
         {
-            RequiredError = string.IsNullOrEmpty(RequiredError) ? Localizer[LanguageResource.MudFormComponent_Required] : RequiredError;
             RegisterAsFormComponent();
             return base.OnInitializedAsync();
         }
