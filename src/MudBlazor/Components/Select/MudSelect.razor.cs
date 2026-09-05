@@ -533,8 +533,12 @@ namespace MudBlazor
             var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
             attributes.TryAdd("role", "combobox");
             attributes.TryAdd("aria-autocomplete", "none");
-            attributes.TryAdd("aria-controls", _listboxId);
             attributes.TryAdd("aria-expanded", _openState.Value ? "true" : "false");
+            if (_openState.Value)
+            {
+                // Only reference the listbox while it is rendered; a dangling IDREF is an invalid aria-controls value.
+                attributes.TryAdd("aria-controls", _listboxId);
+            }
             attributes.TryAdd("aria-haspopup", "listbox");
 
             if (!attributes.ContainsKey("aria-label") && !attributes.ContainsKey("aria-labelledby") && !string.IsNullOrWhiteSpace(Label))
