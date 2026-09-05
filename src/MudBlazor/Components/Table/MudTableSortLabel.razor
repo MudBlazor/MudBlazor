@@ -3,7 +3,12 @@
 @inherits MudComponentBase
 @implements IDisposable
 
-<span @onclick="ToggleSortDirection" class="@Classname" style="@Style" @attributes="@UserAttributes">
+<button type="button"
+        @onclick="ToggleSortDirection"
+        disabled="@(!Enabled)"
+        class="@Classname"
+        style="@Style"
+        @attributes="@UserAttributes">
     @if (!AppendIcon)
     {
         @ChildContent
@@ -16,4 +21,4 @@
     {
         @ChildContent
     }
-</span>
+</button>
