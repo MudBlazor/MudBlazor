@@ -197,6 +197,14 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Activates the click-driven link from the keyboard, since a plain element does not fire click on Enter or Space.
+        /// </summary>
+        private Task HandleKeyDownAsync(KeyboardEventArgs args)
+        {
+            return args.Key is "Enter" or " " ? OnClickHandler(new MouseEventArgs()) : Task.CompletedTask;
+        }
+
         protected async Task OnClickHandler(MouseEventArgs ev)
         {
             if (Disabled)

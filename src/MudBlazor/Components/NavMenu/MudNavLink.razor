@@ -24,6 +24,8 @@
         else
         {
             <div @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
+                 @onkeydown="HandleKeyDownAsync"
+                 role="@(string.IsNullOrEmpty(Href) ? "button" : "link")"
                  @attributes="UserAttributes"
                  class="@LinkClassname"
                  tabindex="@TabIndex">

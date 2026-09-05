@@ -166,5 +166,37 @@ namespace MudBlazor.UnitTests.Components
 
             AlertText().InnerHtml.Should().Be("Oh my! We caught an error and handled it!");
         }
+
+        /// <summary>
+        /// A click-driven link is a button that Enter and Space activate.
+        /// </summary>
+        [Test]
+        public async Task NavLink_OnClick_ActivatesFromKeyboard()
+        {
+            var clicks = 0;
+            var comp = Context.Render<MudNavLink>(parameters => parameters.Add(x => x.OnClick, (MouseEventArgs _) => { clicks++; }));
+
+            var link = comp.Find(".mud-nav-link");
+            link.GetAttribute("role").Should().Be("button");
+
+            await link.KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await link.KeyDownAsync(new KeyboardEventArgs { Key = " " });
+            await link.KeyDownAsync(new KeyboardEventArgs { Key = "a" });
+
+            clicks.Should().Be(2);
+        }
+
+        /// <summary>
+        /// A click-driven link that navigates is announced as a link.
+        /// </summary>
+        [Test]
+        public void NavLink_OnClickWithHref_IsALink()
+        {
+            var comp = Context.Render<MudNavLink>(parameters => parameters
+                .Add(x => x.Href, "/dashboard")
+                .Add(x => x.OnClick, (MouseEventArgs _) => { }));
+
+            comp.Find(".mud-nav-link").GetAttribute("role").Should().Be("link");
+        }
     }
 }
