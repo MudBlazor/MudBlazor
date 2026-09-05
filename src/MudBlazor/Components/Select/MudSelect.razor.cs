@@ -5,6 +5,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Resources;
 using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -43,6 +44,9 @@ namespace MudBlazor
 
         /// <inheritdoc />
         object IMudShadowSelect.SelectContext => _context;
+
+        [Inject]
+        private InternalMudLocalizer Localizer { get; set; } = null!;
 
         public MudSelect()
         {
@@ -274,7 +278,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string SelectAllText { get; set; } = "Select all";
+        public string SelectAllText { get; set; } = string.Empty;
 
         /// <summary>
         /// The icon used for selected items.
@@ -945,6 +949,8 @@ namespace MudBlazor
             _activeItemId = item?.ItemId;
             return InvokeAsync(StateHasChanged);
         }
+
+        private string ResolvedSelectAllText() => string.IsNullOrEmpty(SelectAllText) ? Localizer[LanguageResource.MudSelect_SelectAll] : SelectAllText;
 
         private void UpdateSelectAllChecked()
         {
