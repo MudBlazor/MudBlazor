@@ -94,6 +94,42 @@ namespace MudBlazor
         [Parameter]
         public string AllItemsText { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Shows clickable page numbers between the navigation buttons.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, a user can jump directly to a page by clicking its number.
+        /// </remarks>
+        [Parameter]
+        public bool ShowPageNumbers { get; set; }
+
+        /// <summary>
+        /// The display variant of the pagination buttons.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text"/>.
+        /// </remarks>
+        [Parameter]
+        public Variant PaginationVariant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// The size of the pagination buttons.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
+        [Parameter]
+        public Size PaginationSize { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The color of the selected page button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Primary"/>.
+        /// </remarks>
+        [Parameter]
+        public Color PaginationColor { get; set; } = Color.Primary;
+
         private string Info
         {
             get
@@ -118,9 +154,12 @@ namespace MudBlazor
             }
         }
 
-        private bool BackButtonsDisabled => Disabled || DataGrid is { CurrentPage: 0 };
+        // MudPagination is one-based, while the grid's CurrentPage is zero-based.
+        private int CurrentPageNumber => (DataGrid?.CurrentPage ?? 0) + 1;
 
-        private bool ForwardButtonsDisabled => Disabled || (DataGrid != null && (DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage >= DataGrid.GetFilteredItemsCount());
+        private int PageCount => DataGrid is null
+            ? 1
+            : Math.Max(1, (int)Math.Ceiling(DataGrid.GetFilteredItemsCount() / (double)DataGrid.RowsPerPage));
 
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
