@@ -144,6 +144,24 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// The <c>aria-sort</c> value for the header cell, or <c>null</c> when the column cannot be sorted.
+        /// </summary>
+        private string? GetAriaSort()
+        {
+            if (!sortable)
+            {
+                return null;
+            }
+
+            return SortDirection switch
+            {
+                SortDirection.Ascending => "ascending",
+                SortDirection.Descending => "descending",
+                _ => "none"
+            };
+        }
+
         private bool resizable
         {
             get

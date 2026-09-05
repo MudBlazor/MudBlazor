@@ -9251,5 +9251,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         #endregion
+
+        /// <summary>
+        /// Sortable header cells track the sort direction in aria-sort (#9716).
+        /// </summary>
+        [Test]
+        public async Task DataGridSortableHeaders_ShouldExposeAriaSort()
+        {
+            var comp = Context.Render<DataGridSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
+
+            dataGrid.FindAll("th").Should().OnlyContain(header => header.GetAttribute("aria-sort") == "none");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            dataGrid.FindAll("th")[0].GetAttribute("aria-sort").Should().Be("ascending");
+            dataGrid.FindAll("th")[1].GetAttribute("aria-sort").Should().Be("none");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name));
+            dataGrid.FindAll("th")[0].GetAttribute("aria-sort").Should().Be("descending");
+        }
+
+        /// <summary>
+        /// Header cells omit aria-sort when sorting is disabled.
+        /// </summary>
+        [Test]
+        public async Task DataGridUnsortableHeaders_ShouldNotExposeAriaSort()
+        {
+            var comp = Context.Render<DataGridSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SortMode, SortMode.None));
+
+            dataGrid.FindAll("th").Should().OnlyContain(header => !header.HasAttribute("aria-sort"));
+        }
     }
 }

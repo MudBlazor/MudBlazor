@@ -1,6 +1,8 @@
 ﻿@namespace MudBlazor
 @implements IDisposable
+@using MudBlazor.Resources
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
 <tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
 	@if (Context.DisplayApplyButtonAtStart(IgnoreEditable) || Context.DisplayEditButtonAtStart(IgnoreEditable))
@@ -16,7 +18,7 @@
 			}
 			@if (Checkable)
 			{
-				<MudCheckBox @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" Class="mud-table-cell-checkbox" />
+				<MudCheckBox @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" Class="mud-table-cell-checkbox" AriaLabel="@Localizer[LanguageResource.MudTable_SelectAllRows]" />
 			}
 		</MudTh>
 	}
