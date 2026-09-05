@@ -1605,5 +1605,43 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("div[role=\"button\"]").GetAttribute("aria-expanded").Should().Be("true");
         }
+
+        /// <summary>
+        /// The default button activator announces that it opens a menu and references the list only while it is rendered.
+        /// </summary>
+        [Test]
+        public async Task ButtonActivator_ExposesMenuRelationship()
+        {
+            var comp = Context.Render<MenuTest1>();
+            IElement Activator() => comp.Find("button.mud-button-root");
+
+            Activator().GetAttribute("aria-haspopup").Should().Be("menu");
+            Activator().GetAttribute("aria-expanded").Should().Be("false");
+            Activator().HasAttribute("aria-controls").Should().BeFalse();
+
+            await Activator().ClickAsync();
+
+            var list = comp.Find("div.mud-list");
+            list.GetAttribute("role").Should().Be("menu");
+            list.Id.Should().NotBeNullOrEmpty();
+            Activator().GetAttribute("aria-expanded").Should().Be("true");
+            Activator().GetAttribute("aria-controls").Should().Be(list.Id);
+            comp.FindAll(".mud-menu-item").Should().HaveCount(4).And.OnlyContain(item => item.GetAttribute("role") == "menuitem");
+        }
+
+        /// <summary>
+        /// The icon activator carries the same popup relationship as the button activator.
+        /// </summary>
+        [Test]
+        public void IconActivator_ExposesMenuRelationship()
+        {
+            Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudMenu>(parameters => parameters.Add(p => p.Icon, Icons.Material.Filled.MoreVert));
+
+            var activator = comp.Find("button.mud-icon-button");
+            activator.GetAttribute("aria-haspopup").Should().Be("menu");
+            activator.GetAttribute("aria-expanded").Should().Be("false");
+            activator.HasAttribute("aria-controls").Should().BeFalse();
+        }
     }
 }
