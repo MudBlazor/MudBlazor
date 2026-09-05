@@ -1790,6 +1790,55 @@ namespace MudBlazor.UnitTests.Components
 
             second.Should().NotBeNull();
         }
+
+        /// <summary>
+        /// A dialog is aria-modal and is named by its visible title (#13609).
+        /// </summary>
+        [Test]
+        public async Task DialogShouldExposeModalSemanticsForAssistiveTechnologies()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>("Dialog title"));
+
+            var dialog = comp.Find("div[role='dialog']");
+            dialog.GetAttribute("aria-modal").Should().Be("true");
+            // The visible title already names the dialog, so no redundant aria-label is emitted.
+            dialog.HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A dialog without a header falls back to an aria-label from its title (#13609).
+        /// </summary>
+        [Test]
+        public async Task DialogWithoutHeaderShouldFallBackToAriaLabelFromTitle()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>("Dialog title", new DialogOptions { NoHeader = true }));
+
+            var dialog = comp.Find("div[role='dialog']");
+            dialog.GetAttribute("aria-labelledby").Should().BeNull();
+            dialog.GetAttribute("aria-label").Should().Be("Dialog title");
+        }
+
+        /// <summary>
+        /// A dialog with neither a header nor a title gets no empty aria-label (#13609).
+        /// </summary>
+        [Test]
+        public async Task DialogWithoutHeaderOrTitleShouldNotEmitEmptyAriaLabel()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>(string.Empty, new DialogOptions { NoHeader = true }));
+
+            var dialog = comp.Find("div[role='dialog']");
+            dialog.HasAttribute("aria-labelledby").Should().BeFalse();
+            dialog.HasAttribute("aria-label").Should().BeFalse();
+        }
     }
     internal class CustomDialogService : DialogService
     {
