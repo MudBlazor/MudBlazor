@@ -62,6 +62,62 @@ namespace MudBlazor.UnitTests.Components
             picker.ReadValue.Should().Be(null);
         }
 
+        /// <summary>
+        /// A programmatic clear leaves Text as an empty string, because TimeSpanConverter converts null to string.Empty where the date converter yields null.
+        /// </summary>
+        [Test]
+        public async Task TimePicker_ClearAsync_ShouldLeaveEmptyText()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters.Add(p => p.Time, new TimeSpan(10, 30, 0)));
+            var picker = comp.Instance;
+            picker.Text.Should().Be("10:30");
+
+            await comp.InvokeAsync(() => picker.ClearAsync());
+
+            picker.ReadValue.Should().BeNull();
+            picker.Text.Should().Be("");
+        }
+
+        /// <summary>
+        /// Setting Time to null clears text that failed to convert, which is the only way out of the conversion error.
+        /// </summary>
+        [Test]
+        public async Task TimePicker_ShouldClearInvalidText_WhenTimeSetNull()
+        {
+            var comp = Context.Render<MudTimePicker>();
+            var picker = comp.Instance;
+            picker.Text.Should().Be(null);
+            picker.ReadValue.Should().Be(null);
+
+            const string Invalid = "INVALID_TIME";
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, Invalid));
+            picker.ReadValue.Should().Be(null);
+            picker.Text.Should().Be(Invalid);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Time, null));
+
+            // TimeSpanConverter converts null to string.Empty, where the date converter would yield null.
+            picker.ReadValue.Should().Be(null);
+            picker.Text.Should().Be("");
+        }
+
+        /// <summary>
+        /// ClearAsync also clears text that failed to convert, even though the value was already null.
+        /// </summary>
+        [Test]
+        public async Task TimePicker_ClearAsync_ShouldClearInvalidText()
+        {
+            const string Invalid = "INVALID_TIME";
+            var comp = Context.Render<MudTimePicker>(parameters => parameters.Add(p => p.Text, Invalid));
+            var picker = comp.Instance;
+            picker.Text.Should().Be(Invalid);
+            picker.ReadValue.Should().Be(null);
+
+            await comp.InvokeAsync(() => picker.ClearAsync());
+
+            picker.Text.Should().Be("");
+        }
+
         [Test]
         public async Task Open_ClickOutside_CheckClosed()
         {

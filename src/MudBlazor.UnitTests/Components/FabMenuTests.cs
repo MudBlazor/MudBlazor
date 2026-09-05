@@ -269,4 +269,20 @@ public class FabMenuTests : BunitTest
         var expectedRel = rel ?? (target == "_blank" ? "noopener" : null);
         item.GetAttribute("rel").Should().Be(expectedRel);
     }
+
+    [TestCase(false, 0)]
+    [TestCase(true, 1)]
+    public async Task FabMenuItem_ShouldNotPropagateClickIfFalse(bool propagateClick, int expectedContainerClickCount)
+    {
+        var comp = Context.Render<FabMenuItemClickPropagationTest>(parameters => parameters.Add(param => param.ClickPropagation, propagateClick));
+
+        var item = comp.Find(".mud-fab-menu-item");
+        await item.ClickAsync();
+
+        await comp.WaitForAssertionAsync(() =>
+        {
+            comp.Instance.ItemClickedCount.Should().Be(1);
+            comp.Instance.ContainerClickedCount.Should().Be(expectedContainerClickCount);
+        });
+    }
 }

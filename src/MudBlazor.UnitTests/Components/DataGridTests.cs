@@ -1543,6 +1543,148 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// With no CellClick or CellContextMenuClick delegate the cells must carry no event handlers at all,
+        /// otherwise every td registers a DOM listener that does nothing.
+        /// </summary>
+        [Test]
+        public void DataGridCell_WithoutDelegates_RegistersNoCellEventHandlers()
+        {
+            // DataGridCellClickBubbleTest wires the row events but neither cell event.
+            var comp = Context.Render<DataGridCellClickBubbleTest>();
+
+            var cellHandlers = comp.FindAll(".mud-table-body tr td")
+                .SelectMany(td => td.Attributes.Select(attribute => attribute.Name))
+                .Where(name => name.Contains("onclick") || name.Contains("oncontextmenu"))
+                .ToList();
+
+            cellHandlers.Should().BeEmpty("EventCallback<T>.Empty has a live no-op delegate, so the callbacks must fall back to default instead");
+        }
+
+        /// <summary>
+        /// With no RowContextMenuClick delegate the rows must carry no context-menu handler, otherwise every row registers a DOM listener that does nothing.
+        /// </summary>
+        [Test]
+        public void DataGridRow_WithoutContextMenuDelegate_RegistersNoContextMenuHandler()
+        {
+            // DataGridCellClickBubbleTest wires RowClick and RowContextMenuClick.
+            var withDelegate = Context.Render<DataGridCellClickBubbleTest>();
+            withDelegate.FindAll(".mud-table-body tr")
+                .SelectMany(row => row.Attributes.Select(attribute => attribute.Name))
+                .Should().Contain(name => name.Contains("oncontextmenu"));
+
+            // DataGridCellValueReadsTest wires neither.
+            var withoutDelegate = Context.Render<DataGridCellValueReadsTest>();
+            withoutDelegate.FindAll(".mud-table-body tr")
+                .SelectMany(row => row.Attributes.Select(attribute => attribute.Name))
+                .Should().NotContain(name => name.Contains("oncontextmenu"));
+        }
+
+        /// <summary>
+        /// When both cell delegates are supplied the cells must carry the click and context-menu handlers.
+        /// </summary>
+        [Test]
+        public void DataGridCell_WithDelegates_RegistersCellEventHandlers()
+        {
+            var comp = Context.Render<DataGridEventCallbacksTest>();
+
+            var firstCell = comp.FindAll(".mud-table-body tr td")[0];
+            var cellHandlers = firstCell.Attributes.Select(attribute => attribute.Name).ToList();
+
+            cellHandlers.Should().Contain(name => name.Contains("onclick"));
+            cellHandlers.Should().Contain(name => name.Contains("oncontextmenu"));
+        }
+
+        /// <summary>
+        /// The select-all checkbox covers every filtered row, so its state must be resolved without walking
+        /// the whole data set on each render.
+        /// </summary>
+        [Test]
+        public void DataGridSelectAll_DoesNotScanEveryFilteredRow()
+        {
+            // 500 items, 10 per page, nothing selected.
+            var comp = Context.Render<DataGridSelectAllScanTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectAllScanTest.Item>>();
+
+            comp.Instance.DisabledFuncCalls = 0;
+            dataGrid.Render();
+
+            comp.Instance.DisabledFuncCalls.Should().BeLessThan(100,
+                "the select-all state must not be resolved by scanning all 500 filtered rows");
+        }
+
+        /// <summary>
+        /// A selection change must render each header cell once; the grid's own StateHasChanged already covers them.
+        /// </summary>
+        [Test]
+        public async Task DataGridHeaderCell_RendersOncePerSelectionChange()
+        {
+            var comp = Context.Render<DataGridHeaderRenderOnSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridHeaderRenderOnSelectionTest.Item>>();
+            var item = dataGrid.Instance.Items.First();
+
+            comp.Instance.HeaderRenders = 0;
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectedItemAsync(true, item));
+            comp.Instance.HeaderRenders.Should().Be(1, "selecting a row should render the header once");
+
+            comp.Instance.HeaderRenders = 0;
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(true));
+            comp.Instance.HeaderRenders.Should().Be(1, "select-all should render the header once");
+
+            // The header must still reflect the new state, so the test cannot pass by rendering zero times.
+            comp.FindAll("thead input[type=checkbox]")[0].IsChecked().Should().BeTrue();
+
+            comp.Instance.HeaderRenders = 0;
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSelectAllAsync(false));
+            comp.Instance.HeaderRenders.Should().Be(1, "deselect-all should render the header once");
+            comp.FindAll("thead input[type=checkbox]")[0].IsChecked().Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Re-rendering the grid must not re-render the header buttons, whose parameters have not changed.
+        /// </summary>
+        [Test]
+        public void DataGridHeaderCell_GridRerender_DoesNotRerenderHeaderButtons()
+        {
+            var comp = Context.Render<DataGridSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
+
+            var buttons = comp.FindComponents<MudIconButton>()
+                .Where(button => button.Instance.Class?.Contains("sort-direction-icon") == true
+                                 || button.Instance.Class?.Contains("filter-button") == true)
+                .ToList();
+            buttons.Should().NotBeEmpty("the test grid must actually render header buttons");
+
+            var gridRenders = dataGrid.RenderCount;
+            var buttonRenders = buttons.Select(button => button.RenderCount).ToList();
+
+            comp.Render();
+
+            // Guards against passing vacuously if the grid itself stops re-rendering.
+            dataGrid.RenderCount.Should().BeGreaterThan(gridRenders);
+            buttons.Select(button => button.RenderCount).Should().Equal(buttonRenders,
+                "a localized aria-label must be a string so Blazor can compare it by value");
+        }
+
+        /// <summary>
+        /// A cell must read its bound property exactly once per render; the value is used by several
+        /// render paths and re-reading it invokes the compiled property expression again.
+        /// </summary>
+        [Test]
+        public void DataGridCell_ReadsBoundPropertyOncePerRender()
+        {
+            var comp = Context.Render<DataGridCellValueReadsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellValueReadsTest.Item>>();
+
+            // 3 rows x 2 property columns.
+            const int CellCount = 6;
+
+            comp.Instance.Reads = 0;
+            dataGrid.Render();
+
+            comp.Instance.Reads.Should().Be(CellCount, "each cell should read its property once per render");
+        }
+
+        /// <summary>
         /// When CellContextMenuClick has a delegate, right-clicking a td fires CellContextMenuClick and
         /// stopPropagation prevents RowContextMenuClick from also firing.
         /// </summary>
@@ -4721,6 +4863,89 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Typing into the column filter menu's value box does not re-render the grid, because the filter is not applied until the Filter button is pressed.
+        /// </summary>
+        /// <remarks>
+        /// Re-rendering every row and header cell per keystroke made typing lag badly on a large grid (#13639).
+        /// </remarks>
+        [Test]
+        public async Task DataGridColumnFilterMenu_TypingValue_DoesNotRerenderGrid()
+        {
+            var comp = Context.Render<DataGridColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuTest.Model>>();
+
+            await comp.Find(".filter-button").ClickAsync();
+
+            var rendersBeforeTyping = dataGrid.RenderCount;
+
+            // Type through the rendered input: a real keystroke fires keydown as well as input, and both used to re-render the whole grid.
+            var typed = "";
+            foreach (var character in "Ira")
+            {
+                typed += character;
+                await comp.Find(".filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = character.ToString() });
+                await comp.Find(".filter-input input").InputAsync(new ChangeEventArgs { Value = typed });
+            }
+
+            dataGrid.RenderCount.Should().Be(rendersBeforeTyping);
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+
+            // The typed value is still captured, so applying it filters as usual.
+            await comp.Find(".apply-filter-button").ClickAsync();
+            dataGrid.Instance.FilterDefinitions.Should().ContainSingle().Which.Value.Should().Be("Ira");
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Enter in the column filter menu's value box applies the filter, and Escape clears it.
+        /// </summary>
+        /// <remarks>
+        /// These shortcuts share the value box's keydown handler, which deliberately does not re-render the grid (#13639).
+        /// </remarks>
+        [Test]
+        public async Task DataGridColumnFilterMenu_EnterApplies_EscapeClears()
+        {
+            var comp = Context.Render<DataGridColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuTest.Model>>();
+
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.Find(".filter-input input").InputAsync(new ChangeEventArgs { Value = "Ira" });
+            await comp.Find(".filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            dataGrid.Instance.FilterDefinitions.Should().ContainSingle().Which.Value.Should().Be("Ira");
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
+
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.Find(".filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
+
+            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Editing a filter which is already applied still updates the rows as the value changes.
+        /// </summary>
+        [Test]
+        public async Task DataGridColumnFilterMenu_EditingAppliedFilter_UpdatesRows()
+        {
+            var comp = Context.Render<DataGridColumnFilterMenuTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuTest.Model>>();
+
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.InvokeAsync(() => comp.FindComponent<MudTextField<string>>().Instance.ValueChanged.InvokeAsync("Ira"));
+            await comp.Find(".apply-filter-button").ClickAsync();
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+
+            // Re-open the applied filter and retype: the grid follows the new value without pressing Filter again.
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.InvokeAsync(() => comp.FindComponent<MudTextField<string>>().Instance.ValueChanged.InvokeAsync("Sam"));
+
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
+            dataGrid.FindAll("tbody tr td")[0].TextContent.Trim().Should().Be("Sam");
+        }
 
         [Test]
         public async Task DataGridCustomPropertyFilterTemplate()
@@ -5213,16 +5438,16 @@ namespace MudBlazor.UnitTests.Components
             var column = dataGrid.Instance.RenderedColumns.First();
             var cell = new Cell<DataGridCellContextTest.Model>(dataGrid.Instance, column, item, item);
 
-            cell._cellContext.Selected.Should().Be(false);
-            await cell._cellContext.Actions.SetSelectedItemAsync(true);
-            cell._cellContext.Selected.Should().Be(true);
+            cell.Context.Selected.Should().Be(false);
+            await cell.Context.Actions.SetSelectedItemAsync(true);
+            cell.Context.Selected.Should().Be(true);
 
-            await cell._cellContext.Actions.ToggleHierarchyVisibilityForItemAsync();
-            cell._cellContext.OpenHierarchies.Should().Contain(item);
-            cell._cellContext.Open.Should().Be(true);
-            await cell._cellContext.Actions.ToggleHierarchyVisibilityForItemAsync();
-            cell._cellContext.OpenHierarchies.Should().NotContain(item);
-            cell._cellContext.Open.Should().Be(false);
+            await cell.Context.Actions.ToggleHierarchyVisibilityForItemAsync();
+            cell.Context.OpenHierarchies.Should().Contain(item);
+            cell.Context.Open.Should().Be(true);
+            await cell.Context.Actions.ToggleHierarchyVisibilityForItemAsync();
+            cell.Context.OpenHierarchies.Should().NotContain(item);
+            cell.Context.Open.Should().Be(false);
         }
 
         [Test]
