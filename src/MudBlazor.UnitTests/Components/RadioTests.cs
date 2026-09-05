@@ -574,5 +574,30 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("div[role=radiogroup]").GetAttribute("aria-required").Should().Be("true");
         }
+
+        /// <summary>
+        /// An invalid radio group and each of its radios link to the group's error text.
+        /// </summary>
+        [Test]
+        public async Task RadioGroupWithError_ShouldLinkRadiosToErrorText()
+        {
+            var comp = Context.Render<RadioGroupRequiredTest>();
+            var radioGroup = comp.FindComponent<MudRadioGroup<bool>>();
+
+            comp.Find("div[role=\"radiogroup\"]").HasAttribute("aria-invalid").Should().BeFalse();
+            comp.FindAll("input[type=\"radio\"]").Should().OnlyContain(input => !input.HasAttribute("aria-describedby"));
+
+            await radioGroup.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Error, true)
+                .Add(p => p.ErrorId, "group-error")
+                .Add(p => p.ErrorText, "Pick one"));
+
+            comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-invalid").Should().Be("true");
+            comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-describedby").Should().Be("group-error");
+            // aria-invalid is not supported on the radio role, so the group carries it and each radio only points at the text.
+            comp.FindAll("input[type=\"radio\"]").Should().OnlyContain(input => !input.HasAttribute("aria-invalid"));
+            comp.FindAll("input[type=\"radio\"]").Should().OnlyContain(input => input.GetAttribute("aria-describedby") == "group-error");
+            comp.Find("#group-error").TextContent.Trim().Should().Be("Pick one");
+        }
     }
 }
