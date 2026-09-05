@@ -141,41 +141,43 @@
         <DocsPageSection>
             <SectionHeader Title="Grouping">
                 <Description>
-                    The <CodeInline Tag="true">MudDataGrid</CodeInline> allows users to organize data by grouping rows that share common values in
-                    selected columns. Grouping collapses similar data into expandable sections, making large datasets more manageable.
-                    <MudText Typo="Typo.h6" Class="mt-2">Enabling Grouping</MudText>
-                    <MudText HtmlTag="p">
-                        To enable grouping functionality across the grid set the <CodeInline>Groupable</CodeInline> property on <CodeInline Tag="true">MudDataGrid</CodeInline>
-                        to <CodeInline>true</CodeInline>. This activates the grouping feature globally, allowing all columns to be groupable unless explicitly overridden.
-                        Each column also supports its own <CodeInline>Groupable</CodeInline> property. This column-level property takes precedence over the grid-level
-                        setting. For example, if the grid’s <CodeInline>Groupable</CodeInline> is <CodeInline>true</CodeInline> but a column’s
-                        <CodeInline>Groupable</CodeInline> is set to <CodeInline>false</CodeInline>, that column will not be groupable via the UI.
-                    </MudText>
-                    <MudText Typo="Typo.h6" Class="mt-2">Default Grouping State</MudText>
-                    <MudText HtmlTag="p">
-                        To define whether a column should start grouped by default, set its <CodeInline>Grouping</CodeInline> property to <CodeInline>true</CodeInline>.
-                        This property supports two-way binding <CodeInline>@@bind-Grouping</CodeInline>, meaning it updates if the user groups or ungroups the column
-                        via the grid’s UI.
-                    </MudText>
-                    <MudAlert Severity="Severity.Info" Dense="true">
-                        Note that for <CodeInline>Grouping</CodeInline> to take effect, either the column or grid must have <CodeInline>Groupable</CodeInline> enabled.
-                    </MudAlert>
-                    <MudText Typo="Typo.h6" Class="mt-2">Additional Features</MudText>
-                    <MudList T="string" Dense="true" ReadOnly="true">
-                        <MudListItem Class="py-0">Multi-level grouping is supported, allowing hierarchical organization by multiple columns simultaneously</MudListItem>
-                        <MudListItem Class="py-0">Group headers display the grouped column name or <CodeInline>GroupTemplate</CodeInline>, with expansion controls</MudListItem>
-                        <MudListItem Class="py-0">
-                            <CodeInline>Grouping</CodeInline>, <CodeInline>GroupExpanded</CodeInline>, and <CodeInline>GroupByOrder</CodeInline> are two-way bindable column parameters.
-                        </MudListItem>
-                    </MudList>
+                    The <CodeInline Tag="true">MudDataGrid</CodeInline> allows users to organize data by grouping rows that share common values in selected columns.
+                    Grouping collapses similar data into expandable sections, making large datasets more manageable.
                 </Description>
             </SectionHeader>
-            <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupingMultiLevelExample)" ShowCode="false" Block="true" FullWidth="true">
-                <DataGridGroupingMultiLevelExample />
-            </SectionContent>
+
+            <DocsPageSection>
+                <SectionHeader Title="Single Level Grouping">
+                    <Description>
+                        To enable grouping functionality across the grid, set <CodeInline>Groupable</CodeInline> on <CodeInline Tag="true">MudDataGrid</CodeInline> to <CodeInline>true</CodeInline>.
+                        This enables grouping globally unless a column overrides it with <CodeInline>Groupable="false"</CodeInline>.
+                        <br /><br />
+                        To define an initial grouped column, set <CodeInline>Grouping</CodeInline> on that column.
+                        This parameter supports two-way binding via <CodeInline>@@bind-Grouping</CodeInline>.
+                        <br /><br />
+                        For <CodeInline>Grouping</CodeInline> to take effect, either the column or grid must have <CodeInline>Groupable</CodeInline> enabled.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupingExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridGroupingExample />
+                </SectionContent>
+            </DocsPageSection>
+
+            <DocsPageSection>
+                <SectionHeader Title="Multi Level Grouping">
+                    <Description>
+                        Multi-level grouping lets you group data across multiple columns and control the order of grouped levels.
+                        <br /><br />
+                        <CodeInline>Grouping</CodeInline>, <CodeInline>GroupExpanded</CodeInline>, and <CodeInline>GroupByOrder</CodeInline> support two-way binding.
+                        <br /><br />
+                        Use <CodeInline>GroupByOrder</CodeInline> to control grouped level order and <CodeInline>GroupExpanded</CodeInline> to control initial expansion state per grouped column.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupingMultiLevelExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridGroupingMultiLevelExample />
+                </SectionContent>
+            </DocsPageSection>
         </DocsPageSection>
-
-
         <DocsPageSection>
             <SectionHeader Title="Sorting">
                 <Description>
@@ -580,3 +582,4 @@
 
     </DocsPageContent>
 </DocsPage>
+
