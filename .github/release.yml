@@ -6,9 +6,6 @@ changelog:
     - title: Breaking Changes
       labels:
         - breaking change
-    - title: Accessibility
-      labels:
-        - accessibility
     - title: New Features
       labels:
         - new component
@@ -16,6 +13,9 @@ changelog:
     - title: Bug Fixes
       labels:
         - bug
+    - title: Accessibility
+      labels:
+        - accessibility
     - title: Performance
       labels:
         - performance
