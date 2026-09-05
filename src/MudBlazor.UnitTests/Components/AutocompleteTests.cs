@@ -3071,5 +3071,58 @@ namespace MudBlazor.UnitTests.Components
             var preventScroll = focusInvocation.Arguments.OfType<bool>().Single();
             preventScroll.Should().BeFalse();
         }
+
+        /// <summary>
+        /// The input is a combobox that references the suggestion list and the highlighted option only while the list is open (#13214).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_ExposesComboboxSemantics()
+        {
+            var comp = Context.Render<AutocompleteTest1>();
+            var autocomplete = comp.FindComponent<MudAutocomplete<string>>();
+            IElement Input() => autocomplete.Find("input");
+            await autocomplete.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DebounceInterval, 0));
+
+            Input().GetAttribute("role").Should().Be("combobox");
+            Input().GetAttribute("aria-autocomplete").Should().Be("list");
+            Input().GetAttribute("aria-haspopup").Should().Be("listbox");
+            Input().GetAttribute("aria-expanded").Should().Be("false");
+            Input().HasAttribute("aria-controls").Should().BeFalse();
+            Input().HasAttribute("aria-activedescendant").Should().BeFalse();
+
+            await Input().KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+
+            var list = comp.Find("div.mud-list");
+            list.GetAttribute("role").Should().Be("listbox");
+            list.Id.Should().NotBeNullOrEmpty();
+            Input().GetAttribute("aria-expanded").Should().Be("true");
+            Input().GetAttribute("aria-controls").Should().Be(list.Id);
+
+            var highlighted = comp.Find("div.mud-list-item.mud-selected-item");
+            highlighted.GetAttribute("role").Should().Be("option");
+            highlighted.GetAttribute("aria-selected").Should().Be("true");
+            Input().GetAttribute("aria-activedescendant").Should().Be(highlighted.Id);
+            comp.FindAll("div.mud-list-item:not(.mud-selected-item)").Should().OnlyContain(item => item.GetAttribute("aria-selected") == "false");
+
+            await Input().KeyUpAsync(new KeyboardEventArgs { Key = "Escape" });
+            await comp.WaitForAssertionAsync(() => Input().GetAttribute("aria-expanded").Should().Be("false"));
+            Input().HasAttribute("aria-controls").Should().BeFalse();
+            Input().HasAttribute("aria-activedescendant").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Caller-supplied combobox attributes take precedence over the generated fallbacks.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_CallerAriaAttributes_Win()
+        {
+            var comp = Context.Render<AutocompleteTest1>();
+            var autocomplete = comp.FindComponent<MudAutocomplete<string>>();
+            await autocomplete.SetParametersAndRenderAsync(parameters => parameters.AddUnmatched("aria-autocomplete", "both"));
+
+            autocomplete.Find("input").GetAttribute("aria-autocomplete").Should().Be("both");
+            autocomplete.Find("input").GetAttribute("role").Should().Be("combobox");
+        }
     }
 }

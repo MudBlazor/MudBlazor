@@ -373,5 +373,20 @@ namespace MudBlazor.UnitTests.Components
             //test if rtl is used
             pagination.ClassName.Should().Contain("mud-pagination-rtl");
         }
+
+        /// <summary>
+        /// Pagination ellipses are hidden from assistive technology.
+        /// </summary>
+        [Test]
+        public void Pagination_EllipsisShouldBeHiddenFromAssistiveTechnologies()
+        {
+            var comp = Context.Render<MudPagination>(parameters => parameters
+                .Add(p => p.Count, 20)
+                .Add(p => p.Selected, 10));
+
+            var ellipses = comp.FindAll("li").Where(li => li.TextContent.Trim() == "…").ToList();
+            ellipses.Should().NotBeEmpty();
+            ellipses.Should().OnlyContain(li => li.FirstElementChild!.GetAttribute("aria-hidden") == "true");
+        }
     }
 }

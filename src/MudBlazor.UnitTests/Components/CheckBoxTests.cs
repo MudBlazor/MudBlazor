@@ -590,5 +590,50 @@ namespace MudBlazor.UnitTests.Components
             var input4ForId = input4.GetAttribute("aria-labelledby");
             comp.Find($".cb5 label.mud-checkbox #{input4ForId}").Should().NotBeNull();
         }
+
+        /// <summary>
+        /// An invalid checkbox sets aria-invalid and links aria-describedby to its error text.
+        /// </summary>
+        [Test]
+        public async Task CheckBox_ShouldLinkInputToErrorText()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters
+                .Add(p => p.ErrorId, "field-error")
+                .Add(p => p.ErrorText, "Required"));
+
+            comp.Find("input").HasAttribute("aria-invalid").Should().BeFalse();
+            comp.Find("input").HasAttribute("aria-describedby").Should().BeFalse();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, true));
+
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be("field-error");
+            comp.Find("#field-error").TextContent.Trim().Should().Be("Required");
+        }
+
+        /// <summary>
+        /// An invalid checkbox without an error id is still marked invalid but points at nothing.
+        /// </summary>
+        [Test]
+        public void CheckBox_WithoutErrorId_ShouldNotEmitAriaDescribedBy()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters.Add(p => p.Error, true));
+
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
+            comp.Find("input").HasAttribute("aria-describedby").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A user-supplied aria-invalid wins over the generated one.
+        /// </summary>
+        [Test]
+        public void CheckBox_ShouldAllowUserAriaInvalidOverride()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters
+                .Add(p => p.Error, true)
+                .AddUnmatched("aria-invalid", "false"));
+
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("false");
+        }
     }
 }

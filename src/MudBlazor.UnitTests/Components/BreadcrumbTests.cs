@@ -304,5 +304,74 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() => MudBreadcrumbs.GetItemClassname(comp.Instance.Items[1]).Should().Be("mud-breadcrumb-item"));
         }
+
+        /// <summary>
+        /// The last breadcrumb is marked as the current page.
+        /// </summary>
+        [Test]
+        public void MudBreadcrumbs_ShouldMarkLastItemAsCurrentPage()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
+            {
+                new("Link 1", "link1"),
+                new("Link 2", "link2"),
+                new("Link 3", "link3", disabled: true)
+            }));
+
+            var links = comp.FindAll("li.mud-breadcrumb-item > a");
+            links[0].HasAttribute("aria-current").Should().BeFalse();
+            links[1].HasAttribute("aria-current").Should().BeFalse();
+            links[2].GetAttribute("aria-current").Should().Be("page");
+        }
+
+        /// <summary>
+        /// A collapsed trail still marks its last item as the current page.
+        /// </summary>
+        [Test]
+        public void MudBreadcrumbs_Collapsed_ShouldMarkLastItemAsCurrentPage()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.MaxItems, (byte)2)
+                .Add(x => x.Items, new List<BreadcrumbItem>
+                {
+                    new("Link 1", "link1"),
+                    new("Link 2", "link2"),
+                    new("Link 3", "link3")
+                }));
+
+            var links = comp.FindAll("li.mud-breadcrumb-item > a");
+            links.Count.Should().Be(2);
+            links[0].HasAttribute("aria-current").Should().BeFalse();
+            links[1].GetAttribute("aria-current").Should().Be("page");
+        }
+
+        /// <summary>
+        /// A link rendered outside a breadcrumb trail has no current page to report.
+        /// </summary>
+        [Test]
+        public void BreadcrumbLink_WithoutParent_ShouldNotClaimCurrentPage()
+        {
+            var comp = Context.Render<BreadcrumbLink>(parameters => parameters.Add(x => x.Item, new BreadcrumbItem("Link", "link")));
+
+            comp.Find("a").HasAttribute("aria-current").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Only the last of the supplied items counts as the current page.
+        /// </summary>
+        [Test]
+        public void MudBreadcrumbs_IsLastItem_ShouldOnlyMatchTheLastItem()
+        {
+            var first = new BreadcrumbItem("First", "first");
+            var last = new BreadcrumbItem("Last", "last");
+
+            Context.Render<MudBreadcrumbs>().Instance.IsLastItem(last).Should().BeFalse();
+            Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>())).Instance.IsLastItem(last).Should().BeFalse();
+
+            var breadcrumbs = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem> { first, last })).Instance;
+            breadcrumbs.IsLastItem(first).Should().BeFalse();
+            breadcrumbs.IsLastItem(last).Should().BeTrue();
+            breadcrumbs.IsLastItem(null).Should().BeFalse();
+        }
     }
 }

@@ -24,6 +24,7 @@ namespace MudBlazor
         private (double Top, double Left) _filtersMenuPosition;
         private ElementReference _headerElement;
         private ElementReference _resizerElement;
+        private bool _firstSort = true;
         private readonly string _id = Identifier.Create();
 
         // Resize state
@@ -141,6 +142,24 @@ namespace MudBlazor
             {
                 return Column?.Sortable ?? (DataGrid?.SortMode != SortMode.None);
             }
+        }
+
+        /// <summary>
+        /// The <c>aria-sort</c> value for the header cell, or <c>null</c> when the column cannot be sorted.
+        /// </summary>
+        private string? GetAriaSort()
+        {
+            if (!sortable)
+            {
+                return null;
+            }
+
+            return SortDirection switch
+            {
+                SortDirection.Ascending => "ascending",
+                SortDirection.Descending => "descending",
+                _ => "none"
+            };
         }
 
         private bool resizable
@@ -479,6 +498,8 @@ namespace MudBlazor
             }
 
             var initialSortDirection = Column?.InitialSortDirection ?? SortDirection.Ascending;
+            var firstSort = _firstSort;
+            _firstSort = false;
 
             SortDirection = SortDirection switch
             {
@@ -486,7 +507,7 @@ namespace MudBlazor
                 SortDirection.Descending => DataGrid.AllowUnsorted
                     ? SortDirection.None
                     : SortDirection.Ascending,
-                _ => initialSortDirection == SortDirection.None
+                _ => initialSortDirection == SortDirection.None || !firstSort
                     ? SortDirection.Ascending
                     : initialSortDirection
             };

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -12,6 +13,14 @@ namespace MudBlazor
     {
         [CascadingParameter]
         protected MudAvatarGroup? AvatarGroup { get; set; }
+
+        /// <summary>
+        /// Whether the consumer supplied an accessible name; <c>role="img"</c> is only valid with one.
+        /// </summary>
+        private bool HasAccessibleName() =>
+            UserAttributes.Keys.Any(key =>
+                key.Equals("aria-label", StringComparison.OrdinalIgnoreCase)
+                || key.Equals("aria-labelledby", StringComparison.OrdinalIgnoreCase));
 
         protected string Classname => new CssBuilder("mud-avatar")
             .AddClass($"mud-avatar-{Size.ToStringFast(true)}")

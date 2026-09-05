@@ -45,7 +45,7 @@
             <div class="d-flex" style="@ActionsStylename">
                 @if (Checkable)
                 {
-                    <MudCheckBox @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" StopClickPropagation="true" Class="mud-table-cell-checkbox"></MudCheckBox>
+                    <MudCheckBox @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" StopClickPropagation="true" Class="mud-table-cell-checkbox" AriaLabel="@Localizer[LanguageResource.MudTable_SelectRow]"></MudCheckBox>
                 }
             </div>
         </MudElement>
