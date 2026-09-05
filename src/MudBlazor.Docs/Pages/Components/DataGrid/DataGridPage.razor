@@ -287,7 +287,8 @@
                     The <CodeInline>&lt;MudDataGrid></CodeInline> component supports both single and multi-row selection.<br><br>
                     Selection can be triggered either by row clicks or by checkboxes.<br>
                     Row clicks are enabled by default via the <CodeInline>SelectOnRowClick</CodeInline> property (default: <CodeInline>true</CodeInline>). 
-                    This allows users to select a row by clicking anywhere on it.<br>
+                    This allows users to select a row by clicking anywhere on it.
+                    Set it to <CodeInline>false</CodeInline> to leave selection to the checkboxes; the <CodeInline>RowClick</CodeInline> event is raised either way.<br>
                     To provide visual feedback and explicit selection controls, add a <CodeInline>SelectColumn</CodeInline> in the <CodeInline>&lt;Columns></CodeInline> definition. 
                     This renders a checkbox for each row.<br><br>
                     When using <CodeInline>SelectColumn</CodeInline> checkboxes, built-in accessible labels are provided by default and can be overridden with <CodeInline>AriaLabelFunc</CodeInline>.

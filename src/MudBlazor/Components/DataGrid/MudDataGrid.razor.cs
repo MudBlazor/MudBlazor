@@ -870,10 +870,11 @@ namespace MudBlazor
         public bool MultiSelection { get; set; }
 
         /// <summary>
-        /// Toggles the row checkbox when the row is clicked.
+        /// Selects or deselects a row when it is clicked.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <c>true</c>.  When <c>false</c>, rows are only selected through a <see cref="SelectColumn{T}"/> checkbox or in code.
+        /// <see cref="RowClick"/> is raised either way, so a click can still be handled without changing <see cref="SelectedItem"/> or <see cref="SelectedItems"/>.
         /// </remarks>
         [Parameter]
         public bool SelectOnRowClick { get; set; } = true;
@@ -2178,11 +2179,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Set the currently selected item in the data grid.
+        /// Toggles the selection of an item the same way a row click does.
         /// </summary>
-        /// <param name="item">The item to select.</param>
+        /// <param name="item">The item to select or deselect.</param>
         /// <remarks>
-        /// When <see cref="MultiSelection"/> is <c>true</c> and <see cref="SelectOnRowClick"/> is <c>true</c>, the <see cref="SelectedItems"/> are updated.  The <see cref="SelectedItem"/> is also updated.
+        /// Updates <see cref="SelectedItem"/> and <see cref="SelectedItems"/>.  Does nothing when <see cref="SelectOnRowClick"/> is <c>false</c>.
         /// </remarks>
         public Task SetSelectedItemAsync(T item)
         {
