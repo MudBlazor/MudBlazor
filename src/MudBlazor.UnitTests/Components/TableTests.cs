@@ -3674,5 +3674,44 @@ namespace MudBlazor.UnitTests.Components
             rowBoxes()[0].Change(false);
             header().Should().Contain("mud-checkbox-null", "a row was deselected again");
         }
+
+        /// <summary>
+        /// Row selection checkboxes have a localized accessible name.
+        /// </summary>
+        [Test]
+        public void TableMultiSelection_CheckboxesShouldHaveAccessibleNames()
+        {
+            var comp = Context.Render<TableMultiSelectionTest1>();
+
+            string LabelOf(AngleSharp.Dom.IElement input) =>
+                comp.Find($"#{input.GetAttribute("aria-labelledby")}").TextContent.Trim();
+
+            comp.FindAll("tbody input[type=\"checkbox\"]").Count.Should().Be(3);
+            foreach (var input in comp.FindAll("tbody input[type=\"checkbox\"]"))
+            {
+                LabelOf(input).Should().Be("Select row");
+            }
+        }
+
+        /// <summary>
+        /// Select-all, group, and row checkboxes each have a distinct accessible name.
+        /// </summary>
+        [Test]
+        public async Task TableGrouping_GroupCheckboxShouldHaveAccessibleName()
+        {
+            var comp = Context.Render<TableGroupingTest>();
+            var table = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>();
+            await table.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.GroupBy, new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category) { GroupName = "Category" }));
+
+            string LabelOf(AngleSharp.Dom.IElement input) =>
+                comp.Find($"#{input.GetAttribute("aria-labelledby")}").TextContent.Trim();
+
+            var inputs = comp.FindAll("input[type=\"checkbox\"]");
+            LabelOf(inputs[0]).Should().Be("Select all rows");
+            LabelOf(inputs[1]).Should().Be("Select group");
+            LabelOf(inputs[2]).Should().Be("Select row");
+        }
     }
 }

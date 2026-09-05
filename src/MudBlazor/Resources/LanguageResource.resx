@@ -375,6 +375,15 @@
   <data name="MudPageContentNavigation_NavMenu" xml:space="preserve">
     <value>Contents</value>
   </data>
+  <data name="MudTable_SelectRow" xml:space="preserve">
+    <value>Select row</value>
+  </data>
+  <data name="MudTable_SelectAllRows" xml:space="preserve">
+    <value>Select all rows</value>
+  </data>
+  <data name="MudTable_SelectGroup" xml:space="preserve">
+    <value>Select group</value>
+  </data>
   <data name="MudTable_Loading" xml:space="preserve">
     <value>Loading…</value>
   </data>
