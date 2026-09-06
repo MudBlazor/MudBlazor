@@ -8,8 +8,6 @@
 
 <MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorId="@ErrorIdState.Value" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
-        @* The group instance never changes, so cascade it fixed and push the values a radio renders on their own.
-           A non-fixed instance notifies every radio on every group render, costing each one a render it does not need. *@
         <CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="true">
             <CascadingValue TValue="bool" Name="ParentDisabled" Value="@GetDisabledState()">
                 <CascadingValue TValue="bool" Name="ParentReadOnly" Value="@GetReadOnlyState()">
