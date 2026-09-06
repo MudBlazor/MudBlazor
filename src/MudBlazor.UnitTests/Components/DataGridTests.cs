@@ -1126,6 +1126,20 @@ namespace MudBlazor.UnitTests.Components
             age.Should().Be(52);
         }
 
+        /// <summary>
+        /// Cell edit mode already cascades the grid validator once per row, so it must not add another
+        /// cascading component around every editable cell (#11860).
+        /// </summary>
+        [Test]
+        public void DataGridCellEditCascadesValidatorOncePerRow()
+        {
+            var comp = Context.Render<DataGridCellEditTest>();
+            var rowCount = comp.FindAll(".mud-table-body tr").Count;
+
+            comp.FindComponents<CascadingValue<IForm>>()
+                .Should().HaveCount(rowCount, "per-cell validator cascades multiply component diff work in large editable grids");
+        }
+
         [Test]
         public async Task DataGridInlineEditWithNullableChange()
         {
@@ -1746,6 +1760,25 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Render();
 
             comp.Instance.Reads.Should().Be(CellCount, "each cell should read its property once per render");
+        }
+
+        /// <summary>
+        /// The row callback updates state through the grid, so the row renderer must not also perform its
+        /// automatic post-event render and repeat every cell's work (#11860).
+        /// </summary>
+        [Test]
+        public async Task DataGridRowClickRendersCellsOnce()
+        {
+            var comp = Context.Render<DataGridCellValueReadsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellValueReadsTest.Item>>();
+
+            // 3 rows x 2 property columns.
+            const int CellCount = 6;
+
+            comp.Instance.Reads = 0;
+            await dataGrid.Find(".mud-table-body td").ClickAsync();
+
+            comp.Instance.Reads.Should().Be(CellCount, "the grid render already reflects row selection changes");
         }
 
         /// <summary>
