@@ -25,18 +25,8 @@ namespace MudBlazor
         private readonly DefaultConverter<T?> _converter = new();
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
 
-        /// <summary>
-        /// Swallows a double-click on a leaf's arrow placeholder so it never reaches the item, mirroring <see cref="MudTreeViewItemToggleButton"/>.
-        /// </summary>
-        /// <remarks>
-        /// Cached so the placeholder does not allocate a handler on every render.
-        /// </remarks>
-        private readonly Action<MouseEventArgs> _swallowArrowDoubleClick;
-
         public MudTreeViewItem()
         {
-            _swallowArrowDoubleClick = this.AsNonRenderingEventHandler<MouseEventArgs>(static _ => { });
-
             using var registerScope = CreateRegisterScope();
             _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
                 .WithParameter(() => Expanded)
@@ -613,6 +603,11 @@ namespace MudBlazor
                 }
             }
             await OnClick.InvokeAsync(ev);
+        }
+
+        private void OnArrowDoubleClick()
+        {
+            /* Don't do anything on purpose. Fixes #9419 */
         }
 
         private async Task OnItemDoubleClickedAsync(MouseEventArgs ev)

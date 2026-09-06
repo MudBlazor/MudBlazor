@@ -1,4 +1,4 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
 
@@ -20,7 +20,7 @@
                 {
                     @* A leaf can never show a toggle, so emit the placeholder the button would have rendered instead of paying for a component instance.
                        The empty handler plus stopPropagation is what keeps a double-click here from reaching the item (#9419). *@
-                    <div class="mud-treeview-item-arrow" @ondblclick="_swallowArrowDoubleClick" @ondblclick:stopPropagation="true"></div>
+                    <div class="mud-treeview-item-arrow" @ondblclick="OnArrowDoubleClick" @ondblclick:stopPropagation="true"></div>
                 }
 
                 @if (MultiSelection)
