@@ -3,8 +3,6 @@
 @inherits MudComponentBase
 @typeparam T
 
-@* The tag is chosen at runtime, so each shape is spelled out and the content is shared.
-   Attribute order matches what MudElement emitted: the item's own attributes, then the user splat so a consumer can override them, then class and style so those always win. *@
 @if (HtmlTag == "a")
 {
     <a id="@ElementId"
