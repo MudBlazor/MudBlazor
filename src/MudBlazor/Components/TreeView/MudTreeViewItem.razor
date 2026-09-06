@@ -12,7 +12,16 @@
             }
             else
             {
-                <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@(HasChildren() && AreChildrenVisible())" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+                @if (HasChildren())
+                {
+                    <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@AreChildrenVisible()" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+                }
+                else
+                {
+                    @* A leaf can never show a toggle, so emit the placeholder the button would have rendered instead of paying for a component instance.
+                       The empty handler plus stopPropagation is what keeps a double-click here from reaching the item (#9419). *@
+                    <div class="mud-treeview-item-arrow" @ondblclick="_swallowArrowDoubleClick" @ondblclick:stopPropagation="true"></div>
+                }
 
                 @if (MultiSelection)
                 {
