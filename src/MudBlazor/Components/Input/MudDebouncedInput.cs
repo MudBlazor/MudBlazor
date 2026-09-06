@@ -74,9 +74,30 @@ namespace MudBlazor
                 return base.UpdateValuePropertyAsync(updateText);
             }
 
-            // Debounce the update - use fire-and-forget pattern to match the old Timer implementation.
-            _ = _debouncer.DebounceAsync(OnDebouncedUpdate);
-            return Task.CompletedTask;
+            // Don't wait out the interval, but do wait for the debounce to be scheduled.
+            // Scheduling happens after an await inside the debouncer, so returning before it lets a caller act on a debounce that does not exist yet.
+            var scheduled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            _ = DebounceAndSignalAsync(scheduled);
+
+            return scheduled.Task;
+        }
+
+        /// <summary>
+        /// Runs the debounce and completes <paramref name="scheduled"/> once its timer exists.
+        /// </summary>
+        /// <remarks>
+        /// The task is also completed when the debounce ends without scheduling, such as after disposal, so a caller is never left waiting.
+        /// </remarks>
+        private async Task DebounceAndSignalAsync(TaskCompletionSource scheduled)
+        {
+            try
+            {
+                await _debouncer!.DebounceCoreAsync(OnDebouncedUpdate, () => scheduled.TrySetResult());
+            }
+            finally
+            {
+                scheduled.TrySetResult();
+            }
         }
 
         /// <inheritdoc />
