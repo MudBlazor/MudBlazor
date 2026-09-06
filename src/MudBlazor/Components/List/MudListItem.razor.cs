@@ -31,47 +31,6 @@ namespace MudBlazor
                 .WithEventCallback(() => ExpandedChanged);
         }
 
-        /// <summary>
-        /// Renders the row element itself.
-        /// </summary>
-        /// <remarks>
-        /// Written by hand because the tag is chosen at runtime, which Razor markup cannot express without repeating the whole element once per tag.
-        /// Attribute order matches what the MudElement wrapper emitted, so the rendered DOM is unchanged.
-        /// </remarks>
-        private RenderFragment Root => builder =>
-        {
-            var seq = 0;
-
-            builder.OpenElement(seq++, HtmlTag);
-
-            builder.AddAttribute(seq++, "id", ElementId);
-            builder.AddAttribute(seq++, "tabindex", GetTabIndex());
-            builder.AddAttribute(seq++, "role", GetRole());
-            builder.AddAttribute(seq++, "aria-selected", GetAriaSelected());
-            builder.AddAttribute(seq++, "aria-expanded", GetAriaExpanded());
-
-            // Splatted after the component's own attributes so a consumer can override them, and before class and style so those always win.
-            builder.AddMultipleAttributes(seq++, UserAttributes!);
-
-            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnClickHandlerAsync));
-            builder.AddAttribute(seq++, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusAsync));
-            builder.AddAttribute(seq++, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, HandleKeyDownAsync));
-            builder.AddAttribute(seq++, "href", Href);
-            builder.AddAttribute(seq++, "target", Target);
-            builder.AddAttribute(seq++, "class", Classname);
-            builder.AddAttribute(seq++, "style", Style);
-
-            builder.AddEventStopPropagationAttribute(seq++, "onclick", !GetClickPropagation());
-            builder.AddEventPreventDefaultAttribute(seq++, "onclick", GetPreventDefault());
-
-            // Assigning the field directly is what MudElement.CaptureRef approximated: capturing a reference is not a state change, so it must not render.
-            builder.AddElementReferenceCapture(seq++, reference => _elementReference = reference);
-
-            builder.AddContent(seq++, Body);
-
-            builder.CloseElement();
-        };
-
         protected string Classname =>
             new CssBuilder("mud-list-item")
                 .AddClass("mud-list-item-dense", GetDense())
