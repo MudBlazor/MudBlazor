@@ -2501,6 +2501,60 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Each grouping level's <see cref="TableGroupDefinition{T}.GroupHeaderClass"/> is applied only to that level's group header rows.
+        /// </summary>
+        /// <remarks>
+        /// https://github.com/MudBlazor/MudBlazor/issues/10959
+        /// </remarks>
+        [Test]
+        public void TableGrouping_GroupHeaderClass_AppliedPerLevel()
+        {
+            var comp = Context.Render<TableGroupHeaderClassTest>(parameters => parameters
+                .Add(x => x.OuterHeaderClass, "outer-group-header")
+                .Add(x => x.InnerHeaderClass, "inner-group-header"));
+
+            var groupRows = comp.FindComponents<MudTableGroupRow<TableGroupHeaderClassTest.Item>>();
+            var outerRows = groupRows.Where(row => row.Instance.GroupDefinition?.InnerGroup is not null).ToList();
+            var innerRows = groupRows.Where(row => row.Instance.GroupDefinition?.InnerGroup is null).ToList();
+            outerRows.Should().HaveCount(2);
+            innerRows.Should().HaveCount(4);
+
+            foreach (var outerRow in outerRows)
+            {
+                var header = outerRow.Find("tr");
+                header.ClassList.Should().Contain("outer-group-header");
+                header.ClassList.Should().NotContain("inner-group-header");
+            }
+
+            foreach (var innerRow in innerRows)
+            {
+                var header = innerRow.Find("tr");
+                header.ClassList.Should().Contain("inner-group-header");
+                header.ClassList.Should().NotContain("outer-group-header");
+            }
+
+            comp.FindAll("tr.outer-group-header").Should().HaveCount(2);
+            comp.FindAll("tr.inner-group-header").Should().HaveCount(4);
+        }
+
+        /// <summary>
+        /// A null <see cref="TableGroupDefinition{T}.GroupHeaderClass"/> adds no class to the group header rows.
+        /// </summary>
+        [Test]
+        public void TableGrouping_GroupHeaderClass_NullAddsNoClass()
+        {
+            var comp = Context.Render<TableGroupHeaderClassTest>();
+
+            var groupRows = comp.FindComponents<MudTableGroupRow<TableGroupHeaderClassTest.Item>>();
+            groupRows.Should().HaveCount(6);
+
+            foreach (var groupRow in groupRows)
+            {
+                groupRow.Find("tr").ClassList.Should().BeEquivalentTo("mud-table-row");
+            }
+        }
+
+        /// <summary>
         /// Tests the grouping behavior and ensure that it won't break anything else.
         /// </summary>
         /// <returns></returns>
