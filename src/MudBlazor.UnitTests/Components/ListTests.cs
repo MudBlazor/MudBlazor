@@ -61,6 +61,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A class or style supplied through UserAttributes still wins over the computed ones, on a div row.
+        /// </summary>
+        [Test]
+        public void ListItem_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Espresso")
+                    .Add(x => x.UserAttributes, new Dictionary<string, object?>
+                    {
+                        ["class"] = "user-class",
+                        ["style"] = "color:red",
+                    })));
+
+            var row = comp.FindComponent<MudListItem<string>>().Find("div");
+            row.GetAttribute("class").Should().Be("user-class");
+            row.GetAttribute("style").Should().Be("color:red");
+        }
+
+        /// <summary>
+        /// The same precedence holds on the anchor row, which renders from a separate branch.
+        /// </summary>
+        [Test]
+        public void ListItemWithHref_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Docs")
+                    .Add(x => x.Href, "/docs")
+                    .Add(x => x.UserAttributes, new Dictionary<string, object?>
+                    {
+                        ["class"] = "user-class",
+                        ["style"] = "color:red",
+                    })));
+
+            var row = comp.FindComponent<MudListItem<string>>().Find("a");
+            row.GetAttribute("class").Should().Be("user-class");
+            row.GetAttribute("style").Should().Be("color:red");
+            row.GetAttribute("href").Should().Be("/docs");
+        }
+
+        /// <summary>
         /// Items skip their key interceptor when keyboard handling is delegated to a parent component.
         /// </summary>
         [Test]
