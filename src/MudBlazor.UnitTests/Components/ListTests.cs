@@ -29,6 +29,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A row renders its own element rather than delegating to a nested MudElement.
+        /// </summary>
+        [Test]
+        public void ListItems_RenderTheirElementDirectly()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso"))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
+
+            comp.FindComponents<MudElement>().Should().BeEmpty();
+            comp.FindAll("div.mud-list-item").Count.Should().Be(2);
+        }
+
+        /// <summary>
+        /// A row with an Href still renders an anchor carrying its link attributes.
+        /// </summary>
+        [Test]
+        public void ListItemWithHref_RendersAnchorDirectly()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Docs")
+                    .Add(x => x.Href, "/docs")
+                    .Add(x => x.Target, "_blank")));
+
+            var anchor = comp.Find("a.mud-list-item");
+            anchor.GetAttribute("href").Should().Be("/docs");
+            anchor.GetAttribute("target").Should().Be("_blank");
+            comp.FindComponents<MudElement>().Should().BeEmpty();
+        }
+
+        /// <summary>
         /// Items skip their key interceptor when keyboard handling is delegated to a parent component.
         /// </summary>
         [Test]
