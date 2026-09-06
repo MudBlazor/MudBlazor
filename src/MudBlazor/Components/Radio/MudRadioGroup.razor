@@ -8,12 +8,20 @@
 
 <MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorId="@ErrorIdState.Value" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
-        <CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="false">
+        @* The group instance never changes, so cascade it fixed and push the values a radio renders on their own.
+           A non-fixed instance notifies every radio on every group render, costing each one a render it does not need. *@
+        <CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="true">
             <CascadingValue TValue="bool" Name="ParentDisabled" Value="@GetDisabledState()">
                 <CascadingValue TValue="bool" Name="ParentReadOnly" Value="@GetReadOnlyState()">
-                    <div role="radiogroup" aria-required="@Required.ToString().ToLowerInvariant()" aria-invalid="@(HasErrors ? "true" : null)" aria-describedby="@(HasErrors ? ErrorIdState.Value : null)" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle">
-                        @ChildContent
-                    </div>
+                    <CascadingValue TValue="string" Name="RadioGroupName" Value="@Name">
+                        <CascadingValue TValue="bool" Name="RadioGroupHasErrors" Value="@HasErrors">
+                            <CascadingValue TValue="string" Name="RadioGroupErrorId" Value="@GetErrorId()">
+                                <div role="radiogroup" aria-required="@Required.ToString().ToLowerInvariant()" aria-invalid="@(HasErrors ? "true" : null)" aria-describedby="@(HasErrors ? ErrorIdState.Value : null)" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle">
+                                    @ChildContent
+                                </div>
+                            </CascadingValue>
+                        </CascadingValue>
+                    </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
         </CascadingValue>
