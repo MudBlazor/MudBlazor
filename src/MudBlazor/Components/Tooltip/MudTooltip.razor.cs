@@ -2,7 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -12,15 +14,23 @@ namespace MudBlazor
     /// <summary>
     /// Displays additional context when users hover over or focus on an element.
     /// </summary>
-    public partial class MudTooltip : MudComponentBase
+    public partial class MudTooltip : MudComponentBase, IAsyncDisposable
     {
         private int _parentUpdateCount;
         private readonly ParameterState<bool> _visibleState;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
+        private ElementReference _rootRef;
+        private readonly Lazy<DotNetObjectReference<MudTooltip>> _dotNetReferenceLazy;
 
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
+
+        [DynamicDependency(nameof(OnHoverChangedAsync))]
         public MudTooltip()
         {
+            _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudTooltip>>(() => DotNetObjectReference.Create(this));
+
             using var registerScope = CreateRegisterScope();
             _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
                 .WithParameter(() => Visible)
@@ -236,9 +246,56 @@ namespace MudBlazor
             ConvertPlacement();
         }
 
-        internal Task HandlePointerEnterAsync() => ShowOnHover ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
+        /// <inheritdoc />
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                // The wrapper is display:contents (issue #1167) and has no box, so pointerenter/leave
+                // never fire on it. Bridge hover through the bubbling pointerover/pointerout events.
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.addTooltipHover", _rootRef, _dotNetReferenceLazy.Value);
+            }
 
-        internal Task HandlePointerLeaveAsync() => ShowOnHover ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+        /// <inheritdoc />
+        public async ValueTask DisposeAsync()
+        {
+            if (IsJSRuntimeAvailable)
+            {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeTooltipHover", _rootRef);
+            }
+
+            if (_dotNetReferenceLazy.IsValueCreated)
+            {
+                _dotNetReferenceLazy.Value.Dispose();
+            }
+
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Invoked from JavaScript (via the hover bridge installed by <c>mudElementRef.addTooltipHover</c>)
+        /// when the pointer enters or leaves the tooltip's content. The bridge is used because the
+        /// <c>display:contents</c> wrapper generates no box, so the native pointerenter/leave events
+        /// never fire on it; the bridge listens to the bubbling pointerover/pointerout events and ignores
+        /// moves that stay within the wrapper subtree.
+        /// </summary>
+        /// <param name="hovered">Whether the pointer is now within the tooltip's content.</param>
+        [JSInvokable]
+        public async Task OnHoverChangedAsync(bool hovered)
+        {
+            if (!ShowOnHover)
+            {
+                return;
+            }
+
+            await _visibleState.SetValueAsync(hovered);
+            // Unlike the UI event handlers (focus/click), a JS interop callback does not trigger an
+            // automatic re-render, so request one explicitly to open/close the popover.
+            await InvokeAsync(StateHasChanged);
+        }
 
         private Task HandleFocusInAsync()
         {

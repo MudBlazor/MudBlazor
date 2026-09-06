@@ -1,12 +1,18 @@
 
 .mud-tooltip-root {
+  // The default (inline) tooltip wrapper is layout-transparent so the wrapped content
+  // participates directly in the parent's flex/grid/inline layout (issue #1167). The popover
+  // is anchored to the wrapped content's box in mudPopover.js, not to this box-less wrapper.
+  // Inline="false" keeps a real block box as an escape hatch for styling the wrapper.
   &.mud-tooltip-inline {
-    display: inline-block;
+    display: contents;
   }
 
-  &.mud-tooltip-inline:has(> .mud-width-full) {
-    display: block;
-    width: 100%;
+  // The popover's in-place node is only an anchor marker (the content is portalled to the
+  // provider). With display:contents it would otherwise be promoted into the parent layout
+  // and consume a flex `gap` slot, so keep it out of flow.
+  > .mud-popover-cascading-value {
+    display: none;
   }
 }
 
