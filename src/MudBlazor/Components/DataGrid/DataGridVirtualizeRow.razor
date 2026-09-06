@@ -106,8 +106,11 @@
             ? CreateContextMenuCallback(itemBag)
             : default;
 
+    // ContextRowClick ends at a grid-owned callback whose receiver already schedules the grid's render, so this row must not add its own.
     private EventCallback<MouseEventArgs> CreateContextMenuCallback(IndexBag<T> itemBag)
-        => EventCallback.Factory.Create<MouseEventArgs>(this, args => ContextRowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)));
+        => EventCallback.Factory.Create<MouseEventArgs>(
+            this,
+            this.AsNonRenderingEventHandler<MouseEventArgs>(args => ContextRowClick.InvokeAsync((args, itemBag.Item, itemBag.Index))));
 
     private Dictionary<string, object?>? GetRowAttributes(T item)
     {
