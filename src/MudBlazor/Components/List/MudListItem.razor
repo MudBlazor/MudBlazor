@@ -1,8 +1,48 @@
 ﻿@namespace MudBlazor
+@using Microsoft.AspNetCore.Components.Rendering
 @inherits MudComponentBase
 @typeparam T
 
-@Root
+@* The tag is chosen at runtime, so each shape is spelled out and the content is shared.
+   Attribute order matches what MudElement emitted: the item's own attributes, then the user splat so a consumer can override them, then class and style so those always win. *@
+@if (HtmlTag == "a")
+{
+    <a id="@ElementId"
+       tabindex="@GetTabIndex()"
+       role="@GetRole()"
+       aria-selected="@GetAriaSelected()"
+       aria-expanded="@GetAriaExpanded()"
+       @attributes="UserAttributes"
+       @onclick="OnClickHandlerAsync"
+       @onfocus="OnFocusAsync"
+       @onkeydown="HandleKeyDownAsync"
+       href="@Href"
+       target="@Target"
+       class="@Classname"
+       style="@Style"
+       @onclick:stopPropagation="@(!GetClickPropagation())"
+       @onclick:preventDefault="@GetPreventDefault()"
+       @ref="_elementReference">@{ RenderContent(__builder); }</a>
+}
+else
+{
+    <div id="@ElementId"
+         tabindex="@GetTabIndex()"
+         role="@GetRole()"
+         aria-selected="@GetAriaSelected()"
+         aria-expanded="@GetAriaExpanded()"
+         @attributes="UserAttributes"
+         @onclick="OnClickHandlerAsync"
+         @onfocus="OnFocusAsync"
+         @onkeydown="HandleKeyDownAsync"
+         href="@Href"
+         target="@Target"
+         class="@Classname"
+         style="@Style"
+         @onclick:stopPropagation="@(!GetClickPropagation())"
+         @onclick:preventDefault="@GetPreventDefault()"
+         @ref="_elementReference">@{ RenderContent(__builder); }</div>
+}
 
 @if (NestedList != null)
 {
@@ -23,11 +63,8 @@
 }
 
 @code {
-    /// <summary>
-    /// The row content, kept as markup because only the element around it needs the runtime tag.
-    /// </summary>
-    private RenderFragment Body =>
-    @<text>
+    private void RenderContent(RenderTreeBuilder __builder)
+    {
         @if (AvatarContent is not null)
         {
             <div class="mud-list-item-avatar">
@@ -90,5 +127,5 @@
                      Size="@IconSize"
                      Color="@ExpandIconColor" />
         }
-    </text>;
+    }
 }
