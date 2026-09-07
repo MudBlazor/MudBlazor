@@ -1,14 +1,24 @@
 ﻿
 <div @ref="@SectionReference" id="@GetSectionId()" class="@Classname">
+	@*
+		Typo sets the visual scale; HtmlTag sets the element. They were the same
+		value before, which left every page starting at h4 with all nesting
+		levels below the first collapsed into h6.
+	*@
 	@if (!String.IsNullOrWhiteSpace(Title) && HideTitle == false)
 	{
-		<MudText Typo="@GetTitleTypo()">
+		<MudText Typo="@GetTitleTypo()" HtmlTag="@GetTitleTag()">
 			<b>@Title</b>
+			@if (SectionInfo != null)
+			{
+				<a class="docs-section-anchor-link" href="@($"#{SectionInfo.Id}")" aria-label="@($"Link to the {Title} section")">#</a>
+			}
 		</MudText>
 	}
 	@if (SubTitle != null)
 	{
-		<MudText Typo="Typo.h6">@SubTitle</MudText>
+		@* A subtitle is not a heading; it should not appear in the outline. *@
+		<MudText Typo="Typo.h6" HtmlTag="p">@SubTitle</MudText>
 	}
 	@if (Description != null)
 	{
