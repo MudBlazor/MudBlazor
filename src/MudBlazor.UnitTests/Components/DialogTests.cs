@@ -1937,18 +1937,24 @@ namespace MudBlazor.UnitTests.Components
 
             dialogReference.Should().NotBeNull();
 
-            var titleText = comp.Find(".dynamic-title");
-            titleText.Should().NotBeNull();
-            var titleBtn = comp.Find(".title-btn");
-            titleBtn.Should().NotBeNull();
-            var contentBtn = comp.Find(".content-btn");
-            contentBtn.Should().NotBeNull();
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".dynamic-title").Should().NotBeNull();
+                comp.Find(".dynamic-title").TrimmedText().Should().Be("");
+            });
 
-            titleText!.TrimmedText().Should().Be("");
-            await titleBtn!.ClickAsync();
-            titleText!.TrimmedText().Should().Be("1");
-            await contentBtn!.ClickAsync();
-            titleText!.TrimmedText().Should().Be("11");
+            await comp.Find(".title-btn").ClickAsync(); // test for update initiated from dialog title
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".dynamic-title").TrimmedText().Should().Be("1");
+            });
+
+            await comp.Find(".content-btn").ClickAsync(); // test for update initiated from dialog content
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".dynamic-title").TrimmedText().Should().Be("11");
+            });
+            
         }
     }
     internal class CustomDialogService : DialogService
