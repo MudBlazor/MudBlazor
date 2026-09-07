@@ -3765,5 +3765,18 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr.mud-table-loading-row > th").Should().BeEmpty();
         }
 
+
+        /// <summary>
+        /// The checkbox cell of a selectable row is plain markup rather than a MudElement.
+        /// </summary>
+        [Test]
+        public void MultiSelection_RendersCheckboxCellDirectly()
+        {
+            var comp = Context.Render<TableMultiSelectionTest1>();
+
+            comp.FindComponents<MudElement>().Should().BeEmpty();
+            comp.FindAll("tbody tr td.mud-table-cell .mud-table-cell-checkbox").Count.Should().Be(3);
+        }
+
     }
 }
