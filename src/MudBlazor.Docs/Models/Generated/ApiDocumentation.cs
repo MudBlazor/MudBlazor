@@ -95,6 +95,15 @@ public static partial class ApiDocumentation
         {
             return null;
         }
+        // An exact key match needs only the type that declares the member, so every kind is tried by key first.
+        // Going through GetProperty first instead would build every type as soon as the name turned out to be a method, which is what most cross-references are.
+        var match = ApiDocumentationMembers.Member(name);
+        if (match != null)
+        {
+            return match;
+        }
+
+        // No key matched, so fall back to the searches by name, which need every type built.
         DocumentedMember result = GetProperty(name);
         result ??= GetField(name);
         result ??= GetEvent(name);

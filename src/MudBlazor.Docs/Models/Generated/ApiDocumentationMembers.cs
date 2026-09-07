@@ -40,6 +40,10 @@ public static partial class ApiDocumentationMembers
 
     private static readonly HashSet<string> LoadedTypes = [];
 
+    private static readonly HashSet<string> LoadingTypes = [];
+
+    private static readonly Dictionary<string, Exception> FailedTypes = [];
+
     /// <summary>
     /// Guards building, and the reads that trigger it.
     /// </summary>
@@ -51,6 +55,19 @@ public static partial class ApiDocumentationMembers
     private static readonly Lock Gate = new();
 
     private static bool _allLoaded;
+
+    private static bool _allLoading;
+
+    private static Exception? _allFailure;
+
+    /// <summary>
+    /// How many times something has asked for every type to be built.
+    /// </summary>
+    /// <remarks>
+    /// A member lookup by key must never move this, which is what the tests assert.
+    /// Checking the count rather than what happens to be loaded keeps those tests independent of the order the suite runs in.
+    /// </remarks>
+    internal static int GlobalLoadRequests { get; private set; }
 
     /// <summary>
     /// Builds the members of a type, and of the types it inherits from.
@@ -65,13 +82,38 @@ public static partial class ApiDocumentationMembers
 
         lock (Gate)
         {
-            // Marked before loading, so a type reached again while it is loading is not built twice.
-            if (!LoadedTypes.Add(typeKey))
+            if (LoadedTypes.Contains(typeKey))
             {
                 return;
             }
 
-            LoadType(typeKey);
+            if (FailedTypes.TryGetValue(typeKey, out var earlier))
+            {
+                throw LoadFailure(typeKey, earlier);
+            }
+
+            // A type reached again while it is still loading is already being built further up this call stack, which is how a type builds the types it inherits from.
+            if (!LoadingTypes.Add(typeKey))
+            {
+                return;
+            }
+
+            try
+            {
+                LoadType(typeKey);
+                // Recorded only now, so a loader that threw leaves a partial build looking unfinished rather than complete.
+                LoadedTypes.Add(typeKey);
+            }
+            catch (Exception exception)
+            {
+                FailedTypes[typeKey] = exception;
+
+                throw LoadFailure(typeKey, exception);
+            }
+            finally
+            {
+                LoadingTypes.Remove(typeKey);
+            }
         }
     }
 
@@ -85,18 +127,58 @@ public static partial class ApiDocumentationMembers
     {
         lock (Gate)
         {
-            if (_allLoaded)
+            GlobalLoadRequests++;
+
+            if (_allLoaded || _allLoading)
             {
                 return;
             }
 
-            _allLoaded = true;
-
-            foreach (var typeKey in ApiDocumentation.Types.Keys)
+            if (_allFailure is not null)
             {
-                EnsureType(typeKey);
+                throw LoadFailure(_allFailure);
+            }
+
+            _allLoading = true;
+
+            try
+            {
+                foreach (var typeKey in ApiDocumentation.Types.Keys)
+                {
+                    EnsureType(typeKey);
+                }
+
+                _allLoaded = true;
+            }
+            catch (Exception exception)
+            {
+                _allFailure = exception;
+
+                throw LoadFailure(exception);
+            }
+            finally
+            {
+                _allLoading = false;
             }
         }
+    }
+
+    /// <summary>
+    /// Describes a build that failed.
+    /// </summary>
+    /// <remarks>
+    /// A loader assigns members into the shared dictionaries and adds them to its type's collections, and those additions cannot be repeated, so a failed build cannot be retried.
+    /// Every later read of the same documentation gets this instead of the partial data the failure left behind.
+    /// </remarks>
+    private static InvalidOperationException LoadFailure(string typeKey, Exception cause)
+    {
+        return new InvalidOperationException($"The documentation for '{typeKey}' could not be built.", cause);
+    }
+
+    /// <inheritdoc cref="LoadFailure(string, Exception)"/>
+    private static InvalidOperationException LoadFailure(Exception cause)
+    {
+        return new InvalidOperationException("The documentation for every type could not be built.", cause);
     }
 
     /// <summary>
@@ -116,33 +198,65 @@ public static partial class ApiDocumentationMembers
     /// </summary>
     internal static DocumentedProperty? Property(string key)
     {
-        EnsureType(DeclaringTypeKey(key));
+        lock (Gate)
+        {
+            EnsureType(DeclaringTypeKey(key));
 
-        return PropertiesInternal.GetValueOrDefault(key);
+            return PropertiesInternal.GetValueOrDefault(key);
+        }
     }
 
     /// <inheritdoc cref="Property"/>
     internal static DocumentedMethod? Method(string key)
     {
-        EnsureType(DeclaringTypeKey(key));
+        lock (Gate)
+        {
+            EnsureType(DeclaringTypeKey(key));
 
-        return MethodsInternal.GetValueOrDefault(key);
+            return MethodsInternal.GetValueOrDefault(key);
+        }
     }
 
     /// <inheritdoc cref="Property"/>
     internal static DocumentedField? Field(string key)
     {
-        EnsureType(DeclaringTypeKey(key));
+        lock (Gate)
+        {
+            EnsureType(DeclaringTypeKey(key));
 
-        return FieldsInternal.GetValueOrDefault(key);
+            return FieldsInternal.GetValueOrDefault(key);
+        }
     }
 
     /// <inheritdoc cref="Property"/>
     internal static DocumentedEvent? Event(string key)
     {
-        EnsureType(DeclaringTypeKey(key));
+        lock (Gate)
+        {
+            EnsureType(DeclaringTypeKey(key));
 
-        return EventsInternal.GetValueOrDefault(key);
+            return EventsInternal.GetValueOrDefault(key);
+        }
+    }
+
+    /// <summary>
+    /// Gets a member of any kind by its key, building the type that declares it if needed.
+    /// </summary>
+    /// <remarks>
+    /// A caller looking for a member without knowing its kind must come through here rather than trying each kind in turn.
+    /// The single-kind lookups above fall back to a search by name when the key misses, and that search builds every type, so a method reference would pay for the whole member tier on its way past the property lookup.
+    /// </remarks>
+    internal static DocumentedMember? Member(string key)
+    {
+        lock (Gate)
+        {
+            EnsureType(DeclaringTypeKey(key));
+
+            return (DocumentedMember?)PropertiesInternal.GetValueOrDefault(key)
+                ?? (DocumentedMember?)MethodsInternal.GetValueOrDefault(key)
+                ?? (DocumentedMember?)FieldsInternal.GetValueOrDefault(key)
+                ?? EventsInternal.GetValueOrDefault(key);
+        }
     }
 
     /// <summary>
