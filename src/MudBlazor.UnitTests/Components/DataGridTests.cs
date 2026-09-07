@@ -9310,7 +9310,7 @@ namespace MudBlazor.UnitTests.Components
         /// Sortable header cells track the sort direction in aria-sort (#9716).
         /// </summary>
         [Test]
-        public async Task DataGridSortableHeaders_ShouldExposeAriaSort()
+        public async Task DataGridSortableHeadersExposeAriaSortForActiveSort()
         {
             var comp = Context.Render<DataGridSortableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
