@@ -513,5 +513,29 @@ namespace MudBlazor.UnitTests.Components
             IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
             AlertText().InnerHtml.Should().Be("20");
         }
+
+        [Test]
+        public async Task DragEvents()
+        {
+            var comp = Context.Render<SliderWithDragHandlers>();
+            IElement input = comp.Find(".mud-slider-input");
+            await input.TouchStartAsync();
+            comp.Instance.Dragging.Should().Be(true);
+            await input.TouchEndAsync();
+            comp.Instance.Dragging.Should().Be(false);
+
+            await input.MouseDownAsync();
+            comp.Instance.Dragging.Should().Be(true);
+            await input.MouseUpAsync();
+            comp.Instance.Dragging.Should().Be(false);
+
+            comp = Context.Render<SliderWithDragHandlers>(x =>
+            {
+                x.Add(p => p.Disabled, true);
+            });
+            input = comp.Find(".mud-slider-input");
+            await input.TouchStartAsync();
+            comp.Instance.Dragging.Should().Be(null);
+        }
     }
 }
