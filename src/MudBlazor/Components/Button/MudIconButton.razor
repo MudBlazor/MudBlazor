@@ -1,27 +1,25 @@
 ﻿@namespace MudBlazor
+@using Microsoft.AspNetCore.Components.Rendering
 @inherits MudBaseButton
 
-<MudElement Ref="@_elementReference"
-            RefChanged="@_captureElementReference"
-            HtmlTag="@HtmlTag"
-            Class="@Classname" 
-            Style="@Style"
-            @attributes="UserAttributes" 
-            @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
-            type="@ButtonType.ToStringFast(true)" 
-            href="@Href" 
-            target="@Target"
-            rel="@GetRel()"
-            disabled="@GetDisabledState()"
-            ClickPropagation="@GetClickPropagation()">
-    @if (!string.IsNullOrEmpty(Icon))
+@{
+    OpenRoot(__builder, Classname);
+    RenderLabel(__builder);
+    __builder.CloseElement();
+}
+
+@code {
+    private void RenderLabel(RenderTreeBuilder __builder)
     {
-        <span class="mud-icon-button-label">
-            <MudIcon Disabled="@Disabled" Icon="@Icon" Size="@Size" />
-        </span>
+        @if (!string.IsNullOrEmpty(Icon))
+        {
+            <span class="mud-icon-button-label">
+                <MudIcon Disabled="@Disabled" Icon="@Icon" Size="@Size" />
+            </span>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Color="Color.Inherit">@ChildContent</MudText>
+        }
     }
-    else
-    {
-        <MudText Typo="Typo.body2" Color="Color.Inherit">@ChildContent</MudText>
-    }
-</MudElement>
+}
