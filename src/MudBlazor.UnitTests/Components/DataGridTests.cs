@@ -9326,7 +9326,7 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll("th[aria-sort]").Should().ContainSingle()
                 .Which.Should().BeSameAs(dataGrid.FindAll("th")[0]);
             dataGrid.Find("th[aria-sort]").GetAttribute("aria-sort").Should().Be("descending");
- 
+
             await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
             dataGrid.FindAll("th[aria-sort]").Should().BeEmpty();
         }
