@@ -1,0 +1,23 @@
+﻿<MudDialog Class="test-class" ContentClass="content-class">
+    <TitleContent>
+        <MudText Class="dynamic-title">@DynamicTitleValue</MudText>
+        <MudButton Class="title-btn" OnClick="OnClickHandler">Btn 1</MudButton>
+    </TitleContent>
+    <DialogContent>
+        <MudText>Test dialog with dynamic title content</MudText>
+        <MudButton Class="content-btn" OnClick="OnClickHandler">Btn 2</MudButton>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private string? DynamicTitleValue { get; set; } = "";
+
+    private void OnClickHandler()
+    {
+        DynamicTitleValue += "1";
+    }
+
+}

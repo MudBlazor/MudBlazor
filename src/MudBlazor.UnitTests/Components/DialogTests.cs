@@ -1921,6 +1921,35 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Verify that title content is updated when StateHasChanged invoked from non-inlined custom dialog
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task DialogTitleShouldUpdateDynamically()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogDynamicTitleUpdates>());
+
+            dialogReference.Should().NotBeNull();
+
+            var titleText = comp.Find(".dynamic-title");
+            titleText.Should().NotBeNull();
+            var titleBtn = comp.Find(".title-btn");
+            titleBtn.Should().NotBeNull();
+            var contentBtn = comp.Find(".content-btn");
+            contentBtn.Should().NotBeNull();
+
+            titleText!.TrimmedText().Should().Be("");
+            await titleBtn!.ClickAsync();
+            titleText!.TrimmedText().Should().Be("1");
+            await contentBtn!.ClickAsync();
+            titleText!.TrimmedText().Should().Be("11");
+        }
     }
     internal class CustomDialogService : DialogService
     {
