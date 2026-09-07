@@ -102,7 +102,7 @@ public class SankeyChartOptions : DefaultChartOptions
     public AggregationOption AggregationOption { get; set; }
 
     /// <summary>
-    /// Hides all nodes and their corresponding edges which have a weight of less than the specified one. 
+    /// Hides all nodes and their corresponding edges which have a weight of less than the specified one.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>0</c>.

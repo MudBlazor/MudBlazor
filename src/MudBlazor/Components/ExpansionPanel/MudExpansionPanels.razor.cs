@@ -86,7 +86,7 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// A read-only list of the panels within this component. 
+        /// A read-only list of the panels within this component.
         /// </summary>
         /// <remarks>
         /// Expansion panels are controlled by adding more <see cref="MudExpansionPanel"/> components in the Razor page.

@@ -150,7 +150,7 @@ public partial class MudTabPanel : MudComponentBase
     /// </summary>
     /// <remarks>
     /// Defaults to <c>null</c>. Should be unique across tabs.<br />
-    /// Useful for activating tabs manually via the <c>ActivatePanel</c> method of the <see cref="MudTabs"/> and 
+    /// Useful for activating tabs manually via the <c>ActivatePanel</c> method of the <see cref="MudTabs"/> and
     /// <see cref="MudDynamicTabs"/> components.
     /// </remarks>
     [Parameter]
@@ -200,7 +200,7 @@ public partial class MudTabPanel : MudComponentBase
     /// The content enclosing this tab.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>. Typically used to wrap the entire tab content in other content, such 
+    /// Defaults to <c>null</c>. Typically used to wrap the entire tab content in other content, such
     /// as a <see cref="MudTooltip"/>, which wraps the content they refer to.
     /// </remarks>
     [Parameter]

@@ -224,7 +224,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     public EventCallback<T?> SelectedValueChanged { get; set; }
 
     /// <summary>
-    /// The currently selected chips in this set. 
+    /// The currently selected chips in this set.
     /// </summary>
     /// <remarks>
     /// This event occurs when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection" />.

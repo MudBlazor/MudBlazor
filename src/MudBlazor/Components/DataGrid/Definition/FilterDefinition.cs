@@ -59,7 +59,7 @@ namespace MudBlazor
             }
 
             // We need a PropertyExpression to filter. This allows us to pass in an arbitrary PropertyExpression.
-            // Although, it would be better in that case to simple use the FilterFunction so that we do not 
+            // Although, it would be better in that case to simple use the FilterFunction so that we do not
             // have to generate and compile anything.
             var propertyExpression = Column.PropertyExpression;
 

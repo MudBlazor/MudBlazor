@@ -286,7 +286,7 @@ public partial class MudStepper : MudComponentBase
     /// Displays a ripple effect when a step is clicked.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.  Only applies when <see cref="NonLinear"/> is <c>true</c>. 
+    /// Defaults to <c>false</c>.  Only applies when <see cref="NonLinear"/> is <c>true</c>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
@@ -362,7 +362,7 @@ public partial class MudStepper : MudComponentBase
     /// The steps in this component.
     /// </summary>
     /// <remarks>
-    /// Must be a set of <see cref="MudStep"/> components.  
+    /// Must be a set of <see cref="MudStep"/> components.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
@@ -426,7 +426,7 @@ public partial class MudStepper : MudComponentBase
     }
 
     /// <summary>
-    /// This is only called during step initialization 
+    /// This is only called during step initialization
     /// </summary>
     private void ConsolidateActiveStep()
     {
@@ -448,7 +448,7 @@ public partial class MudStepper : MudComponentBase
     }
 
     /// <summary>
-    /// This is only called after initialization (first render) 
+    /// This is only called after initialization (first render)
     /// </summary>
     private Task ConsolidateActiveIndexAsync()
     {

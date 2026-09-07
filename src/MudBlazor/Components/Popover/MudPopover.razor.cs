@@ -124,7 +124,7 @@ namespace MudBlazor
         public double? Duration { get; set; }
 
         /// <summary>
-        /// The amount of time, in milliseconds, from opening the popover to beginning the transition. 
+        /// The amount of time, in milliseconds, from opening the popover to beginning the transition.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="PopoverOptions.Delay"/>.

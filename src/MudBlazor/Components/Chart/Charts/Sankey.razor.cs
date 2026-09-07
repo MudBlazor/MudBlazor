@@ -35,17 +35,17 @@ namespace MudBlazor.Charts
         private readonly Dictionary<string, string> _nodeColorCache = [];
 
         /// <summary>
-        /// The collection of nodes that represent the points within the Sankey diagram. 
-        /// Each node typically corresponds to a source or target 
+        /// The collection of nodes that represent the points within the Sankey diagram.
+        /// Each node typically corresponds to a source or target
         /// </summary>
         /// <remarks>
-        /// Nodes define the visible anchors of the Sankey flow. Each node should have a unique 
+        /// Nodes define the visible anchors of the Sankey flow. Each node should have a unique
         /// identifier to ensure correct edge linkage and layout calculation.
         /// </remarks>
         public HashSet<SankeyNode> Nodes { get; set; } = [];
 
         /// <summary>
-        /// The collection of edges that represent the flows between nodes in the Sankey diagram. 
+        /// The collection of edges that represent the flows between nodes in the Sankey diagram.
         /// Each edge defines a source node, a target node, and an associated value (or weight) that determines the flow thickness.
         /// </summary>
         public HashSet<SankeyEdge<T>> Edges { get; set; } = [];

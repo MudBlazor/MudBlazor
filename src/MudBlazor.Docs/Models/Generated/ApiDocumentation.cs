@@ -121,7 +121,7 @@ public static partial class ApiDocumentation
             return looseMatch;
         }
 
-        // Nothing found        
+        // Nothing found
         return null;
     }
 

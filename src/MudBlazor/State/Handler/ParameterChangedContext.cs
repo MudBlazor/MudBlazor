@@ -14,7 +14,7 @@ namespace MudBlazor.State;
 /// </summary>
 /// <remarks>
 /// This type is passed to shared change handlers that need to coordinate changes across multiple parameters.
-/// It provides access to both the current parameter values via <see cref="ParameterView"/> and 
+/// It provides access to both the current parameter values via <see cref="ParameterView"/> and
 /// the last values via <see cref="ParameterStateCollection"/>.
 /// </remarks>
 [DebuggerDisplay("ParameterStates.Count = {ParameterStates.Count}")]

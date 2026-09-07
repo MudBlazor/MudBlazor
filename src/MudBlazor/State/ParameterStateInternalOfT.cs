@@ -209,14 +209,14 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     /// </summary>
     /// <param name="parameters">The <see cref="ParameterView"/> containing the incoming parameter values.</param>
     /// <returns>
-    /// The equality comparer to use for comparing parameter values. Returns either the updated comparer from the 
+    /// The equality comparer to use for comparing parameter values. Returns either the updated comparer from the
     /// <paramref name="parameters"/> if available, or the current comparer stored in <see cref="_comparer"/>.
     /// </returns>
     /// <remarks>
-    /// This method handles a special edge case where both a parameter and its associated comparer parameter 
+    /// This method handles a special edge case where both a parameter and its associated comparer parameter
     /// change simultaneously in Razor syntax. Since Blazor calls <c>SetParameterProperties</c> after this method executes,
-    /// the new comparer may not yet be set in the component. This method manually extracts the updated comparer 
-    /// from the <paramref name="parameters"/> to ensure <see cref="HasParameterChanged"/> uses the correct comparer 
+    /// the new comparer may not yet be set in the component. This method manually extracts the updated comparer
+    /// from the <paramref name="parameters"/> to ensure <see cref="HasParameterChanged"/> uses the correct comparer
     /// instead of a stale one.
     /// </remarks>
     public IEqualityComparer<T> ExtractComparer(ParameterView parameters)
@@ -241,7 +241,7 @@ internal class ParameterStateInternal<T> : ParameterState<T>, IParameterComponen
     ///  Creates a <see cref="ParameterState{T}"/> object which automatically manages parameter value changes as part of MudBlazor's ParameterState framework.
     /// <para />
     ///  <b>NB!</b> Usually you don't need to call this directly. Instead, use the RegisterParameter method (<see cref="MudComponentBase"/>) from within the
-    ///  component's constructor.  
+    ///  component's constructor.
     ///  </summary>
     ///  <param name="metadata">The parameter's metadata.</param>
     ///  <param name="getParameterValueFunc">A function that allows <see cref="ParameterState{T}"/> to read the property value.</param>

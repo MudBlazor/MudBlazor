@@ -35,7 +35,7 @@ public class ParameterStateUsageTests : BunitTest
 
         // note: the handler for abc and the one for xyz are each called once per click
         // the handlers for o and p are lambdas which are excluded from this optimization, so they
-        // are each called per click resulting in an increment of 2 per click for op 
+        // are each called per click resulting in an increment of 2 per click for op
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("1");
         comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("1");
@@ -60,7 +60,7 @@ public class ParameterStateUsageTests : BunitTest
 
         // note: the handler for abc and the one for xyz are each called once per click
         // the handlers for o and p are lambdas which are excluded from this optimization, so they
-        // are each called per click resulting in an increment of 2 per click for op 
+        // are each called per click resulting in an increment of 2 per click for op
         comp.Find("span.abc").InnerHtml.Trimmed().Should().Be("1");
         comp.Find("span.op").InnerHtml.Trimmed().Should().Be("2");
         comp.Find("span.xyz").InnerHtml.Trimmed().Should().Be("1");
@@ -520,9 +520,9 @@ public class ParameterStateUsageTests : BunitTest
         // ParameterState change handler events for ParameterStateChildComp2
         IElement ParamChanges2() => comp.Find(".parameter-changes2");
 
-        // This is expected because the default value of Counter in the child component is 0, 
-        // but the parent overrides the initial value to 1 during initialization. 
-        // Therefore, we get the correct data. If the parent had 
+        // This is expected because the default value of Counter in the child component is 0,
+        // but the parent overrides the initial value to 1 during initialization.
+        // Therefore, we get the correct data. If the parent had
         // `Counter { get; internal set; } = 0`, no change would have occurred.
         ParamChanges1().Children.Length.Should().Be(1);
         ParamChanges1().Children[0].TextContent.Trimmed().Should().Be("Counter: 0=>1 by Parent");

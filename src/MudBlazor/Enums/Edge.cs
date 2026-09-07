@@ -29,8 +29,8 @@ public enum Edge
     /// A negative margin is applied to the start of the element.
     /// </summary>
     /// <remarks>
-    /// This reduces the space at the start (leading side) of the element. It is typically used when an adornment, 
-    /// such as an icon or label, is positioned at the beginning of the component and needs to be aligned more closely 
+    /// This reduces the space at the start (leading side) of the element. It is typically used when an adornment,
+    /// such as an icon or label, is positioned at the beginning of the component and needs to be aligned more closely
     /// with the left edge in left-to-right layouts (or the right edge in right-to-left layouts).
     /// </remarks>
     [Description("start")]
@@ -40,8 +40,8 @@ public enum Edge
     /// A negative margin is applied to the end of the element.
     /// </summary>
     /// <remarks>
-    /// This reduces the space at the end (trailing side) of the element. It is commonly used when an adornment, 
-    /// such as an icon or label, is positioned at the end of the component and requires alignment with the right 
+    /// This reduces the space at the end (trailing side) of the element. It is commonly used when an adornment,
+    /// such as an icon or label, is positioned at the end of the component and requires alignment with the right
     /// edge in left-to-right layouts (or the left edge in right-to-left layouts).
     /// </remarks>
     [Description("end")]

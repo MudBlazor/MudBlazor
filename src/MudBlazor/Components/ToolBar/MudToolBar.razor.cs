@@ -9,7 +9,7 @@ namespace MudBlazor;
 
 
 /// <summary>
-/// A set of action buttons.  
+/// A set of action buttons.
 /// </summary>
 /// <seealso cref="MudIconButton" />
 public partial class MudToolBar : MudComponentBase

@@ -81,7 +81,7 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// Forces the attachment of the collection of <seealso cref="IParameterComponentLifeCycle"/> immediately and initializes the inner dictionary.
     /// </summary>
     /// <remarks>
-    /// This method is designed for performance optimization. By calling this method, the dictionary initialization is done immediately instead of waiting for the Blazor lifecycle to access the values. 
+    /// This method is designed for performance optimization. By calling this method, the dictionary initialization is done immediately instead of waiting for the Blazor lifecycle to access the values.
     /// This helps avoid potential slowdowns in rendering speed that could occur if the dictionary were initialized during the Blazor lifecycle.
     /// </remarks>
     public void ForceParametersAttachment() => _ = _parameters.Value;

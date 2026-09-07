@@ -82,8 +82,8 @@ namespace MudBlazor
         /// Closes this picker when the value is set or cleared.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c> and <c>PickerActions</c> are defined, 
-        /// the hour and the minutes can be selected and the drop-down will close without having to 
+        /// Defaults to <c>false</c>. When <c>true</c> and <c>PickerActions</c> are defined,
+        /// the hour and the minutes can be selected and the drop-down will close without having to
         /// click any of the action buttons.
         /// </remarks>
         [Parameter]
@@ -94,7 +94,7 @@ namespace MudBlazor
         /// The step interval when selecting minutes.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>. For example: a value of <c>15</c> would allow minutes <c>0</c>, <c>15</c>, 
+        /// Defaults to <c>1</c>. For example: a value of <c>15</c> would allow minutes <c>0</c>, <c>15</c>,
         /// <c>30</c>, and <c>45</c> be selected.
         /// </remarks>
         [Parameter]

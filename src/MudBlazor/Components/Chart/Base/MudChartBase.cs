@@ -72,7 +72,7 @@ public abstract class MudChartBase<T, TOptions> : MudComponentBase, IMudChart<T>
     public RenderFragment<(SvgPath Segment, string Color)>? TooltipTemplate { get; set; }
 
     /// <summary>
-    /// Optional callback function to determine the position of the tooltip.    
+    /// Optional callback function to determine the position of the tooltip.
     /// </summary>
     /// <remarks>
     /// If not provided, the default tooltip positioning logic will be used.
@@ -153,7 +153,7 @@ public abstract class MudChartBase<T, TOptions> : MudComponentBase, IMudChart<T>
     public EventCallback<int> SelectedIndexChanged { get; set; }
 
     /// <summary>
-    /// Allows series to be hidden 
+    /// Allows series to be hidden
     /// </summary>
     /// <remarks>
     /// When <c>true</c>, checkboxes are displayed which can toggle visibility of each data set

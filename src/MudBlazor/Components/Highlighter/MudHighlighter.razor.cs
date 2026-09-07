@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Components.Highlighter; // Added for FragmentInfo
 using MudBlazor.Utilities;
-// Removed: using static MudBlazor.Components.Highlighter.Splitter; 
+// Removed: using static MudBlazor.Components.Highlighter.Splitter;
 // We will call Splitter methods statically: Splitter.GetFragments, Splitter.GetHtmlAwareFragments
 
 namespace MudBlazor;

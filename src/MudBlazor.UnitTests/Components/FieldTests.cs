@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Components
             // with end adornment no content
             fields[0].ClassList.Should().NotContain("mud-shrink");
             fieldLabels[0].TextContent.Trim().Should().Contain("What am I? (0)");
-            // with start adornment        
+            // with start adornment
             fields[1].ClassList.Should().Contain("mud-shrink");
             fieldLabels[1].TextContent.Trim().Should().Be("What am I? (1)");
             // content

@@ -37,7 +37,7 @@ public enum ObjectFit
     Contain,
 
     /// <summary>
-    /// The content is sized to fill the container. 
+    /// The content is sized to fill the container.
     /// </summary>
     /// <remarks>
     /// The object will completely fill the container. If the object's aspect ratio does not match the aspect ratio of its container, then the object will be stretched to fit.

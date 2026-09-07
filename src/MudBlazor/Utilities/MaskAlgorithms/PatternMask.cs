@@ -238,7 +238,7 @@ public class PatternMask : BaseMask
     /// The current text in the input, excluding delimiter or placeholder characters.
     /// </summary>
     /// <remarks>
-    /// When <see cref="CleanDelimiters"/> is <c>true</c>, any undefined characters will be removed.  
+    /// When <see cref="CleanDelimiters"/> is <c>true</c>, any undefined characters will be removed.
     /// For example: for a mask of <c>0000 0000 0000 0000</c>, the spaces would be removed if they were an undefined character.
     /// </remarks>
     public override string GetCleanText()

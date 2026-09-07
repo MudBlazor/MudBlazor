@@ -92,11 +92,11 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>"{first_item}-{last_item} of {all_items}"</c> (e.g. <c>0-25 of 77</c>).  You can use any of the following values:
-        /// <list type="bullet"> 
-        /// <item><description><c>{first_item}</c>: The index of the first row being displayed.</description></item> 
-        /// <item><description><c>{last_item}</c>: The index of the last row being displayed.</description></item> 
-        /// <item><description><c>{all_items}</c>: The total number of rows in all pages.</description></item> 
-        /// </list> 
+        /// <list type="bullet">
+        /// <item><description><c>{first_item}</c>: The index of the first row being displayed.</description></item>
+        /// <item><description><c>{last_item}</c>: The index of the last row being displayed.</description></item>
+        /// <item><description><c>{all_items}</c>: The total number of rows in all pages.</description></item>
+        /// </list>
         /// </remarks>
         [Parameter]
         public string InfoFormat { get; set; } = string.Empty;

@@ -15,7 +15,7 @@ namespace MudBlazor;
 /// Identifiers consist of lowercase letters and digits from the set [a-z0-9].
 /// </para>
 /// <para>
-/// Performance is prioritized over perfect uniform distribution. The implementation uses modulo operations, 
+/// Performance is prioritized over perfect uniform distribution. The implementation uses modulo operations,
 /// which introduce a slight modulo bias so that some characters may appear marginally more frequently than others.
 /// For the purposes of identifier generation, this bias is negligible.
 /// </para>

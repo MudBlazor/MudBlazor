@@ -53,7 +53,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Multiple expanded expansion panels should not enter an infinite loop 
+        /// Multiple expanded expansion panels should not enter an infinite loop
         /// when MultiExpansionPanel is false
         /// </summary>
         [Test]
@@ -315,8 +315,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Tests that buttons and other interactive content within a collapsed expansion panel 
-        /// are properly hidden from accessibility tools and keyboard navigation by being placed 
+        /// Tests that buttons and other interactive content within a collapsed expansion panel
+        /// are properly hidden from accessibility tools and keyboard navigation by being placed
         /// in a container with the visibility:hidden attribute.
         /// </summary>
         [Test]

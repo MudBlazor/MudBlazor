@@ -11,7 +11,7 @@ namespace MudBlazor.Interpolation
     {
         /// <summary>
         /// Natural Spline data interpolator
-        /// </summary>  
+        /// </summary>
         public NaturalSpline(double[] xs, double[] ys, int resolution = 10) : base(xs, ys, resolution)
         {
             a = new double[n];

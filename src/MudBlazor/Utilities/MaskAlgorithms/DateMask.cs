@@ -133,7 +133,7 @@ public partial class DateMask : PatternMask
             return;
         if (dayString.Length == 1)
         {
-            // we are at the first digit of dd, only 0..3 are allowed except if month is February. 
+            // we are at the first digit of dd, only 0..3 are allowed except if month is February.
             if (day > 3 || (day == 3 && _month == 2))
             {
                 // by inserting a 0 we make 09 out of 9

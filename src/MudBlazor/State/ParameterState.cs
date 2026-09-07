@@ -63,7 +63,7 @@ public abstract class ParameterState<T>
     /// <code>
     /// [Parameter]
     /// public int Counter { get; set; }
-    /// 
+    ///
     /// [Parameter]
     /// public EventCallback&lt;int&gt; CounterChanged { get; set; }
     /// </code>
@@ -99,7 +99,7 @@ public abstract class ParameterState<T>
     public abstract T InitialValue { get; }
 
     /// <summary>
-    /// Set the parameter's value. 
+    /// Set the parameter's value.
     /// </summary>
     /// <remarks>
     /// Note: you should never set the parameter's property directly from within the component.

@@ -45,7 +45,7 @@ namespace MudBlazor
         /// Displays "Next" and "Previous" arrows.
         /// </summary>
         /// <reamrks>
-        /// Defaults to <c>true</c>.  
+        /// Defaults to <c>true</c>.
         /// </reamrks>
         [Parameter]
         [Category(CategoryTypes.Carousel.Behavior)]
@@ -75,7 +75,7 @@ namespace MudBlazor
         /// The location of the bullets when <see cref="ShowBullets"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Position.Bottom"/>.  
+        /// Defaults to <see cref="Position.Bottom"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Carousel.Appearance)]

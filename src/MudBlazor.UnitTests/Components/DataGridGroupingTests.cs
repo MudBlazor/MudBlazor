@@ -803,8 +803,8 @@ namespace MudBlazor.UnitTests.Components
             await dataGrid.WaitForAssertionAsync(() => dataGrid.Instance._groupDefinition.Should().NotBeNull());
             dataGrid.Instance._groupDefinition!.InnerGroup.Should().NotBeNull();
             dataGrid.Instance._groupDefinition!.Grouping.Should().BeNullOrEmpty();
-            // _groupDefinition is the definition for all the groups but isn't combined into the items until display so we need to 
-            // check the final definitions from within the DataGridGroupRow            
+            // _groupDefinition is the definition for all the groups but isn't combined into the items until display so we need to
+            // check the final definitions from within the DataGridGroupRow
 
             var rows = component.FindComponents<DataGridGroupRow<DataGridGroupingMultiLevelTest.USState>>();
             rows.Count.Should().Be(15);
@@ -858,7 +858,7 @@ namespace MudBlazor.UnitTests.Components
             await overlay.ClickAsync(); // close the menu
         }
 
-        // https://github.com/MudBlazor/MudBlazor/pull/10213 
+        // https://github.com/MudBlazor/MudBlazor/pull/10213
         // Allow grouping by null valus and toggle grouping keeps initial state on other groups
         [Test]
         public async Task DataGrid_Grouping_ByNull()

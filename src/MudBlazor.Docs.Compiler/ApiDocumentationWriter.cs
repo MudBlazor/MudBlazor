@@ -610,14 +610,14 @@ public class ApiDocumentationWriter : StringWriter
     public void WriteProperties(DocumentedType type)
     {
         /* Example:
-         
-            Properties = { 
+
+            Properties = {
 				{ "Type.JavaScriptListenerId", Properties["Type.JavaScriptListenerId"], } },
 				{ "Type.BrowserWindowSize", Properties["Type.BrowserWindowSize"], } },
 				{ "Type.Breakpoint", Properties["Type.Breakpoint"],  } },
 				{ "Type.IsImmediate", Properties["Type.IsImmediate"],  } },
             },
-          
+
          */
 
         // Anything to do?
@@ -645,14 +645,14 @@ public class ApiDocumentationWriter : StringWriter
     public void WriteGlobalSettings(DocumentedType type)
     {
         /* Example:
-         
-            GlobalSettings = { 
+
+            GlobalSettings = {
 				{ "JavaScriptListenerId", new() { Type = "Guid", Summary = "Gets the ID of the JavaScript listener.",  } },
 				{ "BrowserWindowSize", new() { Type = "BrowserWindowSize", Summary = "Gets the browser window size.",  } },
 				{ "Breakpoint", new() { Type = "Breakpoint", Summary = "Gets the breakpoint associated with the browser size.",  } },
 				{ "IsImmediate", new() { Type = "Boolean",  } },
             },
-          
+
          */
 
         // Anything to do?
@@ -746,7 +746,7 @@ public class ApiDocumentationWriter : StringWriter
     {
         /* Example:
 
-           Methods = { 
+           Methods = {
                { "SetValue", new() { Type = "Guid", Summary = "Gets the ID of the JavaScript listener.",  } },
                { "BrowserWindowSize", new() { Type = "BrowserWindowSize", Summary = "Gets the browser window size.",  } },
                { "Breakpoint", new() { Type = "Breakpoint", Summary = "Gets the breakpoint associated with the browser size.",  } },

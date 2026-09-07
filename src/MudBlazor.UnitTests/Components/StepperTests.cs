@@ -330,7 +330,7 @@ namespace MudBlazor.UnitTests.Components
             });
 
             // this doesn't work on CI?
-            // check render count. first render is just setup, second render renders the active step 
+            // check render count. first render is just setup, second render renders the active step
             // await stepper.WaitForAssertionAsync(() => stepper.RenderCount.Should().Be(2));
 
             // disable step 1
@@ -394,15 +394,15 @@ namespace MudBlazor.UnitTests.Components
             });
             await stepper.WaitForAssertionAsync(() => stepper.Instance.ActiveStep?.Title.Should().Be("C"));
             activeIndex.Should().Be(2);
-            // remove active step C, stepper should fall back to B  
+            // remove active step C, stepper should fall back to B
             await stepper.InvokeAsync(async () => await stepper.Instance.RemoveStepAsync((MudStep)stepper.Instance.ActiveStep!));
             stepper.Instance.ActiveStep?.Title.Should().Be("B");
             activeIndex.Should().Be(1);
-            // remove step A, stepper should remain on B, active index should fall back to 0  
+            // remove step A, stepper should remain on B, active index should fall back to 0
             await stepper.InvokeAsync(async () => await stepper.Instance.RemoveStepAsync((MudStep)stepper.Instance.Steps[0]));
             stepper.Instance.ActiveStep?.Title.Should().Be("B");
             activeIndex.Should().Be(0);
-            // remove active step B, stepper has no more steps, active index should be -1, active step should be null  
+            // remove active step B, stepper has no more steps, active index should be -1, active step should be null
             await stepper.InvokeAsync(async () => await stepper.Instance.RemoveStepAsync((MudStep)stepper.Instance.ActiveStep!));
             stepper.Instance.ActiveStep.Should().BeNull();
             activeIndex.Should().Be(-1);

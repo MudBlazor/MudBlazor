@@ -34,8 +34,8 @@ public class ParameterChangedEventArgs<T> : EventArgs
 
     /// <summary>
     /// Gets a value indicating whether the change was originated by the child,
-    /// meaning the change was propagated from the child to the parent. 
-    /// This property is used to track whether the parent received the update 
+    /// meaning the change was propagated from the child to the parent.
+    /// This property is used to track whether the parent received the update
     /// as a result of the child triggering the change or updating its own state.
     /// </summary>
     public bool IsChildOriginatedChange { get; private set; }

@@ -86,7 +86,7 @@ namespace MudBlazor
         public double Duration { get; set; } = MudGlobal.TooltipDefaults.Duration.TotalMilliseconds;
 
         /// <summary>
-        /// The amount of time, in milliseconds, to wait from opening the popover before performing the transition. 
+        /// The amount of time, in milliseconds, to wait from opening the popover before performing the transition.
         /// </summary>
         /// <remarks>
         /// Defaults to 0ms in <see cref="MudGlobal.TooltipDefaults.Delay"/>.

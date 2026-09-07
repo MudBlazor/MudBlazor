@@ -112,7 +112,7 @@ namespace MudBlazor
         /// Causes a full page refresh when this list item is clicked and <see cref="Href"/> is set.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.  When <c>true</c>, bypasses client-side routing and forces the browser to load the 
+        /// Defaults to <c>false</c>.  When <c>true</c>, bypasses client-side routing and forces the browser to load the
         /// new page from the server, whether or not the URI would normally be handled by the client-side router.
         /// See: <see cref="NavigationManager.NavigateTo(string, bool, bool)"/>
         /// </remarks>
@@ -586,7 +586,7 @@ namespace MudBlazor
         /// <summary>
         /// returns the kind of element the list item should render to
         /// When <see cref="OnClickPreventDefault"/> is set the link should not be followed thus it is rendered as div
-        /// </summary>        
+        /// </summary>
         private string HtmlTag => string.IsNullOrEmpty(Href) || OnClickPreventDefault ? "div" : "a";
 
         private bool GetPreventDefault() => GetDisabled();

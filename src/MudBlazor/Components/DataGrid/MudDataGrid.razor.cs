@@ -361,7 +361,7 @@ namespace MudBlazor
         /// This callback is raised when the grid's sort state is updated.
         /// When <see cref="ServerData"/> or <see cref="VirtualizeServerData"/> is used,
         /// it is invoked before the data reload triggered by the new sort completes.
-        /// </remarks>        
+        /// </remarks>
         [Parameter]
         public EventCallback<Dictionary<string, SortDefinition<T>>> SortChanged { get; set; }
 

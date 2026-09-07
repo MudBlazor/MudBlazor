@@ -64,7 +64,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     public string? ClassDivider { get; set; }
 
     /// <summary>
-    /// Whether the panels should be divided horizontally instead of vertically. 
+    /// Whether the panels should be divided horizontally instead of vertically.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.

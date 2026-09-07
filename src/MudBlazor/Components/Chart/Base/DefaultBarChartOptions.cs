@@ -22,7 +22,7 @@ public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
     /// This value, between 0.1 and 1.0 is multiplied against the available space to calculate spacing.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>1</c> (100%). 
+    /// Defaults to <c>1</c> (100%).
     /// This setting is only applicable when using <see cref="Justify.FlexStart"/>, <see cref="Justify.Center"/>, or <see cref="Justify.FlexEnd"/>.
     /// </remarks>
     public virtual double SeriesSpacingRatio

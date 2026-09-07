@@ -12,8 +12,8 @@ namespace MudBlazor.Extensions;
 internal static class EnumerableExtensions
 {
     /// <summary>
-    /// Converts an <see cref="IEnumerable{T}"/> into an <see cref="IReadOnlyCollection{T}"/> 
-    /// with minimal overhead. 
+    /// Converts an <see cref="IEnumerable{T}"/> into an <see cref="IReadOnlyCollection{T}"/>
+    /// with minimal overhead.
     /// </summary>
     /// <remarks>
     /// This method attempts to avoid unnecessary allocations by using fast paths:
@@ -41,7 +41,7 @@ internal static class EnumerableExtensions
     /// </description>
     /// </item>
     /// </list>
-    /// This ensures callers always receive an <see cref="IReadOnlyCollection{T}"/> while avoiding 
+    /// This ensures callers always receive an <see cref="IReadOnlyCollection{T}"/> while avoiding
     /// unnecessary enumeration or allocation whenever possible.
     /// </remarks>
     /// <param name="source">The sequence to convert to a read-only collection.</param>

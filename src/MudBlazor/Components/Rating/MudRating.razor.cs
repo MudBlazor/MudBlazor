@@ -244,7 +244,7 @@ namespace MudBlazor
         /// </summary>
         /// <param name="keyboardEventArgs">The pressed key information.</param>
         /// <remarks>
-        /// Has no effect if <see cref="Disabled"/> or <see cref="ReadOnly"/> is <c>true</c>.  
+        /// Has no effect if <see cref="Disabled"/> or <see cref="ReadOnly"/> is <c>true</c>.
         /// The supported keyboard keys are: <c>ArrowRight</c> (increase value) and <c>ArrowLeft</c> (decrease value).
         /// </remarks>
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)

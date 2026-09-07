@@ -335,7 +335,7 @@ namespace MudBlazor
                 startValue = _selectedState.Value - (_middleCountState.Value / 2);
             }
 
-            //set middle items, e.g. if MiddleCount == 3 and Selected == 5 and Count == 11 => [..., 4, 5, 6, ...] 
+            //set middle items, e.g. if MiddleCount == 3 and Selected == 5 and Count == 11 => [..., 4, 5, 6, ...]
             for (var i = 0; i < _middleCountState.Value; i++)
             {
                 pages[_boundaryCountState.Value + 1 + i] = startValue + i;

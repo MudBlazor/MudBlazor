@@ -62,7 +62,7 @@ namespace MudBlazor
         /// How much the value changes on each move.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>.  
+        /// Defaults to <c>1</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Slider.Validation)]
@@ -216,7 +216,7 @@ namespace MudBlazor
         /// The format of the value label.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  
+        /// Defaults to <c>null</c>.
         /// Only applies when <see cref="ValueLabelContent"/> is not set.<br />
         /// See: <see href="https://learn.microsoft.com/dotnet/standard/base-types/standard-numeric-format-strings">Standard Numeric Format Strings</see>.
         /// </remarks>

@@ -15,7 +15,7 @@ public partial class SnackbarMessageRenderFragment : ComponentBase
     /// Sets the message to be rendered as a custom fragment of UI.
     /// </summary>
     /// <remarks>
-    /// This property allows you to define a custom UI using <see cref="RenderFragment"/>. 
+    /// This property allows you to define a custom UI using <see cref="RenderFragment"/>.
     /// It can be used to pass in components, markup, or other content.
     /// </remarks>
     [Parameter]

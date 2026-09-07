@@ -2614,7 +2614,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [Test]
         public async Task FormComponent_ErrorTextTwoWayBinding()

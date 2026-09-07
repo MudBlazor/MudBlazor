@@ -167,7 +167,7 @@ namespace MudBlazor.UnitTests.Components
         [CancelAfter(5000)]
         public void LineChartWithBigValues()
         {
-            // the test should run through instantly (max 5s for a slow build server). 
+            // the test should run through instantly (max 5s for a slow build server).
             // without the fix it took minutes on a fast computer
             var comp = Context.Render<LineChartWithBigValuesTest>();
         }
@@ -184,7 +184,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("NaN");
         }
 
-        ///// <summary> 
+        ///// <summary>
         ///// Checks if the element is added to the CustomGraphics RenderFragment
         ///// </summary>
         [Test]

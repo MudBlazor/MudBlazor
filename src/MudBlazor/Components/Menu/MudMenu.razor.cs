@@ -1207,7 +1207,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Handle activator keydown when activator content is added to the menu/submenus. 
+        /// Handle activator keydown when activator content is added to the menu/submenus.
         /// </summary>
         /// <param name="e"></param>
         private async Task HandleActivatorKeydown(KeyboardEventArgs e)

@@ -15,7 +15,7 @@ public class ParameterMetadataRulesTests
         // Arrange
         ParameterMetadata? metadata = null;
 
-        // Act 
+        // Act
         var addSameParameter = () => ParameterMetadataRules.Morph(metadata!);
 
         // Assert

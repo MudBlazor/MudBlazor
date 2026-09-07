@@ -12,7 +12,7 @@ namespace MudBlazor;
 public class TimeSeriesChartOptions : DefaultAxisLineChartOptions
 {
     /// <summary>
-    /// Specifies the datetime format for timestamp labels. 
+    /// Specifies the datetime format for timestamp labels.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>"HH:mm"</c>.
@@ -25,7 +25,7 @@ public class TimeSeriesChartOptions : DefaultAxisLineChartOptions
     public TimeSpan TimeLabelSpacing { get; set; } = TimeSpan.FromMinutes(5);
 
     /// <summary>
-    /// Determines whether timestamp labels should be rounded to the nearest spacing value. 
+    /// Determines whether timestamp labels should be rounded to the nearest spacing value.
     /// </summary>
     /// <remarks>
     /// Default is <c>false</c>.
@@ -42,7 +42,7 @@ public class TimeSeriesChartOptions : DefaultAxisLineChartOptions
     public bool TimeLabelSpacingRoundingPadSeries { get; set; }
 
     /// <summary>
-    /// Specifies the DateTime format for timestamp labels in DataPoint marker tooltips. 
+    /// Specifies the DateTime format for timestamp labels in DataPoint marker tooltips.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>"HH:mm"</c>.

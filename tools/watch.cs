@@ -2,7 +2,7 @@
 
 // This script extends the 'dotnet watch' functionality to also watch and rebuild
 // MudBlazor JS/CSS assets using Bun whenever relevant source files change.
-// 
+//
 // Usage examples:
 //   dotnet tools/watch.cs
 //   dotnet ../tools/watch.cs

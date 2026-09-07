@@ -32,7 +32,7 @@ public sealed partial class DocsPageHeader
     /// </summary>
     /// <remarks>
     /// Should be the name of a component, such as <c>nameof(MudAlert)</c>.  When set, the
-    /// <see cref="DocumentedType"/> property will contain all the documentation for this 
+    /// <see cref="DocumentedType"/> property will contain all the documentation for this
     /// component.
     /// </remarks>
     [Parameter]

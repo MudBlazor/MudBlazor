@@ -41,7 +41,7 @@ public partial class MudStack : MudComponentBase
     /// </remarks>
     /// <returns>
     /// A string representing the CSS flex direction based on the current breakpoint and row settings.
-    /// </returns>  
+    /// </returns>
     private string getFlexDirection()
     {
         // Sets the inital direction based on the Row Parameter and Appends the reverse if needed
@@ -53,7 +53,7 @@ public partial class MudStack : MudComponentBase
         switch (Breakpoint)
         {
             // If the Breakpoint is None or Always, return the default direction
-            case Breakpoint.None: // If breakpoint is None, return the default direction 
+            case Breakpoint.None: // If breakpoint is None, return the default direction
                 return $"flex-{defaultState}";
             case Breakpoint.Always: // If breakpoint is Always, return the reverse direction, honestly the user should just use the Row Property
                 return $"flex-{reverseState}";
@@ -94,7 +94,7 @@ public partial class MudStack : MudComponentBase
     /// Displays items horizontally.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.  
+    /// Defaults to <c>false</c>.
     /// When <c>true</c>, items will be displayed horizontally.  When <c>false</c>, items are displayed vertically.
     /// </remarks>
     [Parameter]
@@ -105,7 +105,7 @@ public partial class MudStack : MudComponentBase
     /// Reverses the order of items.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.  
+    /// Defaults to <c>false</c>.
     /// When <c>true</c>, items will be reversed.
     /// </remarks>
     [Parameter]
@@ -147,7 +147,7 @@ public partial class MudStack : MudComponentBase
     /// Defines the stretching behaviour of children along the main axis within a <see cref="MudStack"/> component.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>.  
+    /// Defaults to <c>null</c>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]

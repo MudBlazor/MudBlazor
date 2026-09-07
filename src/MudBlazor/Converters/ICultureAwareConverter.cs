@@ -14,11 +14,11 @@ namespace MudBlazor;
 /// <see cref="MudFormComponent{T, U}.Converter"/>. When a converter implementing this interface is supplied to
 /// a Mud form component, the component will automatically provide the <see cref="Culture"/> and
 /// <see cref="Format"/> delegates at runtime.
-/// 
+///
 /// If you plan to use a converter outside of Blazor components (for example in plain services or library code),
 /// prefer not to implement this interface. Instead, provide culture/format information explicitly to the converter
 /// (for example via constructor parameters or required properties)
-/// 
+///
 /// Both members are delegates so callers can supply dynamic providers (for example a component-local culture or a runtime
 /// format string). Implementations should invoke these delegates at conversion time to obtain the current <see cref="CultureInfo"/>
 /// and format string. When <see cref="Format"/> returns <c>null</c>, the implementation should use the default formatting behavior.

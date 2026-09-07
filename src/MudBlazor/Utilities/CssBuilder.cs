@@ -17,7 +17,7 @@ namespace MudBlazor.Utilities
         /// Creates a new instance of CssBuilder with the specified initial value.
         /// </summary>
         /// <remarks>
-        /// Call <see cref="Build"/> to return the completed CSS classes as a string. 
+        /// Call <see cref="Build"/> to return the completed CSS classes as a string.
         /// </remarks>
         /// <param name="value">The initial CSS class value.</param>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
@@ -27,7 +27,7 @@ namespace MudBlazor.Utilities
         /// Creates an empty instance of CssBuilder.
         /// </summary>
         /// <remarks>
-        /// Call <see cref="Build"/> to return the completed CSS classes as a string. 
+        /// Call <see cref="Build"/> to return the completed CSS classes as a string.
         /// </remarks>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public static CssBuilder Empty() => new();
@@ -36,7 +36,7 @@ namespace MudBlazor.Utilities
         /// Creates an empty instance of CssBuilder.
         /// </summary>
         /// <remarks>
-        /// Call <see cref="Build"/> to return the completed CSS classes as a string. 
+        /// Call <see cref="Build"/> to return the completed CSS classes as a string.
         /// </remarks>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder()
@@ -48,7 +48,7 @@ namespace MudBlazor.Utilities
         /// Initializes a new instance of the CssBuilder class with the specified initial value.
         /// </summary>
         /// <remarks>
-        /// Call <see cref="Build"/> to return the completed CSS classes as a string. 
+        /// Call <see cref="Build"/> to return the completed CSS classes as a string.
         /// </remarks>
         /// <param name="value">The initial CSS class value.</param>
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>

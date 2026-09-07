@@ -404,7 +404,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Check markup with property 
+        /// Check markup with property
         /// </summary>
         [Test]
         public void MudHighlighterMarkupUntilNextBoundary()
@@ -417,7 +417,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Check markup with property 
+        /// Check markup with property
         /// </summary>
         [Test]
         public async Task MudHighlighterMarkupCaseSensitive()
@@ -437,7 +437,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Check RenderFragment output using Markup property 
+        /// Check RenderFragment output using Markup property
         /// </summary>
         [Test]
         public void MudHighlighterMarkupRenderFragment()

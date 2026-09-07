@@ -14,7 +14,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A field for numeric values from users. 
+    /// A field for numeric values from users.
     /// </summary>
     /// <typeparam name="T">The type of number being collected.</typeparam>
     public partial class MudNumericField<T> : MudDebouncedInput<T>
@@ -501,7 +501,7 @@ namespace MudBlazor
         /// The amount added or subtracted when changing values.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>.  
+        /// Defaults to <c>1</c>.
         /// This affects changing values via spin buttons or the keyboard.
         /// </remarks>
         [Parameter]

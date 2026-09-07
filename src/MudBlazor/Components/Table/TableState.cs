@@ -12,7 +12,7 @@ namespace MudBlazor
         /// The requested index of the page to display.
         /// </summary>
         /// <remarks>
-        /// The index of the first page is <c>0</c>.  
+        /// The index of the first page is <c>0</c>.
         /// </remarks>
         public int Page { get; set; }
 
@@ -45,7 +45,7 @@ namespace MudBlazor
         /// The items to display in the table.
         /// </summary>
         /// <remarks>
-        /// The number of items should match the number in <see cref="TableState.PageSize"/>.  
+        /// The number of items should match the number in <see cref="TableState.PageSize"/>.
         /// </remarks>
         public IEnumerable<T>? Items { get; set; }
 

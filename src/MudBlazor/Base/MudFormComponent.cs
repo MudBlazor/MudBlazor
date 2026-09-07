@@ -85,7 +85,7 @@ namespace MudBlazor
         /// The error text displayed during validation when <see cref="Required"/> is <see langword="true" /> and no input was given.
         /// </summary>
         /// <remarks>
-        /// If left empty, a localized default message is used instead. 
+        /// If left empty, a localized default message is used instead.
         /// See <see cref="ResolvedRequiredErrorText"/> for the logic that resolves the effective text to display.
         /// </remarks>
         [Parameter]
@@ -836,7 +836,7 @@ namespace MudBlazor
                 {
                     var errorMessages = EditContext.GetValidationMessages(_fieldIdentifier).ToArray();
                     var hasError = errorMessages.Length > 0;
-                    //TODO: v9 there no async API, but just make it async void (acceptable for EventHandler) 
+                    //TODO: v9 there no async API, but just make it async void (acceptable for EventHandler)
                     await ErrorState.SetValueAsync(hasError);
                     await ErrorTextState.SetValueAsync(hasError ? errorMessages[0] : null);
                     await UpdateErrorIdStateAsync(hasError);
@@ -1051,7 +1051,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Override this method in derived components to provide a custom culture for value conversion and display.
-        /// The culture is typically used by the converter (see <see cref="IConverter{T, U}"/> with <see cref="ICultureAwareConverter"/>) 
+        /// The culture is typically used by the converter (see <see cref="IConverter{T, U}"/> with <see cref="ICultureAwareConverter"/>)
         /// to control how values are parsed from and formatted to strings, such as date, time, or numeric formats.
         /// <para>
         /// By default, this method returns the value of the <see cref="Culture"/> parameter, which is tracked by the component's state.
@@ -1067,7 +1067,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Override this method in derived components to provide a custom format string for value conversion and display.
-        /// The format string is typically used by the converter (see <see cref="IConverter{T, U}"/> with <see cref="ICultureAwareConverter"/>) 
+        /// The format string is typically used by the converter (see <see cref="IConverter{T, U}"/> with <see cref="ICultureAwareConverter"/>)
         /// to control how values are parsed from and formatted to strings, such as date, time, or numeric formats.
         /// <para>
         /// By default, this method returns <c>null</c>, which means the converter will use its default formatting behavior.

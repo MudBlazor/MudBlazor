@@ -86,7 +86,7 @@ public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquat
     /// </summary>
     /// <param name="obj">The object to compare with the current object.</param>
     /// <remarks>
-    /// If you compare two <see cref="NullableObject{T}"/> instances with different generic types and both are null, 
+    /// If you compare two <see cref="NullableObject{T}"/> instances with different generic types and both are null,
     /// the <see cref="Equals(object?)"/> method will return false because they are considered two different null values.
     /// There is a type match check.
     /// </remarks>
@@ -144,8 +144,8 @@ public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquat
     /// Gets a <see cref="NullableObject{T}"/> that represents a null value.
     /// </summary>
     /// <remarks>
-    /// If <typeparamref name="T"/> is a struct that is not wrapped in <see cref="Nullable{T}"/>, 
-    /// this property will return a <see cref="NullableObject{T}"/> with a non-null default value 
+    /// If <typeparamref name="T"/> is a struct that is not wrapped in <see cref="Nullable{T}"/>,
+    /// this property will return a <see cref="NullableObject{T}"/> with a non-null default value
     /// because structs cannot be null unless wrapped in <see cref="Nullable{T}"/>.
     /// </remarks>
     public static NullableObject<T> Null { get; } = new(default);

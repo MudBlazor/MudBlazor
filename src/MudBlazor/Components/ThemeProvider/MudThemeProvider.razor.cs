@@ -52,7 +52,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     public MudTheme? Theme { get; set; }
 
     /// <summary>
-    /// Uses the browser default scrollbar instead of the MudBlazor scrollbar. 
+    /// Uses the browser default scrollbar instead of the MudBlazor scrollbar.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>false</c>.
@@ -590,7 +590,7 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     private async Task OnObserveSystemDarkModeChangeChanged(ParameterChangedEventArgs<bool> arg)
     {
         // The _observing flag prevents attempting to stop observation when it hasn't been started.
-        // For example, ObserveSystemDarkModeChange is true by default, and if it's set to false in the initial component setup 
+        // For example, ObserveSystemDarkModeChange is true by default, and if it's set to false in the initial component setup
         // like <MudThemeProvider ObserveSystemDarkModeChange="false" />, the ChangeHandler of ParameterState will be invoked.
         // Therefore, it's not desirable to stop an observation that hasn't been started.
         if (arg.Value)

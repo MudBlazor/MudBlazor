@@ -2818,7 +2818,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<AutocompleteHandleClearButtonAsyncTest>();
 
-            //Trigger the focus of the autocomplete using the clear button. 
+            //Trigger the focus of the autocomplete using the clear button.
             await comp.Find("button.mud-input-clear-button").MouseDownAsync();
 
             await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.HandleClearButtonAsync(new()));
@@ -2834,7 +2834,7 @@ namespace MudBlazor.UnitTests.Components
 
             await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.OpenMenuAsync());
 
-            //Trigger the focus of the autocomplete using the clear button. 
+            //Trigger the focus of the autocomplete using the clear button.
             await comp.Find("button.mud-input-clear-button").MouseDownAsync();
 
             await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.HandleClearButtonAsync(new()));
@@ -2852,7 +2852,7 @@ namespace MudBlazor.UnitTests.Components
 
             await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.CloseMenuAsync());
 
-            //Trigger the focus of the autocomplete using the clear button. 
+            //Trigger the focus of the autocomplete using the clear button.
             await comp.Find("button.mud-input-clear-button").MouseDownAsync();
 
             await Context.Renderer.Dispatcher.InvokeAsync(() => comp.Instance.Autocomplete.HandleClearButtonAsync(new()));

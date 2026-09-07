@@ -17,9 +17,9 @@ namespace MudBlazor.Docs.Compiler;
 /// <remarks>
 /// <para>
 /// This class documents the MudBlazor assembly, including all public types, properties, methods, events, and fields.  Inherited
-/// members are supported, as well as "see cref" links.  Once all documentation has been loaded, several types are made available 
+/// members are supported, as well as "see cref" links.  Once all documentation has been loaded, several types are made available
 /// to the <c>MudBlazor.Docs</c> such as <see cref="DocumentedType"/>, <see cref="DocumentedMethod"/>, <see cref="DocumentedProperty"/>,
-/// <see cref="DocumentedEvent"/>, and <see cref="DocumentedField"/>, in a strongly typed manner. 
+/// <see cref="DocumentedEvent"/>, and <see cref="DocumentedField"/>, in a strongly typed manner.
 /// </para>
 /// </remarks>
 public class ApiDocumentationBuilder
@@ -139,7 +139,7 @@ public class ApiDocumentationBuilder
     /// Path to MudBlazor's reference assembly, if known (passed by the build).
     /// </summary>
     /// <remarks>
-    /// The reference assembly is byte-stable unless the public API surface changes, so it lets us skip regeneration after library edits that only touch method bodies. 
+    /// The reference assembly is byte-stable unless the public API surface changes, so it lets us skip regeneration after library edits that only touch method bodies.
     /// Falls back to the implementation assembly (which changes on every build) when not supplied.
     /// </remarks>
     public string? ReferenceAssemblyPath { get; set; }
@@ -326,7 +326,7 @@ public class ApiDocumentationBuilder
             // Add the root-level type
             Types.Add(type.FullName, documentedType);
 
-            // Record properties, methods, fields, and events            
+            // Record properties, methods, fields, and events
             AddPropertiesToDocument(type, documentedType);
             AddMethodsToDocument(type, documentedType);
             AddFieldsToDocument(type, documentedType);
@@ -335,7 +335,7 @@ public class ApiDocumentationBuilder
             // Look for binable properties
             FindBindableProperties(documentedType);
 
-            // Also add nested types            
+            // Also add nested types
             foreach (var nestedType in type.GetNestedTypes(BindingFlags.Public))
             {
                 AddTypeToDocument(nestedType);
@@ -350,7 +350,7 @@ public class ApiDocumentationBuilder
     /// <param name="documentedType">The document type.</param>
     public void AddPropertiesToDocument(Type type, DocumentedType documentedType)
     {
-        // Look for public properties 
+        // Look for public properties
         var properties = type.GetProperties().ToList();
         // Add protected methods
         properties.AddRange(type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic));
@@ -411,7 +411,7 @@ public class ApiDocumentationBuilder
                     // No.  Get the XML documentation
                     var xmlDocs = _xmlDocs.Value.GetMemberComments(property);
 
-                    // Record this property                
+                    // Record this property
                     documentedProperty = new DocumentedProperty()
                     {
                         Category = category?.Name,
@@ -440,7 +440,7 @@ public class ApiDocumentationBuilder
     /// <param name="documentedType">The document type.</param>
     public void AddFieldsToDocument(Type type, DocumentedType documentedType)
     {
-        // Look for public properties 
+        // Look for public properties
         var fields = type.GetFields().ToList();
         // Add protected methods
         fields.AddRange(type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic));
@@ -449,7 +449,7 @@ public class ApiDocumentationBuilder
             field.Name.Contains("k__BackingField")    // Remove backing fields
             || field.Name == "value__"
             || field.Name.StartsWith('_')
-            || field.IsPrivate                        // Remove private fields            
+            || field.IsPrivate                        // Remove private fields
             || field.IsAssembly                       // Remove internal fields
             || field.IsFamilyOrAssembly               // Remove overridden internal fields
             || IsExcluded(field));                    // Remove fields the team doesn't want shown
@@ -499,7 +499,7 @@ public class ApiDocumentationBuilder
     /// <param name="documentedType">The document type.</param>
     public void AddEventsToDocument(Type type, DocumentedType documentedType)
     {
-        // Look for public properties 
+        // Look for public properties
         var events = type.GetEvents().ToList();
         // Add protected methods
         events.AddRange(type.GetEvents(BindingFlags.Instance | BindingFlags.NonPublic));
@@ -704,7 +704,7 @@ public class ApiDocumentationBuilder
             || method.IsFamilyOrAssembly             // Remove overridden internal methods
             || IsExcluded(method)                    // Remove some internal methods
             || method.Name.StartsWith("add_")        // Remove event subscribers
-            || method.Name.StartsWith("remove_")     // Remove event unsubscribers 
+            || method.Name.StartsWith("remove_")     // Remove event unsubscribers
             || method.Name.StartsWith("get_")        // Remove property getters
             || method.Name.StartsWith("set_")        // Remove property setters
             || method.Name.StartsWith("Microsoft")   // Remove object methods
@@ -726,7 +726,7 @@ public class ApiDocumentationBuilder
                 // No.  Get the XML documentation
                 var xmlDocs = _xmlDocs.Value.GetMethodComments(method);
 
-                // Record this property          
+                // Record this property
                 documentedMethod = new DocumentedMethod
                 {
                     DeclaringType = method.DeclaringType,
@@ -832,7 +832,7 @@ public class ApiDocumentationBuilder
         foreach (var globalProperty in globalProperties)
         {
             /* MudGlobal properties thankfully mention the component they are for, by way of a
-             * <see cref=""> tag in the summary.  Let's use this to tie a global property with its 
+             * <see cref=""> tag in the summary.  Let's use this to tie a global property with its
              * component.  Also, let's link this global to any of the component's descendants.
              */
 
@@ -874,7 +874,7 @@ public class ApiDocumentationBuilder
                 }
                 else
                 {
-                    // A global is missing the docs necessary to link it to a type.                      
+                    // A global is missing the docs necessary to link it to a type.
                 }
             }
         }

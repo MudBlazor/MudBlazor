@@ -80,7 +80,7 @@ namespace MudBlazor
         /// The ID that will be used by aria-describedby if <see cref="ErrorText"/> is set.
         /// </summary>
         /// <remarks>
-        /// When set, the <c>aria-describedby</c> attribute is set to the ID.  
+        /// When set, the <c>aria-describedby</c> attribute is set to the ID.
         /// </remarks>
         [Parameter]
         public string? ErrorId { get; set; }

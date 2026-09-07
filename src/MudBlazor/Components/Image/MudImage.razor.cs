@@ -90,7 +90,7 @@ public partial class MudImage : MudComponentBase
     /// The size of the drop shadow for this image.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>0</c>.  
+    /// Defaults to <c>0</c>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Image.Appearance)]

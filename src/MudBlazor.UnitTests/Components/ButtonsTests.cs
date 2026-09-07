@@ -52,7 +52,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup
                 .Should()
                 .Contain("rel=\"noopener\"");
-            //it is an anchor and not contains stopPropagation 
+            //it is an anchor and not contains stopPropagation
             comp.Markup
                 .Replace(" ", string.Empty)
                 .Should()

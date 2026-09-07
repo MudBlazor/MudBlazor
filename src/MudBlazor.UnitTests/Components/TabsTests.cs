@@ -776,7 +776,7 @@ namespace MudBlazor.UnitTests.Components
             observer.UpdatePanelSize(0, 200.0); // updates tab size not panel size
 
             scrollButtons.First().Instance.Disabled.Should().BeTrue();
-            // 1/6 of the tabs is the exact center of the slider 
+            // 1/6 of the tabs is the exact center of the slider
             GetSliderValue(comp).Should().BeApproximately(1.0 / 6.0 * 100.0, 0.01);
         }
 
@@ -1750,7 +1750,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Tab selection changes on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
+        /// Tab selection changes on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable.
         /// </summary>
         [Test]
         public async Task KeyboardActivation_DisablesDisabledTab_LeftRight()
@@ -1818,7 +1818,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Tab selection wraps on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable. 
+        /// Tab selection wraps on keyboard Left and Right arrow keys, is activated by Enter/Space keys and ensures disabled tab is not selectable.
         /// </summary>
         [Test]
         public async Task KeyboardNavigation_LeftArrow_WrapsToLastEnabledTab()
@@ -1852,7 +1852,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Code coverage test showed a missing test line, this tests the return tabListId returns the correct ID. 
+        /// Code coverage test showed a missing test line, this tests the return tabListId returns the correct ID.
         /// </summary>
         [Test]
         public void TabListId_ReturnsCorrectId()

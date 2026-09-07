@@ -21,8 +21,8 @@ public partial class MudColor
         var b = InterpolateValue(colorStart.B, colorEnd.B);
         var a = InterpolateValue(colorStart.A, colorEnd.A);
         var aPercentage = NormalizeAlpha(a, 3);
-        // Using alpha as a percentage ensures more accurate alpha blending. 
-        // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549), 
+        // Using alpha as a percentage ensures more accurate alpha blending.
+        // Creating a MudColor from an alpha byte or integer can result in fractional alpha values (e.g., 0.996078431372549),
         // which makes it difficult to compare two colors accurately in real-world scenarios.
         return new MudColor(r, g, b, alpha: aPercentage);
 

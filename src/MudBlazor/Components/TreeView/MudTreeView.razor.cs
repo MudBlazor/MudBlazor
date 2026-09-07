@@ -112,7 +112,7 @@ namespace MudBlazor
         /// Uses checkboxes which support an undetermined state.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>. When set, 
+        /// Defaults to <c>true</c>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>. When set,
         /// an item's checkbox will be in the "undetermined" state if child items have a mix of checked and unchecked states.
         /// </remarks>
         [Parameter]
@@ -123,7 +123,7 @@ namespace MudBlazor
         /// Automatically checks an item if all children are selected.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>. 
+        /// Defaults to <c>true</c>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.
         /// Items will also be deselected if any children are deselected.
         /// </remarks>
         [Parameter]
@@ -307,7 +307,7 @@ namespace MudBlazor
         /// The function for asynchronously loading items.
         /// </summary>
         /// <remarks>
-        /// When set, the function will be called to load the children of a parent item. 
+        /// When set, the function will be called to load the children of a parent item.
         /// When the parent node is <c>null</c>, top-level items should be returned.
         /// </remarks>
         [Parameter]
@@ -614,7 +614,7 @@ namespace MudBlazor
 
         ///  <summary>
         ///  Sets the selected value of the tree view in Single- and ToggleSelection mode.
-        ///  If the value is found, the corresponding item is selected; 
+        ///  If the value is found, the corresponding item is selected;
         ///  otherwise, selected value is set default.
         ///  If the selected item is valid it sets the corresponding tree item to selected.
         ///  </summary>

@@ -49,7 +49,7 @@ namespace MudBlazor
         public bool RightToLeft { get; set; }
 
         /// <summary>
-        /// The color of this item. 
+        /// The color of this item.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.  Theme colors are supported.

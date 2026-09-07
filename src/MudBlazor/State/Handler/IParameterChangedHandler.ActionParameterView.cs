@@ -20,7 +20,7 @@ internal class ParameterChangedLambdaParameterViewHandler<T> : IParameterChanged
     /// </summary>
     /// <param name="lambda">
     /// An <see cref="Action"/> lambda to be executed when handling a parameter change.
-    /// The lambda receives the <see cref="ParameterChangedContext"/> containing both the <see cref="ParameterView"/> 
+    /// The lambda receives the <see cref="ParameterChangedContext"/> containing both the <see cref="ParameterView"/>
     /// snapshot and the <see cref="ParameterStateCollection"/> with last and current values.
     /// </param>
     public ParameterChangedLambdaParameterViewHandler(Action<ParameterChangedContext> lambda)

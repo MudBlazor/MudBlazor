@@ -273,7 +273,7 @@ public partial class ApiMemberTable
     /// <returns>The name of the type this member is declared in.</returns>
     /// <remarks>
     /// In some cases, a member may be declared in an external type, such as part of .NET core itself.
-    /// In these cases, we won't have a <see cref="DocumentedType"/> set, but we can still calculate the 
+    /// In these cases, we won't have a <see cref="DocumentedType"/> set, but we can still calculate the
     /// type from the type's name.
     /// </remarks>
     public static string GetDeclaringTypeName(DocumentedMember member)

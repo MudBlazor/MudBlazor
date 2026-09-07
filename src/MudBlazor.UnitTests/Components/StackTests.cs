@@ -153,7 +153,7 @@ namespace MudBlazor.UnitTests.Components
             switch (breakpoint)
             {
                 // If the Breakpoint is None or Always, return the default direction
-                case Breakpoint.None: // If breakpoint is None, return the default direction 
+                case Breakpoint.None: // If breakpoint is None, return the default direction
                     stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", $"flex-{defaultState}", "gap-3" });
                     break;
                 case Breakpoint.Always: // If breakpoint is Always, return the reverse direction, honestly the user should just use the Row Property

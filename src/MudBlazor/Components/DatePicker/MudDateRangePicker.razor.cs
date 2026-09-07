@@ -57,7 +57,7 @@ namespace MudBlazor
         /// Include disabled dates within the valid min/max days range.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>. Disabled days will be included in the min/max count. 
+        /// Defaults to <c>true</c>. Disabled days will be included in the min/max count.
         /// This parameter will take effect when <see cref="MinDays"/> or <see cref="MaxDays"/> is set.
         /// </remarks>
         [Parameter, ParameterState]

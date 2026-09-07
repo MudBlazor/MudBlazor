@@ -73,7 +73,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Use <see cref="MudTd"/> to define columns, and <c>context</c> to access item properties for each column. Typically looks similar to rows in <see cref="RowTemplate"/> but with edit components.
-        /// </remarks>        
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public RenderFragment<T>? RowEditingTemplate { get; set; }
@@ -789,9 +789,9 @@ namespace MudBlazor
         /// Gets the sorted and paginated data for the table.
         /// </summary>
         /// <remarks>
-        /// Use the provided <see cref="TableState"/> to request items for a specific page index, page size, sort column, and sort order.<br />  
+        /// Use the provided <see cref="TableState"/> to request items for a specific page index, page size, sort column, and sort order.<br />
         /// Return a <see cref="TableData{T}"/> which contains the requested page of items and the total number of items (excluding pagination).<br />
-        /// Forward the <see cref="CancellationToken"/> to methods which support it such as <c>HttpClient</c> and <c>DbContext</c> to cancel ongoing requests.<br />  
+        /// Forward the <see cref="CancellationToken"/> to methods which support it such as <c>HttpClient</c> and <c>DbContext</c> to cancel ongoing requests.<br />
         /// When this parameter is set, <see cref="Items"/> and <see cref="Filter"/> should not be set.
         /// </remarks>
         [Parameter]

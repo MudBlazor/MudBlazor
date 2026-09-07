@@ -42,7 +42,7 @@ public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartO
     /// The maximum value for the vertical axis.
     /// </summary>
     /// <remarks>
-    /// This value is used only if all data points are less than or equal to it. 
+    /// This value is used only if all data points are less than or equal to it.
     /// If any data point exceeds this value, the Y-axis maximum will automatically adjust to fit the data.
     /// If this value is <c>null</c>, the Y-axis maximum will be calculated automatically.
     /// </remarks>

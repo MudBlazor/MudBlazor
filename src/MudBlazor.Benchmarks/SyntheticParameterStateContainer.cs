@@ -14,16 +14,16 @@ namespace MudBlazor.Benchmarks;
 /// </summary>
 /// <remarks>
 /// Blazor lifecycle (https://blazor-university.com/components/component-lifecycles/):
-/// 
+///
 /// For NEW instances:
 /// 1. SetParametersAsync - receives parameters, calls base.SetParametersAsync which assigns [Parameter] properties
 /// 2. OnInitialized - called once after parameters are assigned (only for new instances)
 /// 3. OnParametersSet - called after OnInitialized
-/// 
+///
 /// For RE-RENDERS (existing instances):
-/// 1. SetParametersAsync - receives parameters, calls base.SetParametersAsync which assigns [Parameter] properties  
+/// 1. SetParametersAsync - receives parameters, calls base.SetParametersAsync which assigns [Parameter] properties
 /// 2. OnParametersSet - called immediately (OnInitialized is skipped)
-/// 
+///
 /// This container simulates both scenarios to stress-test ParameterState performance.
 /// </remarks>
 public class SyntheticParameterStateContainer

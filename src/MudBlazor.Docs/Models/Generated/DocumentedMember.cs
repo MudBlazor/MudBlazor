@@ -33,7 +33,7 @@ public abstract class DocumentedMember
     /// The name of the type which defines this member.
     /// </summary>
     /// <remarks>
-    /// When <see cref="DeclaringType"/> is not set, the name of the declaring type.  This should only be set for 
+    /// When <see cref="DeclaringType"/> is not set, the name of the declaring type.  This should only be set for
     /// external types such as <see cref="Microsoft.AspNetCore.Components.ComponentBase"/>.
     /// </remarks>
     public string? DeclaringTypeName { get; set; }

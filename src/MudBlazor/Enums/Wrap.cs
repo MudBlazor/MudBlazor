@@ -13,7 +13,7 @@ namespace MudBlazor
         /// No wrapping occurs.
         /// </summary>
         /// <remarks>
-        /// Items may overflow the container.  
+        /// Items may overflow the container.
         /// </remarks>
         [Description("nowrap")]
         NoWrap,

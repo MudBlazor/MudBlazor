@@ -17,7 +17,7 @@ namespace MudBlazor;
 public sealed class EdgePath : SvgPath
 {
     /// <summary>
-    /// The name of the edge, typically corresponding to the 
+    /// The name of the edge, typically corresponding to the
     /// label or key identifying the link between the source and target nodes.
     /// </summary>
     public required string Name { get; set; }

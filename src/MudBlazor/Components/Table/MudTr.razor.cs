@@ -333,7 +333,7 @@ namespace MudBlazor
             _hasBeenCommitted = true;
             _hasBeenCanceled = false;
 
-            // Set hasBeenClickedFirstTime to false 
+            // Set hasBeenClickedFirstTime to false
             _hasBeenClickedFirstTime = false;
         }
 
@@ -353,7 +353,7 @@ namespace MudBlazor
             _hasBeenCanceled = true;
             _hasBeenCommitted = false;
 
-            // Set hasBeenClickedFirstTime to false 
+            // Set hasBeenClickedFirstTime to false
             _hasBeenClickedFirstTime = false;
         }
 

@@ -28,14 +28,14 @@ internal sealed class ObserverManager<TIdentity, TObserver> : IEnumerable<TObser
     private readonly ConcurrentDictionary<TIdentity, Entry> _observers;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class. 
+    /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class.
     /// </summary>
     public ObserverManager(ILogger log) : this(log, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class. 
+    /// Initializes a new instance of the <see cref="ObserverManager{TIdentity,TObserver}"/> class.
     /// </summary>
     public ObserverManager(ILogger log, IEqualityComparer<TIdentity>? comparer)
     {
@@ -236,7 +236,7 @@ internal sealed class ObserverManager<TIdentity, TObserver> : IEnumerable<TObser
     /// </returns>
     /// <remarks>
     /// If the observer fails during the notification, it is considered defunct and removed from the collection.
-    /// This method performs an O(1) lookup by <paramref name="id"/>, making it more efficient than 
+    /// This method performs an O(1) lookup by <paramref name="id"/>, making it more efficient than
     /// using <see cref="NotifyAsync(Func{TObserver, Task}, Func{TIdentity, TObserver, bool}?)"/> with a predicate.
     /// </remarks>
     public async Task NotifyAsync(TIdentity id, Func<TObserver, Task> notification)

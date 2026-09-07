@@ -176,7 +176,7 @@ namespace MudBlazor
         /// Represents a basic count aggregate calculation with custom format.
         /// </summary>
         /// <param name="numberFormat">A numeric format string.</param>
-        /// <param name="culture">An object that supplies culture-specific formatting information.</param>/// 
+        /// <param name="culture">An object that supplies culture-specific formatting information.</param>///
         /// <returns>
         /// An aggregate definition with a <see cref="Type"/> of <see cref="AggregateType.Count"/> and a <see cref="DisplayFormat"/> of <c>Total {value}</c>.
         /// </returns>
@@ -211,7 +211,7 @@ namespace MudBlazor
         /// </summary>
         /// <returns>
         /// <param name="numberFormat">A numeric format string.</param>
-        /// <param name="culture">An object that supplies culture-specific formatting information.</param>/// /// 
+        /// <param name="culture">An object that supplies culture-specific formatting information.</param>/// ///
         /// An aggregate definition with a <see cref="Type"/> of <see cref="AggregateType.Max"/> and a <see cref="DisplayFormat"/> of <c>Max {value}</c>.
         /// </returns>
         public static AggregateDefinition<T> SimpleMax(string? numberFormat, CultureInfo? culture = null)
@@ -245,7 +245,7 @@ namespace MudBlazor
         /// </summary>
         /// <returns>
         /// <param name="numberFormat">A numeric format string.</param>
-        /// <param name="culture">An object that supplies culture-specific formatting information.</param>/// /// 
+        /// <param name="culture">An object that supplies culture-specific formatting information.</param>/// ///
         /// An aggregate definition with a <see cref="Type"/> of <see cref="AggregateType.Min"/> and a <see cref="DisplayFormat"/> of <c>Min {value}</c>.
         /// </returns>
         public static AggregateDefinition<T> SimpleMin(string? numberFormat, CultureInfo? culture = null)
@@ -279,7 +279,7 @@ namespace MudBlazor
         /// </summary>
         /// <returns>
         /// <param name="numberFormat">A numeric format string.</param>
-        /// <param name="culture">An object that supplies culture-specific formatting information.</param>/// /// /// 
+        /// <param name="culture">An object that supplies culture-specific formatting information.</param>/// /// ///
         /// An aggregate definition with a <see cref="Type"/> of <see cref="AggregateType.Sum"/> and a <see cref="DisplayFormat"/> of <c>Sum {value}</c>.
         /// </returns>
         public static AggregateDefinition<T> SimpleSum(string? numberFormat, CultureInfo? culture = null)
