@@ -20,9 +20,6 @@ public class FileBasedCrawlerIdentifier : ICrawlerIdentifier
     private readonly string _filename;
     private readonly LimitedConcurrentDictionary<string, bool> _cache = new(1_000);
 
-    // Most of CrawlerInfo.json is plain substrings such as "bingbot", which a regex matches the same
-    // way string.Contains does. Keeping those out of the regex engine is what makes the difference:
-    // a regex costs far more to hold than the string it looks for.
     private string[] _literals = [];
     private Regex[] _patterns = [];
 
@@ -43,7 +40,7 @@ public class FileBasedCrawlerIdentifier : ICrawlerIdentifier
     }
 
     /// <summary>
-    /// Gets whether a pattern contains no regular expression syntax, so a substring search answers it.
+    /// Pattern contains no regular expression syntax, so a substring search answers it.
     /// </summary>
     private static bool IsLiteral(string pattern) => Regex.Escape(pattern) == pattern;
 
@@ -69,7 +66,6 @@ public class FileBasedCrawlerIdentifier : ICrawlerIdentifier
 
     private bool IsCrawler(string userAgent)
     {
-        // Ordinal, to match what a regex without options does.
         foreach (var literal in _literals)
         {
             if (userAgent.Contains(literal, StringComparison.Ordinal))
