@@ -9307,29 +9307,44 @@ namespace MudBlazor.UnitTests.Components
         #endregion
 
         /// <summary>
-        /// Sortable header cells track the sort direction in aria-sort (#9716).
+        /// Only the active sorted header exposes its sort direction in aria-sort (#9716).
         /// </summary>
         [Test]
-        public async Task DataGridSortableHeaders_ShouldExposeAriaSort()
+        public async Task DataGridSortableHeadersExposeAriaSortForActiveSort()
         {
             var comp = Context.Render<DataGridSortableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
 
-            dataGrid.FindAll("th").Should().OnlyContain(header => header.GetAttribute("aria-sort") == "none");
+            dataGrid.FindAll("th").Should().OnlyContain(header => !header.HasAttribute("aria-sort"));
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
             dataGrid.FindAll("th")[0].GetAttribute("aria-sort").Should().Be("ascending");
-            dataGrid.FindAll("th")[1].GetAttribute("aria-sort").Should().Be("none");
+            dataGrid.FindAll("th").Skip(1).Should().OnlyContain(header => !header.HasAttribute("aria-sort"));
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name));
             dataGrid.FindAll("th")[0].GetAttribute("aria-sort").Should().Be("descending");
         }
 
         /// <summary>
+        /// Header cells omit aria-sort after their active sort is removed.
+        /// </summary>
+        [Test]
+        public async Task DataGridSortableHeadersOmitAriaSortWhenUnsorted()
+        {
+            var comp = Context.Render<DataGridSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
+
+            dataGrid.FindAll("th").Should().OnlyContain(header => !header.HasAttribute("aria-sort"));
+        }
+
+        /// <summary>
         /// Header cells omit aria-sort when sorting is disabled.
         /// </summary>
         [Test]
-        public async Task DataGridUnsortableHeaders_ShouldNotExposeAriaSort()
+        public async Task DataGridUnsortableHeadersOmitAriaSort()
         {
             var comp = Context.Render<DataGridSortableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();

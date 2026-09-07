@@ -158,7 +158,7 @@ namespace MudBlazor
             {
                 SortDirection.Ascending => "ascending",
                 SortDirection.Descending => "descending",
-                _ => "none"
+                _ => null
             };
         }
 
