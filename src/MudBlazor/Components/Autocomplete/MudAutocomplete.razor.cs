@@ -1077,7 +1077,12 @@ namespace MudBlazor
         /// </remarks>
         private Dictionary<string, object?> GetInputAttributes()
         {
-            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+            foreach (var userAttribute in UserAttributes)
+            {
+                attributes[userAttribute.Key] = userAttribute.Value;
+            }
+
             var listRendered = _open && _items is { Length: > 0 };
             attributes.TryAdd("role", "combobox");
             attributes.TryAdd("aria-autocomplete", "list");
