@@ -3128,7 +3128,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Autocomplete_CaseCollidingUserAttributes_DoNotThrow()
         {
-            var userAttributes = new Dictionary<string, object?>
+            var userAttributes = new Dictionary<string, object>
             {
                 ["ARIA-AUTOCOMPLETE"] = "both",
                 ["aria-autocomplete"] = "list"
