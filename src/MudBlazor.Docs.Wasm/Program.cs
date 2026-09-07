@@ -33,8 +33,8 @@ if (notificationService is InMemoryNotificationService inMemoryService)
 {
     inMemoryService.Preload();
 }
-// Warm up the type documentation, which is what most of the site reads. Member documentation is built
-// a type at a time by whichever page asks for it, so there is nothing to warm up here.
+// Warm up the type documentation, which is what most of the site reads.
+// Member documentation is built a type at a time by whichever page asks for it, so there is nothing to warm up here.
 ApiDocumentation.GetType("MudAlert");
 
 await build.RunAsync();

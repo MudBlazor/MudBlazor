@@ -77,9 +77,8 @@ public sealed class DocumentedType
     /// </summary>
     public List<DocumentedType> Children => ApiDocumentation.Types.Values.Where(type => type.BaseTypeName == Name).ToList();
 
-    // The member collections are filled by this type's loader in ApiDocumentationMembers, which runs
-    // the first time something reads them. The generator fills them through the internal views, which
-    // do not trigger it.
+    // The member collections are filled by this type's loader in ApiDocumentationMembers, which runs the first time something reads them.
+    // The generator fills them through the internal views, which do not trigger it.
 
     private readonly Dictionary<string, DocumentedProperty> _properties = [];
     private readonly Dictionary<string, DocumentedMethod> _methods = [];

@@ -11,14 +11,12 @@ namespace MudBlazor.Docs.Models;
 /// </summary>
 /// <remarks>
 /// <para>
-/// Member documentation is about ten times the size of the type documentation, and an API page shows
-/// one type's members - 37 rows for <c>MudButton</c>, 154 for <c>MudDataGrid</c>. So it is built one
-/// type at a time, the first time something asks for that type's members. The pages that make up most
-/// of the site never ask at all.
+/// Member documentation is about ten times the size of the type documentation, and an API page shows one type's members - 37 rows for <c>MudButton</c>, 154 for <c>MudDataGrid</c>.
+/// So it is built one type at a time, the first time something asks for that type's members.
+/// The pages that make up most of the site never ask at all.
 /// </para>
 /// <para>
-/// A member's key begins with the key of the type that declares it, so the owning type can be derived
-/// from the member name and no separate index is needed.
+/// A member's key begins with the key of the type that declares it, so the owning type can be derived from the member name and no separate index is needed.
 /// </para>
 /// </remarks>
 public static partial class ApiDocumentationMembers
@@ -27,8 +25,7 @@ public static partial class ApiDocumentationMembers
     /// Every member built so far, by key.
     /// </summary>
     /// <remarks>
-    /// A member is created by the loader of the type that declares it, so a type which inherits members
-    /// shares the instances declared by its base types.
+    /// A member is created by the loader of the type that declares it, so a type which inherits members shares the instances declared by its base types.
     /// </remarks>
     internal static Dictionary<string, DocumentedProperty> PropertiesInternal { get; } = [];
 
@@ -47,10 +44,9 @@ public static partial class ApiDocumentationMembers
     /// Guards building, and the reads that trigger it.
     /// </summary>
     /// <remarks>
-    /// The WASM client is single threaded, but the prerender host renders crawler requests
-    /// concurrently.  Every read of a member collection comes through here, so a reader cannot see a
-    /// type that another thread is still building.  The lock is reentrant, which is what lets a type
-    /// build the types it inherits from.
+    /// The WASM client is single threaded, but the prerender host renders crawler requests concurrently.
+    /// Every read of a member collection comes through here, so a reader cannot see a type that another thread is still building.
+    /// The lock is reentrant, which is what lets a type build the types it inherits from.
     /// </remarks>
     private static readonly Lock Gate = new();
 
@@ -83,8 +79,7 @@ public static partial class ApiDocumentationMembers
     /// Builds the members of every documented type.
     /// </summary>
     /// <remarks>
-    /// Only needed by the few places that look across all members rather than at one type - the global
-    /// settings page, and the by-name fallback in <see cref="ApiDocumentation"/>.
+    /// Only needed by the few places that look across all members rather than at one type - the global settings page, and the by-name fallback in <see cref="ApiDocumentation"/>.
     /// </remarks>
     public static void EnsureAll()
     {

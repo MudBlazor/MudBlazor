@@ -13,8 +13,8 @@ public static partial class ApiDocumentation
     /// The generated documentation for events.
     /// </summary>
     /// <remarks>
-    /// Reading this builds the members of every type, because it can be enumerated.  Prefer the
-    /// lookups below, which build only the type that declares the member being looked for.
+    /// Reading this builds the members of every type, because it can be enumerated.
+    /// Prefer the lookups below, which build only the type that declares the member being looked for.
     /// </remarks>
     public static Dictionary<string, DocumentedEvent> Events
     {
@@ -29,8 +29,8 @@ public static partial class ApiDocumentation
     /// The generated documentation for fields.
     /// </summary>
     /// <remarks>
-    /// Reading this builds the members of every type, because it can be enumerated.  Prefer the
-    /// lookups below, which build only the type that declares the member being looked for.
+    /// Reading this builds the members of every type, because it can be enumerated.
+    /// Prefer the lookups below, which build only the type that declares the member being looked for.
     /// </remarks>
     public static Dictionary<string, DocumentedField> Fields
     {
@@ -50,8 +50,8 @@ public static partial class ApiDocumentation
     /// The generated documentation for properties.
     /// </summary>
     /// <remarks>
-    /// Reading this builds the members of every type, because it can be enumerated.  Prefer the
-    /// lookups below, which build only the type that declares the member being looked for.
+    /// Reading this builds the members of every type, because it can be enumerated.
+    /// Prefer the lookups below, which build only the type that declares the member being looked for.
     /// </remarks>
     public static Dictionary<string, DocumentedProperty> Properties
     {
@@ -66,8 +66,8 @@ public static partial class ApiDocumentation
     /// The generated documentation for methods.
     /// </summary>
     /// <remarks>
-    /// Reading this builds the members of every type, because it can be enumerated.  Prefer the
-    /// lookups below, which build only the type that declares the member being looked for.
+    /// Reading this builds the members of every type, because it can be enumerated.
+    /// Prefer the lookups below, which build only the type that declares the member being looked for.
     /// </remarks>
     public static Dictionary<string, DocumentedMethod> Methods
     {
@@ -190,8 +190,7 @@ public static partial class ApiDocumentation
         {
             return null;
         }
-        // A member's key starts with the key of the type that declares it, so an exact match only
-        // needs that one type to be built.
+        // A member's key starts with the key of the type that declares it, so an exact match only needs that one type to be built.
         var match = ApiDocumentationMembers.Property(name) ?? ApiDocumentationMembers.Property("MudBlazor." + name);
         if (match != null)
         {
@@ -213,8 +212,7 @@ public static partial class ApiDocumentation
         {
             return null;
         }
-        // A member's key starts with the key of the type that declares it, so an exact match only
-        // needs that one type to be built.
+        // A member's key starts with the key of the type that declares it, so an exact match only needs that one type to be built.
         var match = ApiDocumentationMembers.Field(name) ?? ApiDocumentationMembers.Field("MudBlazor." + name);
         if (match != null)
         {
@@ -236,8 +234,7 @@ public static partial class ApiDocumentation
         {
             return null;
         }
-        // A member's key starts with the key of the type that declares it, so an exact match only
-        // needs that one type to be built.
+        // A member's key starts with the key of the type that declares it, so an exact match only needs that one type to be built.
         var match = ApiDocumentationMembers.Method(name) ?? ApiDocumentationMembers.Method("MudBlazor." + name);
         if (match != null)
         {
@@ -259,8 +256,7 @@ public static partial class ApiDocumentation
         {
             return null;
         }
-        // A member's key starts with the key of the type that declares it, so an exact match only
-        // needs that one type to be built.
+        // A member's key starts with the key of the type that declares it, so an exact match only needs that one type to be built.
         var match = ApiDocumentationMembers.Event(name) ?? ApiDocumentationMembers.Event("MudBlazor." + name);
         if (match != null)
         {

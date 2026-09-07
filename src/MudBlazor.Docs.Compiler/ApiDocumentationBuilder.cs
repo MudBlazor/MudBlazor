@@ -767,8 +767,8 @@ public class ApiDocumentationBuilder
         using var writer = new ApiDocumentationWriter();
         writer.WriteHeader();
 
-        // The type tier: name, summary, remarks and base type for every documented type. This is all
-        // most of the site needs, so it is what boots.
+        // The type tier: name, summary, remarks and base type for every documented type.
+        // This is all most of the site needs, so it is what boots.
         writer.WriteClassStart();
         writer.WriteConstructorStart();
         writer.WriteTypes(Types);
@@ -776,8 +776,8 @@ public class ApiDocumentationBuilder
         writer.WriteClassEnd();
         writer.WriteLine();
 
-        // The member tier, one loader per type. An API page shows one type's members, so building them
-        // a type at a time keeps the other 480 types' members out of the heap.
+        // The member tier, one loader per type.
+        // An API page shows one type's members, so building them a type at a time keeps the other 480 types' members out of the heap.
         writer.WriteMembersClassStart();
         writer.WriteMembersConstructorStart();
         writer.WriteExternalMembers(

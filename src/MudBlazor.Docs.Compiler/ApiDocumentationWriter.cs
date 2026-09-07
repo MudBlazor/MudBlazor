@@ -99,8 +99,7 @@ public partial class ApiDocumentationWriter : StringWriter
     /// Whether members are written as assignments rather than as dictionary initializer entries.
     /// </summary>
     /// <remarks>
-    /// Per-type loaders assign into the shared member dictionaries; the initializer form is kept for
-    /// the external members, which are built once up front.
+    /// Per-type loaders assign into the shared member dictionaries; the initializer form is kept for the external members, which are built once up front.
     /// </remarks>
     public bool StatementForm { get; set; }
 
@@ -191,9 +190,8 @@ public partial class ApiDocumentationWriter : StringWriter
     /// Writes the method which builds one type's members.
     /// </summary>
     /// <remarks>
-    /// The members this type declares are created first, so that a type reached again while this one
-    /// is still loading finds them already there. Inherited members are fetched through the helpers,
-    /// which build whichever type declares them.
+    /// The members this type declares are created first, so that a type reached again while this one is still loading finds them already there.
+    /// Inherited members are fetched through the helpers, which build whichever type declares them.
     /// </remarks>
     public void WriteTypeLoader(DocumentedType type)
     {
@@ -536,8 +534,7 @@ public partial class ApiDocumentationWriter : StringWriter
         WriteIsComponentIndented(type.Type.IsSubclassOf(typeof(MudComponentBase)));
         WriteSummaryIndented(type.Summary);
         WriteRemarksIndented(type.Remarks);
-        // Members and see-also links belong to this type's loader in ApiDocumentationMembers, so that a
-        // page which only needs the name and summary never builds them.
+        // Members and see-also links belong to this type's loader in ApiDocumentationMembers, so that a page which only needs the name and summary never builds them.
         Outdent();
         WriteIndented("}");
         WriteLine("},");
