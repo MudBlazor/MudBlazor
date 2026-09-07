@@ -605,6 +605,11 @@ namespace MudBlazor
             await OnClick.InvokeAsync(ev);
         }
 
+        private void OnArrowDoubleClick()
+        {
+            /* Don't do anything on purpose. Fixes #9419 */
+        }
+
         private async Task OnItemDoubleClickedAsync(MouseEventArgs ev)
         {
             if (HasChildren() && GetExpandOnDoubleClick())
