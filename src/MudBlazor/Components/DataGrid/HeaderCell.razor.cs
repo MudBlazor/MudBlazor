@@ -162,7 +162,7 @@ namespace MudBlazor
 
             var ariaSortOwner = DataGrid.RenderedColumns.FirstOrDefault(column =>
                 !column.HiddenState.Value
-                && (column.Sortable ?? DataGrid.SortMode != SortMode.None)
+                && (column.Sortable ?? (DataGrid.SortMode != SortMode.None))
                 && string.Equals(column.PropertyName, primarySort.Key, StringComparison.Ordinal));
             if (!ReferenceEquals(Column, ariaSortOwner))
             {
