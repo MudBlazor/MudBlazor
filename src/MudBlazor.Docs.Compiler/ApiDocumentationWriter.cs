@@ -3,13 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace MudBlazor.Docs.Compiler;
 
 /// <summary>
 /// Represents a writer for generated API documentation.
 /// </summary>
-public class ApiDocumentationWriter : StringWriter
+public partial class ApiDocumentationWriter : StringWriter
 {
     /// <summary>
     /// Indents generated code to be more readable.
@@ -95,6 +96,259 @@ public class ApiDocumentationWriter : StringWriter
     }
 
     /// <summary>
+    /// Whether members are written as assignments rather than as dictionary initializer entries.
+    /// </summary>
+    /// <remarks>
+    /// Per-type loaders assign into the shared member dictionaries; the initializer form is kept for
+    /// the external members, which are built once up front.
+    /// </remarks>
+    public bool StatementForm { get; set; }
+
+    /// <summary>
+    /// Writes the start of a member, in whichever form is selected.
+    /// </summary>
+    private void WriteEntryStart(string collection, string key)
+    {
+        if (StatementForm)
+        {
+            WriteIndented($"{collection}[\"{key}\"] = new()");
+        }
+        else
+        {
+            WriteIndented("{ ");
+            Write($"\"{key}\", new()");
+        }
+
+        Write(" { ");
+    }
+
+    /// <summary>
+    /// Writes the end of a member, in whichever form is selected.
+    /// </summary>
+    private void WriteEntryEnd()
+    {
+        Write("}");
+        WriteLine(StatementForm ? ";" : "},");
+    }
+
+    /// <summary>
+    /// Gets the name of the method which builds a type's members.
+    /// </summary>
+    public static string LoaderName(string typeKey) => "Load_" + NonIdentifier().Replace(typeKey, "_");
+
+    [GeneratedRegex("[^A-Za-z0-9]")]
+    private static partial Regex NonIdentifier();
+
+    /// <summary>
+    /// Writes the start of the ApiDocumentationMembers partial class.
+    /// </summary>
+    public void WriteMembersClassStart()
+    {
+        WriteLine("/// <summary>");
+        WriteLine("/// Builds the members of documented types, one type at a time.");
+        WriteLine("/// </summary>");
+        WriteLine($"[GeneratedCodeAttribute(\"MudBlazor.Docs.Compiler\", \"{typeof(ApiDocumentationWriter).Assembly.GetName().Version}\")]");
+        WriteLine("public static partial class ApiDocumentationMembers");
+        WriteLine("{");
+        Indent();
+    }
+
+    /// <summary>
+    /// Writes the start of the ApiDocumentationMembers constructor.
+    /// </summary>
+    public void WriteMembersConstructorStart()
+    {
+        WriteLineIndented("static ApiDocumentationMembers()");
+        WriteLineIndented("{");
+        Indent();
+    }
+
+    /// <summary>
+    /// Writes the dispatcher which builds one type's members.
+    /// </summary>
+    public void WriteLoadTypeDispatch(IEnumerable<DocumentedType> types)
+    {
+        WriteLineIndented("static partial void LoadType(string typeKey)");
+        WriteLineIndented("{");
+        Indent();
+        WriteLineIndented("switch (typeKey)");
+        WriteLineIndented("{");
+        Indent();
+
+        foreach (var type in types)
+        {
+            WriteLineIndented($"case \"{type.Key}\": {LoaderName(type.Key!)}(); break;");
+        }
+
+        Outdent();
+        WriteLineIndented("}");
+        Outdent();
+        WriteLineIndented("}");
+        WriteLine();
+    }
+
+    /// <summary>
+    /// Writes the method which builds one type's members.
+    /// </summary>
+    /// <remarks>
+    /// The members this type declares are created first, so that a type reached again while this one
+    /// is still loading finds them already there. Inherited members are fetched through the helpers,
+    /// which build whichever type declares them.
+    /// </remarks>
+    public void WriteTypeLoader(DocumentedType type)
+    {
+        WriteLineIndented($"private static void {LoaderName(type.Key!)}()");
+        WriteLineIndented("{");
+        Indent();
+
+        StatementForm = true;
+
+        foreach (var property in type.Properties.Values.Where(member => member.DeclaringDocumentedType == type))
+        {
+            WriteProperty(property);
+        }
+        foreach (var method in type.Methods.Values.Where(member => member.DeclaringDocumentedType == type))
+        {
+            WriteMethod(method);
+        }
+        foreach (var field in type.Fields.Values.Where(member => member.DeclaringDocumentedType == type))
+        {
+            WriteField(field);
+        }
+        foreach (var documentedEvent in type.Events.Values.Where(member => member.DeclaringDocumentedType == type))
+        {
+            WriteEvent(documentedEvent);
+        }
+
+        StatementForm = false;
+
+        WriteLineIndented($"var type = ApiDocumentation.Types[\"{type.Key}\"];");
+
+        WriteTypeMemberAdds(type.Properties.Values, "PropertiesInternal", "Property");
+        WriteTypeMemberAdds(type.GlobalSettings.Values, "GlobalSettingsInternal", "Property");
+        WriteTypeMemberAdds(type.Fields.Values, "FieldsInternal", "Field");
+        WriteTypeMemberAdds(type.Methods.Values, "MethodsInternal", "Method");
+        WriteTypeMemberAdds(type.Events.Values, "EventsInternal", "Event");
+
+        foreach (var property in type.Properties.Values.Where(member => member.DeclaringDocumentedType == type))
+        {
+            WriteLineIndented($"PropertiesInternal[\"{property.Key}\"].DeclaringType = type;");
+            if (property.ChangeEvent != null)
+            {
+                WriteLineIndented($"PropertiesInternal[\"{property.Key}\"].ChangeEvent = Event(\"{property.ChangeEvent.Key}\");");
+            }
+        }
+        foreach (var method in type.Methods.Values.Where(member => member.DeclaringDocumentedType == type))
+        {
+            WriteLineIndented($"MethodsInternal[\"{method.Key}\"].DeclaringType = type;");
+        }
+        foreach (var field in type.Fields.Values.Where(member => member.DeclaringDocumentedType == type))
+        {
+            WriteLineIndented($"FieldsInternal[\"{field.Key}\"].DeclaringType = type;");
+        }
+        foreach (var documentedEvent in type.Events.Values.Where(member => member.DeclaringDocumentedType == type))
+        {
+            WriteLineIndented($"EventsInternal[\"{documentedEvent.Key}\"].DeclaringType = type;");
+            if (documentedEvent.Property != null)
+            {
+                WriteLineIndented($"EventsInternal[\"{documentedEvent.Key}\"].Property = Property(\"{documentedEvent.Property.Key}\");");
+            }
+        }
+
+        WriteSeeAlsoLinks(type);
+
+        Outdent();
+        WriteLineIndented("}");
+        WriteLine();
+    }
+
+    /// <summary>
+    /// Adds the members a type shows, including the ones it inherits.
+    /// </summary>
+    private void WriteTypeMemberAdds<T>(IEnumerable<T> members, string collection, string lookup)
+        where T : DocumentedMember
+    {
+        foreach (var member in members)
+        {
+            WriteLineIndented($"type.{collection}.Add(\"{member.Name}\", {lookup}(\"{member.Key}\"));");
+        }
+    }
+
+    /// <summary>
+    /// Writes one type's see-also links.
+    /// </summary>
+    public void WriteSeeAlsoLinks(DocumentedType type)
+    {
+        foreach (var link in type.Links)
+        {
+            if (link.Type != null)
+            {
+                WriteLineIndented($"type.LinksInternal.Add(new() {{ Type = ApiDocumentation.Types[\"{link.Type.Key}\"], Text = \"{link.Text}\" }});");
+            }
+            else if (link.Property != null)
+            {
+                WriteLineIndented($"type.LinksInternal.Add(new() {{ Property = Property(\"{link.Property.Key}\"), Text = \"{link.Text}\" }});");
+            }
+            else if (link.Field != null)
+            {
+                WriteLineIndented($"type.LinksInternal.Add(new() {{ Field = Field(\"{link.Field.Key}\"), Text = \"{link.Text}\" }});");
+            }
+            else if (link.Method != null)
+            {
+                WriteLineIndented($"type.LinksInternal.Add(new() {{ Method = Method(\"{link.Method.Key}\"), Text = \"{link.Text}\" }});");
+            }
+            else if (link.Event != null)
+            {
+                WriteLineIndented($"type.LinksInternal.Add(new() {{ Event = Event(\"{link.Event.Key}\"), Text = \"{link.Text}\" }});");
+            }
+            else if (link.Href != null)
+            {
+                WriteLineIndented($"type.LinksInternal.Add(new() {{ Href = \"{link.Href}\", Text = \"{link.Text}\" }});");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Writes the members whose declaring type is not itself documented, such as those on ComponentBase.
+    /// </summary>
+    /// <remarks>
+    /// No type's loader owns these, and there are only a few dozen, so they are built up front.
+    /// </remarks>
+    public void WriteExternalMembers(
+        IEnumerable<DocumentedProperty> properties,
+        IEnumerable<DocumentedMethod> methods,
+        IEnumerable<DocumentedField> fields,
+        IEnumerable<DocumentedEvent> events)
+    {
+        WriteLineIndented("// Members of types which are not themselves documented");
+        StatementForm = true;
+
+        foreach (var property in properties)
+        {
+            WriteProperty(property);
+            WriteLineIndented($"PropertiesInternal[\"{property.Key}\"].DeclaringTypeName = \"{property.DeclaringType?.Name}\";");
+        }
+        foreach (var method in methods)
+        {
+            WriteMethod(method);
+            WriteLineIndented($"MethodsInternal[\"{method.Key}\"].DeclaringTypeName = \"{method.DeclaringType?.Name}\";");
+        }
+        foreach (var field in fields)
+        {
+            WriteField(field);
+            WriteLineIndented($"FieldsInternal[\"{field.Key}\"].DeclaringTypeName = \"{field.DeclaringType?.Name}\";");
+        }
+        foreach (var documentedEvent in events)
+        {
+            WriteEvent(documentedEvent);
+            WriteLineIndented($"EventsInternal[\"{documentedEvent.Key}\"].DeclaringTypeName = \"{documentedEvent.DeclaringType?.Name}\";");
+        }
+
+        StatementForm = false;
+        WriteLine();
+    }
+
+    /// <summary>
     /// Writes text with the current indentation level.
     /// </summary>
     /// <param name="text">The text to write.</param>
@@ -121,15 +375,6 @@ public class ApiDocumentationWriter : StringWriter
     {
         Outdent();
         WriteLineIndented("}");
-    }
-
-    /// <summary>
-    /// Writes the end of the ApiDocumentation class.
-    /// </summary>
-    public void WriteApiDocumentationClassEnd()
-    {
-        Outdent();
-        WriteLine("}");
     }
 
     /// <summary>
@@ -275,151 +520,6 @@ public class ApiDocumentationWriter : StringWriter
     }
 
     /// <summary>
-    /// Links all properties to their declaring types.
-    /// </summary>
-    public void LinkDocumentedTypes(IDictionary<string, DocumentedProperty> properties)
-    {
-        WriteLineIndented("// Link properties to their declaring types");
-
-        foreach (var property in properties)
-        {
-            if (property.Value.DeclaringDocumentedType != null)
-            {
-                // Link directly to a documented type
-                WriteLineIndented($"Properties[\"{property.Key}\"].DeclaringType = Types[\"{property.Value.DeclaringDocumentedType.Key}\"];");
-            }
-            else
-            {
-                // For external .NET types like ComponentBase, just set the name
-                WriteLineIndented($"Properties[\"{property.Key}\"].DeclaringTypeName = \"{property.Value.DeclaringType?.Name}\";");
-            }
-            if (property.Value.ChangeEvent != null)
-            {
-                WriteLineIndented($"Properties[\"{property.Key}\"].ChangeEvent = Events[\"{property.Value.ChangeEvent.Key}\"];");
-            }
-        }
-
-        WriteLine();
-    }
-
-    /// <summary>
-    /// Links all properties to their declaring types.
-    /// </summary>
-    public void LinkDocumentedTypes(IDictionary<string, DocumentedField> fields)
-    {
-        WriteLineIndented("// Link fields to their declaring types");
-
-        foreach (var field in fields)
-        {
-            if (field.Value.DeclaringDocumentedType != null)
-            {
-                WriteLineIndented($"Fields[\"{field.Key}\"].DeclaringType = Types[\"{field.Value.DeclaringDocumentedType.Key}\"];");
-            }
-            else
-            {
-                // For external .NET types like ComponentBase, just set the name
-                WriteLineIndented($"Fields[\"{field.Key}\"].DeclaringTypeName = \"{field.Value.DeclaringType?.Name}\";");
-            }
-        }
-
-        WriteLine();
-    }
-
-    /// <summary>
-    /// Links all events to their declaring types.
-    /// </summary>
-    public void LinkDocumentedTypes(IDictionary<string, DocumentedEvent> events)
-    {
-        WriteLineIndented("// Link events to their declaring types");
-
-        foreach (var eventItem in events)
-        {
-            if (eventItem.Value.DeclaringDocumentedType != null)
-            {
-                WriteLineIndented($"Events[\"{eventItem.Key}\"].DeclaringType = Types[\"{eventItem.Value.DeclaringDocumentedType.Key}\"];");
-            }
-            else
-            {
-                // For external .NET types like ComponentBase, just set the name
-                WriteLineIndented($"Events[\"{eventItem.Key}\"].DeclaringTypeName = \"{eventItem.Value.DeclaringType?.Name}\";");
-            }
-            if (eventItem.Value.Property != null)
-            {
-                WriteLineIndented($"Events[\"{eventItem.Key}\"].Property = Properties[\"{eventItem.Value.Property.Key}\"];");
-            }
-        }
-
-        WriteLine();
-    }
-
-    /// <summary>
-    /// Links all events to their declaring types.
-    /// </summary>
-    public void LinkDocumentedTypes(IDictionary<string, DocumentedMethod> methods)
-    {
-        WriteLineIndented("// Link methods to their declaring types");
-
-        foreach (var method in methods)
-        {
-            if (method.Value.DeclaringDocumentedType != null)
-            {
-                WriteLineIndented($"Methods[\"{method.Key}\"].DeclaringType = Types[\"{method.Value.DeclaringDocumentedType.Key}\"];");
-            }
-            else
-            {
-                // For external .NET types like ComponentBase, just set the name
-                WriteLineIndented($"Methods[\"{method.Key}\"].DeclaringTypeName = \"{method.Value.DeclaringType?.Name}\";");
-            }
-        }
-
-        WriteLine();
-    }
-
-    /// <summary>
-    /// Links all see-also links to their referred types and members.
-    /// </summary>
-    public void WriteSeeAlsoLinks(IDictionary<string, DocumentedType> types)
-    {
-        WriteLineIndented("// Add see-also links for all types");
-
-        // Find the types with links
-        foreach (var type in types.Where(type => type.Value.Links.Count != 0))
-        {
-            // Go through each link
-            foreach (var link in type.Value.Links)
-            {
-                // Is this a type?  Or a member?  Or an actual web site URL?
-                if (link.Type != null)
-                {
-                    WriteLineIndented($"Types[\"{type.Key}\"].Links.Add(new() {{ Type = Types[\"{link.Type.Key}\"], Text = \"{link.Text}\" }});");
-                }
-                else if (link.Property != null)
-                {
-                    WriteLineIndented($"Types[\"{type.Key}\"].Links.Add(new() {{ Property = Properties[\"{link.Property.Key}\"], Text = \"{link.Text}\" }});");
-                }
-                else if (link.Field != null)
-                {
-                    WriteLineIndented($"Types[\"{type.Key}\"].Links.Add(new() {{ Field = Fields[\"{link.Field.Key}\"] , Text = \"{link.Text}\"}});");
-                }
-                else if (link.Method != null)
-                {
-                    WriteLineIndented($"Types[\"{type.Key}\"].Links.Add(new() {{ Method = Methods[\"{link.Method.Key}\"], Text = \"{link.Text}\" }});");
-                }
-                else if (link.Event != null)
-                {
-                    WriteLineIndented($"Types[\"{type.Key}\"].Links.Add(new() {{ Event = Events[\"{link.Event.Key}\"], Text = \"{link.Text}\" }});");
-                }
-                else if (!string.IsNullOrEmpty(link.Href))
-                {
-                    WriteLineIndented($"Types[\"{type.Key}\"].Links.Add(new() {{ Href = \"{link.Href}\", Text = \"{link.Text}\" }});");
-                }
-            }
-        }
-
-        WriteLine();
-    }
-
-    /// <summary>
     /// Serializes the specified type.
     /// </summary>
     /// <param name="type">The type to serialize.</param>
@@ -429,42 +529,18 @@ public class ApiDocumentationWriter : StringWriter
         Write($"\"{type.Key}\", new()");
         WriteLine(" {");
         Indent();
+        WriteLineIndented($"Key = \"{type.Key}\", ");
         WriteLineIndented($"Name = \"{type.Name}\", ");
         WriteLineIndented($"NameFriendly = \"{type.Type.GetFriendlyName()}\", ");
         WriteBaseTypeIndented(type.BaseType);
         WriteIsComponentIndented(type.Type.IsSubclassOf(typeof(MudComponentBase)));
         WriteSummaryIndented(type.Summary);
         WriteRemarksIndented(type.Remarks);
-        WriteProperties(type);
-        WriteGlobalSettings(type);
-        WriteFields(type);
-        WriteMethods(type);
-        WriteEvents(type);
+        // Members and see-also links belong to this type's loader in ApiDocumentationMembers, so that a
+        // page which only needs the name and summary never builds them.
         Outdent();
         WriteIndented("}");
         WriteLine("},");
-    }
-
-    /// <summary>
-    /// Serializes all documented events.
-    /// </summary>
-    /// <param name="events">The events to write.</param>
-    public void WriteEvents(IDictionary<string, DocumentedEvent> events)
-    {
-        WriteLineIndented("// Build all of the documented events");
-        WriteLineIndented($"Events = new()");
-        WriteLineIndented("{");
-        Indent();
-
-        foreach (var documentedEvent in events)
-        {
-            WriteEvent(documentedEvent.Value);
-        }
-
-        Outdent();
-        WriteLineIndented("};");
-
-        WriteLine();
     }
 
     /// <summary>
@@ -473,9 +549,7 @@ public class ApiDocumentationWriter : StringWriter
     /// <param name="documentedEvent">The event to serialize.</param>
     public void WriteEvent(DocumentedEvent documentedEvent)
     {
-        WriteIndented("{ ");
-        Write($"\"{documentedEvent.Key}\", new()");
-        Write(" { ");
+        WriteEntryStart("EventsInternal", documentedEvent.Key);
         Write($"Name = \"{documentedEvent.Name}\", ");
         Write($"TypeName = \"{documentedEvent.Type?.FullName}\", ");
         Write($"TypeFriendlyName = \"{documentedEvent.Type?.GetFriendlyName()}\", ");
@@ -485,30 +559,7 @@ public class ApiDocumentationWriter : StringWriter
         WriteIsProtected(documentedEvent.IsProtected);
         WriteSummary(documentedEvent.Summary);
         WriteRemarks(documentedEvent.Remarks);
-        Write("}");
-        WriteLine("},");
-    }
-
-    /// <summary>
-    /// Serializes all documented fields.
-    /// </summary>
-    /// <param name="fields">The fields to write.</param>
-    public void WriteFields(IDictionary<string, DocumentedField> fields)
-    {
-        WriteLineIndented("// Build all of the documented fields");
-        WriteLineIndented($"Fields = new()");
-        WriteLineIndented("{");
-        Indent();
-
-        foreach (var field in fields)
-        {
-            WriteField(field.Value);
-        }
-
-        Outdent();
-        WriteLineIndented("};");
-
-        WriteLine();
+        WriteEntryEnd();
     }
 
     /// <summary>
@@ -517,9 +568,7 @@ public class ApiDocumentationWriter : StringWriter
     /// <param name="field">The field to serialize.</param>
     public void WriteField(DocumentedField field)
     {
-        WriteIndented("{ ");
-        Write($"\"{field.Key}\", new()");
-        Write(" { ");
+        WriteEntryStart("FieldsInternal", field.Key);
         Write($"Name = \"{field.Name}\", ");
         Write($"TypeName = \"{field.Type?.FullName}\", ");
         Write($"TypeFriendlyName = \"{field.Type?.GetFriendlyName()}\", ");
@@ -528,30 +577,7 @@ public class ApiDocumentationWriter : StringWriter
         WriteOrder(field.Order);
         WriteSummary(field.Summary);
         WriteRemarks(field.Remarks);
-        Write("}");
-        WriteLine("},");
-    }
-
-    /// <summary>
-    /// Serializes all documented properties.
-    /// </summary>
-    /// <param name="properties">the properties to write.</param>
-    public void WriteProperties(IDictionary<string, DocumentedProperty> properties)
-    {
-        WriteLineIndented("// Build all of the documented properties");
-        WriteLineIndented("Properties = new()");
-        WriteLineIndented("{");
-        Indent();
-
-        foreach (var property in properties)
-        {
-            WriteProperty(property.Value);
-        }
-
-        Outdent();
-        WriteLineIndented("};");
-
-        WriteLine();
+        WriteEntryEnd();
     }
 
     /// <summary>
@@ -560,9 +586,7 @@ public class ApiDocumentationWriter : StringWriter
     /// <param name="property">the property to serialize.</param>
     public void WriteProperty(DocumentedProperty property)
     {
-        WriteIndented("{ ");
-        Write($"\"{property.Key}\", new()");
-        Write(" { ");
+        WriteEntryStart("PropertiesInternal", property.Key);
         Write($"Name = \"{property.Name}\", ");
         Write($"TypeName = \"{property.Type?.FullName}\", ");
         Write($"TypeFriendlyName = \"{property.Type?.GetFriendlyName()}\", ");
@@ -572,8 +596,7 @@ public class ApiDocumentationWriter : StringWriter
         WriteOrder(property.Order);
         WriteRemarks(property.Remarks);
         WriteSummary(property.Summary);
-        Write("}");
-        WriteLine("},");
+        WriteEntryEnd();
     }
 
     /// <summary>
@@ -604,87 +627,6 @@ public class ApiDocumentationWriter : StringWriter
     }
 
     /// <summary>
-    /// Serializes the specified properties.
-    /// </summary>
-    /// <param name="type">The type containing the properties.</param>
-    public void WriteProperties(DocumentedType type)
-    {
-        /* Example:
-         
-            Properties = { 
-				{ "Type.JavaScriptListenerId", Properties["Type.JavaScriptListenerId"], } },
-				{ "Type.BrowserWindowSize", Properties["Type.BrowserWindowSize"], } },
-				{ "Type.Breakpoint", Properties["Type.Breakpoint"],  } },
-				{ "Type.IsImmediate", Properties["Type.IsImmediate"],  } },
-            },
-          
-         */
-
-        // Anything to do?
-        if (type.Properties.Count == 0)
-        {
-            return;
-        }
-
-        WriteLineIndented("Properties = { ");
-        Indent();
-
-        foreach (var pair in type.Properties)
-        {
-            WriteTypeProperty(pair.Value);
-        }
-
-        Outdent();
-        WriteLineIndented("},");
-    }
-
-    /// <summary>
-    /// Serializes the specified MudGlobal settings.
-    /// </summary>
-    /// <param name="type">The type containing the settings.</param>
-    public void WriteGlobalSettings(DocumentedType type)
-    {
-        /* Example:
-         
-            GlobalSettings = { 
-				{ "JavaScriptListenerId", new() { Type = "Guid", Summary = "Gets the ID of the JavaScript listener.",  } },
-				{ "BrowserWindowSize", new() { Type = "BrowserWindowSize", Summary = "Gets the browser window size.",  } },
-				{ "Breakpoint", new() { Type = "Breakpoint", Summary = "Gets the breakpoint associated with the browser size.",  } },
-				{ "IsImmediate", new() { Type = "Boolean",  } },
-            },
-          
-         */
-
-        // Anything to do?
-        if (type.GlobalSettings.Count == 0)
-        {
-            return;
-        }
-
-        WriteLineIndented("GlobalSettings = { ");
-        Indent();
-
-        foreach (var property in type.GlobalSettings)
-        {
-            WriteTypeProperty(property.Value);
-        }
-
-        Outdent();
-        WriteLineIndented("},");
-    }
-
-    /// <summary>
-    /// Serializes the specified property.
-    /// </summary>
-    /// <param name="property">The property to serialize.</param>
-    public void WriteTypeProperty(DocumentedProperty property)
-    {
-        WriteIndented("{ ");
-        Write($"\"{property.Name}\", Properties[\"{property.Key}\"]");
-        WriteLine(" },");
-    }
-
-    /// <summary>
     /// Serializes the specified event.
     /// </summary>
     /// <param name="eventItem">The event to serialize.</param>
@@ -696,92 +638,12 @@ public class ApiDocumentationWriter : StringWriter
     }
 
     /// <summary>
-    /// Serializes the specified field.
-    /// </summary>
-    /// <param name="field">The field to serialize.</param>
-    public void WriteTypeField(DocumentedField field)
-    {
-        WriteIndented("{ ");
-        Write($"\"{field.Name}\", Fields[\"{field.Key}\"]");
-        WriteLine(" },");
-    }
-
-    /// <summary>
-    /// Serializes the specified method.
-    /// </summary>
-    /// <param name="method">The method to serialize.</param>
-    public void WriteTypeMethod(DocumentedMethod method)
-    {
-        WriteIndented("{ ");
-        Write($"\"{method.Name}\", Methods[\"{method.Key}\"]");
-        WriteLine(" },");
-    }
-
-    /// <summary>
-    /// Serializes the specified methods.
-    /// </summary>
-    /// <param name="methods">The methods to serialize.</param>
-    public void WriteMethods(IDictionary<string, DocumentedMethod> methods)
-    {
-        WriteLineIndented("// Build all of the documented methods");
-        WriteLineIndented($"Methods = new()");
-        WriteLineIndented("{");
-        Indent();
-
-        foreach (var method in methods)
-        {
-            WriteMethod(method.Value);
-        }
-
-        Outdent();
-        WriteLineIndented("};");
-        WriteLine();
-    }
-
-    /// <summary>
-    /// Serializes the specified methods.
-    /// </summary>
-    /// <param name="type">The type containing the methods.</param>
-    public void WriteMethods(DocumentedType type)
-    {
-        /* Example:
-
-           Methods = { 
-               { "SetValue", new() { Type = "Guid", Summary = "Gets the ID of the JavaScript listener.",  } },
-               { "BrowserWindowSize", new() { Type = "BrowserWindowSize", Summary = "Gets the browser window size.",  } },
-               { "Breakpoint", new() { Type = "Breakpoint", Summary = "Gets the breakpoint associated with the browser size.",  } },
-               { "IsImmediate", new() { Type = "Boolean",  } },
-           },
-
-        */
-
-        // Anything to do?
-        if (type.Methods.Count == 0)
-        {
-            return;
-        }
-
-        WriteLineIndented("Methods = { ");
-        Indent();
-
-        foreach (var method in type.Methods)
-        {
-            WriteTypeMethod(method.Value);
-        }
-
-        Outdent();
-        WriteLineIndented("},");
-    }
-
-    /// <summary>
     /// Serializes a documented method.
     /// </summary>
     /// <param name="method"></param>
     public void WriteMethod(DocumentedMethod method)
     {
-        WriteIndented("{ ");
-        Write($"\"{method.Key}\", new()");
-        Write(" { ");
+        WriteEntryStart("MethodsInternal", method.Key);
         Write($"Name = \"{method.Name}\", ");
         WriteReturnType(method);
         WriteCategory(method.Category);
@@ -791,8 +653,7 @@ public class ApiDocumentationWriter : StringWriter
         WriteRemarks(method.Remarks);
         WriteReturns(method.Returns);
         WriteMethodParameters(method.Parameters);
-        Write("}");
-        WriteLine("},");
+        WriteEntryEnd();
     }
 
     /// <summary>
@@ -868,49 +729,4 @@ public class ApiDocumentationWriter : StringWriter
         }
     }
 
-    /// <summary>
-    /// Serializes all fields for the specified type.
-    /// </summary>
-    /// <param name="type">The type being serialized.</param>
-    public void WriteEvents(DocumentedType type)
-    {
-        if (type.Events.Count == 0)
-        {
-            return;
-        }
-
-        WriteLineIndented("Events = { ");
-        Indent();
-
-        foreach (var field in type.Events)
-        {
-            WriteTypeEvent(field.Value);
-        }
-
-        Outdent();
-        WriteLineIndented("},");
-    }
-
-    /// <summary>
-    /// Serializes all fields for the specified type.
-    /// </summary>
-    /// <param name="type">The type being serialized.</param>
-    public void WriteFields(DocumentedType type)
-    {
-        if (type.Fields.Count == 0)
-        {
-            return;
-        }
-
-        WriteLineIndented("Fields = { ");
-        Indent();
-
-        foreach (var field in type.Fields)
-        {
-            WriteTypeField(field.Value);
-        }
-
-        Outdent();
-        WriteLineIndented("},");
-    }
 }

@@ -766,20 +766,36 @@ public class ApiDocumentationBuilder
         // Sort everything by category
         using var writer = new ApiDocumentationWriter();
         writer.WriteHeader();
+
+        // The type tier: name, summary, remarks and base type for every documented type. This is all
+        // most of the site needs, so it is what boots.
         writer.WriteClassStart();
         writer.WriteConstructorStart();
-        writer.WriteProperties(Properties);
-        writer.WriteMethods(Methods);
-        writer.WriteFields(Fields);
-        writer.WriteEvents(Events);
         writer.WriteTypes(Types);
-        writer.LinkDocumentedTypes(Properties);
-        writer.LinkDocumentedTypes(Methods);
-        writer.LinkDocumentedTypes(Fields);
-        writer.LinkDocumentedTypes(Events);
-        writer.WriteSeeAlsoLinks(Types);
         writer.WriteConstructorEnd();
         writer.WriteClassEnd();
+        writer.WriteLine();
+
+        // The member tier, one loader per type. An API page shows one type's members, so building them
+        // a type at a time keeps the other 480 types' members out of the heap.
+        writer.WriteMembersClassStart();
+        writer.WriteMembersConstructorStart();
+        writer.WriteExternalMembers(
+            Properties.Values.Where(member => member.DeclaringDocumentedType == null),
+            Methods.Values.Where(member => member.DeclaringDocumentedType == null),
+            Fields.Values.Where(member => member.DeclaringDocumentedType == null),
+            Events.Values.Where(member => member.DeclaringDocumentedType == null));
+        writer.WriteConstructorEnd();
+        writer.WriteLine();
+        writer.WriteLoadTypeDispatch(Types.Values);
+
+        foreach (var type in Types.Values)
+        {
+            writer.WriteTypeLoader(type);
+        }
+
+        writer.WriteClassEnd();
+
         var currentCode = string.Empty;
         if (File.Exists(Paths.ApiDocumentationFilePath))
         {
