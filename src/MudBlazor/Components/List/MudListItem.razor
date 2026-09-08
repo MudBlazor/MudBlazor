@@ -3,43 +3,10 @@
 @inherits MudComponentBase
 @typeparam T
 
-@if (HtmlTag == "a")
-{
-    <a id="@ElementId"
-       tabindex="@GetTabIndex()"
-       role="@GetRole()"
-       aria-selected="@GetAriaSelected()"
-       aria-expanded="@GetAriaExpanded()"
-       class="@Classname"
-       style="@Style"
-       @attributes="UserAttributes"
-       @onclick="OnClickHandlerAsync"
-       @onfocus="OnFocusAsync"
-       @onkeydown="HandleKeyDownAsync"
-       href="@Href"
-       target="@Target"
-       @onclick:stopPropagation="@(!GetClickPropagation())"
-       @onclick:preventDefault="@GetPreventDefault()"
-       @ref="_elementReference">@{ RenderContent(__builder); }</a>
-}
-else
-{
-    <div id="@ElementId"
-         tabindex="@GetTabIndex()"
-         role="@GetRole()"
-         aria-selected="@GetAriaSelected()"
-         aria-expanded="@GetAriaExpanded()"
-         class="@Classname"
-         style="@Style"
-         @attributes="UserAttributes"
-         @onclick="OnClickHandlerAsync"
-         @onfocus="OnFocusAsync"
-         @onkeydown="HandleKeyDownAsync"
-         href="@Href"
-         target="@Target"
-         @onclick:stopPropagation="@(!GetClickPropagation())"
-         @onclick:preventDefault="@GetPreventDefault()"
-         @ref="_elementReference">@{ RenderContent(__builder); }</div>
+@{
+    OpenRow(__builder);
+    RenderContent(__builder);
+    __builder.CloseElement();
 }
 
 @if (NestedList != null)
