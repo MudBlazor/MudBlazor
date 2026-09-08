@@ -1,5 +1,5 @@
-﻿using AngleSharp.Dom;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
