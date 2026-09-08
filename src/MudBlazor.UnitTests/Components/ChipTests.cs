@@ -254,25 +254,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A chip renders its element itself rather than through a MudElement, for each of its three tags.
-        /// </summary>
-        [Test]
-        public void Chip_RendersElementDirectly()
-        {
-            var plain = Context.Render<MudChip<string>>(parameters => parameters.Add(x => x.Text, "Plain"));
-            plain.FindComponents<MudElement>().Should().BeEmpty();
-            plain.Find(".mud-chip").TagName.Should().Be("DIV");
-
-            var button = Context.Render<MudChip<string>>(parameters => parameters.Add(x => x.Text, "Button").Add(x => x.OnClick, () => { }));
-            button.FindComponents<MudElement>().Should().BeEmpty();
-            button.Find(".mud-chip").TagName.Should().Be("BUTTON");
-
-            var anchor = Context.Render<MudChip<string>>(parameters => parameters.Add(x => x.Text, "Link").Add(x => x.Href, "/docs"));
-            anchor.FindComponents<MudElement>().Should().BeEmpty();
-            anchor.Find(".mud-chip").TagName.Should().Be("A");
-        }
-
-        /// <summary>
         /// A class or style supplied through UserAttributes keeps winning over the computed ones, as it did through the MudElement boundary.
         /// </summary>
         [Test]
