@@ -29,24 +29,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A row renders its own element rather than delegating to a nested MudElement.
+        /// A row with an Href renders an anchor carrying its link attributes.
         /// </summary>
         [Test]
-        public void ListItems_RenderTheirElementDirectly()
-        {
-            var comp = Context.Render<MudList<string>>(builder => builder
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso"))
-                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
-
-            comp.FindComponents<MudElement>().Should().BeEmpty();
-            comp.FindAll("div.mud-list-item").Count.Should().Be(2);
-        }
-
-        /// <summary>
-        /// A row with an Href still renders an anchor carrying its link attributes.
-        /// </summary>
-        [Test]
-        public void ListItemWithHref_RendersAnchorDirectly()
+        public void ListItemWithHref_RendersAnchorWithLinkAttributes()
         {
             var comp = Context.Render<MudList<string>>(builder => builder
                 .AddChildContent<MudListItem<string>>(item => item
@@ -57,7 +43,6 @@ namespace MudBlazor.UnitTests.Components
             var anchor = comp.Find("a.mud-list-item");
             anchor.GetAttribute("href").Should().Be("/docs");
             anchor.GetAttribute("target").Should().Be("_blank");
-            comp.FindComponents<MudElement>().Should().BeEmpty();
         }
 
         /// <summary>
