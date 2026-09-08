@@ -139,8 +139,8 @@ dotnet format --no-restore
 ### Root element
 - A library component renders its own root element. Do not wrap it in `MudElement`; that is a public component for consumers, and inside the library it costs a second component per instance for one tag. See [Avoid thousands of component instances](https://learn.microsoft.com/aspnet/core/blazor/performance/rendering#avoid-thousands-of-component-instances).
 - If the tag is fixed, write it as markup.
-- If the content is only `ChildContent`, the whole element can be built in C#, as `MudText` and `MudStack` do.
 - If the tag is chosen at runtime, open it from C# with `builder.OpenElement(0, HtmlTag)` and keep the content in a private method that takes `RenderTreeBuilder __builder` and contains markup, so the compiler still assigns sequence numbers. This is how [QuickGrid](https://github.com/dotnet/aspnetcore/blob/4b58ad51259280e1340777513694f122501435ab/src/Components/QuickGrid/Microsoft.AspNetCore.Components.QuickGrid/src/QuickGrid.razor#L41-L110) renders its rows and how [Virtualize](https://github.com/dotnet/aspnetcore/blob/4b58ad51259280e1340777513694f122501435ab/src/Components/Web/src/Virtualization/Virtualize.cs#L554) renders its `SpacerElement`. Reference: `MudBaseButton.OpenRoot` and `MudButton.razor`.
+- If the tag is chosen at runtime and the content is only `ChildContent`, the whole element can be built in C#, as `MudText` and `MudStack` do.
 - Hardcode sequence numbers in hand-written builder code and keep it to the root element; see [Manually build a render tree](https://learn.microsoft.com/aspnet/core/blazor/advanced-scenarios#manually-build-a-render-tree-rendertreebuilder).
 - Attribute order decides precedence: a later attribute with the same name wins. When replacing a wrapper, keep the order the component had before, and add tests that pin what a caller's `class` or `style` in `UserAttributes` does and which parameter-derived attributes it cannot override.
 
