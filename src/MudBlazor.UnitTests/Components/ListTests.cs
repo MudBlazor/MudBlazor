@@ -81,7 +81,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The same precedence holds on the anchor row, which renders from a separate branch.
+        /// The same precedence holds on the anchor row.
         /// </summary>
         [Test]
         public void ListItemWithHref_UserAttributes_OverrideComputedClassAndStyle()
