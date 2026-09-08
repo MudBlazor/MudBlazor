@@ -239,12 +239,14 @@ namespace MudBlazor
         /// Occurs when interaction with the slider starts.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Slider.Behavior)]
         public EventCallback OnDragStart { get; set; }
 
         /// <summary>
         /// Occurs when interaction with the slider ends.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.Slider.Behavior)]
         public EventCallback OnDragEnd { get; set; }
 
         /// <inheritdoc />
