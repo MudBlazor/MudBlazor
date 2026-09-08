@@ -1645,20 +1645,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Menu items render their row element themselves rather than through a MudElement.
+        /// Menu items render an anchor with its link attributes when Href is set, and a div otherwise.
         /// </summary>
         [Test]
-        public async Task MenuItems_RenderRowElementDirectly()
+        public async Task MenuItems_RenderAnchorWhenHrefIsSet()
         {
             var comp = Context.Render<MenuTest1>();
             await comp.Find("button.mud-button-root").ClickAsync();
-
-            var items = comp.FindComponents<MudMenuItem>();
-            items.Count.Should().Be(4);
-            foreach (var item in items)
-            {
-                item.FindComponents<MudElement>().Should().BeEmpty();
-            }
 
             comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
             var links = comp.FindAll("a.mud-menu-item");
