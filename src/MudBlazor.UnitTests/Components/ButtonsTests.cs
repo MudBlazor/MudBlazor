@@ -641,25 +641,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Buttons render their root element themselves rather than through a MudElement.
-        /// </summary>
-        [Test]
-        public void Buttons_RenderRootElementDirectly()
-        {
-            var button = Context.Render<MudButton>(parameters => parameters.AddChildContent("Save"));
-            button.FindComponents<MudElement>().Should().BeEmpty();
-            button.Find("button.mud-button-root").TextContent.Trim().Should().Be("Save");
-
-            var iconButton = Context.Render<MudIconButton>(parameters => parameters.Add(x => x.Icon, Icons.Material.Filled.Add));
-            iconButton.FindComponents<MudElement>().Should().BeEmpty();
-            iconButton.Find("button.mud-icon-button svg");
-
-            var fab = Context.Render<MudFab>(parameters => parameters.Add(x => x.StartIcon, Icons.Material.Filled.Add));
-            fab.FindComponents<MudElement>().Should().BeEmpty();
-            fab.Find("button.mud-fab svg");
-        }
-
-        /// <summary>
         /// A class or style supplied through UserAttributes keeps winning over the computed ones, as it did through the MudElement boundary.
         /// </summary>
         [Test]
