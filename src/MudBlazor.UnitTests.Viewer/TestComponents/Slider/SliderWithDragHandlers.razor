@@ -1,8 +1,0 @@
-<MudSlider T="int" OnDragStart="@(() => Dragging = true)" OnDragEnd="@(() => Dragging = false)" Disabled="@Disabled" />
-
-@code {
-    [Parameter]
-    public bool Disabled { get; set; }
-
-    public bool? Dragging { get; set; } = null;
-}
