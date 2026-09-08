@@ -9307,35 +9307,145 @@ namespace MudBlazor.UnitTests.Components
         #endregion
 
         /// <summary>
-        /// Sortable header cells track the sort direction in aria-sort (#9716).
+        /// A single-sort grid exposes aria-sort only on its active sorted header (#9716).
         /// </summary>
         [Test]
-        public async Task DataGridSortableHeaders_ShouldExposeAriaSort()
+        public async Task DataGridSortableHeadersExposeAriaSortForActiveSort()
         {
             var comp = Context.Render<DataGridSortableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
 
-            dataGrid.FindAll("th").Should().OnlyContain(header => header.GetAttribute("aria-sort") == "none");
+            dataGrid.FindAll("th[aria-sort]").Should().BeEmpty();
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
-            dataGrid.FindAll("th")[0].GetAttribute("aria-sort").Should().Be("ascending");
-            dataGrid.FindAll("th")[1].GetAttribute("aria-sort").Should().Be("none");
+            dataGrid.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.Should().BeSameAs(dataGrid.FindAll("th")[0]);
+            dataGrid.Find("th[aria-sort]").GetAttribute("aria-sort").Should().Be("ascending");
 
             await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name));
-            dataGrid.FindAll("th")[0].GetAttribute("aria-sort").Should().Be("descending");
+            dataGrid.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.Should().BeSameAs(dataGrid.FindAll("th")[0]);
+            dataGrid.Find("th[aria-sort]").GetAttribute("aria-sort").Should().Be("descending");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
+            dataGrid.FindAll("th[aria-sort]").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Duplicate property columns expose aria-sort on only the first matching rendered header (#13774).
+        /// </summary>
+        [Test]
+        public async Task DataGridDuplicatePropertyColumnsExposeSingleAriaSortOwner()
+        {
+            var items = new[] { new DataGridSortableTest.Item("A", 1, "") };
+            var comp = Context.Render<MudDataGrid<DataGridSortableTest.Item>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<DataGridSortableTest.Item, string>>(0);
+                    builder.AddAttribute(1, nameof(PropertyColumn<DataGridSortableTest.Item, string>.Property), (Expression<Func<DataGridSortableTest.Item, string>>)(x => x.Name));
+                    builder.AddAttribute(2, nameof(PropertyColumn<DataGridSortableTest.Item, string>.Title), "First Name");
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<DataGridSortableTest.Item, string>>(3);
+                    builder.AddAttribute(4, nameof(PropertyColumn<DataGridSortableTest.Item, string>.Property), (Expression<Func<DataGridSortableTest.Item, string>>)(x => x.Name));
+                    builder.AddAttribute(5, nameof(PropertyColumn<DataGridSortableTest.Item, string>.Title), "Second Name");
+                    builder.CloseComponent();
+                }));
+
+            await comp.InvokeAsync(() => comp.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+
+            comp.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.TextContent.Should().Contain("First Name");
+
+            await comp.InvokeAsync(async () =>
+            {
+                await comp.Instance.RenderedColumns[0].HiddenState.SetValueAsync(true);
+                ((IMudStateHasChanged)comp.Instance).StateHasChanged();
+            });
+
+            comp.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.TextContent.Should().Contain("Second Name");
+
+            await comp.InvokeAsync(async () =>
+            {
+                await comp.Instance.RenderedColumns[0].HiddenState.SetValueAsync(false);
+                ((IMudStateHasChanged)comp.Instance).StateHasChanged();
+            });
+
+            comp.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.TextContent.Should().Contain("First Name");
+
+            await comp.InvokeAsync(() =>
+            {
+                var firstColumn = comp.Instance.RenderedColumns[0];
+                comp.Instance.RenderedColumns.RemoveAt(0);
+                comp.Instance.RenderedColumns.Add(firstColumn);
+                ((IMudStateHasChanged)comp.Instance).StateHasChanged();
+            });
+
+            comp.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.TextContent.Should().Contain("Second Name");
+
+            await comp.InvokeAsync(() =>
+            {
+                comp.Instance.RenderedColumns.RemoveAt(0);
+                ((IMudStateHasChanged)comp.Instance).StateHasChanged();
+            });
+
+            comp.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.TextContent.Should().Contain("First Name");
+
+            await comp.InvokeAsync(async () =>
+            {
+                await comp.Instance.RenderedColumns[0].HiddenState.SetValueAsync(true);
+                ((IMudStateHasChanged)comp.Instance).StateHasChanged();
+            });
+
+            comp.FindAll("th[aria-sort]").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A multiple-sort grid exposes aria-sort only on the lowest-index sort definition.
+        /// </summary>
+        [Test]
+        public async Task DataGridMultipleSortExposesAriaSortForPrimarySort()
+        {
+            var comp = Context.Render<DataGridSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SortMode, SortMode.Multiple));
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ExtendSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            await comp.InvokeAsync(() => dataGrid.Instance.ExtendSortAsync("Value", SortDirection.Descending, x => x.Value));
+
+            dataGrid.Instance.SortDefinitions["Name"].Index.Should().Be(0);
+            dataGrid.Instance.SortDefinitions["Value"].Index.Should().Be(1);
+            dataGrid.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.Should().BeSameAs(dataGrid.FindAll("th")[0]);
+            dataGrid.Find("th[aria-sort]").GetAttribute("aria-sort").Should().Be("ascending");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
+
+            dataGrid.Instance.SortDefinitions["Value"].Index.Should().Be(0);
+            dataGrid.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.Should().BeSameAs(dataGrid.FindAll("th")[1]);
+            dataGrid.Find("th[aria-sort]").GetAttribute("aria-sort").Should().Be("descending");
         }
 
         /// <summary>
         /// Header cells omit aria-sort when sorting is disabled.
         /// </summary>
         [Test]
-        public async Task DataGridUnsortableHeaders_ShouldNotExposeAriaSort()
+        public async Task DataGridUnsortableHeadersDoNotExposeAriaSort()
         {
             var comp = Context.Render<DataGridSortableTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
 
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            dataGrid.FindAll("th[aria-sort]").Should().ContainSingle();
+
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SortMode, SortMode.None));
 
+            dataGrid.Instance.SortDefinitions.Should().BeEmpty();
             dataGrid.FindAll("th").Should().OnlyContain(header => !header.HasAttribute("aria-sort"));
         }
     }

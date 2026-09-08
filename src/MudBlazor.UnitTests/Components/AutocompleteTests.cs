@@ -3121,5 +3121,23 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.Find("input").GetAttribute("aria-autocomplete").Should().Be("both");
             autocomplete.Find("input").GetAttribute("role").Should().Be("combobox");
         }
+
+        /// <summary>
+        /// Case-colliding caller-supplied attributes do not throw during rendering.
+        /// </summary>
+        [Test]
+        public void Autocomplete_CaseCollidingUserAttributes_DoNotThrow()
+        {
+            var userAttributes = new Dictionary<string, object>
+            {
+                ["ARIA-AUTOCOMPLETE"] = "both",
+                ["aria-autocomplete"] = "list"
+            };
+
+            var action = () => Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.UserAttributes, userAttributes));
+
+            action.Should().NotThrow();
+        }
     }
 }
