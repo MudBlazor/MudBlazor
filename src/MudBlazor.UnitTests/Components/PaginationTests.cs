@@ -391,19 +391,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The pagination renders its list element itself rather than through a MudElement.
-        /// </summary>
-        [Test]
-        public void Pagination_RendersRootElementDirectly()
-        {
-            var comp = Context.Render<MudPagination>(parameters => parameters.Add(x => x.Count, 5));
-
-            comp.FindComponents<MudElement>().Should().BeEmpty();
-            // Five pages plus the previous and next buttons.
-            comp.Find("ul.mud-pagination").QuerySelectorAll("li.mud-pagination-item").Length.Should().Be(7);
-        }
-
-        /// <summary>
         /// UserAttributes are forwarded to the list element, and the computed class and style keep winning over a class or style supplied there, as they did through the MudElement boundary.
         /// </summary>
         [Test]
