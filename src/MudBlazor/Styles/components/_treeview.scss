@@ -27,11 +27,13 @@
   }
 }
 
+$treeview-indent: 17px;
+
 .mud-treeview-group {
   margin: 0px;
   padding: 0px;
-  margin-left: 17px;
-  margin-inline-start: 17px;
+  margin-left: $treeview-indent;
+  margin-inline-start: $treeview-indent;
   margin-inline-end: unset;
   list-style: none;
 }
@@ -56,6 +58,11 @@
     color: var(--mud-palette-action-disabled) !important;
     cursor: default !important;
     pointer-events: none !important;
+  }
+
+  // Virtualized rows are flat siblings, so nesting is expressed through an indent per depth level.
+  &.mud-treeview-item-virtualized {
+    padding-inline-start: calc(var(--mud-treeview-item-depth, 0) * #{$treeview-indent});
   }
 }
 

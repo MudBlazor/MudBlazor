@@ -1,5 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -12,8 +14,11 @@ namespace MudBlazor
     /// <typeparam name="T">The type of item to display.</typeparam>
     /// <seealso cref="MudTreeViewItem{T}"/>
     /// <seealso cref="MudTreeViewItemToggleButton"/>
-    public partial class MudTreeView<T> : MudComponentBase
+    public partial class MudTreeView<T> : MudComponentBase, IDisposable
     {
+        private const float DefaultItemSize = 40f;
+        private const float DefaultDenseItemSize = 26f;
+
         public MudTreeView()
         {
             MudTreeRoot = this;
@@ -51,10 +56,17 @@ namespace MudBlazor
 
         private HashSet<T> _selection;
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
+        private readonly TreeViewProjection<T> _projection = new();
         // ServerData load state belongs to the backing node object, not the rendered component instance.
         // When the parent replaces Items with new node objects, the old entries can disappear with them.
-        private readonly ConditionalWeakTable<ITreeItemData<T>, ServerDataState> _serverDataStates = new();
+        private readonly TreeViewServerLoadState<T> _serverLoadState = new();
+        // Mirrors the splatting workaround in MudVirtualize, because Virtualize only has MaxItemCount on .NET 9 and later (#12701).
+        private readonly Dictionary<string, object?> _virtualizeAttributes = new();
         private bool _isFirstRender = true;
+        private bool _isDisposed;
+        private bool _hasLoggedInvalidVirtualizeConfiguration;
+        private bool _projectionDirty = true;
+        private bool _reconcileSelection;
         internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
         private bool ToggleSelection => SelectionMode == SelectionMode.ToggleSelection;
 
@@ -112,7 +124,7 @@ namespace MudBlazor
         /// Uses checkboxes which support an undetermined state.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>. When set, 
+        /// Defaults to <c>true</c>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>. When set,
         /// an item's checkbox will be in the "undetermined" state if child items have a mix of checked and unchecked states.
         /// </remarks>
         [Parameter]
@@ -123,7 +135,7 @@ namespace MudBlazor
         /// Automatically checks an item if all children are selected.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>. 
+        /// Defaults to <c>true</c>. Only applies when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection"/>.
         /// Items will also be deselected if any children are deselected.
         /// </remarks>
         [Parameter]
@@ -179,6 +191,47 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
         public bool Dense { get; set; }
+
+        /// <summary>
+        /// Renders only visible items instead of all items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  Only works when <see cref="Height"/> or <see cref="MaxHeight"/> is set, and <see cref="Items"/> and <see cref="ItemTemplate"/> are used.  This feature can improve performance for large data sets.
+        /// The item template must bind <see cref="MudTreeViewItem{T}.Expanded"/> and <see cref="MudTreeViewItem{T}.Selected"/> to the backing item, and child items must come from <see cref="TreeItemData{T}.Children"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public bool Virtualize { get; set; }
+
+        /// <summary>
+        /// The number of additional items rendered outside the visible region when <see cref="Virtualize"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>3</c>.  This value can reduce the amount of rendering during scrolling, but higher values can affect performance.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public int OverscanCount { get; set; } = 3;
+
+        /// <summary>
+        /// The height of each item, in pixels, when <see cref="Virtualize"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>0</c>, which uses <c>40</c>, or <c>26</c> when <see cref="Dense"/> is <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public float ItemSize { get; set; }
+
+        /// <summary>
+        /// The maximum number of items rendered when <see cref="Virtualize"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="int.MaxValue"/>.  Only applies on .NET 9 and later.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public int MaxItemCount { get; set; } = int.MaxValue;
 
         /// <summary>
         /// Sets a fixed height.
@@ -307,8 +360,9 @@ namespace MudBlazor
         /// The function for asynchronously loading items.
         /// </summary>
         /// <remarks>
-        /// When set, the function will be called to load the children of a parent item. 
+        /// When set, the function will be called to load the children of a parent item.
         /// When the parent node is <c>null</c>, top-level items should be returned.
+        /// When items come from <see cref="Items"/> and <see cref="ItemTemplate"/>, the loaded children are also written to the parent's <see cref="TreeItemData{T}.Children"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Data)]
@@ -356,12 +410,90 @@ namespace MudBlazor
         public string IndeterminateIcon { get; set; } = Icons.Material.Filled.IndeterminateCheckBox;
 
         /// <inheritdoc />
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+#if NET9_0_OR_GREATER
+            _virtualizeAttributes[nameof(MaxItemCount)] = MaxItemCount;
+#endif
+
+            if (MudTreeRoot == this)
+            {
+                // The application mutates the backing items in place, so a changed Items reference is not the only reason to re-project.
+                // Every parent render therefore marks the projection stale, and it is rebuilt once when the rows are next read.
+                _projectionDirty = true;
+                if (IsVirtualized)
+                {
+                    _reconcileSelection = true;
+                }
+            }
+
+            if (Virtualize && !IsVirtualized && !_hasLoggedInvalidVirtualizeConfiguration)
+            {
+                if (MudTreeRoot == this)
+                {
+                    Logger.LogWarning(
+                        "{Component} requires {Items}, {ItemTemplate}, and either {Height} or {MaxHeight} when {Virtualize} is true. Falling back to standard rendering.",
+                        nameof(MudTreeView<T>),
+                        nameof(Items),
+                        nameof(ItemTemplate),
+                        nameof(Height),
+                        nameof(MaxHeight),
+                        nameof(Virtualize));
+                }
+                else
+                {
+                    Logger.LogWarning(
+                        "{Component} ignores {Virtualize} on a tree nested inside another tree, because a nested tree shares the root tree's state.",
+                        nameof(MudTreeView<T>),
+                        nameof(Virtualize));
+                }
+
+                _hasLoggedInvalidVirtualizeConfiguration = true;
+            }
+        }
+
+        /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender && MudTreeRoot == this)
+            if (MudTreeRoot == this)
             {
-                _isFirstRender = false;
-                await UpdateItemsAsync();
+                if (firstRender)
+                {
+                    _isFirstRender = false;
+                }
+
+                var reconcileSelection = _reconcileSelection;
+                _reconcileSelection = false;
+                var shouldRefresh = false;
+                var selectionChanged = false;
+                if (reconcileSelection && IsVirtualized)
+                {
+                    var result = await ReconcileVirtualizedSelectionAsync();
+                    selectionChanged = result.SelectionChanged;
+                    if (result.Changed)
+                    {
+                        await UpdateItemsAsync();
+                        shouldRefresh = true;
+                    }
+                }
+
+                // Auto-expansion follows selection transitions only, so that a branch the user collapsed stays collapsed when the tree merely re-renders.
+                if (firstRender || selectionChanged)
+                {
+                    shouldRefresh = ApplyVirtualizedAutoExpand(GetSelection()) || shouldRefresh;
+                }
+
+                if (firstRender && !IsVirtualized)
+                {
+                    await UpdateItemsAsync();
+                }
+
+                if (shouldRefresh)
+                {
+                    RefreshProjection();
+                }
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -375,6 +507,18 @@ namespace MudBlazor
         {
             if (Items is null)
             {
+                return;
+            }
+
+            if (IsVirtualized)
+            {
+                var changed = FilterFunc is null
+                    ? TreeViewHierarchy<T>.ResetFilter(Items)
+                    : await TreeViewHierarchy<T>.FilterAsync(Items, FilterFunc);
+                if (changed)
+                {
+                    RefreshProjection();
+                }
                 return;
             }
 
@@ -433,6 +577,15 @@ namespace MudBlazor
         /// </summary>
         public async Task ExpandAllAsync()
         {
+            if (IsVirtualized)
+            {
+                if (TreeViewHierarchy<T>.ExpandAll(Items))
+                {
+                    RefreshProjection();
+                }
+                return;
+            }
+
             foreach (var item in _childItems)
             {
                 await item.ExpandAllAsync();
@@ -444,6 +597,15 @@ namespace MudBlazor
         /// </summary>
         public async Task CollapseAllAsync()
         {
+            if (IsVirtualized)
+            {
+                if (TreeViewHierarchy<T>.CollapseAll(Items))
+                {
+                    RefreshProjection();
+                }
+                return;
+            }
+
             foreach (var item in _childItems)
             {
                 await item.CollapseAllAsync();
@@ -496,6 +658,66 @@ namespace MudBlazor
             return UpdateItemsAsync(forceRender: true);
         }
 
+        [MemberNotNullWhen(true, nameof(ItemTemplate), nameof(Items))]
+        // A nested tree shares the root tree's state and routes every refresh to it, so only the root tree can virtualize.
+        internal bool IsVirtualized =>
+            Virtualize
+            && MudTreeRoot == this
+            && ItemTemplate is not null
+            && Items is not null
+            && (!string.IsNullOrWhiteSpace(Height) || !string.IsNullOrWhiteSpace(MaxHeight));
+
+        internal bool IsDisposed => _isDisposed;
+
+        /// <summary>
+        /// Rebuilds the flattened rows and the selection projection when the backing data changed since the last build.
+        /// </summary>
+        /// <remarks>
+        /// Rebuilding is deferred until the rows are needed, so that several changes made during one operation are projected once.
+        /// </remarks>
+        private void EnsureProjection()
+        {
+            if (_projectionDirty)
+            {
+                _projection.Rebuild(Items, GetSelection(), Comparer);
+                _projectionDirty = false;
+            }
+        }
+
+        /// <summary>
+        /// Returns the flattened visible rows rendered by the virtualized tree.
+        /// </summary>
+        private ReadOnlyCollection<TreeViewItemContext<T>> GetRows()
+        {
+            EnsureProjection();
+            return _projection.Rows;
+        }
+
+        /// <summary>
+        /// Marks the projection stale and re-renders the tree.
+        /// </summary>
+        /// <param name="alwaysRender">Whether the tree re-renders even when it is not virtualized.</param>
+        internal void RefreshProjection(bool alwaysRender = false)
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
+
+            _projectionDirty = true;
+            // Every virtualized render reconciles the backing Selected flags, because the application can change them together with any refresh such as expanding all.
+            // A standard tree keeps its selection in the item components and must not have it rewritten from the data.
+            _reconcileSelection |= IsVirtualized;
+            if (IsVirtualized || alwaysRender)
+            {
+                StateHasChanged();
+            }
+        }
+
+        private float GetEffectiveItemSize() => ItemSize > 0 ? ItemSize : Dense ? DefaultDenseItemSize : DefaultItemSize;
+
+        internal TreeViewServerLoadEntry GetServerLoadEntry(ITreeItemData<T> item) => _serverLoadState.GetEntry(item);
+
         internal async Task OnItemClickAsync(MudTreeViewItem<T> clickedItem)
         {
             if (ReadOnly)
@@ -504,6 +726,16 @@ namespace MudBlazor
             }
             if (MultiSelection)
             {
+                if (IsVirtualized && clickedItem.CurrentItemContext is { } clickedRow)
+                {
+                    EnsureProjection();
+                    var row = _projection.FindRow(clickedRow.RowKey) ?? clickedRow;
+                    _selection = new HashSet<T>(_projection.ToggleSubtreeSelection(row, _selection, AutoSelectParent), Comparer);
+                    await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
+                    await UpdateItemsAsync(synchronizeVirtualized: false);
+                    return;
+                }
+
                 var items = clickedItem.GetChildItemsRecursive();
                 items.Add(clickedItem!);
                 var allSelected = items.All(x => x.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)));
@@ -527,7 +759,7 @@ namespace MudBlazor
                 await UpdateItemsAsync();
                 return;
             }
-            var selected = clickedItem.GetState<bool>(nameof(MudTreeViewItem<T>.Selected));
+            var selected = clickedItem.IsSelected();
             if (ToggleSelection)
             {
                 await SetSelectedValueAsync(selected ? default : clickedItem.GetValue()); // <-- toggle selected value
@@ -567,9 +799,21 @@ namespace MudBlazor
         internal async Task AddChildAsync(MudTreeViewItem<T> item)
         {
             _childItems.Add(item);
+            var value = item.GetValue();
+            if (item.CurrentItemContext is not null)
+            {
+                // A virtualized row renders its selection from the projection, and its backing Selected flag is reconciled after the render.
+                // Writing the tree's selection into the data here would overwrite a change made outside the tree, so a mismatch only requests a reconciling render.
+                if (value is not null && item.CurrentItemData is not null && item.CurrentItemData.Selected != GetSelection().Contains(value))
+                {
+                    RefreshProjection();
+                }
+
+                return;
+            }
+
             // this is to ensure that setting Selected="true" on the item will update the single/multiselection.
             // Note: Setting Selected="false" has no effect however because it would cancel the initialization of the SelectedValue or SelectedValues !
-            var value = item.GetValue();
             if (value is not null && item.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)))
             {
                 await SelectAsync(value);
@@ -589,8 +833,13 @@ namespace MudBlazor
                 _selection.Add(value);
                 if (!_isFirstRender)
                 {
+                    var shouldRefresh = ApplyVirtualizedAutoExpand(_selection);
                     await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
                     await UpdateItemsAsync();
+                    if (shouldRefresh)
+                    {
+                        RefreshProjection();
+                    }
                 }
                 return;
             }
@@ -598,7 +847,12 @@ namespace MudBlazor
             await _selectedValueState.SetValueAsync(value);
             if (!_isFirstRender)
             {
+                var shouldRefresh = ApplyVirtualizedAutoExpand(GetSelection());
                 await UpdateItemsAsync();
+                if (shouldRefresh)
+                {
+                    RefreshProjection();
+                }
             }
         }
 
@@ -610,21 +864,47 @@ namespace MudBlazor
             }
             _selection.Remove(value);
             await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
+            if (IsVirtualized)
+            {
+                await UpdateItemsAsync();
+            }
         }
 
         ///  <summary>
         ///  Sets the selected value of the tree view in Single- and ToggleSelection mode.
-        ///  If the value is found, the corresponding item is selected; 
+        ///  If the value is found, the corresponding item is selected;
         ///  otherwise, selected value is set default.
         ///  If the selected item is valid it sets the corresponding tree item to selected.
         ///  </summary>
         ///  <param name="value">The value to be set as the selected value.</param>
         internal async Task SetSelectedValueAsync(T? value)
         {
-            var isValid = value != null && GetSelectableValues().Contains(value);
+            bool isValid;
+            var synchronizedVirtualSelection = IsVirtualized;
+            if (IsVirtualized)
+            {
+                var requestedSelection = new HashSet<T>(Comparer);
+                if (value is not null)
+                {
+                    requestedSelection.Add(value);
+                }
+
+                var representedSelection = _projection.SynchronizeSelection(Items, requestedSelection, Comparer);
+                isValid = value is not null && representedSelection.Count > 0;
+            }
+            else
+            {
+                isValid = value != null && GetSelectableValues().Contains(value);
+            }
+
             // note: if there is no item that corresponds to the value, the value is reset to default!
             await _selectedValueState.SetValueAsync(isValid ? value : default);
-            await UpdateItemsAsync();
+            var shouldRefresh = ApplyVirtualizedAutoExpand(GetSelection(), useBackingItems: synchronizedVirtualSelection);
+            await UpdateItemsAsync(synchronizeVirtualized: !synchronizedVirtualSelection);
+            if (shouldRefresh)
+            {
+                RefreshProjection();
+            }
         }
 
         ///  <summary>
@@ -633,29 +913,72 @@ namespace MudBlazor
         ///  </summary>
         private async Task SetSelectedValuesAsync(IReadOnlyCollection<T> newValues)
         {
-            var allChildValues = GetSelectableValues();
-            var newSelection = new HashSet<T>(newValues.Where(x => allChildValues.Contains(x)), Comparer);
+            var synchronizedVirtualSelection = IsVirtualized;
+            var newSelection = synchronizedVirtualSelection
+                ? new HashSet<T>(_projection.SynchronizeSelection(Items, newValues, Comparer), Comparer)
+                : new HashSet<T>(newValues.Where(GetSelectableValues().Contains), Comparer);
             if (_selection.SetEquals(newSelection))
             {
                 return;
             }
             _selection = newSelection;
             await _selectedValuesState.SetValueAsync(newSelection);
-            await UpdateItemsAsync();
+            var shouldRefresh = ApplyVirtualizedAutoExpand(_selection, useBackingItems: synchronizedVirtualSelection);
+            await UpdateItemsAsync(synchronizeVirtualized: !synchronizedVirtualSelection);
+            if (shouldRefresh)
+            {
+                RefreshProjection();
+            }
         }
 
         /// <summary>
         /// Let the items update their selection state visualization and state according to
         /// the selection in the tree view
         /// </summary>
+        /// <param name="synchronizeVirtualized">Whether the backing items of a virtualized tree are synchronized with the selection first.</param>
         /// <param name="forceRender">Renders every item regardless of whether its state changed.</param>
-        private async Task UpdateItemsAsync(bool forceRender = false)
+        private async Task UpdateItemsAsync(bool synchronizeVirtualized = true, bool forceRender = false)
         {
             var selection = GetSelection();
-            foreach (var item in _childItems)
+            if (IsVirtualized && synchronizeVirtualized)
+            {
+                _projection.SynchronizeSelection(Items, selection, Comparer);
+            }
+
+            // Rows mount and dispose while the walk awaits item callbacks, so it runs over a snapshot of the registered items.
+            foreach (var item in _childItems.ToArray())
             {
                 await item.UpdateSelectionStateAsync(selection, forceRender);
             }
+
+            RefreshProjection();
+        }
+
+        /// <summary>
+        /// Applies backing <see cref="ITreeItemData{T}.Selected"/> changes made outside the tree to the selected values.
+        /// </summary>
+        /// <returns>The reconciled selection and whether the selected values or the backing items changed.</returns>
+        private async Task<TreeViewSelectionResult<T>> ReconcileVirtualizedSelectionAsync()
+        {
+            EnsureProjection();
+            var result = _projection.ReconcileSelection(
+                MultiSelection,
+                _selectedValueState.Value,
+                _selection);
+            if (MultiSelection)
+            {
+                if (result.SelectionChanged)
+                {
+                    _selection = new HashSet<T>(result.SelectedValues, Comparer);
+                    await _selectedValuesState.SetValueAsync(_selection.ToList());
+                }
+            }
+            else if (result.SelectionChanged)
+            {
+                await _selectedValueState.SetValueAsync(result.SelectedValue);
+            }
+
+            return result;
         }
 
         private HashSet<T> GetSelection()
@@ -693,9 +1016,10 @@ namespace MudBlazor
 
             foreach (var item in items)
             {
-                if (item.Value is not null)
+                var value = TreeViewHierarchy<T>.GetItemValue(item);
+                if (value is not null)
                 {
-                    values.Add(item.Value);
+                    values.Add(value);
                 }
 
                 if (item.Children is not null && item.Children.Count > 0)
@@ -730,14 +1054,34 @@ namespace MudBlazor
             return values;
         }
 
-
-        internal bool GetServerDataLoaded(ITreeItemData<T> item) => _serverDataStates.GetOrCreateValue(item).IsLoaded;
-
-        internal void SetServerDataLoaded(ITreeItemData<T> item, bool isLoaded) => _serverDataStates.GetOrCreateValue(item).IsLoaded = isLoaded;
-
-        private sealed class ServerDataState
+        /// <summary>
+        /// Expands the ancestors of selected items when <see cref="AutoExpand"/> is set.
+        /// </summary>
+        /// <param name="selection">The selected values.</param>
+        /// <param name="useBackingItems">Whether to traverse the backing data instead of the last projection, because the data changed since it was built.</param>
+        private bool ApplyVirtualizedAutoExpand(HashSet<T> selection, bool useBackingItems = false)
         {
-            public bool IsLoaded { get; set; }
+            if (!IsVirtualized || !AutoExpand || selection.Count == 0)
+            {
+                return false;
+            }
+
+            if (useBackingItems)
+            {
+                return TreeViewHierarchy<T>.AutoExpand(Items, selection, Comparer);
+            }
+
+            EnsureProjection();
+            return _projection.AutoExpand(selection);
+        }
+
+        /// <summary>
+        /// Marks this component as disposed so that a <see cref="ServerData"/> load which completes afterwards is discarded.
+        /// </summary>
+        public void Dispose()
+        {
+            _isDisposed = true;
+            GC.SuppressFinalize(this);
         }
     }
 }

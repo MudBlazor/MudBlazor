@@ -1,0 +1,21 @@
+﻿<MudTreeView T="string" Items="_items" Virtualize="true" Height="200px">
+    <ItemTemplate>
+        <MudTreeViewItem Value="@context.Value" Text="@context.Text" Items="@context.Children" Expanded="@context.Expanded">
+            <BodyContent Context="item">
+                <MudText>@context.Text</MudText>
+                <MudTreeView T="string" Class="nested-tree">
+                    <MudTreeViewItem Value="@($"{context.Value}-inner")" Text="@($"{context.Text} inner")" Expanded="true">
+                        <MudTreeViewItem Value="@($"{context.Value}-inner-child")" Text="@($"{context.Text} inner child")" />
+                    </MudTreeViewItem>
+                </MudTreeView>
+            </BodyContent>
+        </MudTreeViewItem>
+    </ItemTemplate>
+</MudTreeView>
+
+@code {
+    private readonly List<TreeItemData<string>> _items =
+    [
+        new TreeItemData<string> { Value = "Root", Text = "Root", Expanded = true, Children = [new TreeItemData<string> { Value = "Child", Text = "Child" }] }
+    ];
+}

@@ -1,10 +1,14 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
 
-@if (Visible)
+@if (IsVirtualizedItem || Visible)
 {
-    <li @attributes="UserAttributes" class="@Classname" style="@Style">
+    @* Virtualized rows are flat siblings, so the hierarchy is exposed through level and position instead of nested lists. *@
+    <li aria-level="@(IsVirtualizedItem ? (int?)(CurrentItemContext!.Depth + 1) : null)"
+        aria-posinset="@(IsVirtualizedItem ? (int?)CurrentItemContext!.PositionInSet : null)"
+        aria-setsize="@(IsVirtualizedItem ? (int?)CurrentItemContext!.SetSize : null)"
+        @attributes="UserAttributes" class="@Classname" style="@Stylename">
         <div class="@ContentClassname" @onclick="OnItemClickedAsync" @onclick:stopPropagation="true" @ondblclick="OnItemDoubleClickedAsync" @ondblclick:stopPropagation="true">
             @if (Content != null)
             {
@@ -14,7 +18,7 @@
             {
                 @if (HasChildren())
                 {
-                    <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@AreChildrenVisible()" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+                    <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="@GetServerDataLoading()" Expanded="GetExpanded()" ExpandedChanged="OnItemExpanded" Visible="@(IsVirtualizedItem || AreChildrenVisible())" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
                 }
                 else
                 {
@@ -60,7 +64,7 @@
                 }
             }
         </div>
-        @if (HasChildren())
+        @if (HasChildren() && !IsVirtualizedItem)
         {
             <MudCollapse Expanded="@_expandedState.Value">
                 <CascadingValue Value="@MudTreeRoot" IsFixed="true">
