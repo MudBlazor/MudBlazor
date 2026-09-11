@@ -635,6 +635,36 @@ namespace MudBlazor.UnitTests.Components
             textfield.HasErrors.Should().Be(false);
         }
 
+        /// <summary>
+        /// A required outlined text field renders its legend on the path the stylesheet uses to reserve notch space for the asterisk (#11050).
+        /// </summary>
+        [Test]
+        public void RequiredOutlinedTextField_Should_RenderLegendUnderRequiredInputControl()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Label, "First name")
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Required, true));
+
+            comp.Find(".mud-input-control").ClassList.Should().Contain("mud-input-required");
+            comp.FindAll(".mud-input-control.mud-input-required > .mud-input-control-input-container .mud-input-outlined-border > legend")
+                .Should().ContainSingle();
+        }
+
+        /// <summary>
+        /// An outlined text field which is not required renders the same legend but keeps the required class off, so the notch is not widened (#11050).
+        /// </summary>
+        [Test]
+        public void OutlinedTextField_Should_RenderLegendWithoutRequiredClass()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Label, "First name")
+                .Add(p => p.Variant, Variant.Outlined));
+
+            comp.Find(".mud-input-control").ClassList.Should().NotContain("mud-input-required");
+            comp.FindAll(".mud-input-control-input-container .mud-input-outlined-border > legend").Should().ContainSingle();
+        }
+
         [Test]
         public async Task SetTextAsync_ProgrammaticSet_DoesNotMarkTouched()
         {
