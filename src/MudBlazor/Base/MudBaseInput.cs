@@ -312,9 +312,11 @@ namespace MudBlazor
         /// The text displayed in the input.
         /// </summary>
         /// <remarks>
-        /// Deprecated and removed in v10. <see cref="Value"/> (with a <c>Converter</c>/<see cref="Format"/> for display) becomes the single source of truth; bind <c>@bind-Value</c> instead, with <see cref="Immediate"/> to update on every keystroke. See https://github.com/MudBlazor/MudBlazor/issues/12556.
+        /// Deprecated and removed in v10. <see cref="Value"/> (with a <c>Converter</c>/<see cref="Format"/> for display) becomes the single source of truth, so bind <c>@bind-Value</c> instead.
+        /// <see cref="Value"/> is not a like-for-like replacement: it holds the parsed value, so input that fails to convert leaves it unchanged and sets <see cref="MudFormComponent{T, U}.ConversionError"/>.
+        /// <see cref="Immediate"/> controls when that conversion runs, not whether unparseable input becomes a value. See https://github.com/MudBlazor/MudBlazor/issues/12556.
         /// </remarks>
-        [Obsolete("Text is being removed in v10; Value (with a Converter/Format for display) becomes the single source of truth. Bind @bind-Value instead, with Immediate=\"true\" to update on every keystroke. https://github.com/MudBlazor/MudBlazor/issues/12556")]
+        [Obsolete("Text is being removed in v10; Value (with a Converter/Format for display) becomes the single source of truth, so bind @bind-Value instead. Value holds the parsed value only: it is not equivalent to raw Text, and Immediate does not change that. https://github.com/MudBlazor/MudBlazor/issues/12556")]
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
         public string? Text { get; set; }
@@ -354,9 +356,11 @@ namespace MudBlazor
         /// Occurs when the <see cref="Text"/> property has changed.
         /// </summary>
         /// <remarks>
-        /// Deprecated and removed in v10 along with the settable <see cref="Text"/>. React to changes via <c>@bind-Value</c>/<see cref="ValueChanged"/> instead, with <see cref="Immediate"/> to update on every keystroke. See https://github.com/MudBlazor/MudBlazor/issues/12556.
+        /// Deprecated and removed in v10 along with the settable <see cref="Text"/>. Use <see cref="ValueChanged"/> for typed-value changes.
+        /// It is not equivalent to raw <see cref="Text"/> notifications: it does not fire for input that fails to convert, which sets <see cref="MudFormComponent{T, U}.ConversionError"/> instead, and <see cref="Immediate"/> only changes when the conversion is attempted.
+        /// Observing every raw keystroke, including unparseable input, has no replacement yet. See https://github.com/MudBlazor/MudBlazor/issues/12556.
         /// </remarks>
-        [Obsolete("TextChanged is being removed in v10 along with the settable Text. React to changes via @bind-Value/ValueChanged instead, with Immediate=\"true\" to update on every keystroke. https://github.com/MudBlazor/MudBlazor/issues/12556")]
+        [Obsolete("TextChanged is being removed in v10 along with the settable Text. Use ValueChanged for typed-value changes; it is not equivalent to raw TextChanged notifications, because it does not fire for input that fails to convert and Immediate does not change that. https://github.com/MudBlazor/MudBlazor/issues/12556")]
         [Parameter]
         public EventCallback<string?> TextChanged { get; set; }
 
