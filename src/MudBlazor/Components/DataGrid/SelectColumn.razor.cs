@@ -23,9 +23,6 @@ public partial class SelectColumn<[DynamicallyAccessedMembers(DynamicallyAccesse
     /// <summary>
     /// Whether the owning grid currently lets the user change the selection.
     /// </summary>
-    /// <remarks>
-    /// The grid reference is null while the column is being configured outside of a grid, so selection stays changeable in that case.
-    /// </remarks>
     private bool SelectionChangeable => DataGrid?.SelectionChangeable ?? true;
 
     /// <summary>
