@@ -252,5 +252,45 @@ namespace MudBlazor.UnitTests.Components
             chip.HasAttribute("aria-disabled").Should().BeFalse();
             chip.HasAttribute("aria-pressed").Should().BeFalse();
         }
+
+        /// <summary>
+        /// A class or style supplied through UserAttributes keeps winning over the computed ones, as it did through the MudElement boundary.
+        /// </summary>
+        [Test]
+        public void Chip_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(x => x.Text, "Chip")
+                .Add(x => x.Style, "color:blue")
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    ["class"] = "user-class",
+                    ["style"] = "color:red",
+                }));
+
+            var chip = comp.Find(".mud-chip-container > *");
+            chip.GetAttribute("class").Should().Be("user-class");
+            chip.GetAttribute("style").Should().Be("color:red");
+        }
+
+        /// <summary>
+        /// A chip that is not a button has no click handler, so clicking it does not throw and does not raise OnClick.
+        /// </summary>
+        [Test]
+        public async Task Chip_Disabled_HasNoClickHandler()
+        {
+            var clicked = false;
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(x => x.Text, "Chip")
+                .Add(x => x.Disabled, true)
+                .Add(x => x.OnClick, () => clicked = true));
+
+            var chip = comp.Find(".mud-chip");
+            chip.GetAttribute("role").Should().Be("button");
+            chip.GetAttribute("aria-disabled").Should().Be("true");
+            var act = async () => await chip.ClickAsync();
+            await act.Should().ThrowAsync<MissingEventHandlerException>();
+            clicked.Should().BeFalse();
+        }
     }
 }
