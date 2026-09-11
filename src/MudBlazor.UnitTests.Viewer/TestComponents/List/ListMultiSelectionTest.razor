@@ -2,26 +2,29 @@
     <MudListSubheader>
         Select your favourite drinks:
     </MudListSubheader>
-    <MudListItem Text="Milk" />
-    <MudListItem Text="Sparkling Water" Value='"Carbonated H²O"' />
-    <MudListItem Text="Teas">
+    <MudListItem Value='"Milk"'>Milk</MudListItem>
+    <MudListItem Value='"Carbonated H²O"'>Sparkling Water</MudListItem>
+    <MudListItem Value='"Teas"'>
+        <ChildContent>Teas</ChildContent>
         <NestedList>
-            <MudListItem Text="English Tea" Value='"Earl Grey"' />
-            <MudListItem Text="Japanese Tea" Value='"Matcha"' />
-            <MudListItem Text="Chinese Tea" Value='"Wu Long Cha"' />
+            <MudListItem Value='"Earl Grey"'>English Tea</MudListItem>
+            <MudListItem Value='"Matcha"'>Japanese Tea</MudListItem>
+            <MudListItem Value='"Wu Long Cha"'>Chinese Tea</MudListItem>
         </NestedList>
     </MudListItem>
-    <MudListItem Text="Coffees">
+    <MudListItem Value='"Coffees"'>
+        <ChildContent>Coffees</ChildContent>
         <NestedList>
-            <MudListItem Text="Irish Coffee" />
-            <MudListItem Text="Double Espresso" />
-            <MudListItem Text="Cafe Latte" />
+            <MudListItem Value='"Irish Coffee"'>Irish Coffee</MudListItem>
+            <MudListItem Value='"Double Espresso"'>Double Espresso</MudListItem>
+            <MudListItem Value='"Cafe Latte"'>Cafe Latte</MudListItem>
         </NestedList>
     </MudListItem>
-    <MudListItem Text="Juices">
+    <MudListItem Value='"Juices"'>
+        <ChildContent>Juices</ChildContent>
         <NestedList>
-            <MudListItem Text="Apple Juice" Disabled="true" />
-            <MudListItem Text="Orange Juice" Disabled="true" />
+            <MudListItem Value='"Apple Juice"' Disabled="true">Apple Juice</MudListItem>
+            <MudListItem Value='"Orange Juice"' Disabled="true">Orange Juice</MudListItem>
         </NestedList>
     </MudListItem>
 </MudList>

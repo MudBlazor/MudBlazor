@@ -5,17 +5,19 @@
         <MudPaper Width="100%">
             <MudList T="string" ReadOnly="@ReadOnly" Dense="@Dense" Gutters="@Gutters" Disabled="@Disabled" Padding="@Padding">
                 <MudListSubheader>Important Isotopes</MudListSubheader>
-                <MudListItem Text="Hydrogen (H-1) - stable" Icon="@StableIcon" IconColor="@StableColor" Expanded>
+                <MudListItem Value='"Hydrogen (H-1) - stable"' Icon="@StableIcon" IconColor="@StableColor" Expanded>
+                    <ChildContent>Hydrogen (H-1) - stable</ChildContent>
                     <NestedList>
-                        <MudListItem Text="Deuterium (H-2) - stable" Icon="@StableIcon" IconColor="@StableColor" />
-                        <MudListItem Text="Tritium (H-3) - radioactive" Icon="@RadioactiveIcon" IconColor="@RadioactiveColor" />
+                        <MudListItem Value='"Deuterium (H-2) - stable"' Icon="@StableIcon" IconColor="@StableColor">Deuterium (H-2) - stable</MudListItem>
+                        <MudListItem Value='"Tritium (H-3) - radioactive"' Icon="@RadioactiveIcon" IconColor="@RadioactiveColor">Tritium (H-3) - radioactive</MudListItem>
                     </NestedList>
                 </MudListItem>
-                <MudListItem Text="Uranium (U-92) - radioactive" Icon="@RadioactiveIcon" IconColor="@RadioactiveColor">
+                <MudListItem Value='"Uranium (U-92) - radioactive"' Icon="@RadioactiveIcon" IconColor="@RadioactiveColor">
+                    <ChildContent>Uranium (U-92) - radioactive</ChildContent>
                     <NestedList>
-                        <MudListItem Text="Uranium (U-234) - radioactive" Icon="@RadioactiveIcon" IconColor="@RadioactiveColor" />
-                        <MudListItem Text="Uranium (U-235) - radioactive" Icon="@RadioactiveIcon" IconColor="@RadioactiveColor" />
-                        <MudListItem Text="Uranium (U-238) - radioactive" Icon="@RadioactiveIcon" IconColor="@RadioactiveColor" />
+                        <MudListItem Value='"Uranium (U-234) - radioactive"' Icon="@RadioactiveIcon" IconColor="@RadioactiveColor">Uranium (U-234) - radioactive</MudListItem>
+                        <MudListItem Value='"Uranium (U-235) - radioactive"' Icon="@RadioactiveIcon" IconColor="@RadioactiveColor">Uranium (U-235) - radioactive</MudListItem>
+                        <MudListItem Value='"Uranium (U-238) - radioactive"' Icon="@RadioactiveIcon" IconColor="@RadioactiveColor">Uranium (U-238) - radioactive</MudListItem>
                     </NestedList>
                 </MudListItem>
             </MudList>

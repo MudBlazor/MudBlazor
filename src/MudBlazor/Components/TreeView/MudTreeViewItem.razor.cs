@@ -85,9 +85,11 @@ namespace MudBlazor
         /// The text to display.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>. When no value is set, the <see cref="Value"/> is used if it is a basic value such as <c>string</c> or <c>int</c>, etc.<br />
+        /// Deprecated and removed in v10. Set <see cref="Value"/> instead, which renders as the label; use <see cref="BodyContent"/> when the displayed content should differ from the value, noting it replaces the whole item body including <see cref="EndText"/> and <see cref="EndIcon"/>. See https://github.com/MudBlazor/MudBlazor/issues/12556.<br />
+        /// When Text is not set, the <see cref="Value"/> is displayed if it is a basic value such as <c>string</c> or <c>int</c>, etc.<br />
         /// Ignored if <see cref="BodyContent"/> is set.
         /// </remarks>
+        [Obsolete("Text is being removed in v10; set Value instead, which renders as the label. Use BodyContent for fully custom content (it replaces the whole item body including EndText and EndIcon). https://github.com/MudBlazor/MudBlazor/issues/12556")]
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
         public string? Text { get; set; }
@@ -103,7 +105,7 @@ namespace MudBlazor
         public Typo TextTypo { get; set; } = Typo.body1;
 
         /// <summary>
-        /// The CSS classes applied to the <see cref="Text"/> parameter.
+        /// The CSS classes applied to the item's text label.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>. Multiple values must be separated by spaces.
@@ -206,7 +208,7 @@ namespace MudBlazor
         /// The custom content for the text, end text, and end icon.
         /// </summary>
         /// <remarks>
-        /// When set, the <see cref="Text"/>, <see cref="EndText"/>, and <see cref="EndIcon"/> properties are ignored.
+        /// When set, the item's text, <see cref="EndText"/>, and <see cref="EndIcon"/> are ignored.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -387,6 +389,7 @@ namespace MudBlazor
             return _itemsState.Value!;
         }
 
+#pragma warning disable CS0618 // Text is obsolete (removed in v10, #12556); referenced here only for v9 back-compat
         internal T? GetValue()
         {
             if (typeof(T) == typeof(string) && Value is null && Text is not null)
@@ -397,6 +400,7 @@ namespace MudBlazor
         }
 
         private string? GetText() => string.IsNullOrEmpty(Text) ? _converter.Convert(Value) : Text;
+#pragma warning restore CS0618
 
         private bool GetDisabled() => Disabled || MudTreeRoot?.Disabled == true;
 
@@ -524,7 +528,9 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
+#pragma warning disable CS0618 // Text is obsolete (removed in v10, #12556); referenced here only for v9 back-compat
             if (Text == null && Value == null && MudTreeRoot?.ServerData != null)
+#pragma warning restore CS0618
                 throw new InvalidOperationException(
                     $"'{nameof(MudTreeView<T>)}.{nameof(MudTreeRoot.ServerData)}' requires '{nameof(MudTreeRoot.ItemTemplate)}.{nameof(MudTreeViewItem<T>)}.{nameof(Value)}' to be supplied.");
         }

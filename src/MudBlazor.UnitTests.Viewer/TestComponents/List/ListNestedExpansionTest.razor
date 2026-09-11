@@ -1,13 +1,14 @@
 ﻿<MudList T="string">
-    <MudListItem Text="Drinks"
+    <MudListItem Value='"Drinks"'
                  Expanded="_expanded"
                  ExpandedChanged="OnExpandedChanged"
                  ExpandMoreIcon="@Icons.Material.Filled.Add"
                  ExpandLessIcon="@Icons.Material.Filled.Remove"
                  ExpandIconColor="Color.Secondary">
+        <ChildContent>Drinks</ChildContent>
         <NestedList>
-            <MudListItem Text="Water" />
-            <MudListItem Text="Coffee" />
+            <MudListItem Value='"Water"'>Water</MudListItem>
+            <MudListItem Value='"Coffee"'>Coffee</MudListItem>
         </NestedList>
     </MudListItem>
 </MudList>

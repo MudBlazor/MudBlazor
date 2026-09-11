@@ -1112,12 +1112,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             // expanded
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(false);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "config").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "images").Expanded.Should().Be(false);
             // selected
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(true);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "launch.json").Selected.Should().Be(true);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "logo.png").Selected.Should().Be(false);
             // switches
             comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(false);
             comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
@@ -1135,12 +1135,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
             // expanded
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(false);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "config").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "images").Expanded.Should().Be(false);
             // selected
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(false);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(true);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "launch.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "logo.png").Selected.Should().Be(true);
             // switches
             comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(false);
             comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
@@ -1158,12 +1158,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
             // expanded
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(true);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "config").Expanded.Should().Be(true);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "images").Expanded.Should().Be(false);
             // selected
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(false);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(true);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "launch.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "logo.png").Selected.Should().Be(true);
             // switches
             comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(true);
             comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
@@ -1181,12 +1181,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
             // expanded
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(false);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "config").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "images").Expanded.Should().Be(false);
             // selected
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(false);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(true);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "launch.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "logo.png").Selected.Should().Be(true);
             // switches
             comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(false);
             comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
@@ -1204,12 +1204,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".item-images .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-logo .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             // expanded
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "config").Expanded.Should().Be(false);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "images").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "config").Expanded.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "images").Expanded.Should().Be(false);
             // selected
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "launch.json").Selected.Should().Be(true);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
-            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "launch.json").Selected.Should().Be(true);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "tasks.json").Selected.Should().Be(false);
+            comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Value == "logo.png").Selected.Should().Be(false);
             // switches
             comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(false);
             comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
@@ -1225,7 +1225,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
-            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").ClickAsync();
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Value == value)?.Find("button.mud-chip").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1265,7 +1265,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true).Add(x => x.ConfigCanExpand, false));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
-            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").ClickAsync();
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Value == value)?.Find("button.mud-chip").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);

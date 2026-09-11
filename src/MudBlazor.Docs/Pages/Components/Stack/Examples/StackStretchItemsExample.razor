@@ -9,12 +9,12 @@
 </MudPaper>
 
 <MudChipSet @bind-SelectedValue="@stretch" Class="mt-12" >
-    <MudChip Value="StretchItems.None" Text="Do Not Stretch" SelectedColor="Color.Primary" />
-    <MudChip Value="StretchItems.Start" Text="Stretch First" SelectedColor="Color.Primary" Default="true" />
-    <MudChip Value="StretchItems.StartAndEnd" Text="Stretch First and Last" SelectedColor="Color.Primary" />
-    <MudChip Value="StretchItems.End" Text="Stretch Last" SelectedColor="Color.Primary" />
-    <MudChip Value="StretchItems.Middle" Text="Stretch Middle" SelectedColor="Color.Primary" />
-    <MudChip Value="StretchItems.All" Text="Stretch All" SelectedColor="Color.Primary" />
+    <MudChip Value="StretchItems.None" SelectedColor="Color.Primary">Do Not Stretch</MudChip>
+    <MudChip Value="StretchItems.Start" SelectedColor="Color.Primary" Default="true">Stretch First</MudChip>
+    <MudChip Value="StretchItems.StartAndEnd" SelectedColor="Color.Primary">Stretch First and Last</MudChip>
+    <MudChip Value="StretchItems.End" SelectedColor="Color.Primary">Stretch Last</MudChip>
+    <MudChip Value="StretchItems.Middle" SelectedColor="Color.Primary">Stretch Middle</MudChip>
+    <MudChip Value="StretchItems.All" SelectedColor="Color.Primary">Stretch All</MudChip>
 </MudChipSet>
 
 @code {

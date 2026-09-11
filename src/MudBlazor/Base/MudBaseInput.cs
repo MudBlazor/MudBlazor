@@ -36,10 +36,12 @@ namespace MudBlazor
         protected MudBaseInput()
         {
             using var registerScope = CreateRegisterScope();
+#pragma warning disable CS0618 // Text/TextChanged are obsolete but remain wired up for v9 back-compat; removed in v10 (#12556)
             _textState = registerScope.RegisterParameter<string?>(nameof(Text))
                 .WithParameter(() => Text)
                 .WithEventCallback(() => TextChanged)
                 .WithChangeHandler(OnTextParameterChangedAsync);
+#pragma warning restore CS0618
             _valueState = registerScope.RegisterParameter<T?>(nameof(Value))
                 .WithParameter(() => Value)
                 .WithEventCallback(() => ValueChanged)
@@ -309,6 +311,12 @@ namespace MudBlazor
         /// <summary>
         /// The text displayed in the input.
         /// </summary>
+        /// <remarks>
+        /// Deprecated and removed in v10. <see cref="Value"/> (with a <c>Converter</c>/<see cref="Format"/> for display) becomes the single source of truth, so bind <c>@bind-Value</c> instead.
+        /// <see cref="Value"/> is not a like-for-like replacement: it holds the parsed value, so input that fails to convert leaves it unchanged and sets <see cref="MudFormComponent{T, U}.ConversionError"/>.
+        /// <see cref="Immediate"/> controls when that conversion runs, not whether unparseable input becomes a value. See https://github.com/MudBlazor/MudBlazor/issues/12556.
+        /// </remarks>
+        [Obsolete("Text is being removed in v10; Value (with a Converter/Format for display) becomes the single source of truth, so bind @bind-Value instead. Value holds the parsed value only: it is not equivalent to raw Text, and Immediate does not change that. https://github.com/MudBlazor/MudBlazor/issues/12556")]
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
         public string? Text { get; set; }
@@ -347,6 +355,12 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when the <see cref="Text"/> property has changed.
         /// </summary>
+        /// <remarks>
+        /// Deprecated and removed in v10 along with the settable <see cref="Text"/>. Use <see cref="ValueChanged"/> for typed-value changes.
+        /// It is not equivalent to raw <see cref="Text"/> notifications: it does not fire for input that fails to convert, which sets <see cref="MudFormComponent{T, U}.ConversionError"/> instead, and <see cref="Immediate"/> only changes when the conversion is attempted.
+        /// Observing every raw keystroke, including unparseable input, has no replacement yet. See https://github.com/MudBlazor/MudBlazor/issues/12556.
+        /// </remarks>
+        [Obsolete("TextChanged is being removed in v10 along with the settable Text. Use ValueChanged for typed-value changes; it is not equivalent to raw TextChanged notifications, because it does not fire for input that fails to convert and Immediate does not change that. https://github.com/MudBlazor/MudBlazor/issues/12556")]
         [Parameter]
         public EventCallback<string?> TextChanged { get; set; }
 
@@ -404,7 +418,7 @@ namespace MudBlazor
         /// The value for this input.
         /// </summary>
         /// <remarks>
-        /// This property represents the strongly typed value for the input.  It is typically the result of parsing raw input via the <see cref="Text"/> property.
+        /// This property represents the strongly typed value for the input.  It is typically the result of parsing the raw text entered into the input.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
@@ -438,7 +452,7 @@ namespace MudBlazor
         /// Occurs when the value has changed internally.
         /// </summary>
         /// <remarks>
-        /// This method is called when the <see cref="Text"/> property needs to be refreshed from current <see cref="Value" />.
+        /// This method is called when the displayed text needs to be refreshed from the current <see cref="Value" />.
         /// </remarks>
         protected virtual Task UpdateTextPropertyAsync(bool updateValue)
         {
@@ -566,7 +580,9 @@ namespace MudBlazor
             // When Value changes from parent, update Text from Value
             // But only if Text is not also being set in the same parameter update
             // Check ParameterView to see if Text is also present
+#pragma warning disable CS0618 // Text is obsolete (removed in v10, #12556); referenced here only for v9 back-compat
             if (!arg.ParameterView.Contains<string?>(nameof(Text)))
+#pragma warning restore CS0618
             {
                 var forceTextUpdate = _forceTextUpdate;
                 _forceTextUpdate = false;
@@ -608,7 +624,7 @@ namespace MudBlazor
         /// Occurs when the value has changed internally.
         /// </summary>
         /// <remarks>
-        /// This method is called when the <see cref="Value"/> property needs to be refreshed from current <see cref="Text" />.
+        /// This method is called when the <see cref="Value"/> property needs to be refreshed from the current displayed text.
         /// </remarks>
         protected virtual Task UpdateValuePropertyAsync(bool updateText)
         {
@@ -677,7 +693,7 @@ namespace MudBlazor
         /// <summary>
         /// Causes this input to be rerendered.
         /// </summary>
-        /// <param name="forceTextUpdate">When <c>true</c>, the <see cref="Text"/> property will be updated before rendering.</param>
+        /// <param name="forceTextUpdate">When <c>true</c>, the displayed text will be refreshed from the current <see cref="Value"/> before rendering.</param>
         public virtual void ForceRender(bool forceTextUpdate)
         {
             _forceTextUpdate = true;
@@ -688,7 +704,9 @@ namespace MudBlazor
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {
+#pragma warning disable CS0618 // Text is obsolete (removed in v10, #12556); referenced here only for v9 back-compat
             var hasText = parameters.Contains<string>(nameof(Text));
+#pragma warning restore CS0618
             var hasValue = parameters.Contains<T>(nameof(Value));
             var currentValue = ReadValue;
             await base.SetParametersAsync(parameters);
