@@ -568,6 +568,86 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        /// <summary>
+        /// Clicking the next scroll button in right-to-left mode moves the tab bar toward the last panel, mirroring the sign used by ScrollToItem.
+        /// </summary>
+        [Test]
+        public async Task ScrollNext_RightToLeft()
+        {
+            var observer = new MockResizeObserver
+            {
+                PanelSize = 100.0,
+                PanelTotalSize = 200,
+            };
+
+            var factory = new MockResizeObserverFactory(observer);
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
+
+            var comp = Context.Render<ScrollableTabsTest>(parameters => parameters.AddCascadingValue("RightToLeft", true));
+
+            var scrollButtons = comp.FindComponents<MudIconButton>();
+            scrollButtons.Should().HaveCount(2);
+
+            // The rendered offset is -1 * _scrollPosition, so a right-to-left scroll toward the last panel shows up as a positive translation.
+            static double Translate(IRenderedComponent<ScrollableTabsTest> c)
+            {
+                var style = c.Find(".mud-tabs-tabbar-wrapper").GetAttribute("style")!;
+                var start = style.IndexOf('(') + 1;
+                var end = style.IndexOf("px", StringComparison.Ordinal);
+                return double.Parse(style[start..end], CultureInfo.InvariantCulture);
+            }
+
+            Translate(comp).Should().Be(0);
+
+            await scrollButtons.Last().Find("button").ClickAsync();
+            Translate(comp).Should().Be(200);
+            scrollButtons.First().Instance.Disabled.Should().BeFalse();
+
+            await scrollButtons.Last().Find("button").ClickAsync();
+            Translate(comp).Should().Be(400);
+        }
+
+        /// <summary>
+        /// Clicking the previous scroll button in right-to-left mode moves the tab bar back toward the first panel one page at a time.
+        /// </summary>
+        [Test]
+        public async Task ScrollPrev_RightToLeft()
+        {
+            var observer = new MockResizeObserver
+            {
+                PanelSize = 100.0,
+                PanelTotalSize = 200,
+            };
+
+            var factory = new MockResizeObserverFactory(observer);
+            Context.Services.Add(new ServiceDescriptor(typeof(IResizeObserverFactory), factory));
+
+            var comp = Context.Render<ScrollableTabsTest>(parameters => parameters.AddCascadingValue("RightToLeft", true));
+
+            var scrollButtons = comp.FindComponents<MudIconButton>();
+            scrollButtons.Should().HaveCount(2);
+
+            static double Translate(IRenderedComponent<ScrollableTabsTest> c)
+            {
+                var style = c.Find(".mud-tabs-tabbar-wrapper").GetAttribute("style")!;
+                var start = style.IndexOf('(') + 1;
+                var end = style.IndexOf("px", StringComparison.Ordinal);
+                return double.Parse(style[start..end], CultureInfo.InvariantCulture);
+            }
+
+            await scrollButtons.Last().Find("button").ClickAsync();
+            await scrollButtons.Last().Find("button").ClickAsync();
+            Translate(comp).Should().Be(400);
+
+            // Each previous click steps back exactly one page instead of collapsing straight to the start.
+            await scrollButtons.First().Find("button").ClickAsync();
+            Translate(comp).Should().Be(200);
+
+            await scrollButtons.First().Find("button").ClickAsync();
+            Translate(comp).Should().Be(0);
+            scrollButtons.First().Instance.Disabled.Should().BeTrue();
+        }
+
         [Test]
         public async Task Handle_ResizeOfPanel()
         {
