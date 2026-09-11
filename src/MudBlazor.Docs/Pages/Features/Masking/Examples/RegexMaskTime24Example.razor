@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid Class="justify-space-between" Style="max-width: 800px;">
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@timeMask" Label="Time" HelperText="@timeMask.Mask"
+                      @bind-Value="time" Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@timeWithSecondsMask" Label="Time with Seconds" HelperText="@timeWithSecondsMask.Mask"
+                      @bind-Value="timeWithSeconds" Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        Time: <b>@time</b>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        Time w/Seconds: <b>@timeWithSeconds</b>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string time;
+    public string timeWithSeconds;
+    public IMask timeMask = RegexMask.Time24();
+    public IMask timeWithSecondsMask = RegexMask.Time24(includeSeconds: true);
+}
