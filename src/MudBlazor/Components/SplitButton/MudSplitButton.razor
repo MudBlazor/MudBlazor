@@ -1,0 +1,50 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<MudButtonGroup Class="@Classname"
+                Style="@Style"
+                Tag="@Tag"
+                UserAttributes="@UserAttributes"
+                Color="@Color"
+                Size="@Size"
+                Variant="@Variant"
+                DropShadow="@DropShadow"
+                FullWidth="@FullWidth">
+    <MudButton Class="mud-split-button-primary"
+               StartIcon="@StartIcon"
+               EndIcon="@EndIcon"
+               Size="@Size"
+               ButtonType="@ButtonType"
+               Href="@Href"
+               Target="@Target"
+               Rel="@Rel"
+               Disabled="@Disabled"
+               Ripple="@Ripple"
+               OnClick="@OnClick">
+        @if (ButtonContent is not null)
+        {
+            @ButtonContent
+        }
+        else
+        {
+            @Label
+        }
+    </MudButton>
+    <MudMenu Class="mud-split-button-toggle"
+             Icon="@GetToggleIcon()"
+             AriaLabel="@ToggleAriaLabel"
+             Color="@Color"
+             Size="@Size"
+             Variant="@Variant"
+             Disabled="@GetToggleDisabled()"
+             Ripple="@Ripple"
+             Dense="@Dense"
+             AnchorOrigin="@AnchorOrigin"
+             TransformOrigin="@TransformOrigin"
+             PopoverClass="@PopoverClass"
+             ListClass="@ListClass"
+             Open="@GetMenuOpen()"
+             OpenChanged="@OnMenuOpenChangedAsync">
+        @ChildContent
+    </MudMenu>
+</MudButtonGroup>
