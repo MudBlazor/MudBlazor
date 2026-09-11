@@ -1,0 +1,20 @@
+<MudTable @ref="_table" T="int" Items="_items" MultiSelection="true" RowClassFunc="RowClass">
+    <ToolBarContent>
+        <MudText id="selected-count">@(_table?.SelectedItems?.Count ?? 0)</MudText>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>#</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "a toolbar and row classes derived from the selection must follow the row checkboxes even when SelectedItems is not bound.";
+
+    private MudTable<int>? _table;
+    private readonly int[] _items = [0, 1, 2, 3];
+
+    private string RowClass(int item, int index) => _table?.SelectedItems?.Contains(item) == true ? "row-selected" : string.Empty;
+}

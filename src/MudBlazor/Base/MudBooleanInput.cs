@@ -142,6 +142,13 @@ namespace MudBlazor
                 ["tabindex"] = GetDisabledState() ? -1 : 0
             };
 
+            if (HasErrors)
+            {
+                // Link the input to the rendered error text the same way MudInput does.
+                attributes["aria-invalid"] = "true";
+                attributes["aria-describedby"] = ErrorIdState.Value;
+            }
+
             foreach (var userAttribute in UserAttributes)
             {
                 attributes[userAttribute.Key] = userAttribute.Value;

@@ -11,7 +11,7 @@
         <CascadingValue Value="@((IMudRadioGroup)this)" IsFixed="false">
             <CascadingValue TValue="bool" Name="ParentDisabled" Value="@GetDisabledState()">
                 <CascadingValue TValue="bool" Name="ParentReadOnly" Value="@GetReadOnlyState()">
-                    <div role="radiogroup" aria-required="@Required.ToString().ToLowerInvariant()" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle">
+                    <div role="radiogroup" aria-required="@Required.ToString().ToLowerInvariant()" aria-invalid="@(HasErrors ? "true" : null)" aria-describedby="@(HasErrors ? ErrorIdState.Value : null)" @attributes="UserAttributes" class="@GetInputClass()" style="@InputStyle">
                         @ChildContent
                     </div>
                 </CascadingValue>

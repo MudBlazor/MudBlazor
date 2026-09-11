@@ -6,7 +6,7 @@
 #pragma warning disable CS0618 // Type or member is obsolete
 }
 
-<MudInputControl Class="@Classname" Style="@Style" Error="HasErrors" ErrorText="@GetErrorText()" Required="@Required">
+<MudInputControl Class="@Classname" Style="@Style" Error="HasErrors" ErrorId="@ErrorIdState.Value" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
         @for (var index = 1; index <= _numberOfActiveFileInputs; index++)
         {
@@ -20,6 +20,7 @@
                        accept="@Accept"
                        disabled="@(GetDisabledState())"
                        aria-required="@Required.ToString().ToLowerInvariant()"
+                       aria-describedby="@(HasErrors ? ErrorIdState.Value : null)"
                        @attributes="UserAttributes"
                        @ondragenter="OnDragEnterAsync"
                        @ondrop="OnDropAsync"

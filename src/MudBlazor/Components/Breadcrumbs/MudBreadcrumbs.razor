@@ -1,6 +1,8 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Resources
 @using MudBlazor.Utilities
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
 @if (Items is null || Items.Count == 0)
 {
@@ -8,7 +10,7 @@
 }
 
 <CascadingValue Value="this" IsFixed="true">
-    <nav aria-label="Breadcrumb">
+    <nav aria-label="@Localizer[LanguageResource.MudBreadcrumbs_Label]">
         <ol @attributes="UserAttributes" class="@Classname" style="@Style">
             @if (MaxItems != null && Collapsed && Items.Count > MaxItems)
             {

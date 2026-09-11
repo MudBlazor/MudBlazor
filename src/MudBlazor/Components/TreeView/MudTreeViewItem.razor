@@ -12,7 +12,14 @@
             }
             else
             {
-                <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@(HasChildren() && AreChildrenVisible())" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+                @if (HasChildren())
+                {
+                    <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@AreChildrenVisible()" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+                }
+                else
+                {
+                    <div class="mud-treeview-item-arrow" @ondblclick="OnArrowDoubleClick" @ondblclick:stopPropagation="true"></div>
+                }
 
                 @if (MultiSelection)
                 {

@@ -20,7 +20,7 @@ on:
       model:
         description: "Gemini model (use pro for best results)"
         required: true
-        default: "gemini-3.7-flash"
+        default: "gemini-3.8-flash"
 
 jobs:
   release-notes:

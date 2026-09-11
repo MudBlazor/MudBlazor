@@ -1,11 +1,9 @@
 ﻿
-using System.Threading.Tasks;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Interfaces;
-using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.Shared.Mocks;
+using MudBlazor.Resources;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -27,7 +25,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.ActiveSection.Should().BeNull();
             comp.Instance.Sections.Should().BeEmpty();
-            comp.Instance.Headline.Should().Be("Contents");
+            comp.Instance.Headline.Should().Be("");
             comp.Instance.SectionClassSelector.Should().BeNullOrEmpty();
 
             comp.Nodes.Should().ContainSingle();
@@ -35,10 +33,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task CustomNavMenuTitle()
+        {
+            var comp = Context.Render<MudPageContentNavigation>(parameters => parameters.Add(x => x.Headline, "Custom title"));
+
+            var section1 = new MudPageContentSection("my section", "my-id");
+            var section2 = new MudPageContentSection("my section 2", "my-id-2");
+
+            comp.Instance.AddSection(section1, false);
+            comp.Instance.AddSection(section2, false);
+            await comp.InvokeAsync(() => ((IMudStateHasChanged)comp.Instance).StateHasChanged());
+
+            comp.RenderCount.Should().Be(2);
+
+            comp.Instance.ActiveSection.Should().BeNull();
+            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });
+
+            comp.Nodes.Should().ContainSingle();
+            comp.Instance.Headline.Should().Be("Custom title");
+
+            var navMenu = comp.FindComponent<MudNavMenu>();
+            navMenu.Instance.UserAttributes.GetValueOrDefault("aria-label").Should().Be("Custom title");
+
+            var headlineItem = comp.FindComponent<MudText>();
+            headlineItem.FindAll("p.mud-typography")[0].TextContent.Should().Be("Custom title");
+
+            var navLinks = comp.FindComponents<MudNavLink>();
+            navLinks.Should().HaveCount(2);
+            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink navigation-level-0");
+
+            var firstLinkText = navLinks[0].Find(".mud-nav-link-text");
+            firstLinkText.TextContent.Should().Be("my section");
+
+            var secondLinkText = navLinks[1].Find(".mud-nav-link-text");
+            secondLinkText.TextContent.Should().Be("my section 2");
+        }
+
+        [Test]
         [TestCase(true)]
         [TestCase(false)]
         public async Task AddSection(bool withUpdate)
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MudPageContentNavigation>();
 
             var section1 = new MudPageContentSection("my section", "my-id");
@@ -62,6 +98,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });
 
             comp.Nodes.Should().ContainSingle();
+
+            var navMenu = comp.FindComponent<MudNavMenu>();
+            navMenu.Instance.UserAttributes.GetValueOrDefault("aria-label").Should().Be(localizer[LanguageResource.MudPageContentNavigation_NavMenu]);
+
+            var headlineItem = comp.FindComponent<MudText>();
+            headlineItem.FindAll("p.mud-typography")[0].TextContent.Should().Be(localizer[LanguageResource.MudPageContentNavigation_NavMenu]);
 
             var navLinks = comp.FindComponents<MudNavLink>();
             navLinks.Should().HaveCount(2);
