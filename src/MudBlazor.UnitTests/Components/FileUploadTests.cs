@@ -890,5 +890,26 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input[type=file]").GetAttribute("id").Should().NotBe("caller-id");
         }
+
+        /// <summary>
+        /// An invalid file input links to its error text.
+        /// </summary>
+        [Test]
+        public async Task FileUpload_ShouldLinkInputToErrorText()
+        {
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(p => p.ErrorId, "upload-error")
+                .Add(p => p.ErrorText, "File required"));
+
+            comp.Find("input[type=\"file\"]").HasAttribute("aria-describedby").Should().BeFalse();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, true));
+
+            var input = comp.Find("input[type=\"file\"]");
+            // A file input has no ARIA role that supports aria-invalid, so it is only linked to the text.
+            input.HasAttribute("aria-invalid").Should().BeFalse();
+            input.GetAttribute("aria-describedby").Should().Be("upload-error");
+            comp.Find("#upload-error").TextContent.Trim().Should().Be("File required");
+        }
     }
 }

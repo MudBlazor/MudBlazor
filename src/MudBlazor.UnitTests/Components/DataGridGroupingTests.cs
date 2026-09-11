@@ -14,6 +14,183 @@ namespace MudBlazor.UnitTests.Components
 {
     public class DataGridGroupingTests : BunitTest
     {
+        /// <summary>
+        /// A row click inside a nested group must render each cell once; every DataGridGroupRow level used to add a pass of its own.
+        /// </summary>
+        [Test]
+        public async Task DataGridNestedGroupRowClickRendersCellsOnce()
+        {
+            var comp = Context.Render<DataGridNestedGroupClickTest>();
+
+            // 8 rows x 1 counted property column.
+            const int CellCount = 8;
+            comp.FindAll("tbody .mud-datagrid-group").Count.Should().Be(6, "the fixture must really be grouped two levels deep");
+
+            comp.Instance.Reads = 0;
+            await comp.FindAll("tbody tr[aria-selected] td")[1].ClickAsync();
+
+            comp.Instance.Reads.Should().Be(CellCount, "the grid render already redraws every group level");
+        }
+
+        /// <summary>
+        /// A right-click inside a nested group must also render each cell once.
+        /// </summary>
+        [Test]
+        public async Task DataGridNestedGroupContextMenuRendersCellsOnce()
+        {
+            var comp = Context.Render<DataGridNestedGroupClickTest>();
+
+            const int CellCount = 8;
+            comp.FindAll("tbody .mud-datagrid-group").Count.Should().Be(6, "the fixture must really be grouped two levels deep");
+
+            comp.Instance.Reads = 0;
+            await comp.FindAll("tbody tr[aria-selected] td")[1].ContextMenuAsync();
+
+            comp.Instance.Reads.Should().Be(CellCount, "forwarding a context-menu click must not add renders either");
+        }
+
+        /// <summary>
+        /// The row context-menu receiver is shared with ungrouped grids, which reach the row without any group row.
+        /// </summary>
+        [Test]
+        public async Task DataGridUngroupedContextMenuRendersCellsOnce()
+        {
+            var comp = Context.Render<DataGridNestedGroupClickTest>(parameters => parameters
+                .Add(x => x.Grouped, false));
+
+            const int CellCount = 8;
+            comp.FindAll("tbody .mud-datagrid-group").Should().BeEmpty("this case must not be grouped");
+
+            comp.Instance.Reads = 0;
+            await comp.FindAll("tbody tr[aria-selected] td")[1].ContextMenuAsync();
+
+            comp.Instance.Reads.Should().Be(CellCount);
+        }
+
+        /// <summary>
+        /// Forwarding through two group levels must still deliver the clicked item and its row index exactly once.
+        /// </summary>
+        [Test]
+        public async Task DataGridNestedGroupRowClickReportsItemAndIndex()
+        {
+            var comp = Context.Render<DataGridNestedGroupClickTest>();
+
+            // The third data row is the first row of the A/Y inner group.
+            await comp.FindAll("tbody tr[aria-selected]")[2].QuerySelectorAll("td")[1].ClickAsync();
+
+            comp.Instance.RowClicks.Should().HaveCount(1);
+            comp.Instance.RowClicks[0].Item.Name.Should().Be("AY1");
+            comp.Instance.RowClicks[0].RowIndex.Should().Be(0, "the index is relative to the innermost group");
+            comp.Instance.ContextClicks.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Forwarding must deliver context-menu clicks with the same item and index as a row click.
+        /// </summary>
+        [Test]
+        public async Task DataGridNestedGroupContextMenuReportsItemAndIndex()
+        {
+            var comp = Context.Render<DataGridNestedGroupClickTest>();
+
+            await comp.FindAll("tbody tr[aria-selected]")[3].QuerySelectorAll("td")[1].ContextMenuAsync();
+
+            comp.Instance.ContextClicks.Should().HaveCount(1);
+            comp.Instance.ContextClicks[0].Item.Name.Should().Be("AY2");
+            comp.Instance.ContextClicks[0].RowIndex.Should().Be(1);
+            comp.Instance.RowClicks.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Selection still follows a row click in a nested group, which is output the group row itself renders.
+        /// </summary>
+        [Test]
+        public async Task DataGridNestedGroupRowClickSelectsRow()
+        {
+            var comp = Context.Render<DataGridNestedGroupClickTest>();
+
+            comp.FindAll("tbody tr[aria-selected]").Select(x => x.GetAttribute("aria-selected"))
+                .Should().AllBe("false");
+
+            await comp.FindAll("tbody tr[aria-selected]")[2].QuerySelectorAll("td")[1].ClickAsync();
+
+            comp.FindAll("tbody tr[aria-selected]").Select(x => x.GetAttribute("aria-selected"))
+                .Should().Equal("false", "false", "true", "false", "false", "false", "false", "false");
+        }
+
+        /// <summary>
+        /// Cell editing still begins from a row click in a nested group, and the editor still commits.
+        /// </summary>
+        [Test]
+        public async Task DataGridNestedGroupRowClickStartsCellEdit()
+        {
+            var comp = Context.Render<DataGridNestedGroupClickTest>(parameters => parameters
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick));
+
+            comp.Instance.StartedEditing.Should().BeEmpty();
+
+            await comp.FindAll("tbody tr[aria-selected]")[2].QuerySelectorAll("td")[1].ClickAsync();
+
+            comp.Instance.StartedEditing.Should().ContainSingle()
+                .Which.Name.Should().Be("AY1", "the row click must begin editing the clicked item");
+
+            await comp.FindAll("tbody tr[aria-selected]")[2].QuerySelectorAll("td input:not([type=checkbox])")[0].ChangeAsync("renamed");
+
+            comp.FindAll("tbody tr[aria-selected]")[2].QuerySelectorAll("td input:not([type=checkbox])")[0]
+                .GetAttribute("value").Should().Be("renamed", "the editor in a nested group must still commit");
+        }
+
+        /// <summary>
+        /// An exception from the consumer's row-click handler must still surface through the forwarding chain.
+        /// </summary>
+        [Test]
+        public async Task DataGridNestedGroupRowClickSurfacesHandlerException()
+        {
+            var comp = Context.Render<DataGridNestedGroupClickTest>(parameters => parameters
+                .Add(x => x.ThrowOnRowClick, true));
+
+            var click = async () => await comp.FindAll("tbody tr[aria-selected] td")[1].ClickAsync();
+
+            await click.Should().ThrowAsync<InvalidOperationException>()
+                .WithMessage("row click handler failed");
+        }
+
+        /// <summary>
+        /// An exception from the consumer's context-menu handler must surface too, since that receiver changed as well.
+        /// </summary>
+        [Test]
+        public async Task DataGridNestedGroupContextMenuSurfacesHandlerException()
+        {
+            var comp = Context.Render<DataGridNestedGroupClickTest>(parameters => parameters
+                .Add(x => x.ThrowOnContextMenuClick, true));
+
+            var rightClick = async () => await comp.FindAll("tbody tr[aria-selected] td")[1].ContextMenuAsync();
+
+            await rightClick.Should().ThrowAsync<InvalidOperationException>()
+                .WithMessage("context menu handler failed");
+        }
+
+        /// <summary>
+        /// Without a RowContextMenuClick delegate the group row forwards nothing and the row carries no context-menu listener.
+        /// </summary>
+        [Test]
+        public async Task DataGridNestedGroupWithoutContextMenuDelegateForwardsNothing()
+        {
+            var comp = Context.Render<DataGridNestedGroupClickTest>(parameters => parameters
+                .Add(x => x.ContextMenuEnabled, false));
+
+            comp.FindComponents<DataGridVirtualizeRow<DataGridNestedGroupClickTest.Item>>()
+                .Select(x => x.Instance.ContextRowClick.HasDelegate)
+                .Should().AllBeEquivalentTo(false, "the group row must not forward a callback that can never fire");
+
+            var rightClick = async () => await comp.FindAll("tbody tr[aria-selected] td")[1].ContextMenuAsync();
+
+            await rightClick.Should().ThrowAsync<MissingEventHandlerException>();
+
+            // A left click must still work here, because both callbacks are handed over together.
+            await comp.FindAll("tbody tr[aria-selected] td")[1].ClickAsync();
+            comp.Instance.RowClicks.Should().HaveCount(1);
+        }
         [Test]
         public async Task DataGridGroupExpandedTrue()
         {

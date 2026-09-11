@@ -131,6 +131,23 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         else
         {
             attributes.Add("tabindex", -1);
+
+            if (ChipSet is not null || OnClick.HasDelegate)
+            {
+                // A disabled or read-only chip is still a button semantically; it only renders as a plain element.
+                attributes.Add("role", "button");
+
+                if (GetDisabled())
+                {
+                    attributes.Add("aria-disabled", "true");
+                }
+            }
+        }
+
+        if (ChipSet is not null && !IsAnchor)
+        {
+            // Chips inside a set act as toggle buttons; expose the selected state to assistive technology.
+            attributes.Add("aria-pressed", SelectedState.Value ? "true" : "false");
         }
 
         // User-defined attributes always take priority.

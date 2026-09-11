@@ -12,6 +12,14 @@
         padding-bottom: 50px;
         text-align: right;
     }
+
+    .mud-table-cell-custom-group-header-outer {
+        background-color: var(--mud-palette-background-gray);
+    }
+
+    .mud-table-cell-custom-group-header-inner {
+        background-color: var(--mud-palette-primary-hover);
+    }
 </style>
 
 <MudText>Total items: @Elements?.Count() - Selected items: @selectedItems?.Count</MudText>
@@ -19,7 +27,6 @@
 <MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
           Items="@Elements"
           GroupBy="@_groupDefinition"
-          GroupHeaderStyle="background-color:var(--mud-palette-background-gray)"
           GroupFooterClass="mb-4"
           Dense="_dense"
           MultiSelection="_multiSelect"
@@ -64,11 +71,13 @@
         Indentation = false,
         Expandable = false,
         Selector = (e) => e.Group,
+        GroupHeaderClass = "mud-table-cell-custom-group-header-outer",
         InnerGroup = new TableGroupDefinition<Element>()
         {
             GroupName = "Position",
             Expandable = false,
-            Selector = (e) => e.Position
+            Selector = (e) => e.Position,
+            GroupHeaderClass = "mud-table-cell-custom-group-header-inner"
         }
 
     };

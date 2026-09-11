@@ -30,7 +30,7 @@ public sealed class ApiSeeAlsoLinksTests : BunitTest
 
         comp.Markup.Should().Contain("<a href=\"/api/MudButtonGroup\"", "There should be a see-also link to MudButtonGroup");
 
-        comp.Markup.Should().Contain("class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">MudButtonGroup</a>", "There should be a see-also link to MudButtonGroup");
+        comp.Markup.Should().Contain("class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">MudButtonGroup</a>", "There should be a see-also link to MudButtonGroup");
 
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No see-also links match the current filters.</div>", "There should NOT be a message saying no members are found");
     }

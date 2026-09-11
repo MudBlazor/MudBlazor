@@ -5,6 +5,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Resources;
 using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -43,6 +44,9 @@ namespace MudBlazor
 
         /// <inheritdoc />
         object IMudShadowSelect.SelectContext => _context;
+
+        [Inject]
+        private InternalMudLocalizer Localizer { get; set; } = null!;
 
         public MudSelect()
         {
@@ -274,7 +278,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string SelectAllText { get; set; } = "Select all";
+        public string SelectAllText { get; set; } = string.Empty;
 
         /// <summary>
         /// The icon used for selected items.
@@ -529,8 +533,12 @@ namespace MudBlazor
             var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
             attributes.TryAdd("role", "combobox");
             attributes.TryAdd("aria-autocomplete", "none");
-            attributes.TryAdd("aria-controls", _listboxId);
             attributes.TryAdd("aria-expanded", _openState.Value ? "true" : "false");
+            if (_openState.Value)
+            {
+                // Only reference the listbox while it is rendered; a dangling IDREF is an invalid aria-controls value.
+                attributes.TryAdd("aria-controls", _listboxId);
+            }
             attributes.TryAdd("aria-haspopup", "listbox");
 
             if (!attributes.ContainsKey("aria-label") && !attributes.ContainsKey("aria-labelledby") && !string.IsNullOrWhiteSpace(Label))
@@ -945,6 +953,8 @@ namespace MudBlazor
             _activeItemId = item?.ItemId;
             return InvokeAsync(StateHasChanged);
         }
+
+        private string ResolvedSelectAllText() => string.IsNullOrEmpty(SelectAllText) ? Localizer[LanguageResource.MudSelect_SelectAll] : SelectAllText;
 
         private void UpdateSelectAllChecked()
         {

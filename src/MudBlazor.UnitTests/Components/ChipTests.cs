@@ -219,5 +219,38 @@ namespace MudBlazor.UnitTests.Components
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClose");
         }
+
+        /// <summary>
+        /// A disabled clickable chip keeps its button role and reports aria-disabled.
+        /// </summary>
+        [Test]
+        public void Chip_Disabled_ShouldExposeAriaDisabled()
+        {
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.Disabled, true)
+                .Add(p => p.OnClick, () => { }));
+
+            var chip = comp.Find(".mud-chip");
+            chip.TagName.Should().Be("DIV");
+            chip.GetAttribute("role").Should().Be("button");
+            chip.GetAttribute("aria-disabled").Should().Be("true");
+            chip.HasAttribute("aria-pressed").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A chip that is not clickable is a plain element with no button role or state.
+        /// </summary>
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Chip_Plain_ShouldNotExposeToggleState(bool disabled)
+        {
+            var comp = Context.Render<MudChip<string>>(parameters => parameters.Add(p => p.Disabled, disabled));
+
+            var chip = comp.Find(".mud-chip");
+            chip.HasAttribute("role").Should().BeFalse();
+            chip.HasAttribute("aria-disabled").Should().BeFalse();
+            chip.HasAttribute("aria-pressed").Should().BeFalse();
+        }
     }
 }

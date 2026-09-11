@@ -187,7 +187,30 @@ public sealed class ApiTypeLinkTests : BunitTest
     {
         var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "MudBlazor.MudAlert"));
 
-        comp.Markup.Should().Contain("<a href=\"/api/MudAlert\" blazor:onclick=\"6\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">MudAlert</a>", "There should be a link to MudAlert");
+        comp.Markup.Should().Contain("<a href=\"/api/MudAlert\" blazor:onclick=\"6\" class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">MudAlert</a>", "There should be a link to MudAlert");
+    }
+
+    /// <summary>
+    /// Renders a link with the requested typography.
+    /// </summary>
+    [Test]
+    public void ApiTypeLink_Typo()
+    {
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "MudBlazor.MudAlert").Add(x => x.Typo, Typo.subtitle1));
+
+        comp.Markup.Should().Contain("mud-typography-subtitle1", "The link should use the requested typography");
+    }
+
+    /// <summary>
+    /// Renders a link without a tooltip when tooltips are turned off.
+    /// </summary>
+    [Test]
+    public void ApiTypeLink_ShowTooltip_False()
+    {
+        var comp = Context.Render<ApiTypeLink>(parameters => parameters.Add(x => x.TypeName, "MudBlazor.MudAlert").Add(x => x.ShowTooltip, false));
+
+        comp.Markup.Should().NotContain("mud-tooltip-root", "There should be no tooltip");
+        comp.Markup.Should().Contain("<a href=\"/api/MudAlert\"", "There should still be a link to MudAlert");
     }
 
     /// <summary>
@@ -200,7 +223,7 @@ public sealed class ApiTypeLinkTests : BunitTest
 
         comp.Markup.Should().Contain("<a href=\"/api/Adornment\"", "There should be a link to Adornment");
 
-        comp.Markup.Should().Contain("class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-body1 docs-link docs-code docs-code-primary\">Adornment</a>", "There should be a link to Adornment");
+        comp.Markup.Should().Contain("class=\"mud-typography mud-link mud-primary-text mud-link-underline-hover mud-typography-caption docs-link docs-code docs-code-primary\">Adornment</a>", "There should be a link to Adornment");
     }
 
     /// <summary>

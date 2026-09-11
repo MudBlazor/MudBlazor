@@ -1,5 +1,7 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Resources
 @inherits MudComponentBase;
+@inject InternalMudLocalizer Localizer
 
 <div id="@_containerId" style="@Style" class="@Classname" @attributes="@UserAttributes">
     <div class="@ClassnameFirstPanel">
@@ -8,7 +10,7 @@
     <div class="@ClassnameDivider" 
          tabindex="0" 
          role="separator" 
-         aria-label="Resize panels" 
+         aria-label="@Localizer[LanguageResource.MudSplitPanel_ResizePanels]" 
          aria-orientation="@(Horizontal ? "horizontal" : "vertical")"></div>
     <div class="@ClassnameSecondPanel">
         @SecondPanel

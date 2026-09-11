@@ -1126,6 +1126,20 @@ namespace MudBlazor.UnitTests.Components
             age.Should().Be(52);
         }
 
+        /// <summary>
+        /// Cell edit mode already cascades the grid validator once per row, so it must not add another
+        /// cascading component around every editable cell (#11860).
+        /// </summary>
+        [Test]
+        public void DataGridCellEditCascadesValidatorOncePerRow()
+        {
+            var comp = Context.Render<DataGridCellEditTest>();
+            var rowCount = comp.FindAll(".mud-table-body tr").Count;
+
+            comp.FindComponents<CascadingValue<IForm>>()
+                .Should().HaveCount(rowCount, "per-cell validator cascades multiply component diff work in large editable grids");
+        }
+
         [Test]
         public async Task DataGridInlineEditWithNullableChange()
         {
@@ -1746,6 +1760,25 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Render();
 
             comp.Instance.Reads.Should().Be(CellCount, "each cell should read its property once per render");
+        }
+
+        /// <summary>
+        /// The row callback updates state through the grid, so the row renderer must not also perform its
+        /// automatic post-event render and repeat every cell's work (#11860).
+        /// </summary>
+        [Test]
+        public async Task DataGridRowClickRendersCellsOnce()
+        {
+            var comp = Context.Render<DataGridCellValueReadsTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridCellValueReadsTest.Item>>();
+
+            // 3 rows x 2 property columns.
+            const int CellCount = 6;
+
+            comp.Instance.Reads = 0;
+            await dataGrid.Find(".mud-table-body td").ClickAsync();
+
+            comp.Instance.Reads.Should().Be(CellCount, "the grid render already reflects row selection changes");
         }
 
         /// <summary>
@@ -6187,6 +6220,27 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-checkbox-true").Count.Should().Be(0);
         }
 
+        /// <summary>
+        /// Clicking a row with <c>SelectOnRowClick</c> disabled still raises <c>RowClick</c> while leaving the selection untouched (#10792).
+        /// </summary>
+        [Test]
+        public async Task RowClickFiresWhenSelectOnRowClickDisabled()
+        {
+            var clickedItems = new List<DataGridMultiSelectionTest.Item>();
+            var comp = Context.Render<DataGridMultiSelectionTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridMultiSelectionTest.Item>>();
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectOnRowClick, false)
+                .Add(x => x.RowClick, args => clickedItems.Add(args.Item)));
+
+            await dataGrid.FindAll("tbody.mud-table-body td")[1].ClickAsync();
+
+            clickedItems.Should().ContainSingle().Which.Name.Should().Be("A");
+            dataGrid.Instance.GetState(x => x.SelectedItem).Should().BeNull();
+            dataGrid.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+            dataGrid.FindAll(".mud-checkbox-true").Should().BeEmpty();
+        }
+
         [Test]
         public async Task DataGridDragAndDrop_SwapMode()
         {
@@ -9251,5 +9305,148 @@ namespace MudBlazor.UnitTests.Components
         }
 
         #endregion
+
+        /// <summary>
+        /// A single-sort grid exposes aria-sort only on its active sorted header (#9716).
+        /// </summary>
+        [Test]
+        public async Task DataGridSortableHeadersExposeAriaSortForActiveSort()
+        {
+            var comp = Context.Render<DataGridSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
+
+            dataGrid.FindAll("th[aria-sort]").Should().BeEmpty();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            dataGrid.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.Should().BeSameAs(dataGrid.FindAll("th")[0]);
+            dataGrid.Find("th[aria-sort]").GetAttribute("aria-sort").Should().Be("ascending");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Descending, x => x.Name));
+            dataGrid.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.Should().BeSameAs(dataGrid.FindAll("th")[0]);
+            dataGrid.Find("th[aria-sort]").GetAttribute("aria-sort").Should().Be("descending");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
+            dataGrid.FindAll("th[aria-sort]").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Duplicate property columns expose aria-sort on only the first matching rendered header (#13774).
+        /// </summary>
+        [Test]
+        public async Task DataGridDuplicatePropertyColumnsExposeSingleAriaSortOwner()
+        {
+            var items = new[] { new DataGridSortableTest.Item("A", 1, "") };
+            var comp = Context.Render<MudDataGrid<DataGridSortableTest.Item>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<DataGridSortableTest.Item, string>>(0);
+                    builder.AddAttribute(1, nameof(PropertyColumn<DataGridSortableTest.Item, string>.Property), (Expression<Func<DataGridSortableTest.Item, string>>)(x => x.Name));
+                    builder.AddAttribute(2, nameof(PropertyColumn<DataGridSortableTest.Item, string>.Title), "First Name");
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<DataGridSortableTest.Item, string>>(3);
+                    builder.AddAttribute(4, nameof(PropertyColumn<DataGridSortableTest.Item, string>.Property), (Expression<Func<DataGridSortableTest.Item, string>>)(x => x.Name));
+                    builder.AddAttribute(5, nameof(PropertyColumn<DataGridSortableTest.Item, string>.Title), "Second Name");
+                    builder.CloseComponent();
+                }));
+
+            await comp.InvokeAsync(() => comp.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+
+            comp.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.TextContent.Should().Contain("First Name");
+
+            await comp.InvokeAsync(async () =>
+            {
+                await comp.Instance.RenderedColumns[0].HiddenState.SetValueAsync(true);
+                ((IMudStateHasChanged)comp.Instance).StateHasChanged();
+            });
+
+            comp.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.TextContent.Should().Contain("Second Name");
+
+            await comp.InvokeAsync(async () =>
+            {
+                await comp.Instance.RenderedColumns[0].HiddenState.SetValueAsync(false);
+                ((IMudStateHasChanged)comp.Instance).StateHasChanged();
+            });
+
+            comp.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.TextContent.Should().Contain("First Name");
+
+            await comp.InvokeAsync(() =>
+            {
+                var firstColumn = comp.Instance.RenderedColumns[0];
+                comp.Instance.RenderedColumns.RemoveAt(0);
+                comp.Instance.RenderedColumns.Add(firstColumn);
+                ((IMudStateHasChanged)comp.Instance).StateHasChanged();
+            });
+
+            comp.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.TextContent.Should().Contain("Second Name");
+
+            await comp.InvokeAsync(() =>
+            {
+                comp.Instance.RenderedColumns.RemoveAt(0);
+                ((IMudStateHasChanged)comp.Instance).StateHasChanged();
+            });
+
+            comp.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.TextContent.Should().Contain("First Name");
+
+            await comp.InvokeAsync(async () =>
+            {
+                await comp.Instance.RenderedColumns[0].HiddenState.SetValueAsync(true);
+                ((IMudStateHasChanged)comp.Instance).StateHasChanged();
+            });
+
+            comp.FindAll("th[aria-sort]").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A multiple-sort grid exposes aria-sort only on the lowest-index sort definition.
+        /// </summary>
+        [Test]
+        public async Task DataGridMultipleSortExposesAriaSortForPrimarySort()
+        {
+            var comp = Context.Render<DataGridSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SortMode, SortMode.Multiple));
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ExtendSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            await comp.InvokeAsync(() => dataGrid.Instance.ExtendSortAsync("Value", SortDirection.Descending, x => x.Value));
+
+            dataGrid.Instance.SortDefinitions["Name"].Index.Should().Be(0);
+            dataGrid.Instance.SortDefinitions["Value"].Index.Should().Be(1);
+            dataGrid.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.Should().BeSameAs(dataGrid.FindAll("th")[0]);
+            dataGrid.Find("th[aria-sort]").GetAttribute("aria-sort").Should().Be("ascending");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.RemoveSortAsync("Name"));
+
+            dataGrid.Instance.SortDefinitions["Value"].Index.Should().Be(0);
+            dataGrid.FindAll("th[aria-sort]").Should().ContainSingle()
+                .Which.Should().BeSameAs(dataGrid.FindAll("th")[1]);
+            dataGrid.Find("th[aria-sort]").GetAttribute("aria-sort").Should().Be("descending");
+        }
+
+        /// <summary>
+        /// Header cells omit aria-sort when sorting is disabled.
+        /// </summary>
+        [Test]
+        public async Task DataGridUnsortableHeadersDoNotExposeAriaSort()
+        {
+            var comp = Context.Render<DataGridSortableTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSortableTest.Item>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Name", SortDirection.Ascending, x => x.Name));
+            dataGrid.FindAll("th[aria-sort]").Should().ContainSingle();
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SortMode, SortMode.None));
+
+            dataGrid.Instance.SortDefinitions.Should().BeEmpty();
+            dataGrid.FindAll("th").Should().OnlyContain(header => !header.HasAttribute("aria-sort"));
+        }
     }
 }
