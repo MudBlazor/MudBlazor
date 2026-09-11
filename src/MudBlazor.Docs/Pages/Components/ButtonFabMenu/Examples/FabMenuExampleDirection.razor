@@ -4,10 +4,10 @@
     <MudStack>
         <MudText>Direction: @_direction</MudText>
         <MudToggleGroup T="Direction" SelectionMode="SelectionMode.SingleSelection" @bind-Value="_direction" Color="Color.Primary" CheckMark FixedContent Vertical>
-            <MudToggleItem Value="@Direction.Top">Top</MudToggleItem>
-            <MudToggleItem Value="@Direction.Right">Right</MudToggleItem>
-            <MudToggleItem Value="@Direction.Bottom">Bottom</MudToggleItem>
-            <MudToggleItem Value="@Direction.Left">Left</MudToggleItem>
+            <MudToggleItem Value="@Direction.Top" />
+            <MudToggleItem Value="@Direction.Right" />
+            <MudToggleItem Value="@Direction.Bottom" />
+            <MudToggleItem Value="@Direction.Left" />
         </MudToggleGroup>
     </MudStack>
     <MudFabMenu StartIcon="@Icons.Material.Outlined.Send" Color="Color.Primary" Direction="@_direction">
