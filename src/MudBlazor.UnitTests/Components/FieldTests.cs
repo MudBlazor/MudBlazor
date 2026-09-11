@@ -70,5 +70,19 @@ namespace MudBlazor.UnitTests.Components
             fields[4].TextContent.Trim().Should().Be("Some Content Here");
             fieldLabels[4].TextContent.Trim().Should().Be("What am I? (4)");
         }
+
+        /// <summary>
+        /// An outlined field renders its legend without the required input control class, since MudField has no Required parameter (#11050).
+        /// </summary>
+        [Test]
+        public void OutlinedField_Should_RenderLegendWithoutRequiredClass()
+        {
+            var comp = Context.Render<MudField>(parameters => parameters
+                .Add(p => p.Label, "First name")
+                .Add(p => p.Variant, Variant.Outlined));
+
+            comp.Find(".mud-input-control").ClassList.Should().NotContain("mud-input-required");
+            comp.FindAll(".mud-input-control-input-container .mud-input-outlined-border > legend").Should().ContainSingle();
+        }
     }
 }
