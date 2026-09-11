@@ -15,12 +15,13 @@ namespace MudBlazor
         protected MudAvatarGroup? AvatarGroup { get; set; }
 
         /// <summary>
-        /// Whether the consumer supplied an accessible name; <c>role="img"</c> is only valid with one.
+        /// Whether the consumer supplied a non-blank accessible name; <c>role="img"</c> is only valid with one.
         /// </summary>
         private bool HasAccessibleName() =>
-            UserAttributes.Keys.Any(key =>
-                key.Equals("aria-label", StringComparison.OrdinalIgnoreCase)
-                || key.Equals("aria-labelledby", StringComparison.OrdinalIgnoreCase));
+            UserAttributes.Any(attribute =>
+                (attribute.Key.Equals("aria-label", StringComparison.OrdinalIgnoreCase)
+                 || attribute.Key.Equals("aria-labelledby", StringComparison.OrdinalIgnoreCase))
+                && !string.IsNullOrWhiteSpace(attribute.Value?.ToString()));
 
         protected string Classname => new CssBuilder("mud-avatar")
             .AddClass($"mud-avatar-{Size.ToStringFast(true)}")

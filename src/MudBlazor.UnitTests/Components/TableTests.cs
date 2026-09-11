@@ -2501,6 +2501,60 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Each grouping level's <see cref="TableGroupDefinition{T}.GroupHeaderClass"/> is applied only to that level's group header rows.
+        /// </summary>
+        /// <remarks>
+        /// https://github.com/MudBlazor/MudBlazor/issues/10959
+        /// </remarks>
+        [Test]
+        public void TableGrouping_GroupHeaderClass_AppliedPerLevel()
+        {
+            var comp = Context.Render<TableGroupHeaderClassTest>(parameters => parameters
+                .Add(x => x.OuterHeaderClass, "outer-group-header")
+                .Add(x => x.InnerHeaderClass, "inner-group-header"));
+
+            var groupRows = comp.FindComponents<MudTableGroupRow<TableGroupHeaderClassTest.Item>>();
+            var outerRows = groupRows.Where(row => row.Instance.GroupDefinition?.InnerGroup is not null).ToList();
+            var innerRows = groupRows.Where(row => row.Instance.GroupDefinition?.InnerGroup is null).ToList();
+            outerRows.Should().HaveCount(2);
+            innerRows.Should().HaveCount(4);
+
+            foreach (var outerRow in outerRows)
+            {
+                var header = outerRow.Find("tr");
+                header.ClassList.Should().Contain("outer-group-header");
+                header.ClassList.Should().NotContain("inner-group-header");
+            }
+
+            foreach (var innerRow in innerRows)
+            {
+                var header = innerRow.Find("tr");
+                header.ClassList.Should().Contain("inner-group-header");
+                header.ClassList.Should().NotContain("outer-group-header");
+            }
+
+            comp.FindAll("tr.outer-group-header").Should().HaveCount(2);
+            comp.FindAll("tr.inner-group-header").Should().HaveCount(4);
+        }
+
+        /// <summary>
+        /// A null <see cref="TableGroupDefinition{T}.GroupHeaderClass"/> adds no class to the group header rows.
+        /// </summary>
+        [Test]
+        public void TableGrouping_GroupHeaderClass_NullAddsNoClass()
+        {
+            var comp = Context.Render<TableGroupHeaderClassTest>();
+
+            var groupRows = comp.FindComponents<MudTableGroupRow<TableGroupHeaderClassTest.Item>>();
+            groupRows.Should().HaveCount(6);
+
+            foreach (var groupRow in groupRows)
+            {
+                groupRow.Find("tr").ClassList.Should().BeEquivalentTo("mud-table-row");
+            }
+        }
+
+        /// <summary>
         /// Tests the grouping behavior and ensure that it won't break anything else.
         /// </summary>
         /// <returns></returns>
@@ -3676,6 +3730,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Content derived from the selection, such as the toolbar and row classes, must follow the row checkboxes.
+        /// </summary>
+        /// <remarks>
+        /// <c>ToolBarContent</c> and <c>RowClassFunc</c> are evaluated while the table renders, so skipping that
+        /// render leaves them showing the previous selection. A bound <c>SelectedItems</c> hides the problem.
+        /// </remarks>
+        [Test]
+        public void TableMultiSelection_SelectionDerivedContent_FollowsRowCheckbox()
+        {
+            var comp = Context.Render<TableSelectionDerivedContentTest>();
+
+            comp.Find("#selected-count").TextContent.Trim().Should().Be("0");
+            comp.FindAll("tbody tr")[0].ClassList.Should().NotContain("row-selected");
+
+            comp.FindAll("tbody .mud-checkbox input")[0].Change(true);
+
+            comp.Find("#selected-count").TextContent.Trim().Should().Be("1");
+            comp.FindAll("tbody tr")[0].ClassList.Should().Contain("row-selected");
+        }
+
+        /// <summary>
         /// Row selection checkboxes have a localized accessible name.
         /// </summary>
         [Test]
@@ -3742,6 +3817,19 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("tr.mud-table-loading-row > td").Should().NotBeNull();
             comp.FindAll("tr.mud-table-loading-row > th").Should().BeEmpty();
+        }
+
+
+        /// <summary>
+        /// The checkbox cell of a selectable row is plain markup rather than a MudElement.
+        /// </summary>
+        [Test]
+        public void MultiSelection_RendersCheckboxCellDirectly()
+        {
+            var comp = Context.Render<TableMultiSelectionTest1>();
+
+            comp.FindComponents<MudElement>().Should().BeEmpty();
+            comp.FindAll("tbody tr td.mud-table-cell .mud-table-cell-checkbox").Count.Should().Be(3);
         }
 
     }
