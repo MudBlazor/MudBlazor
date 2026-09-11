@@ -127,7 +127,17 @@
     <value>https://mudblazor.com/features/analyzers</value>
   </data>
   <data name="MUD0002MessageFormat" xml:space="preserve">
-    <value>Illegal Attribute '{0}' on '{1}' using pattern '{2}' source location '{3}'</value>
+    <value>Illegal Attribute '{0}' on '{1}' using pattern '{2}' source location '{3}'{4}</value>
+    <comment>{4} is the migration hint for a parameter a past major version removed. It is empty for every other attribute, and each hint supplies its own leading space.</comment>
+  </data>
+  <data name="MUD0002MigrationHintMudButtonLink" xml:space="preserve">
+    <value> 'Link' was removed in v7: put the URL in 'Href' instead. See https://github.com/MudBlazor/MudBlazor/discussions/12658</value>
+  </data>
+  <data name="MUD0002MigrationHintMudButtonDisableRipple" xml:space="preserve">
+    <value> 'DisableRipple' was removed in v7 and replaced by 'Ripple', which inverts the value: DisableRipple="true" becomes Ripple="false", DisableRipple="false" becomes Ripple="true", and DisableRipple="@expression" becomes Ripple="@(!expression)". See https://github.com/MudBlazor/MudBlazor/discussions/12658</value>
+  </data>
+  <data name="MUD0002MigrationHintMudTextFieldAutoGrow" xml:space="preserve">
+    <value> 'AutoGrow' was removed in v9 and replaced by 'Sizing': AutoGrow="true" becomes Sizing="InputSizing.Auto", AutoGrow="false" becomes Sizing="InputSizing.Fixed", and AutoGrow="@expression" becomes Sizing="@(expression ? InputSizing.Auto : InputSizing.Fixed)". Lines, MaxLines, and masked input still need a separate look. See https://mudblazor.com/features/analyzers#migration-hints</value>
   </data>
   <data name="MUD0010Title" xml:space="preserve">
     <value>Reading ParameterState property</value>

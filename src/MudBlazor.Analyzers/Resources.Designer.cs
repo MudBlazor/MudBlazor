@@ -79,11 +79,38 @@ namespace MudBlazor.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Illegal Attribute &apos;{0}&apos; on &apos;{1}&apos; using pattern &apos;{2}&apos; source location &apos;{3}&apos;.
+        ///   Looks up a localized string similar to Illegal Attribute &apos;{0}&apos; on &apos;{1}&apos; using pattern &apos;{2}&apos; source location &apos;{3}&apos;{4}.
         /// </summary>
         internal static string MUD0002MessageFormat {
             get {
                 return ResourceManager.GetString("MUD0002MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;DisableRipple&apos; was removed in v7 and replaced by &apos;Ripple&apos;, which inverts the value: DisableRipple=&quot;true&quot; becomes Ripple=&quot;false&quot;, DisableRipple=&quot;false&quot; becomes Ripple=&quot;true&quot;, and DisableRipple=&quot;@expression&quot; becomes Ripple=&quot;@(!expression)&quot;. See https://github.com/MudBlazor/MudBlazor/discussions/12658.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudButtonDisableRipple {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudButtonDisableRipple", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;Link&apos; was removed in v7: put the URL in &apos;Href&apos; instead. See https://github.com/MudBlazor/MudBlazor/discussions/12658.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudButtonLink {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudButtonLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;AutoGrow&apos; was removed in v9 and replaced by &apos;Sizing&apos;: AutoGrow=&quot;true&quot; becomes Sizing=&quot;InputSizing.Auto&quot;, AutoGrow=&quot;false&quot; becomes Sizing=&quot;InputSizing.Fixed&quot;, and AutoGrow=&quot;@expression&quot; becomes Sizing=&quot;@(expression ? InputSizing.Auto : InputSizing.Fixed)&quot;. Lines, MaxLines, and masked input still need a separate look. See https://mudblazor.com/features/analyzers#migration-hints.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudTextFieldAutoGrow {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudTextFieldAutoGrow", resourceCulture);
             }
         }
         
