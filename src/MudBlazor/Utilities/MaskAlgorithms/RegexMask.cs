@@ -272,4 +272,40 @@ public class RegexMask : BaseMask
         var regexMask = new RegexMask(Regex, mask) { DelimiterCharacters = Delimiters };
         return regexMask;
     }
+
+    /// <summary>
+    /// Gets a mask for United States ZIP codes with an optional four-digit extension.
+    /// </summary>
+    /// <param name="maskChar">Defaults to <c>0</c>.  The mask character for ZIP code digits.</param>
+    /// <remarks>
+    /// Accepts a five-digit ZIP code such as <c>90210</c> and the ZIP+4 form such as <c>90210-0123</c>.  The dash is inserted automatically as soon as a sixth digit is typed.
+    /// </remarks>
+    public static RegexMask UsZipCode(char maskChar = '0')
+    {
+        const string Regex = $"^(?:[0-9]{{0,5}}|[0-9]{{5}}-[0-9]{{0,4}}){WhiteSpaceFilter}$";
+        const string Delimiters = "-";
+        var mask = $"{new string(maskChar, 5)}-{new string(maskChar, 4)}";
+        var regexMask = new RegexMask(Regex, mask) { DelimiterCharacters = Delimiters };
+        return regexMask;
+    }
+
+    /// <summary>
+    /// Gets a mask for MAC addresses (EUI-48) such as <c>1A:2B:3C:4D:5E:6F</c>.
+    /// </summary>
+    /// <param name="separator">Defaults to <c>:</c>.  The character between each pair of hexadecimal digits.</param>
+    /// <param name="maskChar">Defaults to <c>X</c>.  The mask character for address digits.</param>
+    /// <remarks>
+    /// The separator is inserted automatically when hexadecimal digits are typed without it.
+    /// </remarks>
+    public static RegexMask MacAddress(char separator = ':', char maskChar = 'X')
+    {
+        const string HexPair = "[0-9A-Fa-f]{0,2}";
+        var delimiters = separator.ToString();
+        // The separator comes from the caller, so it has to be escaped before it goes into the pattern.
+        var escapedSeparator = System.Text.RegularExpressions.Regex.Escape(delimiters);
+        var regex = $"^{HexPair}(?:{escapedSeparator}{HexPair}){{0,5}}{WhiteSpaceFilter}$";
+        var mask = string.Join(delimiters, Enumerable.Repeat(new string(maskChar, 2), 6));
+        var regexMask = new RegexMask(regex, mask) { DelimiterCharacters = delimiters };
+        return regexMask;
+    }
 }
