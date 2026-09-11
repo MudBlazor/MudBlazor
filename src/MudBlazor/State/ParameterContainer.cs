@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections;
-using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
@@ -19,11 +18,12 @@ namespace MudBlazor.State;
 /// </remarks>
 internal class ParameterContainer : IParameterContainer
 {
-    private readonly Lazy<bool> _lazyVerify;
     private readonly List<IParameterScopeContainer> _parameterScopeContainers = new();
 
-    // Flattened dictionary for O(1) parameter lookups (created lazily on first TryGetValue call)
-    private readonly Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>> _flattenedParameters;
+    private bool _verified;
+
+    // Flattened lookup for parameter access by name, built on first TryGetValue call.
+    private Dictionary<string, IParameterComponentLifeCycle>? _flattenedParameters;
 
     // Cache handler count for fast path optimization
     private int _handlerCount = -1;  // -1 means not computed yet
@@ -45,24 +45,15 @@ internal class ParameterContainer : IParameterContainer
     public void Add(IParameterScopeContainer parameterScopeContainer) => _parameterScopeContainers.Add(parameterScopeContainer);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterContainer"/> class.
-    /// </summary>
-    public ParameterContainer()
-    {
-        _lazyVerify = new Lazy<bool>(VerifyInternal);
-        _flattenedParameters = new Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>>(CreateFlattenedDictionary);
-    }
-
-    /// <summary>
     /// Executes <see cref="ParameterScopeContainer.OnInitialized"/> for all registered <see cref="ParameterScopeContainer"/>.
     /// </summary>
     public void OnInitialized()
     {
         VerifyOnAuto();
 
-        foreach (var parameterSet in _parameterScopeContainers)
+        for (var i = 0; i < _parameterScopeContainers.Count; i++)
         {
-            parameterSet.OnInitialized();
+            _parameterScopeContainers[i].OnInitialized();
         }
     }
 
@@ -73,9 +64,9 @@ internal class ParameterContainer : IParameterContainer
     {
         VerifyOnAuto();
 
-        foreach (var parameterSet in _parameterScopeContainers)
+        for (var i = 0; i < _parameterScopeContainers.Count; i++)
         {
-            parameterSet.OnParametersSet();
+            _parameterScopeContainers[i].OnParametersSet();
         }
     }
 
@@ -119,10 +110,12 @@ internal class ParameterContainer : IParameterContainer
         List<IParameterStateInvocationSnapshot>? parametersHandlerShouldFire = null;
         List<ParameterStateValue>? parameterStateValues = null;
 
-        foreach (var scopeContainer in _parameterScopeContainers)
+        for (var scopeIndex = 0; scopeIndex < _parameterScopeContainers.Count; scopeIndex++)
         {
-            foreach (var parameter in scopeContainer)
+            var registered = _parameterScopeContainers[scopeIndex].Parameters;
+            for (var i = 0; i < registered.Count; i++)
             {
+                var parameter = registered[i];
                 if (parameter.HasHandler && parameter.HasParameterChanged(parameters))
                 {
                     parametersHandlerShouldFire ??= new List<IParameterStateInvocationSnapshot>();
@@ -140,14 +133,22 @@ internal class ParameterContainer : IParameterContainer
     {
         VerifyOnAuto();
 
-        // Optimized: Use flattened dictionary for O(1) lookup instead of O(scopes) iteration
-        return _flattenedParameters.Value.TryGetValue(parameterName, out parameterComponentLifeCycle);
+        return FlattenedParameters.TryGetValue(parameterName, out parameterComponentLifeCycle);
     }
 
     /// <summary>
     /// Verifies the container for any duplicate parameters.
     /// </summary>
-    public void Verify() => _ = _lazyVerify.Value;
+    public void Verify()
+    {
+        if (_verified)
+        {
+            return;
+        }
+
+        ThrowOnDuplicates();
+        _verified = true;
+    }
 
     /// <summary>
     /// Throws an exception if <see cref="AutoVerify"/> is enabled and duplicates are found.
@@ -160,42 +161,50 @@ internal class ParameterContainer : IParameterContainer
         }
     }
 
-    private bool VerifyInternal()
-    {
-        ThrowOnDuplicates();
-
-        return true;
-    }
-
     /// <summary>
     /// Throws an exception if duplicates are found among the parameter scope containers.
     /// </summary>
     private void ThrowOnDuplicates()
     {
         var hashSet = new HashSet<IParameterComponentLifeCycle>(ParameterNameUniquenessComparer.Default);
-        var parameters = _parameterScopeContainers.SelectMany(scopeContainers => scopeContainers);
 
-        foreach (var parameter in parameters)
+        for (var scopeIndex = 0; scopeIndex < _parameterScopeContainers.Count; scopeIndex++)
         {
-            if (!hashSet.Add(parameter))
+            var registered = _parameterScopeContainers[scopeIndex].Parameters;
+            for (var i = 0; i < registered.Count; i++)
             {
-                throw new InvalidOperationException($"Parameter {parameter.Metadata.ParameterName} is already registered!");
+                if (!hashSet.Add(registered[i]))
+                {
+                    throw new InvalidOperationException($"Parameter {registered[i].Metadata.ParameterName} is already registered!");
+                }
             }
         }
     }
 
     /// <summary>
-    /// Creates a flattened dictionary from all parameter scope containers for O(1) lookups.
-    /// This is called lazily on first TryGetValue call.
+    /// Gets a flattened lookup across all parameter scope containers, built on first use.
     /// </summary>
-    private FrozenDictionary<string, IParameterComponentLifeCycle> CreateFlattenedDictionary()
+    private Dictionary<string, IParameterComponentLifeCycle> FlattenedParameters
     {
-        return _parameterScopeContainers
-            .SelectMany(scope => scope)
-            .ToFrozenDictionary(
-                parameter => parameter.Metadata.ParameterName,
-                parameter => parameter,
-                StringComparer.Ordinal);  // Parameter names are case-sensitive
+        get
+        {
+            if (_flattenedParameters is null)
+            {
+                var flattened = new Dictionary<string, IParameterComponentLifeCycle>(StringComparer.Ordinal); // Parameter names are case-sensitive
+                for (var scopeIndex = 0; scopeIndex < _parameterScopeContainers.Count; scopeIndex++)
+                {
+                    var registered = _parameterScopeContainers[scopeIndex].Parameters;
+                    for (var i = 0; i < registered.Count; i++)
+                    {
+                        flattened.Add(registered[i].Metadata.ParameterName, registered[i]);
+                    }
+                }
+
+                _flattenedParameters = flattened;
+            }
+
+            return _flattenedParameters;
+        }
     }
 
     /// <summary>
@@ -207,11 +216,12 @@ internal class ParameterContainer : IParameterContainer
         if (_handlerCount == -1)
         {
             _handlerCount = 0;
-            foreach (var scopeContainer in _parameterScopeContainers)
+            for (var scopeIndex = 0; scopeIndex < _parameterScopeContainers.Count; scopeIndex++)
             {
-                foreach (var parameter in scopeContainer)
+                var registered = _parameterScopeContainers[scopeIndex].Parameters;
+                for (var i = 0; i < registered.Count; i++)
                 {
-                    if (parameter.HasHandler)
+                    if (registered[i].HasHandler)
                     {
                         _handlerCount++;
                     }
@@ -225,14 +235,14 @@ internal class ParameterContainer : IParameterContainer
     /// <inheritdoc/>
     public IEnumerator<IParameterComponentLifeCycle> GetEnumerator()
     {
-        // If flattened dictionary is already created, use it for better performance
-        if (_flattenedParameters.IsValueCreated)
+        for (var scopeIndex = 0; scopeIndex < _parameterScopeContainers.Count; scopeIndex++)
         {
-            return ((IEnumerable<IParameterComponentLifeCycle>)_flattenedParameters.Value.Values).GetEnumerator();
+            var registered = _parameterScopeContainers[scopeIndex].Parameters;
+            for (var i = 0; i < registered.Count; i++)
+            {
+                yield return registered[i];
+            }
         }
-
-        // Otherwise, iterate through scope containers (avoid forcing dictionary creation)
-        return _parameterScopeContainers.SelectMany(scopeContainer => scopeContainer).GetEnumerator();
     }
 
     /// <inheritdoc/>

@@ -13,4 +13,12 @@ internal interface IParameterScopeContainer : IParameterContainer, IDisposable
     /// The scope becomes locked when it has been read or ended (<see cref="IDisposable.Dispose"/>), indicating that no more parameter states will be registered.
     /// </remarks>
     bool IsLocked { get; }
+
+    /// <summary>
+    /// Gets the registered parameters, materializing them on first access.
+    /// </summary>
+    /// <remarks>
+    /// Indexing this list avoids the enumerator that iterating the container through its interface would allocate on every parameter set.
+    /// </remarks>
+    IReadOnlyList<IParameterComponentLifeCycle> Parameters { get; }
 }
