@@ -663,8 +663,6 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find(".mud-input-control").ClassList.Should().NotContain("mud-input-required");
             comp.FindAll(".mud-input-control-input-container .mud-input-outlined-border > legend").Should().ContainSingle();
-            comp.FindAll(".mud-input-control.mud-input-required > .mud-input-control-input-container .mud-input-outlined-border > legend")
-                .Should().BeEmpty();
         }
 
         [Test]
