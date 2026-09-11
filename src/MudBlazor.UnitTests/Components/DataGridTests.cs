@@ -7597,6 +7597,148 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.SelectedItems).Should().NotContain(items[1]);
         }
 
+        /// <summary>
+        /// With the default <c>SelectionChangeable</c> the user can still select rows through the checkbox, the select-all checkbox and a row click.
+        /// </summary>
+        [Test]
+        public async Task SelectionChangeable_Default_AllowsUserSelection()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Item 1" },
+                new() { Id = 2, Name = "Item 2" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.Columns, SelectColumnNoFunc));
+
+            comp.Instance.SelectionChangeable.Should().BeTrue();
+            comp.Find("td.mud-table-cell .mud-checkbox input").HasAttribute("disabled").Should().BeFalse();
+            comp.Find("th.mud-table-cell .mud-checkbox input").HasAttribute("disabled").Should().BeFalse();
+
+            await comp.FindAll("td.mud-table-cell .mud-checkbox input")[0].ChangeAsync(new ChangeEventArgs { Value = true });
+            comp.Instance.GetState(x => x.SelectedItems).Should().Contain(items[0]);
+
+            await comp.Find("th.mud-table-cell .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = true });
+            comp.Instance.GetState(x => x.SelectedItems).Should().HaveCount(2);
+
+            await comp.Find("th.mud-table-cell .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = false });
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+
+            await comp.FindAll("tbody tr")[1].ClickAsync();
+            comp.Instance.GetState(x => x.SelectedItems).Should().ContainSingle().Which.Should().Be(items[1]);
+        }
+
+        /// <summary>
+        /// Setting <c>SelectionChangeable</c> to false disables the row checkbox and stops it from changing the selection (#9380).
+        /// </summary>
+        [Test]
+        public async Task SelectionChangeable_False_BlocksRowCheckbox()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Item 1" },
+                new() { Id = 2, Name = "Item 2" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.SelectionChangeable, false)
+                .Add(p => p.Columns, SelectColumnNoFunc));
+
+            var checkbox = comp.Find("td.mud-table-cell .mud-checkbox input");
+            checkbox.HasAttribute("disabled").Should().BeTrue();
+
+            await comp.FindAll("td.mud-table-cell .mud-checkbox input")[0].ChangeAsync(new ChangeEventArgs { Value = true });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Setting <c>SelectionChangeable</c> to false disables the select-all checkbox and stops it from changing the selection (#9380).
+        /// </summary>
+        [Test]
+        public async Task SelectionChangeable_False_BlocksSelectAllCheckbox()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Item 1" },
+                new() { Id = 2, Name = "Item 2" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.SelectionChangeable, false)
+                .Add(p => p.Columns, SelectColumnNoFunc));
+
+            var headerCheckbox = comp.Find("th.mud-table-cell .mud-checkbox input");
+            headerCheckbox.HasAttribute("disabled").Should().BeTrue();
+
+            await comp.Find("th.mud-table-cell .mud-checkbox input").ChangeAsync(new ChangeEventArgs { Value = true });
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Setting <c>SelectionChangeable</c> to false stops a row click from changing the selection while <c>RowClick</c> still fires (#9380).
+        /// </summary>
+        [Test]
+        public async Task SelectionChangeable_False_BlocksRowClickSelection()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Item 1" },
+                new() { Id = 2, Name = "Item 2" }
+            };
+            var rowClicks = 0;
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.SelectionChangeable, false)
+                .Add(p => p.RowClick, _ => rowClicks++)
+                .Add(p => p.Columns, SelectColumnNoFunc));
+
+            await comp.FindAll("tbody tr")[0].ClickAsync();
+
+            rowClicks.Should().Be(1);
+            comp.Instance.GetState(x => x.SelectedItems).Should().BeEmpty();
+            comp.Instance.GetState(x => x.SelectedItem).Should().BeNull();
+        }
+
+        /// <summary>
+        /// Setting <c>SelectionChangeable</c> to false keeps a programmatic selection working and visible (#9380).
+        /// </summary>
+        [Test]
+        public async Task SelectionChangeable_False_KeepsProgrammaticSelection()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "Item 1" },
+                new() { Id = 2, Name = "Item 2" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.SelectionChangeable, false)
+                .Add(p => p.SelectedItems, new HashSet<TestDataItem> { items[0] })
+                .Add(p => p.Columns, SelectColumnNoFunc));
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().ContainSingle().Which.Should().Be(items[0]);
+            comp.FindAll("tbody tr")[0].GetAttribute("aria-selected").Should().Be("true");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.SelectedItems, new HashSet<TestDataItem> { items[1] }));
+
+            comp.Instance.GetState(x => x.SelectedItems).Should().ContainSingle().Which.Should().Be(items[1]);
+            comp.FindAll("tbody tr")[1].GetAttribute("aria-selected").Should().Be("true");
+        }
+
         [Test]
         public async Task SelectAll_IgnoresDisabledRows()
         {
