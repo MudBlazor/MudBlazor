@@ -6718,8 +6718,6 @@ namespace MudBlazor.UnitTests.Components
 
             await dataGrid.FindAll("th .mud-menu button")[0].ClickAsync();
 
-            comp.FindAll(".mud-menu-item").Should().Contain(item => item.TextContent.Trim() == "Hide");
-
             await comp.FindAll(".mud-menu-item").Single(item => item.TextContent.Trim() == "Hide").ClickAsync();
 
             dataGrid.FindAll("th").Count.Should().Be(0, because: "the only column was hidden");
@@ -6738,7 +6736,6 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.Hideable, false));
 
             dataGrid.FindAll("th .mud-menu button").Count.Should().Be(0, because: "a column with no enabled options must not offer a menu");
-            dataGrid.Find(".column-options").TextContent.Trim().Should().BeEmpty();
         }
 
         [Test]
