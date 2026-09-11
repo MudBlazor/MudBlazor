@@ -33,6 +33,58 @@
                     </SectionHeader>
                 </DocsPageSection>
                 <MUD0002CustomAttributeList/>
+                <DocsPageSection>
+                    <SectionHeader Title="Migration Hints">
+                        <Description>
+                            When the unknown attribute is a parameter that an earlier major version removed, the same MUD0002 warning also names its replacement, so you do not have to search the migration guides.
+                            The hints below are the ones the analyzer knows about.
+                        </Description>
+                    </SectionHeader>
+                    <MudSimpleTable Dense="true" Elevation="0" Bordered="true" Class="mb-4">
+                        <thead>
+                            <tr>
+                                <th>Removed</th>
+                                <th>Replacement</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><CodeInline>MudButton.Link</CodeInline></td>
+                                <td><CodeInline>Href</CodeInline></td>
+                                <td>Removed in v7. The URL moves across unchanged.</td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>MudButton.DisableRipple</CodeInline></td>
+                                <td><CodeInline>Ripple</CodeInline></td>
+                                <td>
+                                    Removed in v7.
+                                    The value inverts: <CodeInline>DisableRipple="true"</CodeInline> becomes <CodeInline>Ripple="false"</CodeInline>, and <CodeInline>DisableRipple="@("@expression")"</CodeInline> becomes <CodeInline>Ripple="@("@(!expression)")"</CodeInline>.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><CodeInline>MudTextField.AutoGrow</CodeInline></td>
+                                <td><CodeInline>Sizing</CodeInline></td>
+                                <td>
+                                    Removed in v9.
+                                    <CodeInline>AutoGrow="true"</CodeInline> becomes <CodeInline>Sizing="InputSizing.Auto"</CodeInline> and <CodeInline>AutoGrow="false"</CodeInline> becomes <CodeInline>Sizing="InputSizing.Fixed"</CodeInline>, which is the default.
+                                    An expression needs the equivalent conditional, such as <CodeInline>Sizing="@("@(grow ? InputSizing.Auto : InputSizing.Fixed)")"</CodeInline>.
+                                    <CodeInline>Lines</CodeInline>, <CodeInline>MaxLines</CodeInline>, and masked input behave differently and are worth a separate look.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </MudSimpleTable>
+                    <MudText Class="mb-4">
+                        A hint explains the replacement; it never rewrites your code, and there is no code fix for it.
+                        The hint is attached to the existing warning, so configuration is unaffected: an attribute allowed by your pattern or custom list stays silent, and <CodeInline>Any</CodeInline> still disables MUD0002 entirely.
+                        Hints are matched on the component's type, so a component of your own that derives from <CodeInline>MudButton</CodeInline> gets the same guidance, while an unrelated component with a similarly named attribute does not.
+                    </MudText>
+                    <MudText>
+                        Two limits are worth knowing.
+                        Attributes supplied through an <CodeInline>@("@attributes")</CodeInline> dictionary are invisible to the analyzer, so a removed parameter passed that way is never reported at all.
+                        And, as above, the warning points at the <CodeInline>.razor</CodeInline> file rather than the exact line.
+                    </MudText>
+                </DocsPageSection>
             </SectionSubGroups>
         </DocsPageSection>
     </DocsPageContent>

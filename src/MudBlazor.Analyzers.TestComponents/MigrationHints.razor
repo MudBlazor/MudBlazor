@@ -1,0 +1,68 @@
+﻿@*removed in v7: Link moved to Href*@
+<MudButton Link="/removed-in-v7">Link</MudButton>
+
+@*removed in v7: DisableRipple moved to Ripple with the value inverted*@
+<MudButton DisableRipple="true">Literal true</MudButton>
+<MudButton DisableRipple="false">Literal false</MudButton>
+<MudButton DisableRipple="@_noRipple">Simple expression</MudButton>
+<MudButton DisableRipple="@(_noRipple && !_grow)">Complex expression</MudButton>
+
+@*multiline attributes with nested content*@
+<MudButton Variant="Variant.Filled"
+           Link="/multiline"
+           Color="Color.Primary">
+    <MudText>Nested content</MudText>
+</MudButton>
+
+@*removed in v9: AutoGrow moved to Sizing; @bind-Value forces a TypeInference helper*@
+<MudTextField @bind-Value="_text" AutoGrow="true" Label="Literal true" />
+<MudTextField @bind-Value="_text" AutoGrow="false" Label="Literal false" />
+<MudTextField T="string" AutoGrow="@_grow" Label="Simple expression" />
+<MudTextField T="string" AutoGrow="@(_grow || _noRipple)" Label="Complex expression" />
+
+@*the replacements themselves compile and stay silent*@
+<MudButton Href="/replacement" Ripple="false">Href and Ripple</MudButton>
+<MudButton Ripple="@(!_noRipple)">Inverted expression</MudButton>
+<MudTextField @bind-Value="_text" Sizing="InputSizing.Auto" Lines="3" MaxLines="8" Label="Auto" />
+<MudTextField T="string" Sizing="@(_grow ? InputSizing.Auto : InputSizing.Fixed)" Label="Conditional" />
+
+@*derived component without its own Link still points at MudButton's replacement*@
+<DerivedMudButton Link="/derived" />
+
+@*derived component that declares Link is a real parameter, so nothing is reported*@
+<ReintroducedLinkButton Link="/reintroduced" />
+
+@*a component that merely shares MudButton's short name gets no hint*@
+<MudBlazor.Analyzers.TestComponents.Shadow.MudButton Link="/shadow" />
+
+@*unrelated components that also dropped Link are outside this rule set*@
+<MudChip T="string" Link="/chip" />
+<MudIconButton Link="/icon-button" />
+
+@*similar names are ordinary typos, not migrations*@
+<MudButton Linked="/typo">Similar</MudButton>
+<MudButton DisableRippleEffect="true">Similar</MudButton>
+<MudTextField T="string" AutoGrowth="true" Label="Similar" />
+
+@*a dynamic attribute dictionary is invisible to the analyzer*@
+<MudButton @attributes="_splattedAttributes">Splat</MudButton>
+
+@*markup inside comments and strings is never analyzed*@
+@*<MudButton Link="/razor-comment" />*@
+<!-- <MudButton DisableRipple="true" /> -->
+<MudText>@MarkupSample</MudText>
+
+@code
+{
+    public static string __description__ = "Removed parameters that MUD0002 explains with a migration hint";
+
+    private const string MarkupSample = "<MudButton Link=\"/string-literal\" />";
+
+    private readonly Dictionary<string, object> _splattedAttributes = new() { ["Link"] = "/splatted" };
+
+    private string _text = "y";
+
+    private bool _noRipple = true;
+
+    private bool _grow = true;
+}

@@ -19,14 +19,19 @@ internal static class AnalyzerCompilationFactory
         string source,
         MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern allowedAttributePattern,
         string customAllowedAttributes = "",
-        string sourcePath = "AttributeTest.razor.g.cs")
+        string sourcePath = "AttributeTest.razor.g.cs",
+        ImmutableDictionary<string, ReportDiagnostic>? specificDiagnosticOptions = null)
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(SourceText.From(source, Encoding.UTF8), path: sourcePath);
+        var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+        if (specificDiagnosticOptions is not null)
+            compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(specificDiagnosticOptions);
+
         var compilation = CSharpCompilation.Create(
             assemblyName: "MudBlazor.UnitTests.Analyzers.Generated",
             syntaxTrees: [syntaxTree],
             references: _metadataReferences,
-            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            options: compilationOptions);
 
         var compilationDiagnostics = compilation.GetDiagnostics()
             .Where(x => x.Severity is DiagnosticSeverity.Error)
