@@ -190,8 +190,7 @@ namespace MudBlazor.Analyzers
                     case AllowedAttributePattern.Any:
                         return;
                     default:
-                        // Enrichment happens only once the existing rules have already decided to report, so
-                        // it can change the wording of a warning but never whether one is raised.
+                        // Enrichment happens only once the existing rules have already decided to report, so it can change the wording of a warning but never whether one is raised.
                         componentDescriptor.MigrationHints.TryGetValue(attributeName, out var migrationHint);
                         Report(AttributeDescriptor, context, invocation, attributeName, componentDescriptor, className, _allowedAttributePattern.ToString(), migrationHint);
                         return;

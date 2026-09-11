@@ -9,12 +9,10 @@ namespace MudBlazor.UnitTests.Analyzers.Internal;
 
 #nullable enable
 /// <summary>
-/// The wording each MUD0002 migration hint has to carry, shared by the synthetic-operation tests and the
-/// tests that compile real Razor.
+/// The wording each MUD0002 migration hint has to carry, shared by the synthetic-operation tests and the tests that compile real Razor.
 /// </summary>
 /// <remarks>
-/// The fragments name the replacement parameter and both boolean outcomes, so a mapping that pointed at the
-/// wrong replacement or dropped one direction of the inversion would fail rather than silently pass.
+/// The fragments name the replacement parameter and both boolean outcomes, so a mapping that pointed at the wrong replacement or dropped one direction of the inversion would fail rather than silently pass.
 /// </remarks>
 internal static class MigrationHintExpectations
 {
@@ -53,8 +51,7 @@ internal static class MigrationHintExpectations
     ];
 
     /// <summary>
-    /// Asserts that <paramref name="diagnostic"/> keeps the generic MUD0002 wording and then appends every
-    /// fragment of the expected hint.
+    /// Asserts that <paramref name="diagnostic"/> keeps the generic MUD0002 wording and then appends every fragment of the expected hint.
     /// </summary>
     internal static void ShouldCarryHint(this Diagnostic diagnostic, string attributeName, string tagName, string[] expectedHint)
     {
@@ -104,8 +101,7 @@ internal static class MigrationHintExpectations
     }
 
     /// <summary>
-    /// Splits diagnostics that share an attribute and tag name into the explained and unexplained ones, which
-    /// is how a shadow type sharing a real component's display name is told apart.
+    /// Splits diagnostics that share an attribute and tag name into the explained and unexplained ones, which is how a shadow type sharing a real component's display name is told apart.
     /// </summary>
     internal static IReadOnlyList<Diagnostic> WithHint(this IEnumerable<Diagnostic> diagnostics) =>
         diagnostics.Where(x => x.GetMessage().Contains(HintMarker)).ToList();

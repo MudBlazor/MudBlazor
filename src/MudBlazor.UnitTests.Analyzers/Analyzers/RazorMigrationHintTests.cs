@@ -16,8 +16,7 @@ extern alias MudBlazorAnalyzer;
 
 #nullable enable
 /// <summary>
-/// Runs MUD0002 over <c>MigrationHints.razor</c> as the Razor compiler actually lowers it, so the hints are
-/// verified against real markup rather than against hand-written render-tree calls.
+/// Runs MUD0002 over <c>MigrationHints.razor</c> as the Razor compiler actually lowers it, so the hints are verified against real markup rather than against hand-written render-tree calls.
 /// </summary>
 [TestFixture]
 public class RazorMigrationHintTests
@@ -171,8 +170,7 @@ public class RazorMigrationHintTests
     /// A removed parameter supplied through an @attributes dictionary is a known blind spot, not a hint.
     /// </summary>
     /// <remarks>
-    /// The analyzer only sees the splat call, never the dictionary's keys, so this usage is undiagnosed
-    /// rather than migration-clean.
+    /// The analyzer only sees the splat call, never the dictionary's keys, so this usage is undiagnosed rather than migration-clean.
     /// </remarks>
     [Test]
     public void DynamicAttributeSplatIsNotDiagnosed()

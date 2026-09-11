@@ -17,8 +17,8 @@ extern alias MudBlazorAnalyzer;
 /// Covers the migration guidance MUD0002 appends for parameters an earlier major version removed.
 /// </summary>
 /// <remarks>
-/// These compile hand-written render-tree calls, which is fast but is not proof that the Razor compiler
-/// lowers real markup the same way. <see cref="RazorMigrationHintTests"/> covers that separately.
+/// These compile hand-written render-tree calls, which is fast but is not proof that the Razor compiler lowers real markup the same way.
+/// <see cref="RazorMigrationHintTests"/> covers that separately.
 /// </remarks>
 [TestFixture]
 public class MigrationHintTests
@@ -146,8 +146,7 @@ public class MigrationHintTests
     }
 
     /// <summary>
-    /// A different type that merely shares MudButton's short name gets no hint, because the mapping matches
-    /// on type identity rather than on the tag name the message displays.
+    /// A different type that merely shares MudButton's short name gets no hint, because the mapping matches on type identity rather than on the tag name the message displays.
     /// </summary>
     [Test]
     public void ShadowTypeWithMudButtonNameKeepsGenericWarning()

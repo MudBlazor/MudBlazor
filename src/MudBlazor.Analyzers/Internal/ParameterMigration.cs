@@ -7,13 +7,11 @@ using System.Collections.Immutable;
 namespace MudBlazor.Analyzers.Internal;
 
 /// <summary>
-/// A component parameter that an earlier MudBlazor major version removed, together with the guidance
-/// <c>MUD0002</c> appends when the old name still appears on the component that used to declare it.
+/// A component parameter that an earlier MudBlazor major version removed, together with the guidance <c>MUD0002</c> appends when the old name still appears on the component that used to declare it.
 /// </summary>
 /// <remarks>
 /// This is a lookup table, not a migration tool.
-/// The analyzer never reads, evaluates, or rewrites the attribute's value; it only explains what the
-/// replacement parameter is so the reader does not have to search the migration guides.
+/// The analyzer never reads, evaluates, or rewrites the attribute's value; it only explains what the replacement parameter is so the reader does not have to search the migration guides.
 /// </remarks>
 internal sealed class ParameterMigration
 {
@@ -28,8 +26,7 @@ internal sealed class ParameterMigration
     /// The fully qualified metadata name of the component that declared the removed parameter.
     /// </summary>
     /// <remarks>
-    /// Resolved through the compilation so the hint follows type identity rather than the display tag name,
-    /// which several unrelated components share.
+    /// Resolved through the compilation so the hint follows type identity rather than the display tag name, which several unrelated components share.
     /// </remarks>
     internal string ComponentMetadataName { get; }
 
@@ -47,8 +44,7 @@ internal sealed class ParameterMigration
     /// Every removed parameter MUD0002 can explain.
     /// </summary>
     /// <remarks>
-    /// Each entry is verified against the release that removed the parameter and against the guide it links
-    /// to, so keep the list short and add an entry only when both still hold.
+    /// Each entry is verified against the release that removed the parameter and against the guide it links to, so keep the list short and add an entry only when both still hold.
     /// </remarks>
     internal static ImmutableArray<ParameterMigration> All { get; } = ImmutableArray.Create(
         Create("MudBlazor.MudButton", "Link", nameof(Resources.MUD0002MigrationHintMudButtonLink)),

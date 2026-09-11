@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor.Analyzers.TestComponents.Shadow
 {
     /// <summary>
-    /// Shares its short name with <see cref="MudBlazor.MudButton"/> so the analyzer tests can prove that
-    /// migration hints are matched on the component's type identity, not on its display tag name.
+    /// Shares its short name with <see cref="MudBlazor.MudButton"/> so the analyzer tests can prove that migration hints are matched on the component's type identity, not on its display tag name.
     /// </summary>
     public class MudButton : MudComponentBase
     {

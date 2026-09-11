@@ -12,8 +12,7 @@ internal sealed class ComponentDescriptor
     internal HashSet<string> Parameters { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
-    /// Replacement guidance for parameters an earlier major version removed from this component, keyed by
-    /// the removed parameter's name.
+    /// Replacement guidance for parameters an earlier major version removed from this component, keyed by the removed parameter's name.
     /// </summary>
     internal Dictionary<string, LocalizableString> MigrationHints { get; } = new Dictionary<string, LocalizableString>(StringComparer.OrdinalIgnoreCase);
 
