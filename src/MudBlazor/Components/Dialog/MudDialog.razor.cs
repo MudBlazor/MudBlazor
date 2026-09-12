@@ -313,7 +313,7 @@ namespace MudBlazor
                         await CloseAsync();
                     }
                 }
-            } 
+            }
             else if (DialogInstance is not null)
             {
                 //forward render update to instance container

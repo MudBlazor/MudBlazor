@@ -1955,7 +1955,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.Find(".dynamic-title").TrimmedText().Should().Be("11");
             });
-            
         }
 
         /// <summary>
@@ -1985,7 +1984,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.Find(".test-class").GetStyle().CssText.Trimmed().Should().Be("display: block !important");
             });
-            
         }
 
         /// <summary>
@@ -2014,7 +2012,6 @@ namespace MudBlazor.UnitTests.Components
             {
                 comp.Find(".test-class-dynamic").Should().NotBeNull();
             });
-            
         }
     }
     internal class CustomDialogService : DialogService
