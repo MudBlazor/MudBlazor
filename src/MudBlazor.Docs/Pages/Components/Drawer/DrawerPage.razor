@@ -130,7 +130,12 @@
         <DocsPageSection>
             <SectionHeader Title="Custom Breakpoint">
                 <Description>
-                    The switching point for Responsive Drawers (<CodeInline>DrawerVariant.Mini</CodeInline> and <CodeInline>DrawerVariant.Responsive</CodeInline>) can be changed using the <CodeInline>Breakpoint</CodeInline> parameter. The default is <CodeInline>Breakpoint.Md</CodeInline>.
+                    The switching point for Responsive Drawers (<CodeInline>DrawerVariant.Mini</CodeInline> and <CodeInline>DrawerVariant.Responsive</CodeInline>) can be changed using the <CodeInline>Breakpoint</CodeInline> parameter. The default is <CodeInline>Breakpoint.Md</CodeInline>.<br />
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        <b>Important:</b> When using <b>Mini</b> or <b>Responsive</b> variants, the drawer may automatically open or close when the browser width crosses the configured <b>Breakpoint</b>. This responsive behavior can override the current <b>Open</b> state, including when using <CodeInline>@("@bind-Open")</CodeInline>.<br />
+                        If you need full manual control of the open state independent of breakpoint transitions, set <b>Variant="DrawerVariant.Persistent"</b> and use the <b>OnBreakpointChanged</b> event to implement your own logic. In persistent mode, the drawer will not automatically react to breakpoints.<br />
+                        See the example below for how the <b>Breakpoint</b> parameter affects drawer behavior.
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DrawerBreakpointExample)" ShowCode="false">
