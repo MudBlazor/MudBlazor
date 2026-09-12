@@ -1,0 +1,56 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(2, Units.Fr())">
+    <MudMatrixItem ColumnSpan="2">
+        <MudSlider @bind-Value="_itemCount" Min="0" Max="23" Color="Color.Primary" Class="mb-4">Item Count: @_itemCount</MudSlider>
+    </MudMatrixItem>
+    <MudMatrixItem>
+        <MudNumericField T="int?" Max="_maxTrackCount" Label="Column position" @bind-Value="_columnPosition" Clearable="true" Error="_columnPosition == 0" ErrorText="Position cannot be zero" />
+    </MudMatrixItem>
+    <MudMatrixItem>
+        <MudNumericField T="int?" Max="_maxTrackCount" Label="Row position" @bind-Value="_rowPosition" Clearable="true" Error="_rowPosition == 0" ErrorText="Position cannot be zero" />
+    </MudMatrixItem>
+    <MudMatrixItem Style="align-items: center;">
+        <MudSwitch @bind-Value="_columnSpanBackward" Label="Column span backward" Color="Color.Tertiary" />
+    </MudMatrixItem>
+    <MudMatrixItem Style="align-items: center">
+        <MudSwitch @bind-Value="_rowSpanBackward" Label="Row span backward" Color="Color.Tertiary" />
+    </MudMatrixItem>
+</MudMatrix>
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(_maxTrackCount, Units.Fr())"
+           ExplicitRows="ExplicitMatrix.Pattern(_maxTrackCount, Units.Fr())"
+           Style="height: 500px; overflow: auto;">
+
+    @for (int i = 0; i < _itemCount; i++)
+    {
+        int index = i + 1;
+        <MudMatrixItem>
+            <MudPaper Outlined="true" Class="mud-width-full mud-height-full d-flex align-center justify-center">
+                <MudText Typo="Typo.caption">@index</MudText>
+            </MudPaper>
+        </MudMatrixItem>
+    }
+
+    <MudMatrixItem ColumnPosition="_columnPosition"
+                    RowPosition="_rowPosition"
+                    ColumnSpan="1"
+                    RowSpan="2"
+                    ColumnSpanBackward="_columnSpanBackward"
+                    RowSpanBackward="_rowSpanBackward">
+
+        <MudPaper Outlined="true" Class="mud-width-full mud-height-full" Style="background-color: var(--mud-palette-primary)" />
+    </MudMatrixItem>
+
+</MudMatrix>
+
+
+@code {
+    int _itemCount = 8;
+    const int _maxTrackCount = 5;
+
+    int? _columnPosition = 2;
+    int? _rowPosition = 3;
+    bool _columnSpanBackward;
+    bool _rowSpanBackward;
+}
