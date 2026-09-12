@@ -1,4 +1,5 @@
 ﻿using System.Web;
+using AngleSharp.Css.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -1953,6 +1954,65 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() =>
             {
                 comp.Find(".dynamic-title").TrimmedText().Should().Be("11");
+            });
+            
+        }
+
+        /// <summary>
+        /// Verify that dialog style value is updated when StateHasChanged invoked from non-inlined custom dialog
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task DialogStyleShouldUpdateDynamically()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogDynamicStyleUpdates>());
+
+            dialogReference.Should().NotBeNull();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".test-class").Should().NotBeNull();
+                comp.Find(".test-class").GetStyle().CssText.Trimmed().Should().Be("display: flex !important");
+            });
+
+            await comp.Find(".content-btn").ClickAsync(); // test for update initiated from dialog content
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".test-class").GetStyle().CssText.Trimmed().Should().Be("display: block !important");
+            });
+            
+        }
+
+        /// <summary>
+        /// Verify that dialog class value is updated when StateHasChanged invoked from non-inlined custom dialog
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task DialogClassShouldUpdateDynamically()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogDynamicClassUpdates>());
+
+            dialogReference.Should().NotBeNull();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".test-class").Should().NotBeNull();
+            });
+
+            await comp.Find(".content-btn").ClickAsync(); // test for update initiated from dialog content
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".test-class-dynamic").Should().NotBeNull();
             });
             
         }

@@ -413,7 +413,23 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        void IMudDialogInstance.StateHasChanged() => StateHasChanged();
+        void IMudDialogInstance.StateHasChanged()
+        {
+            // update class and style values, as in case of change, they will not be updated automatically
+            // question for the future: are those assignments needed in the first place?
+            // _dialog.Class is used directly in the Classname builder while Class property is unused here, why _dialog.Style goes different path?
+            if (Class != _dialog?.Class)
+            {
+                Class = _dialog?.Class;
+            }
+
+            if (Style != _dialog?.Style)
+            {
+                Style = _dialog?.Style;
+            }
+
+            StateHasChanged();
+        }
 
         /// <inheritdoc />
         void IMudDialogInstance.CancelAll()
