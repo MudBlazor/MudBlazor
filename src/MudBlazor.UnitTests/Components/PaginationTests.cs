@@ -1,4 +1,5 @@
-﻿using AngleSharp.Dom;
+﻿using System.Collections.Generic;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -387,6 +388,29 @@ namespace MudBlazor.UnitTests.Components
             var ellipses = comp.FindAll("li").Where(li => li.TextContent.Trim() == "…").ToList();
             ellipses.Should().NotBeEmpty();
             ellipses.Should().OnlyContain(li => li.FirstElementChild!.GetAttribute("aria-hidden") == "true");
+        }
+
+        /// <summary>
+        /// UserAttributes are forwarded to the list element, and the computed class and style keep winning over a class or style supplied there, as they did through the MudElement boundary.
+        /// </summary>
+        [Test]
+        public void Pagination_UserAttributes_ForwardedWithComputedClassAndStyleWinning()
+        {
+            var comp = Context.Render<MudPagination>(parameters => parameters
+                .Add(x => x.Count, 5)
+                .Add(x => x.Class, "own-class")
+                .Add(x => x.Style, "color:blue")
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    ["class"] = "user-class",
+                    ["style"] = "color:red",
+                    ["data-test"] = "pager",
+                }));
+
+            var root = comp.Find("ul");
+            root.GetAttribute("data-test").Should().Be("pager");
+            root.ClassList.Should().Contain("mud-pagination").And.Contain("own-class").And.NotContain("user-class");
+            root.GetAttribute("style").Should().Be("color:blue");
         }
     }
 }

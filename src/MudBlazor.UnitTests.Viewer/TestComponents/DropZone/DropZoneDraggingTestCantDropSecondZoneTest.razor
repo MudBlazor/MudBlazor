@@ -1,21 +1,21 @@
 ﻿<MudDropContainer T="SimpleDropItem"
-				  Items="_items" ItemsSelector="@((item,dropzone) => item.ZoneIdentifier == dropzone)"
-				  Class="d-flex"
-				  DraggingClass="my-special-dragging-class" ItemDraggingClass="my-special-item-dragging-class"
-				  ItemDropped="ItemUpdated">
-	<ChildContent>
+                  Items="_items" ItemsSelector="@((item,dropzone) => item.ZoneIdentifier == dropzone)"
+                  Class="d-flex"
+                  DraggingClass="my-special-dragging-class" ItemDraggingClass="my-special-item-dragging-class"
+                  ItemDropped="ItemUpdated">
+    <ChildContent>
         <MudDropZone T="SimpleDropItem" Identifier="Column 1" Class="first-drop-zone"
                      CanDrop=@( (x) => false)>
-			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
-		</MudDropZone>
-		<MudDropZone T="SimpleDropItem" Identifier="Column 2" Class="second-drop-zone"
-					 CanDrop=@( (x) => false)>
-			<MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
-		</MudDropZone>
-	</ChildContent>
-	<ItemRenderer>
-		<MudText>@context.Name</MudText>
-	</ItemRenderer>
+            <MudText Typo="Typo.h6" Class="mb-4">Drop Zone 1</MudText>
+        </MudDropZone>
+        <MudDropZone T="SimpleDropItem" Identifier="Column 2" Class="second-drop-zone"
+                     CanDrop=@( (x) => false)>
+            <MudText Typo="Typo.h6" Class="mb-4">Drop Zone 2</MudText>
+        </MudDropZone>
+    </ChildContent>
+    <ItemRenderer>
+        <MudText>@context.Name</MudText>
+    </ItemRenderer>
 </MudDropContainer>
 
 @code {
@@ -26,7 +26,7 @@
         new("Third Item", "Column 2")
     ];
 
-	private static void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
+    private static void ItemUpdated(MudItemDropInfo<SimpleDropItem> dropItem)
     {
         if (dropItem.Item is null)
         {
