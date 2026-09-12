@@ -1,0 +1,7 @@
+﻿@mixin textAlign($breakpoint) {
+    @each $name in ( center,end,start,left,right,justify,justify-all,match-parent ) {
+        .text-#{$breakpoint}#{$name} {
+            text-align: $name !important;
+        }
+    }
+}
