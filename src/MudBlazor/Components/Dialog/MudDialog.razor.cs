@@ -314,6 +314,11 @@ namespace MudBlazor
                     }
                 }
             }
+            else if (DialogInstance is not null)
+            {
+                //forward render update to instance container
+                await InvokeAsync(DialogInstance.StateHasChanged);
+            }
 
             await base.OnAfterRenderAsync(firstRender);
         }
