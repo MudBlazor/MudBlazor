@@ -122,7 +122,20 @@ internal sealed class DebounceDispatcher : IDisposable
     /// <param name="cancellationToken">Optional cancellation token to cancel the debounced action.</param>
     /// <returns>A task that completes when the action executes or is cancelled/disposed.</returns>
     /// <exception cref="ArgumentNullException">Thrown when action is null.</exception>
-    public async Task DebounceAsync(Func<Task> action, CancellationToken cancellationToken = default)
+    public Task DebounceAsync(Func<Task> action, CancellationToken cancellationToken = default)
+        => DebounceCoreAsync(action, onScheduled: null, cancellationToken);
+
+    /// <summary>
+    /// Debounces the action and reports the moment its timer is scheduled.
+    /// </summary>
+    /// <remarks>
+    /// Scheduling happens after an await, so a caller that needs to know the debounce exists cannot rely on the call returning.
+    /// </remarks>
+    /// <param name="action">The asynchronous action to invoke after the debounce interval.</param>
+    /// <param name="onScheduled">Invoked once the debounce timer has been scheduled, and not invoked when the action runs immediately or the call is cancelled.</param>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the debounced action.</param>
+    /// <returns>A task that completes when the action executes or is cancelled/disposed.</returns>
+    internal async Task DebounceCoreAsync(Func<Task> action, Action? onScheduled, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(action);
 
@@ -213,7 +226,9 @@ internal sealed class DebounceDispatcher : IDisposable
             }
 
             // Wait for the debounce interval
-            await Task.Delay(scheduledInterval, _timeProvider, delayToken).ConfigureAwait(false);
+            var delay = Task.Delay(scheduledInterval, _timeProvider, delayToken);
+            onScheduled?.Invoke();
+            await delay.ConfigureAwait(false);
             proceedToExecution = true;
         }
         catch (Exception ex) when (IsExpectedDebounceFlowException(ex))
