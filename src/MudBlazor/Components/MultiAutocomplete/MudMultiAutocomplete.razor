@@ -1,0 +1,158 @@
+@namespace MudBlazor
+@inherits MudBaseInput<T>
+@typeparam T
+@typeparam TItem
+
+<CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
+    <div class="@AutocompleteClassname">
+        @{
+            UpdateLabelText();
+        }
+        <MudInputControl Label="@Label"
+                         Variant="@Variant"
+                         HelperId="@GetHelperId()"
+                         HelperText="@HelperText"
+                         HelperTextOnFocus="@HelperTextOnFocus"
+                         FullWidth="@FullWidth"
+                         Margin="@Margin"
+                         Class="@Classname"
+                         Style="@Style"
+                         Error="@HasErrors"
+                         ErrorText="@GetErrorText()"
+                         ErrorId="@ErrorId"
+                         Disabled="@GetDisabledState()"
+                         Required="@Required"
+                         @onclick="@OnInputClickedAsync"
+                         @onfocus="@OnInputFocusedAsync"
+                         ForId="@InputElementId">
+            <InputContent>
+                <MudInput @ref="_elementReference" InputType="InputType.Text"
+                          Class="@InputClassname" Margin="@Margin"
+                          Variant="@Variant"
+                          Typo="@Typo"
+                          Label="@Label"
+                          TextUpdateSuppression="@TextUpdateSuppression"
+                          Value="@Text" Underline="@Underline"
+                          Disabled="@GetDisabledState()"
+                          ReadOnly="@GetReadOnlyState()"
+                          Error="@Error"
+                          ErrorId="@ErrorId"
+                          HelperId="@GetHelperId()"
+                          HelperText="@HelperText"
+                          AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
+                          OnAdornmentClick="@AdornmentClickHandlerAsync"
+                          AdornmentAriaLabel="@AdornmentAriaLabel"
+                          Clearable="@(Clearable && !GetReadOnlyState())"
+                          OnClearButtonClick="@OnClearButtonClick"
+                          ClearIcon="@ClearIcon"
+                          MaxLength="@MaxLength"
+                          autocomplete="@GetAutocomplete()"
+                          @attributes="UserAttributes"
+                          TextChanged="OnTextChangedAsync"
+                          OnBlur="OnInputBlurredAsync"
+                          @onfocus="@OnInputFocusedAsync"
+                          OnKeyDown="@OnInputKeyDownAsync"
+                          OnKeyUp="@OnInputKeyUpAsync" KeyUpPreventDefault="KeyUpPreventDefault"
+                          Placeholder="@Placeholder" Immediate="true"
+                          InputMode="@InputMode" Pattern="@Pattern"
+                          ShrinkLabel="@ShrinkLabel"
+                          Required="@Required"
+                          InputId="@InputElementId"/>
+
+                @if (ShowProgressIndicator && IsLoading)
+                {
+                    @if (ProgressIndicatorTemplate is not null)
+                    {
+                        @ProgressIndicatorTemplate
+                    }
+                    else
+                    {
+                        <div class="@CircularProgressClassname">
+                            <MudProgressCircular Color="ProgressIndicatorColor" Indeterminate="true" Size="Size.Small"/>
+                        </div>
+                    }
+                }
+
+                <MudPopover Fixed="@DropdownSettings.Fixed" Open="@Open" MaxHeight="@MaxHeight" AnchorOrigin="@AnchorOrigin" TransformOrigin="@TransformOrigin" Class="@PopoverClass" RelativeWidth="DropdownWidth.Relative" OverflowBehavior="@DropdownSettings.OverflowBehavior">
+                    @if (ProgressIndicatorInPopoverTemplate is not null && IsLoading)
+                    {
+                        @ProgressIndicatorInPopoverTemplate
+                    }
+                    else if (_items != null && _items.Length != 0)
+                    {
+                        <MudList
+                            T="TItem"
+                            Class="@ListClass"
+                            SelectionMode="SelectionMode.MultiSelection"
+                            Dense="@Dense"
+                            SelectedValues="_selectedValue"
+                            SelectedValuesChanged="SetSelectedValueAsync"
+                            >
+                            @if (BeforeItemsTemplate is not null)
+                            {
+                                <div class="mud-autocomplete-before-items pa-1">
+                                    @BeforeItemsTemplate
+                                </div>
+                            }
+                            @for (var index = 0; index < _items.Length; index++)
+                            {
+                                var item = _items[index];
+                                bool isSelected = index == _selectedListItemIndex;
+                                bool isDisabled = !_enabledItemIndices.Contains(index);
+                                bool showSelectedTemplate = ItemSelectedTemplate is not null && isSelected;
+                                bool showDisabledTemplate = ItemDisabledTemplate is not null && isDisabled;
+                                var captureIndex = index;
+                                <MudListItem
+                                    T="TItem"
+                                    Value="@item"
+                                    @key="@item"
+                                    id="@GetListItemId(captureIndex)"
+                                    Disabled="@(isDisabled)"
+                                    Class="@GetListItemClassname(isSelected)"
+                                    OnClickPreventDefault="true"
+                                    OnClick="_ => OnListItemClickAsync(item)">
+                                    @if (showDisabledTemplate)
+                                    {
+                                        @ItemDisabledTemplate!(item)
+                                    }
+                                    else if (showSelectedTemplate)
+                                    {
+                                        @ItemSelectedTemplate!(item)
+                                    }
+                                    else if (ItemTemplate is not null)
+                                    {
+                                        @ItemTemplate(item)
+                                    }
+                                    else
+                                    {
+                                        @GetItemString(item)
+                                    }
+                                </MudListItem>
+                            }
+                            @if (MoreItemsTemplate is not null && _returnedItemsCount > MaxItems)
+                            {
+                                <div class="mud-autocomplete-more-items pa-1">
+                                    @MoreItemsTemplate
+                                </div>
+                            }
+                            @if (AfterItemsTemplate is not null)
+                            {
+                                <div class="mud-autocomplete-after-items pa-1">
+                                    @AfterItemsTemplate
+                                </div>
+                            }
+                        </MudList>
+                    }
+                    else if (NoItemsTemplate is not null)
+                    {
+                        <div class="mud-autocomplete-no-items pa-1">
+                            @NoItemsTemplate
+                        </div>
+                    }
+                </MudPopover>
+            </InputContent>
+        </MudInputControl>
+    </div>
+</CascadingValue>
+
+<MudOverlay AutoClose Visible="Open" OnClosed="OnOverlayClosedAsync" LockScroll="false"/>
