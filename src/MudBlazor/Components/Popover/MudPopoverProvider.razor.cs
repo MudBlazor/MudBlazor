@@ -3,7 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Interfaces;
+using MudBlazor.Interop;
 
 namespace MudBlazor
 {
@@ -20,9 +22,14 @@ namespace MudBlazor
     public partial class MudPopoverProvider : IDisposable, IPopoverObserver
     {
         private bool _isConnectedToService;
+        private bool _pendingSync;
+        private PopoverJsInterop? _jsInterop;
 
         [Inject]
         internal IPopoverService PopoverService { get; set; } = null!;
+
+        [Inject]
+        internal IJSRuntime JSRuntime { get; set; } = null!;
 
         /// <summary>
         /// Controls whether this provider is enabled.
@@ -50,6 +57,7 @@ namespace MudBlazor
             {
                 return;
             }
+            _jsInterop = new PopoverJsInterop(JSRuntime);
 
             PopoverService.Subscribe(this);
             _isConnectedToService = true;
@@ -86,6 +94,16 @@ namespace MudBlazor
                     throw new InvalidOperationException("Duplicate MudPopoverProvider detected. Please ensure there is only one provider, or disable this warning with PopoverOptions.ThrowOnDuplicateProvider.");
                 }
             }
+
+            if (Enabled && _pendingSync && _jsInterop != null)
+            {
+                _pendingSync = false;
+
+                var states = PopoverService.ActivePopovers.Select(s => (GetPopoverElementId(s.Id), s.ShowContent)).ToArray();
+
+                await _jsInterop.SynchroniseAll(states);
+            }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -111,6 +129,11 @@ namespace MudBlazor
                             {
                                 await InvokeAsync(stateHasChanged.StateHasChanged);
                             }
+
+                            if (_jsInterop != null)
+                            {
+                                await _jsInterop.Synchronise(GetPopoverElementId(holder.Id), holder.ShowContent, cancellationToken);
+                            }
                         }
 
                         break;
@@ -118,9 +141,12 @@ namespace MudBlazor
                 // Update whole MudPopoverProvider
                 case PopoverHolderOperation.Create:
                 case PopoverHolderOperation.Remove:
+                    _pendingSync = true;
                     await InvokeAsync(StateHasChanged);
                     break;
             }
         }
+
+        private static string GetPopoverElementId(Guid id) => $"popovercontent-{id}";
     }
 }
