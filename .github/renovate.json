@@ -17,7 +17,7 @@
         "enabled": true
     },
     "constraints": {
-        "bun": "1.4.0"
+        "bun": "1.4.2"
     },
     "vulnerabilityAlerts": {
         "enabled": true,
