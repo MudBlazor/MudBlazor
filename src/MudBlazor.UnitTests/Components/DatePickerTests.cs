@@ -39,6 +39,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DatePickerInputUsesFullWidthTextField()
+        {
+            var comp = Context.Render<MudDatePicker>();
+
+            var inputControl = comp.Find(".mud-input-control");
+            inputControl.ClassList.Should().Contain("mud-input-control-full-width");
+            inputControl.ClassList.Should().NotContain("mud-input-control-width-auto");
+        }
+
+        [Test]
         public void DatePickerOpenButtonDefaultAriaLabel()
         {
             var comp = Context.Render<DatePickerValidationTest>();
