@@ -1,12 +1,13 @@
-﻿@using System.Net.Http.Json
+@using System.Net.Http.Json
 @using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
 <MudDataGrid T="Element" @ref="_grid" Items="_elements" DragDropColumnReordering="_dragDropReorderingEnabled" ColumnsPanelReordering="_columnsPanelReorderingEnabled"
-             ColumnResizeMode="ResizeMode.Container" Hideable="_hideable" Filterable="_filterable" Groupable="_groupable" FilterMode="_filterMode" ShowMenuIcon="true">
+             ColumnResizeMode="ResizeMode.Container" Hideable="_hideable" Filterable="_filterable" Groupable="_groupable" FilterMode="_filterMode" ShowMenuIcon="true"
+             ColumnOrderChanged="OnColumnOrderChanged">
     <Columns>
-        <SelectColumn T="Element"/>
+        <SelectColumn T="Element" />
         <PropertyColumn Property="x => x.Number" Title="Nr" />
         <PropertyColumn Property="x => x.Sign" Hidden="true" DragAndDropEnabled="false" Groupable="false" Sortable="false" Filterable="false" />
         <PropertyColumn Property="x => x.Name" Title="Name" Hidden="false" DragAndDropEnabled="true" Groupable="true" Sortable="true" Filterable="true" Grouping="false" />
@@ -19,6 +20,8 @@
         <MudDataGridPager T="Element" />
     </PagerContent>
 </MudDataGrid>
+
+<MudText Class="mt-2" Typo="Typo.body2">@_status</MudText>
 
 <div class="d-flex flex-rows flex-wrap mr-4">
     <MudSwitch @bind-Value="_dragDropReorderingEnabled" Color="Color.Primary">Drag Drop Column Reordering</MudSwitch>
@@ -53,7 +56,6 @@
 
 @code {
     private IEnumerable<Element> _elements = new List<Element>();
-
     private DataGridFilterMode _filterMode = DataGridFilterMode.Simple;
     private bool _dragDropReorderingEnabled = true;
     private bool _columnsPanelReorderingEnabled = true;
@@ -65,15 +67,16 @@
     private bool _groupMolar;
     private bool _groupCategory;
     private MudDataGrid<Element> _grid = null!;
-
+    private string _status = "Use a header drag, or use the columns panel to reorder columns.";
     private readonly IConverter<bool, bool?> _oppositeBoolConverter = Conversions.From(value => !value, (bool? value) => !value ?? true);
+
     protected override async Task OnInitializedAsync()
     {
         _elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
 
     private async Task HideColumnsAsync(bool hide)
-    {        
+    {
         foreach (var column in _grid.RenderedColumns)
         {
             if (hide)
@@ -84,6 +87,23 @@
             {
                 await column.ShowAsync();
             }
+        }
+    }
+
+    private void OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Element> args)
+    {
+        _status = $"{GetColumnLabel(args.Column)} moved from {args.PreviousIndex} to {args.CurrentIndex}.";
+    }
+
+    private static string GetColumnLabel(Column<Element> column)
+    {
+        return column.Tag?.ToString() switch
+        {
+            "select-column" => "Select Column",
+            "hierarchy-column" => "Hierarchy Column",
+            _ when !string.IsNullOrWhiteSpace(column.Title) => column.Title,
+            _ when column is TemplateColumn<Element> => "Template Column",
+            _ => column.PropertyName ?? "Column"
         };
     }
 }
