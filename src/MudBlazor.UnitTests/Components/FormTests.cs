@@ -6,6 +6,7 @@ using AwesomeAssertions.Execution;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Extensions;
 using MudBlazor.Resources;
@@ -2862,6 +2863,110 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.ValidationDelay, 0)
                 .AddChildContent<MudTextField<int?>>());
             return (comp.Instance, comp, comp.FindComponent<MudTextField<int?>>().Instance);
+        }
+
+        /// <summary>
+        /// #13769: OnEnterPressed waits for the Enter keyup so a value committed on change between keydown and keyup is already applied.
+        /// </summary>
+        [TestCase("Enter")]
+        [TestCase("NumpadEnter")]
+        public async Task OnEnterPressed_InvokedOnKeyUp_AfterValueCommitted(string key)
+        {
+            var observed = new List<string>();
+            string value = null;
+            var comp = RenderEnterForm(() => observed.Add(value), v => value = v);
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = key });
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "a" });
+            observed.Should().BeEmpty();
+
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = key });
+            observed.Should().Equal("a");
+        }
+
+        /// <summary>
+        /// An Enter keyup without a preceding Enter keydown does not invoke OnEnterPressed.
+        /// </summary>
+        [Test]
+        public async Task OnEnterPressed_KeyUpWithoutKeyDown_NotInvoked()
+        {
+            var invocations = 0;
+            var comp = RenderEnterForm(() => invocations++);
+
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            invocations.Should().Be(0);
+        }
+
+        /// <summary>
+        /// An Enter keydown that is part of an IME composition does not arm OnEnterPressed.
+        /// </summary>
+        [Test]
+        public async Task OnEnterPressed_ComposingKeyDown_NotInvoked()
+        {
+            var invocations = 0;
+            var comp = RenderEnterForm(() => invocations++);
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", IsComposing = true });
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            invocations.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A different key pressed after the Enter keydown disarms OnEnterPressed.
+        /// </summary>
+        [Test]
+        public async Task OnEnterPressed_OtherKeyDownAfterEnter_NotInvoked()
+        {
+            var invocations = 0;
+            var comp = RenderEnterForm(() => invocations++);
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "a" });
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            invocations.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Key handlers passed to MudForm as attributes still run, with or without OnEnterPressed.
+        /// </summary>
+        [TestCase("onkeydown", false)]
+        [TestCase("onkeydown", true)]
+        [TestCase("onkeyup", false)]
+        [TestCase("onkeyup", true)]
+        public async Task UserKeyHandler_Invoked(string eventName, bool withOnEnterPressed)
+        {
+            var userCalls = 0;
+            var comp = Context.Render<MudForm>(p =>
+            {
+                p.AddUnmatched(eventName, EventCallback.Factory.Create<KeyboardEventArgs>(this, () => userCalls++));
+                if (withOnEnterPressed)
+                {
+                    p.Add(x => x.OnEnterPressed, () => { });
+                }
+            });
+
+            var args = new KeyboardEventArgs { Key = "Enter" };
+            if (eventName == "onkeydown")
+            {
+                await comp.Find("form").KeyDownAsync(args);
+            }
+            else
+            {
+                await comp.Find("form").KeyUpAsync(args);
+            }
+
+            userCalls.Should().Be(1);
+        }
+
+        private IRenderedComponent<MudForm> RenderEnterForm(Action onEnterPressed, Action<string> valueChanged = null)
+        {
+            return Context.Render<MudForm>(p => p
+                .Add(x => x.OnEnterPressed, onEnterPressed)
+                .AddChildContent<MudTextField<string>>(field => field
+                    .Add(x => x.ValueChanged, valueChanged ?? (_ => { }))));
         }
     }
 }
