@@ -1,45 +1,41 @@
 ﻿@namespace MudBlazor
+@using Microsoft.AspNetCore.Components.Rendering
 @inherits MudComponentBase
 
-<MudElement HtmlTag="@GetHtmlTag()"
-            Class="@Classname"
-            Style="@Style"
-            href="@Href"
-            target="@Target"
-            PreventDefault="GetDisabled()"
-            ClickPropagation="false"
-            role="menuitem"
-            @attributes="UserAttributes"
-            @onclick="OnClickHandlerAsync"
-            Ref="ElementReference"
-            RefChanged="_captureElementReference"
-            tabindex="@(!GetDisabled() ? "0" : "-1")"
-            aria-disabled="@(GetDisabled() ? "true" : "false")">
+@{
+    OpenRow(__builder);
+    RenderContent(__builder);
+    __builder.CloseElement();
+}
 
-    @if (!string.IsNullOrWhiteSpace(Icon))
+@code {
+    private void RenderContent(RenderTreeBuilder __builder)
     {
-        <MudIcon Class="mud-menu-item-icon"
-                 Icon="@Icon"
-                 Color="IconColor"
-                 Disabled="GetDisabled()" />
-    }
-
-    <MudText Class="mud-menu-item-text"
-             Typo="GetTypo()">
-        @if (ChildContent is null)
+        @if (!string.IsNullOrWhiteSpace(Icon))
         {
-            @Label
+            <MudIcon Class="mud-menu-item-icon"
+                     Icon="@Icon"
+                     Color="IconColor"
+                     Disabled="GetDisabled()" />
         }
-        else
-        {
-            @ChildContent
-        }
-    </MudText>
 
-    @if (ActivatesSubMenu && !HideSubMenuArrow)
-    {
-        <MudIcon Class="mud-menu-submenu-icon"
-                 Icon="@(RightToLeft ? Icons.Material.Filled.ArrowLeft : Icons.Material.Filled.ArrowRight)"
-                 Disabled="GetDisabled()" />
+        <MudText Class="mud-menu-item-text"
+                 Typo="GetTypo()">
+            @if (ChildContent is null)
+            {
+                @Label
+            }
+            else
+            {
+                @ChildContent
+            }
+        </MudText>
+
+        @if (ActivatesSubMenu && !HideSubMenuArrow)
+        {
+            <MudIcon Class="mud-menu-submenu-icon"
+                     Icon="@(RightToLeft ? Icons.Material.Filled.ArrowLeft : Icons.Material.Filled.ArrowRight)"
+                     Disabled="GetDisabled()" />
+        }
     }
-</MudElement>
+}
