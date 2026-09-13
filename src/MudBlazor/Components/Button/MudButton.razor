@@ -1,33 +1,31 @@
 ﻿@namespace MudBlazor
+@using Microsoft.AspNetCore.Components.Rendering
 @inherits MudBaseButton
 @implements IDisposable
 
-<MudElement Ref="@_elementReference"
-            RefChanged="@_captureElementReference"
-            HtmlTag="@HtmlTag"
-            Class="@Classname"
-            Style="@Style"
-            @attributes="UserAttributes"
-            @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
-            type="@ButtonType.ToStringFast(true)"
-            href="@Href"
-            target="@Target"
-            rel="@GetRel()"
-            disabled="@GetDisabledState()"
-            ClickPropagation="@GetClickPropagation()">
-    <span class="mud-button-label">
-        @if (!string.IsNullOrWhiteSpace(StartIcon))
-        {
-            <span class="@StartIconClass">
-                <MudIcon Disabled="@Disabled" Icon="@StartIcon" Size="@(IconSize ?? Size)" Color="@IconColor" />
-            </span>
-        }
-        @ChildContent
-        @if (!string.IsNullOrWhiteSpace(EndIcon))
-        {
-            <span class="@EndIconClass">
-                <MudIcon Disabled="@Disabled" Icon="@EndIcon" Size="@(IconSize ?? Size)" Color="@IconColor" />
-            </span>
-        }
-    </span>
-</MudElement>
+@{
+    OpenRoot(__builder, Classname);
+    RenderLabel(__builder);
+    __builder.CloseElement();
+}
+
+@code {
+    private void RenderLabel(RenderTreeBuilder __builder)
+    {
+        <span class="mud-button-label">
+            @if (!string.IsNullOrWhiteSpace(StartIcon))
+            {
+                <span class="@StartIconClass">
+                    <MudIcon Disabled="@Disabled" Icon="@StartIcon" Size="@(IconSize ?? Size)" Color="@IconColor" />
+                </span>
+            }
+            @ChildContent
+            @if (!string.IsNullOrWhiteSpace(EndIcon))
+            {
+                <span class="@EndIconClass">
+                    <MudIcon Disabled="@Disabled" Icon="@EndIcon" Size="@(IconSize ?? Size)" Color="@IconColor" />
+                </span>
+            }
+        </span>
+    }
+}
