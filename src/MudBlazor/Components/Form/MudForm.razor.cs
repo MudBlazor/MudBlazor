@@ -482,20 +482,31 @@ namespace MudBlazor
 
         private async Task OnKeyUpAsync(KeyboardEventArgs args)
         {
-            if (args.Key is "Enter" or "NumpadEnter" && _enterKeyDown)
+            try
             {
-                _enterKeyDown = false;
-                await OnEnterPressed.InvokeAsync();
+                if (args.Key is "Enter" or "NumpadEnter" && _enterKeyDown)
+                {
+                    _enterKeyDown = false;
+                    await OnEnterPressed.InvokeAsync();
+                }
             }
-
-            await InvokeUserKeyHandlerAsync("onkeyup", args);
+            finally
+            {
+                await InvokeUserKeyHandlerAsync("onkeyup", args);
+            }
         }
 
         private Task InvokeUserKeyHandlerAsync(string name, KeyboardEventArgs args)
         {
-            return UserAttributes.TryGetValue(name, out var handler) && handler is EventCallback<KeyboardEventArgs> callback
-                ? callback.InvokeAsync(args)
-                : Task.CompletedTask;
+            UserAttributes.TryGetValue(name, out var handler);
+            return handler switch
+            {
+                EventCallback<KeyboardEventArgs> typed => typed.InvokeAsync(args),
+                EventCallback untyped => untyped.InvokeAsync(args),
+                // Mirrors how the renderer wraps a delegate attribute on a plain element.
+                MulticastDelegate @delegate => new EventCallback(@delegate.Target as IHandleEvent, @delegate).InvokeAsync(args),
+                _ => Task.CompletedTask,
+            };
         }
 
         protected virtual void Dispose(bool disposing)

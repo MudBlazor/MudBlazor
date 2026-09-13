@@ -2932,16 +2932,26 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Key handlers passed to MudForm as attributes still run, with or without OnEnterPressed.
         /// </summary>
-        [TestCase("onkeydown", false)]
-        [TestCase("onkeydown", true)]
-        [TestCase("onkeyup", false)]
-        [TestCase("onkeyup", true)]
-        public async Task UserKeyHandler_Invoked(string eventName, bool withOnEnterPressed)
+        [Test]
+        public async Task UserKeyHandler_Invoked(
+            [Values("onkeydown", "onkeyup")] string eventName,
+            [Values] bool withOnEnterPressed,
+            [Range(0, 6)] int handlerShape)
         {
             var userCalls = 0;
+            object handler = handlerShape switch
+            {
+                0 => EventCallback.Factory.Create<KeyboardEventArgs>(this, () => userCalls++),
+                1 => EventCallback.Factory.Create(this, () => userCalls++),
+                2 => new Action(() => userCalls++),
+                3 => new Action<KeyboardEventArgs>(_ => userCalls++),
+                4 => new Func<Task>(() => { userCalls++; return Task.CompletedTask; }),
+                5 => new Func<KeyboardEventArgs, Task>(_ => { userCalls++; return Task.CompletedTask; }),
+                _ => new KeyboardHandler(_ => userCalls++),
+            };
             var comp = Context.Render<MudForm>(p =>
             {
-                p.AddUnmatched(eventName, EventCallback.Factory.Create<KeyboardEventArgs>(this, () => userCalls++));
+                p.AddUnmatched(eventName, handler);
                 if (withOnEnterPressed)
                 {
                     p.Add(x => x.OnEnterPressed, () => { });
@@ -2960,6 +2970,26 @@ namespace MudBlazor.UnitTests.Components
 
             userCalls.Should().Be(1);
         }
+
+        /// <summary>
+        /// A user onkeyup handler still runs when OnEnterPressed throws.
+        /// </summary>
+        [Test]
+        public async Task UserKeyUpHandler_InvokedWhenOnEnterPressedThrows()
+        {
+            var userCalls = 0;
+            var comp = Context.Render<MudForm>(p => p
+                .AddUnmatched("onkeyup", EventCallback.Factory.Create<KeyboardEventArgs>(this, () => userCalls++))
+                .Add(x => x.OnEnterPressed, () => throw new InvalidOperationException()));
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            var keyUp = () => comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            await keyUp.Should().ThrowAsync<InvalidOperationException>();
+            userCalls.Should().Be(1);
+        }
+
+        private delegate void KeyboardHandler(KeyboardEventArgs args);
 
         private IRenderedComponent<MudForm> RenderEnterForm(Action onEnterPressed, Action<string> valueChanged = null)
         {
