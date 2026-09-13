@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -157,6 +158,22 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         }
 
         return attributes;
+    }
+
+    /// <summary>
+    /// Opens the chip element with its attributes; the Razor file renders the content and closes it.
+    /// </summary>
+    /// <remarks>
+    /// The tag is chosen at runtime, so the element is opened by name rather than written as markup.
+    /// class and style come before the splat so a class or style supplied through <see cref="MudComponentBase.UserAttributes"/> still wins, which is the precedence the MudElement boundary gave them.
+    /// </remarks>
+    private void OpenElement(RenderTreeBuilder builder)
+    {
+        builder.OpenElement(0, GetHtmlTag());
+        builder.AddAttribute(1, "class", Classname);
+        builder.AddAttribute(2, "style", Style);
+        builder.AddMultipleAttributes(3, GetAttributes()!);
+        builder.AddAttribute(4, "onclick", IsButton ? this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync) : null);
     }
 
     internal Variant GetVariant()
