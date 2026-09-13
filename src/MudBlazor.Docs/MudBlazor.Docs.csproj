@@ -58,6 +58,10 @@
     <Delete Files="@(FilesToClean)" />
   </Target>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="MudBlazor.UnitTests.Docs" />
+  </ItemGroup>
+
   <!--Packages-->
   <ItemGroup>
     <PackageReference Include="Blazor-Analytics" Version="4.0.0" />
