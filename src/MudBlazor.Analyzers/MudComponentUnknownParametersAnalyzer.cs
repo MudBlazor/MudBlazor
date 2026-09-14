@@ -82,7 +82,7 @@ namespace MudBlazor.Analyzers
             private readonly INamedTypeSymbol? _renderTreeBuilderSymbol;
             private readonly INamedTypeSymbol? _mudComponentBaseType;
             private readonly ImmutableHashSet<string> _allowedAttributes;
-            private readonly ImmutableArray<ResolvedParameterMigration> _migrations;
+            private readonly ParameterMigrationResolver _migrations;
             private readonly Func<ITypeSymbol, ComponentDescriptor> _createComponentDescriptor;
 
             public AnalyzerContext(Compilation compilation, AllowedAttributePattern allowedAttributePattern, string allowedAttributes)
@@ -96,7 +96,7 @@ namespace MudBlazor.Analyzers
                 _parameterSymbol = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.ParameterAttribute");
                 _renderTreeBuilderSymbol = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder");
                 _mudComponentBaseType = compilation.GetBestTypeByMetadataName("MudBlazor.MudComponentBase");
-                _migrations = ResolvedParameterMigration.Resolve(compilation);
+                _migrations = new ParameterMigrationResolver(compilation);
                 _createComponentDescriptor = componentType => ComponentDescriptor.GetComponentDescriptor(componentType, _parameterSymbol, _migrations);
             }
 

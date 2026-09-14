@@ -13,10 +13,10 @@ using NUnit.Framework;
 namespace MudBlazor.UnitTests.Analyzers;
 
 extern alias MudBlazorAnalyzer;
-
+using ComponentDescriptor = MudBlazorAnalyzer::MudBlazor.Analyzers.Internal.ComponentDescriptor;
 using ParameterMigration = MudBlazorAnalyzer::MudBlazor.Analyzers.Internal.ParameterMigration;
 using ParameterMigrationKind = MudBlazorAnalyzer::MudBlazor.Analyzers.Internal.ParameterMigrationKind;
-using ResolvedParameterMigration = MudBlazorAnalyzer::MudBlazor.Analyzers.Internal.ResolvedParameterMigration;
+using ParameterMigrationResolver = MudBlazorAnalyzer::MudBlazor.Analyzers.Internal.ParameterMigrationResolver;
 
 #nullable enable
 /// <summary>
@@ -235,17 +235,26 @@ public class ParameterMigrationCatalogTests
     }
 
     /// <summary>
-    /// A compilation that cannot see MudBlazor resolves no hints, and one that sees only part of it resolves only those components.
+    /// A type that only shares a catalog component's name gets no hints, and a partial MudBlazor gets hints only for the components it declares.
     /// </summary>
     [Test]
-    public void ResolveSkipsComponentsTheCompilationCannotSee()
+    public void ResolverSkipsComponentsTheCompilationCannotSee()
     {
-        ResolvedParameterMigration.Resolve(AnalyzerCompilationFactory.CreateCompilation(string.Empty, referenceMudBlazor: false)).Should().BeEmpty();
+        var lookalike = AnalyzerCompilationFactory.CreateCompilation(
+            "namespace Other { public class MudBaseButton : Microsoft.AspNetCore.Components.ComponentBase { } }",
+            referenceMudBlazor: false);
+        HintsFor(lookalike, "Other.MudBaseButton").Should().BeEmpty();
 
-        var partial = ResolvedParameterMigration.Resolve(AnalyzerCompilationFactory.CreateCompilation(PartialMudBlazorSource, referenceMudBlazor: false));
-
-        partial.Select(x => x.ParameterName).Should().BeEquivalentTo(
+        var partial = AnalyzerCompilationFactory.CreateCompilation(PartialMudBlazorSource, referenceMudBlazor: false);
+        HintsFor(partial, "MudBlazor.MudButton").Should().BeEquivalentTo(
             ParameterMigration.All.Where(x => x.ComponentMetadataName == "MudBlazor.MudBaseButton").Select(x => x.ParameterName));
+        HintsFor(partial, "MudBlazor.MudCheckBox").Should().BeEmpty();
+
+        static IEnumerable<string> HintsFor(Compilation compilation, string metadataName) =>
+            ComponentDescriptor.GetComponentDescriptor(
+                compilation.GetTypeByMetadataName(metadataName)!,
+                compilation.GetTypeByMetadataName("Microsoft.AspNetCore.Components.ParameterAttribute"),
+                new ParameterMigrationResolver(compilation)).MigrationHints.Keys;
     }
 
     /// <summary>
