@@ -880,6 +880,16 @@ namespace MudBlazor
         public bool SelectOnRowClick { get; set; } = true;
 
         /// <summary>
+        /// Allows the selection to be changed by the user.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>false</c>, <see cref="SelectedItem"/> and <see cref="SelectedItems"/> can still be set in code.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public bool SelectionChangeable { get; set; } = true;
+
+        /// <summary>
         /// Controls how cell values are edited.
         /// </summary>
         /// <remarks>
@@ -2140,6 +2150,10 @@ namespace MudBlazor
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
             Debug.Assert(item is not null);
+
+            if (!SelectionChangeable)
+                return;
+
             if (IsRowSelectionDisabled(item))
                 return; // Do not change selection if the item is disabled
 
@@ -2202,6 +2216,9 @@ namespace MudBlazor
             if (!MultiSelection)
                 return;
 
+            if (!SelectionChangeable)
+                return;
+
             var selectableItems = GetSelectableItems();
 
             if (value)
@@ -2229,6 +2246,9 @@ namespace MudBlazor
         {
             // nothing should happen if multiselection is false
             if (!MultiSelection)
+                return;
+
+            if (!SelectionChangeable)
                 return;
 
             var selectableItems = GetSelectableItems(groupItems);
