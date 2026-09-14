@@ -37,51 +37,21 @@
                     <SectionHeader Title="Migration Hints">
                         <Description>
                             When the unknown attribute is a parameter that an earlier major version removed, the same MUD0002 warning also names its replacement, so you do not have to search the migration guides.
-                            The hints below are the ones the analyzer knows about.
+                            The tables below list every removal the analyzer explains.
+                            Everything else, including changes that move a setting to another component or replace several parameters with one enum, is covered by the <MudLink Href="https://github.com/MudBlazor/MudBlazor/discussions/12658" Target="_blank">v7</MudLink>, <MudLink Href="https://github.com/MudBlazor/MudBlazor/discussions/12659" Target="_blank">v8</MudLink>, and <MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/12666" Target="_blank">v9</MudLink> migration guides.
                         </Description>
                     </SectionHeader>
-                    <MudSimpleTable Dense="true" Elevation="0" Bordered="true" Class="mb-4">
-                        <thead>
-                            <tr>
-                                <th>Removed</th>
-                                <th>Replacement</th>
-                                <th>Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><CodeInline>MudButton.Link</CodeInline></td>
-                                <td><CodeInline>Href</CodeInline></td>
-                                <td>Removed in v7. The URL moves across unchanged.</td>
-                            </tr>
-                            <tr>
-                                <td><CodeInline>MudButton.DisableRipple</CodeInline></td>
-                                <td><CodeInline>Ripple</CodeInline></td>
-                                <td>
-                                    Removed in v7.
-                                    The value inverts: <CodeInline>DisableRipple="true"</CodeInline> becomes <CodeInline>Ripple="false"</CodeInline>, and <CodeInline>DisableRipple="@("@expression")"</CodeInline> becomes <CodeInline>Ripple="@("@(!expression)")"</CodeInline>.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><CodeInline>MudTextField.AutoGrow</CodeInline></td>
-                                <td><CodeInline>Sizing</CodeInline></td>
-                                <td>
-                                    Removed in v9.
-                                    <CodeInline>AutoGrow="true"</CodeInline> becomes <CodeInline>Sizing="InputSizing.Auto"</CodeInline> and <CodeInline>AutoGrow="false"</CodeInline> becomes <CodeInline>Sizing="InputSizing.Fixed"</CodeInline>, which is the default.
-                                    An expression needs the equivalent conditional, such as <CodeInline>Sizing="@("@(grow ? InputSizing.Auto : InputSizing.Fixed)")"</CodeInline>.
-                                    <CodeInline>Lines</CodeInline>, <CodeInline>MaxLines</CodeInline>, and masked input behave differently and are worth a separate look.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </MudSimpleTable>
+                    <MUD0002MigrationHints/>
                     <MudText Class="mb-4">
                         A hint explains the replacement; it never rewrites your code, and there is no code fix for it.
                         The hint is attached to the existing warning, so configuration is unaffected: an attribute allowed by your pattern or custom list stays silent, and <CodeInline>Any</CodeInline> still disables MUD0002 entirely.
                         Hints are matched on the component's type, so a component of your own that derives from <CodeInline>MudButton</CodeInline> gets the same guidance, while an unrelated component with a similarly named attribute does not.
+                        A component that declares its own parameter with the old name keeps using it and is not reported.
                     </MudText>
                     <MudText>
-                        Two limits are worth knowing.
-                        Attributes supplied through an <CodeInline>@("@attributes")</CodeInline> dictionary are invisible to the analyzer, so a removed parameter passed that way is never reported at all.
+                        A few limits are worth knowing.
+                        Only attributes the analyzer can see are reported: a removed parameter supplied through an <CodeInline>@("@attributes")</CodeInline> dictionary, or written as a child element such as <CodeInline>&lt;DelimiterTemplate&gt;</CodeInline>, is never reported at all.
+                        A changed default is only mentioned when the old attribute is still present, because a parameter you never set produces no warning.
                         And, as above, the warning points at the <CodeInline>.razor</CodeInline> file rather than the exact line.
                     </MudText>
                 </DocsPageSection>

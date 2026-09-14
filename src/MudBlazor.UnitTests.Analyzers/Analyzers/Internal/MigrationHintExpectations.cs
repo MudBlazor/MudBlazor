@@ -25,9 +25,8 @@ internal static class MigrationHintExpectations
 
     internal static readonly string[] Link =
     [
-        "'Link' was removed in v7",
-        "put the URL in 'Href' instead",
-        "https://github.com/MudBlazor/MudBlazor/discussions/12658"
+        "'Link' was removed in v7 and replaced by 'Href', which takes the same value.",
+        "See https://github.com/MudBlazor/MudBlazor/discussions/12658"
     ];
 
     internal static readonly string[] DisableRipple =
@@ -46,7 +45,7 @@ internal static class MigrationHintExpectations
         "AutoGrow=\"true\" becomes Sizing=\"InputSizing.Auto\"",
         "AutoGrow=\"false\" becomes Sizing=\"InputSizing.Fixed\"",
         "AutoGrow=\"@expression\" becomes Sizing=\"@(expression ? InputSizing.Auto : InputSizing.Fixed)\"",
-        "Lines, MaxLines, and masked input still need a separate look",
+        "Lines and MaxLines keep their meaning, and a masked MudTextField ignores Sizing just as it ignored AutoGrow.",
         "https://mudblazor.com/features/analyzers#migration-hints"
     ];
 

@@ -23,29 +23,57 @@ public class RazorMigrationHintTests
 {
     private const string FixtureClassName = "MudBlazor.Analyzers.TestComponents.MigrationHints";
 
+    private const string CatalogNamespace = "MudBlazor.Analyzers.TestComponents.MigrationHintCatalog.";
+
     private static IReadOnlyList<Diagnostic> LowerCaseDiagnostics { get; set; } = null!;
 
     private static IReadOnlyList<Diagnostic> NoneDiagnostics { get; set; } = null!;
 
     private static IReadOnlyList<Diagnostic> AnyDiagnostics { get; set; } = null!;
 
+    private static IReadOnlyList<Diagnostic> CatalogDiagnostics { get; set; } = null!;
+
+    private static IReadOnlyList<Diagnostic> ReplacementDiagnostics { get; set; } = null!;
+
+    private static IReadOnlyList<Diagnostic> LegacyBindingDiagnostics { get; set; } = null!;
+
+    private static IReadOnlyList<Diagnostic> BoundaryDiagnostics { get; set; } = null!;
+
+    private static IReadOnlyList<Diagnostic> AttributeTestLowerCaseDiagnostics { get; set; } = null!;
+
+    private static IReadOnlyList<Diagnostic> AttributeTestNoneDiagnostics { get; set; } = null!;
+
+    private static IEnumerable<string> CaseNames => MigrationHintCases.All.Select(x => x.ToString());
+
     [OneTimeSetUp]
     public static async Task OneTimeSetup()
     {
         using var projectCompilation = await ProjectCompilation.CreateAsync(Util.ProjectPath());
 
-        LowerCaseDiagnostics = await GetDiagnosticsAsync(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.LowerCase);
-        NoneDiagnostics = await GetDiagnosticsAsync(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.None);
-        AnyDiagnostics = await GetDiagnosticsAsync(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.Any);
+        var lowerCase = await GetDiagnosticsAsync(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.LowerCase);
+        var none = await GetDiagnosticsAsync(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.None);
 
-        async Task<IReadOnlyList<Diagnostic>> GetDiagnosticsAsync(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern pattern)
+        LowerCaseDiagnostics = lowerCase.FilterToClass(FixtureClassName);
+        NoneDiagnostics = none.FilterToClass(FixtureClassName);
+        AnyDiagnostics = (await GetDiagnosticsAsync(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.Any)).FilterToClass(FixtureClassName);
+
+        CatalogDiagnostics = [.. lowerCase.Where(x => ClassName(x).StartsWith($"{CatalogNamespace}Removed", StringComparison.Ordinal))];
+        ReplacementDiagnostics = none.FilterToClass($"{CatalogNamespace}Replacements");
+        LegacyBindingDiagnostics = lowerCase.FilterToClass($"{CatalogNamespace}LegacyBindings");
+        BoundaryDiagnostics = lowerCase.FilterToClass($"{CatalogNamespace}Boundaries");
+        AttributeTestLowerCaseDiagnostics = lowerCase.FilterToClass("MudBlazor.Analyzers.TestComponents.AttributeTest");
+        AttributeTestNoneDiagnostics = none.FilterToClass("MudBlazor.Analyzers.TestComponents.AttributeTest");
+
+        async Task<ImmutableArray<Diagnostic>> GetDiagnosticsAsync(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern pattern)
         {
             var analyzer = new MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer();
             var options = TestAnalyzerOptions.Create(pattern, projectCompilation.AdditionalTexts);
-            var diagnostics = await projectCompilation.GetDiagnosticsAsync(ImmutableArray.Create<DiagnosticAnalyzer>(analyzer), options);
 
-            return diagnostics.FilterToClass(FixtureClassName);
+            return await projectCompilation.GetDiagnosticsAsync(ImmutableArray.Create<DiagnosticAnalyzer>(analyzer), options);
         }
+
+        static string ClassName(Diagnostic diagnostic) =>
+            diagnostic.Properties.TryGetValue(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey, out var name) ? name ?? string.Empty : string.Empty;
     }
 
     /// <summary>
@@ -131,13 +159,21 @@ public class RazorMigrationHintTests
     }
 
     /// <summary>
-    /// Components outside the mapping, and attribute names that merely look similar, keep the generic warning.
+    /// MudChip and MudIconButton dropped Link in the same release as MudButton, so they carry the same Href guidance.
     /// </summary>
     [Test]
-    public void UnrelatedComponentsAndSimilarNamesKeepGenericWarning()
+    public void LinkOnMudChipAndMudIconButtonExplainsHref()
     {
-        LowerCaseDiagnostics.Single("Link", "MudChip").ShouldCarryNoHint("Link", "MudChip");
-        LowerCaseDiagnostics.Single("Link", "MudIconButton").ShouldCarryNoHint("Link", "MudIconButton");
+        LowerCaseDiagnostics.Single("Link", "MudChip").ShouldCarryHint("Link", "MudChip", MigrationHintExpectations.Link);
+        LowerCaseDiagnostics.Single("Link", "MudIconButton").ShouldCarryHint("Link", "MudIconButton", MigrationHintExpectations.Link);
+    }
+
+    /// <summary>
+    /// Attribute names that merely look like removed parameters keep the generic warning.
+    /// </summary>
+    [Test]
+    public void SimilarNamesKeepGenericWarning()
+    {
         LowerCaseDiagnostics.Single("Linked", "MudButton").ShouldCarryNoHint("Linked", "MudButton");
         LowerCaseDiagnostics.Single("DisableRippleEffect", "MudButton").ShouldCarryNoHint("DisableRippleEffect", "MudButton");
         LowerCaseDiagnostics.Single("AutoGrowth", "MudTextField").ShouldCarryNoHint("AutoGrowth", "MudTextField");
@@ -200,8 +236,111 @@ public class RazorMigrationHintTests
     {
         LowerCaseDiagnostics.Should().HaveCount(17);
         LowerCaseDiagnostics.Should().OnlyContain(x => x.Id == "MUD0002");
-        LowerCaseDiagnostics.Count(x => x.GetMessage().Contains(MigrationHintExpectations.HintMarker)).Should().Be(11);
+        LowerCaseDiagnostics.Count(x => x.GetMessage().Contains(MigrationHintExpectations.HintMarker)).Should().Be(13);
         AnyDiagnostics.Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// Every catalog case, written in real markup on the component a consumer uses, carries its own guidance.
+    /// </summary>
+    [TestCaseSource(nameof(CaseNames))]
+    public void CatalogCaseCarriesItsHint(string caseName)
+    {
+        var hintCase = MigrationHintCases.All.Single(x => x.ToString() == caseName);
+
+        CatalogDiagnostics.Single(hintCase.Removed, hintCase.TagName).ShouldCarryHint(hintCase.Removed, hintCase.TagName, [.. hintCase.ExpectedHint]);
+    }
+
+    /// <summary>
+    /// The catalog fixtures raise exactly one diagnostic per case, every one explained, and nothing else.
+    /// </summary>
+    [Test]
+    public void CatalogFixturesRaiseOneExplainedDiagnosticPerCase()
+    {
+        CatalogDiagnostics.Should().HaveCount(MigrationHintCases.All.Count);
+        CatalogDiagnostics.Should().OnlyContain(x => x.Id == "MUD0002" && x.GetMessage().Contains(MigrationHintExpectations.HintMarker));
+    }
+
+    /// <summary>
+    /// The markup every hint and documented example points at compiles and raises nothing, even with every attribute checked.
+    /// </summary>
+    [Test]
+    public void ReplacementMarkupRaisesNothingUnderTheStrictestPattern()
+    {
+        ReplacementDiagnostics.Select(x => x.GetMessage()).Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// A legacy @bind- lowers into the removed value and its removed callback, and both halves are explained, as are explicitly typed callbacks.
+    /// </summary>
+    [Test]
+    public void LegacyBindingsExplainBothHalves()
+    {
+        LegacyBindingDiagnostics.Should().HaveCount(23, "ten legacy bindings report two halves each, plus three explicitly typed attributes");
+        LegacyBindingDiagnostics.Should().OnlyContain(x => x.GetMessage().Contains(MigrationHintExpectations.HintMarker));
+
+        AssertEach("Checked", "MudCheckBox", 3);
+        AssertEach("CheckedChanged", "MudCheckBox", 3);
+        AssertEach("Checked", "MudSwitch", 1);
+        AssertEach("CheckedChanged", "MudSwitch", 2);
+        AssertEach("SelectedOption", "MudRadioGroup", 1);
+        AssertEach("SelectedOptionChanged", "MudRadioGroup", 1);
+        AssertEach("IsVisible", "MudDialog", 1);
+        AssertEach("IsVisibleChanged", "MudDialog", 1);
+        AssertEach("IsVisible", "MudMessageBox", 1);
+        AssertEach("IsVisibleChanged", "MudMessageBox", 1);
+        AssertEach("IsVisible", "MudTooltip", 1);
+        AssertEach("IsVisibleChanged", "MudTooltip", 1);
+        AssertEach("IsHidden", "MudHidden", 1);
+        AssertEach("IsHiddenChanged", "MudHidden", 1);
+        AssertEach("IsExpanded", "MudExpansionPanel", 1);
+        AssertEach("IsExpandedChanged", "MudExpansionPanel", 1);
+        AssertEach("IsChecked", "MudTr", 1);
+        AssertEach("IsCheckedChanged", "MudTr", 1);
+
+        static void AssertEach(string attributeName, string tagName, int count)
+        {
+            var hintCase = MigrationHintCases.All.Single(x => x.ToString() == $"{tagName}.{attributeName}");
+            var diagnostics = LegacyBindingDiagnostics.All(attributeName, tagName);
+
+            diagnostics.Should().HaveCount(count);
+
+            foreach (var diagnostic in diagnostics)
+            {
+                diagnostic.ShouldCarryHint(attributeName, tagName, [.. hintCase.ExpectedHint]);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Lookalikes keep the generic warning, and current parameters, a case-only rename, and a component MUD0002 does not inspect raise nothing.
+    /// </summary>
+    [Test]
+    public void BoundariesKeepGenericWarningOrStaySilent()
+    {
+        BoundaryDiagnostics.Should().HaveCount(7);
+        BoundaryDiagnostics.Single("Link", "MudMenu").ShouldCarryNoHint("Link", "MudMenu");
+        BoundaryDiagnostics.Single("IsOpen", "MudMenu").ShouldCarryNoHint("IsOpen", "MudMenu");
+        BoundaryDiagnostics.Single("DisableRipple", "MudSelectItem").ShouldCarryNoHint("DisableRipple", "MudSelectItem");
+        BoundaryDiagnostics.Single("IsOpen", "MudAutocomplete").ShouldCarryNoHint("IsOpen", "MudAutocomplete");
+        BoundaryDiagnostics.Single("Checked", "MudRadio").ShouldCarryNoHint("Checked", "MudRadio");
+        BoundaryDiagnostics.Single("IsChecked", "MudTHeadRow").ShouldCarryNoHint("IsChecked", "MudTHeadRow");
+        BoundaryDiagnostics.Single("Title", "MudIconButton").ShouldCarryNoHint("Title", "MudIconButton");
+    }
+
+    /// <summary>
+    /// The existing attribute fixture keeps every warning it had, and only the removed parameters it already used gain a hint.
+    /// </summary>
+    [Test]
+    public void ExistingAttributeFixtureOnlyGainsIntendedHints()
+    {
+        AttributeTestLowerCaseDiagnostics.Should().HaveCount(13);
+        AttributeTestLowerCaseDiagnostics.WithHint().Should().ContainSingle();
+        AttributeTestLowerCaseDiagnostics.Single("Minimum", "MudProgressLinear").ShouldCarryHint("Minimum", "MudProgressLinear", [.. MigrationHintCases.All.Single(x => x.ToString() == "MudProgressLinear.Minimum").ExpectedHint]);
+
+        AttributeTestNoneDiagnostics.Should().HaveCount(22);
+        AttributeTestNoneDiagnostics.WithHint().Should().HaveCount(2);
+        AttributeTestNoneDiagnostics.Single("icon", "MudFab").ShouldCarryHint("icon", "MudFab", [.. MigrationHintCases.All.Single(x => x.ToString() == "MudFab.Icon").ExpectedHint]);
     }
 }
 #nullable restore
