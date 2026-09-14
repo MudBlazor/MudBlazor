@@ -139,7 +139,9 @@ namespace MudBlazor.Analyzers
                                     if (componentType.IsOrInheritFrom(_mudComponentBaseType))
                                     {
                                         currentComponent = componentType;
-                                        currentComponentDescriptor = _componentDescriptors.GetOrAdd(currentComponent, _createComponentDescriptor);
+                                        // Every construction of a generic component declares the same parameters, so they share one descriptor.
+                                        // This matters for inferred type arguments, where each Razor helper constructs the component over its own type parameter.
+                                        currentComponentDescriptor = _componentDescriptors.GetOrAdd(componentType.OriginalDefinition, _createComponentDescriptor);
                                     }
                                 }
                                 else if (string.Equals(targetMethod.Name, "CloseComponent", StringComparison.Ordinal))
