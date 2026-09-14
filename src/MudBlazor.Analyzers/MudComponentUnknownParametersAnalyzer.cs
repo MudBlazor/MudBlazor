@@ -83,8 +83,6 @@ namespace MudBlazor.Analyzers
             private readonly INamedTypeSymbol? _mudComponentBaseType;
             private readonly ImmutableHashSet<string> _allowedAttributes;
             private readonly ImmutableArray<ResolvedParameterMigration> _migrations;
-            // Passed to GetOrAdd so a cache hit neither builds a descriptor nor allocates a delegate.
-            // Concurrent misses for the same type can still build it more than once, and GetOrAdd keeps the first.
             private readonly Func<ITypeSymbol, ComponentDescriptor> _createComponentDescriptor;
 
             public AnalyzerContext(Compilation compilation, AllowedAttributePattern allowedAttributePattern, string allowedAttributes)
