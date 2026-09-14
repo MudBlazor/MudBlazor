@@ -158,8 +158,7 @@ namespace MudBlazor.Analyzers
                             }
                             else if (string.Equals(targetMethod.ContainingType.MetadataName, "TypeInference", StringComparison.Ordinal))
                             {
-                                var methods = context.FilterTree.GetRoot().DescendantNodes().OfType<MethodDeclarationSyntax>();
-                                var method = methods?.Where(x => x.Identifier.ValueText == targetMethod.MetadataName).SingleOrDefault();
+                                var method = GetDeclarationInFilterTree(context, targetMethod);
 
                                 if (method is not null)
                                 {
@@ -174,6 +173,23 @@ namespace MudBlazor.Analyzers
                         }
                     }
                 }
+            }
+
+            /// <summary>
+            /// Finds the declaration of a type-inference helper in the tree being analyzed.
+            /// </summary>
+            /// <remarks>
+            /// Razor generates each helper in the same file as the markup that calls it, so a declaration in another tree is not followed.
+            /// </remarks>
+            private static MethodDeclarationSyntax? GetDeclarationInFilterTree(OperationAnalysisContext context, IMethodSymbol method)
+            {
+                foreach (var reference in method.OriginalDefinition.DeclaringSyntaxReferences)
+                {
+                    if (reference.SyntaxTree == context.FilterTree && reference.GetSyntax(context.CancellationToken) is MethodDeclarationSyntax declaration)
+                        return declaration;
+                }
+
+                return null;
             }
 
             private void ValidateAttribute(OperationAnalysisContext context, IInvocationOperation invocation,
