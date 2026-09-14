@@ -83,6 +83,7 @@ namespace MudBlazor.Analyzers
             private readonly INamedTypeSymbol? _mudComponentBaseType;
             private readonly ImmutableHashSet<string> _allowedAttributes;
             private readonly ImmutableArray<ResolvedParameterMigration> _migrations;
+            private readonly Func<ITypeSymbol, ComponentDescriptor> _createComponentDescriptor;
 
             public AnalyzerContext(Compilation compilation, AllowedAttributePattern allowedAttributePattern, string allowedAttributes)
             {
@@ -96,6 +97,7 @@ namespace MudBlazor.Analyzers
                 _renderTreeBuilderSymbol = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder");
                 _mudComponentBaseType = compilation.GetBestTypeByMetadataName("MudBlazor.MudComponentBase");
                 _migrations = ResolvedParameterMigration.Resolve(compilation);
+                _createComponentDescriptor = componentType => ComponentDescriptor.GetComponentDescriptor(componentType, _parameterSymbol, _migrations);
             }
 
             public bool IsValid => _componentBaseSymbol is not null && _parameterSymbol is not null && _renderTreeBuilderSymbol is not null && _mudComponentBaseType is not null;
@@ -135,7 +137,7 @@ namespace MudBlazor.Analyzers
                                     if (componentType.IsOrInheritFrom(_mudComponentBaseType))
                                     {
                                         currentComponent = componentType;
-                                        currentComponentDescriptor = _componentDescriptors.GetOrAdd(currentComponent, ComponentDescriptor.GetComponentDescriptor(componentType, _parameterSymbol, _migrations));
+                                        currentComponentDescriptor = _componentDescriptors.GetOrAdd(currentComponent, _createComponentDescriptor);
                                     }
                                 }
                                 else if (string.Equals(targetMethod.Name, "CloseComponent", StringComparison.Ordinal))
