@@ -82,7 +82,7 @@ namespace MudBlazor.Analyzers
             private readonly INamedTypeSymbol? _renderTreeBuilderSymbol;
             private readonly INamedTypeSymbol? _mudComponentBaseType;
             private readonly ImmutableHashSet<string> _allowedAttributes;
-            private readonly ImmutableArray<ResolvedParameterMigration> _migrations;
+            private readonly ParameterMigrationResolver _migrations;
             // Passed to GetOrAdd so a cache hit neither builds a descriptor nor allocates a delegate.
             // Concurrent misses for the same type can still build it more than once, and GetOrAdd keeps the first.
             private readonly Func<ITypeSymbol, ComponentDescriptor> _createComponentDescriptor;
@@ -98,7 +98,7 @@ namespace MudBlazor.Analyzers
                 _parameterSymbol = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.ParameterAttribute");
                 _renderTreeBuilderSymbol = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder");
                 _mudComponentBaseType = compilation.GetBestTypeByMetadataName("MudBlazor.MudComponentBase");
-                _migrations = ResolvedParameterMigration.Resolve(compilation);
+                _migrations = new ParameterMigrationResolver(compilation);
                 _createComponentDescriptor = componentType => ComponentDescriptor.GetComponentDescriptor(componentType, _parameterSymbol, _migrations);
             }
 
