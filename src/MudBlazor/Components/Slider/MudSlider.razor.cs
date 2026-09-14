@@ -235,6 +235,20 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Appearance)]
         public RenderFragment<SliderContext<T>>? ValueLabelContent { get; set; }
 
+        /// <summary>
+        /// Occurs when interaction with the slider starts.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Slider.Behavior)]
+        public EventCallback OnDragStart { get; set; }
+
+        /// <summary>
+        /// Occurs when interaction with the slider ends.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Slider.Behavior)]
+        public EventCallback OnDragEnd { get; set; }
+
         /// <inheritdoc />
         protected override void OnParametersSet()
         {
@@ -296,6 +310,26 @@ namespace MudBlazor
             }
 
             return _valueState.SetValueAsync(arg.Value.GetValueOrDefault(T.Zero));
+        }
+
+        private async Task OnDragStartHandler()
+        {
+            if (Disabled)
+            {
+                return;
+            }
+
+            await OnDragStart.InvokeAsync();
+        }
+
+        private async Task OnDragEndHandler()
+        {
+            if (Disabled)
+            {
+                return;
+            }
+
+            await OnDragEnd.InvokeAsync();
         }
 
         private string Width => CalculatePosition().ToString(CultureInfo.InvariantCulture);
