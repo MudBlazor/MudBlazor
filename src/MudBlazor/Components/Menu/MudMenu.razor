@@ -25,8 +25,9 @@
                  class="@ActivatorClassname"
                  tabindex="0"
                  role="button"
-                 aria-haspopup="true"
-                 aria-expanded="@_openState.Value.ToString().ToLowerInvariant()">
+                 aria-haspopup="menu"
+                 aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
+                 aria-controls="@GetAriaControls()">
                 @ActivatorContent(_menuContext)
             </div>
         }
@@ -38,8 +39,9 @@
                          OnClick="OpenSubMenuAsync"
                          AutoClose="false"
                          HideSubMenuArrow="true"
-                         aria-haspopup="true"
+                         aria-haspopup="menu"
                          aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
+                         aria-controls="@GetAriaControls()"
                          aria-label="@AriaLabel">
                 @ActivatorContent(_menuContext)
             </MudMenuItem>
@@ -61,6 +63,9 @@
                        Ripple="@Ripple"
                        DropShadow="@DropShadow"
                        OnClick="@ToggleMenuAsync"
+                       aria-haspopup="menu"
+                       aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
+                       aria-controls="@GetAriaControls()"
                        aria-label="@AriaLabel">
                 @Label
             </MudButton>
@@ -75,6 +80,9 @@
                          OnClick="OpenSubMenuAsync"
                          AutoClose="false"
                          Label="@Label"
+                         aria-haspopup="menu"
+                         aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
+                         aria-controls="@GetAriaControls()"
                          aria-label="@AriaLabel">
                 @Label
             </MudMenuItem>
@@ -92,6 +100,9 @@
                        Ripple="@Ripple"
                        DropShadow="@DropShadow"
                        OnClick="@ToggleMenuAsync"
+                       aria-haspopup="menu"
+                       aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
+                       aria-controls="@GetAriaControls()"
                        aria-label="@AriaLabel" />
     }
 
@@ -115,6 +126,8 @@
                  @onpointerenter="@PointerEnterAsync"
                  @onpointerleave="@PointerLeaveAsync">
                 <MudList T="object"
+                         id="@_listId"
+                         role="menu"
                          Class="@ListClassname"
                          Dense="@Dense">
                     @ChildContent

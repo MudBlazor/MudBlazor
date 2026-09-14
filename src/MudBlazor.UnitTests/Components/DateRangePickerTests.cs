@@ -1823,6 +1823,27 @@ namespace MudBlazor.UnitTests.Components
 
             public Task Submit() => SubmitAsync();
         }
+
+        /// <summary>
+        /// Both range inputs link to the error text when the picker is invalid.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ShouldLinkInputsToErrorText()
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.ErrorId, "range-error")
+                .Add(p => p.ErrorText, "Invalid range"));
+
+            comp.FindAll("input").Should().OnlyContain(input => !input.HasAttribute("aria-invalid"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, true));
+
+            var inputs = comp.FindAll("input");
+            inputs.Count.Should().Be(2);
+            inputs.Should().OnlyContain(input => input.GetAttribute("aria-invalid") == "true");
+            inputs.Should().OnlyContain(input => input.GetAttribute("aria-describedby") == "range-error");
+            comp.Find("#range-error").TextContent.Trim().Should().Be("Invalid range");
+        }
     }
     public static class DatePickerRenderedFragmentExtensions
     {

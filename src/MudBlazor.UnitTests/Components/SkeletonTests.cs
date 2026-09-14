@@ -66,5 +66,18 @@ namespace MudBlazor.UnitTests.Components
             span = comp.Find("span");
             span.Attributes.GetNamedItem("style")?.Value.Should().Be("width:500px;");
         }
+
+        /// <summary>
+        /// A skeleton is hidden from assistive technology unless the user overrides it.
+        /// </summary>
+        [Test]
+        public void SkeletonShouldBeHiddenFromAssistiveTechnologies()
+        {
+            var comp = Context.Render<MudSkeleton>();
+            comp.Find("span.mud-skeleton").GetAttribute("aria-hidden").Should().Be("true");
+
+            var overridden = Context.Render<MudSkeleton>(parameters => parameters.AddUnmatched("aria-hidden", "false"));
+            overridden.Find("span.mud-skeleton").GetAttribute("aria-hidden").Should().Be("false");
+        }
     }
 }

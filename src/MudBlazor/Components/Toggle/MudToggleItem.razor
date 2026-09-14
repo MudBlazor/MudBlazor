@@ -3,7 +3,7 @@
 @typeparam T
 
 <MudButton role="checkbox"
-           aria-checked="@(Selected.ToString().ToLower())"
+           aria-checked="@(Selected.ToString().ToLowerInvariant())"
            @attributes="UserAttributes"
            Class="@Classname"
            Style="@Style"

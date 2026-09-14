@@ -41,14 +41,14 @@
     }
     @if (Expandable || Checkable)
     {
-        <MudElement HtmlTag="@("Td")" Class="@($"mud-table-cell {Context?.Table?.CellClass}")">
+        <td class="@($"mud-table-cell {Context?.Table?.CellClass}")">
             <div class="d-flex" style="@ActionsStylename">
                 @if (Checkable)
                 {
-                    <MudCheckBox @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" StopClickPropagation="true" Class="mud-table-cell-checkbox"></MudCheckBox>
+                    <MudCheckBox @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" StopClickPropagation="true" Class="mud-table-cell-checkbox" AriaLabel="@Localizer[LanguageResource.MudTable_SelectRow]"></MudCheckBox>
                 }
             </div>
-        </MudElement>
+        </td>
     }
     @ChildContent
     @if (Context?.Table?.Editable == true && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtEnd() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true))

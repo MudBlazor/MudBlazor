@@ -514,6 +514,63 @@ namespace MudBlazor.UnitTests.Components
             create(readOnly = true, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
         }
 
+        /// <summary>
+        /// A radio with no child content still picks up the group's error state, which #13743 found going stale.
+        /// </summary>
+        [Test]
+        public async Task RadioGroup_ErrorState_ReachesRadiosWithoutChildContent()
+        {
+            var comp = Context.Render<MudRadioGroup<int>>(self => self
+                .Add(x => x.ErrorId, "group-error")
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 1))
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 2)));
+
+            comp.FindAll("span.mud-button-root").Should().AllSatisfy(x => x.ClassList.Should().NotContain("mud-error-text"));
+            comp.FindAll("input.mud-radio-input").Should().AllSatisfy(x => x.HasAttribute("aria-describedby").Should().BeFalse());
+
+            await comp.SetParametersAndRenderAsync(self => self.Add(x => x.Error, true));
+
+            comp.FindAll("span.mud-button-root").Should().AllSatisfy(x => x.ClassList.Should().Contain("mud-error-text"));
+            comp.FindAll("input.mud-radio-input").Should().AllSatisfy(x => x.GetAttribute("aria-describedby").Should().Be("group-error"));
+        }
+
+        /// <summary>
+        /// Changing the group's Name after the first render still reaches radios with no child content (#13743).
+        /// </summary>
+        [Test]
+        public async Task RadioGroup_NameChangedAfterRender_ReachesRadios()
+        {
+            var comp = Context.Render<MudRadioGroup<int>>(self => self
+                .Add(x => x.Name, "before")
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 1))
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 2)));
+
+            comp.FindAll("input.mud-radio-input").Should().AllSatisfy(x => x.GetAttribute("name").Should().Be("before"));
+
+            await comp.SetParametersAndRenderAsync(self => self.Add(x => x.Name, "after"));
+
+            comp.FindAll("input.mud-radio-input").Should().AllSatisfy(x => x.GetAttribute("name").Should().Be("after"));
+        }
+
+        /// <summary>
+        /// A group render that changes nothing a radio shows leaves the radios alone.
+        /// </summary>
+        [Test]
+        public async Task RadioGroup_RenderingItself_DoesNotRerenderEveryRadio()
+        {
+            var comp = Context.Render<MudRadioGroup<int>>(self => self
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 1))
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 2))
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 3)));
+
+            var before = comp.FindComponents<MudRadio<int>>().Select(x => x.RenderCount).ToArray();
+
+            await comp.SetParametersAndRenderAsync(self => self.Add(x => x.Class, "repainted"));
+
+            var after = comp.FindComponents<MudRadio<int>>().Select(x => x.RenderCount).ToArray();
+            after.Should().Equal(before);
+        }
+
         [Test]
         public void RadioColor_ReadOnly_ShouldKeepColor()
         {
@@ -573,6 +630,31 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Required, true));
 
             comp.Find("div[role=radiogroup]").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// An invalid radio group and each of its radios link to the group's error text.
+        /// </summary>
+        [Test]
+        public async Task RadioGroupWithError_ShouldLinkRadiosToErrorText()
+        {
+            var comp = Context.Render<RadioGroupRequiredTest>();
+            var radioGroup = comp.FindComponent<MudRadioGroup<bool>>();
+
+            comp.Find("div[role=\"radiogroup\"]").HasAttribute("aria-invalid").Should().BeFalse();
+            comp.FindAll("input[type=\"radio\"]").Should().OnlyContain(input => !input.HasAttribute("aria-describedby"));
+
+            await radioGroup.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Error, true)
+                .Add(p => p.ErrorId, "group-error")
+                .Add(p => p.ErrorText, "Pick one"));
+
+            comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-invalid").Should().Be("true");
+            comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-describedby").Should().Be("group-error");
+            // aria-invalid is not supported on the radio role, so the group carries it and each radio only points at the text.
+            comp.FindAll("input[type=\"radio\"]").Should().OnlyContain(input => !input.HasAttribute("aria-invalid"));
+            comp.FindAll("input[type=\"radio\"]").Should().OnlyContain(input => input.GetAttribute("aria-describedby") == "group-error");
+            comp.Find("#group-error").TextContent.Trim().Should().Be("Pick one");
         }
     }
 }

@@ -422,35 +422,18 @@
 
                  @if (showEditMode)
                  {
-                     @* An inline editor registers with the grid's own validator, which forwards it to Validator but keeps a commit scoped to the row being edited. *@
-                     <CascadingValue TValue="Interfaces.IForm" Value="@(isInlineEditing ? _inlineEditValidator : Validator)" IsFixed="true">
-                         @if (column.EditTemplate is not null)
-                         {
-                             @column.EditTemplate(cell.Context)
-                         }
-                         else
-                         {
-                             if (column.PropertyType == typeof(string))
-                             {
-                                 <MudTextField T="string"
-                                               Value="@cell._valueString"
-                                               ValueChanged="@cell.StringValueChangedAsync"
-                                               Margin="@Margin.Dense" Style="margin-top:0"
-                                               Required="@column.Required"
-                                               Variant="@Variant.Text" Culture="@column.Culture" />
-                             }
-                             else if (column.isNumber)
-                             {
-                                 <MudNumericField T="double?"
-                                                  Value="@cell._valueNumber"
-                                                  ValueChanged="@cell.NumberValueChangedAsync"
-                                                  Margin="@Margin.Dense" Style="margin-top:0"
-                                                  Required="@column.Required"
-                                                  Variant="@Variant.Text" Culture="@column.Culture"
-                                                  Format="@column.ContentFormat" />
-                             }
-                         }
-                     </CascadingValue>
+                     if (isInlineEditing)
+                     {
+                         @* An inline editor registers with the grid's own validator, which forwards it to Validator but keeps a commit scoped to the row being edited. *@
+                         <CascadingValue TValue="Interfaces.IForm" Value="@_inlineEditValidator" IsFixed="true">
+                             @EditCell(column, cell)
+                         </CascadingValue>
+                     }
+                     else
+                     {
+                         @* Cell edit mode reuses the row-level Validator cascade so a grid full of editors does not double the component count. *@
+                         @EditCell(column, cell)
+                     }
                  }
                  else
                  {
@@ -482,6 +465,33 @@
                      }
                  }
              </td>
+         </text>;
+
+    internal RenderFragment EditCell(Column<T> column, Cell<T> cell) =>
+        @<text>
+             @if (column.EditTemplate is not null)
+             {
+                 @column.EditTemplate(cell.Context)
+             }
+             else if (column.PropertyType == typeof(string))
+             {
+                 <MudTextField T="string"
+                               Value="@cell._valueString"
+                               ValueChanged="@cell.StringValueChangedAsync"
+                               Margin="@Margin.Dense" Style="margin-top:0"
+                               Required="@column.Required"
+                               Variant="@Variant.Text" Culture="@column.Culture" />
+             }
+             else if (column.isNumber)
+             {
+                 <MudNumericField T="double?"
+                                  Value="@cell._valueNumber"
+                                  ValueChanged="@cell.NumberValueChangedAsync"
+                                  Margin="@Margin.Dense" Style="margin-top:0"
+                                  Required="@column.Required"
+                                  Variant="@Variant.Text" Culture="@column.Culture"
+                                  Format="@column.ContentFormat" />
+             }
          </text>;
 
     internal RenderFragment Filter(IFilterDefinition<T> filterDefinition, Column<T>? column, bool autoFocus = false) =>

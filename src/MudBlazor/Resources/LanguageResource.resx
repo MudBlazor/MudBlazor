@@ -270,6 +270,9 @@
   <data name="MudChip_Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="MudSelect_SelectAll" xml:space="preserve">
+    <value>Select all</value>
+  </data>
   <data name="MudColorPicker_Close" xml:space="preserve">
     <value>Close</value>
   </data>
@@ -333,6 +336,9 @@
   <data name="MudRatingItem_Label" xml:space="preserve">
     <value>{0} rating</value>
   </data>
+  <data name="MudRating_Label" xml:space="preserve">
+    <value>Rating</value>
+  </data>
   <data name="MudCarousel_Index" xml:space="preserve">
     <value>Index {0}</value>
   </data>
@@ -368,6 +374,15 @@
   </data>
   <data name="MudPageContentNavigation_NavMenu" xml:space="preserve">
     <value>Contents</value>
+  </data>
+  <data name="MudTable_SelectRow" xml:space="preserve">
+    <value>Select row</value>
+  </data>
+  <data name="MudTable_SelectAllRows" xml:space="preserve">
+    <value>Select all rows</value>
+  </data>
+  <data name="MudTable_SelectGroup" xml:space="preserve">
+    <value>Select group</value>
   </data>
   <data name="MudTable_Loading" xml:space="preserve">
     <value>Loading…</value>
@@ -554,5 +569,11 @@
   </data>
   <data name="MudExitPrompt_Cancel" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="MudBreadcrumbs_Label" xml:space="preserve">
+    <value>Breadcrumb</value>
+  </data>
+  <data name="MudSplitPanel_ResizePanels" xml:space="preserve">
+    <value>Resize panels</value>
   </data>
 </root>

@@ -36,6 +36,7 @@ namespace MudBlazor
         private readonly List<object> _menuItems = [];
         private readonly HashSet<object> _registeredItems = [];
         private readonly string _elementId = Identifier.Create("menu");
+        private readonly string _listId = Identifier.Create("menu-list");
         private DateTimeOffset _lastKeyboardActivation = DateTimeOffset.MinValue;
         private readonly MenuContext _menuContext;
 
@@ -386,6 +387,11 @@ namespace MudBlazor
         /// TODO: Once .NET 8 support is dropped, consider using constructor injection (available in .NET 9+) to set defaults directly.
         /// </remarks>
         protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
+
+        /// <summary>
+        /// The id of the popup list while it is rendered, so the activator only references an element that exists.
+        /// </summary>
+        private string? GetAriaControls() => _openState.Value ? _listId : null;
 
         /// <summary>
         /// Gets the transition duration for the popover, using dense menus to disable animations.
