@@ -5540,6 +5540,62 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        /// <summary>
+        /// Applying a filter-row value outside an event, as a select or picker does after an await, renders the grid once.
+        /// </summary>
+        [Test]
+        public async Task DataGridFilterRow_ApplyingValue_RendersGridOnce()
+        {
+            var items = new List<TestDataItem> { new() { Id = 1, Name = "A" }, new() { Id = 2, Name = "AB" } };
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Filterable, true)
+                .Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterRow)
+                .Add(p => p.Columns, NamePropertyColumnWithTextCell));
+            var nameCell = comp.FindComponent<FilterHeaderCell<TestDataItem>>();
+            var definition = nameCell.Instance.Column.FilterContext.FilterDefinition!;
+            definition.Operator = FilterOperator.String.Contains;
+            definition.Value = "A";
+            // The MudText in a row's cell renders once per grid render and has nothing of its own to render.
+            var rowText = comp.FindComponents<MudText>()[0];
+            var rowTextRenders = rowText.RenderCount;
+
+            await comp.InvokeAsync(() => nameCell.Instance.ApplyFilterAsync(definition));
+
+            comp.FindAll("tbody tr").Count.Should().Be(2);
+            (rowText.RenderCount - rowTextRenders).Should().Be(1);
+        }
+
+        /// <summary>
+        /// The filtered rows show while an asynchronous FilterChanged handler is still running.
+        /// </summary>
+        [Test]
+        public async Task DataGridFilterRow_ApplyingValue_ShowsRowsBeforeFilterChangedCompletes()
+        {
+            var items = new List<TestDataItem> { new() { Id = 1, Name = "A" }, new() { Id = 2, Name = "B" } };
+            var filterChangedGate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Filterable, true)
+                .Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterRow)
+                .Add(p => p.FilterChanged, (IReadOnlyCollection<IFilterDefinition<TestDataItem>> _) => filterChangedGate.Task)
+                .Add(p => p.Columns, NamePropertyColumn));
+            var nameCell = comp.FindComponent<FilterHeaderCell<TestDataItem>>();
+            var definition = nameCell.Instance.Column.FilterContext.FilterDefinition!;
+            definition.Operator = FilterOperator.String.Equal;
+            definition.Value = "A";
+
+            var applying = comp.InvokeAsync(() => nameCell.Instance.ApplyFilterAsync(definition));
+
+            comp.FindAll("tbody tr").Count.Should().Be(1);
+            applying.IsCompleted.Should().BeFalse();
+
+            filterChangedGate.SetResult();
+            await applying;
+
+            comp.FindAll("tbody tr").Count.Should().Be(1);
+        }
+
         [Test]
         public async Task DataGridColumnFilterRowPropertyClearAll()
         {
@@ -7509,6 +7565,29 @@ namespace MudBlazor.UnitTests.Components
             public string Name { get; set; }
             public bool ShouldBeDisabled { get; set; }
         }
+
+        private static RenderFragment NamePropertyColumn => builder =>
+        {
+            builder.OpenComponent<PropertyColumn<TestDataItem, string>>(0);
+            builder.AddAttribute(1, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
+            builder.CloseComponent();
+        };
+
+        private static RenderFragment NamePropertyColumnWithTextCell => builder =>
+        {
+            builder.OpenComponent<PropertyColumn<TestDataItem, string>>(0);
+            builder.AddAttribute(1, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
+            builder.CloseComponent();
+            builder.OpenComponent<TemplateColumn<TestDataItem>>(2);
+            builder.AddAttribute(3, nameof(TemplateColumn<TestDataItem>.Filterable), false);
+            builder.AddAttribute(4, nameof(TemplateColumn<TestDataItem>.CellTemplate), (RenderFragment<CellContext<TestDataItem>>)(context => textBuilder =>
+            {
+                textBuilder.OpenComponent<MudText>(0);
+                textBuilder.AddAttribute(1, nameof(MudText.ChildContent), (RenderFragment)(content => content.AddContent(0, context.Item.Name)));
+                textBuilder.CloseComponent();
+            }));
+            builder.CloseComponent();
+        };
 
         private static RenderFragment SelectColumnWithFunc => builder =>
         {
