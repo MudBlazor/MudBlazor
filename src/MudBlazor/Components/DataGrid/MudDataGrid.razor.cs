@@ -2924,6 +2924,20 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Hides the columns panel only when it is open.
+        /// </summary>
+        /// <remarks>
+        /// A column filter menu lives in its header cell, so opening one renders that cell and needs a grid render only to close an open columns panel.
+        /// </remarks>
+        internal void HideColumnsPanelIfVisible()
+        {
+            if (_columnsPanelVisible)
+            {
+                HideColumnsPanel();
+            }
+        }
+
         private Task ColumnOrderUpdated(MudItemDropInfo<Column<T>> dropItem)
         {
             Debug.Assert(dropItem.Item is not null);

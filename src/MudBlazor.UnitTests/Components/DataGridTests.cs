@@ -5025,6 +5025,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Opening a column filter menu does not re-render the grid while the columns panel is closed.
+        /// </summary>
+        [Test]
+        public async Task DataGridColumnFilterMenu_OpeningFilter_DoesNotRerenderGrid()
+        {
+            var comp = Context.Render<DataGridColumnFilterMenuTest>();
+            var headerCells = comp.FindComponents<HeaderCell<DataGridColumnFilterMenuTest.Model>>();
+            var otherHeaderCellRenders = headerCells.Skip(1).Select(cell => cell.RenderCount).ToList();
+
+            await headerCells[0].Find(".filter-button").ClickAsync();
+
+            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Count.Should().Be(1);
+            // A grid render re-renders every header cell, so the other columns' cells show whether the grid rendered.
+            headerCells.Skip(1).Select(cell => cell.RenderCount).Should().Equal(otherHeaderCellRenders);
+        }
+
+        /// <summary>
         /// Enter in the column filter menu's value box applies the filter, and Escape clears it.
         /// </summary>
         /// <remarks>
