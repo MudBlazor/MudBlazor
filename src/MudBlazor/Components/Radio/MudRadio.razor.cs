@@ -52,8 +52,29 @@ namespace MudBlazor
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass("mud-readonly", GetReadOnlyState())
             .AddClass("mud-checked", Checked)
-            .AddClass("mud-error-text", MudRadioGroup?.HasErrors)
+            .AddClass("mud-error-text", GroupHasErrors)
             .Build();
+
+        /// <summary>
+        /// The <c>name</c> shared by every radio in the parent group.
+        /// </summary>
+        /// <remarks>
+        /// Pushed by the group rather than read off it, so a radio re-renders when it changes without the group having to notify every radio on every render.
+        /// </remarks>
+        [CascadingParameter(Name = "RadioGroupName")]
+        private string? GroupName { get; set; }
+
+        /// <summary>
+        /// Whether the parent group is showing a validation error.
+        /// </summary>
+        [CascadingParameter(Name = "RadioGroupHasErrors")]
+        private bool GroupHasErrors { get; set; }
+
+        /// <summary>
+        /// The id of the parent group's error text, used to describe each radio.
+        /// </summary>
+        [CascadingParameter(Name = "RadioGroupErrorId")]
+        private string? GroupErrorId { get; set; }
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
