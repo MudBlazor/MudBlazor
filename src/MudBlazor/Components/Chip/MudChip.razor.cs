@@ -83,7 +83,9 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool IsAnchor => !string.IsNullOrWhiteSpace(Href);
 
-    private bool IsButton => !GetDisabled()
+    // A link is left to the browser, so Href takes precedence over OnClick and selection.
+    private bool IsButton => !IsAnchor
+                             && !GetDisabled()
                              && !GetReadOnly()
                              && (ChipSet is not null || OnClick.HasDelegate);
 
@@ -348,6 +350,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// </summary>
     /// <remarks>
     /// <para>Defaults to <c>null</c>.  Use <see cref="Target"/> to control where the URL is opened.</para>
+    /// <para>When set, the chip renders as a link and the browser handles the click, so <see cref="OnClick"/> is not raised and the chip cannot be selected in a <see cref="MudChipSet{T}"/>.</para>
     /// <para>Note: The close button cannot be enabled if this is set because <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#technical_summary">interactive content violates the HTML spec</see>.</para>
     /// </remarks>
     [Parameter]
