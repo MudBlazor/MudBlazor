@@ -911,5 +911,55 @@ namespace MudBlazor.UnitTests.Components
             input.GetAttribute("aria-describedby").Should().Be("upload-error");
             comp.Find("#upload-error").TextContent.Trim().Should().Be("File required");
         }
+
+        [Test]
+        public void MudFileUpload_FolderAttribute_Test()
+        {
+            // 1. Arrange & Render component with Folder mode enabled using the updated syntax
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.Folder, true));
+
+            // 2. Act: Find the target HTML file input element
+            var input = comp.Find("input[type=file]");
+
+            // 3. Assert: Ensure both key HTML attributes are successfully injected 
+            input.HasAttribute("webkitdirectory").Should().BeTrue();
+            input.HasAttribute("multiple").Should().BeTrue();
+        }
+
+        [Test]
+        public void MudFileUpload_FolderPathsChanged_JSInterop_Test()
+        {
+            // 1. Arrange: Use an inline wildcard predicate (_ => true) to catch any structural string ID argument
+            var mockPaths = new List<string> { "folder/file1.txt", "folder/subfolder/file2.txt" };
+            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
+                "mudFileUpload.getRelativePaths", 
+                _ => true // Smoothly matches any invocation signature regardless of dynamic IDs
+            ).SetResult(mockPaths);
+
+            IReadOnlyList<string> receivedPaths = null;
+            var callback = EventCallback.Factory.Create<IReadOnlyList<string>>(this, (paths) => receivedPaths = paths);
+
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.FolderPathsChanged, callback));
+
+            // 2. Act: Target the child component element and dispatch the files
+            var inputFileComponent = comp.FindComponent<InputFile>();
+            
+            var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
+            var file2 = InputFileContent.CreateFromText("file2 content", "file2.txt");
+
+            inputFileComponent.UploadFiles(file1, file2);
+
+            // 3. Assert: Allow the async render pipeline to catch up with WaitForAssertion
+            comp.WaitForAssertion(() =>
+            {
+                jsMock.VerifyInvoke("mudFileUpload.getRelativePaths");
+                receivedPaths.Should().NotBeNull();
+                receivedPaths.Count.Should().Be(2);
+                receivedPaths.ElementAt(0).Should().Be("folder/file1.txt");
+            }, TimeSpan.FromSeconds(2));
+        }
     }
 }
