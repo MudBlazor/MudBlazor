@@ -2,7 +2,10 @@
 @inherits MudComponentBase
 
 <MudPaper @attributes="UserAttributes" Class="@Classname" Style="@Style" Outlined="@Outlined" Square="@Square" Elevation="@Elevation">
-    <CascadingValue Value="this">
-        @ChildContent
+    @* The card never changes identity, so only ContentPadding notifies the parts; a non-fixed cascade rendered them a second time on every card render. *@
+    <CascadingValue Value="this" IsFixed="true">
+        <CascadingValue Name="MudCardContentPadding" Value="@ContentPadding">
+            @ChildContent
+        </CascadingValue>
     </CascadingValue>
 </MudPaper>

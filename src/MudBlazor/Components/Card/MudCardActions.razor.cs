@@ -13,12 +13,15 @@ namespace MudBlazor
     public partial class MudCardActions : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card-actions")
-            .AddClass("mud-card-actions-padding", ParentCard?.ContentPadding ?? true)
+            .AddClass("mud-card-actions-padding", ParentCard is null || ContentPadding)
             .AddClass(Class)
             .Build();
 
         [CascadingParameter]
         private MudCard? ParentCard { get; set; }
+
+        [CascadingParameter(Name = "MudCardContentPadding")]
+        private bool ContentPadding { get; set; }
 
         /// <summary>
         /// The content within this component.
