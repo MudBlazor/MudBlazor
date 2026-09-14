@@ -251,6 +251,7 @@ private Task ToggleAsync()
 - Prefer additive APIs, safe defaults, or obsoleting old behavior while keeping the current PR scoped to the requested fix or feature.
 - If a breaking change is required, call it out explicitly in the PR description and update docs and tests accordingly.
 - For parameter renames or removals, consider `[Obsolete]` with a clear message and migration path.
+- When a parameter is removed, including by renaming it, add a MUD0002 migration hint to `src/MudBlazor.Analyzers/Internal/ParameterMigration.cs`, with a case in `MigrationHintCases` and a row on the analyzer docs page. Verify the conversion against the component source, not the migration guide.
 - A binary break is still a breaking change even when source-compatible. For example, changing a parameter from `EventCallback` to `EventCallback<T>` keeps existing Razor markup compiling but breaks precompiled consumers until they rebuild.
 - When current behavior is wrong compared to common web standards, prefer fixing the default over adding a parameter or `MudGlobal` setting to opt out of the fix. If the corrected default is breaking, hold it for the next major version as a single change.
 

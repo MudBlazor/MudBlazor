@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections.Immutable;
+using System.Text;
 using AwesomeAssertions;
 using Microsoft.CodeAnalysis;
 using MudBlazor.UnitTests.Analyzers.Internal;
@@ -35,6 +36,12 @@ public class MigrationHintTests
 
     private static IReadOnlyList<Diagnostic> AnyDiagnostics { get; set; } = null!;
 
+    private static IReadOnlyList<Diagnostic> CatalogDiagnostics { get; set; } = null!;
+
+    private static IReadOnlyList<Diagnostic> BoundaryDiagnostics { get; set; } = null!;
+
+    private static IEnumerable<string> CaseNames => MigrationHintCases.All.Select(x => x.ToString());
+
     [OneTimeSetUp]
     public static async Task OneTimeSetup()
     {
@@ -46,6 +53,11 @@ public class MigrationHintTests
         DataAndAriaDiagnostics = await GetDiagnosticsAsync(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.DataAndAria);
         NoneDiagnostics = await GetDiagnosticsAsync(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.None);
         AnyDiagnostics = await GetDiagnosticsAsync(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.Any);
+
+        CatalogDiagnostics = (await AnalyzerCompilationFactory.GetDiagnosticsAsync(CreateCatalogSource(), MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.LowerCase))
+            .FilterToClass("MudBlazor.Analyzers.TestComponents.MigrationHintCatalogSource");
+        BoundaryDiagnostics = (await AnalyzerCompilationFactory.GetDiagnosticsAsync(CreateBoundarySource(), MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern.LowerCase))
+            .FilterToClass("MudBlazor.Analyzers.TestComponents.MigrationHintBoundarySource");
 
         async Task<IReadOnlyList<Diagnostic>> GetDiagnosticsAsync(MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern pattern, string customAllowedAttributes = "")
         {
@@ -134,15 +146,101 @@ public class MigrationHintTests
     }
 
     /// <summary>
-    /// Components outside the mapping get no hint even when they carry an identically named attribute.
+    /// Link on MudIconButton and MudChip was removed alongside MudButton's, so they get the same Href guidance.
     /// </summary>
     [Test]
-    public void UnrelatedComponentWithSameAttributeNameKeepsGenericWarning()
+    public void LinkOnOtherComponentsThatDroppedItExplainsHref()
     {
-        LowerCaseDiagnostics.Single("Link", "MudIconButton").ShouldCarryNoHint("Link", "MudIconButton");
-        LowerCaseDiagnostics.Single("Link", "MudChip").ShouldCarryNoHint("Link", "MudChip");
+        LowerCaseDiagnostics.Single("Link", "MudIconButton").ShouldCarryHint("Link", "MudIconButton", MigrationHintExpectations.Link);
+        LowerCaseDiagnostics.Single("Link", "MudChip").ShouldCarryHint("Link", "MudChip", MigrationHintExpectations.Link);
+    }
+
+    /// <summary>
+    /// A removed name written on a component that never declared it gets no hint, even when another component's hint uses the same name.
+    /// </summary>
+    [Test]
+    public void RemovedNameOnComponentThatNeverHadItKeepsGenericWarning()
+    {
         LowerCaseDiagnostics.Single("AutoGrow", "MudAutocomplete").ShouldCarryNoHint("AutoGrow", "MudAutocomplete");
         LowerCaseDiagnostics.Single("AutoGrow", "MudButton").ShouldCarryNoHint("AutoGrow", "MudButton");
+    }
+
+    /// <summary>
+    /// Every catalog case, written on the concrete component a consumer uses, carries its own guidance.
+    /// </summary>
+    [TestCaseSource(nameof(CaseNames))]
+    public void CatalogCaseCarriesItsHint(string caseName)
+    {
+        var hintCase = MigrationHintCases.All.Single(x => x.ToString() == caseName);
+
+        CatalogDiagnostics.Single(hintCase.Removed, hintCase.TagName).ShouldCarryHint(hintCase.Removed, hintCase.TagName, [.. hintCase.ExpectedHint]);
+    }
+
+    /// <summary>
+    /// The catalog source raises exactly one diagnostic per case, every one explained, and nothing else.
+    /// </summary>
+    [Test]
+    public void CatalogSourceRaisesOneExplainedDiagnosticPerCase()
+    {
+        MigrationHintCases.All.Select(x => x.ToString()).Should().OnlyHaveUniqueItems();
+        CatalogDiagnostics.Should().HaveCount(MigrationHintCases.All.Count);
+        CatalogDiagnostics.Should().OnlyContain(x => x.Id == "MUD0002" && x.GetMessage().Contains(MigrationHintExpectations.HintMarker));
+    }
+
+    /// <summary>
+    /// Names that look like catalog entries but were never removed parameters on that component keep the generic warning.
+    /// </summary>
+    [Test]
+    public void LookalikesOfCatalogEntriesKeepGenericWarning()
+    {
+        // MudMenu.Link was removed with no navigation replacement, so MudMenuItem's Href advice must not leak onto it.
+        BoundaryDiagnostics.Single("Link", "MudMenu").ShouldCarryNoHint("Link", "MudMenu");
+        // v6 MudSelectItem inherited DisableRipple from a base that no longer exists, and today's MudSelectItem has no Ripple.
+        BoundaryDiagnostics.Single("DisableRipple", "MudSelectItem").ShouldCarryNoHint("DisableRipple", "MudSelectItem");
+        // IsOpen was never a parameter, so the IsOpenChanged rename does not make IsOpen a migration.
+        BoundaryDiagnostics.Single("IsOpen", "MudMenu").ShouldCarryNoHint("IsOpen", "MudMenu");
+        BoundaryDiagnostics.Single("IsOpen", "MudAutocomplete").ShouldCarryNoHint("IsOpen", "MudAutocomplete");
+        // MudRadio's Checked was internal, so the checkbox and switch hint must not reach it through their shared base.
+        BoundaryDiagnostics.Single("Checked", "MudRadio").ShouldCarryNoHint("Checked", "MudRadio");
+        // Only MudTr ever had IsChecked as a parameter.
+        BoundaryDiagnostics.Single("IsChecked", "MudTHeadRow").ShouldCarryNoHint("IsChecked", "MudTHeadRow");
+    }
+
+    /// <summary>
+    /// Current parameters that share a name with a removed one, case-only renames, and components MUD0002 does not inspect raise nothing.
+    /// </summary>
+    [Test]
+    public void CurrentNamesAndUninspectedComponentsRaiseNothing()
+    {
+        BoundaryDiagnostics.All("PanelClass", "MudTabPanel").Should().BeEmpty("MudTabPanel.PanelClass is a current parameter");
+        BoundaryDiagnostics.All("IconExpanded", "MudTreeViewItem").Should().BeEmpty("IconExpanded is a current parameter, not the replacement for ExpandedIcon");
+        BoundaryDiagnostics.All("ExpandedIcon", "MudTreeViewItemToggleButton").Should().BeEmpty("the toggle button still declares ExpandedIcon");
+        BoundaryDiagnostics.All("UnCheckedColor", "MudCheckBox").Should().BeEmpty("a case-only rename still matches case-insensitively");
+        BoundaryDiagnostics.All("ObserveSystemThemeChange", "MudThemeProvider").Should().BeEmpty("MudThemeProvider does not derive from MudComponentBase");
+    }
+
+    /// <summary>
+    /// A consumer component deriving from a closed generic MudCheckBox inherits the hint, and one that reintroduces Checked keeps its own parameter while its callback is still explained.
+    /// </summary>
+    [Test]
+    public void GenericDerivedComponentsFollowTheirBase()
+    {
+        BoundaryDiagnostics.Single("Checked", "DerivedCheckBox").ShouldCarryHint("Checked", "DerivedCheckBox", ExpectedHint("MudCheckBox.Checked"));
+        BoundaryDiagnostics.All("Checked", "ReintroducedCheckedBox").Should().BeEmpty();
+        BoundaryDiagnostics.Single("CheckedChanged", "ReintroducedCheckedBox").ShouldCarryHint("CheckedChanged", "ReintroducedCheckedBox", ExpectedHint("MudCheckBox.CheckedChanged"));
+    }
+
+    /// <summary>
+    /// The pagers share a removed name but not a conversion: MudTablePager keeps the value, MudDataGridPager inverts it.
+    /// </summary>
+    [Test]
+    public void PagersExplainOppositeConversionsForTheSameName()
+    {
+        var table = CatalogDiagnostics.Single("DisableRowsPerPage", "MudTablePager").GetMessage();
+        var grid = CatalogDiagnostics.Single("DisableRowsPerPage", "MudDataGridPager").GetMessage();
+
+        table.Should().Contain("DisableRowsPerPage=\"true\" becomes HideRowsPerPage=\"true\"").And.NotContain("PageSizeSelector");
+        grid.Should().Contain("DisableRowsPerPage=\"true\" becomes PageSizeSelector=\"false\"").And.NotContain("HideRowsPerPage");
     }
 
     /// <summary>
@@ -384,6 +482,115 @@ public class MigrationHintTests
                 builder.OpenComponent<MudTextField<string>>(sequence);
                 builder.AddAttribute(sequence + 1, "Value", value);
                 builder.AddAttribute(sequence + 2, "AutoGrow", grow);
+                builder.CloseComponent();
+            }
+        }
+        }
+        """;
+
+    private static string[] ExpectedHint(string caseName) => [.. MigrationHintCases.All.Single(x => x.ToString() == caseName).ExpectedHint];
+
+    /// <summary>
+    /// One render-tree call per catalog case, so each case is analyzed exactly as its own component.
+    /// </summary>
+    private static string CreateCatalogSource()
+    {
+        var calls = new StringBuilder();
+        var sequence = 0;
+
+        foreach (var hintCase in MigrationHintCases.All)
+        {
+            calls.AppendLine($"        builder.OpenComponent<{hintCase.TypeSyntax}>({sequence++});");
+            calls.AppendLine($"        builder.AddComponentParameter({sequence++}, \"{hintCase.Removed}\", true);");
+            calls.AppendLine("        builder.CloseComponent();");
+        }
+
+        return $$"""
+            using Microsoft.AspNetCore.Components;
+            using Microsoft.AspNetCore.Components.Rendering;
+
+            namespace MudBlazor.Analyzers.TestComponents;
+
+            public class MigrationHintCatalogSource : ComponentBase
+            {
+                protected override void BuildRenderTree(RenderTreeBuilder builder)
+                {
+            {{calls}}
+                }
+            }
+            """;
+    }
+
+    private static string CreateBoundarySource() =>
+        """
+        using Microsoft.AspNetCore.Components;
+        using Microsoft.AspNetCore.Components.Rendering;
+        using MudBlazor;
+
+        namespace MudBlazor.Analyzers.TestComponents
+        {
+        public class DerivedCheckBox : MudCheckBox<bool>
+        {
+        }
+
+        public class ReintroducedCheckedBox<T> : MudCheckBox<T>
+        {
+            [Parameter]
+            public bool Checked { get; set; }
+        }
+
+        public class MigrationHintBoundarySource : ComponentBase
+        {
+            protected override void BuildRenderTree(RenderTreeBuilder builder)
+            {
+                builder.OpenComponent<MudMenu>(0);
+                builder.AddAttribute(1, "Link", "/menu");
+                builder.AddAttribute(2, "IsOpen", true);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudSelectItem<string>>(3);
+                builder.AddAttribute(4, "DisableRipple", true);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudAutocomplete<string>>(5);
+                builder.AddAttribute(6, "IsOpen", true);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudRadio<string>>(7);
+                builder.AddAttribute(8, "Checked", true);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudTHeadRow>(9);
+                builder.AddAttribute(10, "IsChecked", true);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudTabPanel>(11);
+                builder.AddAttribute(12, "PanelClass", "panel");
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudTreeViewItem<string>>(13);
+                builder.AddAttribute(14, "IconExpanded", "icon");
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudTreeViewItemToggleButton>(15);
+                builder.AddAttribute(16, "ExpandedIcon", "icon");
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudCheckBox<bool>>(17);
+                builder.AddAttribute(18, "UnCheckedColor", Color.Primary);
+                builder.CloseComponent();
+
+                builder.OpenComponent<MudThemeProvider>(19);
+                builder.AddAttribute(20, "ObserveSystemThemeChange", true);
+                builder.CloseComponent();
+
+                builder.OpenComponent<DerivedCheckBox>(21);
+                builder.AddAttribute(22, "Checked", true);
+                builder.CloseComponent();
+
+                builder.OpenComponent<ReintroducedCheckedBox<bool>>(23);
+                builder.AddAttribute(24, "Checked", true);
+                builder.AddAttribute(25, "CheckedChanged", true);
                 builder.CloseComponent();
             }
         }
