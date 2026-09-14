@@ -18,8 +18,7 @@
                      Disabled="GetDisabled()" />
         }
 
-        <MudText Class="mud-menu-item-text"
-                 Typo="GetTypo()">
+        <p class="@TextClassname">
             @if (ChildContent is null)
             {
                 @Label
@@ -28,7 +27,7 @@
             {
                 @ChildContent
             }
-        </MudText>
+        </p>
 
         @if (ActivatesSubMenu && !HideSubMenuArrow)
         {

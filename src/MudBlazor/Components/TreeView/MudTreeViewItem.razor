@@ -40,15 +40,11 @@
                 }
                 else
                 {
-                    <MudText Typo="@TextTypo" Class="@TextClassname">
-                        @GetText()
-                    </MudText>
+                    @MudText.RenderText(TextTypo, TextClassname, GetText())
 
                     @if (!string.IsNullOrEmpty(EndText))
                     {
-                        <MudText Typo="@EndTextTypo" Class="@EndTextClass">
-                            @EndText
-                        </MudText>
+                        @MudText.RenderText(EndTextTypo, EndTextClass, EndText)
                     }
 
                     @if (!string.IsNullOrEmpty(EndIcon))
