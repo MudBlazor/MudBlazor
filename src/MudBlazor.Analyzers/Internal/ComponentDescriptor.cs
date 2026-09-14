@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.Immutable;
+
 namespace MudBlazor.Analyzers.Internal;
 
 internal sealed class ComponentDescriptor
@@ -9,7 +11,12 @@ internal sealed class ComponentDescriptor
     internal string TagName { get; set; } = string.Empty;
     internal HashSet<string> Parameters { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-    internal static ComponentDescriptor GetComponentDescriptor(ITypeSymbol typeSymbol, INamedTypeSymbol? parameterSymbol)
+    /// <summary>
+    /// Replacement guidance for parameters an earlier major version removed from this component, keyed by the removed parameter's name.
+    /// </summary>
+    internal Dictionary<string, LocalizableString> MigrationHints { get; } = new Dictionary<string, LocalizableString>(StringComparer.OrdinalIgnoreCase);
+
+    internal static ComponentDescriptor GetComponentDescriptor(ITypeSymbol typeSymbol, INamedTypeSymbol? parameterSymbol, ImmutableArray<ResolvedParameterMigration> migrations)
     {
         var descriptor = new ComponentDescriptor();
         var currentSymbol = typeSymbol as INamedTypeSymbol;
@@ -33,6 +40,13 @@ internal sealed class ComponentDescriptor
             }
 
             currentSymbol = currentSymbol.BaseType;
+        }
+
+        foreach (var migration in migrations)
+        {
+            // A component that still declares the old name owns it, so leave it alone.
+            if (migration.AppliesTo(typeSymbol) && !descriptor.Parameters.Contains(migration.ParameterName))
+                descriptor.MigrationHints[migration.ParameterName] = migration.Hint;
         }
 
         return descriptor;
