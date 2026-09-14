@@ -75,7 +75,7 @@
             @PrePanelContent(ActivePanel)
         }
         <div class="@PanelsClassnames">
-            @ChildContent
+            <MudTooltipChildContainer ChildContent="@ChildContent" UpdateCount="@GetPanelsUpdateCount()" />
         </div>
     </CascadingValue>
 </div>

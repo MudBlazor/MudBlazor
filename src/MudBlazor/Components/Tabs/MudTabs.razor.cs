@@ -27,6 +27,8 @@ namespace MudBlazor
         private string? _nextIcon;
         private bool _isVerticalTabs;
         private bool _redraw;
+        private int _panelsUpdateCount;
+        private MudTabPanel? _panelsActivePanel;
         private bool _isSliderPositionDetermined;
         private bool _prevButtonDisabled;
         private bool _nextButtonDisabled;
@@ -522,7 +524,29 @@ namespace MudBlazor
                 _redraw = true;
                 _isVerticalTabs = Position is Position.Left or Position.Right or Position.Start or Position.End;
             }
+
+            // The panels render again when the parent renders the tabs, not when the tabs only update their layout, slider or scroll buttons.
+            unchecked { _panelsUpdateCount++; }
+
             await base.SetParametersAsync(parameters);
+        }
+
+        /// <summary>
+        /// The count the panels' content container compares to decide whether to render the panels again.
+        /// </summary>
+        /// <remarks>
+        /// Each panel shows or hides itself by comparing itself to <see cref="ActivePanel"/>, so a new active panel renders them again too.
+        /// </remarks>
+        private int GetPanelsUpdateCount()
+        {
+            var activePanel = ActivePanel;
+            if (!ReferenceEquals(activePanel, _panelsActivePanel))
+            {
+                _panelsActivePanel = activePanel;
+                unchecked { _panelsUpdateCount++; }
+            }
+
+            return _panelsUpdateCount;
         }
 
         /// <inheritdoc />

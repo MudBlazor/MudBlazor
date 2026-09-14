@@ -73,6 +73,50 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Panel content does not render again when the tabs only re-render themselves, while switching tabs and a parent render still reach the panels.
+        /// </summary>
+        [Test]
+        public async Task PanelContent_RendersOnlyWhenTheParentRendersOrTheActivePanelChanges()
+        {
+            var comp = Context.Render<MudTabs>(parameters => parameters
+                .Add(p => p.KeepPanelsAlive, true)
+                .Add(p => p.ChildContent, ThreeTextPanels));
+            var texts = comp.FindComponents<MudText>();
+            var rendersAfterMount = texts.Select(text => text.RenderCount).ToList();
+
+            // Layout, slider and scroll updates re-render the tabs without anything changing for the panels.
+            await comp.InvokeAsync(() => ((MudBlazor.Interfaces.IMudStateHasChanged)comp.Instance).StateHasChanged());
+
+            texts.Select(text => text.RenderCount).Should().Equal(rendersAfterMount);
+
+            await comp.FindAll("div.mud-tab")[1].ClickAsync();
+
+            comp.FindAll("div.mud-tabs-panels > div")[1].ClassList.Should().Contain("mud-tab-panel-active");
+            comp.FindAll("div.mud-tabs-panels > div")[0].ClassList.Should().NotContain("mud-tab-panel-active");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.KeepPanelsAlive, false));
+
+            comp.FindAll("div.mud-tabs-panels > div").Should().ContainSingle().Which.TextContent.Should().Be("Content 1");
+        }
+
+        private static RenderFragment ThreeTextPanels => builder =>
+        {
+            for (var i = 0; i < 3; i++)
+            {
+                var index = i;
+                builder.OpenComponent<MudTabPanel>(0);
+                builder.AddAttribute(1, nameof(MudTabPanel.Text), $"Tab {index}");
+                builder.AddAttribute(2, nameof(MudTabPanel.ChildContent), (RenderFragment)(panel =>
+                {
+                    panel.OpenComponent<MudText>(0);
+                    panel.AddAttribute(1, nameof(MudText.ChildContent), (RenderFragment)(text => text.AddContent(0, $"Content {index}")));
+                    panel.CloseComponent();
+                }));
+                builder.CloseComponent();
+            }
+        };
+
+        /// <summary>
         /// When KeepPanelsAlive="true" the panels are not destroyed and recreated on tab-switch. We prove that by using a button click counter on every tab and
         /// a callback that is fired only when OnRenderAsync of the tab panel happens the first time (which outputs a message at the bottom).
         /// </summary>
