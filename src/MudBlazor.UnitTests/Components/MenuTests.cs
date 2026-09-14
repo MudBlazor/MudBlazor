@@ -434,6 +434,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Menu item text uses body1 typography, or body2 in a dense menu.
+        /// </summary>
+        [Test]
+        [TestCase(false, "mud-typography mud-typography-body1 mud-menu-item-text")]
+        [TestCase(true, "mud-typography mud-typography-body2 mud-menu-item-text")]
+        public async Task MenuItem_TextTypography_FollowsDense(bool dense, string expectedClass)
+        {
+            var comp = Context.Render<MenuItemIconTest>(parameters => parameters.Add(p => p.Dense, dense));
+
+            await comp.Find(".mud-menu-button-activator").ClickAsync();
+            await comp.WaitForElementAsync("div.mud-popover-open");
+
+            comp.FindAll("div.mud-menu-item p").Should().HaveCount(3).And.OnlyContain(text => text.ClassName == expectedClass);
+        }
+
+        /// <summary>
         /// https://github.com/MudBlazor/MudBlazor/issues/6645
         /// </summary>
         [Test]

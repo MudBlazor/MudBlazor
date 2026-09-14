@@ -126,6 +126,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-list-item-secondary-text").TextContent.Should().Contain("with oat milk");
         }
 
+        /// <summary>
+        /// Item text uses body1 typography, or body2 in a dense list, and secondary text uses subtitle2.
+        /// </summary>
+        [Test]
+        [TestCase(false, "mud-typography mud-typography-body1")]
+        [TestCase(true, "mud-typography mud-typography-body2")]
+        public void ListItem_TextTypography_FollowsDense(bool dense, string expectedClass)
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .Add(x => x.Dense, dense)
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Latte")
+                    .Add(x => x.SecondaryText, "with oat milk")));
+
+            comp.Find("div.mud-list-item-text p:not(.mud-list-item-secondary-text)").ClassName.Should().Be(expectedClass);
+            comp.Find("p.mud-list-item-secondary-text").ClassName.Should().Be("mud-typography mud-typography-subtitle2 mud-list-item-secondary-text");
+        }
+
         [Test]
         [TestCase(SelectionMode.SingleSelection)]
         [TestCase(SelectionMode.ToggleSelection)]
@@ -286,6 +304,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 drinks + 2 nested group headers
             comp.FindAll("div.mud-list-item-dense").Count.Should().Be(expectedDenseClassCount);
+            comp.FindAll("div.mud-list-item-text p.mud-typography-body2").Count.Should().Be(expectedDenseClassCount);
         }
 
         [Test]

@@ -287,7 +287,7 @@ namespace MudBlazor
 
         private SelectionMode SelectionMode => TopLevelList?.SelectionMode ?? SelectionMode.SingleSelection;
 
-        private Typo TextTypo => GetDense() ? Typo.body2 : Typo.body1;
+        private string TextClassname => GetDense() ? "mud-typography mud-typography-body2" : "mud-typography mud-typography-body1";
 
         private bool GetClickable()
         {
