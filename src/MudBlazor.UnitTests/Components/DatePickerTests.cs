@@ -374,6 +374,48 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
         }
 
+        /// <summary>
+        /// Each year renders the same element a MudText would, with the current year highlighted.
+        /// </summary>
+        [Test]
+        public async Task OpenToYear_YearsRenderTheSameMarkupAsMudText()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Year));
+            var picker = comp.FindComponent<MudDatePicker>().Instance;
+            var currentYear = DateTime.Now.Year;
+
+            var currentYearMarkup = comp.Find($"div.mud-picker-year[id$='{currentYear}']").InnerHtml;
+            var otherYearMarkup = comp.Find($"div.mud-picker-year[id$='{currentYear - 1}']").InnerHtml;
+
+            var selected = Context.Render<MudText>(parameters => parameters
+                .Add(x => x.Typo, Typo.h5)
+                .Add(x => x.Class, $"mud-picker-year-selected mud-{picker.Color.ToString().ToLowerInvariant()}-text")
+                .AddChildContent(currentYear.ToString(CultureInfo.InvariantCulture)));
+            var other = Context.Render<MudText>(parameters => parameters
+                .Add(x => x.Typo, Typo.subtitle1)
+                .AddChildContent((currentYear - 1).ToString(CultureInfo.InvariantCulture)));
+
+            currentYearMarkup.Trim().Should().Be(selected.Markup.Trim());
+            otherYearMarkup.Trim().Should().Be(other.Markup.Trim());
+        }
+
+        /// <summary>
+        /// Scrolling the year list to the current year does not render the picker again.
+        /// </summary>
+        [Test]
+        public async Task OpenToYear_ScrollToYear_DoesNotRender()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Year));
+            var picker = comp.FindComponent<MudDatePicker>();
+            var renders = picker.RenderCount;
+
+            await comp.InvokeAsync(() => picker.Instance.ScrollToYearAsync());
+
+            picker.RenderCount.Should().Be(renders);
+        }
+
         [Test]
         public async Task OpenToYear_ClickYear_CheckMonthsShown()
         {
