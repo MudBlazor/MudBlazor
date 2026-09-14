@@ -140,6 +140,72 @@ public class TypeInferenceHelperTests
     }
 
     /// <summary>
+    /// Constructions of one generic component over different type arguments, including each helper's own type parameter, all get its migration hint, while a subclass that declares the parameter again stays silent.
+    /// </summary>
+    [Test]
+    public async Task EveryConstructionOfAGenericComponentGetsItsHint()
+    {
+        var source = Usings + """
+
+            namespace Consumer
+            {
+                public class ReintroducedAutoGrow<T> : MudTextField<T>
+                {
+                    [Parameter]
+                    public bool AutoGrow { get; set; }
+                }
+
+                public class GenericHints : ComponentBase
+                {
+                    protected override void BuildRenderTree(RenderTreeBuilder builder)
+                    {
+                        TypeInference.CreateMudTextField_0(builder, 0, "text");
+                        TypeInference.CreateMudTextField_1(builder, 1, 42);
+                        TypeInference.CreateReintroduced_2(builder, 2, "text");
+                        builder.OpenComponent<MudTextField<decimal>>(3);
+                        builder.AddAttribute(4, "AutoGrow", true);
+                        builder.CloseComponent();
+                        builder.OpenComponent<ReintroducedAutoGrow<int>>(5);
+                        builder.AddAttribute(6, "AutoGrow", true);
+                        builder.CloseComponent();
+                    }
+                }
+
+                internal static class TypeInference
+                {
+                    public static void CreateMudTextField_0<T>(RenderTreeBuilder __builder, int seq, T __arg0)
+                    {
+                        __builder.OpenComponent<global::MudBlazor.MudTextField<T>>(seq);
+                        __builder.AddAttribute(1, "AutoGrow", __arg0);
+                        __builder.CloseComponent();
+                    }
+
+                    public static void CreateMudTextField_1<TValue>(RenderTreeBuilder __builder, int seq, TValue __arg0)
+                    {
+                        __builder.OpenComponent<global::MudBlazor.MudTextField<TValue>>(seq);
+                        __builder.AddAttribute(1, "AutoGrow", __arg0);
+                        __builder.CloseComponent();
+                    }
+
+                    public static void CreateReintroduced_2<T>(RenderTreeBuilder __builder, int seq, T __arg0)
+                    {
+                        __builder.OpenComponent<global::Consumer.ReintroducedAutoGrow<T>>(seq);
+                        __builder.AddAttribute(1, "AutoGrow", __arg0);
+                        __builder.CloseComponent();
+                    }
+                }
+            }
+            """;
+
+        var diagnostics = await GetDiagnosticsAsync(source, includeHint: true);
+
+        diagnostics.Should().BeEquivalentTo(
+            "AutoGrow on MudTextField in Consumer.GenericHints with hint",
+            "AutoGrow on MudTextField in Consumer.GenericHints with hint",
+            "AutoGrow on MudTextField in Consumer.GenericHints with hint");
+    }
+
+    /// <summary>
     /// A helper declared in a different file is not followed, which is also how a missing declaration behaves.
     /// </summary>
     [Test]
@@ -280,7 +346,9 @@ public class TypeInferenceHelperTests
     /// <summary>
     /// Runs MUD0002 over one or more files and describes each diagnostic by attribute, component, and reporting class, or by ID when it is not MUD0002.
     /// </summary>
-    private static async Task<IReadOnlyList<string>> GetDiagnosticsAsync(string source, params string[] otherFiles)
+    private static Task<IReadOnlyList<string>> GetDiagnosticsAsync(string source, params string[] otherFiles) => GetDiagnosticsAsync(source, includeHint: false, otherFiles);
+
+    private static async Task<IReadOnlyList<string>> GetDiagnosticsAsync(string source, bool includeHint, params string[] otherFiles)
     {
         var compilation = AnalyzerCompilationFactory.CreateCompilation(source, "Caller.razor.g.cs")
             .AddSyntaxTrees(otherFiles.Select((text, i) => CSharpSyntaxTree.ParseText(SourceText.From(text, Encoding.UTF8), path: $"Other{i}.cs")));
@@ -292,7 +360,7 @@ public class TypeInferenceHelperTests
 
         return diagnostics
             .Select(x => x.Id == MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.DiagnosticId
-                ? $"{x.GetMessage().Split('\'')[1]} on {x.GetMessage().Split('\'')[3]} in {x.Properties[MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey]}"
+                ? $"{x.GetMessage().Split('\'')[1]} on {x.GetMessage().Split('\'')[3]} in {x.Properties[MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey]}{(includeHint && x.GetMessage().Contains("replaced by 'Sizing'") ? " with hint" : "")}"
                 : x.Id)
             .ToList();
     }
