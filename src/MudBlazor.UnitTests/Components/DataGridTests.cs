@@ -2242,6 +2242,33 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Items[0].SubItem.SubItem2.SubProperty2.Should().Be("Test 3");
         }
 
+        /// <summary>
+        /// Clicking a group's expander renders only that group, and the grid keeps the new state when it renders again.
+        /// </summary>
+        [Test]
+        public async Task DataGridGroupExpander_RendersOnlyItsGroup()
+        {
+            var comp = Context.Render<DataGridGroupExpandedTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridGroupExpandedTest.Fruit>>();
+            var groupRows = dataGrid.FindComponents<DataGridGroupRow<DataGridGroupExpandedTest.Fruit>>();
+            groupRows.Count.Should().Be(2);
+            var otherGroupRenders = groupRows[1].RenderCount;
+
+            await groupRows[0].Find(".mud-table-row-expander").ClickAsync();
+
+            dataGrid.Markup.Should().NotContain("Apple").And.Contain("Orange");
+            groupRows[1].RenderCount.Should().Be(otherGroupRenders);
+
+            // A grid render afterwards keeps the collapsed group collapsed and the other one expanded.
+            await comp.InvokeAsync(() => dataGrid.Instance.SetSortAsync("Count", SortDirection.Descending, x => x.Count));
+
+            dataGrid.Markup.Should().NotContain("Apple").And.Contain("Orange");
+
+            await dataGrid.FindComponents<DataGridGroupRow<DataGridGroupExpandedTest.Fruit>>()[0].Find(".mud-table-row-expander").ClickAsync();
+
+            dataGrid.Markup.Should().Contain("Apple").And.Contain("Orange");
+        }
+
         [Test]
         public void DataGridOnContextMenuClickWhenIsGrouped()
         {

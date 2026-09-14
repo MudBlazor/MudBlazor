@@ -131,7 +131,7 @@ namespace MudBlazor
         {
             _expanded = !_expanded;
             if (Items != null)
-                DataGrid.ToggleGroupExpand(GroupDefinition.Title, GroupDefinition.KeyPath, _expanded);
+                DataGrid.SetGroupExpanded(GroupDefinition.Title, GroupDefinition.KeyPath, _expanded);
         }
     }
 }
