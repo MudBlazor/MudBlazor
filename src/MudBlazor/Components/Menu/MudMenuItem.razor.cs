@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
@@ -10,11 +11,11 @@ namespace MudBlazor
     /// <seealso cref="MudMenu" />
     public partial class MudMenuItem : MudComponentBase
     {
-        private readonly EventCallback<ElementReference> _captureElementReference;
+        private readonly Action<ElementReference> _captureElementReference;
 
         public MudMenuItem()
         {
-            _captureElementReference = MudElement.CaptureRef(reference => ElementReference = reference);
+            _captureElementReference = reference => ElementReference = reference;
         }
 
         [Inject]
@@ -132,6 +133,30 @@ namespace MudBlazor
         public ElementReference ElementReference { get; private set; }
 
         protected string GetHtmlTag() => string.IsNullOrEmpty(Href) ? "div" : "a";
+
+        /// <summary>
+        /// Opens the row element with its attributes; the Razor file renders the content and closes it.
+        /// </summary>
+        /// <remarks>
+        /// The tag is chosen at runtime, so the element is opened by name rather than written as markup.
+        /// class and style come before the splat so a class or style supplied through <see cref="MudComponentBase.UserAttributes"/> still wins, which is the precedence the MudElement boundary gave them.
+        /// </remarks>
+        private void OpenRow(RenderTreeBuilder builder)
+        {
+            builder.OpenElement(0, GetHtmlTag());
+            builder.AddAttribute(1, "class", Classname);
+            builder.AddAttribute(2, "style", Style);
+            builder.AddAttribute(3, "href", Href);
+            builder.AddAttribute(4, "target", Target);
+            builder.AddAttribute(5, "role", "menuitem");
+            builder.AddMultipleAttributes(6, UserAttributes!);
+            builder.AddAttribute(7, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnClickHandlerAsync));
+            builder.AddAttribute(8, "tabindex", GetDisabled() ? "-1" : "0");
+            builder.AddAttribute(9, "aria-disabled", GetDisabled() ? "true" : "false");
+            builder.AddEventStopPropagationAttribute(10, "onclick", true);
+            builder.AddEventPreventDefaultAttribute(11, "onclick", GetDisabled());
+            builder.AddElementReferenceCapture(12, _captureElementReference);
+        }
 
         protected internal bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
 

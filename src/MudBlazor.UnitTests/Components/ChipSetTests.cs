@@ -664,15 +664,36 @@ namespace MudBlazor.UnitTests.Components
                     builder.OpenComponent<MudChip<string>>(0);
                     builder.AddAttribute(1, nameof(MudChip<string>.Value), "Milk");
                     builder.AddAttribute(2, nameof(MudChip<string>.Href), "https://example.com");
-                    // A clickable chip is always a button; only a non-clickable one falls back to the anchor.
-                    builder.AddAttribute(3, nameof(MudChip<string>.Disabled), true);
                     builder.CloseComponent();
                 }));
 
             var chip = comp.Find(".mud-chip");
             chip.TagName.Should().Be("A");
+            chip.GetAttribute("href").Should().Be("https://example.com");
             chip.HasAttribute("role").Should().BeFalse();
             chip.HasAttribute("aria-pressed").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A link chip inside a set leaves the click to the browser, so clicking it does not change the selection.
+        /// </summary>
+        [Test]
+        public async Task ChipSet_AnchorChip_ClickDoesNotChangeSelection()
+        {
+            var comp = Context.Render<MudChipSet<string>>(parameters => parameters
+                .Add(p => p.SelectionMode, SelectionMode.MultiSelection)
+                .Add(p => p.ChildContent, builder =>
+                {
+                    builder.OpenComponent<MudChip<string>>(0);
+                    builder.AddAttribute(1, nameof(MudChip<string>.Value), "Milk");
+                    builder.AddAttribute(2, nameof(MudChip<string>.Href), "https://example.com");
+                    builder.CloseComponent();
+                }));
+
+            var act = async () => await comp.Find(".mud-chip").ClickAsync();
+            await act.Should().ThrowAsync<MissingEventHandlerException>();
+            comp.Instance.SelectedValues.Should().BeNullOrEmpty();
+            comp.Find(".mud-chip").ClassList.Should().NotContain("mud-chip-selected");
         }
     }
 }

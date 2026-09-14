@@ -1,0 +1,87 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@*each removed parameter appears once, on the component a consumer writes*@
+
+@*inputs: DisableUnderLine and OnKeyPress come from MudBaseInput*@
+<MudTextField T="string" DisableUnderLine="true" OnKeyPress="@((KeyboardEventArgs args) => _text = args.Key)" AutoGrow="true" />
+<MudNumericField T="int" DisableUnderLine="true" OnKeyPress="@((KeyboardEventArgs args) => _text = args.Key)" />
+<MudSelect T="string" DisableUnderLine="true" OnOpen="@(() => _flag = true)" OnClose="@(() => _flag = false)" />
+<MudAutocomplete T="string" DisableUnderLine="true" IsOpenChanged="@((bool open) => _flag = open)" SelectOnClick="true" SearchFuncWithCancel="@((string value, CancellationToken token) => SearchAsync(value, token))" />
+<MudField DisableUnderLine="true" />
+<MudInput T="string" AutoGrow="@_flag" />
+
+@*pickers: DisableToolbar, DisableUnderLine, InputIcon, InputVariant, and ClassActions come from MudPicker*@
+<MudDatePicker DisableToolbar="true" DisableUnderLine="true" InputIcon="@Icons.Material.Filled.Event" InputVariant="Variant.Outlined" />
+<MudDateRangePicker DisableToolbar="true" />
+<MudTimePicker DisableToolbar="false" ClassActions="actions" />
+<MudColorPicker DisableToolbar="true" DisableSliders="true" DisablePreview="true" DisableModeSwitch="true" DisableInputs="true" DisableDragEffect="true" DisableColorField="true" DisableAlpha="true" />
+<MudPickerToolbar DisableToolbar="true" />
+
+@*navigation, tabs, and progress*@
+<MudNavMenu>
+    <MudNavGroup Title="Group" DisableRipple="true">
+        <MudNavLink Href="/link" DisableRipple="true">Link</MudNavLink>
+    </MudNavGroup>
+</MudNavMenu>
+<MudTabs DisableRipple="true" DisableSliderAnimation="true" TabPanelClass="buttons" PanelClass="panels">
+    <MudTabPanel Text="One" PanelClass="one-panel" />
+</MudTabs>
+<MudDynamicTabs PanelClass="panels" />
+<MudTimeline DisableModifiers="true" />
+<MudProgressCircular Value="50" Minimum="0" Maximum="100" />
+<MudProgressLinear Value="50" Minimum="0" Maximum="100" />
+<MudCarousel TData="string" ShowDelimiters="true" DelimitersColor="Color.Primary" DelimitersClass="bullets" DelimiterTemplate="@_bulletTemplate" />
+<MudPagination Count="3" DisableElevation="true" />
+
+@*tables and data grids*@
+<MudTablePager DisableRowsPerPage="true" />
+<MudDataGridPager T="string" DisableRowsPerPage="true" />
+<MudDataGrid T="Row" Items="_rows" CancelledEditingItem="@((Row row) => _text = row.Name)">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" IsEditable="true" />
+        <TemplateColumn IsEditable="false" />
+    </Columns>
+</MudDataGrid>
+<MudTable T="string" Items="_items">
+    <HeaderContent>
+        <MudTHeadRow IsCheckable="true" IsExpandable="true" />
+    </HeaderContent>
+    <RowTemplate>
+        <MudTr IsCheckable="true" IsChecked="@_flag" IsCheckedChanged="@((bool isChecked) => _flag = isChecked)" IsExpandable="true" IsEditable="true" />
+    </RowTemplate>
+    <FooterContent>
+        <MudTFootRow IsCheckable="true" IsExpandable="true" />
+    </FooterContent>
+</MudTable>
+<MudTableGroupRow T="string" IsCheckable="true" />
+
+@*trees, drag and drop, and charts*@
+<MudTreeView T="string" CanHover="true" ActivatedValueChanged="@((string value) => _text = value)">
+    <MudTreeViewItem T="string" Value="@("item")" ExpandedIcon="@Icons.Material.Filled.ChevronRight" ExpandedIconColor="Color.Primary" />
+</MudTreeView>
+<MudDropContainer T="string" Items="_items" ItemsSelector="@((item, zone) => true)" ItemIsDisabled="@((string item) => item.Length == 0)">
+    <ChildContent>
+        <MudDropZone T="string" Identifier="zone" ItemIsDisabled="@((string item) => false)" />
+    </ChildContent>
+</MudDropContainer>
+<MudChart T="double" XAxisLabels="@_labels" InputLabels="@_labels" />
+
+@code
+{
+    public static string __description__ = "Removed input, picker, navigation, and data parameters that MUD0002 explains";
+
+    private bool _flag = true;
+
+    private string _text = "a";
+
+    private readonly string[] _items = ["a", "b"];
+
+    private readonly string[] _labels = ["Jan", "Feb"];
+
+    private readonly Row[] _rows = [new("a")];
+
+    private readonly RenderFragment<bool> _bulletTemplate = selected => builder => builder.AddContent(0, selected);
+
+    private Task<IEnumerable<string>> SearchAsync(string value, CancellationToken token) => Task.FromResult<IEnumerable<string>>(_items);
+
+    public sealed record Row(string Name);
+}
