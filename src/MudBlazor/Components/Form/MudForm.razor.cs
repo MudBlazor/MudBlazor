@@ -161,8 +161,11 @@ namespace MudBlazor
 
         /// <summary>
         /// Occurs when <c>Enter</c> is released after being pressed on any child input of this form.
-        /// Values that inputs commit on change are already applied when this occurs.
         /// </summary>
+        /// <remarks>
+        /// A value that an input commits synchronously on <c>change</c> is already applied when this occurs.
+        /// A commit that is still awaiting an asynchronous callback, such as <c>TextChanged</c>, is not.
+        /// </remarks>
         [Parameter]
         public EventCallback OnEnterPressed { get; set; }
 
@@ -502,6 +505,8 @@ namespace MudBlazor
             return handler switch
             {
                 EventCallback<KeyboardEventArgs> typed => typed.InvokeAsync(args),
+                EventCallback<EventArgs> eventArgs => eventArgs.InvokeAsync(args),
+                EventCallback<object> boxed => boxed.InvokeAsync(args),
                 EventCallback untyped => untyped.InvokeAsync(args),
                 // Mirrors how the renderer wraps a delegate attribute on a plain element.
                 MulticastDelegate @delegate => new EventCallback(@delegate.Target as IHandleEvent, @delegate).InvokeAsync(args),

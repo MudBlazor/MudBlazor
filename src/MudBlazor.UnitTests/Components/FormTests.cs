@@ -2885,6 +2885,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// OnEnterPressed does not wait for a change commit that is still awaiting an asynchronous TextChanged callback.
+        /// </summary>
+        [Test]
+        public async Task OnEnterPressed_PendingAsyncTextChanged_ValueNotYetApplied()
+        {
+            var observed = new List<string>();
+            string value = null;
+            var textChanged = new TaskCompletionSource();
+            var comp = RenderEnterForm(() => observed.Add(value), v => value = v, _ => textChanged.Task);
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            var change = comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "a" });
+            change.IsCompleted.Should().BeFalse();
+            observed.Should().BeEmpty();
+
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            observed.Should().ContainSingle().Which.Should().BeNull();
+
+            textChanged.SetResult();
+            await change;
+            value.Should().Be("a");
+        }
+
+        /// <summary>
         /// An Enter keyup without a preceding Enter keydown does not invoke OnEnterPressed.
         /// </summary>
         [Test]
@@ -2936,19 +2960,23 @@ namespace MudBlazor.UnitTests.Components
         public async Task UserKeyHandler_Invoked(
             [Values("onkeydown", "onkeyup")] string eventName,
             [Values] bool withOnEnterPressed,
-            [Range(0, 6)] int handlerShape)
+            [Values("TypedCallback", "EventArgsCallback", "ObjectCallback", "UntypedCallback", "Action", "ActionWithArgs", "FuncTask", "FuncTaskWithArgs", "CustomDelegate")] string handlerShape)
         {
-            var userCalls = 0;
+            var received = new List<object>();
             object handler = handlerShape switch
             {
-                0 => EventCallback.Factory.Create<KeyboardEventArgs>(this, () => userCalls++),
-                1 => EventCallback.Factory.Create(this, () => userCalls++),
-                2 => new Action(() => userCalls++),
-                3 => new Action<KeyboardEventArgs>(_ => userCalls++),
-                4 => new Func<Task>(() => { userCalls++; return Task.CompletedTask; }),
-                5 => new Func<KeyboardEventArgs, Task>(_ => { userCalls++; return Task.CompletedTask; }),
-                _ => new KeyboardHandler(_ => userCalls++),
+                "TypedCallback" => EventCallback.Factory.Create<KeyboardEventArgs>(this, received.Add),
+                "EventArgsCallback" => EventCallback.Factory.Create<EventArgs>(this, received.Add),
+                "ObjectCallback" => EventCallback.Factory.Create<object>(this, received.Add),
+                "UntypedCallback" => EventCallback.Factory.Create(this, () => received.Add(null)),
+                "Action" => new Action(() => received.Add(null)),
+                "ActionWithArgs" => new Action<KeyboardEventArgs>(received.Add),
+                "FuncTask" => new Func<Task>(() => { received.Add(null); return Task.CompletedTask; }),
+                "FuncTaskWithArgs" => new Func<KeyboardEventArgs, Task>(a => { received.Add(a); return Task.CompletedTask; }),
+                "CustomDelegate" => new KeyboardHandler(received.Add),
+                _ => throw new ArgumentOutOfRangeException(nameof(handlerShape)),
             };
+            var takesArgs = handlerShape is not ("UntypedCallback" or "Action" or "FuncTask");
             var comp = Context.Render<MudForm>(p =>
             {
                 p.AddUnmatched(eventName, handler);
@@ -2968,7 +2996,11 @@ namespace MudBlazor.UnitTests.Components
                 await comp.Find("form").KeyUpAsync(args);
             }
 
-            userCalls.Should().Be(1);
+            received.Should().ContainSingle();
+            if (takesArgs)
+            {
+                received[0].Should().BeSameAs(args);
+            }
         }
 
         /// <summary>
@@ -2991,12 +3023,13 @@ namespace MudBlazor.UnitTests.Components
 
         private delegate void KeyboardHandler(KeyboardEventArgs args);
 
-        private IRenderedComponent<MudForm> RenderEnterForm(Action onEnterPressed, Action<string> valueChanged = null)
+        private IRenderedComponent<MudForm> RenderEnterForm(Action onEnterPressed, Action<string> valueChanged = null, Func<string, Task> textChanged = null)
         {
             return Context.Render<MudForm>(p => p
                 .Add(x => x.OnEnterPressed, onEnterPressed)
                 .AddChildContent<MudTextField<string>>(field => field
-                    .Add(x => x.ValueChanged, valueChanged ?? (_ => { }))));
+                    .Add(x => x.ValueChanged, valueChanged ?? (_ => { }))
+                    .Add(x => x.TextChanged, textChanged ?? (_ => Task.CompletedTask))));
         }
     }
 }
