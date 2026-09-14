@@ -27,6 +27,7 @@ namespace MudBlazor
         private MudSelectItem<T>? _longestItem;
         private bool _needsHighlightAfterRender;
         private bool _needsFitContentRefresh;
+        private int _parentUpdateCount;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = [];
         private string _searchText = string.Empty;
@@ -1426,6 +1427,15 @@ namespace MudBlazor
         {
             base.OnInitialized();
             UpdateIcon();
+        }
+
+        /// <inheritdoc />
+        public override Task SetParametersAsync(ParameterView parameters)
+        {
+            // Opening, closing and highlighting only change the select's own state, so the options re-render when the parent does.
+            unchecked { _parentUpdateCount++; }
+
+            return base.SetParametersAsync(parameters);
         }
 
         protected override void OnParametersSet()

@@ -38,8 +38,8 @@ namespace MudBlazor.UnitTests.Components
         /// A select with nothing to present must build its option list once, not twice (#13519).
         /// </summary>
         /// <remarks>
-        /// MudSelect renders ChildContent twice per pass, once for the popup list and once for the shadow items.
-        /// A second render on mount would double that, and no item can be diffed away because each one is handed a fresh ChildContent delegate.
+        /// While the select is closed only the hidden shadow items are built.
+        /// The select renders again while mounting, and that render must not rebuild them.
         /// </remarks>
         [Test]
         public void Select_WithoutResolvableValue_BuildsItemsOnce()
@@ -54,7 +54,62 @@ namespace MudBlazor.UnitTests.Components
                     builder.CloseComponent();
                 }));
 
-            passes.Should().Be(2);
+            passes.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Opening and closing only change the select's own state, so they build the popup options once and never rebuild the hidden ones (#13519).
+        /// </summary>
+        [Test]
+        public async Task Select_OpenAndClose_DoNotRebuildOptions()
+        {
+            var passes = 0;
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.ChildContent, builder =>
+                {
+                    passes++;
+                    builder.OpenComponent<MudSelectItem<string>>(0);
+                    builder.AddComponentParameter(1, nameof(MudSelectItem<string>.Value), "Espresso");
+                    builder.CloseComponent();
+                    builder.OpenComponent<MudSelectItem<string>>(2);
+                    builder.AddComponentParameter(3, nameof(MudSelectItem<string>.Value), "Latte");
+                    builder.CloseComponent();
+                }));
+            passes.Should().Be(1);
+
+            await comp.InvokeAsync(() => comp.Instance.OpenMenu());
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Should().HaveCount(2));
+            passes.Should().Be(2, "the popup builds its own copy of the options");
+
+            await comp.InvokeAsync(() => comp.Instance.CloseMenu());
+            passes.Should().Be(2, "closing does not rebuild either copy");
+        }
+
+        /// <summary>
+        /// A render from the parent still rebuilds the options, even when it passes the same ChildContent delegate.
+        /// </summary>
+        [Test]
+        public async Task Select_ParentRender_RebuildsOptionsWithSameChildContent()
+        {
+            var text = "Espresso";
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.ChildContent, builder =>
+                {
+                    builder.OpenComponent<MudSelectItem<string>>(0);
+                    builder.AddComponentParameter(1, nameof(MudSelectItem<string>.Value), "coffee");
+                    builder.AddComponentParameter(2, nameof(MudSelectItem<string>.ChildContent), (RenderFragment)(content => content.AddContent(0, text)));
+                    builder.CloseComponent();
+                }));
+
+            await comp.InvokeAsync(() => comp.Instance.OpenMenu());
+            await provider.WaitForAssertionAsync(() => provider.Find("div.mud-list-item").TextContent.Trim().Should().Be("Espresso"));
+
+            text = "Latte";
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Dense, true));
+
+            await provider.WaitForAssertionAsync(() => provider.Find("div.mud-list-item").TextContent.Trim().Should().Be("Latte"));
         }
 
         /// <summary>
