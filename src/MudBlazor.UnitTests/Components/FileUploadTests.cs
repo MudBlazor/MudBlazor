@@ -933,7 +933,7 @@ namespace MudBlazor.UnitTests.Components
             // 1. Arrange: Use an inline wildcard predicate (_ => true) to catch any structural string ID argument
             var mockPaths = new List<string> { "folder/file1.txt", "folder/subfolder/file2.txt" };
             var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
-                "mudFileUpload.getRelativePaths", 
+                "mudFileUpload.getRelativePaths",
                 _ => true // Smoothly matches any invocation signature regardless of dynamic IDs
             ).SetResult(mockPaths);
 
@@ -946,7 +946,7 @@ namespace MudBlazor.UnitTests.Components
 
             // 2. Act: Target the child component element and dispatch the files
             var inputFileComponent = comp.FindComponent<InputFile>();
-            
+
             var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
             var file2 = InputFileContent.CreateFromText("file2 content", "file2.txt");
 

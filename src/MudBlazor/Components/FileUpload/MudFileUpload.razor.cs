@@ -513,8 +513,8 @@ namespace MudBlazor
             if (Folder && FolderPathsChanged.HasDelegate)
             {
                 //Use localIndex = 1 since MudBlazor initializes the first active input index at 1
-                var inputId = GetInputId(1); 
-                
+                var inputId = GetInputId(1);
+
                 // Pass the string ID to JS to extract webkitRelativePath arrays
                 var paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudFileUpload.getRelativePaths", inputId);
 
