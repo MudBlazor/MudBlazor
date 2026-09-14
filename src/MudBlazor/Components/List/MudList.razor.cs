@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
+using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -60,6 +62,13 @@ namespace MudBlazor
         private HashSet<T> _selection = new();
         private MudListItem<T>? _activeItem;
         private bool _hasSingleSelection;
+        private ElementReference _elementReference;
+        private bool _interceptingKeys;
+        private static readonly KeyInterceptorOptions _keyInterceptorOptions = new("mud-list-item", MudListItem<T>.InterceptedKeys);
+
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
+
         internal MudList<T> TopLevelList { get; private set; }
 
         /// <summary>
@@ -592,6 +601,26 @@ namespace MudBlazor
             }
 
             return attributes;
+        }
+
+        /// <summary>
+        /// Suppresses the browser's default action for the keys its items handle, with one listener on the list element instead of one per item.
+        /// </summary>
+        /// <remarks>
+        /// Each keyboard-enabled item calls this after it renders, so a list whose items all leave keyboard handling to a parent never connects.
+        /// Nested lists connect their own element, which keeps their items covered when they render outside this list's element.
+        /// The listener goes away with the element, so there is nothing to disconnect.
+        /// </remarks>
+        internal Task InterceptKeysAsync()
+        {
+            if (_interceptingKeys)
+            {
+                return Task.CompletedTask;
+            }
+
+            _interceptingKeys = true;
+
+            return JsRuntime.InvokeVoidAsyncWithErrorHandling("mudKeyInterceptor.connectElement", _elementReference, _keyInterceptorOptions).AsTask();
         }
 
         /// <summary>

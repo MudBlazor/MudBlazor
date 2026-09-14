@@ -18,6 +18,21 @@ namespace MudBlazor
     {
         private bool _selected;
         private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
+
+        /// <summary>
+        /// The keys whose browser default an item suppresses: Space and the arrows would scroll the page, and Enter would submit or follow a link.
+        /// </summary>
+        internal static readonly KeyOptions[] InterceptedKeys =
+        [
+            new(" ", preventDown: "key+none", preventUp: "key+none"),
+            new("ArrowUp", preventDown: "key+none"),
+            new("ArrowDown", preventDown: "key+none"),
+            new("Home", preventDown: "key+none"),
+            new("End", preventDown: "key+none"),
+            new("Enter", preventDown: "key+none"),
+            new("NumpadEnter", preventDown: "key+none")
+        ];
+
         private ElementReference _elementReference = new();
         private string? _subscribedElementId;
         internal string ElementId { get; } = Identifier.Create("list-item");
@@ -145,7 +160,7 @@ namespace MudBlazor
         /// Allows this item to handle keyboard input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  Set to <c>false</c> when a parent component owns keyboard navigation, which avoids a key interceptor per item.
+        /// Defaults to <c>true</c>.  Set to <c>false</c> when a parent component owns keyboard navigation; a list whose items all do this never attaches a key interceptor.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
@@ -313,7 +328,13 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            var effectiveElementId = KeyboardEnabled ? GetEffectiveElementId(ElementId) : null;
+            if (KeyboardEnabled && MudList is not null)
+            {
+                await MudList.InterceptKeysAsync();
+            }
+
+            // An item outside a list has no list element to share, so it intercepts keys on its own element.
+            var effectiveElementId = KeyboardEnabled && MudList is null ? GetEffectiveElementId(ElementId) : null;
 
             if (!string.Equals(_subscribedElementId, effectiveElementId, StringComparison.Ordinal))
             {
@@ -325,28 +346,8 @@ namespace MudBlazor
 
                 if (effectiveElementId is not null)
                 {
-                    var options = new KeyInterceptorOptions(
-                        [
-                            // prevent scrolling page
-                            new(" ", preventDown: "key+none", preventUp: "key+none"),
-                            // prevent scrolling page and move focus to previous item
-                            new("ArrowUp", preventDown: "key+none"),
-                            // prevent scrolling page and move focus to next item
-                            new("ArrowDown", preventDown: "key+none"),
-                            new("Home", preventDown: "key+none"),
-                            new("End", preventDown: "key+none"),
-                            new("Enter", preventDown: "key+none"),
-                            new("NumpadEnter", preventDown: "key+none")
-                        ]);
-
-                    await KeyInterceptorService.SubscribeAsync(effectiveElementId, options, keys => keys
-                        .When(CanHandleKeys, builder => builder
-                            .OnKeyDown("ArrowDown", HandleArrowDownAsync)
-                            .OnKeyDown("ArrowUp", HandleArrowUpAsync)
-                            .OnKeyDown("Home", HandleHomeAsync)
-                            .OnKeyDown("End", HandleEndAsync)
-                            .OnKeyDown(" ", HandleSpaceAsync)
-                            .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)));
+                    // HandleKeyDownAsync handles the keys, so the interceptor only stops the browser's default action.
+                    await KeyInterceptorService.SubscribeAsync(effectiveElementId, new KeyInterceptorOptions(InterceptedKeys), static (KeyMapBuilder _) => { });
 
                     _subscribedElementId = effectiveElementId;
                 }
@@ -421,7 +422,24 @@ namespace MudBlazor
             }
         }
 
-        private Task HandleKeyDownAsync(KeyboardEventArgs args) => KeyInterceptorService.DispatchAsync(_subscribedElementId ?? GetEffectiveElementId(ElementId), KeyEventKind.Down, args);
+        private Task HandleKeyDownAsync(KeyboardEventArgs args)
+        {
+            if (!KeyboardEnabled || !CanHandleKeys())
+            {
+                return Task.CompletedTask;
+            }
+
+            return args.Key switch
+            {
+                "ArrowDown" => HandleArrowDownAsync(),
+                "ArrowUp" => HandleArrowUpAsync(),
+                "Home" => HandleHomeAsync(),
+                "End" => HandleEndAsync(),
+                " " => HandleSpaceAsync(),
+                "Enter" or "NumpadEnter" => HandleEnterAsync(),
+                _ => Task.CompletedTask
+            };
+        }
 
         private bool CanHandleKeys() => !GetDisabled() && MudList is not null && MudList.IsInteractive() && TopLevelList is not null && TopLevelList.IsTabbable(this);
 

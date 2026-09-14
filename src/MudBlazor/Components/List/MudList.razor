@@ -3,7 +3,8 @@
 @typeparam T
 @attribute [CascadingTypeParameter(nameof(T))]
 
-<div @attributes="GetUserAttributes()"
+<div @ref="_elementReference"
+     @attributes="GetUserAttributes()"
      class="@Classname"
      style="@Style">
     <CascadingValue Value="@this" IsFixed="true">

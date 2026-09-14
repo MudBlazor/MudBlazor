@@ -4,6 +4,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.List;
 using NUnit.Framework;
@@ -14,10 +15,10 @@ namespace MudBlazor.UnitTests.Components
     public class ListTests : BunitTest
     {
         /// <summary>
-        /// List items install their own key interceptor by default.
+        /// Items in a list share one key interceptor on the list element instead of installing their own.
         /// </summary>
         [Test]
-        public void ListItems_RegisterKeyInterceptorsByDefault()
+        public void ListItems_ShareTheListKeyInterceptor()
         {
             var keyInterceptorService = Context.AddKeyInterceptorService();
 
@@ -25,7 +26,45 @@ namespace MudBlazor.UnitTests.Components
                 .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso"))
                 .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
 
-            keyInterceptorService.ObserversCount.Should().Be(2);
+            keyInterceptorService.ObserversCount.Should().Be(0);
+            var connect = Context.JSInterop.Invocations["mudKeyInterceptor.connectElement"].Single();
+            connect.Arguments[0].Should().BeOfType<ElementReference>();
+            connect.Arguments[1].Should().BeOfType<KeyInterceptorOptions>().Which.TargetClass.Should().Be("mud-list-item");
+        }
+
+        /// <summary>
+        /// A list whose items all leave keyboard handling to a parent never attaches the interceptor, and those items ignore key commands.
+        /// </summary>
+        [Test]
+        public async Task ListItems_KeyboardDisabled_SkipListKeyInterceptorAndKeyCommands()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Espresso").Add(x => x.KeyboardEnabled, false))
+                .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado").Add(x => x.KeyboardEnabled, false)));
+
+            Context.JSInterop.Invocations["mudKeyInterceptor.connectElement"].Should().BeEmpty();
+
+            var items = comp.FindAll("div.mud-list-item");
+            await items[0].KeyDownAsync(new KeyboardEventArgs { Key = "End" });
+
+            items = comp.FindAll("div.mud-list-item");
+            items[0].GetAttribute("tabindex").Should().Be("0");
+            items[1].GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        /// <summary>
+        /// A nested list attaches its own interceptor, so its items stay covered when it renders outside the parent list's element.
+        /// </summary>
+        [Test]
+        public void NestedList_AttachesItsOwnKeyInterceptor()
+        {
+            Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Coffee")
+                    .Add(x => x.Expanded, true)
+                    .Add<MudListItem<string>>(x => x.NestedList, nested => nested.Add(x => x.Text, "Espresso"))));
+
+            Context.JSInterop.Invocations["mudKeyInterceptor.connectElement"].Should().HaveCount(2);
         }
 
         /// <summary>

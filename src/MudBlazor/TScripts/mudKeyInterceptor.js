@@ -23,6 +23,17 @@ class MudKeyInterceptorFactory {
     }
 
     /**
+     * Attaches a key interceptor that only applies preventDefault/stopPropagation rules, so it needs no .NET reference or element id.
+     */
+    connectElement(element, options) {
+        if (!element)
+            return;
+        if (!element.mudKeyInterceptor)
+            element.mudKeyInterceptor = new MudKeyInterceptor(null, options);
+        element.mudKeyInterceptor.connect(element);
+    }
+
+    /**
      * Updates the key option for an existing interceptor registration.
      */
     updatekey(elementId, option) {
