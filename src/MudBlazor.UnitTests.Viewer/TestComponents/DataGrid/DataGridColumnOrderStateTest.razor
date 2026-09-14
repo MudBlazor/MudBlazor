@@ -1,0 +1,178 @@
+﻿<MudDataGrid Items="@Items"
+             DragDropColumnReordering="true"
+             ColumnsPanelReordering="true"
+             ShowMenuIcon="true"
+             ColumnReorderMode="@ColumnReorderMode"
+             ColumnOrderChanged="@((DataGridColumnOrderChangedEventArgs<Model> args) => OnColumnOrderChanged(args))">
+    <Columns>
+        @if (ShowHierarchy)
+        {
+            <HierarchyColumn T="Model" />
+        }
+        @if (ShowSelect)
+        {
+            <SelectColumn T="Model" @bind-Order="SelectOrder" />
+        }
+        <PropertyColumn Property="x => x.Name" Title="Name" @bind-Order="NameOrder" />
+        @if (BindAgeOrder)
+        {
+            <PropertyColumn Property="x => x.Age" Title="Age" @bind-Order="AgeOrder" />
+        }
+        else
+        {
+            <PropertyColumn Property="x => x.Age" Title="Age" />
+        }
+        <PropertyColumn Property="x => x.Status" Title="Status" @bind-Order="StatusOrder" />
+    </Columns>
+</MudDataGrid>
+
+<div class="d-flex gap-2 mt-3">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveOrders">Save layout</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ResetOrders">Reset layout</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="RestoreOrders">Restore layout</MudButton>
+</div>
+
+<MudPaper Class="mt-3">
+    @foreach (var row in GetOrderRows())
+    {
+        <div class="d-flex align-center justify-space-between px-4 py-3">
+            <div class="d-flex align-center gap-2">
+                <MudIcon Icon="@Icons.Material.Filled.DragIndicator" />
+                <MudText Typo="Typo.body1">@row.Label</MudText>
+            </div>
+            <MudText Typo="Typo.body1">@row.Order</MudText>
+        </div>
+    }
+</MudPaper>
+
+<MudText Class="mt-2" Typo="Typo.body2">@StatusText</MudText>
+
+@code {
+    public static string __description__ = "Unit Test and Visual Test for DataGrid Column Order State";
+
+    public List<Model> Items { get; } =
+    [
+        new("Sam", 56, Severity.Normal),
+        new("Alicia", 54, Severity.Info),
+        new("Ira", 27, Severity.Success)
+    ];
+
+    public int? NameOrder { get; set; }
+
+    public int? AgeOrder { get; set; }
+
+    public int? StatusOrder { get; set; }
+
+    [Parameter]
+    public bool ShowSelect { get; set; }
+
+    [Parameter]
+    public bool ShowHierarchy { get; set; }
+
+    [Parameter]
+    public bool BindAgeOrder { get; set; } = true;
+
+    [Parameter]
+    public DataGridDragAndDropColumnReorderMode ColumnReorderMode { get; set; } = DataGridDragAndDropColumnReorderMode.Insert;
+
+    [Parameter]
+    public int? InitialNameOrder { get; set; }
+
+    [Parameter]
+    public int? InitialAgeOrder { get; set; }
+
+    [Parameter]
+    public int? InitialStatusOrder { get; set; }
+
+    [Parameter]
+    public int? InitialSelectOrder { get; set; }
+
+    public int? SelectOrder { get; set; }
+
+    public int CallbackCount { get; private set; }
+
+    public DataGridColumnOrderChangedEventArgs<Model>? LastArgs { get; private set; }
+
+    public string StatusText { get; private set; } = "Reorder columns to update the bound Order state shown below.";
+
+    private (int? Select, int? Name, int? Age, int? Status) _savedOrders;
+
+    protected override void OnInitialized()
+    {
+        NameOrder = InitialNameOrder;
+        AgeOrder = InitialAgeOrder;
+        StatusOrder = InitialStatusOrder;
+        SelectOrder = InitialSelectOrder;
+    }
+
+    public void SetOrders(int? nameOrder, int? ageOrder, int? statusOrder, int? selectOrder = null)
+    {
+        NameOrder = nameOrder;
+        AgeOrder = ageOrder;
+        StatusOrder = statusOrder;
+        SelectOrder = selectOrder;
+        StatusText = "Order values updated.";
+        StateHasChanged();
+    }
+
+    private void SaveOrders()
+    {
+        _savedOrders = (SelectOrder, NameOrder, AgeOrder, StatusOrder);
+        StatusText = "Layout saved.";
+    }
+
+    private void ResetOrders()
+    {
+        SetOrders(null, null, null, null);
+        StatusText = "Layout reset to null order values and default placement.";
+    }
+
+    private void RestoreOrders()
+    {
+        SetOrders(_savedOrders.Name, _savedOrders.Age, _savedOrders.Status, _savedOrders.Select);
+        StatusText = "Saved layout restored without a grid callback.";
+    }
+
+    private Task OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Model> args)
+    {
+        CallbackCount++;
+        LastArgs = args;
+        StatusText = $"{GetColumnLabel(args.Column)} moved from {args.PreviousIndex} to {args.CurrentIndex}.";
+        return Task.CompletedTask;
+    }
+
+    private IReadOnlyList<(string Label, string Order)> GetOrderRows()
+    {
+        var rows = new List<(string Label, string Order)>();
+        if (ShowHierarchy)
+        {
+            rows.Add(("Hierarchy Column", "Pinned"));
+        }
+
+        if (ShowSelect)
+        {
+            rows.Add(("Select Column", FormatOrder(SelectOrder)));
+        }
+
+        rows.Add(("Name", FormatOrder(NameOrder)));
+        rows.Add(("Age", BindAgeOrder ? FormatOrder(AgeOrder) : "Unbound"));
+        rows.Add(("Status", FormatOrder(StatusOrder)));
+        return rows;
+    }
+
+    private static string GetColumnLabel(Column<Model> column)
+    {
+        return column.Tag?.ToString() switch
+        {
+            "select-column" => "Select Column",
+            "hierarchy-column" => "Hierarchy Column",
+            _ when !string.IsNullOrWhiteSpace(column.Title) => column.Title,
+            _ when column is TemplateColumn<Model> => "Template Column",
+            _ => column.PropertyName ?? "Column"
+        };
+    }
+
+    private static string FormatOrder(int? order) => order?.ToString() ?? "Default";
+
+    public record Model(string Name, int? Age, Severity? Status);
+}
