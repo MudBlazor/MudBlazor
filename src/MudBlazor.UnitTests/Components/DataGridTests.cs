@@ -5097,6 +5097,58 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Enter in the column filter menu closes the menu when applying the filter finishes after an await, whether in a <c>FilterChanged</c> handler or a server load.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task DataGridColumnFilterMenu_EnterAfterAwait_ClosesMenu(bool serverSide)
+        {
+            var comp = Context.Render<DataGridColumnFilterMenuGateTest>(parameters => parameters.Add(x => x.ServerSide, serverSide));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuGateTest.Model>>();
+            comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(4));
+
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.Find(".filter-input input").InputAsync(new ChangeEventArgs { Value = "Ira" });
+
+            var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            comp.Instance.Gate = gate;
+            var keyDown = comp.Find(".filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            gate.SetResult();
+            await keyDown;
+
+            comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(1));
+            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Escape in the column filter menu closes the menu when clearing the filter reloads server data after an await.
+        /// </summary>
+        [Test]
+        public async Task DataGridColumnFilterMenu_EscapeAfterServerLoad_ClosesMenu()
+        {
+            var comp = Context.Render<DataGridColumnFilterMenuGateTest>(parameters => parameters.Add(x => x.ServerSide, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuGateTest.Model>>();
+            comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(4));
+
+            await comp.Find(".filter-button").ClickAsync();
+            await comp.Find(".filter-input input").InputAsync(new ChangeEventArgs { Value = "Ira" });
+            await comp.Find(".apply-filter-button").ClickAsync();
+            comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(1));
+
+            await comp.Find(".filter-button").ClickAsync();
+            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Count.Should().Be(1);
+
+            var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            comp.Instance.Gate = gate;
+            var keyDown = comp.Find(".filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
+            gate.SetResult();
+            await keyDown;
+
+            comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(4));
+            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
+        }
+
+        /// <summary>
         /// Editing a filter which is already applied still updates the rows as the value changes.
         /// </summary>
         [Test]
