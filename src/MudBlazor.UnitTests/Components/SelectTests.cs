@@ -1816,6 +1816,64 @@ namespace MudBlazor.UnitTests.Components
             icons[5].Attributes["d"].Value.Should().Be(@unchecked); // test3
         }
 
+        /// <summary>
+        /// Reused select items recalculate checkbox state when normal parent updates replace their values (#13561).
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_ReusedVisibleItem_RecalculatesCheckboxWhenValueChanges()
+        {
+            const string uncheckedIcon =
+                "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
+            const string checkedIcon =
+                "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
+            var selectedProduct = new ReusedSelectItemValueTest.Product { Id = "1" };
+            var initialDisplayedProduct = new ReusedSelectItemValueTest.Product { Id = "1" };
+            var differentDisplayedProduct = new ReusedSelectItemValueTest.Product { Id = "2" };
+            var equivalentDisplayedProduct = new ReusedSelectItemValueTest.Product { Id = "1" };
+            initialDisplayedProduct.Should().NotBeSameAs(selectedProduct);
+            differentDisplayedProduct.Should().NotBeSameAs(selectedProduct);
+            differentDisplayedProduct.Should().NotBeSameAs(initialDisplayedProduct);
+            equivalentDisplayedProduct.Should().NotBeSameAs(selectedProduct);
+            equivalentDisplayedProduct.Should().NotBeSameAs(initialDisplayedProduct);
+            equivalentDisplayedProduct.Should().NotBeSameAs(differentDisplayedProduct);
+
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<ReusedSelectItemValueTest>(parameters => parameters
+                .Add(x => x.SelectedProduct, selectedProduct)
+                .Add(x => x.DisplayedProduct, initialDisplayedProduct));
+            var select = comp.FindComponent<MudSelect<ReusedSelectItemValueTest.Product>>();
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Should().ContainSingle());
+
+            MudSelectItem<ReusedSelectItemValueTest.Product> VisibleItem() => provider
+                .FindComponents<MudSelectItem<ReusedSelectItemValueTest.Product>>()
+                .Single(item => !item.Instance.HideContent)
+                .Instance;
+            string CheckboxPath() => GetCheckboxPath(provider.FindAll("div.mud-list-item").Single());
+            void SelectionShouldRemainUnchanged() => select.Instance.GetState(x => x.SelectedValues)
+                .Should().ContainSingle().Which.Should().BeSameAs(selectedProduct);
+
+            var reusedItem = VisibleItem();
+            CheckboxPath().Should().Be(checkedIcon);
+            SelectionShouldRemainUnchanged();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedProduct, selectedProduct)
+                .Add(x => x.DisplayedProduct, differentDisplayedProduct));
+
+            VisibleItem().Should().BeSameAs(reusedItem);
+            CheckboxPath().Should().Be(uncheckedIcon);
+            SelectionShouldRemainUnchanged();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedProduct, selectedProduct)
+                .Add(x => x.DisplayedProduct, equivalentDisplayedProduct));
+
+            VisibleItem().Should().BeSameAs(reusedItem);
+            CheckboxPath().Should().Be(checkedIcon);
+            SelectionShouldRemainUnchanged();
+        }
+
         [Test(Description = "A custom Comparer must drive value->item resolution for highlight/active-descendant, not just selection state.")]
         public async Task SingleSelectWithCustomComparer_HighlightsKeyEqualItem()
         {

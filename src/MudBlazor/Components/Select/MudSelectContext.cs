@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
-using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -77,11 +76,20 @@ internal sealed class MudSelectContext<T>
         // Note: Do NOT add to _shadowLookup here - that's only for shadow items
         // Shadow items are registered separately via RegisterShadowItem
 
-        // Check if this item's value is currently selected
+        return IsItemSelected(item);
+    }
+
+    /// <summary>
+    /// Check if this item's value is currently selected using the select comparer if specified
+    /// </summary>
+    /// <param name="item">The item to check</param>
+    /// <returns></returns>
+    public bool IsItemSelected(MudSelectItem<T> item)
+    {
         return _select.MultiSelection switch
         {
-            true => _select.GetSelectedValues()?.Contains(item.Value) == true,
-            false => _select.ReadValue?.Equals(item.Value) == true
+            true => _select.GetSelectedValues()?.Contains(item.Value, _select.Comparer) == true,
+            false => (_select.Comparer ?? EqualityComparer<T?>.Default).Equals(_select.ReadValue, item.Value)
         };
     }
 

@@ -247,6 +247,12 @@ namespace MudBlazor
         {
             _context?.OnItemValueChanged(this, args.LastValue, args.Value);
             _shadowContext?.OnShadowItemValueChanged(this, args.LastValue, args.Value);
+
+            if (_context is not null)
+            {
+                //Update selected value when updated without new item creation
+                Selected = _context.IsItemSelected(this);
+            }
         }
 
         /// <summary>
