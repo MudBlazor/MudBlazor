@@ -1,0 +1,26 @@
+<MudSplitPanel @ref="_panel">
+    <FirstPanel>First Panel</FirstPanel>
+    <SecondPanel>Second Panel</SecondPanel>
+</MudSplitPanel>
+
+@code {
+    private MudSplitPanel _panel = null!;
+
+    [Parameter]
+    public int? DividerPosition { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (DividerPosition is { } offset)
+            {
+                await _panel.SetDividerPositionAsync(offset);
+            }
+            else
+            {
+                await _panel.ResetDividerPositionAsync();
+            }
+        }
+    }
+}

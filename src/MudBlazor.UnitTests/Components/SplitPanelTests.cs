@@ -79,6 +79,30 @@ public class SplitPanelTests : BunitTest
     }
 
     [Test]
+    public void ResetDividerPositionFromParentFirstRender_RunsAfterBuild()
+    {
+        Context.Render<SplitPanelDividerPositionOnFirstRenderTest>();
+
+        var invocations = Context.JSInterop.Invocations.ToArray();
+        invocations.Should().HaveCount(2);
+        invocations[0].Identifier.Should().Be("mudSplitPanel.build");
+        invocations[1].Identifier.Should().Be("mudSplitPanel_resetDividerPosition");
+    }
+
+    [Test]
+    public void SetDividerPositionFromParentFirstRender_RunsAfterBuild()
+    {
+        Context.Render<SplitPanelDividerPositionOnFirstRenderTest>(parameters => parameters
+            .Add(p => p.DividerPosition, 123));
+
+        var invocations = Context.JSInterop.Invocations.ToArray();
+        invocations.Should().HaveCount(2);
+        invocations[0].Identifier.Should().Be("mudSplitPanel.build");
+        invocations[1].Identifier.Should().Be("mudSplitPanel_setDividerPosition");
+        invocations[1].Arguments[1].Should().Be(123);
+    }
+
+    [Test]
     public async Task ExecutesSetDividerPositionJsCall()
     {
         var comp = Context.Render<SplitPanelTest>();
@@ -96,6 +120,15 @@ public class SplitPanelTests : BunitTest
 
         var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_getDividerPosition");
         invocation.Arguments.Count.Should().Be(1);
+    }
+
+    [Test]
+    public void GetDividerPositionFromParentFirstRender_ThrowsClearException()
+    {
+        var action = () => Context.Render<SplitPanelGetOnFirstRenderTest>();
+
+        action.Should().Throw<InvalidOperationException>()
+            .WithMessage("The split panel has not been initialized yet.");
     }
 
     [Test]
