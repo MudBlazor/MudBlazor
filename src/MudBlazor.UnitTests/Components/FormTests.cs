@@ -6,6 +6,7 @@ using AwesomeAssertions.Execution;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Extensions;
 using MudBlazor.Resources;
@@ -2862,6 +2863,173 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.ValidationDelay, 0)
                 .AddChildContent<MudTextField<int?>>());
             return (comp.Instance, comp, comp.FindComponent<MudTextField<int?>>().Instance);
+        }
+
+        /// <summary>
+        /// #13769: OnEnterPressed waits for the Enter keyup so a value committed on change between keydown and keyup is already applied.
+        /// </summary>
+        [TestCase("Enter")]
+        [TestCase("NumpadEnter")]
+        public async Task OnEnterPressed_InvokedOnKeyUp_AfterValueCommitted(string key)
+        {
+            var observed = new List<string>();
+            string value = null;
+            var comp = RenderEnterForm(() => observed.Add(value), v => value = v);
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = key });
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "a" });
+            observed.Should().BeEmpty();
+
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = key });
+            observed.Should().Equal("a");
+        }
+
+        /// <summary>
+        /// OnEnterPressed does not wait for a change commit that is still awaiting an asynchronous TextChanged callback.
+        /// </summary>
+        [Test]
+        public async Task OnEnterPressed_PendingAsyncTextChanged_ValueNotYetApplied()
+        {
+            var observed = new List<string>();
+            string value = null;
+            var textChanged = new TaskCompletionSource();
+            var comp = RenderEnterForm(() => observed.Add(value), v => value = v, _ => textChanged.Task);
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            var change = comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "a" });
+            change.IsCompleted.Should().BeFalse();
+            observed.Should().BeEmpty();
+
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            observed.Should().ContainSingle().Which.Should().BeNull();
+
+            textChanged.SetResult();
+            await change;
+            value.Should().Be("a");
+        }
+
+        /// <summary>
+        /// An Enter keyup without a preceding Enter keydown does not invoke OnEnterPressed.
+        /// </summary>
+        [Test]
+        public async Task OnEnterPressed_KeyUpWithoutKeyDown_NotInvoked()
+        {
+            var invocations = 0;
+            var comp = RenderEnterForm(() => invocations++);
+
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            invocations.Should().Be(0);
+        }
+
+        /// <summary>
+        /// An Enter keydown that is part of an IME composition does not arm OnEnterPressed.
+        /// </summary>
+        [Test]
+        public async Task OnEnterPressed_ComposingKeyDown_NotInvoked()
+        {
+            var invocations = 0;
+            var comp = RenderEnterForm(() => invocations++);
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", IsComposing = true });
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            invocations.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A different key pressed after the Enter keydown disarms OnEnterPressed.
+        /// </summary>
+        [Test]
+        public async Task OnEnterPressed_OtherKeyDownAfterEnter_NotInvoked()
+        {
+            var invocations = 0;
+            var comp = RenderEnterForm(() => invocations++);
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "a" });
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            invocations.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Key handlers passed to MudForm as attributes still run, with or without OnEnterPressed.
+        /// </summary>
+        [Test]
+        public async Task UserKeyHandler_Invoked(
+            [Values("onkeydown", "onkeyup")] string eventName,
+            [Values] bool withOnEnterPressed,
+            [Values("TypedCallback", "EventArgsCallback", "ObjectCallback", "UntypedCallback", "Action", "ActionWithArgs", "FuncTask", "FuncTaskWithArgs", "CustomDelegate")] string handlerShape)
+        {
+            var received = new List<object>();
+            object handler = handlerShape switch
+            {
+                "TypedCallback" => EventCallback.Factory.Create<KeyboardEventArgs>(this, received.Add),
+                "EventArgsCallback" => EventCallback.Factory.Create<EventArgs>(this, received.Add),
+                "ObjectCallback" => EventCallback.Factory.Create<object>(this, received.Add),
+                "UntypedCallback" => EventCallback.Factory.Create(this, () => received.Add(null)),
+                "Action" => new Action(() => received.Add(null)),
+                "ActionWithArgs" => new Action<KeyboardEventArgs>(received.Add),
+                "FuncTask" => new Func<Task>(() => { received.Add(null); return Task.CompletedTask; }),
+                "FuncTaskWithArgs" => new Func<KeyboardEventArgs, Task>(a => { received.Add(a); return Task.CompletedTask; }),
+                "CustomDelegate" => new KeyboardHandler(received.Add),
+                _ => throw new ArgumentOutOfRangeException(nameof(handlerShape)),
+            };
+            var takesArgs = handlerShape is not ("UntypedCallback" or "Action" or "FuncTask");
+            var comp = Context.Render<MudForm>(p =>
+            {
+                p.AddUnmatched(eventName, handler);
+                if (withOnEnterPressed)
+                {
+                    p.Add(x => x.OnEnterPressed, () => { });
+                }
+            });
+
+            var args = new KeyboardEventArgs { Key = "Enter" };
+            if (eventName == "onkeydown")
+            {
+                await comp.Find("form").KeyDownAsync(args);
+            }
+            else
+            {
+                await comp.Find("form").KeyUpAsync(args);
+            }
+
+            received.Should().ContainSingle();
+            if (takesArgs)
+            {
+                received[0].Should().BeSameAs(args);
+            }
+        }
+
+        /// <summary>
+        /// A user onkeyup handler still runs when OnEnterPressed throws.
+        /// </summary>
+        [Test]
+        public async Task UserKeyUpHandler_InvokedWhenOnEnterPressedThrows()
+        {
+            var userCalls = 0;
+            var comp = Context.Render<MudForm>(p => p
+                .AddUnmatched("onkeyup", EventCallback.Factory.Create<KeyboardEventArgs>(this, () => userCalls++))
+                .Add(x => x.OnEnterPressed, () => throw new InvalidOperationException()));
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            var keyUp = () => comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            await keyUp.Should().ThrowAsync<InvalidOperationException>();
+            userCalls.Should().Be(1);
+        }
+
+        private delegate void KeyboardHandler(KeyboardEventArgs args);
+
+        private IRenderedComponent<MudForm> RenderEnterForm(Action onEnterPressed, Action<string> valueChanged = null, Func<string, Task> textChanged = null)
+        {
+            return Context.Render<MudForm>(p => p
+                .Add(x => x.OnEnterPressed, onEnterPressed)
+                .AddChildContent<MudTextField<string>>(field => field
+                    .Add(x => x.ValueChanged, valueChanged ?? (_ => { }))
+                    .Add(x => x.TextChanged, textChanged ?? (_ => Task.CompletedTask))));
         }
     }
 }

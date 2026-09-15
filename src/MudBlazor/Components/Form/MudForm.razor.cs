@@ -18,6 +18,8 @@ namespace MudBlazor
         private ITimer? _timer;
         // Default is true, we need the form children to render
         private bool _shouldRender = true;
+        // A non-immediate input commits its value on change, which the browser delivers between keydown and keyup, so Enter is handled on keyup.
+        private bool _enterKeyDown;
 
         [Inject]
         private TimeProvider TimeProvider { get; set; } = null!;
@@ -158,8 +160,12 @@ namespace MudBlazor
         public EventCallback<FormFieldChangedEventArgs> FieldChanged { get; set; }
 
         /// <summary>
-        /// Occurs when <c>Enter</c> is pressed on any child input of this form.
+        /// Occurs when <c>Enter</c> is released after being pressed on any child input of this form.
         /// </summary>
+        /// <remarks>
+        /// A value that an input commits synchronously on <c>change</c> is already applied when this occurs.
+        /// A commit that is still awaiting an asynchronous callback, such as <c>TextChanged</c>, is not.
+        /// </remarks>
         [Parameter]
         public EventCallback OnEnterPressed { get; set; }
 
@@ -457,12 +463,55 @@ namespace MudBlazor
         /// <param name="formControl"></param>
         void IForm.Update(IFormComponent formControl) => EvaluateForm();
 
-        private async Task OnKeyDownAsync(KeyboardEventArgs args)
+        private Dictionary<string, object?> GetAttributes()
         {
-            if (args.Key is "Enter" or "NumpadEnter")
+            if (!OnEnterPressed.HasDelegate)
             {
-                await OnEnterPressed.InvokeAsync();
+                return UserAttributes;
             }
+
+            return new Dictionary<string, object?>(UserAttributes)
+            {
+                ["onkeydown"] = this.AsNonRenderingEventHandler<KeyboardEventArgs>(OnKeyDownAsync),
+                ["onkeyup"] = this.AsNonRenderingEventHandler<KeyboardEventArgs>(OnKeyUpAsync),
+            };
+        }
+
+        private Task OnKeyDownAsync(KeyboardEventArgs args)
+        {
+            _enterKeyDown = args.Key is "Enter" or "NumpadEnter" && !args.IsComposing;
+            return InvokeUserKeyHandlerAsync("onkeydown", args);
+        }
+
+        private async Task OnKeyUpAsync(KeyboardEventArgs args)
+        {
+            try
+            {
+                if (args.Key is "Enter" or "NumpadEnter" && _enterKeyDown)
+                {
+                    _enterKeyDown = false;
+                    await OnEnterPressed.InvokeAsync();
+                }
+            }
+            finally
+            {
+                await InvokeUserKeyHandlerAsync("onkeyup", args);
+            }
+        }
+
+        private Task InvokeUserKeyHandlerAsync(string name, KeyboardEventArgs args)
+        {
+            UserAttributes.TryGetValue(name, out var handler);
+            return handler switch
+            {
+                EventCallback<KeyboardEventArgs> typed => typed.InvokeAsync(args),
+                EventCallback<EventArgs> eventArgs => eventArgs.InvokeAsync(args),
+                EventCallback<object> boxed => boxed.InvokeAsync(args),
+                EventCallback untyped => untyped.InvokeAsync(args),
+                // Mirrors how the renderer wraps a delegate attribute on a plain element.
+                MulticastDelegate @delegate => new EventCallback(@delegate.Target as IHandleEvent, @delegate).InvokeAsync(args),
+                _ => Task.CompletedTask,
+            };
         }
 
         protected virtual void Dispose(bool disposing)
