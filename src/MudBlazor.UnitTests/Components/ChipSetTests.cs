@@ -695,5 +695,94 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.SelectedValues.Should().BeNullOrEmpty();
             comp.Find(".mud-chip").ClassList.Should().NotContain("mud-chip-selected");
         }
+
+        /// <summary>
+        /// Enabling the set in the same render that changes its selection re-enables chips whose selection did not change.
+        /// </summary>
+        [Test]
+        public async Task ChipSet_EnabledWithSelectionChange_ReenablesEveryChip()
+        {
+            var comp = RenderChipSetWithStaticChips(parameters => parameters.Add(p => p.Disabled, true));
+            comp.FindAll(".mud-chip").Should().AllSatisfy(chip => chip.ClassList.Should().Contain("mud-disabled"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Disabled, false)
+                .Add(p => p.SelectedValue, "Milk"));
+
+            comp.FindAll(".mud-chip").Should().AllSatisfy(chip =>
+            {
+                chip.ClassList.Should().NotContain("mud-disabled");
+                chip.HasAttribute("blazor:onclick").Should().BeTrue();
+            });
+        }
+
+        /// <summary>
+        /// Changing the set's <see cref="MudChipSet{T}.Disabled"/> and <see cref="MudChipSet{T}.ReadOnly"/> on their own reaches every chip.
+        /// </summary>
+        [Test]
+        public async Task ChipSet_DisabledAndReadOnlyChanged_ReachEveryChip()
+        {
+            var comp = RenderChipSetWithStaticChips();
+            comp.FindAll(".mud-chip").Should().AllSatisfy(chip => chip.ClassList.Should().Contain("mud-clickable"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Disabled, true));
+            comp.FindAll(".mud-chip").Should().AllSatisfy(chip => chip.ClassList.Should().Contain("mud-disabled"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Disabled, false).Add(p => p.ReadOnly, true));
+            comp.FindAll(".mud-chip").Should().AllSatisfy(chip =>
+            {
+                chip.ClassList.Should().NotContain("mud-disabled");
+                chip.ClassList.Should().NotContain("mud-clickable");
+            });
+        }
+
+        /// <summary>
+        /// Changing the set's appearance parameters on their own reaches every chip.
+        /// </summary>
+        [Test]
+        public async Task ChipSet_AppearanceChanged_ReachesEveryChip()
+        {
+            var comp = RenderChipSetWithStaticChips();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Color, Color.Error)
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Size, Size.Small)
+                .Add(p => p.Label, true)
+                .Add(p => p.Ripple, false)
+                .Add(p => p.AllClosable, true));
+
+            comp.FindAll(".mud-chip").Should().AllSatisfy(chip =>
+            {
+                chip.ClassList.Should().Contain("mud-chip-color-error");
+                chip.ClassList.Should().Contain("mud-chip-outlined");
+                chip.ClassList.Should().Contain("mud-chip-size-small");
+                chip.ClassList.Should().Contain("mud-chip-label");
+                chip.ClassList.Should().NotContain("mud-ripple");
+            });
+            comp.FindAll("button.mud-chip-close-button").Count.Should().Be(3);
+        }
+
+        /// <summary>
+        /// Renders a single-selection set of three chips whose own parameters never change, so only the set can make them render.
+        /// </summary>
+        /// <param name="parameters">Additional parameters for the set.</param>
+        private IRenderedComponent<MudChipSet<string>> RenderChipSetWithStaticChips(Action<ComponentParameterCollectionBuilder<MudChipSet<string>>> parameters = null) =>
+            Context.Render<MudChipSet<string>>(builder =>
+            {
+                builder.Add(p => p.SelectionMode, SelectionMode.SingleSelection);
+                parameters?.Invoke(builder);
+                builder.Add(p => p.ChildContent, content =>
+                {
+                    var values = new[] { "Milk", "Eggs", "Soap" };
+                    for (var i = 0; i < values.Length; i++)
+                    {
+                        content.OpenComponent<MudChip<string>>(i * 3);
+                        content.AddComponentParameter((i * 3) + 1, nameof(MudChip<string>.Value), values[i]);
+                        content.AddComponentParameter((i * 3) + 2, nameof(MudChip<string>.Text), values[i]);
+                        content.CloseComponent();
+                    }
+                });
+            });
     }
 }
