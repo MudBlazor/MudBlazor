@@ -927,6 +927,45 @@ namespace MudBlazor.UnitTests.Components
             text.Should().Be("Name:John");
         }
 
+        /// <summary>
+        /// Clicking a top-level group's expander updates the expanded state its group template, class function, and style function receive.
+        /// </summary>
+        [Test]
+        public async Task DataGridGroupExpanderClick_UpdatesExpandedForGroupTemplate()
+        {
+            var comp = Context.Render<DataGridGroupExpandedTemplateTest>();
+            comp.FindAll(".category-state").Select(x => x.TextContent).Should().Equal("Collapsed", "Collapsed");
+
+            await comp.FindAll("button.mud-table-row-expander")[0].ClickAsync();
+
+            comp.FindAll(".category-state").Select(x => x.TextContent).Should().Equal("Expanded", "Collapsed");
+            var groupCell = comp.FindAll("td.mud-datagrid-group")[0];
+            groupCell.ClassList.Should().Contain("group-expanded");
+            groupCell.GetAttribute("style").Should().Contain("--group-expanded: 1");
+
+            await comp.FindAll("button.mud-table-row-expander")[0].ClickAsync();
+
+            comp.FindAll(".category-state").Select(x => x.TextContent).Should().Equal("Collapsed", "Collapsed");
+            comp.FindAll("td.mud-datagrid-group")[0].ClassList.Should().Contain("group-collapsed");
+        }
+
+        /// <summary>
+        /// Clicking a nested group's expander updates the expanded state its group template and class function receive.
+        /// </summary>
+        [Test]
+        public async Task DataGridNestedGroupExpanderClick_UpdatesExpandedForGroupTemplate()
+        {
+            var comp = Context.Render<DataGridGroupExpandedTemplateTest>();
+            await comp.FindAll("button.mud-table-row-expander")[0].ClickAsync();
+            comp.FindAll(".color-state").Select(x => x.TextContent).Should().Equal("Collapsed", "Collapsed");
+
+            var nestedExpander = comp.FindAll("tr").First(row => row.QuerySelector(".color-state") is not null).QuerySelector("button.mud-table-row-expander")!;
+            await nestedExpander.ClickAsync();
+
+            comp.FindAll(".color-state").Select(x => x.TextContent).Should().Equal("Expanded", "Collapsed");
+            comp.FindAll("tr").First(row => row.QuerySelector(".color-state") is not null).QuerySelector("td.mud-datagrid-group")!.ClassList.Should().Contain("group-expanded");
+        }
+
         [Test]
         public async Task DataGrid_MultilevelGrouping_ExpandSpecificNestedGroup()
         {
