@@ -84,6 +84,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A part outside any card, inside a caller's own cascade of a card, still follows that card's ContentPadding.
+        /// </summary>
+        [TestCase(true)]
+        [TestCase(false)]
+        public void CardContentInsideCustomCardCascade_UsesThatCardsContentPadding(bool contentPadding)
+        {
+            var card = Context.Render<MudCard>(parameters => parameters.Add(p => p.ContentPadding, contentPadding)).Instance;
+
+            var comp = Context.Render<CascadingValue<MudCard>>(parameters => parameters
+                .Add(p => p.Value, card)
+                .Add(p => p.ChildContent, (RenderFragment)(builder =>
+                {
+                    builder.OpenComponent<MudCardContent>(0);
+                    builder.CloseComponent();
+                })));
+
+            comp.FindAll(".mud-card-content-padding").Count.Should().Be(contentPadding ? 1 : 0);
+        }
+
+        /// <summary>
         /// A caller-supplied title used to be erased by the trailing null literal.
         /// </summary>
         [Test]

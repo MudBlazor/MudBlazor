@@ -4,7 +4,7 @@
 <MudPaper @attributes="UserAttributes" Class="@Classname" Style="@Style" Outlined="@Outlined" Square="@Square" Elevation="@Elevation">
     @* The card never changes identity, so only ContentPadding notifies the parts; a non-fixed cascade rendered them a second time on every card render. *@
     <CascadingValue Value="this" IsFixed="true">
-        <CascadingValue Name="MudCardContentPadding" Value="@ContentPadding">
+        <CascadingValue Name="MudCardContentPadding" Value="@((bool?)ContentPadding)">
             @ChildContent
         </CascadingValue>
     </CascadingValue>
