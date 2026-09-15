@@ -1,0 +1,58 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMatrixItem ColumnSpan="2">
+    <MudSlider @bind-Value="_itemCount" Min="0" Max="30" Color="Color.Primary" Class="mb-6">Item Count: @_itemCount</MudSlider>
+</MudMatrixItem>
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(2, Units.Auto())"
+           ColumnGap="3"
+           RowGap="3"
+           JustifyColumns="MatrixJustify.Center">
+
+    <MudMatrixItem>
+        <MudText Color="Color.Primary">Explicitly generated rows: </MudText>
+    </MudMatrixItem>
+    <MudMatrixItem Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Primary" />
+    </MudMatrixItem>
+    <MudMatrixItem>
+        <MudText Color="Color.Secondary">Implicitly generated rows: </MudText>
+    </MudMatrixItem>
+    <MudMatrixItem Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Secondary" />
+    </MudMatrixItem>
+</MudMatrix>
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(3, Units.Fr())"
+           ExplicitRows="ExplicitMatrix.Pattern(3, Units.Px(35))"
+           ImplicitRows="ImplicitMatrix.Pattern(Units.Px(65), Units.Px(90))"
+           Style="height: 500px;"
+           Class="overflow-auto">
+
+    @for (int i = 0; i < _itemCount; i++)
+    {
+        int index = i + 1;
+        string color = index <= 9 ? "--mud-palette-primary" : "--mud-palette-secondary";
+        <MudMatrixItem>
+            <MudPaper Class="d-flex align-center justify-center mud-width-full mud-height-full" Style="@($"background: var({color})")">
+                <MudText Color="Color.Tertiary"></MudText>
+            </MudPaper>
+        </MudMatrixItem>
+    }
+</MudMatrix>
+
+<MudAlert Severity="Severity.Info">
+    If you set item count to 0 and hop into DevTools <CodeInline>CTRL + SHIFT + I</CodeInline>,
+    take note that <CodeInline>ExplicitMatrix</CodeInline> already has its tracks laid out
+    even with no items. This is important when applying  <CodeInline>JustifyColumns</CodeInline> or
+    <CodeInline>JustifyRows</CodeInline> (see below). because the tracks exist regardless
+    of content, there is no empty space in the layout for justify to act on, even if there is visually.
+    <br /><br />
+    <CodeInline>ImplicitMatrix</CodeInline> behaves differently. If you set the item count to 10 and hop
+    back into DevTools, you'll see that only after an item has landed in the track will the layout 
+    definition appear for that track.
+</MudAlert>
+
+@code {
+    int _itemCount = 5;
+}

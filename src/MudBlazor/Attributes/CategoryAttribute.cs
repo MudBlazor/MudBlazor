@@ -382,6 +382,16 @@ namespace MudBlazor
             public const string Behavior = "Behavior";
         }
 
+        public static class Matrix
+        {
+            public const string Behavior = "Behavior";
+        }
+
+        public static class MatrixItem
+        {
+            public const string Behavior = "Behavior";
+        }
+
         public static class Menu
         {
             public const string Behavior = "Behavior";
