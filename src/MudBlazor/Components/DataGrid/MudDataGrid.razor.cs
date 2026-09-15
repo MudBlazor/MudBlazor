@@ -3154,6 +3154,19 @@ namespace MudBlazor
         /// <param name="expanded">Whether the group should be expanded (true) or collapsed (false).</param>
         public void ToggleGroupExpand(string? columnName, object? key, bool expanded)
         {
+            SetGroupExpanded(columnName, key, expanded);
+            StateHasChanged();
+        }
+
+        /// <summary>
+        /// Records whether a group is expanded without rendering the grid.
+        /// </summary>
+        /// <remarks>
+        /// A group row renders its own rows, so a click on its expander only needs that row to render.
+        /// The grid reads the recorded state the next time it renders.
+        /// </remarks>
+        internal void SetGroupExpanded(string? columnName, object? key, bool expanded)
+        {
             var groupKey = new GroupKey(columnName, key);
 
             // update the expansion state for _groupExpansionsDict
@@ -3166,7 +3179,6 @@ namespace MudBlazor
                 _groupExpansionsDict[groupKey] = expanded;
 
             _groupInitialExpanded = false;
-            StateHasChanged();
         }
 
         /// <summary>
