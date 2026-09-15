@@ -191,8 +191,16 @@ namespace MudBlazor
             if (DataGrid.HasServerData)
                 await DataGrid.ReloadServerData();
 
-            DataGrid.GroupItems();
-            await DataGrid.NotifyFilterChangedAsync();
+            // Regroup without rendering, so a select or picker that applies the filter after an await renders the grid once instead of twice.
+            DataGrid.GroupItems(noStateChange: true);
+            DataGrid.DropContainerHasChanged();
+            var filterChanged = DataGrid.NotifyFilterChangedAsync();
+            if (!filterChanged.IsCompleted)
+            {
+                // Show the filtered rows while a FilterChanged handler is still running.
+                ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            }
+            await filterChanged;
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 
