@@ -1280,7 +1280,9 @@ namespace MudBlazor.UnitTests.Components
                 currentText += "2";
                 timers = timeProvider.TimersCreated;
                 await Input().InputAsync(currentText);
-                await timeProvider.WaitForTimerAsync(timers);
+                // Validation of the previous commit can commit this text right away instead of starting a timer.
+                var typedValue = converter.ConvertBack(currentText);
+                await timeProvider.WaitForTimerAsync(timers, () => numericField.ReadValue == typedValue);
                 // external re-render while the user is mid-typing (before debounce commits)
                 await comp.InvokeAsync(comp.Instance.TriggerExternalRerender);
                 // advance by less than the debounce interval so it does NOT commit mid-typing

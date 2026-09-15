@@ -72,4 +72,51 @@ public class TimerTrackingFakeTimeProvider : FakeTimeProvider
             return signal.Task.WaitAsync(TimeSpan.FromSeconds(10));
         }
     }
+
+    /// <summary>
+    /// Completes once a timer has been created after <paramref name="timersCreatedBefore"/> timers existed, or once <paramref name="settled"/> returns <c>true</c>.
+    /// </summary>
+    /// <remarks>
+    /// A debounced input can commit without creating a timer.
+    /// When validation of an earlier commit finds a debounce pending, it cancels it and commits the typed text immediately, which can happen before the new timer exists.
+    /// </remarks>
+    /// <param name="timersCreatedBefore">The value of <see cref="TimersCreated"/> read before the action that schedules the timer.</param>
+    /// <param name="settled">Returns <c>true</c> once the outcome the timer would have produced is already in place.</param>
+    public async Task WaitForTimerAsync(int timersCreatedBefore, Func<bool> settled)
+    {
+        ArgumentNullException.ThrowIfNull(settled);
+
+        TaskCompletionSource signal;
+        lock (_lock)
+        {
+            if (_timersCreated > timersCreatedBefore)
+            {
+                return;
+            }
+
+            signal = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            _waiters.Add((timersCreatedBefore + 1, signal));
+        }
+
+        var deadline = DateTime.UtcNow.AddSeconds(10);
+        while (!signal.Task.IsCompleted)
+        {
+            if (settled())
+            {
+                lock (_lock)
+                {
+                    _waiters.RemoveAll(waiter => waiter.Signal == signal);
+                }
+
+                return;
+            }
+
+            if (DateTime.UtcNow > deadline)
+            {
+                throw new TimeoutException("No timer was created and the debounced outcome was not reached within 10 seconds.");
+            }
+
+            await Task.WhenAny(signal.Task, Task.Delay(5));
+        }
+    }
 }

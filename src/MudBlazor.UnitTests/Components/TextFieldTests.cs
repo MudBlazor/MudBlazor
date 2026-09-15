@@ -1564,7 +1564,9 @@ namespace MudBlazor.UnitTests.Components
                 currentText += "a";
                 timers = timeProvider.TimersCreated;
                 await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
-                await timeProvider.WaitForTimerAsync(timers);
+                // Validation of the previous commit can commit this text right away instead of starting a timer.
+                var typedText = currentText;
+                await timeProvider.WaitForTimerAsync(timers, () => textField.ReadValue == typedText);
 
                 // external re-render dispatched on the renderer's synchronization context
                 await comp.InvokeAsync(comp.Instance.TriggerExternalRerender);
