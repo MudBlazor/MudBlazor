@@ -2661,6 +2661,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Should_Render_OuterClasses_Correctly()
+        {
+            // Arrange
+            var outerClass = "custom-outer-class";
+
+            // Act
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.OuterClass, outerClass)
+            );
+
+            // Assert
+            comp.Find(".mud-autocomplete").ClassList.Should().Contain(outerClass);
+        }
+
+        [Test]
         public async Task Should_Select_Correct_Item_With_ArrowKeys_And_Not_Wrap_Around()
         {
             var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
