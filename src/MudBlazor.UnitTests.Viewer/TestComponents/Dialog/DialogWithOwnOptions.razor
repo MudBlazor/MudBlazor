@@ -1,0 +1,14 @@
+﻿<MudDialog Options="@DialogDefaults">
+    <DialogContent>
+        <MudText>Dialog that carries its own default options</MudText>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    public static readonly DialogOptions DialogDefaults = new()
+    {
+        FullScreen = true,
+        MaxWidth = MaxWidth.ExtraLarge,
+        CloseButton = true
+    };
+}
