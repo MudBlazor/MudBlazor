@@ -473,6 +473,12 @@ namespace MudBlazor
 
         protected ElementReference ClockElementReference { get; private set; }
 
+        // The clock prevents the browser context menu, and before .NET 10 Blazor only honors a handler-less preventDefault while some other contextmenu listener is registered on the page.
+        // The handler does nothing, so it must not render either.
+        private Action<MouseEventArgs> SuppressContextMenuHandler => _suppressContextMenuHandler ??= this.AsNonRenderingEventHandler<MouseEventArgs>(static _ => { });
+
+        private Action<MouseEventArgs>? _suppressContextMenuHandler;
+
         /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
