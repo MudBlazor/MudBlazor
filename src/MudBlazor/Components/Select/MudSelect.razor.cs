@@ -733,6 +733,8 @@ namespace MudBlazor
                 return;
             }
 
+            // Opening rebuilds the options once, so items added since the last parent render are also registered as shadow items and their selected content resolves.
+            unchecked { _parentUpdateCount++; }
             await _openState.SetValueAsync(true);
             _needsHighlightAfterRender = true;
             UpdateIcon();

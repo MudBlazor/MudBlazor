@@ -80,10 +80,39 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => comp.Instance.OpenMenu());
             await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Should().HaveCount(2));
-            passes.Should().Be(2, "the popup builds its own copy of the options");
+            passes.Should().Be(3, "opening refreshes the shadow items once and the popup builds its own copy");
 
             await comp.InvokeAsync(() => comp.Instance.CloseMenu());
-            passes.Should().Be(2, "closing does not rebuild either copy");
+            passes.Should().Be(3, "closing does not rebuild either copy");
+        }
+
+        /// <summary>
+        /// An option added without a parent render still shows its content in the input after it is picked.
+        /// </summary>
+        [Test]
+        public async Task Select_OptionAddedWithoutParentRender_ShowsContentAfterPick()
+        {
+            var items = new List<string> { "Espresso", "Latte" };
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.Strict, true)
+                .Add(x => x.ChildContent, builder =>
+                {
+                    foreach (var item in items)
+                    {
+                        builder.OpenComponent<MudSelectItem<string>>(0);
+                        builder.AddComponentParameter(1, nameof(MudSelectItem<string>.Value), item);
+                        builder.AddComponentParameter(2, nameof(MudSelectItem<string>.ChildContent), (RenderFragment)(content => content.AddContent(0, $"{item} option")));
+                        builder.CloseComponent();
+                    }
+                }));
+
+            items.Add("Cortado");
+            await comp.InvokeAsync(() => comp.Instance.OpenMenu());
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Should().HaveCount(3));
+            await provider.FindAll("div.mud-list-item")[2].ClickAsync();
+
+            await comp.WaitForAssertionAsync(() => comp.Find(".mud-input-control .mud-input").TextContent.Should().Contain("Cortado option"));
         }
 
         /// <summary>
