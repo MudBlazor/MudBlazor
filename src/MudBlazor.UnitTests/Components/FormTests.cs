@@ -2892,7 +2892,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var observed = new List<string>();
             string value = null;
-            var textChanged = new TaskCompletionSource();
+            var textChanged = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             var comp = RenderEnterForm(() => observed.Add(value), v => value = v, _ => textChanged.Task);
 
             await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
@@ -3001,6 +3001,20 @@ namespace MudBlazor.UnitTests.Components
             {
                 received[0].Should().BeSameAs(args);
             }
+        }
+
+        /// <summary>
+        /// The keyup that started a dispatch calls the onkeyup handler it started with, even when OnEnterPressed rerenders the parent and replaces that handler.
+        /// </summary>
+        [Test]
+        public async Task UserKeyUpHandler_CapturedBeforeOnEnterPressed()
+        {
+            var comp = Context.Render<FormEnterPressedSwapsKeyUpHandlerTest>();
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            comp.Instance.Calls.Should().Equal("enter", "original");
         }
 
         /// <summary>

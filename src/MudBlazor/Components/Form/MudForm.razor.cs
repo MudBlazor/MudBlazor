@@ -480,11 +480,14 @@ namespace MudBlazor
         private Task OnKeyDownAsync(KeyboardEventArgs args)
         {
             _enterKeyDown = args.Key is "Enter" or "NumpadEnter" && !args.IsComposing;
-            return InvokeUserKeyHandlerAsync("onkeydown", args);
+            UserAttributes.TryGetValue("onkeydown", out var userHandler);
+            return InvokeUserKeyHandlerAsync(userHandler, args);
         }
 
         private async Task OnKeyUpAsync(KeyboardEventArgs args)
         {
+            // Captured first: OnEnterPressed may rerender the parent and replace the attribute.
+            UserAttributes.TryGetValue("onkeyup", out var userHandler);
             try
             {
                 if (args.Key is "Enter" or "NumpadEnter" && _enterKeyDown)
@@ -495,13 +498,12 @@ namespace MudBlazor
             }
             finally
             {
-                await InvokeUserKeyHandlerAsync("onkeyup", args);
+                await InvokeUserKeyHandlerAsync(userHandler, args);
             }
         }
 
-        private Task InvokeUserKeyHandlerAsync(string name, KeyboardEventArgs args)
+        private static Task InvokeUserKeyHandlerAsync(object? handler, KeyboardEventArgs args)
         {
-            UserAttributes.TryGetValue(name, out var handler);
             return handler switch
             {
                 EventCallback<KeyboardEventArgs> typed => typed.InvokeAsync(args),
