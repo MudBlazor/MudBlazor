@@ -130,8 +130,11 @@ namespace MudBlazor
         internal void GroupExpandClick()
         {
             _expanded = !_expanded;
+
+            // Only this row renders after the click, so its definition must carry the new state to the group template and the class and style functions.
+            GroupDefinition.Expanded = _expanded;
             if (Items != null)
-                DataGrid.ToggleGroupExpand(GroupDefinition.Title, GroupDefinition.KeyPath, _expanded);
+                DataGrid.SetGroupExpanded(GroupDefinition.Title, GroupDefinition.KeyPath, _expanded);
         }
     }
 }

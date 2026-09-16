@@ -49,18 +49,15 @@ Reproductions:
 - Do not add or remove labels previously set by you or a maintainer unless both conditions are true: (a) new context has been added (e.g., new reproduction, logs, confirmations), and (b) a specific rule in this policy authorizes the change. Never remove a label solely because its criteria no longer appear to be met on re-reading; removal must cite a specific timeline event, dated after the label was applied, that resolves it.
 
 Primary labels (always assign the single best fit to any open thread that lacks one, regardless of author):
-`bug`, `enhancement`, `docs`, `build`, `tests`, `refactor`, `new component`, `question`, `invalid`
+`bug`, `enhancement`, `docs`, `build`, `tests`, `refactor`, `new component`, `question`, `invalid`, `accessibility`, `localization`, `security`, `performance`
 - When changing an existing primary label, post a comment citing the new information that triggered the change. Never post a comment whose only content announces or explains your own labeling actions.
-
-Secondary labels (apply as many as needed; only when core focus):
-`accessibility`, `dependency`, `localization`, `security`, `performance`
 
 Environment Labels (apply at most one per category):
 `blazor: wasm`, `blazor: server`, `blazor: hybrid`, `browser: chromium`, `browser: safari`, `browser: firefox`, `device: mobile`
 - Only add an environment label when the impact is exclusive to that environment. Required evidence — one of: (a) explicit "only in X, not in Y" statement; (b) repro shows failure in X and pass in Y; or (c) cited, known env-specific code path. Never add based on template selections, title/body mentions, author setup alone, or because the described symptom is commonly associated with one environment. If multiple environments are mentioned without contrast, add none. Remove conflicting or unjustified env labels silently.
 
 Misc labels:
-`API change`, `regression`, `breaking change`, `has workaround`
+`dependency`, `API change`, `regression`, `breaking change`, `has workaround`
 
 ### Good First Issue
 Apply `good first issue` when ALL conditions are met:

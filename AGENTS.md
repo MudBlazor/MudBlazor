@@ -136,6 +136,14 @@ dotnet format --no-restore
 - Use `ParameterState<T>` for parameter updates and change handlers.
 - Parameters managed through the parameter-state framework should be annotated with `[Parameter, ParameterState]`.
 
+### Root element
+- A library component renders its own root element. Do not wrap it in `MudElement`; that is a public component for consumers, and inside the library it costs a second component per instance for one tag. See [Avoid thousands of component instances](https://learn.microsoft.com/aspnet/core/blazor/performance/rendering#avoid-thousands-of-component-instances).
+- If the tag is fixed, write it as markup.
+- If the tag is chosen at runtime, open it from C# with `builder.OpenElement(0, HtmlTag)` and keep the content in a private method that takes `RenderTreeBuilder __builder` and contains markup, so the compiler still assigns sequence numbers. This is how [QuickGrid](https://github.com/dotnet/aspnetcore/blob/4b58ad51259280e1340777513694f122501435ab/src/Components/QuickGrid/Microsoft.AspNetCore.Components.QuickGrid/src/QuickGrid.razor#L41-L110) renders its rows and how [Virtualize](https://github.com/dotnet/aspnetcore/blob/4b58ad51259280e1340777513694f122501435ab/src/Components/Web/src/Virtualization/Virtualize.cs#L554) renders its `SpacerElement`. Reference: `MudBaseButton.OpenRoot` and `MudButton.razor`.
+- If the tag is chosen at runtime and the content is only `ChildContent`, the whole element can be built in C#, as `MudText` and `MudStack` do.
+- Hardcode sequence numbers in hand-written builder code and keep it to the root element; see [Manually build a render tree](https://learn.microsoft.com/aspnet/core/blazor/advanced-scenarios#manually-build-a-render-tree-rendertreebuilder). The exception is an inner element whose tag is chosen at runtime and whose content is a single value: build it in a `RenderFragment`, which gives it its own sequence numbers, as `MudText.RenderText` does for item text.
+- Attribute order decides precedence: a later attribute with the same name wins. When replacing a wrapper, keep the order the component had before, and add tests that pin what a caller's `class` or `style` in `UserAttributes` does and which parameter-derived attributes it cannot override.
+
 ### Styling and naming
 - Use `CssBuilder` for classes and styles.
 - Use CSS variables and design tokens. Do not hard-code colors.
@@ -243,6 +251,7 @@ private Task ToggleAsync()
 - Prefer additive APIs, safe defaults, or obsoleting old behavior while keeping the current PR scoped to the requested fix or feature.
 - If a breaking change is required, call it out explicitly in the PR description and update docs and tests accordingly.
 - For parameter renames or removals, consider `[Obsolete]` with a clear message and migration path.
+- When a parameter is removed, including by renaming it, add a MUD0002 migration hint to `src/MudBlazor.Analyzers/Internal/ParameterMigration.cs`, with a case in `MigrationHintCases` and a row on the analyzer docs page. Verify the conversion against the component source, not the migration guide.
 - A binary break is still a breaking change even when source-compatible. For example, changing a parameter from `EventCallback` to `EventCallback<T>` keeps existing Razor markup compiling but breaks precompiled consumers until they rebuild.
 - When current behavior is wrong compared to common web standards, prefer fixing the default over adding a parameter or `MudGlobal` setting to opt out of the fix. If the corrected default is breaking, hold it for the next major version as a single change.
 

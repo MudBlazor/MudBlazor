@@ -880,6 +880,16 @@ namespace MudBlazor
         public bool SelectOnRowClick { get; set; } = true;
 
         /// <summary>
+        /// Allows the selection to be changed by the user.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>false</c>, <see cref="SelectedItem"/> and <see cref="SelectedItems"/> can still be set in code.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public bool SelectionChangeable { get; set; } = true;
+
+        /// <summary>
         /// Controls how cell values are edited.
         /// </summary>
         /// <remarks>
@@ -2140,6 +2150,10 @@ namespace MudBlazor
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
             Debug.Assert(item is not null);
+
+            if (!SelectionChangeable)
+                return;
+
             if (IsRowSelectionDisabled(item))
                 return; // Do not change selection if the item is disabled
 
@@ -2202,6 +2216,9 @@ namespace MudBlazor
             if (!MultiSelection)
                 return;
 
+            if (!SelectionChangeable)
+                return;
+
             var selectableItems = GetSelectableItems();
 
             if (value)
@@ -2229,6 +2246,9 @@ namespace MudBlazor
         {
             // nothing should happen if multiselection is false
             if (!MultiSelection)
+                return;
+
+            if (!SelectionChangeable)
                 return;
 
             var selectableItems = GetSelectableItems(groupItems);
@@ -2904,6 +2924,20 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Hides the columns panel only when it is open.
+        /// </summary>
+        /// <remarks>
+        /// A column filter menu lives in its header cell, so opening one renders that cell and needs a grid render only to close an open columns panel.
+        /// </remarks>
+        internal void HideColumnsPanelIfVisible()
+        {
+            if (_columnsPanelVisible)
+            {
+                HideColumnsPanel();
+            }
+        }
+
         private Task ColumnOrderUpdated(MudItemDropInfo<Column<T>> dropItem)
         {
             Debug.Assert(dropItem.Item is not null);
@@ -3120,6 +3154,19 @@ namespace MudBlazor
         /// <param name="expanded">Whether the group should be expanded (true) or collapsed (false).</param>
         public void ToggleGroupExpand(string? columnName, object? key, bool expanded)
         {
+            SetGroupExpanded(columnName, key, expanded);
+            StateHasChanged();
+        }
+
+        /// <summary>
+        /// Records whether a group is expanded without rendering the grid.
+        /// </summary>
+        /// <remarks>
+        /// A group row renders its own rows, so a click on its expander only needs that row to render.
+        /// The grid reads the recorded state the next time it renders.
+        /// </remarks>
+        internal void SetGroupExpanded(string? columnName, object? key, bool expanded)
+        {
             var groupKey = new GroupKey(columnName, key);
 
             // update the expansion state for _groupExpansionsDict
@@ -3132,7 +3179,6 @@ namespace MudBlazor
                 _groupExpansionsDict[groupKey] = expanded;
 
             _groupInitialExpanded = false;
-            StateHasChanged();
         }
 
         /// <summary>

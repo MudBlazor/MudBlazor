@@ -437,6 +437,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Changing the appearance parameters of the panels after the first render reaches a panel that has no content of its own.
+        /// </summary>
+        [Test]
+        public async Task MudExpansionPanels_AppearanceChanged_ShouldReachPanelsWithoutContent()
+        {
+            var comp = Context.Render<MudExpansionPanels>(parameters => parameters
+                .Add(x => x.Dense, false)
+                .Add(x => x.Outlined, true)
+                .Add(x => x.Gutters, true)
+                .Add(x => x.Elevation, 1)
+                .Add(x => x.ChildContent, builder =>
+                {
+                    builder.OpenComponent<MudExpansionPanel>(0);
+                    builder.AddAttribute(1, nameof(MudExpansionPanel.Text), "Panel");
+                    builder.CloseComponent();
+                }));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Dense, true)
+                .Add(x => x.Outlined, false)
+                .Add(x => x.Gutters, false)
+                .Add(x => x.Elevation, 4));
+
+            var panel = comp.Find(".mud-expand-panel");
+            panel.ClassList.Should().Contain("mud-elevation-4").And.NotContain("mud-elevation-1").And.NotContain("mud-expand-panel-border");
+            comp.Find(".mud-expand-panel-header").ClassList.Should().NotContain("mud-expand-panel-header-gutters");
+            comp.Find(".mud-expand-panel-content").ClassList.Should().Contain("mud-expand-panel-dense");
+        }
+
+        /// <summary>
         /// Tests that when Parent Gutters is false, it overrides panel's Gutters setting.
         /// </summary>
         [Test]

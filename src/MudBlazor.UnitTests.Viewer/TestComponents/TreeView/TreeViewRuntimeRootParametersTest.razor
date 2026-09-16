@@ -1,4 +1,5 @@
-﻿<MudTreeView T="string" SelectionMode="@SelectionMode" Disabled="@Disabled" ReadOnly="@ReadOnly" TriState="true">
+﻿<MudTreeView T="string" SelectionMode="@SelectionMode" Disabled="@Disabled" ReadOnly="@ReadOnly" TriState="true"
+             SelectedValues="@SelectedValues" UncheckedIcon="@UncheckedIcon" Ripple="@Ripple" ExpandOnDoubleClick="@ExpandOnDoubleClick">
     <MudTreeViewItem T="string" Class="lvl1" Value='@("p")' Expanded="true">
         <MudTreeViewItem T="string" Class="lvl2" Value='@("c1")' Expanded="true">
             <MudTreeViewItem T="string" Class="lvl3" Value='@("g1")' />
@@ -7,9 +8,13 @@
 </MudTreeView>
 
 @code {
-    public static string __description__ = "A three-deep tree whose root Disabled, ReadOnly and SelectionMode are changed at runtime.";
+    public static string __description__ = "A three-deep tree whose root parameters are changed at runtime.";
 
     [Parameter] public SelectionMode SelectionMode { get; set; } = SelectionMode.MultiSelection;
     [Parameter] public bool Disabled { get; set; }
     [Parameter] public bool ReadOnly { get; set; }
+    [Parameter] public IReadOnlyCollection<string>? SelectedValues { get; set; }
+    [Parameter] public string UncheckedIcon { get; set; } = Icons.Material.Filled.CheckBoxOutlineBlank;
+    [Parameter] public bool Ripple { get; set; } = true;
+    [Parameter] public bool ExpandOnDoubleClick { get; set; }
 }

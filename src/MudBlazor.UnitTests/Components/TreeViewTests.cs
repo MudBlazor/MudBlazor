@@ -968,6 +968,40 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item 5");
         }
 
+        /// <summary>
+        /// The text and end text render the tag and typography classes their typo picks, including after the typo changes.
+        /// </summary>
+        [Test]
+        [TestCase(Typo.body1, "p", Typo.caption, "span")]
+        [TestCase(Typo.h6, "h6", Typo.subtitle2, "p")]
+        public async Task TreeViewItem_TextAndEndText_RenderTagForTypo(Typo textTypo, string textTag, Typo endTextTypo, string endTextTag)
+        {
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .AddChildContent<MudTreeViewItem<string>>(item => item
+                    .Add(x => x.Text, "Documents")));
+            var item = comp.FindComponent<MudTreeViewItem<string>>();
+
+            comp.Find(".mud-treeview-item-label").ClassName.Should().Be("mud-typography mud-typography-body1 mud-treeview-item-label");
+            comp.FindAll(".mud-typography").Should().ContainSingle();
+
+            await item.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.TextTypo, textTypo)
+                .Add(x => x.TextClass, "custom-text")
+                .Add(x => x.EndText, "3 files")
+                .Add(x => x.EndTextTypo, endTextTypo)
+                .Add(x => x.EndTextClass, "custom-end-text"));
+
+            var text = comp.Find(".mud-treeview-item-label");
+            text.LocalName.Should().Be(textTag);
+            text.ClassName.Should().Be($"mud-typography mud-typography-{textTypo} mud-treeview-item-label custom-text");
+            text.TextContent.Should().Be("Documents");
+
+            var endText = comp.Find(".custom-end-text");
+            endText.LocalName.Should().Be(endTextTag);
+            endText.ClassName.Should().Be($"mud-typography mud-typography-{endTextTypo} custom-end-text");
+            endText.TextContent.Should().Be("3 files");
+        }
+
         [Test]
         public async Task TreeView_SetSelectedValue_SetsSelectedValue()
         {
@@ -1531,6 +1565,55 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll(".mud-treeview-item-checkbox").Count.Should().Be(3);
         }
+
+        /// <summary>
+        /// Verifies that changing the root's <see cref="MudTreeView{T}.UncheckedIcon"/> at runtime reaches items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeUncheckedIcon_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.UncheckedIcon, CustomIcon));
+
+            comp.FindAll(".mud-treeview-item-checkbox").Should().AllSatisfy(checkbox => checkbox.InnerHtml.Should().Contain(CustomIconPath));
+        }
+
+        /// <summary>
+        /// Verifies that a later selection change does not leave an unchanged item showing the root's previous <see cref="MudTreeView{T}.UncheckedIcon"/>.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeUncheckedIconThenSelection_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.UncheckedIcon, CustomIcon));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValues, new[] { "c1" }));
+
+            comp.Find(".lvl3 .mud-treeview-item-checkbox").InnerHtml.Should().Contain(CustomIconPath);
+        }
+
+        /// <summary>
+        /// Verifies that turning off the root's <see cref="MudTreeView{T}.Ripple"/> and turning on <see cref="MudTreeView{T}.ExpandOnDoubleClick"/> at runtime reach items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeRippleAndExpandOnDoubleClick_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+            comp.Find(".lvl3 .mud-treeview-item-content").ClassList.Should().Contain("mud-ripple");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Ripple, false));
+
+            comp.FindAll(".mud-treeview-item-content").Should().AllSatisfy(content => content.ClassList.Should().NotContain("mud-ripple"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ExpandOnDoubleClick, true));
+
+            comp.FindAll(".mud-treeview-item").Should().AllSatisfy(item => item.ClassList.Should().Contain("mud-treeview-select-none"));
+        }
+
+        private const string CustomIconPath = "M0 0h9";
+
+        private const string CustomIcon = "<path d=\"" + CustomIconPath + "\"/>";
         /// <summary>
         /// Mounting a tree must render each item once, not twice.
         /// </summary>
