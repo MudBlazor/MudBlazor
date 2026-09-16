@@ -272,4 +272,105 @@ public class RegexMask : BaseMask
         var regexMask = new RegexMask(Regex, mask) { DelimiterCharacters = Delimiters };
         return regexMask;
     }
+
+    /// <summary>
+    /// Gets a mask for United States ZIP codes with an optional four-digit extension.
+    /// </summary>
+    /// <param name="maskChar">Defaults to <c>0</c>.  The mask character for ZIP code digits.</param>
+    /// <remarks>
+    /// Accepts a five-digit ZIP code such as <c>90210</c> and the ZIP+4 form such as <c>90210-0123</c>.  The dash is inserted automatically as soon as a sixth digit is typed.
+    /// </remarks>
+    public static RegexMask UsZipCode(char maskChar = '0')
+    {
+        const string Regex = $"^(?:[0-9]{{0,5}}|[0-9]{{5}}-[0-9]{{0,4}}){WhiteSpaceFilter}$";
+        const string Delimiters = "-";
+        var mask = $"{new string(maskChar, 5)}-{new string(maskChar, 4)}";
+        var regexMask = new RegexMask(Regex, mask) { DelimiterCharacters = Delimiters };
+        return regexMask;
+    }
+
+    /// <summary>
+    /// Gets a mask for MAC addresses (EUI-48) such as <c>1A:2B:3C:4D:5E:6F</c>.
+    /// </summary>
+    /// <param name="separator">Defaults to <c>:</c>.  The character between each pair of hexadecimal digits.</param>
+    /// <param name="maskChar">Defaults to <c>X</c>.  The mask character for address digits.</param>
+    /// <remarks>
+    /// The separator is inserted automatically when hexadecimal digits are typed without it.
+    /// </remarks>
+    public static RegexMask MacAddress(char separator = ':', char maskChar = 'X')
+    {
+        const string HexPair = "[0-9A-Fa-f]{0,2}";
+        var delimiters = separator.ToString();
+        // The separator comes from the caller, so it has to be escaped before it goes into the pattern.
+        var escapedSeparator = System.Text.RegularExpressions.Regex.Escape(delimiters);
+        var regex = $"^{HexPair}(?:{escapedSeparator}{HexPair}){{0,5}}{WhiteSpaceFilter}$";
+        var mask = string.Join(delimiters, Enumerable.Repeat(new string(maskChar, 2), 6));
+        var regexMask = new RegexMask(regex, mask) { DelimiterCharacters = delimiters };
+        return regexMask;
+    }
+
+    /// <summary>
+    /// Gets a mask for globally unique identifiers such as <c>2f9d8e7a-1b3c-4d5e-6f70-8192a3b4c5d6</c>.
+    /// </summary>
+    /// <param name="maskChar">Defaults to <c>X</c>.  The mask character for identifier digits.</param>
+    /// <remarks>
+    /// Accepts the canonical 8-4-4-4-12 hexadecimal form in upper or lower case.  Dashes are inserted automatically when hexadecimal digits are typed without them.  The braced form <c>{...}</c> is not accepted.
+    /// </remarks>
+    public static RegexMask Guid(char maskChar = 'X')
+    {
+        const string Hex = "[0-9A-Fa-f]";
+        const string Delimiters = "-";
+        // The blocks nest from the last one outwards so a dash is only accepted once the block before it is complete.
+        var fifthBlock = $"{Hex}{{0,12}}";
+        var fourthBlock = $"(?:{Hex}{{0,3}}|{Hex}{{4}}(?:-{fifthBlock})?)";
+        var thirdBlock = $"(?:{Hex}{{0,3}}|{Hex}{{4}}(?:-{fourthBlock})?)";
+        var secondBlock = $"(?:{Hex}{{0,3}}|{Hex}{{4}}(?:-{thirdBlock})?)";
+        var firstBlock = $"(?:{Hex}{{0,7}}|{Hex}{{8}}(?:-{secondBlock})?)";
+        var regex = $"^{firstBlock}{WhiteSpaceFilter}$";
+        var mask = $"{new string(maskChar, 8)}-{new string(maskChar, 4)}-{new string(maskChar, 4)}-{new string(maskChar, 4)}-{new string(maskChar, 12)}";
+        var regexMask = new RegexMask(regex, mask) { DelimiterCharacters = Delimiters };
+        return regexMask;
+    }
+
+    /// <summary>
+    /// Gets a mask for hexadecimal colors such as <c>#1A2B3C</c>.
+    /// </summary>
+    /// <param name="maskChar">Defaults to <c>X</c>.  The mask character for color digits.</param>
+    /// <remarks>
+    /// The leading <c>#</c> is inserted automatically.  Up to eight hexadecimal digits are accepted, which covers the CSS <c>#RGB</c>, <c>#RGBA</c>, <c>#RRGGBB</c>, and <c>#RRGGBBAA</c> forms.
+    /// </remarks>
+    public static RegexMask HexColor(char maskChar = 'X')
+    {
+        const string Regex = $"^#[0-9A-Fa-f]{{0,8}}{WhiteSpaceFilter}$";
+        const string Delimiters = "#";
+        var mask = $"#{new string(maskChar, 8)}";
+        var regexMask = new RegexMask(Regex, mask) { DelimiterCharacters = Delimiters };
+        return regexMask;
+    }
+
+    /// <summary>
+    /// Gets a mask for times on a 24-hour clock such as <c>07:30</c>.
+    /// </summary>
+    /// <param name="includeSeconds">Defaults to <c>false</c>.  When <c>true</c>, seconds are allowed.</param>
+    /// <param name="maskChar">Defaults to <c>0</c>.  The mask character for time digits.</param>
+    /// <remarks>
+    /// Hours are limited to <c>0</c> through <c>23</c>, and minutes and seconds to <c>0</c> through <c>59</c>.  Colons are inserted automatically when digits are typed without them, so typing <c>2400</c> yields <c>2:40</c>.
+    /// </remarks>
+    public static RegexMask Time24(bool includeSeconds = false, char maskChar = '0')
+    {
+        const string Hour = "(?:[01][0-9]?|2[0-3]?|[3-9])";
+        const string Delimiters = ":";
+
+        // A lone tens digit is a valid prefix, and the following field is nested so it can only begin once this one holds a complete pair.
+        static string Field(string next) => $"(?::(?:[0-5]|[0-5][0-9]{next})?)?";
+
+        var seconds = includeSeconds ? Field(string.Empty) : string.Empty;
+        var regex = $"^{Hour}{Field(seconds)}{WhiteSpaceFilter}$";
+        var digitPair = new string(maskChar, 2);
+        var mask = includeSeconds
+            ? $"{digitPair}:{digitPair}:{digitPair}"
+            : $"{digitPair}:{digitPair}";
+        var regexMask = new RegexMask(regex, mask) { DelimiterCharacters = Delimiters };
+        return regexMask;
+    }
 }

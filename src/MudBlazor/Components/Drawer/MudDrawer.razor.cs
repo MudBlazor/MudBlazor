@@ -45,6 +45,15 @@ namespace MudBlazor
             registerScope.RegisterParameter<bool>(nameof(RightToLeft))
                 .WithParameter(() => RightToLeft)
                 .WithChangeHandler(OnRightToLeftParameterChanged);
+            registerScope.RegisterParameter<string?>(nameof(Width))
+                .WithParameter(() => Width)
+                .WithChangeHandler(DrawerContainerUpdate);
+            registerScope.RegisterParameter<string?>(nameof(MiniWidth))
+                .WithParameter(() => MiniWidth)
+                .WithChangeHandler(DrawerContainerUpdate);
+            registerScope.RegisterParameter<string?>(nameof(Height))
+                .WithParameter(() => Height)
+                .WithChangeHandler(DrawerContainerUpdate);
         }
 
         // A mini drawer behaves like a temporary drawer below its breakpoint, but only for a finite breakpoint.
@@ -251,7 +260,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported.  Applies to non-fixed or <see cref="DrawerVariant.Temporary"/> drawers anchored to the left or right.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.Drawer.Appearance)]
         public string? Width { get; set; }
 
@@ -261,7 +270,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported. Applies to <see cref="DrawerVariant.Mini"/> drawers achored to the left or right.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.Drawer.Appearance)]
         public string? MiniWidth { get; set; }
 
@@ -271,7 +280,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported. Applies to drawers achored to the top or bottom.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.Drawer.Appearance)]
         public string? Height { get; set; }
 

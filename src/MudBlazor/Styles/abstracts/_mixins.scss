@@ -1,4 +1,4 @@
-﻿@mixin inputplaceholder {
+@mixin inputplaceholder {
   // CSS Pseudo-Element
   &::placeholder {
     @content
@@ -30,6 +30,19 @@
   &::-ms-input-placeholder {
     @content
   }
+}
+
+// Hides content visually while leaving it in the accessibility tree.
+@mixin sr-only {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  padding: 0;
+  border: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
 }
 
 @mixin slider-track {

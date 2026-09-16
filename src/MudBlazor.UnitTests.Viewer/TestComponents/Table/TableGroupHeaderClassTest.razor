@@ -1,0 +1,60 @@
+﻿<MudTable T="Item" Items="Items" GroupBy="@_groupDefinition">
+    <GroupHeaderTemplate>
+        <MudTh>@context.Key</MudTh>
+    </GroupHeaderTemplate>
+    <RowTemplate>
+        <MudTd>@context.Label</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    /// <summary>
+    /// The <see cref="TableGroupDefinition{T}.GroupHeaderClass"/> for the outer grouping level.
+    /// </summary>
+    [Parameter]
+    public string? OuterHeaderClass { get; set; }
+
+    /// <summary>
+    /// The <see cref="TableGroupDefinition{T}.GroupHeaderClass"/> for the nested grouping level.
+    /// </summary>
+    [Parameter]
+    public string? InnerHeaderClass { get; set; }
+
+    public List<Item> Items { get; } = [
+        new Item { Group = "G1", Nested = "N1", Label = "A" },
+        new Item { Group = "G1", Nested = "N2", Label = "B" },
+        new Item { Group = "G2", Nested = "N1", Label = "C" },
+        new Item { Group = "G2", Nested = "N2", Label = "D" }
+    ];
+
+    private TableGroupDefinition<Item> _groupDefinition = new();
+
+    protected override void OnInitialized()
+    {
+        _groupDefinition = new TableGroupDefinition<Item>
+        {
+            Indentation = false,
+            Expandable = true,
+            IsInitiallyExpanded = true,
+            Selector = e => e.Group,
+            GroupHeaderClass = OuterHeaderClass,
+            InnerGroup = new TableGroupDefinition<Item>
+            {
+                Indentation = false,
+                Expandable = true,
+                IsInitiallyExpanded = true,
+                Selector = e => e.Nested,
+                GroupHeaderClass = InnerHeaderClass,
+            }
+        };
+    }
+
+    public class Item
+    {
+        public required string Label { get; set; }
+
+        public required string Group { get; set; }
+
+        public required string Nested { get; set; }
+    }
+}

@@ -35,7 +35,8 @@ public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
             var currentCulture = Thread.CurrentThread.CurrentUICulture.Parent.TwoLetterISOLanguageName;
             if (MudLocalizer is null || currentCulture.Equals("en", StringComparison.InvariantCultureIgnoreCase))
             {
-                return Localizer[key, arguments];
+                // The argument-less indexer skips the string.Format copy, and most keys take no arguments.
+                return arguments.Length > 0 ? Localizer[key, arguments] : Localizer[key];
             }
         }
 

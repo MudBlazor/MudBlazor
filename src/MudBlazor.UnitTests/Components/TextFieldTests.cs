@@ -11,6 +11,7 @@ using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using MudBlazor.Extensions;
+using MudBlazor.Resources;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Field;
 using MudBlazor.UnitTests.TestComponents.Form;
@@ -200,11 +201,14 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
 
             //Act
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
             await input.InputAsync(new ChangeEventArgs() { Value = "Some Value" });
+            await timeProvider.WaitForTimerAsync(timers);
 
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
-            textField.Immediate.Should().BeTrue();
+            textField.EffectiveImmediate.Should().BeTrue();
 
             //input value has changed, but elapsed time is 0, so Value should not change in TextField
             textField.ReadValue.Should().BeNull();
@@ -214,6 +218,68 @@ namespace MudBlazor.UnitTests.Components
             textField.ReadValue.Should().BeNull();
 
             //More than 200 ms had elapsed, so Value should be updated
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Some Value"));
+        }
+
+        /// <summary>
+        /// A DebounceInterval assigned in the constructor of a derived component never travels through the
+        /// ParameterView, so the change handler does not run for it. It must still be honored.
+        /// </summary>
+        [Test]
+        public async Task DebounceInterval_SetInDerivedComponentConstructor_ShouldDebounce()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<InheritedDebouncedTextField>();
+            var textField = comp.Instance;
+            var input = comp.Find("input");
+
+            //Act
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
+            await input.InputAsync(new ChangeEventArgs() { Value = "Some Value" });
+            await timeProvider.WaitForTimerAsync(timers);
+
+            //Assert
+            textField.DebounceInterval.Should().Be(200d);
+            textField.EffectiveImmediate.Should().BeTrue();
+
+            //input value has changed, but elapsed time is 0, so Value should not change in TextField
+            textField.ReadValue.Should().BeNull();
+
+            //DebounceInterval is 200 ms, so at 100 ms Value should not change in TextField
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            textField.ReadValue.Should().BeNull();
+
+            //More than 200 ms had elapsed, so Value should be updated
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Some Value"));
+        }
+
+        /// <summary>
+        /// When the constructor value and the value passed in markup are equal, the parameter counts as
+        /// unchanged and the change handler is skipped. Debouncing must still work.
+        /// </summary>
+        [Test]
+        public async Task DebounceInterval_MatchingConstructorAndParameterValue_ShouldDebounce()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<InheritedDebouncedTextField>(parameters => parameters.Add(p => p.DebounceInterval, 200d));
+            var textField = comp.Instance;
+            var input = comp.Find("input");
+
+            //Act
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
+            await input.InputAsync(new ChangeEventArgs() { Value = "Some Value" });
+            await timeProvider.WaitForTimerAsync(timers);
+
+            //Assert
+            textField.ReadValue.Should().BeNull();
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            textField.ReadValue.Should().BeNull();
+
             timeProvider.Advance(TimeSpan.FromMilliseconds(100));
             await comp.WaitForAssertionAsync(() => textField.ReadValue.Should().Be("Some Value"));
         }
@@ -517,13 +583,14 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task RequiredTextField_Should_ReuseGeneratedErrorIdWhileInvalid()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MudTextField<string>>(parameters => parameters.Add(p => p.Required, true));
 
             await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
 
             var firstErrorId = comp.Find("input").GetAttribute("aria-describedby");
             firstErrorId.Should().NotBeNullOrWhiteSpace();
-            comp.Find($"[id='{firstErrorId}']").TextContent.Should().Be("Required");
+            comp.Find($"[id='{firstErrorId}']").TextContent.Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             await comp.InvokeAsync(() => comp.Instance.ValidateAsync());
 
@@ -575,6 +642,36 @@ namespace MudBlazor.UnitTests.Components
             textfield.Touched.Should().BeFalse();
             textfield.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfield.HasErrors.Should().Be(false);
+        }
+
+        /// <summary>
+        /// A required outlined text field renders its legend on the path the stylesheet uses to reserve notch space for the asterisk (#11050).
+        /// </summary>
+        [Test]
+        public void RequiredOutlinedTextField_Should_RenderLegendUnderRequiredInputControl()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Label, "First name")
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Required, true));
+
+            comp.Find(".mud-input-control").ClassList.Should().Contain("mud-input-required");
+            comp.FindAll(".mud-input-control.mud-input-required > .mud-input-control-input-container .mud-input-outlined-border > legend")
+                .Should().ContainSingle();
+        }
+
+        /// <summary>
+        /// An outlined text field which is not required renders the same legend but keeps the required class off, so the notch is not widened (#11050).
+        /// </summary>
+        [Test]
+        public void OutlinedTextField_Should_RenderLegendWithoutRequiredClass()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Label, "First name")
+                .Add(p => p.Variant, Variant.Outlined));
+
+            comp.Find(".mud-input-control").ClassList.Should().NotContain("mud-input-required");
+            comp.FindAll(".mud-input-control-input-container .mud-input-outlined-border > legend").Should().ContainSingle();
         }
 
         [Test]
@@ -773,6 +870,30 @@ namespace MudBlazor.UnitTests.Components
 
             // Button should have tabindex -1
             comp.Find(".mud-input-clear-button").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        /// <summary>
+        /// Testing that <see cref="MudBaseInput{T}.EffectiveImmediate"/> reflects the Immediate and Debounce state of this component.
+        /// </summary>
+        /// <remarks>Added for <a href="https://github.com/MudBlazor/MudBlazor/pull/13610">PR #13610</a></remarks>
+        [Test]
+        public void TextField_EffectiveImmediate_Should_Reflect_Immediate_And_Debounced_State()
+        {
+            Context.Render<MudTextField<string>>()
+                .Instance.EffectiveImmediate.Should().BeFalse();
+
+            Context.Render<MudTextField<string>>(parameters => parameters
+                    .Add(x => x.Immediate, true))
+                .Instance.EffectiveImmediate.Should().BeTrue();
+
+            Context.Render<MudTextField<string>>(parameters => parameters
+                    .Add(x => x.DebounceInterval, 500))
+                .Instance.EffectiveImmediate.Should().BeTrue();
+
+            Context.Render<MudTextField<string>>(parameters => parameters
+                    .Add(x => x.Immediate, true)
+                    .Add(x => x.DebounceInterval, 500))
+                .Instance.EffectiveImmediate.Should().BeTrue();
         }
 
         #region ValidationAttribute support
@@ -1221,6 +1342,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TextField_OnlyValidateIfDirty_WithNonDefaultInitialValue_ShouldNotValidateOnBlur()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MudTextField<string>>(parameters => parameters
                 .Add(p => p.Value, string.Empty)
                 .Add(p => p.Required, true)
@@ -1236,12 +1358,13 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").ChangeAsync("");
             await comp.Find("input").BlurAsync();
             comp.FindAll("div.mud-input-error").Count.Should().BeGreaterThan(0);
-            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         [Test]
         public async Task TextField_OnlyValidateIfDirty_Is_False_Should_HaveInputErrorWhenFocusChanged()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<MudTextField<int?>>(parameters => parameters
                 .Add(p => p.Required, true)
                 .Add(p => p.OnlyValidateIfDirty, false));
@@ -1250,7 +1373,7 @@ namespace MudBlazor.UnitTests.Components
             // user does not change input value but changes focus
             await comp.Find("input").BlurAsync();
             comp.FindAll("div.mud-input-error").Count.Should().Be(3);
-            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             // user puts in a invalid integer value
             await comp.Find("input").ChangeAsync("invalid");
@@ -1265,7 +1388,7 @@ namespace MudBlazor.UnitTests.Components
             // user does not change input value but changes focus
             await comp.Find("input").BlurAsync();
             comp.FindAll("div.mud-input-error").Count.Should().Be(3);
-            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be("Required");
+            comp.Find("div.mud-input-error").TextContent.Trim().Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             // user corrects input
             await comp.Find("input").ChangeAsync(55);
@@ -1425,7 +1548,10 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.Render<DebouncedTextFieldRerenderTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
             await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "test" });
+            await timeProvider.WaitForTimerAsync(timers);
 
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
@@ -1436,7 +1562,11 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 4; i++)
             {
                 currentText += "a";
+                timers = timeProvider.TimersCreated;
                 await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
+                // Validation of the previous commit can commit this text right away instead of starting a timer.
+                var typedText = currentText;
+                await timeProvider.WaitForTimerAsync(timers, () => textField.ReadValue == typedText);
 
                 // external re-render dispatched on the renderer's synchronization context
                 await comp.InvokeAsync(comp.Instance.TriggerExternalRerender);
@@ -1487,7 +1617,9 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 4; i++)
             {
                 currentText += "a";
+                var timers = timeProvider.TimersCreated;
                 await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
+                await timeProvider.WaitForTimerAsync(timers);
 
                 // external format change dispatched on the renderer's synchronization context
                 await comp.InvokeAsync(comp.Instance.ApplyFormatChange);
@@ -1755,6 +1887,31 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("input").HasAttribute("required").Should().BeTrue();
             comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// A caller-supplied aria-required should win over the value computed from Required, and required should still follow the parameter.
+        /// </summary>
+        [Test]
+        public void TextField_Should_LetUserAttributesOverrideAriaRequired()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-required", "true" } }));
+
+            comp.Find("input").GetAttribute("aria-required").Should().Be("true");
+            comp.Find("input").HasAttribute("required").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A caller-supplied aria-invalid should win over the value computed from the error state.
+        /// </summary>
+        [Test]
+        public void TextField_Should_LetUserAttributesOverrideAriaInvalid()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-invalid", "true" } }));
+
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
         }
 
         /// <summary>

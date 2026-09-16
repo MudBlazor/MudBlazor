@@ -21,6 +21,20 @@ namespace MudBlazor.UnitTests.Components
             stack.HtmlTag.Should().Be("div");
         }
 
+        /// <summary>
+        /// The stack element carries its role, user attributes, class and style.
+        /// </summary>
+        [Test]
+        public void Stack_RendersRoleUserAttributesClassAndStyle()
+        {
+            var stack = Context.Render<MudStack>(parameters => parameters
+                .Add(x => x.Class, "my-class")
+                .Add(x => x.Style, "color:red")
+                .AddUnmatched("data-test", "value"));
+
+            stack.MarkupMatches("""<div role="group" data-test="value" class="d-flex flex-column gap-3 my-class" style="color:red"></div>""");
+        }
+
         [Test]
         public void CheckDefaultClass()
         {

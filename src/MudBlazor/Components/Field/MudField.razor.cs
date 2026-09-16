@@ -16,8 +16,8 @@ namespace MudBlazor
                 .AddClass($"mud-input-{Variant.ToStringFast(true)}")
                 .AddClass($"mud-input-{Variant.ToStringFast(true)}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-input-adorned-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
-                .AddClass($"mud-input-margin-{Margin.ToStringFast(true)}", () => Margin != Margin.None)
-                .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
+                .AddClass($"mud-input-margin-{Margin.ToStringFast(true)}", Margin != Margin.None)
+                .AddClass("mud-input-underline", Underline && Variant != Variant.Outlined)
                 // Without the mud-shrink class, the label will become a placeholder
                 // Apply "mud-shrink" only if ShrinkLabel is false AND
                 // (there is content OR the adornment is at the start)
@@ -32,10 +32,10 @@ namespace MudBlazor
         protected string InnerClassname =>
             new CssBuilder("mud-input-slot")
                 .AddClass("mud-input-root")
-                .AddClass("mud-input-slot-nopadding", () => !InnerPadding)
+                .AddClass("mud-input-slot-nopadding", !InnerPadding)
                 .AddClass($"mud-input-root-{Variant.ToStringFast(true)}")
                 .AddClass($"mud-input-adorned-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
-                .AddClass($"mud-input-root-margin-{Margin.ToStringFast(true)}", () => Margin != Margin.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToStringFast(true)}", Margin != Margin.None)
                 .Build();
 
         protected string AdornmentClassname =>

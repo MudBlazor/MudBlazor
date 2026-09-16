@@ -1,7 +1,11 @@
 {
   "dependencies": {
-    "eslint": "^10.0.0",
-    "sass": "^1.97.2"
+    "@happy-dom/global-registrator": "20.14.3",
+    "@types/bun": "1.4.2",
+    "@types/node": "26.5.1",
+    "eslint": "10.10.0",
+    "sass": "1.104.0",
+    "typescript": "7.0.2"
   },
   "trustedDependencies": ["sass"]
 }

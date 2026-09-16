@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -22,9 +23,11 @@ namespace MudBlazor
         internal string ElementId { get; } = Identifier.Create("list-item");
 
         private readonly ParameterState<bool> _expandedState;
+        private readonly Action<ElementReference> _captureElementReference;
 
         public MudListItem()
         {
+            _captureElementReference = reference => _elementReference = reference;
             using var registerScope = CreateRegisterScope();
             _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
                 .WithParameter(() => Expanded)
@@ -137,6 +140,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Ripple { get; set; } = true;
+
+        /// <summary>
+        /// Allows this item to handle keyboard input.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Set to <c>false</c> when a parent component owns keyboard navigation, which avoids a key interceptor per item.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool KeyboardEnabled { get; set; } = true;
 
         /// <summary>
         /// The icon to display for this list item.
@@ -274,7 +287,7 @@ namespace MudBlazor
 
         private SelectionMode SelectionMode => TopLevelList?.SelectionMode ?? SelectionMode.SingleSelection;
 
-        private Typo TextTypo => GetDense() ? Typo.body2 : Typo.body1;
+        private string TextClassname => GetDense() ? "mud-typography mud-typography-body2" : "mud-typography mud-typography-body1";
 
         private bool GetClickable()
         {
@@ -300,39 +313,43 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            var effectiveElementId = GetEffectiveElementId(ElementId);
+            var effectiveElementId = KeyboardEnabled ? GetEffectiveElementId(ElementId) : null;
 
-            if (firstRender || !string.Equals(_subscribedElementId, effectiveElementId, StringComparison.Ordinal))
+            if (!string.Equals(_subscribedElementId, effectiveElementId, StringComparison.Ordinal))
             {
                 if (!string.IsNullOrEmpty(_subscribedElementId))
                 {
                     await KeyInterceptorService.UnsubscribeAsync(_subscribedElementId);
+                    _subscribedElementId = null;
                 }
 
-                var options = new KeyInterceptorOptions(
-                    [
-                        // prevent scrolling page
-                        new(" ", preventDown: "key+none", preventUp: "key+none"),
-                        // prevent scrolling page and move focus to previous item
-                        new("ArrowUp", preventDown: "key+none"),
-                        // prevent scrolling page and move focus to next item
-                        new("ArrowDown", preventDown: "key+none"),
-                        new("Home", preventDown: "key+none"),
-                        new("End", preventDown: "key+none"),
-                        new("Enter", preventDown: "key+none"),
-                        new("NumpadEnter", preventDown: "key+none")
-                    ]);
+                if (effectiveElementId is not null)
+                {
+                    var options = new KeyInterceptorOptions(
+                        [
+                            // prevent scrolling page
+                            new(" ", preventDown: "key+none", preventUp: "key+none"),
+                            // prevent scrolling page and move focus to previous item
+                            new("ArrowUp", preventDown: "key+none"),
+                            // prevent scrolling page and move focus to next item
+                            new("ArrowDown", preventDown: "key+none"),
+                            new("Home", preventDown: "key+none"),
+                            new("End", preventDown: "key+none"),
+                            new("Enter", preventDown: "key+none"),
+                            new("NumpadEnter", preventDown: "key+none")
+                        ]);
 
-                await KeyInterceptorService.SubscribeAsync(effectiveElementId, options, keys => keys
-                    .When(CanHandleKeys, builder => builder
-                        .OnKeyDown("ArrowDown", HandleArrowDownAsync)
-                        .OnKeyDown("ArrowUp", HandleArrowUpAsync)
-                        .OnKeyDown("Home", HandleHomeAsync)
-                        .OnKeyDown("End", HandleEndAsync)
-                        .OnKeyDown(" ", HandleSpaceAsync)
-                        .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)));
+                    await KeyInterceptorService.SubscribeAsync(effectiveElementId, options, keys => keys
+                        .When(CanHandleKeys, builder => builder
+                            .OnKeyDown("ArrowDown", HandleArrowDownAsync)
+                            .OnKeyDown("ArrowUp", HandleArrowUpAsync)
+                            .OnKeyDown("Home", HandleHomeAsync)
+                            .OnKeyDown("End", HandleEndAsync)
+                            .OnKeyDown(" ", HandleSpaceAsync)
+                            .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)));
 
-                _subscribedElementId = effectiveElementId;
+                    _subscribedElementId = effectiveElementId;
+                }
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -574,6 +591,34 @@ namespace MudBlazor
         private string HtmlTag => string.IsNullOrEmpty(Href) || OnClickPreventDefault ? "div" : "a";
 
         private bool GetPreventDefault() => GetDisabled();
+
+        /// <summary>
+        /// Opens the row element with its attributes; the Razor file renders the content and closes it.
+        /// </summary>
+        /// <remarks>
+        /// The tag is chosen at runtime, so the element is opened by name rather than written as markup.
+        /// class and style come before the splat so a class or style supplied through <see cref="MudComponentBase.UserAttributes"/> still wins, which is the precedence the MudElement boundary gave them.
+        /// </remarks>
+        private void OpenRow(RenderTreeBuilder builder)
+        {
+            builder.OpenElement(0, HtmlTag);
+            builder.AddAttribute(1, "id", ElementId);
+            builder.AddAttribute(2, "tabindex", GetTabIndex());
+            builder.AddAttribute(3, "role", GetRole());
+            builder.AddAttribute(4, "aria-selected", GetAriaSelected());
+            builder.AddAttribute(5, "aria-expanded", GetAriaExpanded());
+            builder.AddAttribute(6, "class", Classname);
+            builder.AddAttribute(7, "style", Style);
+            builder.AddMultipleAttributes(8, UserAttributes!);
+            builder.AddAttribute(9, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnClickHandlerAsync));
+            builder.AddAttribute(10, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusAsync));
+            builder.AddAttribute(11, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, HandleKeyDownAsync));
+            builder.AddAttribute(12, "href", Href);
+            builder.AddAttribute(13, "target", Target);
+            builder.AddEventStopPropagationAttribute(14, "onclick", !GetClickPropagation());
+            builder.AddEventPreventDefaultAttribute(15, "onclick", GetPreventDefault());
+            builder.AddElementReferenceCapture(16, _captureElementReference);
+        }
 
         private bool GetClickPropagation() => false;
 

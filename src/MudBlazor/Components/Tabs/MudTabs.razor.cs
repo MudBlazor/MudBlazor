@@ -925,10 +925,10 @@ namespace MudBlazor
         private string GetTabClass(MudTabPanel panel)
         {
             var tabClass = new CssBuilder("mud-tab")
-              .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
+              .AddClass($"mud-tab-active", panel == ActivePanel)
               .AddClass($"mud-disabled", IsPanelDisabled(panel))
               .AddClass($"mud-ripple", Ripple)
-              .AddClass(ActiveTabClass, when: () => panel == ActivePanel)
+              .AddClass(ActiveTabClass, panel == ActivePanel)
               .AddClass(TabButtonsClass)
               .AddClass(panel.Classname)
               .Build();
@@ -1208,7 +1208,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Scroll by page; isNext is true to scroll forward (right or down), false to scroll backward (left or up), depending on tab orientation.
+        /// Scroll by page; isNext is true to scroll toward the last panel, false toward the first, whatever the tab orientation or text direction.
         /// </summary>
         private void ScrollBy(bool isNext)
         {
@@ -1222,8 +1222,11 @@ namespace MudBlazor
             {
                 scrollAmount = -scrollAmount;
             }
-            var position = ScrollEdgeAdjust(_scrollPosition + scrollAmount, panelSize);
-            _scrollPosition = position;
+            // right to left uses negative positioning but only when it's horizontal tabs
+            var isMirrored = RightToLeft && !_isVerticalTabs;
+            var current = isMirrored ? -_scrollPosition : _scrollPosition;
+            var position = ScrollEdgeAdjust(current + scrollAmount, panelSize);
+            _scrollPosition = isMirrored ? -position : position;
         }
 
         private void CenterScrollPositionAroundSelectedItem()

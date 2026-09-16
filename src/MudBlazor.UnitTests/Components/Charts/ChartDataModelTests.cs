@@ -161,6 +161,19 @@ public class ChartDataModelTests : BunitTest
         collected.Should().Equal(1.5, 2.5);
     }
 
+    [Test]
+    public void ChartData_Enumerators_ReadCurrentPointValues()
+    {
+        var data = new ChartData<double>(new List<double> { 1.0, 2.0 });
+        data[1].Y = 20.0;
+
+        var genericValues = data.ToList();
+        var nonGenericValues = ((IEnumerable)data).Cast<double>().ToList();
+
+        genericValues.Should().Equal(1.0, 20.0);
+        nonGenericValues.Should().Equal(1.0, 20.0);
+    }
+
     #endregion
 
     #region ChartData implicit conversions

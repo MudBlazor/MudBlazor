@@ -63,7 +63,13 @@ public partial class ChartData<T> : IEnumerable<T> where T : struct, INumber<T>,
     public static implicit operator ChartData<T>(List<T> values) => new(values);
 
     ///<inheritdoc/>
-    public IEnumerator<T> GetEnumerator() => Values.GetEnumerator();
+    public IEnumerator<T> GetEnumerator()
+    {
+        foreach (var point in Points)
+        {
+            yield return point.Y;
+        }
+    }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

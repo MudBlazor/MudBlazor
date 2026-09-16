@@ -20,7 +20,7 @@
                 .AddClass("mud-step-skipped", step.SkippedState.Value)
                 .Build();
 
-            <button class="@stepClassname" role="tab" type="button" id="@GetStepButtonId(step)" aria-controls="@GetStepPanelIdIfRendered(step)" aria-selected="@(isActive.ToString().ToLower())"
+            <button class="@stepClassname" role="tab" type="button" id="@GetStepButtonId(step)" aria-controls="@GetStepPanelIdIfRendered(step)" aria-selected="@(isActive.ToString().ToLowerInvariant())"
                     @onclick="@(async e => await OnStepClickAsync(step, e))" disabled="@step.DisabledState.Value">
                 @RenderStepLabel(step, isActive)
             </button>

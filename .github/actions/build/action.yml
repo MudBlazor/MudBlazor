@@ -26,6 +26,13 @@ runs:
         key: ${{ github.repository }}-bun-binary-${{ hashFiles('**/Directory.Build.props') }}
         path: ./tools/BunDotNet
 
+    - name: Cache Bun packages
+      uses: actions/cache@v6
+      with:
+        # The build installs from 'src/bun.lock', so the resolved package set changes only when it does
+        key: ${{ github.repository }}-bun-packages-${{ hashFiles('src/bun.lock') }}
+        path: ~/.bun/install/cache
+
     - name: Restore NuGet packages
       shell: bash
       run: dotnet restore ${{ inputs.project-path }}

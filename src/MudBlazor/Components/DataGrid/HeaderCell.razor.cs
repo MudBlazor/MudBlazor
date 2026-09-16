@@ -18,13 +18,13 @@ namespace MudBlazor
     /// <seealso cref="MudDataGrid{T}"/>
     public partial class HeaderCell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
-        private bool _selected;
         private bool _isResizing;
         private double? _resizerHeight;
         private bool _filtersMenuVisible;
         private (double Top, double Left) _filtersMenuPosition;
         private ElementReference _headerElement;
         private ElementReference _resizerElement;
+        private bool _firstSort = true;
         private readonly string _id = Identifier.Create();
 
         // Resize state
@@ -144,6 +144,39 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// The <c>aria-sort</c> value for the primary sorted header cell, or <c>null</c> otherwise.
+        /// </summary>
+        private string? GetAriaSort()
+        {
+            if (!sortable || SortDirection == SortDirection.None || Column?.PropertyName is not { } propertyName || DataGrid.SortDefinitions.Count == 0)
+            {
+                return null;
+            }
+
+            var primarySort = DataGrid.SortDefinitions.MinBy(sort => sort.Value.Index);
+            if (!string.Equals(primarySort.Key, propertyName, StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            var ariaSortOwner = DataGrid.RenderedColumns.FirstOrDefault(column =>
+                !column.HiddenState.Value
+                && (column.Sortable ?? (DataGrid.SortMode != SortMode.None))
+                && string.Equals(column.PropertyName, primarySort.Key, StringComparison.Ordinal));
+            if (!ReferenceEquals(Column, ariaSortOwner))
+            {
+                return null;
+            }
+
+            return SortDirection switch
+            {
+                SortDirection.Ascending => "ascending",
+                SortDirection.Descending => "descending",
+                _ => null
+            };
+        }
+
         private bool resizable
         {
             get
@@ -191,7 +224,7 @@ namespace MudBlazor
         {
             get
             {
-                if (!sortable && !filterable && !groupable)
+                if (!sortable && !filterable && !groupable && !hideable)
                     return false;
                 if (!sortable && DataGrid?.FilterMode == DataGridFilterMode.ColumnFilterRow)
                     return false;
@@ -260,8 +293,6 @@ namespace MudBlazor
             if (DataGrid != null)
             {
                 DataGrid.SortChangedEvent += OnGridSortChanged;
-                DataGrid.SelectedAllItemsChangedEvent += OnSelectedAllItemsChanged;
-                DataGrid.SelectedItemsChangedEvent += OnSelectedItemsChanged;
             }
         }
 
@@ -308,19 +339,6 @@ namespace MudBlazor
             {
                 Column.SortIndex = sortDefinition.Index;
             }
-        }
-
-        private void OnSelectedAllItemsChanged(bool value)
-        {
-            _selected = value;
-            StateHasChanged();
-        }
-
-        private void OnSelectedItemsChanged(HashSet<T> items)
-        {
-            Debug.Assert(DataGrid is not null);
-            _selected = items.Count == DataGrid.GetFilteredItemsCount();
-            StateHasChanged();
         }
 
         private async Task OnResizerPointerDown(PointerEventArgs args)
@@ -495,6 +513,8 @@ namespace MudBlazor
             }
 
             var initialSortDirection = Column?.InitialSortDirection ?? SortDirection.Ascending;
+            var firstSort = _firstSort;
+            _firstSort = false;
 
             SortDirection = SortDirection switch
             {
@@ -502,7 +522,7 @@ namespace MudBlazor
                 SortDirection.Descending => DataGrid.AllowUnsorted
                     ? SortDirection.None
                     : SortDirection.Ascending,
-                _ => initialSortDirection == SortDirection.None
+                _ => initialSortDirection == SortDirection.None || !firstSort
                     ? SortDirection.Ascending
                     : initialSortDirection
             };
@@ -554,7 +574,7 @@ namespace MudBlazor
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
-                DataGrid.HideColumnsPanel();
+                DataGrid.HideColumnsPanelIfVisible();
                 DataGrid.DropContainerHasChanged();
             }
         }
@@ -577,7 +597,7 @@ namespace MudBlazor
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
-                DataGrid.HideColumnsPanel();
+                DataGrid.HideColumnsPanelIfVisible();
                 DataGrid.DropContainerHasChanged();
             }
         }
@@ -769,8 +789,6 @@ namespace MudBlazor
             if (DataGrid is not null)
             {
                 DataGrid.SortChangedEvent -= OnGridSortChanged;
-                DataGrid.SelectedAllItemsChangedEvent -= OnSelectedAllItemsChanged;
-                DataGrid.SelectedItemsChangedEvent -= OnSelectedItemsChanged;
             }
         }
     }

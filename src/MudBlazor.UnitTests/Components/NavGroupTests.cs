@@ -58,6 +58,31 @@ namespace MudBlazor.UnitTests.Components
 
             bool GetExpandedState() => comp.FindComponent<MudCollapse>().Instance.Expanded;
         }
+
+        /// <summary>
+        /// The nav landmark takes its accessible name from Title, which a caller must be able to override.
+        /// </summary>
+        [Test]
+        public void NavGroup_Should_LetUserAttributesOverrideAriaLabel()
+        {
+            var comp = Context.Render<MudNavGroup>(parameters => parameters
+                .Add(p => p.Title, "Reports")
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-label", "Quarterly reports" } }));
+
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Quarterly reports");
+        }
+
+        /// <summary>
+        /// Title still names the landmark when the caller does not supply an aria-label.
+        /// </summary>
+        [Test]
+        public void NavGroup_Should_UseTitleAsAriaLabel()
+        {
+            var comp = Context.Render<MudNavGroup>(parameters => parameters
+                .Add(p => p.Title, "Reports"));
+
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Reports");
+        }
     }
 }
 

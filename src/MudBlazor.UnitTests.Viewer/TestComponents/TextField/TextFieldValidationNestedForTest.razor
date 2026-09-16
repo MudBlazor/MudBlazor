@@ -1,0 +1,29 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="_model">
+    <DataAnnotationsValidator />
+    <MudTextField For="@(() => _model.Address.Street)" @bind-Value="_model.Address.Street" />
+</EditForm>
+
+@code {
+    public static string __description__ = "Validation through a nested `For` path, including replacing the nested model instance.";
+
+    private readonly TestModel _model = new();
+
+    public void ReplaceNestedModel() => _model.Address = new AddressModel();
+
+    public object NestedModel => _model.Address;
+
+    public void ForceRender() => StateHasChanged();
+
+    public class TestModel
+    {
+        public AddressModel Address { get; set; } = new();
+    }
+
+    public class AddressModel
+    {
+        [StringLength(3, ErrorMessage = "Should not be longer than 3")]
+        public string? Street { get; set; }
+    }
+}

@@ -595,7 +595,6 @@ namespace MudBlazor
         // These are set in OnInitialized() so they can't be null
         internal HeaderContext<T> headerContext = null!;
         private FilterContext<T> filterContext = null!;
-        internal FooterContext<T> footerContext = null!;
 
         // Cached filter definition to avoid repeated lookups during rendering
         private IFilterDefinition<T>? _cachedFilterDefinition;
@@ -693,9 +692,6 @@ namespace MudBlazor
 
             // Add the FilterContext
             filterContext = new FilterContext<T>(DataGrid);
-
-            // Add the FooterContext
-            footerContext = new FooterContext<T>(DataGrid);
         }
 
         internal IReadOnlyCollection<string> GetFilterOperators(FieldType fieldType)
@@ -826,6 +822,13 @@ namespace MudBlazor
         protected internal virtual string? ContentFormat { get; }
 
         protected internal abstract object? CellContent(T item);
+
+        /// <summary>
+        /// Gets the cell content value for the specified item.
+        /// </summary>
+        /// <param name="item">The item to retrieve the cell content for.</param>
+        /// <returns>The cell content value, or <c>null</c> if not available.</returns>
+        public object? GetCellContent(T item) => CellContent(item);
 
         protected internal abstract object? PropertyFunc(T item);
 

@@ -39,6 +39,24 @@ namespace MudBlazor
         [Parameter]
         public IEnumerable<T>? CurrentItems { get; set; }
 
+        /// <summary>
+        /// The rows of the group this footer cell belongs to.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which scopes the footer to the whole grid.  It is set for the footer rendered underneath a single group of rows.
+        /// </remarks>
+        [Parameter]
+        public IEnumerable<T>? GroupItems { get; set; }
+
+        // Set in OnInitialized() so it can't be null.
+        private FooterContext<T> _footerContext = null!;
+
+        protected override void OnInitialized()
+        {
+            Debug.Assert(DataGrid is not null);
+            _footerContext = new FooterContext<T>(DataGrid) { GroupItemsFunc = () => GroupItems };
+        }
+
         private string Classname =>
             new CssBuilder(Column?.FooterClassname)
                 .AddClass(Column?.FooterClassFunc?.Invoke(items ?? Enumerable.Empty<T>()))

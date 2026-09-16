@@ -43,7 +43,7 @@
 - Search for existing patterns before adding helpers, abstractions, or new APIs.
 - For component behavior changes, identify the likely unit test file before editing.
 - For public API changes, identify the docs page and examples that may need updates.
-- For TS, style, or asset changes, check whether `entrypoint.js` or generated assets are affected.
+- For TS, style, or asset changes, check whether `entrypoint.ts` or generated assets are affected.
 
 ## Repository Layout
 
@@ -86,7 +86,7 @@ Run restore only when restore inputs changed (`*.csproj`, `src/Directory.Build.*
 
 If `.config/dotnet-tools.json` changes, run `dotnet tool restore --tool-manifest .config/dotnet-tools.json`.
 
-If `src/package.json` or `src/bun.lock` changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
+If `src/package.json`, `src/bun.lock`, `src/eslint.config.ts`, `src/Directory.Build.props`, any `tsconfig.json`, `src/MudBlazor/bunfig.toml`, `src/MudBlazor/test-setup.ts`, or a project's build script (`build.mjs` or `build.mts`) changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
 
 ### Default local loop for C# or Razor component changes
 
@@ -135,6 +135,14 @@ dotnet format --no-restore
 - Do not set other component parameters via `@ref` (`BL0005`). Use declarative binding instead.
 - Use `ParameterState<T>` for parameter updates and change handlers.
 - Parameters managed through the parameter-state framework should be annotated with `[Parameter, ParameterState]`.
+
+### Root element
+- A library component renders its own root element. Do not wrap it in `MudElement`; that is a public component for consumers, and inside the library it costs a second component per instance for one tag. See [Avoid thousands of component instances](https://learn.microsoft.com/aspnet/core/blazor/performance/rendering#avoid-thousands-of-component-instances).
+- If the tag is fixed, write it as markup.
+- If the tag is chosen at runtime, open it from C# with `builder.OpenElement(0, HtmlTag)` and keep the content in a private method that takes `RenderTreeBuilder __builder` and contains markup, so the compiler still assigns sequence numbers. This is how [QuickGrid](https://github.com/dotnet/aspnetcore/blob/4b58ad51259280e1340777513694f122501435ab/src/Components/QuickGrid/Microsoft.AspNetCore.Components.QuickGrid/src/QuickGrid.razor#L41-L110) renders its rows and how [Virtualize](https://github.com/dotnet/aspnetcore/blob/4b58ad51259280e1340777513694f122501435ab/src/Components/Web/src/Virtualization/Virtualize.cs#L554) renders its `SpacerElement`. Reference: `MudBaseButton.OpenRoot` and `MudButton.razor`.
+- If the tag is chosen at runtime and the content is only `ChildContent`, the whole element can be built in C#, as `MudText` and `MudStack` do.
+- Hardcode sequence numbers in hand-written builder code and keep it to the root element; see [Manually build a render tree](https://learn.microsoft.com/aspnet/core/blazor/advanced-scenarios#manually-build-a-render-tree-rendertreebuilder). The exception is an inner element whose tag is chosen at runtime and whose content is a single value: build it in a `RenderFragment`, which gives it its own sequence numbers, as `MudText.RenderText` does for item text.
+- Attribute order decides precedence: a later attribute with the same name wins. When replacing a wrapper, keep the order the component had before, and add tests that pin what a caller's `class` or `style` in `UserAttributes` does and which parameter-derived attributes it cannot override.
 
 ### Styling and naming
 - Use `CssBuilder` for classes and styles.
@@ -243,6 +251,7 @@ private Task ToggleAsync()
 - Prefer additive APIs, safe defaults, or obsoleting old behavior while keeping the current PR scoped to the requested fix or feature.
 - If a breaking change is required, call it out explicitly in the PR description and update docs and tests accordingly.
 - For parameter renames or removals, consider `[Obsolete]` with a clear message and migration path.
+- When a parameter is removed, including by renaming it, add a MUD0002 migration hint to `src/MudBlazor.Analyzers/Internal/ParameterMigration.cs`, with a case in `MigrationHintCases` and a row on the analyzer docs page. Verify the conversion against the component source, not the migration guide.
 - A binary break is still a breaking change even when source-compatible. For example, changing a parameter from `EventCallback` to `EventCallback<T>` keeps existing Razor markup compiling but breaks precompiled consumers until they rebuild.
 - When current behavior is wrong compared to common web standards, prefer fixing the default over adding a parameter or `MudGlobal` setting to opt out of the fix. If the corrected default is breaking, hold it for the next major version as a single change.
 
@@ -325,7 +334,8 @@ Verify with bUnit assertions on roles and `aria-*` attributes before and after i
 - Break comment lines at sentence boundaries, one sentence per line, instead of wrapping at a column width.
 - Do not use `#region`.
 - A helper used by only one method should be a `static` local function inside that method. Reserve private members for helpers shared across multiple methods.
-- Keep `src/MudBlazor/TScripts/entrypoint.js` in sync with files in `src/MudBlazor/TScripts/` except `entrypoint.js`.
+- Keep `src/MudBlazor/TScripts/entrypoint.ts` in sync with files in `src/MudBlazor/TScripts/`, except `entrypoint.ts` itself and `*.test.ts` files.
+- Test files are run by `bun test` and must never be imported by `entrypoint.ts`, which would pull the test runner into the shipped bundle.
 
 ## When Verification Fails
 

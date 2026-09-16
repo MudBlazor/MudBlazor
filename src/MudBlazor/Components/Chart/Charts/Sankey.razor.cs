@@ -105,13 +105,16 @@ namespace MudBlazor.Charts
             }
 
             // Assert input data
-            var nodeGroups = Nodes.GroupBy(e => e.Name).ToList();
-            if (nodeGroups.Any(grp => grp.Count() > 1))
+            var nodeNames = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var node in Nodes)
             {
-                throw new ArgumentException("All nodes must have unique names");
+                if (!nodeNames.Add(node.Name))
+                {
+                    throw new ArgumentException("All nodes must have unique names");
+                }
             }
 
-            var edgeWithInvalidNode = Edges.FirstOrDefault(e => Nodes.All(n => n.Name != e.Source) || Nodes.All(n => n.Name != e.Target));
+            var edgeWithInvalidNode = Edges.FirstOrDefault(e => !nodeNames.Contains(e.Source) || !nodeNames.Contains(e.Target));
             if (edgeWithInvalidNode != null)
             {
                 throw new ArgumentException($"Edge {edgeWithInvalidNode.Source} {ChartOptions!.EdgeLabelSymbol} {edgeWithInvalidNode.Target} specifies a non-existing node");
@@ -171,7 +174,8 @@ namespace MudBlazor.Charts
         {
             NodeValues = GetAllNodeValues();
             var nodes = Nodes.Where(n => NodeValues[n.Name] >= ChartOptions!.HideNodesSmallerThan).ToList();
-            NodeValues = NodeValues.Where(kv => nodes.Any(n => n.Name == kv.Key)).ToDictionary();
+            var retainedNodeNames = nodes.Select(n => n.Name).ToHashSet(StringComparer.Ordinal);
+            NodeValues = NodeValues.Where(kv => retainedNodeNames.Contains(kv.Key)).ToDictionary();
 
             if (ChartOptions!.OrderNodesByValue) nodes = nodes.OrderByDescending(n => NodeValues[n.Name]).ToList();
 
@@ -180,8 +184,9 @@ namespace MudBlazor.Charts
 
         private SankeyEdge<T>[] GetAllEdgesToDraw(SankeyNode[] nodes)
         {
+            var nodeNames = nodes.Select(n => n.Name).ToHashSet(StringComparer.Ordinal);
             return Edges
-                .Where(e => nodes.Any(n => n.Name == e.Source) && nodes.Any(n => n.Name == e.Target))
+                .Where(e => nodeNames.Contains(e.Source) && nodeNames.Contains(e.Target))
                 .ToArray();
         }
 
@@ -318,8 +323,8 @@ namespace MudBlazor.Charts
             if (ChartLabels.Length > 0)
                 return ChartLabels.Length;
 
-            return ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty()
-                              .Max(x => x?.Data?.Values.Count ?? 0);
+            return ChartSeries.Where(x => x.Data is not null).DefaultIfEmpty()
+                              .Max(x => x?.Data?.Count ?? 0);
         }
 
         private List<ChartSeries<T>> AggregateByLabel()
@@ -337,12 +342,12 @@ namespace MudBlazor.Charts
 
                 foreach (var series in visibleSeries)
                 {
-                    var values = series.Data?.Values ?? [];
+                    var values = series.Data;
 
-                    if (i < values.Count)
+                    if (values is not null && i < values.Count)
                     {
                         var link = new SankeyLink(label, series.Name);
-                        data.Add((link, values[i]));
+                        data.Add((link, values.GetValue(i)));
                     }
                 }
 
@@ -365,14 +370,14 @@ namespace MudBlazor.Charts
             foreach (var series in chartSeries)
             {
                 var data = new List<(SankeyLink, T)>();
-                var values = series.Data?.Values ?? [];
-
                 if (!series.Visible) continue;
 
-                for (var i = 0; i < values.Count; i++)
+                if (series.Data is null) continue;
+
+                for (var i = 0; i < series.Data.Count; i++)
                 {
                     var link = new SankeyLink(series.Name, ChartLabels[i]);
-                    data.Add((link, values[i]));
+                    data.Add((link, series.Data.GetValue(i)));
                 }
 
                 result.Add(new ChartSeries<T>
@@ -408,8 +413,15 @@ namespace MudBlazor.Charts
 
         private static SankeyNode[] RemoveNodesWithNoEdges(SankeyNode[] nodes, SankeyEdge<T>[] edges)
         {
+            var connectedNodeNames = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var edge in edges)
+            {
+                connectedNodeNames.Add(edge.Source);
+                connectedNodeNames.Add(edge.Target);
+            }
+
             return nodes
-                .Where(n => edges.Any(e => e.Source == n.Name || e.Target == n.Name))
+                .Where(n => connectedNodeNames.Contains(n.Name))
                 .ToArray();
         }
 
