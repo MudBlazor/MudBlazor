@@ -2134,6 +2134,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies that adornment tooltips are rendered for every text field input mode.
+        /// </summary>
+        [TestCase(Adornment.Start, false, false)]
+        [TestCase(Adornment.Start, false, true)]
+        [TestCase(Adornment.Start, true, false)]
+        [TestCase(Adornment.Start, true, true)]
+        [TestCase(Adornment.End, false, false)]
+        [TestCase(Adornment.End, false, true)]
+        [TestCase(Adornment.End, true, false)]
+        [TestCase(Adornment.End, true, true)]
+        public void Should_render_tooltip_for_adornment_if_provided(Adornment adornment, bool withMultipleLines, bool withMask)
+        {
+            const string tooltip = "the tooltip";
+            const string ariaLabel = "the aria label";
+            var lines = withMultipleLines ? 5 : 1;
+            var mask = withMask ? new PatternMask("0000") : null;
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Adornment, adornment)
+                .Add(p => p.AdornmentIcon, Icons.Material.Filled.Accessibility)
+                .Add(p => p.AdornmentAriaLabel, ariaLabel)
+                .Add(p => p.AdornmentTooltip, tooltip)
+                .Add(p => p.Lines, lines)
+                .Add(p => p.Mask, mask));
+
+            comp.FindComponent<MudTooltip>().Instance.Text.Should().Be(tooltip);
+            comp.Find(".mud-input-adornment-icon").Attributes.GetNamedItem("aria-label")!.Value.Should().Be(ariaLabel);
+        }
+
+        /// <summary>
+        /// Verifies that an unset adornment tooltip preserves the existing adornment markup.
+        /// </summary>
+        [Test]
+        public void Should_not_render_tooltip_for_adornment_if_not_provided()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Adornment, Adornment.End)
+                .Add(p => p.AdornmentIcon, Icons.Material.Filled.Accessibility));
+
+            comp.FindComponents<MudTooltip>().Should().BeEmpty();
+        }
+
+        /// <summary>
         /// Verifies that a text field with various configurations renders the expected <c>aria-describedby</c> attribute.
         /// </summary>
         // no helpers, validates error id is present when error is present
