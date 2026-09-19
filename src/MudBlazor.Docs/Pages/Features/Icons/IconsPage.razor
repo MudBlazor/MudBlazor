@@ -1,5 +1,6 @@
 ﻿@page "/features/icons"
 @using Microsoft.AspNetCore.Components.Web.Virtualization
+@using MudBlazor.Docs.Extensions
 
 <DocsPage>
     <DocsPageHeader Title="MudBlazor Icons" SubTitle="Over 1800 Material Design icons and a few custom ones." />
@@ -20,7 +21,7 @@
                 <MudItem xs="12" Class="relative">
                     @if(SelectedIconOrigin == IconOrigin.Material)
                     {
-                        <MudChipSet T="string" CheckMark>
+                        <MudChipSet @bind-SelectedValue="SelectedIconType" T="string" CheckMark>
                             <MudChip Default="true" Text="Filled" OnClick="@(() => ChangeIconCategory(IconType.Filled))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                             <MudChip Text="Outlined" OnClick="@(() => ChangeIconCategory(IconType.Outlined))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                             <MudChip Text="Rounded" OnClick="@(() => ChangeIconCategory(IconType.Rounded))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
@@ -30,7 +31,7 @@
                     }
                     else if(SelectedIconOrigin == IconOrigin.Custom)
                     {
-                        <MudChipSet T="string" CheckMark>
+                        <MudChipSet @bind-SelectedValue="SelectedIconType" T="string" CheckMark>
                             <MudChip Default="true" Text="All" OnClick="@(() => ChangeIconCategory(IconType.All))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                             <MudChip Text="Brands" OnClick="@(() => ChangeIconCategory(IconType.Brands))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                             <MudChip Text="FileFormats" OnClick="@(() => ChangeIconCategory(IconType.FileFormats))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
@@ -38,6 +39,18 @@
                         </MudChipSet>
                     }
                 </MudItem>
+                @if (SelectedIconOrigin == IconOrigin.Material)
+                {
+                    <MudItem xs="12" Class="relative">
+                        <MudChipSet @key="@SelectedIconType" @bind-SelectedValue="SelectedMaterialIconCategory" @bind-SelectedValue:after="@(() => ChangeMaterialCategory(SelectedMaterialIconCategory))" T="string" CheckMark>
+                            <MudChip T="string" Default="true" Value="@string.Empty" Text="All" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            @foreach (var category in MaterialIconCategories)
+                            {
+                                <MudChip T="string" Value="@category" Text="@category.Capitalize()" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            }
+                        </MudChipSet>
+                    </MudItem>
+                }
             </MudGrid>
             
             <div class="relative">
@@ -99,5 +112,13 @@
             <MudSelectItem Value="Size.Medium">Medium</MudSelectItem>
             <MudSelectItem Value="Size.Large">Large</MudSelectItem>
         </MudSelect>
+
+        <MudText Typo="Typo.subtitle2">Icon tags</MudText>
+        <div class="d-flex flex-wrap">
+            @foreach (var tag in SelectedIcon.MaterialTags ?? Enumerable.Empty<string>())
+            {
+                <MudChip T="string" Size="Size.Small" Text="@tag" Variant="Variant.Outlined" Color="Color.Default" />
+            }
+        </div>
     </div>
 </MudDrawer>
