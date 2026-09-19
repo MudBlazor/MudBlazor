@@ -52,6 +52,17 @@
         </CustomContent>
         <SelectedTemplate />
     </MudFileUpload>
+
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>" Folder="true" FilesChanged="UploadFolderFiles">
+        <CustomContent>
+            <MudButton Variant="Variant.Filled" 
+                    Color="Color.Secondary" 
+                    StartIcon="@Icons.Material.Filled.Folder" 
+                    OnClick="@context.OpenFilePickerAsync">
+                Upload Folder
+            </MudButton>
+        </CustomContent>
+    </MudFileUpload>
 </MudStack>
 
 <MudFlexBreak />
@@ -81,5 +92,22 @@
     {
         _files.Add(file);
         //TODO upload the files to the server
+    }
+
+    private void OnFilesChanged(IReadOnlyList<IBrowserFile> files)
+    {
+        _files.Clear();
+        foreach (var file in files)
+        {
+            _files.Add(file);
+        }
+    }
+
+    private void UploadFolderFiles(IReadOnlyList<IBrowserFile> files)
+    {
+        foreach (var file in files)
+        {
+            _files.Add(file);
+        }
     }
 }

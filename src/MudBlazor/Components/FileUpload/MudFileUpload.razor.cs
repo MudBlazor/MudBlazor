@@ -256,6 +256,19 @@ namespace MudBlazor
         [Category(CategoryTypes.FileUpload.Behavior)]
         public bool Disabled { get; set; }
 
+        /// <summary>
+        /// If true, the file input will accept folder drops and folder selection.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public bool Folder { get; set; }
+
+        /// <summary>
+        /// Triggered when files are uploaded in Folder mode, returning a list of their relative path structures.
+        /// </summary>
+        [Parameter]
+        public EventCallback<IReadOnlyList<string>> FolderPathsChanged { get; set; }
+
         [CascadingParameter(Name = "ParentDisabled")]
         private bool ParentDisabled { get; set; }
 
@@ -496,6 +509,20 @@ namespace MudBlazor
                 return;
 
             await ProcessFileChangeAsync(args);
+
+            if (Folder && FolderPathsChanged.HasDelegate)
+            {
+                //Use localIndex = 1 since MudBlazor initializes the first active input index at 1
+                var inputId = GetInputId(1);
+
+                // Pass the string ID to JS to extract webkitRelativePath arrays
+                var paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudFileUpload.getRelativePaths", inputId);
+
+                if (paths != null)
+                {
+                    await FolderPathsChanged.InvokeAsync(paths);
+                }
+            }
         }
 
         private async Task ProcessFileChangeAsync(InputFileChangeEventArgs args)
