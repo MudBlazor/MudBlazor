@@ -6,8 +6,7 @@
 .mud-card-header {
   display: flex;
   align-items: center;
-  border-top-left-radius: inherit;
-  border-top-right-radius: inherit;
+  padding: 16px;
 
   &.mud-card-header-padding {
     padding: 16px;
@@ -22,19 +21,22 @@
 
   & .mud-card-header-content {
     flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    height: 48px;
 
     & .mud-typography {
       margin-bottom: 0;
+      line-height: 1;
     }
   }
 
   & .mud-card-header-actions {
     flex: 0 0 auto;
-    align-self: flex-start;
-    margin-top: -8px;
-    margin-right: -8px;
-    margin-inline-end: -8px;
-    margin-inline-start: unset;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    height: 48px;
   }
 }
 
