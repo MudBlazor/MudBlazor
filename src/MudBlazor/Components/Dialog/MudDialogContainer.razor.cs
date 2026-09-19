@@ -333,7 +333,42 @@ namespace MudBlazor
 
         private string? GetBackgroundClass() => GetDialogOptionsOrDefault.BackgroundClass ?? GlobalDialogOptions.BackgroundClass;
 
-        private DialogOptions GetDialogOptionsOrDefault => _dialogOptionsState.Value ?? DialogOptions.Default;
+        /// <summary>
+        /// The options in effect for this dialog: the values passed to
+        /// <see cref="DialogService.ShowAsync(Type, string, DialogOptions)"/> layered over the
+        /// <see cref="MudDialog.Options"/> of the dialog being shown, one property at a time.
+        /// </summary>
+        /// <remarks>
+        /// A dialog that does not set <see cref="MudDialog.Options"/> keeps the instance it was
+        /// shown with, so only dialogs that declare their own defaults pay for the merge.
+        /// </remarks>
+        private DialogOptions GetDialogOptionsOrDefault
+        {
+            get
+            {
+                var options = _dialogOptionsState.Value ?? DialogOptions.Default;
+                var dialogDefaults = _dialog?.Options;
+                if (dialogDefaults is null)
+                {
+                    return options;
+                }
+
+                return options with
+                {
+                    Position = options.Position ?? dialogDefaults.Position,
+                    MaxWidth = options.MaxWidth ?? dialogDefaults.MaxWidth,
+                    BackdropClick = options.BackdropClick ?? dialogDefaults.BackdropClick,
+                    CloseOnEscapeKey = options.CloseOnEscapeKey ?? dialogDefaults.CloseOnEscapeKey,
+                    CloseOnNavigation = options.CloseOnNavigation ?? dialogDefaults.CloseOnNavigation,
+                    NoHeader = options.NoHeader ?? dialogDefaults.NoHeader,
+                    CloseButton = options.CloseButton ?? dialogDefaults.CloseButton,
+                    FullScreen = options.FullScreen ?? dialogDefaults.FullScreen,
+                    FullWidth = options.FullWidth ?? dialogDefaults.FullWidth,
+                    BackgroundClass = options.BackgroundClass ?? dialogDefaults.BackgroundClass,
+                    DefaultFocus = options.DefaultFocus ?? dialogDefaults.DefaultFocus
+                };
+            }
+        }
 
         protected virtual async ValueTask DisposeAsyncCore()
         {
