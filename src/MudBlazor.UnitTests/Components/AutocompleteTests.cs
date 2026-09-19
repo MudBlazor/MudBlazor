@@ -2660,6 +2660,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-select-input").ClassList.Should().Contain(inputClass);
         }
 
+        /// <summary>
+        /// Applying OuterClass adds the class to the autocomplete's outer element.
+        /// </summary>
+        [Test]
+        public void Should_Render_OuterClasses_Correctly()
+        {
+            // Arrange
+            var outerClass = "custom-outer-class";
+
+            // Act
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.OuterClass, outerClass)
+            );
+
+            // Assert
+            comp.Find(".mud-autocomplete").ClassList.Should().Contain(outerClass);
+        }
+
         [Test]
         public async Task Should_Select_Correct_Item_With_ArrowKeys_And_Not_Wrap_Around()
         {
