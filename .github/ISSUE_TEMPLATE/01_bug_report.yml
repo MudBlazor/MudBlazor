@@ -45,15 +45,15 @@ body:
     attributes:
       label: Version (bug)
       description: Which version has the issue?
-      placeholder: v8.x.x
+      placeholder: v9.x.x
     validations:
       required: true
   - type: input
     id: working-version
     attributes:
       label: Version (working)
-      description: Last working version?
-      placeholder: v7.x.x
+      description: Last working version
+      placeholder: v9.x.x
   - type: dropdown
     id: environments
     attributes:
@@ -64,7 +64,9 @@ body:
         - Edge
         - Firefox
         - Safari
-        - iOS/Android
+        - iOS
+        - Android
+        - MAUI / Hybrid
         - Other
   - type: dropdown
     id: rendering-mode
@@ -72,6 +74,9 @@ body:
       label: Blazor rendering mode
       multiple: true
       options:
-        - WASM
-        - Server
+        - Interactive WebAssembly
+        - Interactive Server
+        - Interactive Auto
+        - Static server-side rendering
         - Hybrid
+        - Not applicable / unknown
