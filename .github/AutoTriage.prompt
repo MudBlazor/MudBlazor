@@ -200,39 +200,40 @@ When NOT to edit:
 
 ## 8. Inactivity Rules
 
-General Inactivity Rules:
-- Skip closed threads
-- Skip threads assigned to or created by maintainers or bots
-- Only remove `stale` label and reset timer after a human (non-bot) posts a comment. No other kind of timeline event should reset the timer.
-- Do not post a comment when closing stale threads
+### General Inactivity Rules
+- Skip closed threads and threads assigned to or created by maintainers or bots.
+- Activity means any event, EXCEPT:
+  - Any action by a bot.
+  - Labeled, unlabeled, renamed, reviewer-removed, and assignee-removed events.
+- Qualifying activity resets the inactivity timer and removes `stale` if present. Excluded events do neither.
+- Measure inactivity from the latest qualifying activity, or creation if none.
+- Do not post a comment when closing stale threads.
 
-### Issues Only
-- Set `state: not_planned` on issues that have been stale for >=84 consecutive days
+### Issues
+Mark an issue `stale` when ANY condition holds:
+- Bug: >=18 months of inactivity.
+- Feature: >=36 months of inactivity.
+- Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days, with no qualifying activity during those 28 days.
+The 28-day label list is exhaustive; no other label, including `has workaround`, creates eligibility.
 
-Mark issues as `stale` when ONE of these inactivity thresholds are met. For the time-based thresholds, only a comment by a human (non-bot) account counts as activity: bot comments, bot actions, and labeled/unlabeled/renamed/assigned/unassigned events never reset the clock. Measure elapsed time from the last human comment, or from the issue's creation date if there are none.
-- Bug: >=18 months since the last human activity
-- Feature: >=36 months since the last human activity
-- Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days. This label list is exhaustive; no other label (e.g. `has workaround`) makes an issue eligible for `stale`.
+When marking stale, post verbatim without the default footer:
 
-Post this comment verbatim (exclude default footer) when marking an issue stale:
-```
-This issue has been marked as stale due to inactivity.  
-If you have any updates or additional information, please comment below.
+> This issue has been marked as stale due to inactivity.
+> If you have any updates or additional information, please comment below.
+>
+> If no response is received, it will be automatically closed.
 
-If no response is received, it will be automatically closed.
-```
+Close with `state: not_planned` after >=84 consecutive days marked `stale`, provided no qualifying activity has occurred since it was marked.
 
-### Pull Requests Only
-- Close pull requests that have been stale for >=168 consecutive days
+### Pull Requests
+Mark a pull request `stale` when BOTH conditions hold:
+- Has any `needs:` label.
+- No qualifying activity for >=84 consecutive days.
 
-Mark pull requests as `stale` while ALL conditions are met:
-- Has any `needs:` label
-- No timeline event (excluding labeled/unlabeled/renamed or reviewer/assignee removed) for >=84 consecutive days
+When marking stale, post verbatim without the default footer:
+> This pull request has been marked as stale due to inactivity.
 
-Post this comment verbatim (exclude default footer) when marking a pull request stale:
-```
-This pull request has been marked as stale due to inactivity.
-```
+Close after >=168 consecutive days marked `stale`, provided no qualifying activity has occurred since it was marked.
 
 ## 9. Reopen Closed Items
 - This section applies to closed threads only.
