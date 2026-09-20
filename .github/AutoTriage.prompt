@@ -84,12 +84,14 @@ Apply `help wanted` when ALL conditions are met:
 ### Awaiting Triage
 Apply `awaiting triage` while ALL conditions are met:
 - Thread is a pull request
+- Thread is open and not a draft
 - Thread is not assigned
 - Thread was not created by a maintainer or a bot
-- Thread does not qualify for a `needs:` label or `help wanted` label
-- The author comments a request for help/review/triage
-- No maintainer has replied since that comment
-- At least 14 days have elapsed since that comment
+- Thread has no outstanding `needs:` requirements and is not marked `on hold`
+- No maintainer has commented or reviewed since the PR was opened or most recently marked ready for review
+- At least 14 days have elapsed since that opening or ready-for-review event
+
+Remove `awaiting triage` when a later event makes the PR draft, assigns it, supplies a maintainer response/review, places it on hold, or establishes an outstanding `needs:` requirement.
 
 ## 4. Missing Information Handling
 Purpose: Capture essential details early on open threads so maintainers can act quickly. Covers low-signal reports (link-only, screenshot/video-only, missing PR rationale, unsubstantiated enhancements). Does not interfere once a maintainer engages.
