@@ -10,10 +10,11 @@ body:
     id: expected-behavior
     attributes:
       label: Describe your idea
+      description: What problem does this solve, and why are existing options insufficient?
     validations:
       required: true
   - type: textarea
     id: examples
     attributes:
-      label: Example code and screenshots
-      description: Have you seen this feature elsewhere, or do you have a mockup? How would you implement it?
+      label: Examples
+      description: Have you seen this feature elsewhere, or do you have a mockup?
