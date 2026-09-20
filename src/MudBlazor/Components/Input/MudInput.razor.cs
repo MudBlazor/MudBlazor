@@ -49,9 +49,9 @@ namespace MudBlazor
 
         protected string ClearButtonClassname =>
             new CssBuilder("mud-input-clear-button")
-                .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+                .AddClass("me-n1", Adornment == Adornment.End && !HideSpinButtons)
                 .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
-                .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+                .AddClass("me-6", Adornment != Adornment.End && !HideSpinButtons)
                 .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
                 .AddClass("mud-no-activator")
                 .Build();
@@ -59,6 +59,8 @@ namespace MudBlazor
         protected internal override InputType GetInputType() => InputType;
 
         protected string InputTypeString => InputType.ToStringFast(true);
+
+        internal bool IsClearing { get; set; }
 
         /// <summary>
         /// The type of input collected by this component.
@@ -196,14 +198,17 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public override async ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override async ValueTask FocusAsync(bool preventScroll)
         {
             try
             {
                 if (InputType == InputType.Hidden && ChildContent != null)
-                    await _elementReference1.FocusAsync();
+                    await _elementReference1.FocusAsync(preventScroll);
                 else
-                    await ElementReference.FocusAsync();
+                    await ElementReference.FocusAsync(preventScroll);
             }
             catch (Exception e)
             {
@@ -305,9 +310,38 @@ namespace MudBlazor
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {
-            await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
-            await ElementReference.FocusAsync();
-            await OnClearButtonClick.InvokeAsync(e);
+            IsClearing = true;
+            try
+            {
+                await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
+                await ElementReference.FocusAsync();
+                await OnClearButtonClick.InvokeAsync(e);
+            }
+            finally
+            {
+                IsClearing = false;
+            }
+        }
+
+        // The clear button lives inside components that open on mousedown, such as MudSelect and the pickers, so its own mousedown must not reach them.
+        // A `@onmousedown:stopPropagation` directive cannot sit beside `@onmousedown` on a component, so both travel through the splat instead, which is what the directive compiles to anyway.
+        private Dictionary<string, object>? _clearButtonAttributes;
+
+        private Dictionary<string, object> ClearButtonAttributes => _clearButtonAttributes ??= new Dictionary<string, object>(3)
+        {
+            ["onmousedown"] = EventCallback.Factory.Create<MouseEventArgs>(this, HandleClearMouseDownAsync),
+            ["__internal_stopPropagation_onmousedown"] = true,
+            ["onmouseleave"] = EventCallback.Factory.Create<MouseEventArgs>(this, HandleClearMouseLeaveAsync),
+        };
+
+        protected virtual async Task HandleClearMouseDownAsync(MouseEventArgs e)
+        {
+            IsClearing = true;
+        }
+
+        protected virtual async Task HandleClearMouseLeaveAsync(MouseEventArgs e)
+        {
+            IsClearing = false;
         }
 
         protected virtual async Task HandleSpinButtonPointerDownAsync()

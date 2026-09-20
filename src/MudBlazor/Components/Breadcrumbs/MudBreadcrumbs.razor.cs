@@ -76,6 +76,11 @@ namespace MudBlazor
         /// </remarks>
         public bool Collapsed { get; private set; } = true;
 
+        /// <summary>
+        /// Whether <paramref name="item"/> is the last item in the trail and therefore represents the current page.
+        /// </summary>
+        internal bool IsLastItem(BreadcrumbItem? item) => Items is { Count: > 0 } && ReferenceEquals(Items[^1], item);
+
         internal static string GetItemClassname(BreadcrumbItem item)
         {
             return new CssBuilder("mud-breadcrumb-item")

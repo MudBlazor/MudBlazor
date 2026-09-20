@@ -312,7 +312,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll($"path.mud-chart-bar{series3}").Count.Should().Be(0, "Series 3 should have 0 bars initially");
 
             // Hide Series 1
-            comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Count, "Series 1 bars should be visible");
+            comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Count, "Series 1 bars should be visible");
             await seriesCheckboxes[0].ChangeAsync(new ChangeEventArgs() { Value = false });
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[0].IsChecked().Should().BeFalse("Series 1 checkbox should be unchecked after hiding");
@@ -325,10 +325,10 @@ namespace MudBlazor.UnitTests.Charts
             seriesCheckboxes[0].IsChecked().Should().BeTrue("Series 1 checkbox should be checked after showing");
             chartSeries[0].Visible.Should().BeTrue("Series 1 Visible property should be true");
 
-            comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Count, "Series 1 bars should be visible again after re-checking");
+            comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Count, "Series 1 bars should be visible again after re-checking");
 
             // Now check Series 2 (which should have been visible from the start)
-            comp.FindAll($"path.mud-chart-bar{series2}").Count.Should().Be(chartSeries[1].Data.Values.Count, "Series 2 should have bars from the start");
+            comp.FindAll($"path.mud-chart-bar{series2}").Count.Should().Be(chartSeries[1].Data.Count, "Series 2 should have bars from the start");
 
             // Hide Series 2
             await seriesCheckboxes[1].ChangeAsync(new ChangeEventArgs() { Value = false });
@@ -336,14 +336,105 @@ namespace MudBlazor.UnitTests.Charts
             seriesCheckboxes[1].IsChecked().Should().BeFalse("Series 2 checkbox should be unchecked after hiding");
             chartSeries[1].Visible.Should().BeFalse("Series 2 Visible property should be false");
             comp.FindAll($"path.mud-chart-bar{series2}").Count.Should().Be(0, "Series 2 bars should be hidden");
-            comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Values.Count, "Series 1 bars should still be visible"); // Ensure other series not affected
+            comp.FindAll($"path.mud-chart-bar{series1}").Count.Should().Be(chartSeries[0].Data.Count, "Series 1 bars should still be visible"); // Ensure other series not affected
 
             // Show Series 3 (which was initially hidden)
             await seriesCheckboxes[2].ChangeAsync(new ChangeEventArgs() { Value = true });
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Series 3 checkbox should be checked after showing");
             chartSeries[2].Visible.Should().BeTrue("Series 3 Visible property should be true");
-            comp.FindAll($"path.mud-chart-bar{series3}").Count.Should().Be(chartSeries[2].Data.Values.Count, "Series 3 bars should be visible");
+            comp.FindAll($"path.mud-chart-bar{series3}").Count.Should().Be(chartSeries[2].Data.Count, "Series 3 bars should be visible");
+        }
+
+        [Test]
+        public void BarChart_Legend_HasOneFocusableControlPerSeries()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new () { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            var focusable = comp.FindAll(".mud-chart-legend input, .mud-chart-legend [tabindex]:not([tabindex='-1'])");
+            focusable.Count.Should().Be(chartSeries.Count, "each series should be a single tab stop");
+            comp.FindAll(".mud-chart-legend [role='button']").Should().BeEmpty("the checkbox already carries the toggle semantics");
+        }
+
+        [Test]
+        public void BarChart_Legend_CheckboxIsLabelledBySeriesName()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new () { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            // The name has to live inside the checkbox's own label. That is what gives the input an
+            // accessible name and what makes clicking the text toggle the series in a browser.
+            var labels = comp.FindAll(".mud-chart-legend-checkbox label.mud-checkbox");
+            labels.Count.Should().Be(chartSeries.Count);
+
+            for (var i = 0; i < chartSeries.Count; i++)
+            {
+                labels[i].TextContent.Trim().Should().Be(chartSeries[i].Name);
+                labels[i].QuerySelector("input.mud-checkbox-input").Should().NotBeNull();
+            }
+        }
+
+        [Test]
+        public async Task BarChart_Legend_SpaceKey_TogglesVisibility()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new () { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            chartSeries[0].Visible.Should().BeTrue("Series 1 should be visible initially");
+
+            comp.Find(".mud-checkbox-input").KeyDown(new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = " ", Type = "keydown" });
+            await comp.WaitForAssertionAsync(() => chartSeries[0].Visible.Should().BeFalse("Space should hide Series 1"));
+
+            comp.Find(".mud-checkbox-input").KeyDown(new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = " ", Type = "keydown" });
+            await comp.WaitForAssertionAsync(() => chartSeries[0].Visible.Should().BeTrue("Space again should restore Series 1"));
+        }
+
+        [Test]
+        public async Task BarChart_Legend_ToggleCheckbox_DoesNotTriggerOnLegendSelected()
+        {
+            var chartSeries = new List<ChartSeries<double>>()
+            {
+                new () { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                new () { Name = "Series 2", Data = new double[] { 40, 50, 60 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.CanHideSeries, true));
+
+            var initialSelectedIndex = comp.Instance.GetState(x => x.SelectedIndex);
+
+            await comp.Find(".mud-checkbox-input").ChangeAsync(new ChangeEventArgs { Value = false });
+
+            chartSeries[0].Visible.Should().BeFalse("the checkbox drives series visibility");
+            comp.Instance.GetState(x => x.SelectedIndex).Should().Be(initialSelectedIndex,
+                "toggling a series should not change the selected chart index");
         }
 
         [Test]
@@ -378,7 +469,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.Render();
 
             var overlayBars = comp.FindAll("g.mud-charts-bar-series path.mud-chart-bar");
-            overlayBars.Count.Should().Be(overlayData[0].Data.Values.Count, because: "the overlay renders one bar per data point");
+            overlayBars.Count.Should().Be(overlayData[0].Data.Count, because: "the overlay renders one bar per data point");
         }
 
         [Test]

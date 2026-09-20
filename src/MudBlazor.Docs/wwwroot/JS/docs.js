@@ -1,8 +1,8 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-//General functions for Docs page 
+//General functions for Docs page
 class MudBlazorDocs {
 
     // return the inner text of the element referenced by given element id
@@ -135,7 +135,7 @@ window.CookieConsent = {
 
     ApplyPreferences: function (categories, services) {
         const activatableScriptTags = document.querySelectorAll("script[type='text/plain']");
-        
+
         activatableScriptTags.forEach(originalScriptElement => {
             const requiredCategory = originalScriptElement.getAttribute("data-consent-category");
 
@@ -190,13 +190,13 @@ window.CookieConsent = {
                     };
 
                     CookieConsent.Data.LoadedScripts.push(loadedScript);
-                    
+
                     CookieConsent.BroadcastEventAll("JsBroadcastEventScriptLoaded", JSON.stringify({
                         AllLoadedScripts: CookieConsent.Data.LoadedScripts,
                         Script: loadedScript
                     }));
                 });
-                
+
                 // Load the script and place it in the DOM
                 if (sourceUri) {
                     newScriptElement.src = sourceUri;
@@ -206,7 +206,7 @@ window.CookieConsent = {
             }
         });
     },
-    
+
     ReadLoadedScripts: function () {
         return JSON.stringify(CookieConsent.Data.LoadedScripts);
     },
@@ -220,7 +220,7 @@ window.CookieConsent = {
     RegisterBroadcastReceiver: function (context, isWasm) {
         if (typeof window.CookieConsentContext === 'undefined') {
             console.log("CookieConsent: Creating default value for window.CookieConsentContext.Broadcasting")
-            
+
             window.CookieConsentContext = {
                 Broadcasting: {
                     ServerContext: null,
@@ -231,11 +231,11 @@ window.CookieConsent = {
 
         if (isWasm) {
             console.log("CookieConsent: Registered context for WASM");
-            
+
             window.CookieConsentContext.Broadcasting.WasmContext = context;
         } else {
             console.log("CookieConsent: Registered context for Server");
-            
+
             window.CookieConsentContext.Broadcasting.ServerContext = context;
         }
     },

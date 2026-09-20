@@ -111,7 +111,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         VerticalLines.Clear();
         VerticalValues.Clear();
 
-        if (numVerticalLines == 0 || !Series.Any(x => x.Data.Values.Any()))
+        if (numVerticalLines == 0 || !Series.Any(x => x.Data.Count != 0))
         {
             return;
         }
@@ -291,7 +291,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         var interpolator = CreateInterpolator(seriesIndex, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
 
         var series = Series[seriesIndex];
-        var isPositiveOnly = series.Data.Values.All(v => v >= T.Zero);
+        var isPositiveOnly = series.Data.All(v => v >= T.Zero);
         var zeroPointY = GetYForZeroPoint(lowestHorizontalLine);
 
         for (var j = 0; j < interpolator.InterpolatedYs.Length; j++)

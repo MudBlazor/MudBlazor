@@ -1,4 +1,4 @@
-﻿@import '../../abstracts/variables';
+@import '../../abstracts/variables';
 
 @mixin flex-shrink ($breakpoint) {
   .flex-#{$breakpoint}shrink-0 {

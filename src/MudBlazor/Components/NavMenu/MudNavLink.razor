@@ -2,13 +2,13 @@
 @inherits MudComponentBase
 @using Microsoft.AspNetCore.Components.Routing
 
-<div @attributes="UserAttributes" class="@Classname" disabled="@Disabled" style="@Style">
+<div class="@Classname" disabled="@Disabled" style="@Style">
     @{
         if (!OnClick.HasDelegate)
         {
             <NavLink @onclick="this.AsNonRenderingEventHandler(HandleNavigation)"
-                    class="@LinkClassname"
                     @attributes="@Attributes"
+                    class="@LinkClassname"
                     tabindex="@TabIndex"
                     Match="@Match"
                     ActiveClass="@ActiveClass">
@@ -24,6 +24,7 @@
         else
         {
             <div @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)"
+                 @attributes="UserAttributes"
                  class="@LinkClassname"
                  tabindex="@TabIndex">
                 @if (!string.IsNullOrEmpty(Icon))

@@ -75,9 +75,10 @@ namespace MudBlazor
         /// The number of pages shown before and after the ellipsis.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>. <br />
+        /// Defaults to <c>2</c>. <br />
+        /// A value of <c>0</c> would hide the page numbers at the edge: <c>&lt; ... 4 5 6 ... &gt;</c> <br />
         /// A value of <c>1</c> would show one-page number at the edge: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c> <br />
-        /// A value of <c>2</c> would show two-page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c> 
+        /// A value of <c>2</c> would show two-page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c>
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.Pagination.Appearance)]
@@ -87,7 +88,7 @@ namespace MudBlazor
         /// The number of pages shown between the ellipsis.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>. <br />
+        /// Defaults to <c>3</c>. <br />
         /// A value of <c>1</c> would show one-page number in the middle: <c>&lt; 1 ... 5 ... 9 &gt;</c> <br />
         /// A value of <c>3</c> would show three-page numbers in the middle: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c>
         /// </remarks>
@@ -266,7 +267,7 @@ namespace MudBlazor
          -1 is displayed as "..." in the ui*/
         private int[] GeneratePagination()
         {
-            //return array {1, ..., Count} if Count is small 
+            //return array {1, ..., Count} if Count is small
             if (_countState.Value <= 4 || _countState.Value <= (2 * _boundaryCountState.Value) + _middleCountState.Value + 2)
             {
                 var result = new int[_countState.Value];
@@ -276,6 +277,32 @@ namespace MudBlazor
                 }
 
                 return result;
+            }
+
+            //With no boundary pages there is nothing for a single-page gap to be absorbed into.
+            //The path below would then show one page more than MiddleCount, so use a plain sliding window.
+            if (_boundaryCountState.Value == 0)
+            {
+                var maxStart = _countState.Value - _middleCountState.Value + 1;
+                var start = Math.Clamp(_selectedState.Value - (_middleCountState.Value / 2), 1, maxStart);
+
+                var window = new List<int>(_middleCountState.Value + 2);
+                if (start > 1)
+                {
+                    window.Add(-1);
+                }
+
+                for (var i = 0; i < _middleCountState.Value; i++)
+                {
+                    window.Add(start + i);
+                }
+
+                if (start + _middleCountState.Value - 1 < _countState.Value)
+                {
+                    window.Add(-1);
+                }
+
+                return window.ToArray();
             }
 
             var length = (2 * _boundaryCountState.Value) + _middleCountState.Value + 2;
@@ -378,7 +405,7 @@ namespace MudBlazor
 
         private Task SetBoundaryCount(int count)
         {
-            var newCount = Math.Max(1, count);
+            var newCount = Math.Max(0, count);
 
             return _boundaryCountState.SetValueAsync(newCount);
         }

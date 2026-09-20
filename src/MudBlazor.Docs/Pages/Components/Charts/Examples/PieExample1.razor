@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Class="pa-4">
-    <MudChart ChartType="ChartType.Pie" ChartSeries="@data.AsChartDataSet()" @bind-SelectedIndex="Index" ChartLabels="@labels" Width="100%" Height="300px" />
+    <MudChart T="double" ChartType="ChartType.Pie" ChartSeries="@data.AsChartDataSet()" @bind-SelectedIndex="Index" ChartLabels="@labels" Width="100%" Height="300px" />
 </MudPaper>
 <MudPaper Class="pa-4 mt-2 d-flex justify-center">
     <MudButton OnClick="AddDataSize" Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>

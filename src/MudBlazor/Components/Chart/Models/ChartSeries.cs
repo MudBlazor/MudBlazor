@@ -59,10 +59,10 @@ public sealed class ChartSeries<T> : IChartSeries, IEquatable<ChartSeries<T>> wh
     {
         if (other is null || other.Data is null) return false;
         if (ReferenceEquals(this, other)) return true;
-        if (Data?.Values?.Count != other.Data.Values.Count) return false;
+        if (Data?.Count != other.Data.Count) return false;
 
         return Name == other.Name &&
-               Data.Values.SequenceEqual(other.Data.Values);
+               Data.SequenceEqual(other.Data);
     }
 
     ///<inheritdoc />
@@ -75,13 +75,13 @@ public sealed class ChartSeries<T> : IChartSeries, IEquatable<ChartSeries<T>> wh
 
         hashCode.Add(Name);
 
-        if (Data?.Values != null)
+        if (Data is not null)
         {
-            hashCode.Add(Data.Values.Count);
+            hashCode.Add(Data.Count);
 
-            for (var i = 0; i < Math.Min(10, Data.Values.Count); i++)
+            for (var i = 0; i < Math.Min(10, Data.Count); i++)
             {
-                hashCode.Add(Data.Values[i]);
+                hashCode.Add(Data.GetValue(i));
             }
         }
 

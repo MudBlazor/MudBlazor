@@ -53,7 +53,7 @@ internal sealed class ScrollManager : IScrollManager
     // and maintain the proper lock. IF YOU CHANGE THIS, CHANGE THE JAVASCRIPT AS WELL
     /// <inheritdoc />
     public ValueTask LockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>
-        _jSRuntime.InvokeVoidAsync("mudScrollManager.lockScroll", selector, cssClass);
+        _jSRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.lockScroll", selector, cssClass);
 
     /// <inheritdoc />
     public ValueTask UnlockScrollAsync(string selector = "body", string cssClass = "scroll-locked") =>

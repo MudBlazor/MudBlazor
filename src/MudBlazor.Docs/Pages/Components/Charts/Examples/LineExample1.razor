@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 
 <MudPaper Class="doc-section-component-container">
-    <MudChart ChartType="ChartType.Line" ChartSeries="@_series" ChartLabels="@_xAxisLabels" ChartOptions="@_options" Width="100%" Height="@($"{_height}px")"
+    <MudChart T="double" ChartType="ChartType.Line" ChartSeries="@_series" ChartLabels="@_xAxisLabels" ChartOptions="@_options" Width="100%" Height="@($"{_height}px")"
               @bind-SelectedIndex="_index" MatchBoundsToSize="_matchBoundsToSize"/>
 </MudPaper>
 

@@ -1037,4 +1037,138 @@ class TestClass
 
         await VerifyCS.VerifyAnalyzerAsync(source);
     }
+
+    /// <summary>
+    /// A GetState method on a lookalike type or outside MudBlazor.Extensions does not exempt the read inside its lambda.
+    /// </summary>
+    [Test]
+    public async Task MUD0010_ImpostorGetState_ShouldReportDiagnostic()
+    {
+        var source = @"
+using System;
+using MudBlazor.State;
+using Other.Extensions;
+
+namespace Other.Extensions
+{
+    static class ComponentBaseWithStateExtensions
+    {
+        public static int GetState<T>(this T component, Func<T, int> selector) => 0;
+    }
+}
+
+class MyComponent
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+
+    public int Method()
+    {
+        return this.GetState(x => {|#0:x.Counter|}) + GetState(() => {|#1:Counter|});
+    }
+
+    private static int GetState(Func<int> selector) => 0;
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source,
+            VerifyCS.Diagnostic("MUD0010").WithLocation(0).WithArguments("Counter", "int"),
+            VerifyCS.Diagnostic("MUD0010").WithLocation(1).WithArguments("Counter", "int"));
+    }
+
+    /// <summary>
+    /// A read in an ordinary delegate lambda is reported, while the same lambda nested inside an expression-tree lambda is exempt.
+    /// </summary>
+    [Test]
+    public async Task MUD0010_DelegateLambdaOnlyExemptInsideExpressionTree()
+    {
+        var source = @"
+using System;
+using System.Linq.Expressions;
+using MudBlazor.State;
+
+class MyComponent
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+
+    public void Method()
+    {
+        Func<int> plain = () => {|#0:Counter|};
+        Func<Func<int>> nestedPlain = () => () => {|#1:Counter|};
+        Expression<Func<Func<int>>> nestedInTree = () => () => Counter;
+        Expression<Func<MyComponent, Func<Func<int>>>> deepInTree = x => () => () => x.Counter;
+        Func<Expression<Func<int>>> treeInsidePlain = () => () => Counter;
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source,
+            VerifyCS.Diagnostic("MUD0010").WithLocation(0).WithArguments("Counter", "int"),
+            VerifyCS.Diagnostic("MUD0010").WithLocation(1).WithArguments("Counter", "int"));
+    }
+
+    /// <summary>
+    /// Reading another component's state in a constructor is still external access, and nameof on it is not.
+    /// </summary>
+    [Test]
+    public async Task MUD0012_ExternalReadInConstructor_ShouldReportDiagnostic()
+    {
+        var source = @"
+using System;
+using MudBlazor.State;
+
+class ComponentA
+{
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+
+    [MudBlazor.State.ParameterState(ParameterUsage = ParameterUsageOptions.Write)]
+    public int WriteOnly { get; set; }
+}
+
+class ComponentB
+{
+    public ComponentB(ComponentA other)
+    {
+        var counter = {|#0:other.Counter|};
+        var writeOnly = other.WriteOnly;
+        var name = nameof(other.Counter);
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source,
+            VerifyCS.Diagnostic("MUD0012").WithLocation(0).WithArguments("Counter"));
+    }
+
+    /// <summary>
+    /// Assignment, compound assignment, increment, and decrement targets never get a read diagnostic, even when only reads are checked.
+    /// </summary>
+    [Test]
+    public async Task NoReadDiagnostic_ForAssignmentTargets()
+    {
+        var source = @"
+using System;
+using MudBlazor.State;
+
+class MyComponent
+{
+    [MudBlazor.State.ParameterState(ParameterUsage = ParameterUsageOptions.Read)]
+    public int ReadOnly { get; set; }
+
+    [MudBlazor.State.ParameterState]
+    public int Counter { get; set; }
+
+    public void Method()
+    {
+        ReadOnly = 1;
+        ReadOnly += 1;
+        ReadOnly++;
+        --ReadOnly;
+        {|#0:Counter|} = {|#1:Counter|} + 1;
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(source,
+            VerifyCS.Diagnostic("MUD0011").WithLocation(0).WithArguments("Counter", "int"),
+            VerifyCS.Diagnostic("MUD0010").WithLocation(1).WithArguments("Counter", "int"));
+    }
 }

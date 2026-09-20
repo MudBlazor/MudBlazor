@@ -134,4 +134,16 @@ public class SplitPanelTests : BunitTest
         await Context.DisposeComponentsAsync();
         Context.JSInterop.VerifyInvoke("mudSplitPanel_destroy").Arguments[0].Should().Be("custom-split");
     }
+
+    /// <summary>
+    /// The divider's accessible name comes from the language resources so it can be translated.
+    /// </summary>
+    [Test]
+    public void Divider_HasLocalizedAccessibleName()
+    {
+        var comp = Context.Render<MudSplitPanel>();
+
+        var divider = comp.Find("[role='separator']");
+        divider.GetAttribute("aria-label").Should().Be("Resize panels");
+    }
 }

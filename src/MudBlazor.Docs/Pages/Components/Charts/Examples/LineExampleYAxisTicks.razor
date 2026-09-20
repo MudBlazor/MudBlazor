@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <div>
-    <MudChart ChartType="ChartType.Line" ChartSeries="@_series" ChartLabels="@_xAxisLabels" ChartOptions="@_options" Width="100%" Height="350px"></MudChart>
+    <MudChart T="double" ChartType="ChartType.Line" ChartSeries="@_series" ChartLabels="@_xAxisLabels" ChartOptions="@_options" Width="100%" Height="350px"></MudChart>
     <MudSlider @bind-Value="_options.YAxisTicks" Min="10" Max="400" Step="10" Color="Color.Info">Y-Axis Ticks: @_options.YAxisTicks.ToString()</MudSlider>
 </div>
 

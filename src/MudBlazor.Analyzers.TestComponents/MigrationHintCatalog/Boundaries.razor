@@ -1,0 +1,25 @@
+﻿@*names that look like catalog entries but must keep the generic warning*@
+<MudMenu Link="/menu" IsOpen="true" />
+<MudSelect T="string">
+    <MudSelectItem T="string" Value="@("a")" DisableRipple="true" />
+</MudSelect>
+<MudAutocomplete T="string" IsOpen="true" />
+<MudRadio T="string" Checked="true" />
+<MudTHeadRow IsChecked="true" />
+<MudIconButton Icon="@Icons.Material.Filled.Add" Title="Title moved to the HTML title attribute" />
+
+@*current parameters, a case-only rename, and a component MUD0002 does not inspect raise nothing*@
+<MudTabs>
+    <MudTabPanel Text="One" PanelClass="one-panel" />
+</MudTabs>
+<MudTreeView T="string">
+    <MudTreeViewItem T="string" Value="@("item")" IconExpanded="@Icons.Material.Filled.FolderOpen" />
+</MudTreeView>
+<MudTreeViewItemToggleButton ExpandedIcon="@Icons.Material.Filled.ChevronRight" />
+<MudCheckBox T="bool" UnCheckedColor="Color.Primary" />
+<MudThemeProvider ObserveSystemThemeChange="true" />
+
+@code
+{
+    public static string __description__ = "Lookalikes of MUD0002 migration hints that must not be explained";
+}

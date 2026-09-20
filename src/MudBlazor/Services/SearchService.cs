@@ -172,7 +172,13 @@ internal sealed class SearchService : ISearchService
 
         // Typo tolerance: allow a limited number of edits proportional to length.
         var maxLen = Math.Max(qt.Length, tt.Length);
-        var maxDist = maxLen <= 3 ? 0 : maxLen <= 5 ? 1 : maxLen <= 8 ? 2 : 3;
+        var maxDist = maxLen switch
+        {
+            <= 3 => 0,
+            <= 5 => 1,
+            <= 8 => 2,
+            _ => 3
+        };
 
         if (maxDist > 0)
         {
@@ -196,7 +202,12 @@ internal sealed class SearchService : ISearchService
             return PrefixScore(b.Length, a.Length);
 
         var maxLen = Math.Max(a.Length, b.Length);
-        var maxDist = maxLen <= 5 ? 1 : maxLen <= 8 ? 2 : 3;
+        var maxDist = maxLen switch
+        {
+            <= 5 => 1,
+            <= 8 => 2,
+            _ => 3
+        };
         var dist = EditDistance(a, b);
         if (dist <= maxDist)
             return (maxLen - dist) * 100 / maxLen;

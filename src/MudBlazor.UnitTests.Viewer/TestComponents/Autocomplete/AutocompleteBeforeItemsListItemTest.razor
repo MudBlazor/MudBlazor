@@ -1,0 +1,33 @@
+﻿<MudPopoverProvider />
+
+<MudAutocomplete T="Season" SearchFunc="@SearchAsync" @bind-Value="@Value" Strict="false" Dense="true" DebounceInterval="0">
+    <BeforeItemsTemplate>
+        @* A consumer-authored typed list item: it must still find the cascading MudList<T> to inherit Dense.
+           Its value is the enum's 0 member, so it must not be selected while nothing is selected either. *@
+        <MudListItem T="Season" Value="Season.Spring" Text="Header" Class="before-item" />
+    </BeforeItemsTemplate>
+</MudAutocomplete>
+
+@code {
+    public Season Value { get; set; } = Season.Autumn;
+
+    public enum Season
+    {
+        Spring = 0,
+        Summer = 1,
+        Autumn = 2,
+        Winter = 3,
+    }
+
+    public Task<IEnumerable<Season>> SearchAsync(string? text, CancellationToken token)
+    {
+        var all = Enum.GetValues<Season>().AsEnumerable();
+
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            all = all.Where(x => x.ToString().Contains(text, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        return Task.FromResult(all);
+    }
+}

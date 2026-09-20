@@ -2,14 +2,16 @@
  * Build script for MudBlazor JS and SCSS assets.
  *
  * Usage:
- *   bun run build.mjs
+ *   bun run build.mts
  * Or if you don't have bun installed:
- *   dotnet tool run bun -- wrapper -- run build.mjs
+ *   dotnet tool run bun -- wrapper -- run build.mts
  *
  * Parameters:
  *   watch: Watch for changes and rebuild on change.
  *   fix: Apply ESLint fixes.
  */
+
+/// <reference types="bun" />
 
 import fs from "node:fs";
 import path from "node:path";
@@ -17,17 +19,22 @@ import { fileURLToPath } from "node:url";
 import * as sass from "sass";
 import { ESLint } from "eslint";
 
+const bunExecutable = process.execPath;
 const scriptFilename = fileURLToPath(import.meta.url);
 const scriptDirectory = path.dirname(scriptFilename);
 const jsDirectory = path.join(scriptDirectory, "TScripts");
-const jsEntrypoint = path.join(scriptDirectory, "TScripts/entrypoint.js");
+const jsEntrypoint = path.join(scriptDirectory, "TScripts/entrypoint.ts");
 const jsOutputFile = path.join(scriptDirectory, "wwwroot/MudBlazor.min.js");
 const scssInput = path.join(scriptDirectory, "Styles/MudBlazor.scss");
 const scssInputDir = path.dirname(scssInput);
 const scssOutput = path.join(scriptDirectory, "wwwroot/MudBlazor.min.css");
 
-const timings = [];
-function startTimer(label) {
+type TimingEntry = {
+    step: string;
+    ms: number;
+};
+const timings: TimingEntry[] = [];
+function startTimer(label: string) {
     return {
         label,
         start: process.hrtime.bigint(),
@@ -37,7 +44,7 @@ function startTimer(label) {
             const entry = { step: this.label, ms: Math.round(duration * 100) / 100 };
             timings.push(entry);
             return entry;
-        }
+        },
     };
 }
 function printTimings() {
@@ -73,14 +80,72 @@ async function buildJS() {
     timer.stop();
 }
 
+async function typecheck() {
+    console.log("Typechecking Scripts");
+    const timer = startTimer("typescript");
+
+    const proc = Bun.spawn({
+        cmd: [bunExecutable, "run", "tsc"],
+        cwd: scriptDirectory,
+        stdout: "inherit",
+        stderr: "inherit",
+    });
+
+    // exitCode is null when tsc is killed by a signal, and process.exit(null) exits 0.
+    // The awaited value is always a number and carries the conventional 128+n for signals.
+    const exitCode = await proc.exited;
+    if (exitCode !== 0) {
+        process.exit(exitCode);
+    }
+
+    timer.stop();
+}
+
+async function test() {
+    console.log("Running Tests");
+    const timer = startTimer("tests");
+
+    const proc = Bun.spawn({
+        cmd: [bunExecutable, "test"],
+        cwd: scriptDirectory,
+        stdout: "ignore",
+        stderr: "ignore",
+    });
+    const exitCode = await proc.exited;
+
+    if (exitCode !== 0) {
+        // The bun test runner is very verbose, so we re-run it with stdout/stderr attached to the console to show the errors.
+        const retryProc = Bun.spawn({
+            cmd: [bunExecutable, "test"],
+            cwd: scriptDirectory,
+            stdout: "inherit",
+            stderr: "inherit",
+        });
+        const exitCode = await retryProc.exited;
+
+        if (exitCode !== 0) {
+            process.exit(exitCode);
+        } else {
+            console.error(
+                "Tests failed, but re-run succeeded. This should never happen.",
+            );
+            process.exit(1);
+        }
+    }
+
+    timer.stop();
+}
+
 async function eslint() {
-    console.log("Linting JS files", jsDirectory);
+    console.log("Linting Scripts");
     const timer = startTimer("eslint");
 
     const fix = process.argv.includes("fix");
     const eslint = new ESLint({ fix: fix });
     const results = await eslint.lintFiles([
-        scriptFilename,
+        // todo: add this once eslint supports TypeScript 7
+        //path.join(jsDirectory, "**/*.ts")
+        //scriptFilename,
         path.join(jsDirectory, "**/*.js"),
     ]);
 
@@ -89,14 +154,17 @@ async function eslint() {
     }
 
     const formatter = await eslint.loadFormatter("stylish");
-    const resultText = formatter.format(results);
+    const resultText = await formatter.format(results);
 
     if (resultText.trim().length > 0) {
         console.log(resultText);
     }
 
     const totalErrors = results.reduce((sum, r) => sum + (r.errorCount || 0), 0);
-    const totalWarnings = results.reduce((sum, r) => sum + (r.warningCount || 0), 0);
+    const totalWarnings = results.reduce(
+        (sum, r) => sum + (r.warningCount || 0),
+        0,
+    );
 
     if (totalErrors > 0 || totalWarnings > 0) {
         process.exit(1);
@@ -125,6 +193,8 @@ function buildSCSS() {
 
 async function buildAll() {
     await eslint();
+    await typecheck();
+    await test();
     await buildJS();
     buildSCSS();
     printTimings();
@@ -147,6 +217,8 @@ if (process.argv.includes("watch")) {
             console.log(`JS file changed: ${eventType} ${filename}`);
             try {
                 await eslint();
+                await typecheck();
+                await test();
                 await buildJS();
                 printTimings();
             } catch (e) {
@@ -159,7 +231,7 @@ if (process.argv.includes("watch")) {
         scssInputDir,
         { recursive: true },
         (eventType, filename) => {
-            if (filename.endsWith(".scss")) {
+            if (filename?.endsWith(".scss")) {
                 console.log(`SCSS file changed: ${eventType} ${filename}`);
                 try {
                     buildSCSS();

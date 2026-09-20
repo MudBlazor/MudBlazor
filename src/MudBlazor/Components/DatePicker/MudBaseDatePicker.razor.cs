@@ -712,7 +712,6 @@ namespace MudBlazor
             var dateTime = date ?? GetMonthStart(0);
             var id = $"{_componentId}{calendar.GetYear(dateTime)}";
             await ScrollManager.ScrollToYearAsync(id);
-            StateHasChanged();
         }
 
         protected int GetMinYear()

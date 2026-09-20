@@ -1,0 +1,66 @@
+﻿@* Test component for selection collapse and SelectedItemsChanged when Comparer is swapped at runtime *@
+
+<MudDataGrid T="Person" Items="@Items" Comparer="@Comparer" MultiSelection="true"
+             SelectedItems="@SelectedItems" SelectedItemsChanged="OnSelectedItemsChanged">
+    <Columns>
+        <SelectColumn T="Person" />
+        <PropertyColumn Property="x => x.GroupId" />
+        <PropertyColumn Property="x => x.SubId" />
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Swapping Comparer to a coarser instance at runtime collapses the live selection and fires SelectedItemsChanged with the collapsed set.";
+
+    public IEqualityComparer<Person> Comparer { get; set; } = new CompositeComparer();
+
+    public List<Person> Items { get; } =
+    [
+        new Person(1, 1, "Alpha"),
+        new Person(1, 2, "Bravo"),
+        new Person(2, 1, "Charlie")
+    ];
+
+    public HashSet<Person> SelectedItems { get; set; } = [];
+
+    public int SelectedItemsChangedCount { get; private set; }
+
+    private void OnSelectedItemsChanged(HashSet<Person> items)
+    {
+        SelectedItemsChangedCount++;
+        SelectedItems = items;
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Swaps in a coarser comparer instance, the way a fresh reference is detected by HasParameterChanged.
+    /// </summary>
+    public void SwapToGroupComparer()
+    {
+        Comparer = new GroupComparer();
+        StateHasChanged();
+    }
+
+    public record Person(int GroupId, int SubId, string Name);
+
+    /// <summary>
+    /// Keys on the composite of GroupId and SubId, so Alpha and Bravo remain distinct despite sharing a GroupId.
+    /// </summary>
+    public class CompositeComparer : IEqualityComparer<Person>
+    {
+        public bool Equals(Person? x, Person? y) => x?.GroupId == y?.GroupId && x?.SubId == y?.SubId;
+
+        public int GetHashCode(Person obj) => HashCode.Combine(obj.GroupId, obj.SubId);
+    }
+
+    /// <summary>
+    /// Keys on GroupId alone, so Alpha and Bravo become equal once this comparer is applied.
+    /// </summary>
+    public class GroupComparer : IEqualityComparer<Person>
+    {
+        public bool Equals(Person? x, Person? y) => x?.GroupId == y?.GroupId;
+
+        public int GetHashCode(Person obj) => obj.GroupId;
+    }
+}

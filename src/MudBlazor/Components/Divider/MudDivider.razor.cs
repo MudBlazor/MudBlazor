@@ -19,7 +19,7 @@ public partial class MudDivider : MudComponentBase
             .AddClass("mud-divider-flexitem", FlexItem)
             .AddClass("mud-divider-light", Light)
             .AddClass("mud-divider-vertical", Vertical)
-            .AddClass($"mud-divider-{DividerType.ToStringFast(true)}", DividerType != DividerType.FullWidth || (DividerType == DividerType.FullWidth && Vertical == false))
+            .AddClass($"mud-divider-{DividerType.ToStringFast(true)}", DividerType != DividerType.FullWidth || (DividerType == DividerType.FullWidth && !Vertical))
             .AddClass(Class)
             .Build();
 

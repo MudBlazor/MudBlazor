@@ -15,6 +15,11 @@ namespace MudBlazor.State.Comparer;
 [DebuggerDisplay("IEqualityComparer = {OriginalComparer}")]
 internal class ParameterEqualityComparerSwappable<T> : IParameterEqualityComparerSwappable<T>
 {
+    /// <summary>
+    /// The shared instance used by parameters that do not declare their own comparer.
+    /// </summary>
+    public static readonly ParameterEqualityComparerSwappable<T> Default = new((Func<IEqualityComparer<T>>?)null);
+
     /// <inheritdoc />
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     public Func<IEqualityComparer<T>> UnderlyingComparer { get; }

@@ -1,4 +1,4 @@
-﻿@import '../../abstracts/variables';
+@import '../../abstracts/variables';
 
 @mixin align-self ($breakpoint) {
   .align-self-#{$breakpoint}auto {

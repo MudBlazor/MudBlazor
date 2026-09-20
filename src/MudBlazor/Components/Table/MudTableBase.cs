@@ -704,6 +704,7 @@ namespace MudBlazor
         // Applies an internal page change (pager/NavigateTo/clamp/reset); must not update _currentPageParameterValue or it would be mistaken for a parameter change (#13462).
         internal void SetCurrentPage(int page)
         {
+            page = Math.Max(0, page);
             if (_currentPage == page)
             {
                 return;

@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 
 <MudPaper Class="doc-section-component-container">
-    <MudChart ChartType="ChartType.Timeseries"
+    <MudChart T="double" ChartType="ChartType.Timeseries"
               ChartSeries="@_series"
               @bind-SelectedIndex="_index"
               MatchBoundsToSize="@_matchBoundsToSize"

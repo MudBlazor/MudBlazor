@@ -7,15 +7,15 @@
         <DocsPageSection>
             <SectionHeader Title="How it works">
                 <Description>
-					<MudText>
-						The breakpoint provider offers a cascading parameter that exposes the window's current breakpoint (xs,sm,md,lg,xl). 
-						These features improve the performance if your layout heavily relies on such features or if you don't want to use the BreakpointListenerService directly in your own components.
-					</MudText>
-					<MudText>
-						If a <strong>MudHidden</strong> is used within a <strong>MudBreakpointProvider</strong>, it will use the provided value instead of relying on the IBreakpointListenerService. 
-						That would reduce the number of render cycles if a change of the browser size occurred. 
-					</MudText>
-				</Description>
+                    <MudText>
+                        The breakpoint provider offers a cascading parameter that exposes the window's current breakpoint (xs,sm,md,lg,xl).
+                        These features improve the performance if your layout heavily relies on such features or if you don't want to use the BreakpointListenerService directly in your own components.
+                    </MudText>
+                    <MudText>
+                        If a <strong>MudHidden</strong> is used within a <strong>MudBreakpointProvider</strong>, it will use the provided value instead of relying on the IBreakpointListenerService.
+                        That would reduce the number of render cycles if a change of the browser size occurred.
+                    </MudText>
+                </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(BreakpointProviderPageHiddenExample)" ShowCode="false">
                 <BreakpointProviderPageHiddenExample />

@@ -1,0 +1,15 @@
+﻿@attribute [ViewerHidden]
+
+<MudDialog AriaLabel="Spoken name">
+    <DialogContent>
+        <MudText>Named by AriaLabel instead of the title bar.</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(() => MudDialog.Close())">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+}

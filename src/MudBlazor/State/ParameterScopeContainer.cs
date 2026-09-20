@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Collections;
-using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Invocation;
@@ -20,7 +19,10 @@ namespace MudBlazor.State;
 internal class ParameterScopeContainer : IParameterScopeContainer
 {
     private readonly IParameterStatesReader _parameterStatesReader;
-    private readonly Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>> _parameters;
+
+    // A scope holds a handful of parameters, so an array scanned linearly beats any hashed lookup.
+    // The scope is materialized once per component instance and read far less often than it is built.
+    private IParameterComponentLifeCycle[]? _parameters;
 
     // Cache handler count for fast path optimization
     private int _handlerCount = -1;  // -1 means not computed yet
@@ -32,9 +34,12 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// Gets a value indicating whether the parameter set has been initialized.
     /// </summary>
     /// <remarks>
-    /// The parameter set is considered initialized once the inner dictionary of parameters has been created.
+    /// The parameter set is considered initialized once the registered parameters have been materialized.
     /// </remarks>
-    public bool IsInitialized => _parameters.IsValueCreated;
+    public bool IsInitialized => _parameters is not null;
+
+    /// <inheritdoc/>
+    public IReadOnlyList<IParameterComponentLifeCycle> Parameters => _parameters ?? Materialize();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterScopeContainer"/> class with the specified parameters.
@@ -61,39 +66,60 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     public ParameterScopeContainer(IParameterStatesReader parameterStatesReader)
     {
         _parameterStatesReader = parameterStatesReader;
-        _parameters = new Lazy<FrozenDictionary<string, IParameterComponentLifeCycle>>(ParametersFactory);
     }
 
-    private FrozenDictionary<string, IParameterComponentLifeCycle> ParametersFactory()
+    private IParameterComponentLifeCycle[] Materialize()
     {
         IsLocked = true;
         var parameters = _parameterStatesReader.ReadParameters();
-        var dictionary = parameters.ToFrozenDictionary(
-            parameter => parameter.Metadata.ParameterName,
-            parameter => parameter,
-            StringComparer.Ordinal);  // Parameter names are case-sensitive; use Ordinal for best performance
+        var materialized = parameters as IParameterComponentLifeCycle[] ?? parameters.ToArray();
+        ThrowOnDuplicates(materialized);
+        _parameters = materialized;
         _parameterStatesReader.Complete();
 
-        return dictionary;
+        return materialized;
     }
 
     /// <summary>
-    /// Forces the attachment of the collection of <seealso cref="IParameterComponentLifeCycle"/> immediately and initializes the inner dictionary.
+    /// Registering the same parameter twice is a component bug, so it must not be silently accepted.
     /// </summary>
     /// <remarks>
-    /// This method is designed for performance optimization. By calling this method, the dictionary initialization is done immediately instead of waiting for the Blazor lifecycle to access the values. 
-    /// This helps avoid potential slowdowns in rendering speed that could occur if the dictionary were initialized during the Blazor lifecycle.
+    /// A scope holds a handful of parameters whose names are compile-time literals, so pairwise comparison is cheaper than building a hashed set for the check.
     /// </remarks>
-    public void ForceParametersAttachment() => _ = _parameters.Value;
+    private static void ThrowOnDuplicates(IParameterComponentLifeCycle[] parameters)
+    {
+        for (var i = 1; i < parameters.Length; i++)
+        {
+            var name = parameters[i].Metadata.ParameterName;
+            for (var j = 0; j < i; j++)
+            {
+                if (string.Equals(parameters[j].Metadata.ParameterName, name, StringComparison.Ordinal))
+                {
+                    throw new ArgumentException($"Parameter {name} is already registered!", nameof(parameters));
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Forces the attachment of the collection of <seealso cref="IParameterComponentLifeCycle"/> immediately and materializes the parameters.
+    /// </summary>
+    /// <remarks>
+    /// This method is designed for performance optimization.
+    /// By calling this method, the parameters are materialized immediately instead of waiting for the Blazor lifecycle to access the values.
+    /// This helps avoid potential slowdowns in rendering speed that could occur if the parameters were materialized during the Blazor lifecycle.
+    /// </remarks>
+    public void ForceParametersAttachment() => _ = Parameters;
 
     /// <summary>
     /// Executes <see cref="IParameterComponentLifeCycle.OnInitialized"/> for all registered parameters.
     /// </summary>
     public void OnInitialized()
     {
-        foreach (var parameter in _parameters.Value.Values)
+        var parameters = _parameters ?? Materialize();
+        for (var i = 0; i < parameters.Length; i++)
         {
-            parameter.OnInitialized();
+            parameters[i].OnInitialized();
         }
     }
 
@@ -102,9 +128,10 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// </summary>
     public void OnParametersSet()
     {
-        foreach (var parameter in _parameters.Value.Values)
+        var parameters = _parameters ?? Materialize();
+        for (var i = 0; i < parameters.Length; i++)
         {
-            parameter.OnParametersSet();
+            parameters[i].OnParametersSet();
         }
     }
 
@@ -130,7 +157,21 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     /// <inheritdoc/>
     public bool TryGetValue(string parameterName, [MaybeNullWhen(false)] out IParameterComponentLifeCycle parameterComponentLifeCycle)
     {
-        return _parameters.Value.TryGetValue(parameterName, out parameterComponentLifeCycle);
+        var parameters = _parameters ?? Materialize();
+        for (var i = 0; i < parameters.Length; i++)
+        {
+            var parameter = parameters[i];
+            if (string.Equals(parameter.Metadata.ParameterName, parameterName, StringComparison.Ordinal))
+            {
+                parameterComponentLifeCycle = parameter;
+
+                return true;
+            }
+        }
+
+        parameterComponentLifeCycle = null;
+
+        return false;
     }
 
     private async Task SetParametersWithHandlersAsync(Func<ParameterView, Task> baseSetParametersAsync, ParameterView parameters)
@@ -146,8 +187,10 @@ internal class ParameterScopeContainer : IParameterScopeContainer
         List<IParameterStateInvocationSnapshot>? parametersHandlerShouldFire = null;
         List<ParameterStateValue>? parameterStateValues = null;
 
-        foreach (var parameter in _parameters.Value.Values)
+        var registered = _parameters ?? Materialize();
+        for (var i = 0; i < registered.Length; i++)
         {
+            var parameter = registered[i];
             if (parameter.HasHandler && parameter.HasParameterChanged(parameters))
             {
                 parametersHandlerShouldFire ??= new List<IParameterStateInvocationSnapshot>();
@@ -168,9 +211,10 @@ internal class ParameterScopeContainer : IParameterScopeContainer
         if (_handlerCount == -1)
         {
             _handlerCount = 0;
-            foreach (var parameter in this)
+            var parameters = _parameters ?? Materialize();
+            for (var i = 0; i < parameters.Length; i++)
             {
-                if (parameter.HasHandler)
+                if (parameters[i].HasHandler)
                 {
                     _handlerCount++;
                 }
@@ -190,7 +234,7 @@ internal class ParameterScopeContainer : IParameterScopeContainer
     }
 
     /// <inheritdoc/>
-    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => ((IReadOnlyDictionary<string, IParameterComponentLifeCycle>)_parameters.Value).Values.GetEnumerator();
+    public IEnumerator<IParameterComponentLifeCycle> GetEnumerator() => ((IEnumerable<IParameterComponentLifeCycle>)(_parameters ?? Materialize())).GetEnumerator();
 
     /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

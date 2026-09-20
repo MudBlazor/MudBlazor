@@ -62,7 +62,7 @@ window.mudInputSizing = {
 
         // Update parameters that affect the functionality and visuals of the sizing input.
         elem.updateParameters = function (newMaxLines) {
-            maxLinesValue = newMaxLines > 0 ? newMaxLines : 0;
+            maxLinesValue = Math.max(newMaxLines, 0);
         };
 
         // Capture min and max height in closure to trigger height adjustment on element in the input.

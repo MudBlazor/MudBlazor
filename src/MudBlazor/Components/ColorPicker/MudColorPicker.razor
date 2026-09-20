@@ -62,7 +62,7 @@
                                          id="@_id"
                                          @onpointerdown="OnColorOverlayClick"
                                          @onpointerup="OnColorOverlayClick"
-                                         @onpointermove="OnPointerMoveAsync"
+                                         @onpointermove="@(DragEffect ? EventCallback.Factory.Create<PointerEventArgs>(this, OnPointerMoveAsync) : default)"
                                          @onpointerleave="OnPointerLeaveAsync">
                                         <svg class="mud-picker-color-selector"
                                              height="26"
