@@ -34,7 +34,7 @@ body:
     id: repro-steps
     attributes:
       label: Reproduction steps
-      value: |
+      placeholder: |
         1.
         2.
         3.
