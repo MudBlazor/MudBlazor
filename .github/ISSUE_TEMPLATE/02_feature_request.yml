@@ -6,11 +6,24 @@ body:
     attributes:
       value: |
         Suggest **new features** for MudBlazor. For questions, use [Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor).
-  - type: textarea
-    id: expected-behavior
+  - type: input
+    id: component
     attributes:
-      label: Describe your idea
-      description: What problem does this solve, and why are existing options insufficient?
+      label: Component
+      description: Which component does this affect, or is it a new one?
+      placeholder: MudDataGrid
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and use case
+      description: What are you trying to do, and why are the existing options insufficient?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the API or behavior you have in mind, such as new parameters, events, or a code sample of how it would be used.
     validations:
       required: true
   - type: textarea
