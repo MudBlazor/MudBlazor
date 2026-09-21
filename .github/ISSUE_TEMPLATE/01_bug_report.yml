@@ -27,7 +27,7 @@ body:
     id: what-happened
     attributes:
       label: What went wrong?
-      description: What did you expect, and what happened instead? Include code snippets, screenshots, or links.
+      description: What did you expect, and what happened instead? A screenshot or short video helps, especially for layout or styling problems.
     validations:
       required: true
   - type: input
