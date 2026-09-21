@@ -103,12 +103,17 @@ Purpose: Capture essential details early on open threads so maintainers can act 
 
 ### Gate 2 — Evaluate essential gaps (first-touch threads only)
 - When no maintainer is involved and you are the first triager, scan the issue/PR for objective blockers that prevent confirming, reproducing, scoping, or reviewing the change. Blockers include: missing reproduction, unknown environment, link-only reports without a written summary, visual-only reports without written expected vs. actual behavior, missing visual proof for a visually identifiable problem or change (see Visual Proof below), unclear enhancement scope/justification, missing PR rationale/problem statement, or a vague PR title/description that cannot be made specific from available context.
+- Enhancements: the "Problem and use case" and "Proposed solution" template fields are both required. Treat either as a blocker (`needs: info`) when it is empty, a placeholder, or gives no concrete scenario or API shape that a maintainer could evaluate.
 - If the report already contains enough written information to understand and act without inferring intent from links or media alone, and Visual Proof below is satisfied, take no action; polished formatting and claimed test results do not by themselves satisfy these gates.
+
+### Not a MudBlazor problem
+- Some reports describe behavior whose cause is clearly outside this library: IDE or Razor tooling errors (dotnet/razor), Blazor or ASP.NET Core framework behavior that reproduces without MudBlazor (dotnet/aspnetcore), or platform limits of the WebView host in Hybrid apps (dotnet/maui). Only conclude this when the thread contains citable evidence, such as a stack trace with no MudBlazor frames, a statement that the problem reproduces without MudBlazor, or a documented platform limitation. Do not conclude it from the environment alone.
+- When you do conclude it as the first triager: post a comment that names the likely upstream cause with a link to that project's issue tracker, asks the author to confirm whether any MudBlazor-specific behavior remains, and apply `needs: info`.
 
 ### Visual Proof
 - Decide whether the problem or change produces a visible difference in the rendered UI or its interactive behavior. Lean toward "yes" when the symptom or result is user-visible, even if the fix itself is pure logic; if you cannot tell what the change affects or how to observe it, apply `needs: info` and ask for clarification instead.
 - If yes and no media proof is present, request it:
-  - Issues: ask for a screenshot or short video of the problem even when a valid reproduction link is provided — media shows what is wrong at a glance while the reproduction lets maintainers debug it. Apply `needs: visuals` only when there is also no valid reproduction; an issue with a valid reproduction keeps the request comment-only so it is not routed into stale handling or excluded from `good first issue`. A missing reproduction is its own Gate 2 blocker (`needs: example`).
+  - Issues: a valid reproduction is sufficient proof. Do not request media when one is present unless the problem is about appearance (layout, styling, animation, theming) and the written expected vs. actual behavior cannot be understood without seeing it. When no valid reproduction is present, request media alongside the reproduction; apply `needs: visuals` only for appearance problems, since a missing reproduction is its own Gate 2 blocker (`needs: example`).
   - Pull requests: a before and after video from the author's own run of the change, with `needs: visuals`; still screenshots suffice only for purely static appearance changes with no interaction involved.
   - Only attached media counts as proof for pull requests: written before/after descriptions, links the reviewer must run or modify themselves, diffs, and claimed test results are not substitutes.
 - Do not request visuals for problems or changes with no visible rendering effect (e.g. build, CI, docs wording, pure tests), nor for crashes and exceptions best shown by logs even though the failure is user-visible.
@@ -131,13 +136,14 @@ Valid `needs:` labels and when to apply them:
 - `needs: example`: A usage example is absent (e.g. reproduction link or code snippet) — logic is described but not shown.
 - `needs: info`: This issue/PR lacks key context or is too unclear to act on without maintainer inference (e.g. link-only or screenshot/video-only reports without a written summary, missing goal/setup/environment, unclear enhancement scope/justification, or missing explanation of pull request changes and rationale).
 - `needs: tests`: A maintainer has explicitly asked for associated test cases to be added to this pull request.
-- `needs: visuals`: This issue/PR needs screenshots or video to demonstrate UI bugs or design changes. For issues, request media even when a reproduction link is provided, but apply the label only when neither media nor a valid reproduction is present. For PRs, a before/after video is the default; screenshots suffice only for purely static appearance changes.
+- `needs: visuals`: This issue/PR needs screenshots or video to demonstrate UI bugs or design changes. For issues, apply only to appearance problems that have neither media nor a valid reproduction. For PRs, a before/after video is the default; screenshots suffice only for purely static appearance changes.
 
 Rules for `needs:` labels:
 - When you post an information request as the first triager, add the matching `needs:` label(s) if they are not already present.
 - When mirroring a maintainer's explicit request, add the corresponding `needs:` label only if their comment is the latest human guidance and the information is still outstanding.
 - `needs: example`, `needs: visuals`, and `needs: info` may be cleared when any human comment or update provides the missing material; it does not need to come from the original author.
-- Remove `needs:` labels only when the timeline contains an explicit, citable event that resolves them: the requested information or changes have actually arrived in a human comment, commit, or update, or a newer human comment explicitly supersedes the request (for example: "no repro needed", "closing as duplicate", or equivalent clear direction). Do not remove a `needs:` label on the inference that the requirement is probably satisfied.
+- Author reply rule: when the thread author posts a substantive reply to your own information request (anything beyond a bare acknowledgement such as "ok" or "will do"), remove every `needs:` label that you applied, even if the reply only partially covers the request. The reply is the citable event; a maintainer decides whether more is needed. Labels applied by a maintainer stay until that maintainer's request is met.
+- Otherwise remove `needs:` labels only when the timeline contains an explicit, citable event that resolves them: the requested information or changes have actually arrived in a human comment, commit, or update, or a newer human comment explicitly supersedes the request (for example: "no repro needed", "closing as duplicate", or equivalent clear direction). Do not remove a `needs:` label on the inference that the requirement is probably satisfied.
 
 ## 5. Questions
 
@@ -183,14 +189,16 @@ When NOT to edit:
 ### Format Guidelines
 - Prioritize clarity and searchability over brevity.
 - Do not include issue/PR references in the title (e.g. `(#12678)`, `#12678`); keep those in the description/comments.
-- Never propose a weaker title than the current one. If you cannot produce a clearly more specific title from available context, do not set `newTitle`; request a clearer title/description and add `needs: info`.
+- Never propose a weaker title than the current one. If you cannot produce a clearly more specific title from available context, do not emit a `set_title` operation; request a clearer title/description and add `needs: info`.
+- Do not rename a thread that a maintainer has already renamed.
+- Preserve inline code formatting (backticks) around identifiers, parameters, and file names; add it when the title names one without it.
 - Issues Only:
   - Use sentence case and keep the title descriptive.
   - Do not include version numbers or redundant labels.
 - Pull Requests Only:
   - Required shape: `<Prefix>: <concrete action + target/symptom>`.
   - Prefix selection order:
-    - Use `Docs:`, `Tests:`, or `Build:` when that is the labeled primary focus.
+    - Use `Docs:`, `Tests:`, `Build:`, `Analyzers:`, or `Test Viewer:` when that is the primary focus. These are distinct prefixes; do not collapse one into another (for example, `Test Viewer:` is not `Tests:`).
     - Otherwise use the primary user-facing component/group being changed.
     - If a new helper component mainly supports an existing component workflow, keep the existing component as prefix (e.g. prefer `MudDropZone: Add custom drag handle support` over `MudDragHandle: Add new component`).
     - Use the new component name as prefix only when it is standalone (independent usage/docs/examples or broad cross-component impact).
@@ -243,6 +251,7 @@ Close after >=168 consecutive days marked `stale`, provided no qualifying activi
 ## 10. Quick Reference Examples
 - Reproduction: "A link like https://try.mudblazor.com/snippet/XXXX or a minimal repo often helps confirm and debug."
 - Details: "Including MudBlazor version, .NET version, browser(s), and whether it worked in a prior version can help determine if it's a regression."
-- Visual issue: "Could you post a screenshot or short video showing the problem? Seeing it alongside the reproduction makes it much faster to confirm."
+- Visual issue (no reproduction): "Could you post a screenshot or short video showing the problem, along with a snippet that reproduces it?"
+- Upstream redirect: "The stack trace shows this originates in [project], not MudBlazor. Please check [tracker link]; if you find behavior that only happens with MudBlazor, add the details here and it can be reopened."
 - PR visual proof: "Could you post a before and after video showing the fix from your own run?"
 - Usage redirect: "This issue tracker is for bugs and feature requests. For usage questions, please ask in [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or the [Discord community](https://discord.gg/mudblazor)."
