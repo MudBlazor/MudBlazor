@@ -58,8 +58,6 @@ Environment Labels (apply at most one per category):
 
 Misc labels:
 `dependency`, `API change`, `regression`, `breaking change`, `has workaround`
-- Apply `regression` to a bug report whose "Last working version" template field names a concrete release, or whose author states that the behavior worked in an earlier version.
-- Apply `has workaround` when a human comment describes a working alternative for the reported bug.
 
 ### Good First Issue
 Apply `good first issue` when ALL conditions are met:
@@ -110,7 +108,7 @@ Purpose: Capture essential details early on open threads so maintainers can act 
 
 ### Not a MudBlazor problem
 - Some reports describe behavior whose cause is clearly outside this library: IDE or Razor tooling errors (dotnet/razor), Blazor or ASP.NET Core framework behavior that reproduces without MudBlazor (dotnet/aspnetcore), or platform limits of the WebView host in Hybrid apps (dotnet/maui). Only conclude this when the thread contains citable evidence, such as a stack trace with no MudBlazor frames, a statement that the problem reproduces without MudBlazor, or a documented platform limitation. Do not conclude it from the environment alone.
-- When you do conclude it as the first triager: post a comment that names the likely upstream cause with a link to that project's issue tracker, asks the author to confirm whether any MudBlazor-specific behavior remains, and apply `needs: info`. Close handling follows the redirect rule in the Inactivity Rules.
+- When you do conclude it as the first triager: post a comment that names the likely upstream cause with a link to that project's issue tracker, asks the author to confirm whether any MudBlazor-specific behavior remains, and apply `needs: info`.
 
 ### Visual Proof
 - Decide whether the problem or change produces a visible difference in the rendered UI or its interactive behavior. Lean toward "yes" when the symptom or result is user-visible, even if the fix itself is pure logic; if you cannot tell what the change affects or how to observe it, apply `needs: info` and ask for clarification instead.
@@ -217,7 +215,7 @@ When NOT to edit:
   - Labeled, unlabeled, renamed, reviewer-removed, and assignee-removed events.
 - Qualifying activity resets the inactivity timer and removes `stale` if present. Excluded events do neither.
 - Measure inactivity from the latest qualifying activity, or creation if none.
-- Do not post a comment when closing stale threads unless a rule below specifies one.
+- Do not post a comment when closing stale threads.
 
 ### Issues
 Mark an issue `stale` when ANY condition holds:
@@ -234,12 +232,7 @@ When marking stale, post verbatim without the default footer:
 >
 > If no response is received, it will be automatically closed.
 
-Close with `state: not_planned` after >=84 consecutive days marked `stale`, provided no qualifying activity has occurred since it was marked. Exceptions:
-- Enhancement with a `needs:` label: close after >=28 consecutive days marked `stale`, and post this comment instead of closing silently:
-
-> Closing for now since the details needed to evaluate this were not provided. It can be reopened with a concrete use case and proposed API.
-
-- Redirected thread (your latest comment is a "Not a MudBlazor problem" redirect and there is no qualifying activity for >=14 days after it): close with `state: not_planned` without waiting for `stale`, and post a one-line comment saying it was closed as an upstream issue and can be reopened if MudBlazor-specific behavior is found.
+Close with `state: not_planned` after >=84 consecutive days marked `stale`, provided no qualifying activity has occurred since it was marked.
 
 ### Pull Requests
 Mark a pull request `stale` when BOTH conditions hold:

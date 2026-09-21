@@ -63,6 +63,20 @@ body:
       description: Only if it worked in an earlier version. This marks the issue as a regression.
       placeholder: v9.x.x
   - type: dropdown
+    id: environments
+    attributes:
+      label: Environment
+      multiple: true
+      options:
+        - Chrome
+        - Edge
+        - Firefox
+        - Safari
+        - iOS
+        - Android
+        - MAUI / Hybrid
+        - Other
+  - type: dropdown
     id: rendering-mode
     attributes:
       label: Blazor rendering mode
@@ -77,17 +91,3 @@ body:
         - Not applicable / unknown
     validations:
       required: true
-  - type: dropdown
-    id: environments
-    attributes:
-      label: Environment
-      multiple: true
-      options:
-        - Chrome
-        - Edge
-        - Firefox
-        - Safari
-        - iOS
-        - Android
-        - MAUI / Hybrid
-        - Other
