@@ -150,6 +150,7 @@ namespace MudBlazor
         protected string TableRootStyle =>
             new StyleBuilder()
                 .AddStyle("width", "max-content", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
+                .AddStyle("min-width", "100%", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
                 .Build();
 
         protected string TableClass =>
