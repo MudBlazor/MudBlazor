@@ -534,7 +534,27 @@ namespace MudBlazor.UnitTests.Components
             Assert.False(dragging);
 
             dragging = null;
+            await slider.PointerDownAsync();
             await slider.PointerCancelAsync();
+            Assert.False(dragging);
+
+            dragging = null;
+            comp.Render(p =>
+            {
+                p.Add(x => x.Immediate, false);
+            });
+            await slider.PointerDownAsync();
+            Assert.True(dragging);
+            await slider.PointerCancelAsync();
+            Assert.False(dragging);
+
+            dragging = null;
+            await slider.PointerDownAsync();
+            Assert.True(dragging);
+            comp.Render(p =>
+            {
+                p.Add(x => x.Disabled, true);
+            });
             Assert.False(dragging);
 
             var touched = false;

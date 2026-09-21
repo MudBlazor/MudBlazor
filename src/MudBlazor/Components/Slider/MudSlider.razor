@@ -42,7 +42,7 @@
                @bind-value:event="@(Immediate ? "oninput" : "onchange")"
                @onpointerdown="this.AsNonRenderingEventHandler(OnDragStartHandler)"
                @onpointerup="this.AsNonRenderingEventHandler(OnDragEndHandler)"
-               @onpointercancel="this.AsNonRenderingEventHandler(OnDragEndHandler)" />
+               @onpointercancel="this.AsNonRenderingEventHandler(OnDragEndHandlerCore)" />
         @if (ValueLabel)
         {
             <div class="mud-slider-value-label" style="@ValueLabelPositionStyle">

@@ -14,6 +14,7 @@ namespace MudBlazor
     {
         private int _tickMarkCount = 0;
         private bool _nullableValueResetToDefault = false;
+        private bool _dragging = false;
         private readonly ParameterState<T> _valueState;
         private readonly ParameterState<T?> _nullableValueState;
 
@@ -263,6 +264,18 @@ namespace MudBlazor
             base.OnParametersSet();
         }
 
+        protected override async Task OnParametersSetAsync()
+        {
+            // a drag started but the Input got disabled
+            if (Disabled && _dragging)
+            {
+                // execute the drag end handler as the drag is terminated by disabling the input
+                await OnDragEndHandlerCore();
+            }
+
+            await base.OnParametersSetAsync();
+        }
+
         private double CalculatePosition()
         {
             var min = Convert.ToDouble(Min);
@@ -283,6 +296,11 @@ namespace MudBlazor
             {
                 await _valueState.SetValueAsync(result);
                 await _nullableValueState.SetValueAsync(result);
+
+                if (!Immediate)
+                {
+                    await OnDragEndHandlerCore();
+                }
             }
         }
 
@@ -314,21 +332,33 @@ namespace MudBlazor
 
         private async Task OnDragStartHandler()
         {
-            if (Disabled)
+            if (Disabled || _dragging)
             {
                 return;
             }
 
+            this._dragging = true;
             await OnDragStart.InvokeAsync();
         }
 
         private async Task OnDragEndHandler()
         {
-            if (Disabled)
+            if (!Immediate)
             {
                 return;
             }
 
+            await OnDragEndHandlerCore();
+        }
+
+        private async Task OnDragEndHandlerCore()
+        {
+            if (!_dragging)
+            {
+                return;
+            }
+
+            this._dragging = false;
             await OnDragEnd.InvokeAsync();
         }
 
