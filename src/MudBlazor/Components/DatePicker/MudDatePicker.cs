@@ -67,7 +67,10 @@ namespace MudBlazor
             // Empty text is not user input that failed to convert, so it must not re-enter this branch.
             // A clear-button click empties the text before ClearAsync runs, so re-entering would overwrite Text with null once the debounce window above had closed.
             // That would leave the observable result dependent on the wall clock.
-            if (_value != date || (date is null && !string.IsNullOrEmpty(Text)))
+            // Only the user can produce text the converter rejects, so the programmatic parameter write is excluded too.
+            // Blazor runs the Date setter on every render, even when the parent supplies the same value, so leaving it in
+            // let any unrelated re-render mid-typing (a form's bound Errors, for instance) wipe the half-typed date (#13887).
+            if (_value != date || (date is null && !suppressInteraction && !string.IsNullOrEmpty(Text)))
             {
                 if (!suppressInteraction)
                 {
