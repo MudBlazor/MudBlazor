@@ -223,7 +223,6 @@ Mark an issue `stale` when ANY condition holds:
 - Feature: >=36 months of inactivity.
 - Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days, with no qualifying activity during those 28 days.
 The 28-day label list is exhaustive; no other label, including `has workaround`, creates eligibility.
-Do not apply the 28-day rule when the latest human comment is from a maintainer and does not ask the author for something; the maintainer has taken over the thread.
 
 When marking stale, post verbatim without the default footer:
 
