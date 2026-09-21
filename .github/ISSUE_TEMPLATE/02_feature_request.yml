@@ -6,12 +6,6 @@ body:
     attributes:
       value: |
         Suggest **new features** for MudBlazor. For questions, use [Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor).
-  - type: input
-    id: component
-    attributes:
-      label: Component
-      description: Which component does this affect, or is it a new one?
-      placeholder: MudDataGrid
   - type: textarea
     id: problem
     attributes:

@@ -15,14 +15,6 @@ body:
           required: true
         - label: I tried in private/incognito browser
           required: true
-        - label: This is a MudBlazor problem, not an IDE, Blazor framework, or WebView limitation
-          required: true
-  - type: input
-    id: component
-    attributes:
-      label: Component
-      description: Which component is affected?
-      placeholder: MudDataGrid
   - type: textarea
     id: what-happened
     attributes:
