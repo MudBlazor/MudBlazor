@@ -191,7 +191,7 @@ When NOT to edit:
 - Do not include issue/PR references in the title (e.g. `(#12678)`, `#12678`); keep those in the description/comments.
 - Never propose a weaker title than the current one. If you cannot produce a clearly more specific title from available context, do not emit a `set_title` operation; request a clearer title/description and add `needs: info`.
 - Do not rename a thread that a maintainer has already renamed.
-- Preserve inline code formatting (backticks) around identifiers, parameters, and file names; add it when the title names one without it.
+- Keep existing inline code formatting for members, parameters, and file names. Never wrap component names such as MudNumericField in backticks, and do not add backticks the author did not use.
 - Issues Only:
   - Use sentence case and keep the title descriptive.
   - Do not include version numbers or redundant labels.
