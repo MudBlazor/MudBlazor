@@ -1,0 +1,32 @@
+﻿@* Repro for #13887: a MudDatePicker with a mask inside a MudForm that binds Errors.
+   Each error change re-renders the parent, which re-supplies the unchanged Date, and the
+   half-typed date was wiped. *@
+@using System.Globalization
+<MudPopoverProvider />
+
+<MudForm @bind-Success="_formSuccess" @bind-Errors="_formErrors">
+    @if (_formErrors.Length > 0)
+    {
+        <MudAlert Severity="Severity.Error">
+            @foreach (var error in _formErrors)
+            {
+                <span>@error</span>
+            }
+        </MudAlert>
+    }
+    <MudDatePicker @bind-Date="_date"
+                   Label="Enter a date (if you can)"
+                   Editable="true"
+                   Mask="@(new DateMask("dd/MM/yyyy"))"
+                   DateFormat="dd/MM/yyyy"
+                   Culture="@(new CultureInfo("en-US"))"
+                   ErrorText="Invalid date" />
+</MudForm>
+
+@code {
+    private DateTime? _date;
+    private bool _formSuccess { get; set; }
+    private string[] _formErrors { get; set; } = [];
+
+    public DateTime? Date => _date;
+}

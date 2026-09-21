@@ -221,11 +221,11 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
 
-            var invalid = "INVALID_DATE";
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "INVALID_DATE"));
+            var date = new DateTime(2020, 10, 26);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, date));
 
-            picker.Date.Should().Be(null);
-            picker.Text.Should().Be(invalid);
+            picker.Date.Should().Be(date);
+            picker.Text.Should().Be(date.ToShortDateString());
 
             // Advance past the SetDateAsync debounce window so the clear is not debounced away.
             timeProvider.Advance(TimeSpan.FromMilliseconds(150));
@@ -234,6 +234,32 @@ namespace MudBlazor.UnitTests.Components
 
             picker.Date.Should().Be(null);
             picker.Text.Should().Be(null);
+        }
+
+        /// <summary>
+        /// Re-supplying the same null Date must leave text the converter rejected alone: https://github.com/MudBlazor/MudBlazor/issues/13887.
+        /// </summary>
+        [Test]
+        public async Task DataPicker_ShouldKeepInvalidText_WhenTheSameNullDateIsReSupplied()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            // Blazor re-runs the Date setter on every render of the parent, and a form that binds Errors re-renders on
+            // each keystroke. Auto-advancing the clock puts every one of those writes past the SetDateAsync debounce
+            // window, which is the slow machine that used to lose the half-typed date.
+            timeProvider.AutoAdvanceAmount = TimeSpan.FromMilliseconds(150);
+            var comp = Context.Render<MudDatePicker>();
+
+            var picker = comp.Instance;
+            const string Invalid = "INVALID_DATE";
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, Invalid));
+
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(Invalid);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, null));
+
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(Invalid);
         }
 
         [Test]
@@ -1291,6 +1317,35 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Date.Should().BeNull();
             comp.Instance.Text.Should().BeNullOrEmpty();
             comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Typing into a masked, editable picker must survive the re-render a parent runs while the date is still incomplete: https://github.com/MudBlazor/MudBlazor/issues/13887.
+        /// </summary>
+        [Test]
+        public async Task Mask_TypingInsideFormWithBoundErrors_KeepsTheTypedText()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            // Model the real gap between a keystroke and the re-render that the form's bound Errors triggers.
+            // Every clock read lands past the debounce window in SetDateAsync, which is where the parameter write used to discard the text.
+            Context.AddFakeTimeProvider().AutoAdvanceAmount = TimeSpan.FromMilliseconds(150);
+            var comp = Context.Render<DatePickerFormErrorsTypingTest>();
+            var picker = comp.FindComponent<MudDatePicker>().Instance;
+            var mask = comp.FindComponent<MudMask>().Instance;
+
+            var expected = new[] { "1", "15/", "15/0", "15/06/", "15/06/2", "15/06/20", "15/06/202", "15/06/2026" };
+            var index = 0;
+            foreach (var key in "15062026")
+            {
+                await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(mask.ElementId, new KeyboardEventArgs { Key = key.ToString() }));
+
+                picker.Text.Should().Be(expected[index], $"the text must survive the parent re-render after the '{key}' keystroke");
+                comp.Find("input").GetAttribute("value").Should().Be(expected[index]);
+                index++;
+            }
+
+            picker.Date.Should().Be(new DateTime(2026, 6, 15));
+            comp.Instance.Date.Should().Be(new DateTime(2026, 6, 15));
         }
 
         [Test]
