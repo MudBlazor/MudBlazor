@@ -86,23 +86,20 @@ internal sealed class MudSelectContext<T>
     /// <returns></returns>
     public bool IsItemSelected(MudSelectItem<T> item)
     {
+        var comparer = _select.Comparer ?? EqualityComparer<T?>.Default;
         if (!_select.MultiSelection)
         {
-            return (_select.Comparer ?? EqualityComparer<T?>.Default).Equals(_select.ReadValue, item.Value);
+            return comparer.Equals(_select.ReadValue, item.Value);
         }
 
-        var selectedValues = _select.GetSelectedValues();
-        if (selectedValues is null)
+        return _select.GetSelectedValues() switch
         {
-            return false;
-        }
-        else if (_select.Comparer is null || _select.Comparer == EqualityComparer<T?>.Default)
-        {
-            // use internal hashset contains when _select.Comparer is null (or when default comparer is used) to be able to use the hashset's lookup
-            return selectedValues.Contains(item.Value);
-        }
-
-        return selectedValues.Contains(item.Value, _select.Comparer);
+            null => false,
+            // MudSelect keeps its selection in a HashSet built with the select's comparer, so its O(1) lookup gives the same answer.
+            HashSet<T?> set when set.Comparer.Equals(comparer) => set.Contains(item.Value),
+            // A caller-supplied collection can be a list or use a different comparer.
+            var values => values.Contains(item.Value, comparer),
+        };
     }
 
     /// <summary>
