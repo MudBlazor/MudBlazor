@@ -205,7 +205,10 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
 
             //Act
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
             await input.InputAsync(new ChangeEventArgs() { Value = "Some Value" });
+            await timeProvider.WaitForTimerAsync(timers);
 
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
@@ -236,7 +239,10 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
 
             //Act
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
             await input.InputAsync(new ChangeEventArgs() { Value = "Some Value" });
+            await timeProvider.WaitForTimerAsync(timers);
 
             //Assert
             textField.DebounceInterval.Should().Be(200d);
@@ -267,7 +273,10 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
 
             //Act
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
             await input.InputAsync(new ChangeEventArgs() { Value = "Some Value" });
+            await timeProvider.WaitForTimerAsync(timers);
 
             //Assert
             textField.ReadValue.Should().BeNull();
@@ -637,6 +646,36 @@ namespace MudBlazor.UnitTests.Components
             textfield.Touched.Should().BeFalse();
             textfield.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
             textfield.HasErrors.Should().Be(false);
+        }
+
+        /// <summary>
+        /// A required outlined text field renders its legend on the path the stylesheet uses to reserve notch space for the asterisk (#11050).
+        /// </summary>
+        [Test]
+        public void RequiredOutlinedTextField_Should_RenderLegendUnderRequiredInputControl()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Label, "First name")
+                .Add(p => p.Variant, Variant.Outlined)
+                .Add(p => p.Required, true));
+
+            comp.Find(".mud-input-control").ClassList.Should().Contain("mud-input-required");
+            comp.FindAll(".mud-input-control.mud-input-required > .mud-input-control-input-container .mud-input-outlined-border > legend")
+                .Should().ContainSingle();
+        }
+
+        /// <summary>
+        /// An outlined text field which is not required renders the same legend but keeps the required class off, so the notch is not widened (#11050).
+        /// </summary>
+        [Test]
+        public void OutlinedTextField_Should_RenderLegendWithoutRequiredClass()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.Label, "First name")
+                .Add(p => p.Variant, Variant.Outlined));
+
+            comp.Find(".mud-input-control").ClassList.Should().NotContain("mud-input-required");
+            comp.FindAll(".mud-input-control-input-container .mud-input-outlined-border > legend").Should().ContainSingle();
         }
 
         [Test]
@@ -1513,7 +1552,10 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.Render<DebouncedTextFieldRerenderTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
             await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "test" });
+            await timeProvider.WaitForTimerAsync(timers);
 
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
@@ -1524,7 +1566,11 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 4; i++)
             {
                 currentText += "a";
+                timers = timeProvider.TimersCreated;
                 await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
+                // Validation of the previous commit can commit this text right away instead of starting a timer.
+                var typedText = currentText;
+                await timeProvider.WaitForTimerAsync(timers, () => textField.ReadValue == typedText);
 
                 // external re-render dispatched on the renderer's synchronization context
                 await comp.InvokeAsync(comp.Instance.TriggerExternalRerender);
@@ -1575,7 +1621,9 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 4; i++)
             {
                 currentText += "a";
+                var timers = timeProvider.TimersCreated;
                 await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
+                await timeProvider.WaitForTimerAsync(timers);
 
                 // external format change dispatched on the renderer's synchronization context
                 await comp.InvokeAsync(comp.Instance.ApplyFormatChange);

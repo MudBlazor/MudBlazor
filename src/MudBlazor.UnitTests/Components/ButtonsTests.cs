@@ -639,5 +639,61 @@ namespace MudBlazor.UnitTests.Components
             Context.Render<MudFab>().RenderCount.Should().Be(1);
             Context.Render<MudIconButton>().RenderCount.Should().Be(1);
         }
+
+        /// <summary>
+        /// A class or style supplied through UserAttributes keeps winning over the computed ones, as it did through the MudElement boundary.
+        /// </summary>
+        [Test]
+        public void Button_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudButton>(parameters => parameters
+                .Add(x => x.Style, "color:blue")
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    ["class"] = "user-class",
+                    ["style"] = "color:red",
+                }));
+
+            var root = comp.Find("button");
+            root.GetAttribute("class").Should().Be("user-class");
+            root.GetAttribute("style").Should().Be("color:red");
+        }
+
+        /// <summary>
+        /// The same precedence holds when the button renders as an anchor.
+        /// </summary>
+        [Test]
+        public void LinkButton_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudButton>(parameters => parameters
+                .Add(x => x.Href, "/docs")
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    ["class"] = "user-class",
+                    ["style"] = "color:red",
+                }));
+
+            var root = comp.Find("a");
+            root.GetAttribute("class").Should().Be("user-class");
+            root.GetAttribute("style").Should().Be("color:red");
+            root.GetAttribute("href").Should().Be("/docs");
+        }
+
+        /// <summary>
+        /// Attributes a button derives from its own parameters still win over the same names supplied through UserAttributes.
+        /// </summary>
+        [Test]
+        public void Button_ParameterAttributes_WinOverUserAttributes()
+        {
+            var comp = Context.Render<MudButton>(parameters => parameters
+                .Add(x => x.ButtonType, ButtonType.Submit)
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    ["type"] = "reset",
+                }));
+
+            comp.Find("button").GetAttribute("type").Should().Be("submit");
+        }
+
     }
 }

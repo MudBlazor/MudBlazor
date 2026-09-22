@@ -43,6 +43,24 @@ namespace MudBlazor
             registerScope.RegisterParameter<bool>(nameof(ReadOnly))
                 .WithParameter(() => ReadOnly)
                 .WithChangeHandler(OnParameterChangedAsync);
+            registerScope.RegisterParameter<bool>(nameof(ExpandOnClick))
+                .WithParameter(() => ExpandOnClick)
+                .WithChangeHandler(OnParameterChangedAsync);
+            registerScope.RegisterParameter<bool>(nameof(ExpandOnDoubleClick))
+                .WithParameter(() => ExpandOnDoubleClick)
+                .WithChangeHandler(OnParameterChangedAsync);
+            registerScope.RegisterParameter<bool>(nameof(Ripple))
+                .WithParameter(() => Ripple)
+                .WithChangeHandler(OnParameterChangedAsync);
+            registerScope.RegisterParameter<string>(nameof(CheckedIcon))
+                .WithParameter(() => CheckedIcon)
+                .WithChangeHandler(OnParameterChangedAsync);
+            registerScope.RegisterParameter<string>(nameof(UncheckedIcon))
+                .WithParameter(() => UncheckedIcon)
+                .WithChangeHandler(OnParameterChangedAsync);
+            registerScope.RegisterParameter<string>(nameof(IndeterminateIcon))
+                .WithParameter(() => IndeterminateIcon)
+                .WithChangeHandler(OnParameterChangedAsync);
             _selection = new();
         }
 
