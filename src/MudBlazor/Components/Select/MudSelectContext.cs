@@ -91,13 +91,18 @@ internal sealed class MudSelectContext<T>
             return (_select.Comparer ?? EqualityComparer<T?>.Default).Equals(_select.ReadValue, item.Value);
         }
 
-        var collection = _select.GetSelectedValues();
-        if (collection is null)
+        var selectedValues = _select.GetSelectedValues();
+        if (selectedValues is null)
         {
             return false;
         }
-        // use internal hashset contains when _select.Comparer is null to be able to use the hashset's lookup
-        return _select.Comparer is null ? collection.Contains(item.Value) : collection.Contains(item.Value, _select.Comparer);
+        else if (_select.Comparer is null || _select.Comparer == EqualityComparer<T?>.Default)
+        {
+            // use internal hashset contains when _select.Comparer is null (or when default comparer is used) to be able to use the hashset's lookup
+            return selectedValues.Contains(item.Value);
+        }
+
+        return selectedValues.Contains(item.Value, _select.Comparer);
     }
 
     /// <summary>
