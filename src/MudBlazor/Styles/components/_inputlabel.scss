@@ -43,7 +43,7 @@
   transform: translate(14px, 20px) scale(1);
   max-width: calc(100% - 14px);
   pointer-events: none;
-  background-color: transparent;
+  background-color: var(--mud-palette-surface);
   padding: 0px 5px !important;
 
 
