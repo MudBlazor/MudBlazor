@@ -1,0 +1,28 @@
+<MudDataGrid T="Model" Items="@_items" Groupable="true" GroupExpanded="false"
+             GroupClassFunc="@(group => group.Expanded ? "group-expanded" : "group-collapsed")"
+             GroupStyleFunc="@(group => group.Expanded ? "--group-expanded: 1" : "--group-expanded: 0")">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Groupable="false" />
+        <PropertyColumn Property="x => x.Category" Grouping="true">
+            <GroupTemplate>
+                <span class="category-state">@(context.Expanded ? "Expanded" : "Collapsed")</span>
+            </GroupTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Color" Grouping="true">
+            <GroupTemplate>
+                <span class="color-state">@(context.Expanded ? "Expanded" : "Collapsed")</span>
+            </GroupTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Model(string Name, string Category, string Color);
+
+    private readonly List<Model> _items =
+    [
+        new("Apple", "Fruit", "Red"),
+        new("Banana", "Fruit", "Yellow"),
+        new("Tomato", "Vegetable", "Red")
+    ];
+}

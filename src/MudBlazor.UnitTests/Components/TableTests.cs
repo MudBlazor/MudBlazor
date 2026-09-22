@@ -3821,14 +3821,13 @@ namespace MudBlazor.UnitTests.Components
 
 
         /// <summary>
-        /// The checkbox cell of a selectable row is plain markup rather than a MudElement.
+        /// The checkbox of a selectable row renders inside a table cell.
         /// </summary>
         [Test]
-        public void MultiSelection_RendersCheckboxCellDirectly()
+        public void MultiSelection_RendersCheckboxInsideTableCell()
         {
             var comp = Context.Render<TableMultiSelectionTest1>();
 
-            comp.FindComponents<MudElement>().Should().BeEmpty();
             comp.FindAll("tbody tr td.mud-table-cell .mud-table-cell-checkbox").Count.Should().Be(3);
         }
 

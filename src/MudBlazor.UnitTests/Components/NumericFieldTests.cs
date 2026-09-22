@@ -855,10 +855,15 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Immediate.Should().BeFalse();
             comp.Instance.EffectiveImmediate.Should().BeTrue("a debounced field still commits from oninput");
 
+            // Each input's debounce timer is created after the input event returns, so wait for it before the next step.
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "1" });
+            var timers = timeProvider.TimersCreated;
             await comp.Find("input").InputAsync("1");
+            await timeProvider.WaitForTimerAsync(timers);
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "." });
+            timers = timeProvider.TimersCreated;
             await comp.Find("input").InputAsync("1.");
+            await timeProvider.WaitForTimerAsync(timers);
 
             timeProvider.Advance(TimeSpan.FromMilliseconds(300));
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1d));
@@ -869,7 +874,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadText.Should().Be("1.", "the trailing separator the user typed must survive the echo");
 
             await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "5" });
+            timers = timeProvider.TimersCreated;
             await comp.Find("input").InputAsync("1.5");
+            await timeProvider.WaitForTimerAsync(timers);
             timeProvider.Advance(TimeSpan.FromMilliseconds(300));
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1.5d));
         }
@@ -1261,14 +1268,21 @@ namespace MudBlazor.UnitTests.Components
             IElement Input() => comp.Find("input");
             var converter = new DefaultConverter<int>();
             var currentText = "1";
+            // Each input's debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
             await Input().InputAsync(currentText);
+            await timeProvider.WaitForTimerAsync(timers);
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
             // imitate "typing in progress" with an external re-render interleaved before the debounce commits
             for (var i = 0; i < 4; i++)
             {
                 currentText += "2";
+                timers = timeProvider.TimersCreated;
                 await Input().InputAsync(currentText);
+                // Validation of the previous commit can commit this text right away instead of starting a timer.
+                var typedValue = converter.ConvertBack(currentText);
+                await timeProvider.WaitForTimerAsync(timers, () => numericField.ReadValue == typedValue);
                 // external re-render while the user is mid-typing (before debounce commits)
                 await comp.InvokeAsync(comp.Instance.TriggerExternalRerender);
                 // advance by less than the debounce interval so it does NOT commit mid-typing
@@ -1316,7 +1330,9 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 4; i++)
             {
                 currentText += "2";
+                var timers = timeProvider.TimersCreated;
                 await Input().InputAsync(new ChangeEventArgs { Value = currentText });
+                await timeProvider.WaitForTimerAsync(timers);
                 timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval / 2));
             }
             // after the culture change, the uncommitted text is retained (with the old culture)

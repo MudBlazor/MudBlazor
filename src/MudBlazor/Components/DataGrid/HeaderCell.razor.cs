@@ -224,7 +224,7 @@ namespace MudBlazor
         {
             get
             {
-                if (!sortable && !filterable && !groupable)
+                if (!sortable && !filterable && !groupable && !hideable)
                     return false;
                 if (!sortable && DataGrid?.FilterMode == DataGridFilterMode.ColumnFilterRow)
                     return false;
@@ -574,7 +574,7 @@ namespace MudBlazor
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
-                DataGrid.HideColumnsPanel();
+                DataGrid.HideColumnsPanelIfVisible();
                 DataGrid.DropContainerHasChanged();
             }
         }
@@ -597,7 +597,7 @@ namespace MudBlazor
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
-                DataGrid.HideColumnsPanel();
+                DataGrid.HideColumnsPanelIfVisible();
                 DataGrid.DropContainerHasChanged();
             }
         }
