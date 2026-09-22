@@ -2938,19 +2938,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A different key pressed after the Enter keydown disarms OnEnterPressed.
+        /// A different key pressed while Enter is still held does not disarm OnEnterPressed, matching the keydown behavior it replaced.
         /// </summary>
         [Test]
-        public async Task OnEnterPressed_OtherKeyDownAfterEnter_NotInvoked()
+        public async Task OnEnterPressed_OtherKeyDownAfterEnter_Invoked()
         {
             var invocations = 0;
             var comp = RenderEnterForm(() => invocations++);
 
             await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
             await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "a" });
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "a" });
             await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
 
-            invocations.Should().Be(0);
+            invocations.Should().Be(1);
         }
 
         /// <summary>
