@@ -86,11 +86,18 @@ internal sealed class MudSelectContext<T>
     /// <returns></returns>
     public bool IsItemSelected(MudSelectItem<T> item)
     {
-        return _select.MultiSelection switch
+        if (!_select.MultiSelection)
         {
-            true => _select.GetSelectedValues()?.Contains(item.Value, _select.Comparer) == true,
-            false => (_select.Comparer ?? EqualityComparer<T?>.Default).Equals(_select.ReadValue, item.Value)
-        };
+            return (_select.Comparer ?? EqualityComparer<T?>.Default).Equals(_select.ReadValue, item.Value);
+        }
+
+        var collection = _select.GetSelectedValues();
+        if (collection is null)
+        {
+            return false;
+        }
+        // use internal hashset contains when _select.Comparer is null to be able to use the hashset's lookup
+        return _select.Comparer is null ? collection.Contains(item.Value) : collection.Contains(item.Value, _select.Comparer);
     }
 
     /// <summary>
