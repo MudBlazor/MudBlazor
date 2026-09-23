@@ -1682,6 +1682,18 @@ namespace MudBlazor
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             var sortModeBefore = SortMode;
+
+            // A bound set that is mutated in place arrives as the same reference, so the parameter state sees no change.
+            // Resync only when it is the set this grid last published, otherwise a stale one-way or pending value would undo a selection.
+            if (parameters.TryGetValue<HashSet<T>?>(nameof(SelectedItems), out var selectedItems)
+                && selectedItems is not null
+                && ReferenceEquals(selectedItems, _selectedItemsState.Value)
+                && !Selection.SetEquals(selectedItems))
+            {
+                Selection.Clear();
+                Selection.UnionWith(selectedItems);
+            }
+
             await base.SetParametersAsync(parameters);
 
             VirtualItemsProviderInitialize();
