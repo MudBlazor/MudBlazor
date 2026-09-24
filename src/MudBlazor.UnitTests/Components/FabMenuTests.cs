@@ -132,6 +132,24 @@ public class FabMenuTests : BunitTest
     }
 
     /// <summary>
+    /// A menu rendered both open and disabled starts closed and reports the close through OpenChanged.
+    /// </summary>
+    [Test]
+    public void OpenAndDisabledMenuRendersClosed()
+    {
+        var changes = new List<bool>();
+        var comp = Context.Render<MudFabMenu>(parameters => parameters
+            .Add(p => p.Open, true)
+            .Add(p => p.Disabled, true)
+            .Add(p => p.StartIcon, Icons.Material.Filled.Settings)
+            .Add(p => p.OpenChanged, open => changes.Add(open)));
+
+        IsOpen(comp).Should().BeFalse();
+        comp.FindComponent<MudFab>().Instance.StartIcon.Should().Be(Icons.Material.Filled.Settings);
+        changes.Should().Equal(false);
+    }
+
+    /// <summary>
     /// Open renders the menu open, and user toggles are reported through OpenChanged.
     /// </summary>
     [Test]

@@ -194,7 +194,7 @@ public partial class MudFabMenu : MudFab
         }
     }
 
-    private void HandleOpenChanged(ParameterChangedEventArgs<bool> args) => HandleOpenChanged(args.Value);
+    private void HandleOpenChanged(ParameterChangedEventArgs<bool> args) => HandleOpenChanged(_openState.Value);
 
     private void HandleOpenChanged(bool open)
     {
