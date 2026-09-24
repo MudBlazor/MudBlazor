@@ -75,6 +75,63 @@ public class FabMenuTests : BunitTest
     }
 
     /// <summary>
+    /// Hovering a disabled menu does not open it.
+    /// </summary>
+    [Test]
+    public async Task DisabledMenuDoesNotOpenOnHover()
+    {
+        var changes = new List<bool>();
+        var comp = Context.Render<MudFabMenu>(parameters => parameters
+            .Add(p => p.Disabled, true)
+            .Add(p => p.OpenChanged, open => changes.Add(open)));
+
+        await comp.Find(".mud-fab-menu-container").MouseEnterAsync(new MouseEventArgs());
+
+        IsOpen(comp).Should().BeFalse();
+        changes.Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// Hovering a menu disabled through a cascaded ParentDisabled value does not open it.
+    /// </summary>
+    [Test]
+    public async Task ParentDisabledMenuDoesNotOpenOnHover()
+    {
+        var changes = new List<bool>();
+        var comp = Context.Render<CascadingValue<bool>>(parameters => parameters
+            .Add(p => p.Name, "ParentDisabled")
+            .Add(p => p.Value, true)
+            .AddChildContent<MudFabMenu>(menu => menu
+                .Add(p => p.OpenChanged, open => changes.Add(open))));
+
+        await comp.Find(".mud-fab-menu-container").MouseEnterAsync(new MouseEventArgs());
+
+        IsOpen(comp).Should().BeFalse();
+        changes.Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// An open menu closes when it becomes disabled, because its button can no longer toggle it.
+    /// </summary>
+    [Test]
+    public async Task OpenMenuClosesWhenDisabled()
+    {
+        var changes = new List<bool>();
+        var comp = Context.Render<MudFabMenu>(parameters => parameters
+            .Add(p => p.StartIcon, Icons.Material.Filled.Settings)
+            .Add(p => p.OpenChanged, open => changes.Add(open)));
+
+        await comp.Find(".mud-fab-menu-container").MouseEnterAsync(new MouseEventArgs());
+        IsOpen(comp).Should().BeTrue();
+
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Disabled, true));
+
+        IsOpen(comp).Should().BeFalse();
+        comp.FindComponent<MudFab>().Instance.StartIcon.Should().Be(Icons.Material.Filled.Settings);
+        changes.Should().Equal(true, false);
+    }
+
+    /// <summary>
     /// Open renders the menu open, and user toggles are reported through OpenChanged.
     /// </summary>
     [Test]

@@ -184,6 +184,17 @@ public partial class MudFabMenu : MudFab
         }
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        // A disabled button can no longer toggle the menu, so an open menu would stay open with its items still clickable.
+        if (_openState.Value && GetDisabledState())
+        {
+            await ToggleMenuAsync(false);
+        }
+    }
+
     private void HandleOpenChanged(ParameterChangedEventArgs<bool> args) => HandleOpenChanged(args.Value);
 
     private void HandleOpenChanged(bool open)
@@ -223,7 +234,7 @@ public partial class MudFabMenu : MudFab
 
     private async Task OnMouseEnterLeaveAsync(bool enter)
     {
-        if (OpenOnMouseHover && !_lastInteractionWasTouch)
+        if (OpenOnMouseHover && !_lastInteractionWasTouch && !GetDisabledState())
         {
             await ToggleMenuAsync(enter);
         }
