@@ -144,40 +144,26 @@ namespace MudBlazor
             Activatable?.Activate(this, ev);
         }
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            SetDefaultValues();
-        }
-
-        protected override void OnParametersSet()
-        {
-            base.OnParametersSet();
-            //if params change, must set default values again
-            SetDefaultValues();
-        }
-
-        //Set the default value for HtmlTag, Href and Target
-        private void SetDefaultValues()
+        /// <summary>
+        /// The tag rendered for the root element.
+        /// </summary>
+        /// <remarks>
+        /// Derived from the parameters on every render so that clearing <see cref="Href"/> or enabling the button again restores the tag.
+        /// A disabled button always renders a <c>button</c> so the browser can disable it.
+        /// </remarks>
+        private string GetHtmlTag()
         {
             if (GetDisabledState())
             {
-                HtmlTag = "button";
-                Href = null;
-                Target = null;
-                return;
+                return "button";
             }
 
-            // Render an anchor element if Href property is set and is not disabled
-            if (!IsNullOrWhiteSpace(Href))
-            {
-                HtmlTag = "a";
-            }
+            return IsNullOrWhiteSpace(Href) ? HtmlTag : "a";
         }
 
         protected ElementReference _elementReference;
 
-        protected bool GetClickPropagation() => HtmlTag != "button" || ClickPropagation;
+        protected bool GetClickPropagation() => GetHtmlTag() != "button" || ClickPropagation;
 
         /// <summary>
         /// Opens the root element with the attributes every button shares.
@@ -189,16 +175,20 @@ namespace MudBlazor
         /// </remarks>
         private protected void OpenRoot(RenderTreeBuilder builder, string classname)
         {
-            builder.OpenElement(0, HtmlTag);
+            var disabled = GetDisabledState();
+            var htmlTag = GetHtmlTag();
+
+            builder.OpenElement(0, htmlTag);
             builder.AddAttribute(1, "class", classname);
             builder.AddAttribute(2, "style", Style);
             builder.AddMultipleAttributes(3, UserAttributes!);
             builder.AddAttribute(4, "onclick", this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler));
-            builder.AddAttribute(5, "type", ButtonType.ToStringFast(true));
-            builder.AddAttribute(6, "href", Href);
-            builder.AddAttribute(7, "target", Target);
+            // On an anchor, type is a MIME type hint for the linked resource, so a button type does not belong there.
+            builder.AddAttribute(5, "type", htmlTag == "a" ? null : ButtonType.ToStringFast(true));
+            builder.AddAttribute(6, "href", disabled ? null : Href);
+            builder.AddAttribute(7, "target", disabled ? null : Target);
             builder.AddAttribute(8, "rel", GetRel());
-            builder.AddAttribute(9, "disabled", GetDisabledState());
+            builder.AddAttribute(9, "disabled", disabled);
             builder.AddEventStopPropagationAttribute(10, "onclick", !GetClickPropagation());
             builder.AddElementReferenceCapture(11, _captureElementReference);
         }
@@ -210,6 +200,11 @@ namespace MudBlazor
 
         protected string? GetRel()
         {
+            if (GetDisabledState())
+            {
+                return null;
+            }
+
             if (Rel is null && Target == "_blank")
             {
                 return "noopener";
