@@ -241,95 +241,130 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Typing while the menu is closed selects matching options, cycling on a repeated letter and extending the prefix within the quick search interval.
+        /// Typing a letter while the menu is closed selects the first matching option without opening the menu.
         /// </summary>
         [Test]
-        public async Task Select_KeyDown_WhileClosed()
+        public async Task Select_TypingWhileClosed_SelectsFirstMatchWithoutOpening()
         {
-            var timeProvider = Context.AddFakeTimeProvider();
-            var keyInterceptorService = Context.AddKeyInterceptorService();
+            Context.AddFakeTimeProvider();
+            var keys = Context.AddKeyInterceptorService();
             var comp = Context.Render<SelectFocusAndTypeTest>();
             var select = comp.FindComponent<MudSelect<string>>();
 
-            //typing while closed selects the first match without opening the menu
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            await PressAsync(select, keys, "t");
+
+            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
+            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
+        }
+
+        /// <summary>
+        /// Pressing the same letter again after the quick search interval cycles through the options that start with it.
+        /// </summary>
+        [Test]
+        public async Task Select_RepeatingLetter_CyclesThroughMatches()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectFocusAndTypeTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            var afterInterval = select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10);
+
+            await PressAsync(select, keys, "t");
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
 
-            //cycle through matching results
-            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
+            timeProvider.Advance(afterInterval);
+            await PressAsync(select, keys, "t");
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Texas"));
-            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
+
+            timeProvider.Advance(afterInterval);
+            await PressAsync(select, keys, "t");
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Tennessee"));
+        }
 
-            //multi-string search
-            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "c", Type = "keydown" }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "l", Type = "keydown" }));
+        /// <summary>
+        /// Letters typed within the quick search interval build a prefix, so the search skips options that only match the first letter.
+        /// </summary>
+        [Test]
+        public async Task Select_TypingWithinQuickSearchInterval_MatchesPrefix()
+        {
+            Context.AddFakeTimeProvider();
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectFocusAndTypeTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+
+            await PressAsync(select, keys, "c");
+            await PressAsync(select, keys, "o");
+            await PressAsync(select, keys, "l");
+
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Colorado"));
+        }
 
-            //paused search
-            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "i", Type = "keydown" }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
+        /// <summary>
+        /// A pause longer than the quick search interval starts a new search instead of extending the prefix.
+        /// </summary>
+        [Test]
+        public async Task Select_PauseLongerThanQuickSearchInterval_StartsNewSearch()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectFocusAndTypeTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            var afterInterval = select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10);
+
+            await PressAsync(select, keys, "i");
+            await PressAsync(select, keys, "o");
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Iowa"));
 
-            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "i", Type = "keydown" }));
-            timeProvider.Advance(select.Instance.QuickSearchInterval + TimeSpan.FromMilliseconds(10));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "o", Type = "keydown" }));
+            timeProvider.Advance(afterInterval);
+            await PressAsync(select, keys, "i");
+            timeProvider.Advance(afterInterval);
+            await PressAsync(select, keys, "o");
+
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Ohio"));
         }
 
         /// <summary>
-        /// Click should not close the menu and selecting multiple values should update the bindable value with a comma separated list.
+        /// Clicking options in a multi-select toggles them in the text and keeps the menu open.
         /// </summary>
         [Test]
-        public async Task MultiSelectTest1()
+        public async Task MultiSelect_ClickingOptions_TogglesSelectionAndKeepsMenuOpen()
         {
             var comp = Context.Render<MultiSelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
             select.Instance.ReadValue.Should().BeNullOrEmpty();
-            await comp.WaitForAssertionAsync(() =>
-                comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            await comp.Find("div.mud-input-control").MouseDownAsync();
-            await comp.WaitForAssertionAsync(() =>
-                comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
+
+            await OpenAsync(comp);
             await comp.FindAll("div.mud-list-item")[1].ClickAsync();
-            await comp.WaitForAssertionAsync(() =>
-                comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
             await comp.WaitForAssertionAsync(() => select.Instance.ReadText.Should().Be("2"));
+            comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open");
+
             await comp.FindAll("div.mud-list-item")[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => select.Instance.ReadText.Should().Be("2, 1"));
             await comp.FindAll("div.mud-list-item")[2].ClickAsync();
             await comp.WaitForAssertionAsync(() => select.Instance.ReadText.Should().Be("2, 1, 3"));
             await comp.FindAll("div.mud-list-item")[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => select.Instance.ReadText.Should().Be("2, 3"));
-            select.Instance.GetState(x => x.SelectedValues).Count.Should().Be(2);
-            select.Instance.GetState(x => x.SelectedValues).Should().Contain("2");
-            select.Instance.GetState(x => x.SelectedValues).Should().Contain("3");
-            const string @unchecked =
-                "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z";
-            const string @checked =
-                "M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z";
-            await comp.WaitForAssertionAsync(() =>
-                comp.FindAll("div.mud-list-item path")[1].Attributes["d"].Value.Should().Be(@unchecked));
-            await comp.WaitForAssertionAsync(() =>
-                comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked));
-            await comp.WaitForAssertionAsync(() =>
-                comp.FindAll("div.mud-list-item path")[5].Attributes["d"].Value.Should().Be(@checked));
-            await select.SetParametersAndRenderAsync(parameter => parameter.Add(x => x.SelectedValues, new HashSet<string>() { "1", "2" }));
-            await comp.WaitForAssertionAsync(() =>
-                comp.FindAll("div.mud-list-item path")[1].Attributes["d"].Value.Should().Be(@checked));
-            await comp.WaitForAssertionAsync(() =>
-                comp.FindAll("div.mud-list-item path")[3].Attributes["d"].Value.Should().Be(@checked));
-            await comp.WaitForAssertionAsync(() =>
-                comp.FindAll("div.mud-list-item path")[5].Attributes["d"].Value.Should().Be(@unchecked));
+
+            select.Instance.GetState(x => x.SelectedValues).Should().BeEquivalentTo(["2", "3"]);
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Select(CheckboxState)
+                .Should().Equal("unchecked", "checked", "checked"));
+        }
+
+        /// <summary>
+        /// Setting SelectedValues from code updates the checkboxes of the open menu.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_SelectedValuesParameter_UpdatesCheckboxes()
+        {
+            var comp = Context.Render<MultiSelectTest1>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await OpenAsync(comp);
+            comp.FindAll("div.mud-list-item").Select(CheckboxState).Should().Equal("unchecked", "unchecked", "unchecked");
+
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValues, new HashSet<string> { "1", "2" }));
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Select(CheckboxState)
+                .Should().Equal("checked", "checked", "unchecked"));
         }
 
         /// <summary>
@@ -1234,75 +1269,92 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Keys open and close a single select and move the selection through its enabled options.
+        /// Each opening key opens a closed select without picking a value.
         /// </summary>
-        [Test]
-        public async Task Select_KeyboardNavigation_SingleSelect()
+        [TestCase("Enter", false)]
+        [TestCase("NumpadEnter", false)]
+        [TestCase(" ", false)]
+        [TestCase("ArrowDown", false)]
+        [TestCase("ArrowUp", false)]
+        [TestCase("ArrowDown", true)]
+        public async Task Select_Key_OpensClosedMenu(string key, bool altKey)
         {
-            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var keys = Context.AddKeyInterceptorService();
             var comp = Context.Render<SelectTest1>();
-            // print the generated html
-            // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
+            await PressAsync(select, keys, key, altKey: altKey);
+
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            select.Instance.ReadValue.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Each closing key closes an open select, and none of them picks a value when no option is highlighted.
+        /// </summary>
+        [TestCase("Escape", false)]
+        [TestCase(" ", false)]
+        [TestCase("Tab", false)]
+        [TestCase("Enter", false)]
+        [TestCase("NumpadEnter", false)]
+        [TestCase("ArrowUp", true)]
+        public async Task Select_Key_ClosesOpenMenuWithoutPicking(string key, bool altKey)
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectTest1>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            await PressAsync(select, keys, key, altKey: altKey);
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = " ", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-            //If we didn't select an item with mouse or arrow keys yet, value should remains null.
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be(null));
+            // Tab closes without rendering, because in a browser the focus change that follows renders the select.
+            select.Instance.GetState(x => x.Open).Should().BeFalse();
+            select.Instance.ReadValue.Should().BeNull();
+        }
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", AltKey = true, Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+        /// <summary>
+        /// Arrow, Home and End keys select the adjacent, first and last enabled option without wrapping around.
+        /// </summary>
+        [Test]
+        public async Task Select_NavigationKeys_SelectEnabledOptionsWithoutWrapping()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectTest1>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowUp", AltKey = true, Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-            //If dropdown is closed, arrow key should not set a value.
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be(null));
+            async Task<string> PressAndReadAsync(string key)
+            {
+                await PressAsync(select, keys, key);
+                return select.Instance.ReadValue;
+            }
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "NumpadEnter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            (await PressAndReadAsync("ArrowDown")).Should().Be("1");
+            (await PressAndReadAsync("End")).Should().Be("3", "End skips the disabled last option");
+            (await PressAndReadAsync("ArrowDown")).Should().Be("3", "ArrowDown does not wrap or land on the disabled option");
+            (await PressAndReadAsync("ArrowUp")).Should().Be("2");
+            (await PressAndReadAsync("Home")).Should().Be("1");
+            (await PressAndReadAsync("ArrowUp")).Should().Be("1", "ArrowUp does not wrap");
+        }
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+        /// <summary>
+        /// Typing a character while the menu is open selects the matching option, and typing it again keeps a single selection.
+        /// </summary>
+        [Test]
+        public async Task Select_TypingWhileOpen_SelectsMatchingOption()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectTest1>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("1"));
-            //End key should not select the last disabled item
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "End", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("3"));
-
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown", }));
+            await PressAsync(select, keys, "2");
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("2"));
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Home", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("1"));
-            //Arrow up should select still the first item
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("1"));
-
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "End", Type = "keydown", }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("3"));
-
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "2", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("2"));
-
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "2", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("2"));
-            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().HaveCount(1));
-
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = " ", Type = "keydown", }));
-            comp.Render(); // <-- this is necessary for reliable passing of the test
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            await PressAsync(select, keys, "2");
+            select.Instance.ReadValue.Should().Be("2");
+            select.Instance.GetState(x => x.SelectedValues).Should().Equal("2");
         }
 
         /// <summary>
@@ -1331,68 +1383,73 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Keys toggle all options, toggle the highlighted option and close a multi-select, and are ignored while it is disabled.
+        /// Ctrl+A toggles every option of a multi-select, in either letter case.
         /// </summary>
         [Test]
-        public async Task Select_KeyboardNavigation_MultiSelect()
+        public async Task MultiSelect_CtrlA_TogglesEveryOption()
         {
-            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var keys = Context.AddKeyInterceptorService();
             var comp = Context.Render<MultiSelectTest3>();
-            // print the generated html
-            // select elements needed for the test
             var select = comp.FindComponent<MudSelect<string>>();
-
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = " ", Type = "keydown", }));
+            await PressAsync(select, keys, " ");
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "a", CtrlKey = true, Type = "keydown", }));
+            await PressAsync(select, keys, "a", ctrlKey: true);
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("0 feline has been selected"));
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "A", CtrlKey = true, Type = "keydown", }));
+            await PressAsync(select, keys, "A", ctrlKey: true);
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("7 felines have been selected"));
+        }
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("6 felines have been selected"));
-
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "A", CtrlKey = true, Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("7 felines have been selected"));
-
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
-
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
+        /// <summary>
+        /// In a multi-select, arrow, Home and End keys only move the highlight, and Enter toggles the highlighted option while the menu stays open.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_Enter_TogglesHighlightedOption()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MultiSelectTest4>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            IReadOnlyCollection<string> Selected() => select.Instance.GetState(x => x.SelectedValues);
+            await PressAsync(select, keys, "Enter");
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().Contain("Jaguar"));
+            await PressAsync(select, keys, "Home");
+            Selected().Should().BeEmpty("moving the highlight does not select in a multi-select");
+            await select.InvokeAsync(() => keys.OnKeyUp(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keyup" }));
+            Selected().Should().BeEmpty("only keydown toggles");
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Home", Type = "keydown", }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "NumpadEnter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().NotContain("Jaguar"));
+            await PressAsync(select, keys, "Enter");
+            await comp.WaitForAssertionAsync(() => Selected().Should().BeEquivalentTo(["Jaguar"]));
+            await PressAsync(select, keys, "ArrowDown");
+            await PressAsync(select, keys, "NumpadEnter");
+            await comp.WaitForAssertionAsync(() => Selected().Should().BeEquivalentTo(["Jaguar", "Leopard"]));
+            await PressAsync(select, keys, "Home");
+            await PressAsync(select, keys, "Enter");
+            await comp.WaitForAssertionAsync(() => Selected().Should().BeEquivalentTo(["Leopard"]));
+            await PressAsync(select, keys, "End");
+            await PressAsync(select, keys, "Enter");
+            await comp.WaitForAssertionAsync(() => Selected().Should().BeEquivalentTo(["Leopard", "Tiger"]));
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "ArrowDown", Type = "keydown", }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().Contain("Leopard"));
+            comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open");
+        }
 
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "End", Type = "keydown", }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().NotContain("Tiger"));
+        /// <summary>
+        /// A disabled multi-select ignores Enter even while its menu is open.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_Disabled_IgnoresEnter()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MultiSelectTest4>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await PressAsync(select, keys, "Enter");
+            await PressAsync(select, keys, "ArrowDown");
 
             await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().NotContain("Tiger"));
+            await PressAsync(select, keys, "Enter");
 
-            await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, false));
-            //Test the keyup event
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyUp(select.Instance.ElementId, new KeyboardEventArgs { Key = "Enter", Type = "keyup", }));
-            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().NotContain("Tiger"));
-
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "Tab", Type = "keydown", }));
-            await comp.InvokeAsync(() => keyInterceptorService.OnKeyUp(select.Instance.ElementId, new KeyboardEventArgs { Key = "Tab" }));
-            comp.Render(); // <-- this is necessary for reliable passing of the test
-            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            select.Instance.GetState(x => x.SelectedValues).Should().BeEmpty();
         }
 
         /// <summary>
