@@ -202,7 +202,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<AutocompleteTest1>();
             var label = comp.FindAll(".mud-input-label");
-            label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("autocompleteLabelTest");
+            label[0].GetAttribute("for").Should().Be("autocompleteLabelTest");
         }
 
         /// <summary>
@@ -464,7 +464,6 @@ namespace MudBlazor.UnitTests.Components
                 parameters.Add(a => a.Immediate, false);
                 parameters.Add(a => a.DebounceInterval, 0);
             });
-            var ccc = comp.FindComponent<MudInput<string>>();
 
             // Assert : Initial
 
@@ -536,7 +535,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnBlur()
+        public async Task NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueNotSetOnBlur()
         {
             // Arrange
 
@@ -547,7 +546,6 @@ namespace MudBlazor.UnitTests.Components
                 parameters.Add(a => a.Immediate, false);
                 parameters.Add(a => a.DebounceInterval, 0);
             });
-            var ccc = comp.FindComponent<MudInput<string>>();
 
             // Assert : Initial
 
@@ -778,6 +776,7 @@ namespace MudBlazor.UnitTests.Components
             var mudText = comp.FindAll("p.mud-typography");
             mudText[^1].InnerHtml.Should().Contain("Not all items are shown"); //ensure the text is shown
 
+            comp.FindAll("div.mud-list-item").Should().HaveCount(10, "MaxItems caps the results");
             comp.FindAll("div.mud-popover .mud-autocomplete-more-items").Count.Should().Be(1);
         }
 
@@ -1153,7 +1152,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When calling Clear(), menu should closed, Value and Text should be cleared.
+        /// Calling ClearAsync from ValueChanged leaves the text empty instead of showing the clicked item.
         /// </summary>
         [Test]
         public async Task Autocomplete_CheckTextValueCleared_OnClear()
@@ -1162,7 +1161,6 @@ namespace MudBlazor.UnitTests.Components
             var alaskaString = "Alaska";
             var listItemQuerySelector = "div.mud-list-item";
 
-            var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
 
             // create the component
             var component = Context.Render<AutocompleteDisabledItemsTest>();
@@ -1260,6 +1258,10 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<AutocompleteStates>(parameters =>
             {
                 parameters.Add(a => a.DebounceInterval, 0);
+                parameters.Add(a => a.ResetValueOnEmptyText, resetValueOnEmptyText);
+                parameters.Add(a => a.CoerceText, coerceText);
+                parameters.Add(a => a.CoerceValue, coerceValue);
+                parameters.Add(a => a.Immediate, immediate);
             });
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
             var autocomplete = autocompleteComponent.Instance;
@@ -1582,7 +1584,7 @@ namespace MudBlazor.UnitTests.Components
                     args.Length == 2 &&
                     args[0] is ElementReference &&
                     args[1] is bool)),
-                Times.AtMost(1));
+                Times.Once);
 
             var input = comp.Find("input");
             await input.InputAsync("Wyo");
@@ -1776,7 +1778,7 @@ namespace MudBlazor.UnitTests.Components
 
             CancellationToken? cancelToken = null;
 
-            var first = new TaskCompletionSource<IEnumerable<string>>();
+            var first = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
             {
@@ -1791,11 +1793,15 @@ namespace MudBlazor.UnitTests.Components
 
             // Test
 
-            await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeFalse());
+            await comp.WaitForAssertionAsync(() =>
+            {
+                cancelToken.Should().NotBeNull("the first search must have started");
+                cancelToken!.Value.IsCancellationRequested.Should().BeFalse();
+            });
 
             // Arrange second call
 
-            var second = new TaskCompletionSource<IEnumerable<string>>();
+            var second = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             await autocompleteComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SearchFunc, new Func<string, CancellationToken, Task<IEnumerable<string>>>((s, cancellationToken) =>
             {
@@ -1808,7 +1814,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Test
 
-            await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
+            await comp.WaitForAssertionAsync(() => cancelToken!.Value.IsCancellationRequested.Should().BeTrue());
 
             first.SetCanceled();
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ToMarkup().Should().NotContain("Foo"));
@@ -2665,8 +2671,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var selectedItemIndexPropertyInfo = typeof(MudAutocomplete<string>).GetField("_selectedListItemIndex", BindingFlags.NonPublic | BindingFlags.Instance) ?? throw new ArgumentException("Cannot find field named '_selectedListItemIndex' on type 'MudAutocomplete<T>'");
 
-            var component = Context.Render<AutocompleteTest1>();
-            var autocompleteComponent = component.FindComponent<MudAutocomplete<string>>();
+            var provider = Context.Render<MudPopoverProvider>();
+            var component = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.SearchFunc, SearchStatesAsync));
+            var autocompleteComponent = component;
             var autocompleteInstance = autocompleteComponent.Instance;
 
             // Focus to open the popup
@@ -2676,8 +2685,9 @@ namespace MudBlazor.UnitTests.Components
             await component.WaitForAssertionAsync(() => autocompleteInstance.Open.Should().BeTrue("Input has been focused and should open the popup"));
 
             // Get the initial matching states (items in the dropdown)
-            var matchingStates = component.FindComponents<MudListItem<string>>().ToArray();
+            var matchingStates = provider.FindComponents<MudListItem<string>>().ToArray();
             var maxIndex = matchingStates.Length - 1;
+            maxIndex.Should().BeGreaterThan(0, "wrapping can only be observed with several results");
 
             // Define keyboard event args for ArrowDown and ArrowUp
             var arrowDownKeyboardEventArgs = new KeyboardEventArgs { Key = Key.Down.Value, Type = "keydown" };
@@ -2988,38 +2998,41 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ClearCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// PopoverFixed renders the results with fixed positioning.
+        /// </summary>
         [Test]
-        public void PopoverSettings_SetsDefaultValues()
+        public void Autocomplete_PopoverFixed_RendersFixedPopover()
         {
-            var auto = Context.Render<MudAutocomplete<string>>();
+            var provider = Context.Render<MudPopoverProvider>();
+            Context.Render<MudAutocomplete<string>>(parameters => parameters.Add(x => x.PopoverClass, "default-popover"));
+            Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.PopoverClass, "fixed-popover")
+                .Add(x => x.PopoverFixed, true));
 
-            auto.Instance.PopoverFixed.Should().BeFalse();
-            // When not set, should use global default from PopoverOptions
-            auto.Instance.Modal.Should().BeNull();
+            provider.Find(".default-popover").ClassList.Should().NotContain("mud-popover-fixed");
+            provider.Find(".fixed-popover").ClassList.Should().Contain("mud-popover-fixed");
         }
 
-        [Test]
-        public void PopoverSettings_OverridesDefaultValues()
+        /// <summary>
+        /// Without Modal, the overlay follows the global ModalOverlay option, and Modal overrides it.
+        /// </summary>
+        [TestCase(null, false, false)]
+        [TestCase(null, true, true)]
+        [TestCase(true, false, true)]
+        [TestCase(false, true, false)]
+        public async Task Autocomplete_Modal_FallsBackToGlobalModalOverlay(bool? modal, bool globalModalOverlay, bool expectModal)
         {
-            var auto = Context.Render<MudAutocomplete<string>>(p =>
-            {
-                p.Add(p => p.PopoverFixed, true);
-                p.Add(p => p.Modal, true);
-            });
+            Context.Services.Configure<PopoverOptions>(options => options.ModalOverlay = globalModalOverlay);
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.Modal, modal)
+                .Add(x => x.SearchFunc, SearchStatesAsync));
 
-            auto.Instance.PopoverFixed.Should().BeTrue();
-            auto.Instance.Modal.Should().BeTrue();
-        }
+            await comp.InvokeAsync(comp.Instance.OpenMenuAsync);
 
-        [Test]
-        public void PopoverSettings_UsesGlobalDefaultsFromPopoverOptions()
-        {
-            // The default PopoverOptions should have OverflowBehavior.FlipAlways and ModalOverlay = false
-            var auto = Context.Render<MudAutocomplete<string>>();
-
-            // Verify that the component is using the global defaults
-            // Modal should be null (using PopoverOptions defaults)
-            auto.Instance.Modal.Should().BeNull();
+            var overlayStyle = provider.Find("div.mud-overlay").GetAttribute("style") ?? string.Empty;
+            overlayStyle.Contains("pointer-events:none").Should().Be(!expectModal, "a modeless overlay lets pointer events through");
         }
 
         /// <summary>
@@ -3139,5 +3152,76 @@ namespace MudBlazor.UnitTests.Components
 
             action.Should().NotThrow();
         }
+
+        /// <summary>
+        /// Typing again within the debounce interval restarts it, so only the latest text is searched.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_TypingWithinDebounceInterval_SearchesOnlyLatestText()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searches = new List<string>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 500)
+                .Add(x => x.SearchFunc, (text, _) =>
+                {
+                    searches.Add(text);
+                    return Task.FromResult<IEnumerable<string>>(States);
+                }));
+
+            await comp.Find("input").InputAsync("A");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(300));
+            await comp.Find("input").InputAsync("Al");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(300));
+            searches.Should().BeEmpty("the second keystroke restarted the interval");
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(200));
+
+            await comp.WaitForAssertionAsync(() => searches.Should().Equal("Al"));
+        }
+
+        /// <summary>
+        /// SelectOnActivation selects the input text when the input first receives focus.
+        /// </summary>
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task Autocomplete_SelectOnActivation_SelectsTextOnFocus(bool selectOnActivation)
+        {
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.Value, "Alabama")
+                .Add(p => p.OpenOnFocus, false)
+                .Add(p => p.SelectOnActivation, selectOnActivation));
+
+            await comp.Find("input").FocusAsync();
+
+            Context.JSInterop.Invocations["mudElementRef.select"].Should().HaveCount(selectOnActivation ? 1 : 0);
+        }
+
+        /// <summary>
+        /// ListClass styles the list of results.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_ListClass_AppliedToResultList()
+        {
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.ListClass, "my-list-class")
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.SearchFunc, SearchStatesAsync));
+
+            await comp.InvokeAsync(comp.Instance.OpenMenuAsync);
+
+            await provider.WaitForAssertionAsync(() => provider.Find(".mud-list").ClassList.Should().Contain("my-list-class"));
+        }
+
+        /// <summary>
+        /// Searches <see cref="States"/> by case-insensitive substring, completing synchronously.
+        /// </summary>
+        private static Task<IEnumerable<string>> SearchStatesAsync(string text, CancellationToken token)
+        {
+            return Task.FromResult(States.Where(state => state.Contains(text ?? string.Empty, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        private static readonly string[] States = ["Alabama", "Alaska", "Arizona", "Arkansas"];
     }
 }
