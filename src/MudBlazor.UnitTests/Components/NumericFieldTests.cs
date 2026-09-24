@@ -127,12 +127,16 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task ShouldRespectDebounceIntervalPropertyInNumericField()
         {
+            var timeProvider = Context.AddFakeTimeProvider();
             var comp = Context.Render<MudNumericField<int?>>(parameters => parameters
                 .Add(x => x.DebounceInterval, 200d));
             var numericField = comp.Instance;
             var input = comp.Find("input");
             //Act
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
             await input.InputAsync(new ChangeEventArgs() { Value = "100" });
+            await timeProvider.WaitForTimerAsync(timers);
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
             numericField.EffectiveImmediate.Should().BeTrue();
@@ -140,11 +144,12 @@ namespace MudBlazor.UnitTests.Components
             numericField.ReadValue.Should().BeNull();
             numericField.ReadText.Should().Be("100");
             //DebounceInterval is 200 ms, so at 100 ms Value should not change in NumericField
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().NotBe(100), TimeSpan.FromMilliseconds(100));
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
             numericField.ReadValue.Should().BeNull();
             numericField.ReadText.Should().Be("100");
-            //More than 200 ms had elapsed, so Value should be updated (CPU time will likely take more than 200ms)
-            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(100), TimeSpan.FromMilliseconds(300));
+            //More than 200 ms had elapsed, so Value should be updated
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => numericField.ReadValue.Should().Be(100));
             numericField.ReadText.Should().Be("100");
         }
 
@@ -1265,12 +1270,14 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.Render<DebouncedNumericFieldRerenderTest>();
             var numericField = comp.FindComponent<MudNumericField<int>>().Instance;
-            IElement Input() => comp.Find("input");
+            // The debounce commit re-renders off the test thread after the clock advances, which can replace the input's event handler between a Find and the event dispatch.
+            // Looking up the input and dispatching on the renderer makes the two atomic.
+            Task InputAsync(string text) => comp.InvokeAsync(() => comp.Find("input").InputAsync(text));
             var converter = new DefaultConverter<int>();
             var currentText = "1";
             // Each input's debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
             var timers = timeProvider.TimersCreated;
-            await Input().InputAsync(currentText);
+            await InputAsync(currentText);
             await timeProvider.WaitForTimerAsync(timers);
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
@@ -1279,7 +1286,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 currentText += "2";
                 timers = timeProvider.TimersCreated;
-                await Input().InputAsync(currentText);
+                await InputAsync(currentText);
                 // Validation of the previous commit can commit this text right away instead of starting a timer.
                 var typedValue = converter.ConvertBack(currentText);
                 await timeProvider.WaitForTimerAsync(timers, () => numericField.ReadValue == typedValue);

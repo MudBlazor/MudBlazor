@@ -1593,7 +1593,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void StableHue_WhenColorSpectrumClicked()
+        public async Task StableHue_WhenColorSpectrumClicked()
         {
             var comp = Context.Render<MudColorPicker>(p =>
             {
@@ -1602,15 +1602,14 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Value, _defaultColor);
             });
 
-            var overlay = comp.Find(CssSelector);
-
             var expectedHue = _defaultColor.H;
 
             for (var x = 0; x < 312; x += 5)
             {
                 for (var y = 0; y < 250; y += 5)
                 {
-                    overlay.PointerDown(new PointerEventArgs { OffsetX = x, OffsetY = y });
+                    // Each click re-renders the picker, so re-query the overlay instead of dispatching on a detached element.
+                    await comp.Find(CssSelector).PointerDownAsync(new PointerEventArgs { OffsetX = x, OffsetY = y });
 
                     comp.Instance.ReadValue.H.Should().Be(expectedHue);
                 }
