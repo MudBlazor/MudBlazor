@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudAutocomplete T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" DebounceInterval="10" Clearable="true" />
+<MudAutocomplete T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" DebounceInterval="0" Clearable="true" />
 
 @code {
     public static string __description__ = "Initially hidden clear button should show when text is entered or item selected.";
