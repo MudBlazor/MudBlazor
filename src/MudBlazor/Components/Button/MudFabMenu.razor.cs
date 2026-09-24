@@ -188,7 +188,6 @@ public partial class MudFabMenu : MudFab
     {
         await base.OnParametersSetAsync();
 
-        // A disabled button can no longer toggle the menu, so an open menu would stay open with its items still clickable.
         if (_openState.Value && GetDisabledState())
         {
             await ToggleMenuAsync(false);
