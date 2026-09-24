@@ -88,8 +88,9 @@ Apply `awaiting triage` while ALL conditions are met:
 - Thread is not assigned
 - Thread was not created by a maintainer or a bot
 - Thread has no outstanding `needs:` requirements and is not marked `on hold`
-- No maintainer has commented or reviewed since the PR was opened or most recently marked ready for review
-- At least 14 days have elapsed since that opening or ready-for-review event
+- Either:
+  - No maintainer has commented or reviewed since the PR was opened or most recently marked ready for review, and at least 14 days have elapsed since that event; or
+  - The author requested review or pushed commits after the latest maintainer comment or review, and at least 14 days have elapsed since that request or push with no maintainer response
 
 Remove `awaiting triage` when a later event makes the PR draft, assigns it, supplies a maintainer response/review, places it on hold, or establishes an outstanding `needs:` requirement.
 
@@ -191,7 +192,7 @@ When NOT to edit:
 - Do not include issue/PR references in the title (e.g. `(#12678)`, `#12678`); keep those in the description/comments.
 - Never propose a weaker title than the current one. If you cannot produce a clearly more specific title from available context, do not emit a `set_title` operation; request a clearer title/description and add `needs: info`.
 - Do not rename a thread that a maintainer has already renamed.
-- Wrap members, parameters, and file names in backticks, adding them when the author did not. Never wrap component names such as MudNumericField.
+- It's optional to wrap members, parameters, and file names in backticks, but never wrap component names such as MudNumericField.
 - Issues Only:
   - Use sentence case and keep the title descriptive.
   - Do not include version numbers or redundant labels.
@@ -252,6 +253,6 @@ Close after >=168 consecutive days marked `stale`, provided no qualifying activi
 - Reproduction: "A link like https://try.mudblazor.com/snippet/XXXX or a minimal repo often helps confirm and debug."
 - Details: "Including MudBlazor version, .NET version, browser(s), and whether it worked in a prior version can help determine if it's a regression."
 - Visual issue (no reproduction): "Could you post a screenshot or short video showing the problem, along with a snippet that reproduces it?"
-- Upstream redirect: "The stack trace shows this originates in [project], not MudBlazor. Please check [tracker link]; if you find behavior that only happens with MudBlazor, add the details here and it can be reopened."
+- Upstream redirect: "It looks like the stack trace shows this originates in [project], not MudBlazor. Please check [tracker link]; if you find behavior that only happens with MudBlazor, add the details here."
 - PR visual proof: "Could you post a before and after video showing the fix from your own run?"
 - Usage redirect: "This issue tracker is for bugs and feature requests. For usage questions, please ask in [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or the [Discord community](https://discord.gg/mudblazor)."

@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudAutocomplete T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" DebounceInterval="10" MinCharacters="3" />
+<MudAutocomplete T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" DebounceInterval="0" MinCharacters="3" />
 
 @code {
     public static string __description__ = "Popup should open when 3 characters are typed and close when below.";
@@ -28,7 +28,7 @@
     private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5, token);
+        await Task.Yield();
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))

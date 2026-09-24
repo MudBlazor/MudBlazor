@@ -1300,9 +1300,12 @@ namespace MudBlazor.UnitTests.Components
         public async Task TablePaginationTest1()
         {
             var comp = Context.Render<TablePaginationTest1>();
-            await Task.Delay(200);
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(11); // ten rows + header row
-            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
+            // The items load after a delay, so wait for the render that shows them instead of sleeping.
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll("tr.mud-table-row").Count.Should().Be(11); // ten rows + header row
+                comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
+            });
         }
 
         /// <summary>
