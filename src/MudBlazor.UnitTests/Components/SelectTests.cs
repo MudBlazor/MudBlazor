@@ -185,10 +185,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Click should open the Menu and selecting a value should update the bindable value.
+        /// Clicking an option sets the bound value and closes the menu; reopening and picking another option replaces it.
         /// </summary>
         [Test]
-        public async Task SelectTest1()
+        public async Task Select_ClickingOption_SetsValueAndClosesMenu()
         {
             var comp = Context.Render<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -206,6 +206,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("1"));
         }
 
+        /// <summary>
+        /// The modeless overlay ignores the select's own root, so pressing the select does not count as a click outside.
+        /// </summary>
         [Test]
         public async Task Select_ModelessOverlay_IgnoresActivatorRootForAutoCloseHitTesting()
         {
@@ -219,8 +222,11 @@ namespace MudBlazor.UnitTests.Components
             overlay.GetAttribute("data-modeless-ignore-element-id").Should().Be(select.Instance.ElementId);
         }
 
+        /// <summary>
+        /// ToStringFunc formats both the options and the selected value shown in the input.
+        /// </summary>
         [Test]
-        public async Task SelectTestCustomToString()
+        public async Task Select_ToStringFunc_FormatsOptionsAndInputText()
         {
             var comp = Context.Render<SelectCustomToStringTest>();
             IElement Input() => comp.Find("input[value]");
@@ -234,6 +240,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => Input().GetAttribute("value").Should().Be("Margarita"));
         }
 
+        /// <summary>
+        /// Typing while the menu is closed selects matching options, cycling on a repeated letter and extending the prefix within the quick search interval.
+        /// </summary>
         [Test]
         public async Task Select_KeyDown_WhileClosed()
         {
@@ -323,8 +332,11 @@ namespace MudBlazor.UnitTests.Components
                 comp.FindAll("div.mud-list-item path")[5].Attributes["d"].Value.Should().Be(@unchecked));
         }
 
+        /// <summary>
+        /// The enum member backed by zero can be selected in a multi-select like any other value, and the MultiSelectionTextFunc formats the result.
+        /// </summary>
         [Test]
-        public async Task MultiSelectWithValueContainZero()
+        public async Task MultiSelect_EnumMemberWithZeroValue_CanBeToggled()
         {
             var comp = Context.Render<MultiSelectWithValueContainZeroTest>();
             IReadOnlyList<IElement> Inputs() => comp.FindAll("input");
@@ -344,12 +356,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Initial Text should be enums default value
-        /// Initial render fragment in input should be the pre-selected value's items's render fragment.
-        /// After clicking the second item, the render fragment should update
+        /// An enum select shows the default member initially and the picked member afterwards.
         /// </summary>
         [Test]
-        public async Task SelectWithEnum()
+        public async Task Select_EnumValue_ShowsSelectedMember()
         {
             var comp = Context.Render<SelectWithEnumTest>();
             var select = comp.FindComponent<MudSelect<MyEnum>>();
@@ -363,10 +373,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Initially no member is selected; clicking the first member checks only that member.
+        /// An enum multi-select starts with nothing checked and checks only the member that was clicked.
         /// </summary>
         [Test]
-        public async Task MultiSelectWithEnum()
+        public async Task MultiSelect_EnumValues_ChecksOnlyClickedMember()
         {
             var comp = Context.Render<MultiSelectWithEnumTest>();
             var select = comp.FindComponent<MudSelect<MultiSelectWithEnumTest.MyEnum>>();
@@ -387,6 +397,9 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Options without child content, formatted by ToStringFunc, check their box as soon as they are clicked.
+        /// </summary>
         [Test]
         public async Task MultiSelect_ChildlessEnumItems_ShouldUpdateCheckboxImmediately()
         {
@@ -404,6 +417,9 @@ namespace MudBlazor.UnitTests.Components
                 .Should().Equal("unchecked", "checked", "unchecked", "unchecked"));
         }
 
+        /// <summary>
+        /// String options without child content check their box as soon as they are clicked.
+        /// </summary>
         [Test]
         public async Task MultiSelect_ChildlessStringItems_ShouldUpdateCheckboxImmediately()
         {
@@ -421,6 +437,9 @@ namespace MudBlazor.UnitTests.Components
                 .Should().Equal("unchecked", "unchecked", "checked", "unchecked"));
         }
 
+        /// <summary>
+        /// Select all checks every option without child content as soon as it is clicked.
+        /// </summary>
         [Test]
         public async Task MultiSelect_SelectAll_ShouldUpdateChildlessItemCheckboxesImmediately()
         {
@@ -439,10 +458,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Initially we have a value of 17 which is not in the list. So we render it as text via MudInput
+        /// A value that matches no option is still shown as text in the input until an option is picked.
         /// </summary>
         [Test]
-        public async Task SelectUnrepresentableValue()
+        public async Task Select_ValueNotInOptions_ShowsValueAsText()
         {
             var comp = Context.Render<SelectUnrepresentableValueTest>();
             var select = comp.FindComponent<MudSelect<int>>();
@@ -458,10 +477,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Don't show initial value which is not in list because of Strict=true.
+        /// A strict select hides a value that matches no option, then shows the picked option's value as text.
         /// </summary>
         [Test]
-        public async Task SelectUnrepresentableValueTest2()
+        public async Task Select_StrictValueNotInOptions_HidesValue()
         {
             var comp = Context.Render<SelectUnrepresentableValueTest2>();
             var select = comp.FindComponent<MudSelect<int>>();
@@ -480,10 +499,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When the select has a null value, the text should be displayed, and the mud-shrink class should be applied.
+        /// An option whose value is null renders its content and shrinks the label, both initially and after it is picked again.
         /// </summary>
         [Test]
-        public async Task SelectNullValue()
+        public async Task Select_NullValuedOption_RendersItsContent()
         {
             var comp = Context.Render<SelectNullValueTest>();
             var select = comp.FindComponent<MudSelect<int?>>();
@@ -502,10 +521,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The items have no render fragments, so instead of RF the select must display the converted string value
+        /// Options without child content leave the content slot hidden and show the value as text.
         /// </summary>
         [Test]
-        public async Task SelectWithoutItemPresenters()
+        public async Task Select_OptionsWithoutContent_ShowValueAsText()
         {
             var comp = Context.Render<SelectWithoutItemPresentersTest>();
             var select = comp.FindComponent<MudSelect<int>>();
@@ -522,12 +541,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// SingleSelect: TextChanged should be fired before SelectedValuesChanged
-        /// We test this by checking the counter. The event which should be fired first must always
-        /// find an even counter value, the second must always find an odd value.
+        /// Picking an option raises TextChanged before SelectedValuesChanged, each exactly once.
         /// </summary>
         [Test]
-        public async Task SingleSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
+        public async Task Select_PickingOption_RaisesTextChangedThenSelectedValuesChanged()
         {
             var events = new List<string>();
             var comp = Context.Render<SelectTest1>();
@@ -548,12 +565,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MultiSelect: TextChanged should be fired before SelectedValuesChanged
-        /// We test this by checking the counter. The event which should be fired first must always
-        /// find an even counter value, the second must always find an odd value.
+        /// Toggling an option in a multi-select raises TextChanged before SelectedValuesChanged, each exactly once.
         /// </summary>
         [Test]
-        public async Task MultiSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
+        public async Task MultiSelect_PickingOption_RaisesTextChangedThenSelectedValuesChanged()
         {
             var events = new List<string>();
             var comp = Context.Render<SelectTest1>();
@@ -574,8 +589,11 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.ReadValue.Should().Be("2, 1");
         }
 
+        /// <summary>
+        /// Opening and closing the menu does not raise OnBlur; leaving the select does.
+        /// </summary>
         [Test]
-        public async Task Select_Should_FireOnBlur()
+        public async Task Select_OnBlur_RaisedByFocusOutNotByMenuToggle()
         {
             var comp = Context.Render<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -590,8 +608,11 @@ namespace MudBlazor.UnitTests.Components
             blurCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// A focus loss raises both the inner input's blur and the outer focusout, but OnBlur fires once.
+        /// </summary>
         [Test]
-        public async Task Select_OnBlurShouldFireOnceOnFocusLoss()
+        public async Task Select_OnBlur_RaisedOncePerFocusLoss()
         {
             var calls = 0;
             var comp = Context.Render<MudSelect<string>>(parameters => parameters
@@ -603,8 +624,11 @@ namespace MudBlazor.UnitTests.Components
             calls.Should().Be(1);
         }
 
+        /// <summary>
+        /// Clicking a disabled option neither selects it nor closes the menu.
+        /// </summary>
         [Test]
-        public async Task Disabled_SelectItem_Should_Be_Respected()
+        public async Task Select_ClickingDisabledOption_DoesNothing()
         {
             var comp = Context.Render<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -617,8 +641,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open");
         }
 
+        /// <summary>
+        /// A multi-select's Validation function receives the delimited text of the current selection.
+        /// </summary>
         [Test]
-        public async Task MultiSelect_ShouldCallValidationFunc()
+        public async Task MultiSelect_Validation_ReceivesDelimitedText()
         {
             var comp = Context.Render<MultiSelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -763,8 +790,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadText.Should().Be("one|<null>|<null>");
         }
 
+        /// <summary>
+        /// Select all picks every option and joins them with the custom Delimiter.
+        /// </summary>
         [Test]
-        public async Task MultiSelect_SelectAll()
+        public async Task MultiSelect_SelectAll_SelectsEveryOptionWithDelimiter()
         {
             var comp = Context.Render<MultiSelectTest2>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -782,8 +812,11 @@ namespace MudBlazor.UnitTests.Components
             validatedValue.Should().Be("FirstA^SecondA^ThirdA");
         }
 
+        /// <summary>
+        /// Select all shows SelectAllText and is checked when every option starts selected; the hidden shadow options render no list items.
+        /// </summary>
         [Test]
-        public async Task MultiSelect_SelectAll2()
+        public async Task MultiSelect_SelectAll_CheckedWhenEveryOptionInitiallySelected()
         {
             var comp = Context.Render<MultiSelectTest3>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -798,8 +831,11 @@ namespace MudBlazor.UnitTests.Components
                 .Should().NotBeEmpty().And.OnlyContain(item => item.FindComponents<MudListItem<string>>().Count == 0);
         }
 
+        /// <summary>
+        /// Select all is unchecked when nothing is selected.
+        /// </summary>
         [Test]
-        public async Task MultiSelect_SelectAll3()
+        public async Task MultiSelect_SelectAll_UncheckedWhenNothingSelected()
         {
             var comp = Context.Render<MultiSelectTest4>();
 
@@ -810,8 +846,11 @@ namespace MudBlazor.UnitTests.Components
             CheckboxState(selectAll).Should().Be("unchecked");
         }
 
+        /// <summary>
+        /// Select all skips disabled options, and clicking it again clears the selection.
+        /// </summary>
         [Test]
-        public async Task MultiSelect_SelectAll4()
+        public async Task MultiSelect_SelectAll_SkipsDisabledOptionsAndTogglesOff()
         {
             var comp = Context.Render<MultiSelectTest7>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -849,8 +888,11 @@ namespace MudBlazor.UnitTests.Components
                 .Should().BeEquivalentTo(["FOURTHA"]));
         }
 
+        /// <summary>
+        /// A single select's Validation function receives each picked value.
+        /// </summary>
         [Test]
-        public async Task SingleSelect_Should_CallValidationFunc()
+        public async Task Select_Validation_ReceivesPickedValue()
         {
             var comp = Context.Render<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -869,11 +911,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// We filled the multiselect with initial selected values, that must
-        /// show in the value of the input as a comma separated list of strings
+        /// Initial selected values show in the input as a comma separated list.
         /// </summary>
         [Test]
-        public void MultiSelect_Initial_Values()
+        public void MultiSelect_InitialSelectedValues_ShownAsDelimitedText()
         {
             var comp = Context.Render<MultiSelectWithInitialValuesTest>();
 
@@ -881,19 +922,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// We filled the multiselect with initial selected values.
-        /// Then the returned text in the selection is customized.
+        /// MultiSelectionTextFunc formats the initial selected values.
         /// </summary>
         [Test]
-        public void MultiSelectCustomizedText()
+        public void MultiSelect_MultiSelectionTextFunc_FormatsInitialText()
         {
             var comp = Context.Render<MultiSelectCustomizedTextTest>();
 
             comp.Find("input").GetAttribute("value").Should().Be("Selected values: FirstA, SecondA");
         }
 
+        /// <summary>
+        /// The clear button appears once a value is picked, clears it, raises OnClearButtonClick and then hides again.
+        /// </summary>
         [Test]
-        public async Task SelectClearable()
+        public async Task Select_ClearButton_ClearsValueAndHidesItself()
         {
             var comp = Context.Render<SelectClearableTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -910,6 +953,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ClearButtonClicked.Should().BeTrue();
         }
 
+        /// <summary>
+        /// A non-nullable enum's default member is the cleared state, so the clear button stays hidden until another member is selected (#13372).
+        /// </summary>
         [Test]
         public async Task SelectClearable_NonNullableEnum_HiddenWhileValueIsDefault()
         {
@@ -927,6 +973,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Zero is the cleared state of a non-nullable int, so the clear button stays hidden until a non-zero value is selected (#13372).
+        /// </summary>
         [Test]
         public async Task SelectClearable_NonNullableInt_HiddenWhileValueIsDefault()
         {
@@ -940,6 +989,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-input-clear-button").Should().ContainSingle();
         }
 
+        /// <summary>
+        /// A nullable int's cleared state is null, so a selected zero stays clearable (#13372).
+        /// </summary>
         [Test]
         public async Task SelectClearable_NullableValueType_ShownForZero()
         {
@@ -954,10 +1006,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Reselect an already selected value should not call SelectedValuesChanged event.
+        /// Picking the option that is already selected does not raise SelectedValuesChanged.
         /// </summary>
         [Test]
-        public async Task SelectReselect()
+        public async Task Select_ReselectingCurrentValue_DoesNotRaiseSelectedValuesChanged()
         {
             var comp = Context.Render<ReselectValueTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -973,8 +1025,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ChangeCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// A data annotation on the bound property rejects an invalid value.
+        /// </summary>
         [Test]
-        public async Task Select_Should_Validate_Data_Attribute_Fail()
+        public async Task Select_DataAnnotation_InvalidValue_FailsValidation()
         {
             var comp = Context.Render<SelectValidationDataAttrTest>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
@@ -987,8 +1042,11 @@ namespace MudBlazor.UnitTests.Components
             select.ValidationErrors.Should().Equal("Should not be longer than 3");
         }
 
+        /// <summary>
+        /// A data annotation on the bound property accepts a valid value.
+        /// </summary>
         [Test]
-        public async Task Select_Should_Validate_Data_Attribute_Success()
+        public async Task Select_DataAnnotation_ValidValue_PassesValidation()
         {
             var comp = Context.Render<SelectValidationDataAttrTest>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
@@ -1002,10 +1060,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Tests the required property.
+        /// A required select without a value fails validation with the localized required message.
         /// </summary>
         [Test]
-        public async Task Select_Should_SetRequiredTrue()
+        public async Task Select_Required_WithoutValue_FailsValidation()
         {
             var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<SelectRequiredTest>();
@@ -1017,10 +1075,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Required MudSelect should show validation error on focus loss without a value selected.
+        /// A required select without a value shows the required error once focus leaves it.
         /// </summary>
         [Test]
-        public async Task Select_Required_Should_ShowValidationError_OnFocusOut()
+        public async Task Select_Required_ValidatesOnFocusOut()
         {
             var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<SelectRequiredTest>();
@@ -1036,7 +1094,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// #11796: in multi-selection the Validation function runs after SelectedValues commits, so it observes the new selection - once per click.
+        /// In multi-selection the Validation function runs after SelectedValues commits, so it observes the new selection once per click (#11796).
         /// </summary>
         [Test]
         public async Task MultiSelect_Validation_RunsAfterSelectedValuesCommit()
@@ -1064,10 +1122,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Selected option should be hilighted when drop-down opens
+        /// Opening the menu highlights the selected option, and nothing when there is no value.
         /// </summary>
         [Test]
-        public async Task Select_Should_HilightSelectedValue()
+        public async Task Select_Open_HighlightsSelectedOption()
         {
             var comp = Context.Render<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -1088,10 +1146,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Initially selected option should be hilighted when drop-down opens
+        /// Opening the menu highlights an initially bound value, and the highlight follows a new pick.
         /// </summary>
         [Test]
-        public async Task Select_Should_HilightInitiallySelectedValue()
+        public async Task Select_Open_HighlightsInitiallySelectedOption()
         {
             var comp = Context.Render<SelectTest2>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -1109,6 +1167,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item")[0].ClassList.Should().Contain("mud-selected-item");
         }
 
+        /// <summary>
+        /// Opening the menu scrolls the initially selected option into view.
+        /// </summary>
         [Test]
         public async Task Select_Should_ScrollToInitiallySelectedValue_WhenOpened()
         {
@@ -1119,8 +1180,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => Context.JSInterop.VerifyInvoke("mudScrollManager.scrollToListItem"));
         }
 
+        /// <summary>
+        /// After the parent replaces the options, the menu offers and picks only the new ones.
+        /// </summary>
         [Test]
-        public async Task Select_Should_AllowReloadingItems()
+        public async Task Select_ReloadedOptions_ReplaceOldOptions()
         {
             var comp = Context.Render<ReloadSelectItemsTest>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -1143,8 +1207,11 @@ namespace MudBlazor.UnitTests.Components
             (await PickAsync(2)).Should().Be("American Samoa");
         }
 
+        /// <summary>
+        /// ToggleMenu and OpenMenu do nothing while the select is disabled, not even closing an open menu.
+        /// </summary>
         [Test]
-        public async Task Select_ToggleOpenCloseMenuMethods()
+        public async Task Select_MenuMethods_IgnoredWhileDisabled()
         {
             var comp = Context.Render<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -1166,6 +1233,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
         }
 
+        /// <summary>
+        /// Keys open and close a single select and move the selection through its enabled options.
+        /// </summary>
         [Test]
         public async Task Select_KeyboardNavigation_SingleSelect()
         {
@@ -1235,8 +1305,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
 
+        /// <summary>
+        /// With SelectionOnEnter, arrow keys only move the highlight and Enter commits the highlighted option.
+        /// </summary>
         [Test]
-        public async Task Select_SelectionOnEnter_ShouldOnlyChangeOnEnter()
+        public async Task Select_SelectionOnEnter_ArrowKeysMoveHighlightOnly()
         {
             var keys = Context.AddKeyInterceptorService();
             var comp = Context.Render<SelectTest3>();
@@ -1257,6 +1330,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
 
+        /// <summary>
+        /// Keys toggle all options, toggle the highlighted option and close a multi-select, and are ignored while it is disabled.
+        /// </summary>
         [Test]
         public async Task Select_KeyboardNavigation_MultiSelect()
         {
@@ -1319,8 +1395,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
         }
 
+        /// <summary>
+        /// Focus leaving an open multi-select, as happens when a checkbox is clicked, returns focus to the select and keeps the selection.
+        /// </summary>
         [Test]
-        public async Task Select_KeyboardNavigation_MultiSelect_Focus()
+        public async Task MultiSelect_FocusOutWhileOpen_RefocusesSelect()
         {
             var comp = Context.Render<MultiSelectTest6>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -1335,8 +1414,11 @@ namespace MudBlazor.UnitTests.Components
             Context.JSInterop.VerifyFocusAsyncInvoke();
         }
 
+        /// <summary>
+        /// Keyboard navigation in a select without options selects nothing and does not throw.
+        /// </summary>
         [Test]
-        public async Task Select_ItemlessSelect()
+        public async Task Select_WithoutOptions_KeyboardSelectsNothing()
         {
             var keys = Context.AddKeyInterceptorService();
             var comp = Context.Render<MudSelect<string>>();
@@ -1350,6 +1432,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadValue.Should().BeNull();
         }
 
+        /// <summary>
+        /// A custom Comparer decides which options show as checked for values set from code.
+        /// </summary>
         [Test]
         public async Task MultiSelectWithCustomComparer()
         {
@@ -1362,7 +1447,10 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item").Select(CheckboxState).Should().Equal("unchecked", "checked", "checked", "unchecked");
         }
 
-        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/13106")]
+        /// <summary>
+        /// Values preselected through a custom Comparer survive the first render (#13106).
+        /// </summary>
+        [Test]
         public async Task MultiSelectWithCustomComparer_InitialSelectionPreservedOnFirstRender()
         {
             var comp = Context.Render<MultiSelectComparerInitialTest>();
@@ -1378,7 +1466,10 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item").Select(CheckboxState).Should().Equal("unchecked", "checked", "checked", "unchecked");
         }
 
-        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/13106")]
+        /// <summary>
+        /// A value bound through a custom Comparer survives the first render (#13106).
+        /// </summary>
+        [Test]
         public async Task MultiSelectWithCustomComparer_InitialBindPreservedOnFirstRender()
         {
             var comp = Context.Render<MultiSelectWithCustomComparerInitialBindTest>();
@@ -1390,7 +1481,10 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-list-item").Select(CheckboxState).Should().Equal("checked", "unchecked", "unchecked");
         }
 
-        [Test(Description = "A custom Comparer must drive value->item resolution for highlight/active-descendant, not just selection state.")]
+        /// <summary>
+        /// A custom Comparer drives value-to-item resolution for the highlight and aria-activedescendant, not just selection state.
+        /// </summary>
+        [Test]
         public async Task SingleSelectWithCustomComparer_HighlightsKeyEqualItem()
         {
             var comp = Context.Render<SingleSelectComparerHighlightTest>();
@@ -1409,8 +1503,11 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
-        [Test(Description = "A custom Comparer must drive value->item resolution for the selected-value template (shadow lookup).")]
-        public async Task SingleSelectWithCustomComparer_RendersKeyEqualItemTemplate()
+        /// <summary>
+        /// A custom Comparer drives value-to-item resolution for the selected-value template.
+        /// </summary>
+        [Test]
+        public void SingleSelectWithCustomComparer_RendersKeyEqualItemTemplate()
         {
             var comp = Context.Render<SingleSelectComparerPresenterTest>();
 
@@ -1419,7 +1516,10 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-select-input").TextContent.Should().Contain("Latte template");
         }
 
-        [Test(Description = "A custom Comparer that matches no item resolves to no highlight rather than mis-highlighting.")]
+        /// <summary>
+        /// A custom Comparer that matches no item highlights nothing rather than the wrong item.
+        /// </summary>
+        [Test]
         public async Task SingleSelectWithCustomComparer_NoMatch_HighlightsNothing()
         {
             var comp = Context.Render<SingleSelectComparerNoMatchTest>();
@@ -1434,8 +1534,11 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Items lists each option of the open menu exactly once, in order.
+        /// </summary>
         [Test]
-        public async Task Select_Item_Collection_Should_Match_Number_Of_Select_Options()
+        public async Task Select_Items_ListsEachOptionOnce()
         {
             var comp = Context.Render<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -1446,10 +1549,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When MultiSelection and Required are True with no selected values, required validation should fail.
+        /// A required multi-select of strings or objects fails validation until an option is selected.
         /// </summary>
         [Test]
-        public async Task MultiSelectWithRequiredValue()
+        public async Task MultiSelect_Required_FailsUntilOptionSelected()
         {
             var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var required = localizer[LanguageResource.MudFormComponent_Required];
@@ -1476,8 +1579,11 @@ namespace MudBlazor.UnitTests.Components
             objectSelect.ValidationErrors.Should().BeEmpty();
         }
 
+        /// <summary>
+        /// ClearAsync empties a required multi-select and reports the required error, while ResetAsync empties it and clears the error.
+        /// </summary>
         [Test]
-        public async Task MultiSelectClearAndReset()
+        public async Task MultiSelect_ClearKeepsRequiredErrorAndResetClearsIt()
         {
             var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var required = localizer[LanguageResource.MudFormComponent_Required];
@@ -1520,10 +1626,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When MultiSelect attribute goes after SelectedValues, text should contain all selected values.
+        /// SelectedValues given before the MultiSelection attribute still show every value, and replacing them updates the text.
         /// </summary>
         [Test]
-        public async Task MultiSelectAttributesOrder()
+        public async Task MultiSelect_SelectedValuesBeforeMultiSelectionAttribute_ShowsEveryValue()
         {
             var comp = Context.Render<MultiSelectTest5>();
             var selectComponent = comp.FindComponent<MudSelect<string>>();
@@ -1632,8 +1738,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").GetAttribute("aria-required").Should().Be("true");
         }
 
+        /// <summary>
+        /// A conversion error renders its message and marks the input invalid, described by the error.
+        /// </summary>
         [Test]
-        public void Should_render_conversion_error_message()
+        public void Select_ConversionError_RendersMessageAndMarksInputInvalid()
         {
             var comp = Context.Render<MudSelect<int>>(parameters => parameters
                 .Add(p => p.ErrorId, "error-id")
@@ -1646,9 +1755,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
         }
 
+        /// <summary>
+        /// AdornmentAriaLabel names the adornment icon at either end.
+        /// </summary>
         [TestCase(Adornment.Start)]
         [TestCase(Adornment.End)]
-        public void Should_render_aria_label_for_adornment_if_provided(Adornment adornment)
+        public void Select_AdornmentAriaLabel_NamesAdornmentIcon(Adornment adornment)
         {
             var ariaLabel = "the aria label";
             var comp = Context.Render<MudSelect<string>>(parameters => parameters
@@ -1671,7 +1783,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, false)]
         // with user helper id and helper text, should always favour user helper id
         [TestCase(true, true)]
-        public async Task Should_pass_various_aria_describedby_tests(
+        public async Task Select_AriaDescribedBy_ReferencesHelperAndError(
             bool withUserHelperId,
             bool withHelperText)
         {
@@ -1717,8 +1829,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(inputSelector).GetAttribute("aria-describedby").Should().Be(secondExpectedAriaDescribedBy);
         }
 
+        /// <summary>
+        /// A read-only select hides its clear button.
+        /// </summary>
         [Test]
-        public async Task ReadOnlyShouldNotHaveClearButton()
+        public async Task Select_ReadOnly_HidesClearButton()
         {
             var comp = Context.Render<MudSelect<string>>(p => p
                 .Add(x => x.Text, "some value")
@@ -1731,8 +1846,11 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
         }
 
+        /// <summary>
+        /// A read-only select marks its input with the mud-readonly class.
+        /// </summary>
         [Test]
-        public async Task ReadOnlyShouldHaveMudReadonlyClass()
+        public async Task Select_ReadOnly_AddsReadonlyClass()
         {
             var comp = Context.Render<MudSelect<string>>(p => p
                 .Add(x => x.ReadOnly, false));
@@ -1743,8 +1861,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-select-input").ClassList.Should().Contain("mud-readonly");
         }
 
+        /// <summary>
+        /// The default relative width matches the popover to the input, while Adaptive lets it grow.
+        /// </summary>
         [Test]
-        public async Task SelectPopoverFullWidth()
+        public async Task Select_RelativeWidth_ControlsPopoverWidthClass()
         {
             var comp = Context.Render<SelectPopoverRelativeWidthTest>();
 
@@ -1760,8 +1881,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".expanded").ClassList.Should().NotContain("mud-popover-relative-width");
         }
 
+        /// <summary>
+        /// FitContent sizes the select to its longest option through a hidden filler, unless FullWidth is set.
+        /// </summary>
         [Test]
-        public async Task SelectFitContent()
+        public async Task Select_FitContent_SizesToLongestOptionUnlessFullWidth()
         {
             var comp = Context.Render<SelectFitContentTest>();
             comp.Find(".mud-select").ClassList.Should().NotContain("mud-width-content");
@@ -1778,6 +1902,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-select").ClassList.Should().NotContain("mud-width-content");
         }
 
+        /// <summary>
+        /// FitContent set on the first render sizes the select to its longest option straight away.
+        /// </summary>
         [Test]
         public void SelectFitContent_InitiallyEnabled()
         {
@@ -1788,8 +1915,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-select-filler").TextContent.Trim().Should().Be("Federated States of Micronesia");
         }
 
+        /// <summary>
+        /// Only a primary-button press opens the menu.
+        /// </summary>
         [TestCaseSource(typeof(MouseEventArgsTestCase), nameof(MouseEventArgsTestCase.AllCombinations))]
-        public async Task Select_HandleMouseDown(MouseEventArgs args)
+        public async Task Select_MouseDown_OpensOnlyForPrimaryButton(MouseEventArgs args)
         {
             var comp = Context.Render<MudSelect<string>>();
 
@@ -1798,8 +1928,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.GetState(x => x.Open).Should().Be(args.Button == 0);
         }
 
+        /// <summary>
+        /// Toggling an option in a multi-select notifies the parent form with the new selection.
+        /// </summary>
         [Test]
-        public async Task SelectMultiSelectFieldChanged()
+        public async Task MultiSelect_PickingOption_RaisesFormFieldChanged()
         {
             var comp = Context.Render<SelectMultiSelectFieldChangedTest>();
             comp.Instance.FormFieldChangedEventArgs.Should().BeNull();
@@ -1811,8 +1944,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.FormFieldChangedEventArgs!.NewValue.Should().BeEquivalentTo(comp.Instance.States.Take(2).Reverse());
         }
 
+        /// <summary>
+        /// @bind-Open follows the menu when it opens or closes from the select, and opens or closes the menu when the parent changes it.
+        /// </summary>
         [Test]
-        public async Task SelectOpenTwoWay()
+        public async Task Select_OpenBinding_SyncsBothWays()
         {
             var comp = Context.Render<SelectOpenTwoBindTest>();
             var select = comp.FindComponent<MudSelect<string>>().Instance;
@@ -1872,6 +2008,9 @@ namespace MudBlazor.UnitTests.Components
             overlayStyle.Contains("pointer-events:none").Should().Be(!expectModal, "a modeless overlay lets pointer events through");
         }
 
+        /// <summary>
+        /// A non-null ToStringFunc result is shown as text in place of the item's content; a null result falls back to the content.
+        /// </summary>
         [Test]
         public async Task Select_ToStringFunc_ShouldTakePrecedenceOverChildContent()
         {
@@ -1890,6 +2029,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").GetAttribute("value").Should().Be("ITEM2");
         }
 
+        /// <summary>
+        /// FitContent measures an option by its ToStringFunc text rather than its content.
+        /// </summary>
         [Test]
         public async Task Select_FitContent_ShouldPrioritizeToStringFunc()
         {
@@ -1916,8 +2058,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-select-filler").InnerHtml.Should().NotContain("custom-render");
         }
 
+        /// <summary>
+        /// When the parent replaces the options and the bound value, the input shows the new option's content.
+        /// </summary>
         [Test]
-        public async Task Select_CustomItemRenderFragment()
+        public async Task Select_ReplacedOptions_ShowNewSelectedContent()
         {
             var comp = Context.Render<CustomItemRenderFragmentTest>();
             comp.Find(".mud-select-input").TextContent.Should().Contain("Initial Item 1");
@@ -1927,6 +2072,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find(".mud-select-input").TextContent.Should().Contain("Item 1").And.NotContain("Initial"));
         }
 
+        /// <summary>
+        /// The input is a combobox that controls a multiselectable listbox and tracks the highlighted option.
+        /// </summary>
         [Test]
         public async Task Select_ShouldExposeComboboxSemantics_OnInput()
         {
@@ -1955,6 +2103,9 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// When a value is shown through its item's content, the focusable presenter carries the combobox semantics instead of the input.
+        /// </summary>
         [Test]
         public async Task Select_ShouldExposeComboboxSemantics_OnCustomPresenter()
         {
@@ -1976,6 +2127,9 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Caller-supplied role and aria attributes take precedence over the generated combobox attributes.
+        /// </summary>
         [Test]
         public void Select_UserAttributes_ShouldOverrideGeneratedAccessibilityAttributes()
         {
@@ -1999,6 +2153,9 @@ namespace MudBlazor.UnitTests.Components
             input.GetAttribute("aria-activedescendant").Should().Be("custom-option");
         }
 
+        /// <summary>
+        /// Consumer attributes and focus handlers reach the focusable presenter that replaces the hidden input (#13086).
+        /// </summary>
         [Test]
         public async Task Select_UserAttributes_ForwardedToSelectedValuePresenter()
         {
@@ -2013,6 +2170,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find("#focus-count").TextContent.Should().Be("1"));
         }
 
+        /// <summary>
+        /// The presenter never duplicates the consumer's id, and a forwarded tabindex does not make a disabled presenter focusable.
+        /// </summary>
         [Test]
         public void Select_PresenterAttributes_DoNotDuplicateIdOrFocusDisabled()
         {
@@ -2024,6 +2184,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-select-input[data-scenario='disabled']").HasAttribute("tabindex").Should().BeFalse();
         }
 
+        /// <summary>
+        /// In a multi-select, aria-selected follows the selection while aria-activedescendant follows the highlight.
+        /// </summary>
         [Test]
         public async Task Select_MultiSelect_ShouldKeepSelectionStateIndependentOfActiveDescendant()
         {
@@ -2043,6 +2206,9 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// AutoFocus focuses the select without scrolling the page.
+        /// </summary>
         [Test]
         public void AutoFocus_ShouldFocusWithoutScrolling()
         {
@@ -2054,6 +2220,9 @@ namespace MudBlazor.UnitTests.Components
             preventScroll.Should().BeTrue();
         }
 
+        /// <summary>
+        /// FocusAsync focuses the select and lets the browser scroll it into view.
+        /// </summary>
         [Test]
         public async Task FocusAsync_ShouldFocusWithScrolling()
         {
