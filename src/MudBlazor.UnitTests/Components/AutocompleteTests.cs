@@ -36,8 +36,11 @@ namespace MudBlazor.UnitTests.Components
             keyInterceptorService.ObserversCount.Should().Be(0);
         }
 
+        /// <summary>
+        /// The adornment button toggles the full result list, and typing filters it through the converter.
+        /// </summary>
         [Test]
-        public async Task Autocomplete_Should_Handle_Converter_WithStrict()
+        public async Task Autocomplete_ConverterWithStrict_FiltersResults()
         {
             var comp = Context.Render<AutocompleteConverterStrictTest>();
             var autocomplete = comp.FindComponent<MudAutocomplete<AutocompleteConverterStrictTest.ConverterElement>>();
@@ -56,6 +59,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudListItem<AutocompleteConverterStrictTest.ConverterElement>>().Should().HaveCount(4);
         }
 
+        /// <summary>
+        /// With CoerceValue and a custom converter, typed text is converted back into a value.
+        /// </summary>
         [Test]
         public async Task AutocompleteCoerceValue_WithCustomConverter_UsesConvertBack()
         {
@@ -79,10 +85,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Initial value should be shown and popup should not open.
+        /// The initial value is shown without opening the menu; typing opens matching results and clicking one sets the value.
         /// </summary>
         [Test]
-        public async Task AutocompleteTest1()
+        public async Task Autocomplete_ClickingResult_SetsValue()
         {
             var comp = Context.Render<AutocompleteTest1>();
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
@@ -101,6 +107,9 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.ReadText.Should().Be("California");
         }
 
+        /// <summary>
+        /// The modeless overlay ignores the autocomplete's own root, so pressing the autocomplete does not count as a click outside.
+        /// </summary>
         [Test]
         public async Task Autocomplete_ModelessOverlay_IgnoresActivatorRootForAutoCloseHitTesting()
         {
@@ -114,10 +123,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Popup should open when 3 characters are typed and close when below.
+        /// With MinCharacters, focusing does not open the menu, typing enough characters does, and deleting below the minimum closes it again.
         /// </summary>
         [Test]
-        public async Task AutocompleteTest2()
+        public async Task Autocomplete_MinCharacters_OpensOnlyAtThreshold()
         {
             var comp = Context.Render<AutocompleteTest2>();
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
@@ -133,10 +142,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Autocomplete should show 'Assam' (using ToStringFunc)
+        /// ToStringFunc formats the initial value's text.
         /// </summary>
         [Test]
-        public void AutocompleteTest3()
+        public void Autocomplete_ToStringFunc_FormatsInitialText()
         {
             var comp = Context.Render<AutocompleteTest3>();
 
@@ -144,10 +153,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The autocomplete should stop loading data when it is disposed
+        /// Disposing the autocomplete cancels a search that is still running.
         /// </summary>
         [Test]
-        public async Task AutocompleteCancelDispose()
+        public async Task Autocomplete_Dispose_CancelsPendingSearch()
         {
             var timeProvider = Context.AddFakeTimeProvider();
             var comp = Context.Render<AutocompleteTest8>();
@@ -164,10 +173,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Autocomplete should show 'Assam' (using state.ToString())
+        /// Without a ToStringFunc, the value's own ToString formats the initial text.
         /// </summary>
         [Test]
-        public void AutocompleteTest4()
+        public void Autocomplete_ValueToString_FormatsInitialText()
         {
             var comp = Context.Render<AutocompleteTest4>();
 
@@ -175,11 +184,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// We search for a value not in list and coercion will go back to the last valid value,
-        /// discarding the current search text.
+        /// With CoerceText, leaving text that matches nothing restores the text of the current value.
         /// </summary>
         [Test]
-        public async Task AutocompleteCoercion()
+        public async Task Autocomplete_CoerceText_RestoresValueTextOnBlur()
         {
             var comp = Context.Render<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
@@ -198,11 +206,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// We search for a value not in list and value coercion will force the invalid value to be applied
-        /// allowing to validate the user input.
+        /// With CoerceValue, text that matches nothing becomes the value when the menu is toggled, so it can be validated.
         /// </summary>
         [Test]
-        public async Task AutocompleteCoerceValue()
+        public async Task Autocomplete_CoerceValue_AppliesUnmatchedTextOnMenuToggle()
         {
             var comp = Context.Render<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
@@ -218,10 +225,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Test to cover issue #5993.
+        /// With Immediate and CoerceValue, text that matches nothing becomes the value as soon as it changes (#5993).
         /// </summary>
         [Test]
-        public async Task AutocompleteImmediateCoerceValue()
+        public async Task Autocomplete_ImmediateCoerceValue_AppliesUnmatchedTextAsTyped()
         {
             var comp = Context.Render<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
@@ -237,6 +244,9 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.ReadText.Should().Be("Austria");
         }
 
+        /// <summary>
+        /// Clearing the text of an object-valued autocomplete with immediate value coercion clears the value without a conversion error.
+        /// </summary>
         [Test]
         public async Task AutocompleteImmediateCoerceValue_WithToStringFuncAndObjectValue_DoesNotThrowOnClear()
         {
@@ -266,6 +276,9 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Without a debounce, Immediate value coercion sets the value and opens the menu on the first keystroke.
+        /// </summary>
         [Test]
         public async Task OnTextChanged_WithCoerceValueAndNotCoerceTextAndImmediateNotDebounce_SetValueAndOpenMenuImmediately()
         {
@@ -293,6 +306,9 @@ namespace MudBlazor.UnitTests.Components
             valueChangedCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// With a debounce, Immediate value coercion sets the value on the first keystroke but opens the menu only after the interval.
+        /// </summary>
         [Test]
         public async Task OnTextChanged_CoerceValueAndNotCoerceTextAndImmediateAndDebounce_SetValueImmediatelyButDelaysMenuOpening()
         {
@@ -324,6 +340,9 @@ namespace MudBlazor.UnitTests.Components
             valueChangedCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// OnDebounceIntervalElapsed fires once with the typed text when the debounce interval ends.
+        /// </summary>
         [Test]
         public async Task OnTextChanged_WithDebounce_InvokesOnDebounceIntervalElapsed()
         {
@@ -345,6 +364,9 @@ namespace MudBlazor.UnitTests.Components
             debouncedTexts.Should().Equal("Al");
         }
 
+        /// <summary>
+        /// With CoerceValue but not Immediate, typed text becomes the value only when the input loses focus.
+        /// </summary>
         [Test]
         public async Task CoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnBlur()
         {
@@ -367,6 +389,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadValue.Should().Be("ABC");
         }
 
+        /// <summary>
+        /// Coercing a value on blur without a converter leaves an object-valued autocomplete's value empty, without a conversion error.
+        /// </summary>
         [Test]
         public async Task CoerceValueWithToStringFuncAndObjectValue_DoesNotThrowOnBlur()
         {
@@ -390,6 +415,9 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Coercing a value on blur relies on neither ToStringFunc nor the value's ToString, so an object-valued autocomplete stays empty without a conversion error.
+        /// </summary>
         [Test]
         public async Task CoerceValueWithObjectToStringAndNoToStringFunc_DoesNotThrowOnBlur()
         {
@@ -412,6 +440,9 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Without CoerceValue, typed text never becomes the value, not even when the input loses focus.
+        /// </summary>
         [Test]
         public async Task NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueNotSetOnBlur()
         {
@@ -430,6 +461,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadValue.Should().BeNull();
         }
 
+        /// <summary>
+        /// With CoerceValue but not Immediate, Enter turns typed text into the value.
+        /// </summary>
         [Test]
         public async Task CoerceValueAndNotCoerceTextAndNotImmediate_ValueSetOnEnter()
         {
@@ -452,6 +486,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadValue.Should().Be("ABC");
         }
 
+        /// <summary>
+        /// Without CoerceValue, Enter does not turn typed text into the value.
+        /// </summary>
         [Test]
         public async Task NotCoerceValueAndNotCoerceTextAndNotImmediate_ValueNotSetOnEnter()
         {
@@ -470,8 +507,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ReadValue.Should().BeNull();
         }
 
+        /// <summary>
+        /// Without CoerceText, closing the menu keeps unmatched text and leaves the value unchanged.
+        /// </summary>
         [Test]
-        public async Task AutocompleteCoercionOff()
+        public async Task Autocomplete_CoerceTextOff_KeepsTypedTextOnClose()
         {
             var comp = Context.Render<AutocompleteTestCoersionAndBlur>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
@@ -487,8 +527,11 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.ReadText.Should().Be("Austria");
         }
 
+        /// <summary>
+        /// With CoerceText, Tab away from unmatched text restores the text of the current value.
+        /// </summary>
         [Test]
-        public async Task AutocompleteTextCoercionOnTabKey()
+        public async Task Autocomplete_CoerceText_RestoresValueTextOnTab()
         {
             var comp = Context.Render<AutocompleteTestCoersionAndBlur>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
@@ -503,8 +546,11 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.ReadText.Should().Be("Alabama");
         }
 
+        /// <summary>
+        /// With ResetValueOnEmptyText, emptying the text clears the value, and Tab does not restore it.
+        /// </summary>
         [Test]
-        public async Task AutocompleteTextCoercionAndResetIfEmptyText()
+        public async Task Autocomplete_ResetValueOnEmptyText_ClearsValueWhenTextEmptied()
         {
             var comp = Context.Render<AutocompleteTestCoersionAndBlur>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
@@ -523,6 +569,9 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.ReadText.Should().BeNull();
         }
 
+        /// <summary>
+        /// A SearchFunc that returns null, or a null task, does not throw.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_TolerateNullFromSearchFunc()
         {
@@ -539,8 +588,11 @@ namespace MudBlazor.UnitTests.Components
             await setText2.Should().NotThrowAsync();
         }
 
+        /// <summary>
+        /// A read-only autocomplete hides its clear button.
+        /// </summary>
         [Test]
-        public async Task AutocompleteReadOnlyShouldNotHaveClearButton()
+        public async Task Autocomplete_ReadOnly_HidesClearButton()
         {
             var comp = Context.Render<MudAutocomplete<string>>(p => p
                 .Add(x => x.Text, "some value")
@@ -553,8 +605,11 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
         }
 
+        /// <summary>
+        /// A read-only autocomplete marks its input with the mud-readonly class.
+        /// </summary>
         [Test]
-        public async Task AutocompleteReadOnlyShouldHaveMudReadonlyClass()
+        public async Task Autocomplete_ReadOnly_AddsReadonlyClass()
         {
             var comp = Context.Render<MudAutocomplete<string>>(p => p
                 .Add(x => x.ReadOnly, false));
@@ -566,10 +621,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MoreItemsTemplate should render when there are more items than the MaxItems limit
+        /// MaxItems caps the results, and MoreItemsTemplate says that some were left out.
         /// </summary>
         [Test]
-        public async Task AutocompleteTest6()
+        public async Task Autocomplete_MoreItemsTemplate_ShownWhenResultsExceedMaxItems()
         {
             var comp = Context.Render<AutocompleteTest6>();
 
@@ -581,10 +636,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// NoItemsTemplate should render when there are no items
+        /// NoItemsTemplate opens the menu with its message when the search finds nothing.
         /// </summary>
         [Test]
-        public async Task AutocompleteTest7()
+        public async Task Autocomplete_NoItemsTemplate_ShownWhenNothingMatches()
         {
             var comp = Context.Render<AutocompleteTest7>();
 
@@ -596,10 +651,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// After press Enter key down, the selected value should be shown in the input value
+        /// Enter selects the highlighted result, shows it in the input and closes the menu.
         /// </summary>
         [Test]
-        public async Task Autocomplete_after_Enter_Should_show_Selected_Value()
+        public async Task Autocomplete_Enter_SelectsHighlightedResultAndCloses()
         {
             var comp = Context.Render<AutocompleteTest1>();
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
@@ -614,8 +669,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Based on this try https://try.mudblazor.com/snippet/GacPunvDUyjdUJAh
-        /// and this issue https://github.com/MudBlazor/MudBlazor/issues/1235
+        /// A value supplied during the parent's asynchronous initialization is shown once it arrives (#1235).
         /// </summary>
         [Test]
         public async Task Autocomplete_Initialize_Value_on_SetParameters()
@@ -626,10 +680,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When T is a complex type and Text is explicitly set without a Value,
-        /// the initial Text should be preserved and not overwritten.
+        /// When T is a complex type and Text is explicitly set without a Value, the initial Text is kept (#12900).
         /// </summary>
-        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12900")]
+        [Test]
         public void Autocomplete_ComplexType_Should_Preserve_Initial_Text()
         {
             var comp = Context.Render<AutocompleteInitialTextComplexTypeTest>();
@@ -638,7 +691,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Test for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/1415"/>
+        /// Blurring the input raises OnBlur (#1415).
         /// </summary>
         [Test]
         public async Task Autocomplete_OnBlurShouldBeCalled()
@@ -653,7 +706,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// #5489: A required autocomplete validates when the user leaves it (blur with the menu closed).
+        /// A required autocomplete validates when the user leaves it with the menu closed (#5489).
         /// </summary>
         [Test]
         public async Task Autocomplete_Required_ValidatesOnBlur()
@@ -679,7 +732,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// #9425: A required autocomplete pre-filled with a value is valid on blur.
+        /// A required autocomplete pre-filled with a value is valid on blur (#9425).
         /// </summary>
         [Test]
         public async Task Autocomplete_Required_PreFilledValue_IsValidOnBlur()
@@ -703,7 +756,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// #5489: A required autocomplete validates on blur even when Immediate is disabled.
+        /// A required autocomplete validates on blur even when Immediate is disabled (#5489).
         /// </summary>
         [Test]
         public async Task Autocomplete_Required_NonImmediate_ValidatesOnBlur()
@@ -729,8 +782,11 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// The clear button appears while there is text and disappears when the text is cleared by the button or by typing.
+        /// </summary>
         [Test]
-        public async Task AutoCompleteClearable()
+        public async Task Autocomplete_ClearButton_ShownOnlyWithText()
         {
             var comp = Context.Render<AutocompleteTestClearable>();
             comp.FindAll(".mud-input-clear-button").Should().BeEmpty();
@@ -746,8 +802,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-input-clear-button").Should().BeEmpty());
         }
 
+        /// <summary>
+        /// A data annotation on the bound property rejects an invalid value.
+        /// </summary>
         [Test]
-        public async Task Autocomplete_Should_Validate_Data_Attribute_Fail()
+        public async Task Autocomplete_DataAnnotation_InvalidValue_FailsValidation()
         {
             var comp = Context.Render<AutocompleteValidationDataAttrTest>();
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
@@ -760,8 +819,11 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.ValidationErrors.Should().Equal("Should not be longer than 3");
         }
 
+        /// <summary>
+        /// A data annotation on the bound property accepts a valid value.
+        /// </summary>
         [Test]
-        public async Task Autocomplete_Should_Validate_Data_Attribute_Success()
+        public async Task Autocomplete_DataAnnotation_ValidValue_PassesValidation()
         {
             var comp = Context.Render<AutocompleteValidationDataAttrTest>();
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
@@ -775,10 +837,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Tests the required property.
+        /// A required autocomplete without a value fails validation with the localized required message.
         /// </summary>
         [Test]
-        public async Task Autocomplete_Should_SetRequiredTrue()
+        public async Task Autocomplete_Required_WithoutValue_FailsValidation()
         {
             var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<AutocompleteRequiredTest>();
@@ -790,10 +852,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Test for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/1761"/>
+        /// Tab closes the menu without selecting the highlighted result by default (#1761).
         /// </summary>
         [Test]
-        public async Task Autocomplete_Should_Close_OnTab()
+        public async Task Autocomplete_Tab_ClosesWithoutSelecting()
         {
             var comp = Context.Render<AutocompleteTest1>();
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
@@ -807,8 +869,11 @@ namespace MudBlazor.UnitTests.Components
             autocomplete.ReadValue.Should().Be("Alabama");
         }
 
+        /// <summary>
+        /// With SelectValueOnTab, Tab selects the highlighted result as it closes the menu.
+        /// </summary>
         [Test]
-        public async Task Autocomplete_Should_SelectValue_On_Tab_With_SelectValueOnTab()
+        public async Task Autocomplete_SelectValueOnTab_TabSelectsHighlightedResult()
         {
             var comp = Context.Render<AutocompleteTest1>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
@@ -825,15 +890,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// <para>
-        /// When selecting a value by clicking on it in the list the input will blur. However, this
-        /// must not cause the dropdown to close or else the click on the item will not be possible!
-        /// </para>
-        /// <para>
-        /// If this test fails it means the dropdown has closed before we can even click any value in the list.
-        /// Such a regression happened and caused PR #1807 to be reverted
-        /// </para>
+        /// Blurring the input keeps the menu open, because clicking a result blurs the input before the click lands.
         /// </summary>
+        /// <remarks>
+        /// A regression here made results unclickable and caused PR #1807 to be reverted.
+        /// </remarks>
         [Test]
         public async Task Autocomplete_Should_NotCloseDropdownOnInputBlur()
         {
@@ -877,10 +938,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Calling ClearAsync from ValueChanged leaves the text empty instead of showing the clicked item.
+        /// Calling ClearAsync from ValueChanged leaves the text empty instead of showing the clicked result.
         /// </summary>
         [Test]
-        public async Task Autocomplete_CheckTextValueCleared_OnClear()
+        public async Task Autocomplete_ClearAsyncFromValueChanged_LeavesTextEmpty()
         {
             var comp = Context.Render<AutocompleteDisabledItemsTest>();
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>();
@@ -895,12 +956,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Generate parameters for the test of `ResetAsync`.
+        /// Generates every combination of the parameters that ResetAsync must ignore.
         /// </summary>
-        /// <remarks>
-        /// `ResetAsync` has the same behavior, regardless of the component's parameters.
-        /// So this method generates all parameter combinations.
-        /// </remarks>
         private static IEnumerable<bool[]> ResetAsyncParameters()
         {
             const int NbParameters = 4;
@@ -913,11 +970,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When calling ResetAsync() without debounce,
-        /// so menu should be closed, Text empty and Value null.
+        /// ResetAsync leaves the menu closed, the text empty and the value null, whatever the coercion settings, without searching.
         /// </summary>
         [TestCaseSource(nameof(ResetAsyncParameters))]
-        public async Task ResetAsync_WithoutDebounce_SoTextEmptyAndValueNull(bool resetValueOnEmptyText, bool coerceText, bool coerceValue, bool immediate)
+        public async Task ResetAsync_WithoutValue_SoTextEmptyAndValueNull(bool resetValueOnEmptyText, bool coerceText, bool coerceValue, bool immediate)
         {
             var comp = Context.Render<AutocompleteStates>(parameters =>
             {
@@ -940,11 +996,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When calling ResetAsync() with value and without debounce,
-        /// so menu should be closed, Text empty and Value null.
+        /// ResetAsync clears an existing value and leaves the menu closed and the text empty, whatever the coercion settings, without searching.
         /// </summary>
         [TestCaseSource(nameof(ResetAsyncParameters))]
-        public async Task ResetAsync_WithValueAndWithoutDebounce_SoTextEmptyAndValueNull(bool resetValueOnEmptyText, bool coerceText, bool coerceValue, bool immediate)
+        public async Task ResetAsync_WithValue_SoTextEmptyAndValueNull(bool resetValueOnEmptyText, bool coerceText, bool coerceValue, bool immediate)
         {
             var comp = Context.Render<AutocompleteStates>(parameters =>
             {
@@ -1007,6 +1062,9 @@ namespace MudBlazor.UnitTests.Components
             await autocomplete.WaitForAssertionAsync(() => autocomplete.Instance.ReadValue.Should().Be("Enabled 3"));
         }
 
+        /// <summary>
+        /// Disabled results can be neither clicked nor reached with the arrow keys.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_Not_Select_Disabled_Item()
         {
@@ -1035,7 +1093,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// When changing the bound value, ensure the new value is displayed
+        /// Changing the bound object updates the text, and keys open, close and reset the autocomplete.
         /// </summary>
         [Test]
         public async Task Autocomplete_ChangeBoundValue()
@@ -1138,6 +1196,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => autocomplete.Open.Should().BeFalse());
         }
 
+        /// <summary>
+        /// A SearchFunc that completes synchronously still opens the menu with every result.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_Support_Sync_Search()
         {
@@ -1157,8 +1218,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The adornment icon should change live without having to re-open the autocomplete
-        /// This test a bugfix where changing the icon property would not cause the icon to visually change until the autocomplete was opened or closed
+        /// Changing AdornmentIcon updates the icon without reopening the autocomplete.
         /// </summary>
         [Test]
         public async Task Autocomplete_Should_ChangeAdornmentIcon()
@@ -1171,6 +1231,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("svg.mud-icon-root").InnerHtml.Should().NotBe(markupBefore);
         }
 
+        /// <summary>
+        /// No progress indicator shows while searching unless ShowProgressIndicator is set.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_NotIndicateLoadingByDefault()
         {
@@ -1190,6 +1253,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
         }
 
+        /// <summary>
+        /// ShowProgressIndicator shows a circular indicator while searching and removes it when the results arrive.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_IndicateLoadingWithCircularProgressIndicator()
         {
@@ -1214,6 +1280,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-autocomplete .progress-indicator-circular").Should().BeEmpty();
         }
 
+        /// <summary>
+        /// The circular progress indicator makes room for an end adornment while searching.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_IndicateLoadingWithCircularProgressIndicatorAndAdornmentAdjustment()
         {
@@ -1237,6 +1306,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-autocomplete .progress-indicator-circular").Should().BeEmpty();
         }
 
+        /// <summary>
+        /// ProgressIndicatorTemplate replaces the circular indicator while searching.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_IndicateLoadingWithCustomProgressIndicator()
         {
@@ -1261,6 +1333,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress");
         }
 
+        /// <summary>
+        /// ProgressIndicatorInPopoverTemplate opens the menu and shows inside it while searching.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_IndicateLoadingWithProgressIndicatorInsidePopover()
         {
@@ -1285,8 +1360,11 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress");
         }
 
+        /// <summary>
+        /// A new search cancels the pending one, and only the new search's results are shown.
+        /// </summary>
         [Test]
-        public async Task Autocomplete_Should_Cancel_Search()
+        public async Task Autocomplete_NewSearch_CancelsPendingSearch()
         {
             var timeProvider = Context.AddFakeTimeProvider();
             var tokens = new List<CancellationToken>();
@@ -1317,6 +1395,9 @@ namespace MudBlazor.UnitTests.Components
             await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Bar"));
         }
 
+        /// <summary>
+        /// FullWidth adds the full-width class to the autocomplete.
+        /// </summary>
         [Test]
         public async Task Autocomplete_FullWidth()
         {
@@ -1332,8 +1413,11 @@ namespace MudBlazor.UnitTests.Components
             autocompleteComp.Find("div.mud-select").ClassList.Should().Contain("mud-width-full");
         }
 
+        /// <summary>
+        /// Typing raises TextChanged with the typed text.
+        /// </summary>
         [Test]
-        public async Task Autocomplete_Should_HaveValueWithTextChangedEvent()
+        public async Task Autocomplete_Typing_RaisesTextChanged()
         {
             var texts = new List<string>();
             var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
@@ -1344,9 +1428,11 @@ namespace MudBlazor.UnitTests.Components
             texts.Should().Equal("testText");
         }
 
-        [Test]
-        [TestCase(0)] //test toStringFunc
-        [TestCase(1)] //test toString
+        /// <summary>
+        /// With Strict off, reopening the menu lists results around the selected value and highlights only that value, whether it is formatted by ToStringFunc or ToString.
+        /// </summary>
+        [TestCase(0, TestName = "AutocompleteStrictFalse(ToStringFunc)")]
+        [TestCase(1, TestName = "AutocompleteStrictFalse(ToString)")]
         public async Task AutocompleteStrictFalse(int index)
         {
             var comp = Context.Render<AutocompleteStrictFalseTest>();
@@ -1382,8 +1468,9 @@ namespace MudBlazor.UnitTests.Components
             Results().Count(x => x.ClassList.Contains("mud-selected-item")).Should().Be(1);
         }
 
-        // https://github.com/MudBlazor/MudBlazor/issues/13358
-        // With Strict="false" and a value type whose default is a valid item (e.g. an enum with a 0 member), only the actually-selected item should be highlighted, not also the default-valued item.
+        /// <summary>
+        /// With Strict off and an enum whose default is a valid item, only the selected item is highlighted, not also the default-valued one (#13358).
+        /// </summary>
         [Test]
         public async Task AutocompleteStrictFalse_ValueType_HighlightsOnlySelectedItem()
         {
@@ -1405,9 +1492,9 @@ namespace MudBlazor.UnitTests.Components
                 .Should().ContainSingle().Which.TextContent.Should().Contain("Third"));
         }
 
-        // https://github.com/MudBlazor/MudBlazor/issues/13358
-        // When the selected value drops out of refreshed results, no row should be highlighted.
-        // In particular the default-valued (First = 0) item must not be highlighted as a fallback.
+        /// <summary>
+        /// When the selected value drops out of refreshed results, no row is highlighted, not even the default-valued one (#13358).
+        /// </summary>
         [Test]
         public async Task AutocompleteStrictFalse_ValueType_SelectedItemRemovedOnRefresh_HighlightsNothing()
         {
@@ -1433,8 +1520,9 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
-        // A consumer can put a typed MudListItem<T> in BeforeItemsTemplate/AfterItemsTemplate.
-        // It sits under the internal list, so it must keep finding the cascading MudList<T> to inherit Dense, and must not be selected just because its value is default(T).
+        /// <summary>
+        /// A typed MudListItem in BeforeItemsTemplate inherits the list's Dense setting and is not selected just because its value is default(T).
+        /// </summary>
         [Test]
         public async Task Autocomplete_TypedListItemInBeforeItemsTemplate_InheritsListCascade()
         {
@@ -1452,6 +1540,9 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Typing without a SearchFunc does not throw and opens no results.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_Not_Throw_When_SearchFunc_Is_Null()
         {
@@ -1462,6 +1553,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Open.Should().BeFalse();
         }
 
+        /// <summary>
+        /// Key presses on the input raise OnKeyDown and OnKeyUp.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_Raise_KeyDown_KeyUp_Event()
         {
@@ -1476,6 +1570,9 @@ namespace MudBlazor.UnitTests.Components
             events.Should().Equal("down a", "up a");
         }
 
+        /// <summary>
+        /// A key press that re-renders the autocomplete keeps the typed text when the value is unchanged.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_PreserveText_OnKeyRerender_WhenValueIsUnchanged()
         {
@@ -1500,7 +1597,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Test case for <seealso cref="https://github.com/MudBlazor/MudBlazor/issues/6412"/>
+        /// With Strict off, reopening highlights the selected result even when a disabled result is listed (#6412).
         /// </summary>
         [Test]
         public async Task Autocomplete_Should_Highlight_Selected_Item_After_Disabled()
@@ -1522,10 +1619,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// https://github.com/MudBlazor/MudBlazor/issues/6475
+        /// Calling ResetAsync from ValueChanged leaves the text empty instead of showing the clicked result (#6475).
         /// </summary>
         [Test]
-        public async Task Autocomplete_Reset_Value_ShouldBe_Empty()
+        public async Task Autocomplete_ResetAsyncFromValueChanged_LeavesTextEmpty()
         {
             var comp = Context.Render<AutocompleteResetTest>();
             var autocomplete = comp.FindComponent<MudAutocomplete<string>>().Instance;
@@ -1554,10 +1651,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The menu should stay closed when the search returns no items even though BeforeItemsTemplate is set
+        /// BeforeItemsTemplate alone does not open the menu when the search returns nothing.
         /// </summary>
         [Test]
-        public async Task Autocomplete_Should_Not_LoadListStartWhenSet()
+        public async Task Autocomplete_BeforeItemsTemplate_DoesNotOpenEmptyResults()
         {
             var comp = Context.Render<AutocompleteListStartRendersTest>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
@@ -1572,10 +1669,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The menu should stay closed when the search returns no items even though AfterItemsTemplate is set
+        /// AfterItemsTemplate alone does not open the menu when the search returns nothing.
         /// </summary>
         [Test]
-        public async Task Autocomplete_Should_Not_LoadListEndWhenSet()
+        public async Task Autocomplete_AfterItemsTemplate_DoesNotOpenEmptyResults()
         {
             var comp = Context.Render<AutocompleteListEndRendersTest>();
             var autocompleteComponent = comp.FindComponent<MudAutocomplete<string>>();
@@ -1590,7 +1687,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The menu should close instead of staying invisibly open when a search returns no items and no NoItemsTemplate is set (#13360)
+        /// The menu closes instead of staying invisibly open when a search returns no items and no NoItemsTemplate is set (#13360).
         /// </summary>
         [Test]
         public async Task Autocomplete_Should_StayClosed_When_SearchReturnsNoItems()
@@ -1608,7 +1705,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Clicking the clear button after a search that returned no items should not open the menu (#13360)
+        /// Clicking the clear button after a search that returned no items does not open the menu (#13360).
         /// </summary>
         [Test]
         public async Task Autocomplete_Clear_AfterEmptySearch_Should_NotOpenMenu()
@@ -1630,7 +1727,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Pressing Enter while the menu is closed after an empty search should still coerce the value when CoerceValue is on (#13360)
+        /// Pressing Enter while the menu is closed after an empty search still coerces the value when CoerceValue is on (#13360).
         /// </summary>
         [Test]
         public async Task Autocomplete_Enter_AfterEmptySearch_Should_CoerceValue()
@@ -1675,6 +1772,9 @@ namespace MudBlazor.UnitTests.Components
                 .And.OnlyContain(item => item.ClassList.Contains("my-list-item-class"));
         }
 
+        /// <summary>
+        /// A click opens the menu even when OpenOnFocus is off.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_OpenMenuOnFocus_AlwaysOnClick()
         {
@@ -1690,6 +1790,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
         }
 
+        /// <summary>
+        /// ReturnedItemsCountChanged reports how many results each search found.
+        /// </summary>
         [Test]
         public async Task Autocomplete_ReturnedItemsCount_Should_Be_Accurate()
         {
@@ -1810,7 +1913,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Ensure selecting an option does not reopen the list.
+        /// Clicking a result closes the menu and does not reopen it.
         /// </summary>
         [Test]
         public async Task Autocomplete_SelectingOption_ShouldNot_ReopenList()
@@ -1826,7 +1929,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Ensure the menu does not open in read-only mode.
+        /// A read-only autocomplete opens neither on focus nor on click.
         /// </summary>
         [Test]
         public async Task Autocomplete_User_ShouldNot_OpenMenu_InReadOnlyMode()
@@ -1844,7 +1947,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Ensure the menu does not open in disabled mode.
+        /// A disabled autocomplete opens neither on focus nor on click.
         /// </summary>
         [Test]
         public async Task Autocomplete_User_ShouldNot_OpenMenu_InDisabledMode()
@@ -1862,7 +1965,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Ensure that the ItemDisabledTemplate and ItemSelectedTemplate both can display when ItemTemplate isn't provided (null)
+        /// ItemDisabledTemplate and ItemSelectedTemplate apply even without an ItemTemplate.
         /// </summary>
         [Test]
         public async Task AutocompleteItemTemplateDisplay()
@@ -1878,8 +1981,11 @@ namespace MudBlazor.UnitTests.Components
             results[2].TextContent.Should().Contain("American Samoa Selected State");
         }
 
+        /// <summary>
+        /// A conversion error renders its message and marks the input invalid, described by the error.
+        /// </summary>
         [Test]
-        public void Should_render_conversion_error_message()
+        public void Autocomplete_ConversionError_RendersMessageAndMarksInputInvalid()
         {
             var comp = Context.Render<MudAutocomplete<int>>(parameters => parameters
                 .Add(p => p.ErrorId, "error-id")
@@ -1893,9 +1999,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
         }
 
+        /// <summary>
+        /// AdornmentAriaLabel names the adornment button at either end.
+        /// </summary>
         [TestCase(Adornment.Start)]
         [TestCase(Adornment.End)]
-        public void Should_render_aria_label_for_adornment_if_provided(Adornment adornment)
+        public void Autocomplete_AdornmentAriaLabel_NamesAdornmentButton(Adornment adornment)
         {
             var ariaLabel = "the aria label";
             var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
@@ -1918,7 +2027,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, false)]
         // with user helper id and helper text, should always favour user helper id
         [TestCase(true, true)]
-        public async Task Should_pass_various_aria_describedby_tests(
+        public async Task Autocomplete_AriaDescribedBy_ReferencesHelperAndError(
             bool withUserHelperId,
             bool withHelperText)
         {
@@ -1965,16 +2074,22 @@ namespace MudBlazor.UnitTests.Components
         }
 #nullable disable
 
+        /// <summary>
+        /// The input turns off the browser's own autocomplete so it does not cover the results.
+        /// </summary>
         [Test]
-        public void Autocomplete_Attribute_Should_Exist()
+        public void Autocomplete_DisablesBrowserAutocomplete()
         {
             var comp = Context.Render<MudAutocomplete<string>>();
 
             comp.Find("input.mud-input-root").GetAttribute("autocomplete").Should().Be("off");
         }
 
+        /// <summary>
+        /// A caller-supplied autocomplete attribute overrides the default.
+        /// </summary>
         [Test]
-        public void Should_Override_Autocomplete_Attribute_With_UserAttributes()
+        public void Autocomplete_UserAttributes_OverrideBrowserAutocomplete()
         {
             var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
                 .Add(p => p.UserAttributes, new() { ["autocomplete"] = "on" }));
@@ -1983,10 +2098,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// https://github.com/MudBlazor/MudBlazor/issues/9495
-        /// With `ResetValueOnEmptyText`,
-        /// when the input text is cleared,
-        /// then the value is set to null and the search func is called
+        /// With ResetValueOnEmptyText, emptying the text sets the value to null and searches again (#9495).
         /// </summary>
         [Test]
         public async Task ResetValueOnEmptyText_WhenTextCleared_ThenSetNullAndTriggerSearch()
@@ -2000,8 +2112,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.SearchCount.Should().Be(1));
         }
 
+        /// <summary>
+        /// Arrow keys move the highlight to the last and first result without wrapping around.
+        /// </summary>
         [Test]
-        public async Task Should_Select_Correct_Item_With_ArrowKeys_And_Not_Wrap_Around()
+        public async Task Autocomplete_ArrowKeys_MoveHighlightWithoutWrapping()
         {
             var provider = Context.Render<MudPopoverProvider>();
             var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
@@ -2055,10 +2170,12 @@ namespace MudBlazor.UnitTests.Components
             Context.JSInterop.Invocations["Blazor._internal.domWrapper.focus"].Should().HaveCount(attachDelegate ? 0 : 1);
         }
 
-        [Test]
-        [TestCase(false)]
+        /// <summary>
+        /// OpenOnFocus decides whether focusing the input opens the menu.
+        /// </summary>
         [TestCase(true)]
-        public async Task Autocomplete_OpenOnFocusShouldWork(bool openOnFocus)
+        [TestCase(false)]
+        public async Task Autocomplete_OpenOnFocus_ControlsOpeningOnFocus(bool openOnFocus)
         {
             var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
                 .Add(p => p.OpenOnFocus, openOnFocus)
@@ -2069,6 +2186,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.Open.Should().Be(openOnFocus));
         }
 
+        /// <summary>
+        /// An autocomplete inside an open menu can be opened, closed by its overlay, and opened again without closing the menu.
+        /// </summary>
         [Test]
         public async Task Autocomplete_OpenTwiceInMenu()
         {
@@ -2087,6 +2207,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Should().HaveCount(2, "the autocomplete opens again inside the menu"));
         }
 
+        /// <summary>
+        /// OpenChanged fires once for opening, even when the menu is opened twice.
+        /// </summary>
         [Test]
         public async Task Autocomplete_OpenChanged_OpenMenu()
         {
@@ -2098,6 +2221,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.OpenedCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// Closing a menu that is already closed does not fire OpenChanged.
+        /// </summary>
         [Test]
         public async Task Autocomplete_OpenChanged_CloseMenu()
         {
@@ -2108,6 +2234,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ClosedCount.Should().Be(0);
         }
 
+        /// <summary>
+        /// Opening then closing fires OpenChanged once for each.
+        /// </summary>
         [Test]
         public async Task Autocomplete_OpenChanged_OpenClose()
         {
@@ -2120,6 +2249,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ClosedCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// Selecting an option from code fires OpenChanged once for closing, without opening first.
+        /// </summary>
         [Test]
         public async Task Autocomplete_OpenChanged_SelectOption()
         {
@@ -2131,6 +2263,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ClosedCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// The clear button clears a closed autocomplete without opening or closing it.
+        /// </summary>
         [Test]
         public async Task Autocomplete_OpenChanged_HandleClearButton()
         {
@@ -2145,6 +2280,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ClearCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// The clear button keeps an open menu open.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_Remain_Open_On_ClearButton_Usage()
         {
@@ -2159,6 +2297,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.ClearCount.Should().Be(1);
         }
 
+        /// <summary>
+        /// The clear button keeps a menu that was opened and closed again closed.
+        /// </summary>
         [Test]
         public async Task Autocomplete_Should_Remain_Closed_On_ClearButton_Usage()
         {
@@ -2360,6 +2501,9 @@ namespace MudBlazor.UnitTests.Components
             public override string ToString() => Name;
         }
 
+        /// <summary>
+        /// AutoFocus focuses the autocomplete without scrolling the page.
+        /// </summary>
         [Test]
         public void AutoFocus_ShouldFocusWithoutScrolling()
         {
@@ -2371,6 +2515,9 @@ namespace MudBlazor.UnitTests.Components
             preventScroll.Should().BeTrue();
         }
 
+        /// <summary>
+        /// FocusAsync focuses the autocomplete and lets the browser scroll it into view.
+        /// </summary>
         [Test]
         public async Task FocusAsync_ShouldFocusWithScrolling()
         {
