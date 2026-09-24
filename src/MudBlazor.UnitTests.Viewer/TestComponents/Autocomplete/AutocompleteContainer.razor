@@ -33,7 +33,8 @@
     {
         try
         {
-            await Task.Delay(2000, token);
+            // The search only ends when it is cancelled, which disposing the autocomplete must do.
+            await Task.Delay(Timeout.InfiniteTimeSpan, token);
         }
         catch (TaskCanceledException)
         {

@@ -84,12 +84,15 @@ Apply `help wanted` when ALL conditions are met:
 ### Awaiting Triage
 Apply `awaiting triage` while ALL conditions are met:
 - Thread is a pull request
+- Thread is open and not a draft
 - Thread is not assigned
 - Thread was not created by a maintainer or a bot
-- Thread does not qualify for a `needs:` label or `help wanted` label
-- The author comments a request for help/review/triage
-- No maintainer has replied since that comment
-- At least 14 days have elapsed since that comment
+- Thread has no outstanding `needs:` requirements and is not marked `on hold`
+- Either:
+  - No maintainer has commented or reviewed since the PR was opened or most recently marked ready for review, and at least 14 days have elapsed since that event; or
+  - The author requested review or pushed commits after the latest maintainer comment or review, and at least 14 days have elapsed since that request or push with no maintainer response
+
+Remove `awaiting triage` when a later event makes the PR draft, assigns it, supplies a maintainer response/review, places it on hold, or establishes an outstanding `needs:` requirement.
 
 ## 4. Missing Information Handling
 Purpose: Capture essential details early on open threads so maintainers can act quickly. Covers low-signal reports (link-only, screenshot/video-only, missing PR rationale, unsubstantiated enhancements). Does not interfere once a maintainer engages.
@@ -101,12 +104,17 @@ Purpose: Capture essential details early on open threads so maintainers can act 
 
 ### Gate 2 — Evaluate essential gaps (first-touch threads only)
 - When no maintainer is involved and you are the first triager, scan the issue/PR for objective blockers that prevent confirming, reproducing, scoping, or reviewing the change. Blockers include: missing reproduction, unknown environment, link-only reports without a written summary, visual-only reports without written expected vs. actual behavior, missing visual proof for a visually identifiable problem or change (see Visual Proof below), unclear enhancement scope/justification, missing PR rationale/problem statement, or a vague PR title/description that cannot be made specific from available context.
+- Enhancements: the "Problem and use case" and "Proposed solution" template fields are both required. Treat either as a blocker (`needs: info`) when it is empty, a placeholder, or gives no concrete scenario or API shape that a maintainer could evaluate.
 - If the report already contains enough written information to understand and act without inferring intent from links or media alone, and Visual Proof below is satisfied, take no action; polished formatting and claimed test results do not by themselves satisfy these gates.
+
+### Not a MudBlazor problem
+- Some reports describe behavior whose cause is clearly outside this library: IDE or Razor tooling errors (dotnet/razor), Blazor or ASP.NET Core framework behavior that reproduces without MudBlazor (dotnet/aspnetcore), or platform limits of the WebView host in Hybrid apps (dotnet/maui). Only conclude this when the thread contains citable evidence, such as a stack trace with no MudBlazor frames, a statement that the problem reproduces without MudBlazor, or a documented platform limitation. Do not conclude it from the environment alone.
+- When you do conclude it as the first triager: post a comment that names the likely upstream cause with a link to that project's issue tracker, asks the author to confirm whether any MudBlazor-specific behavior remains, and apply `needs: info`.
 
 ### Visual Proof
 - Decide whether the problem or change produces a visible difference in the rendered UI or its interactive behavior. Lean toward "yes" when the symptom or result is user-visible, even if the fix itself is pure logic; if you cannot tell what the change affects or how to observe it, apply `needs: info` and ask for clarification instead.
 - If yes and no media proof is present, request it:
-  - Issues: ask for a screenshot or short video of the problem even when a valid reproduction link is provided — media shows what is wrong at a glance while the reproduction lets maintainers debug it. Apply `needs: visuals` only when there is also no valid reproduction; an issue with a valid reproduction keeps the request comment-only so it is not routed into stale handling or excluded from `good first issue`. A missing reproduction is its own Gate 2 blocker (`needs: example`).
+  - Issues: a valid reproduction is sufficient proof. Do not request media when one is present unless the problem is about appearance (layout, styling, animation, theming) and the written expected vs. actual behavior cannot be understood without seeing it. When no valid reproduction is present, request media alongside the reproduction; apply `needs: visuals` only for appearance problems, since a missing reproduction is its own Gate 2 blocker (`needs: example`).
   - Pull requests: a before and after video from the author's own run of the change, with `needs: visuals`; still screenshots suffice only for purely static appearance changes with no interaction involved.
   - Only attached media counts as proof for pull requests: written before/after descriptions, links the reviewer must run or modify themselves, diffs, and claimed test results are not substitutes.
 - Do not request visuals for problems or changes with no visible rendering effect (e.g. build, CI, docs wording, pure tests), nor for crashes and exceptions best shown by logs even though the failure is user-visible.
@@ -129,13 +137,14 @@ Valid `needs:` labels and when to apply them:
 - `needs: example`: A usage example is absent (e.g. reproduction link or code snippet) — logic is described but not shown.
 - `needs: info`: This issue/PR lacks key context or is too unclear to act on without maintainer inference (e.g. link-only or screenshot/video-only reports without a written summary, missing goal/setup/environment, unclear enhancement scope/justification, or missing explanation of pull request changes and rationale).
 - `needs: tests`: A maintainer has explicitly asked for associated test cases to be added to this pull request.
-- `needs: visuals`: This issue/PR needs screenshots or video to demonstrate UI bugs or design changes. For issues, request media even when a reproduction link is provided, but apply the label only when neither media nor a valid reproduction is present. For PRs, a before/after video is the default; screenshots suffice only for purely static appearance changes.
+- `needs: visuals`: This issue/PR needs screenshots or video to demonstrate UI bugs or design changes. For issues, apply only to appearance problems that have neither media nor a valid reproduction. For PRs, a before/after video is the default; screenshots suffice only for purely static appearance changes.
 
 Rules for `needs:` labels:
 - When you post an information request as the first triager, add the matching `needs:` label(s) if they are not already present.
 - When mirroring a maintainer's explicit request, add the corresponding `needs:` label only if their comment is the latest human guidance and the information is still outstanding.
 - `needs: example`, `needs: visuals`, and `needs: info` may be cleared when any human comment or update provides the missing material; it does not need to come from the original author.
-- Remove `needs:` labels only when the timeline contains an explicit, citable event that resolves them: the requested information or changes have actually arrived in a human comment, commit, or update, or a newer human comment explicitly supersedes the request (for example: "no repro needed", "closing as duplicate", or equivalent clear direction). Do not remove a `needs:` label on the inference that the requirement is probably satisfied.
+- Author reply rule: when the thread author posts a substantive reply to your own information request (anything beyond a bare acknowledgement such as "ok" or "will do"), remove every `needs:` label that you applied, even if the reply only partially covers the request. The reply is the citable event; a maintainer decides whether more is needed. Labels applied by a maintainer stay until that maintainer's request is met.
+- Otherwise remove `needs:` labels only when the timeline contains an explicit, citable event that resolves them: the requested information or changes have actually arrived in a human comment, commit, or update, or a newer human comment explicitly supersedes the request (for example: "no repro needed", "closing as duplicate", or equivalent clear direction). Do not remove a `needs:` label on the inference that the requirement is probably satisfied.
 
 ## 5. Questions
 
@@ -181,14 +190,16 @@ When NOT to edit:
 ### Format Guidelines
 - Prioritize clarity and searchability over brevity.
 - Do not include issue/PR references in the title (e.g. `(#12678)`, `#12678`); keep those in the description/comments.
-- Never propose a weaker title than the current one. If you cannot produce a clearly more specific title from available context, do not set `newTitle`; request a clearer title/description and add `needs: info`.
+- Never propose a weaker title than the current one. If you cannot produce a clearly more specific title from available context, do not emit a `set_title` operation; request a clearer title/description and add `needs: info`.
+- Do not rename a thread that a maintainer has already renamed.
+- It's optional to wrap members, parameters, and file names in backticks, but never wrap component names such as MudNumericField.
 - Issues Only:
   - Use sentence case and keep the title descriptive.
   - Do not include version numbers or redundant labels.
 - Pull Requests Only:
   - Required shape: `<Prefix>: <concrete action + target/symptom>`.
   - Prefix selection order:
-    - Use `Docs:`, `Tests:`, or `Build:` when that is the labeled primary focus.
+    - Use `Docs:`, `Tests:`, `Build:`, `Analyzers:`, or `Test Viewer:` when that is the primary focus. These are distinct prefixes; do not collapse one into another (for example, `Test Viewer:` is not `Tests:`).
     - Otherwise use the primary user-facing component/group being changed.
     - If a new helper component mainly supports an existing component workflow, keep the existing component as prefix (e.g. prefer `MudDropZone: Add custom drag handle support` over `MudDragHandle: Add new component`).
     - Use the new component name as prefix only when it is standalone (independent usage/docs/examples or broad cross-component impact).
@@ -198,39 +209,40 @@ When NOT to edit:
 
 ## 8. Inactivity Rules
 
-General Inactivity Rules:
-- Skip closed threads
-- Skip threads assigned to or created by maintainers or bots
-- Only remove `stale` label and reset timer after a human (non-bot) posts a comment. No other kind of timeline event should reset the timer.
-- Do not post a comment when closing stale threads
+### General Inactivity Rules
+- Skip closed threads and threads assigned to or created by maintainers or bots.
+- Activity means any event, EXCEPT:
+  - Any action by a bot.
+  - Labeled, unlabeled, renamed, reviewer-removed, and assignee-removed events.
+- Qualifying activity resets the inactivity timer and removes `stale` if present. Excluded events do neither.
+- Measure inactivity from the latest qualifying activity, or creation if none.
+- Do not post a comment when closing stale threads.
 
-### Issues Only
-- Set `state: not_planned` on issues that have been stale for >=84 consecutive days
+### Issues
+Mark an issue `stale` when ANY condition holds:
+- Bug: >=18 months of inactivity.
+- Feature: >=36 months of inactivity.
+- Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days, with no qualifying activity during those 28 days.
+The 28-day label list is exhaustive; no other label, including `has workaround`, creates eligibility.
 
-Mark issues as `stale` when ONE of these inactivity thresholds are met. For the time-based thresholds, only a comment by a human (non-bot) account counts as activity: bot comments, bot actions, and labeled/unlabeled/renamed/assigned/unassigned events never reset the clock. Measure elapsed time from the last human comment, or from the issue's creation date if there are none.
-- Bug: >=18 months since the last human activity
-- Feature: >=36 months since the last human activity
-- Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days. This label list is exhaustive; no other label (e.g. `has workaround`) makes an issue eligible for `stale`.
+When marking stale, post verbatim without the default footer:
 
-Post this comment verbatim (exclude default footer) when marking an issue stale:
-```
-This issue has been marked as stale due to inactivity.  
-If you have any updates or additional information, please comment below.
+> This issue has been marked as stale due to inactivity.
+> If you have any updates or additional information, please comment below.
+>
+> If no response is received, it will be automatically closed.
 
-If no response is received, it will be automatically closed.
-```
+Close with `state: not_planned` after >=84 consecutive days marked `stale`, provided no qualifying activity has occurred since it was marked.
 
-### Pull Requests Only
-- Close pull requests that have been stale for >=168 consecutive days
+### Pull Requests
+Mark a pull request `stale` when BOTH conditions hold:
+- Has any `needs:` label.
+- No qualifying activity for >=84 consecutive days.
 
-Mark pull requests as `stale` while ALL conditions are met:
-- Has any `needs:` label
-- No timeline event (excluding labeled/unlabeled/renamed or reviewer/assignee removed) for >=84 consecutive days
+When marking stale, post verbatim without the default footer:
+> This pull request has been marked as stale due to inactivity.
 
-Post this comment verbatim (exclude default footer) when marking a pull request stale:
-```
-This pull request has been marked as stale due to inactivity.
-```
+Close after >=168 consecutive days marked `stale`, provided no qualifying activity has occurred since it was marked.
 
 ## 9. Reopen Closed Items
 - This section applies to closed threads only.
@@ -240,6 +252,7 @@ This pull request has been marked as stale due to inactivity.
 ## 10. Quick Reference Examples
 - Reproduction: "A link like https://try.mudblazor.com/snippet/XXXX or a minimal repo often helps confirm and debug."
 - Details: "Including MudBlazor version, .NET version, browser(s), and whether it worked in a prior version can help determine if it's a regression."
-- Visual issue: "Could you post a screenshot or short video showing the problem? Seeing it alongside the reproduction makes it much faster to confirm."
+- Visual issue (no reproduction): "Could you post a screenshot or short video showing the problem, along with a snippet that reproduces it?"
+- Upstream redirect: "It looks like the stack trace shows this originates in [project], not MudBlazor. Please check [tracker link]; if you find behavior that only happens with MudBlazor, add the details here."
 - PR visual proof: "Could you post a before and after video showing the fix from your own run?"
 - Usage redirect: "This issue tracker is for bugs and feature requests. For usage questions, please ask in [GitHub Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or the [Discord community](https://discord.gg/mudblazor)."
