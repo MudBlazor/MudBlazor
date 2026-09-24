@@ -2145,6 +2145,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Arrowing past disabled results scrolls to the highlighted result even when its position exceeds the number of enabled results.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_ArrowKeys_ScrollToResultAfterDisabledResults()
+        {
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.ItemDisabledFunc, state => state is "Alaska" or "Arizona")
+                .Add(x => x.SearchFunc, SearchStatesAsync));
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Should().HaveCount(States.Length));
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
+
+            HighlightedText(provider).Should().Be("Arkansas");
+            Context.JSInterop.Invocations["mudScrollManager.scrollToListItem"]
+                .Select(invocation => (string)invocation.Arguments[0])
+                .Should().ContainSingle(id => id.EndsWith("_item3"));
+        }
+
+        /// <summary>
         /// Clicking the adornment toggles the menu and focuses the input, unless OnAdornmentClick handles the click.
         /// </summary>
         [TestCase(false)]

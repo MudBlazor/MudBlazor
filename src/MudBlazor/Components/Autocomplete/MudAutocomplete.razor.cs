@@ -1033,7 +1033,7 @@ namespace MudBlazor
         /// <param name="index">The index of the item to scroll to. If it's out of range then nothing will happen.</param>
         private ValueTask SelectItemAsync(int index)
         {
-            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any() || index < 0 || index > _enabledItemIndices.Count - 1)
+            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any() || index < 0 || index >= _items.Length)
                 return ValueTask.CompletedTask;
 
             _selectedListItemIndex = index;
