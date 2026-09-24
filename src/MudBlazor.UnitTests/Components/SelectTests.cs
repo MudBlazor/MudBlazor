@@ -179,9 +179,9 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.OuterClass, "my-outer-class")
                 .Add(x => x.Class, "my-main-class")
                 .Add(x => x.InputClass, "my-input-class"));
-            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("my-outer-class"));
-            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("my-main-class"));
-            await comp.WaitForAssertionAsync(() => comp.Markup.Should().Contain("my-input-class"));
+            comp.Find($"#{comp.Instance.ElementId}").ClassList.Should().Contain("my-outer-class");
+            comp.Find(".mud-input-control").ClassList.Should().Contain("my-main-class");
+            comp.Find(".mud-select-input").ClassList.Should().Contain("my-input-class");
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<SelectRequiredTest>();
             var label = comp.FindAll(".mud-input-label");
-            label[0].Attributes.GetNamedItem("for")?.Value.Should().Be("selectLabelTest");
+            label[0].GetAttribute("for").Should().Be("selectLabelTest");
         }
 
         /// <summary>
@@ -222,7 +222,7 @@ namespace MudBlazor.UnitTests.Components
             // menu should be closed now
             await comp.WaitForAssertionAsync(() => Menu().ClassList.Should().NotContain("mud-popover-open"));
             select.Instance.ReadValue.Should().Be("2");
-            // now we cheat and click the list without opening the menu ;)
+            // open the menu again and pick another option
 
             await Input().MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
@@ -284,7 +284,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<SelectFocusAndTypeTest>();
             var select = comp.FindComponent<MudSelect<string>>();
 
-            //open menu on keydown
+            //typing while closed selects the first match without opening the menu
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
             await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = "t", Type = "keydown" }));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
@@ -401,18 +401,16 @@ namespace MudBlazor.UnitTests.Components
             select.Instance.ReadValue.Should().Be(default(MyEnum));
             select.Instance.ReadText.Should().Be(default(MyEnum).ToString());
 
-            comp.Find("input").Attributes["value"]?.Value.Should().Be("First");
+            comp.Find("input").GetAttribute("value").Should().Be("First");
             await input.MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
             await items[1].ClickAsync();
-            await comp.WaitForAssertionAsync(() => comp.Find("input").Attributes["value"]?.Value.Should().Be("Second"));
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("Second"));
         }
 
         /// <summary>
-        /// Initial Text should be enums default value
-        /// Initial render fragment in input should be the pre-selected value's items's render fragment.
-        /// After clicking the second item, the render fragment should update
+        /// Initially no member is selected; clicking the first member checks only that member.
         /// </summary>
         [Test]
         public async Task MultiSelectWithEnum()
@@ -438,7 +436,7 @@ namespace MudBlazor.UnitTests.Components
             );
             // Select the first item
             await items[0].ClickAsync();
-            await comp.WaitForAssertionAsync(() => comp.Find("input").Attributes["value"]?.Value.Should().Be("First"));
+            await comp.WaitForAssertionAsync(() => comp.Find("input").GetAttribute("value").Should().Be("First"));
             await comp.WaitForAssertionAsync(() =>
                 select.Instance.GetState(x => x.SelectedValues).Should().OnlyContain(item => item == MultiSelectWithEnumTest.MyEnum.First)
             );
@@ -536,7 +534,7 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("div.mud-input-control");
             select.Instance.ReadValue.Should().Be(17);
             select.Instance.ReadText.Should().Be("17");
-            comp.Find("input").Attributes["value"]?.Value.Should().Be("17");
+            comp.Find("input").GetAttribute("value").Should().Be("17");
             await input.MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
             var items = comp.FindAll("div.mud-list-item").ToArray();
@@ -736,7 +734,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// SingleSelect: SelectedValuesChanged should be fired before TextChanged
+        /// SingleSelect: TextChanged should be fired before SelectedValuesChanged
         /// We test this by checking the counter. The event which should be fired first must always
         /// find an even counter value, the second must always find an odd value.
         /// </summary>
@@ -796,12 +794,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MultiSelect: SelectedValuesChanged should be fired before TextChanged
+        /// MultiSelect: TextChanged should be fired before SelectedValuesChanged
         /// We test this by checking the counter. The event which should be fired first must always
         /// find an even counter value, the second must always find an odd value.
         /// </summary>
         [Test]
-        public async Task MulitSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
+        public async Task MultiSelect_Should_FireTextChangedBeforeSelectedValuesChanged()
         {
             var comp = Context.Render<SelectTest1>();
             var select = comp.FindComponent<MudSelect<string>>();
@@ -888,6 +886,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item-disabled").Count.Should().Be(1));
             await comp.FindAll("div.mud-list-item-disabled")[0].ClickAsync();
             await comp.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().BeNull());
+            comp.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open", "clicking a disabled option does not close the menu");
         }
 
         [Test]
@@ -1390,9 +1389,8 @@ namespace MudBlazor.UnitTests.Components
 
         }
 
-        #region DataAttribute validation
         [Test]
-        public async Task TextField_Should_Validate_Data_Attribute_Fail()
+        public async Task Select_Should_Validate_Data_Attribute_Fail()
         {
             var comp = Context.Render<SelectValidationDataAttrTest>();
             var selectcomp = comp.FindComponent<MudSelect<string>>();
@@ -1410,7 +1408,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task TextField_Should_Validate_Data_Attribute_Success()
+        public async Task Select_Should_Validate_Data_Attribute_Success()
         {
             var comp = Context.Render<SelectValidationDataAttrTest>();
             var selectcomp = comp.FindComponent<MudSelect<string>>();
@@ -1424,7 +1422,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => select.ValidateAsync());
             select.ValidationErrors.Should().BeEmpty();
         }
-        #endregion
 
         /// <summary>
         /// Tests the required property.
@@ -1957,7 +1954,7 @@ namespace MudBlazor.UnitTests.Components
             await input.MouseDownAsync();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().BeGreaterThan(0));
 
-            sut.Instance.Items.Should().HaveCountGreaterThanOrEqualTo(4);
+            sut.Instance.Items.Should().HaveCount(4);
         }
 
         /// <summary>
@@ -1992,7 +1989,7 @@ namespace MudBlazor.UnitTests.Components
             //2b.
             await inputs[1].MouseDownAsync();//selectWithT
             //wait for render and it will find 5 items from the component
-            comp.WaitForState(() => comp.FindAll("div.mud-list-item").Count == 5);
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Count.Should().Be(5));
             items = comp.FindAll("div.mud-list-item").ToArray();
             await items[3].ClickAsync();
             await comp.InvokeAsync(() => selectWithT.ValidateAsync());
@@ -2392,7 +2389,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TestCaseSource(typeof(MouseEventArgsTestCase), nameof(MouseEventArgsTestCase.AllCombinations))]
-        [Test]
         public async Task Select_HandleMouseDown(MouseEventArgs args)
         {
             var comp = Context.Render<MudSelect<string>>(p => p
@@ -2476,38 +2472,39 @@ namespace MudBlazor.UnitTests.Components
             selectComponentInsaInstance.GetState(x => x.Open).Should().BeFalse();
         }
 
+        /// <summary>
+        /// PopoverFixed renders the dropdown with fixed positioning.
+        /// </summary>
         [Test]
-        public void PopoverSettings_SetsDefaultValues()
+        public void Select_PopoverFixed_RendersFixedPopover()
         {
-            var select = Context.Render<MudSelect<string>>();
+            var provider = Context.Render<MudPopoverProvider>();
+            Context.Render<MudSelect<string>>(parameters => parameters.Add(x => x.PopoverClass, "default-popover"));
+            Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.PopoverClass, "fixed-popover")
+                .Add(x => x.PopoverFixed, true));
 
-            select.Instance.PopoverFixed.Should().BeFalse();
-            // When not set, should use global default from PopoverOptions
-            select.Instance.Modal.Should().BeNull();
+            provider.Find(".default-popover").ClassList.Should().NotContain("mud-popover-fixed");
+            provider.Find(".fixed-popover").ClassList.Should().Contain("mud-popover-fixed");
         }
 
-        [Test]
-        public void PopoverSettings_OverridesDefaultValues()
+        /// <summary>
+        /// Without Modal, the overlay follows the global ModalOverlay option, and Modal overrides it.
+        /// </summary>
+        [TestCase(null, false, false)]
+        [TestCase(null, true, true)]
+        [TestCase(true, false, true)]
+        [TestCase(false, true, false)]
+        public async Task Select_Modal_FallsBackToGlobalModalOverlay(bool? modal, bool globalModalOverlay, bool expectModal)
         {
-            var select = Context.Render<MudSelect<string>>(parameters =>
-            {
-                parameters.Add(x => x.PopoverFixed, true);
-                parameters.Add(x => x.Modal, true);
-            });
+            Context.Services.Configure<PopoverOptions>(options => options.ModalOverlay = globalModalOverlay);
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters.Add(x => x.Modal, modal));
 
-            select.Instance.PopoverFixed.Should().BeTrue();
-            select.Instance.Modal.Should().BeTrue();
-        }
+            await comp.InvokeAsync(() => comp.Instance.OpenMenu());
 
-        [Test]
-        public void PopoverSettings_UsesGlobalDefaultsFromPopoverOptions()
-        {
-            // The default PopoverOptions should have OverflowBehavior.FlipAlways and ModalOverlay = false
-            var select = Context.Render<MudSelect<string>>();
-
-            // Verify that the component is using the global defaults
-            // Modal should be null (using PopoverOptions defaults)
-            select.Instance.Modal.Should().BeNull();
+            var overlayStyle = provider.Find("div.mud-overlay").GetAttribute("style") ?? string.Empty;
+            overlayStyle.Contains("pointer-events:none").Should().Be(!expectModal, "a modeless overlay lets pointer events through");
         }
 
         [Test]
@@ -2579,7 +2576,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find(".mud-select-input").TextContent.Should().Contain("Initial Item 1");
             await comp.Find("#switch_values").ClickAsync();
-            comp.Find(".mud-select-input").TextContent.Should().Contain("Item 1");
+            comp.Find(".mud-select-input").TextContent.Should().Contain("Item 1").And.NotContain("Initial");
         }
 
         [Test]
@@ -2743,6 +2740,211 @@ namespace MudBlazor.UnitTests.Components
             input.GetAttribute("aria-expanded").Should().Be("false");
             // The listbox is not rendered while closed, so aria-controls would be a dangling reference.
             input.HasAttribute("aria-controls").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// ValueChanged is raised once for each new pick and not at all for a reselected or disabled option.
+        /// </summary>
+        [Test]
+        public async Task Select_ValueChanged_RaisedOncePerNewValue()
+        {
+            var comp = Context.Render<SelectEventCountTest>();
+
+            await PickOptionAsync(comp, 0);
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValueChangeCount.Should().Be(1));
+
+            await PickOptionAsync(comp, 1);
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValueChangeCount.Should().Be(2));
+
+            await PickOptionAsync(comp, 1);
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+
+            await PickOptionAsync(comp, 3);
+            comp.Instance.ValueChangeCount.Should().Be(2, "reselecting the current option and clicking a disabled one change nothing");
+            comp.Instance.ValuesChangeCount.Should().Be(2);
+        }
+
+        /// <summary>
+        /// Toggling options in a multi-select raises SelectedValuesChanged once per click.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_SelectedValuesChanged_RaisedOncePerToggle()
+        {
+            var comp = Context.Render<SelectEventCountTest>(parameters => parameters.Add(x => x.MultiSelection, true));
+
+            await OpenAsync(comp);
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValuesChangeCount.Should().Be(1));
+
+            await comp.FindAll("div.mud-list-item")[1].ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValuesChangeCount.Should().Be(2));
+
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ValuesChangeCount.Should().Be(3));
+
+            await comp.FindAll("div.mud-list-item")[3].ClickAsync();
+            comp.Instance.ValuesChangeCount.Should().Be(3, "a disabled option cannot be toggled");
+        }
+
+        /// <summary>
+        /// Select all is indeterminate while only some options are selected, and clicking it then selects every option.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_SelectAll_IndeterminateWhenSomeOptionsSelected()
+        {
+            var comp = Context.Render<MultiSelectTest4>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await OpenAsync(comp);
+
+            await comp.FindAll("div.mud-list-item")[1].ClickAsync();
+            await comp.WaitForAssertionAsync(() => CheckboxState(comp.FindAll("div.mud-list-item")[0]).Should().Be("indeterminate"));
+
+            await comp.FindAll("div.mud-list-item")[0].ClickAsync();
+            await comp.WaitForAssertionAsync(() => select.Instance.GetState(x => x.SelectedValues).Should().HaveCount(7));
+            CheckboxState(comp.FindAll("div.mud-list-item")[0]).Should().Be("checked");
+        }
+
+        /// <summary>
+        /// ClearAsync resets the value, the text and the selection, and raises the change callbacks.
+        /// </summary>
+        [Test]
+        public async Task Select_ClearAsync_ResetsValueTextAndSelection()
+        {
+            string? boundValue = null;
+            IReadOnlyCollection<string?>? boundValues = null;
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.ValueChanged, value => boundValue = value)
+                .Add(x => x.SelectedValuesChanged, values => boundValues = values)
+                .AddChildContent<MudSelectItem<string>>(item => item.Add(x => x.Value, "Espresso"))
+                .AddChildContent<MudSelectItem<string>>(item => item.Add(x => x.Value, "Latte")));
+            await comp.InvokeAsync(() => comp.Instance.SelectOption("Latte"));
+            boundValue.Should().Be("Latte");
+            boundValues.Should().Equal("Latte");
+
+            await comp.InvokeAsync(() => comp.Instance.ClearAsync());
+
+            comp.Instance.ReadValue.Should().BeNull();
+            comp.Instance.ReadText.Should().BeNull();
+            comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+            boundValue.Should().BeNull();
+            boundValues.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// ClearAsync on a multi-select deselects every option.
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_ClearAsync_DeselectsEveryOption()
+        {
+            var comp = Context.Render<MultiSelectTest3>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            select.Instance.GetState(x => x.SelectedValues).Should().HaveCount(7);
+
+            await comp.InvokeAsync(() => select.Instance.ClearAsync());
+            await OpenAsync(comp);
+
+            select.Instance.GetState(x => x.SelectedValues).Should().BeEmpty();
+            comp.FindAll("div.mud-list-item").Select(CheckboxState).Should().OnlyContain(state => state == "unchecked");
+        }
+
+        /// <summary>
+        /// A read-only select opens neither by mouse, keyboard nor OpenMenu.
+        /// </summary>
+        [Test]
+        public async Task Select_ReadOnly_DoesNotOpen()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectTest1>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await select.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ReadOnly, true));
+
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await PressAsync(select, keys, "Enter");
+            await PressAsync(select, keys, "ArrowDown");
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+
+            comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open");
+            select.Instance.ReadValue.Should().BeNull();
+        }
+
+        /// <summary>
+        /// An option whose value is null can be removed from the select without breaking the remaining options.
+        /// </summary>
+        [Test]
+        public async Task Select_NullValuedOption_CanBeRemoved()
+        {
+            var values = new List<int?> { null, 1 };
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudSelect<int?>>(parameters => parameters
+                .Add(x => x.ChildContent, builder =>
+                {
+                    foreach (var value in values)
+                    {
+                        builder.OpenComponent<MudSelectItem<int?>>(0);
+                        builder.SetKey(value ?? -1);
+                        builder.AddComponentParameter(1, nameof(MudSelectItem<int?>.Value), value);
+                        builder.CloseComponent();
+                    }
+                }));
+
+            values.Remove(null);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Dense, true));
+
+            await comp.InvokeAsync(() => comp.Instance.OpenMenu());
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Should().ContainSingle());
+            await provider.Find("div.mud-list-item").ClickAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadValue.Should().Be(1));
+        }
+
+        /// <summary>
+        /// Opens the select with a primary-button press and waits for its options to render.
+        /// </summary>
+        /// <remarks>
+        /// Only for components hosting a single select; pressing an open select closes it.
+        /// </remarks>
+        private static async Task OpenAsync<TComponent>(IRenderedComponent<TComponent> comp)
+            where TComponent : IComponent
+        {
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-list-item").Should().NotBeEmpty());
+        }
+
+        /// <summary>
+        /// Opens the select and clicks the option at <paramref name="index"/>.
+        /// </summary>
+        private static async Task PickOptionAsync<TComponent>(IRenderedComponent<TComponent> comp, int index)
+            where TComponent : IComponent
+        {
+            await OpenAsync(comp);
+            await comp.FindAll("div.mud-list-item")[index].ClickAsync();
+        }
+
+        /// <summary>
+        /// Sends a keydown the way the key interceptor reports a key pressed on the select.
+        /// </summary>
+        private static Task PressAsync<T>(IRenderedComponent<MudSelect<T>> select, KeyInterceptorService keys, string key)
+        {
+            return select.InvokeAsync(() => keys.OnKeyDown(select.Instance.ElementId, new KeyboardEventArgs { Key = key, Type = "keydown" }));
+        }
+
+        /// <summary>
+        /// Names the checkbox icon a multi-select option renders: checked, unchecked or indeterminate.
+        /// </summary>
+        private static string CheckboxState(IElement option)
+        {
+            var path = $"d=\"{option.QuerySelectorAll("path").Last().GetAttribute("d")}\"";
+
+            if (Icons.Material.Filled.CheckBox.Contains(path))
+            {
+                return "checked";
+            }
+
+            if (Icons.Material.Filled.CheckBoxOutlineBlank.Contains(path))
+            {
+                return "unchecked";
+            }
+
+            return Icons.Material.Filled.IndeterminateCheckBox.Contains(path) ? "indeterminate" : $"unknown icon {path}";
         }
     }
 }
