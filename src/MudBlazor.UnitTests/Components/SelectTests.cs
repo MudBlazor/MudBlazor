@@ -1539,6 +1539,60 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Reused select items recalculate checkbox state when normal parent updates replace their values (#13561).
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_ReusedVisibleItem_RecalculatesCheckboxWhenValueChanges()
+        {
+            var selectedProduct = new ReusedSelectItemValueTest.Product { Id = "1" };
+            var initialDisplayedProduct = new ReusedSelectItemValueTest.Product { Id = "1" };
+            var differentDisplayedProduct = new ReusedSelectItemValueTest.Product { Id = "2" };
+            var equivalentDisplayedProduct = new ReusedSelectItemValueTest.Product { Id = "1" };
+            initialDisplayedProduct.Should().NotBeSameAs(selectedProduct);
+            differentDisplayedProduct.Should().NotBeSameAs(selectedProduct);
+            differentDisplayedProduct.Should().NotBeSameAs(initialDisplayedProduct);
+            equivalentDisplayedProduct.Should().NotBeSameAs(selectedProduct);
+            equivalentDisplayedProduct.Should().NotBeSameAs(initialDisplayedProduct);
+            equivalentDisplayedProduct.Should().NotBeSameAs(differentDisplayedProduct);
+
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<ReusedSelectItemValueTest>(parameters => parameters
+                .Add(x => x.SelectedProduct, selectedProduct)
+                .Add(x => x.DisplayedProduct, initialDisplayedProduct));
+            var select = comp.FindComponent<MudSelect<ReusedSelectItemValueTest.Product>>();
+            await comp.Find("div.mud-input-control").MouseDownAsync();
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Should().ContainSingle());
+
+            MudSelectItem<ReusedSelectItemValueTest.Product> VisibleItem() => provider
+                .FindComponents<MudSelectItem<ReusedSelectItemValueTest.Product>>()
+                .Single(item => !item.Instance.HideContent)
+                .Instance;
+            string VisibleCheckboxState() => CheckboxState(provider.FindAll("div.mud-list-item").Single());
+            void SelectionShouldRemainUnchanged() => select.Instance.GetState(x => x.SelectedValues)
+                .Should().ContainSingle().Which.Should().BeSameAs(selectedProduct);
+
+            var reusedItem = VisibleItem();
+            VisibleCheckboxState().Should().Be("checked");
+            SelectionShouldRemainUnchanged();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedProduct, selectedProduct)
+                .Add(x => x.DisplayedProduct, differentDisplayedProduct));
+
+            VisibleItem().Should().BeSameAs(reusedItem);
+            VisibleCheckboxState().Should().Be("unchecked");
+            SelectionShouldRemainUnchanged();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedProduct, selectedProduct)
+                .Add(x => x.DisplayedProduct, equivalentDisplayedProduct));
+
+            VisibleItem().Should().BeSameAs(reusedItem);
+            VisibleCheckboxState().Should().Be("checked");
+            SelectionShouldRemainUnchanged();
+        }
+
+        /// <summary>
         /// A custom Comparer drives value-to-item resolution for the highlight and aria-activedescendant, not just selection state.
         /// </summary>
         [Test]
