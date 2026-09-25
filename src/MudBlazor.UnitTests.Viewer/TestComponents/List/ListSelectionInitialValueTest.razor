@@ -5,19 +5,21 @@
             @(_selectedValue ?? "You are dry")
         </MudChip>
     </MudListSubheader>
-    <MudListItem Text="Sparkling Water" />
-    <MudListItem Text="Teas">
+    <MudListItem Value='"Sparkling Water"'>Sparkling Water</MudListItem>
+    <MudListItem Value='"Teas"'>
+        <ChildContent>Teas</ChildContent>
         <NestedList>
-            <MudListItem Text="Earl Grey" />
-            <MudListItem Text="Matcha" />
-            <MudListItem Text="Pu'er" />
+            <MudListItem Value='"Earl Grey"'>Earl Grey</MudListItem>
+            <MudListItem Value='"Matcha"'>Matcha</MudListItem>
+            <MudListItem Value="@("Pu'er")">Pu'er</MudListItem>
         </NestedList>
     </MudListItem>
-    <MudListItem Text="Coffees">
+    <MudListItem Value='"Coffees"'>
+        <ChildContent>Coffees</ChildContent>
         <NestedList>
-            <MudListItem Text="Irish Coffee" />
-            <MudListItem Text="Double Espresso" />
-            <MudListItem Text="Cafe Latte" />
+            <MudListItem Value='"Irish Coffee"'>Irish Coffee</MudListItem>
+            <MudListItem Value='"Double Espresso"'>Double Espresso</MudListItem>
+            <MudListItem Value='"Cafe Latte"'>Cafe Latte</MudListItem>
         </NestedList>
     </MudListItem>
 </MudList>

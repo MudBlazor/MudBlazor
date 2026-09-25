@@ -2,9 +2,9 @@
 <MudStack>
     <MudText>Select an item</MudText>
     <MudToggleGroup T="string" SelectionMode="SelectionMode.SingleSelection" Value="_value1" ValueChanged="OnValueChanged" Color="Color.Primary" CheckMark FixedContent>
-        <MudToggleItem Value="@("Yes")" Text="Yes" />
-        <MudToggleItem Value="@("No")" Text="No" />
-        <MudToggleItem Value="@("Don't know")" Text="Don't know (Click me twice)" />
+        <MudToggleItem Value='"Yes"' />
+        <MudToggleItem Value='"No"' />
+        <MudToggleItem Value="@("Don't know")">Don't know (Click me twice)</MudToggleItem>
     </MudToggleGroup>
     <MudText>
         Selected value : @(_value1 ?? "None")

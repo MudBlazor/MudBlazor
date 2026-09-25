@@ -8,20 +8,22 @@
             @(SelectedValue ?? "You are dry")
         </MudChip>
         </MudListSubheader>
-        <MudListItem Text="Milk" />
-        <MudListItem Text="Sparkling Water" Value='"Carbonated H²O"' />
-        <MudListItem Text="Teas">
+        <MudListItem Value='"Milk"'>Milk</MudListItem>
+        <MudListItem Value='"Carbonated H²O"'>Sparkling Water</MudListItem>
+        <MudListItem Value='"Teas"'>
+            <ChildContent>Teas</ChildContent>
             <NestedList>
-                <MudListItem Text="English Tea" Value='"Earl Grey"' />
-                <MudListItem Text="Chinese Tea" Value='"Gunpowder Tea"' />
-                <MudListItem Text="Bubble Tea" />
+                <MudListItem Value='"Earl Grey"'>English Tea</MudListItem>
+                <MudListItem Value='"Gunpowder Tea"'>Chinese Tea</MudListItem>
+                <MudListItem Value='"Bubble Tea"'>Bubble Tea</MudListItem>
             </NestedList>
         </MudListItem>
-        <MudListItem Text="Coffees">
+        <MudListItem Value='"Coffees"'>
+            <ChildContent>Coffees</ChildContent>
             <NestedList>
-                <MudListItem Text="Irish Coffee" />
-                <MudListItem Text="Double Espresso" />
-                <MudListItem Text="Cafe Latte" />
+                <MudListItem Value='"Irish Coffee"'>Irish Coffee</MudListItem>
+                <MudListItem Value='"Double Espresso"'>Double Espresso</MudListItem>
+                <MudListItem Value='"Cafe Latte"'>Cafe Latte</MudListItem>
             </NestedList>
         </MudListItem>
     </MudList>
@@ -33,14 +35,14 @@
         <MudRadio Value="SelectionMode.ToggleSelection" Color="Color.Primary">ToggleSelection</MudRadio>
     </MudRadioGroup>
     <MudChipSet T="string" @bind-SelectedValue="SelectedValue" SelectionMode="@SelectionMode" Color="Color.Info" Variant="Variant.Text">
-        <MudChip Text="Milk" />
-        <MudChip Text="Carbonated H²O" />
-        <MudChip Text="Earl Grey" />
-        <MudChip Text="Gunpowder Tea" />
-        <MudChip Text="Bubble Tea" />
-        <MudChip Text="Irish Coffee" />
-        <MudChip Text="Double Espresso" />
-        <MudChip Text="Cafe Latte" />
+        <MudChip Value='"Milk"' />
+        <MudChip Value='"Carbonated H²O"' />
+        <MudChip Value='"Earl Grey"' />
+        <MudChip Value='"Gunpowder Tea"' />
+        <MudChip Value='"Bubble Tea"' />
+        <MudChip Value='"Irish Coffee"' />
+        <MudChip Value='"Double Espresso"' />
+        <MudChip Value='"Cafe Latte"' />
     </MudChipSet>
     <MudSwitch @bind-Value="ReadOnly" Color="Color.Primary">ReadOnly</MudSwitch>    
 </MudStack>

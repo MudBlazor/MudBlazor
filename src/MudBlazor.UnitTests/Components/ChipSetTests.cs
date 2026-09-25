@@ -6,6 +6,9 @@ using MudBlazor.Docs.Examples;
 using MudBlazor.UnitTests.TestComponents.ChipSet;
 using NUnit.Framework;
 
+// Chip_GetValue_ShouldReturnTextIfValueIsNullAndT_IsString covers the obsolete Text->Value fallback (removed in v10, #12556) which still works in v9.
+#pragma warning disable CS0618
+
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]

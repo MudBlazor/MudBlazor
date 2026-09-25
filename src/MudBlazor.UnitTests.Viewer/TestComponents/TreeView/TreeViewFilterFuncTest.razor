@@ -1,7 +1,7 @@
 ﻿<MudTreeView T="string" @ref="_treeView" Items="@Items" FilterFunc="@FilterFunc">
     <ItemTemplate>
         <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
-                         Icon="@context.Icon" Text="@context.Text" Visible="@context.Visible" />
+                         Icon="@context.Icon" Visible="@context.Visible" />
     </ItemTemplate>
 </MudTreeView>
 

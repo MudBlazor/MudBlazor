@@ -1,10 +1,10 @@
 ﻿<MudGrid>
     <MudItem xs="12">
         <MudChipSet T="Coffee" SelectionMode="SelectionMode.MultiSelection" CheckMark SelectedValues="@Selected" SelectedValuesChanged="SelectedChanged" Comparer="@_comparer">
-            <MudChip T="Coffee" Text="Cappuccino" Value="@(new Coffee("cap","Cappuccino"))" />
-            <MudChip T="Coffee" Text="Cafe Latte" Value="@(new Coffee("lat","Cafe Latte"))" />
-            <MudChip T="Coffee" Text="Espresso" Value="@(new Coffee("esp","Espresso"))" />
-            <MudChip T="Coffee" Text="Irish Coffee" Value="@(new Coffee("ire","Irish Coffee"))" />
+            <MudChip T="Coffee" Value="@(new Coffee("cap","Cappuccino"))">Cappuccino</MudChip>
+            <MudChip T="Coffee" Value="@(new Coffee("lat","Cafe Latte"))">Cafe Latte</MudChip>
+            <MudChip T="Coffee" Value="@(new Coffee("esp","Espresso"))">Espresso</MudChip>
+            <MudChip T="Coffee" Value="@(new Coffee("ire","Irish Coffee"))">Irish Coffee</MudChip>
         </MudChipSet>
     </MudItem>
     <MudItem xs="12">

@@ -89,7 +89,7 @@ namespace MudBlazor
         /// Occurs when the Clear button is clicked.
         /// </summary>
         /// <remarks>
-        /// When clicked, the <see cref="MudBaseInput{T}.Text"/> and <see cref="MudBaseInput{T}.Value"/> properties are reset.
+        /// When clicked, the input's text and <see cref="MudBaseInput{T}.Value"/> are reset.
         /// </remarks>
         [Parameter]
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
