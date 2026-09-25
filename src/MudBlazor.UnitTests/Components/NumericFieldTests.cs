@@ -844,6 +844,25 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("1234.000"));
         }
 
+        [Test]
+        public async Task NumericField_PercentFormat_ShouldKeepValueOnBlur()
+        {
+            // #11241: blurring a field whose text is the percent-formatted value (e.g. "50.00 %")
+            // used to fail conversion with "Not a valid number" because the percent symbol could
+            // not be parsed back.
+            var comp = Context.Render<MudNumericField<decimal>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Format, "P")
+                .Add(x => x.Value, 0.5m));
+
+            comp.Instance.ReadText.Should().Be("50.00 %");
+
+            await comp.Find("input").BlurAsync();
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("50.00 %"));
+            comp.Instance.ReadValue.Should().Be(0.5m);
+            comp.Instance.GetErrorText().Should().BeNullOrWhiteSpace();
+        }
+
         /// <summary>
         /// A debounced field commits from oninput just like an Immediate one, so its own value echo must not rewrite the text the user is still typing.
         /// </summary>

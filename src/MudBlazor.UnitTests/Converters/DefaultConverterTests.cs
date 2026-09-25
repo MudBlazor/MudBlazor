@@ -1574,5 +1574,73 @@ public class DefaultConverterTests
         }
     }
 
+    [Test]
+    public void DefaultConverter_ConvertBack_ShouldParseOwnPercentOutput()
+    {
+        // #11241: the "P" format renders a value multiplied by 100 plus the culture's percent
+        // symbol, so blurring a field displaying that text must not fail with "Not a valid number".
+        var converter = new DefaultConverter<decimal> { Format = () => "P", Culture = () => CultureInfo.InvariantCulture };
+        var text = converter.Convert(0.5m);
+        text.Should().Be("50.00 %");
+        converter.ConvertBack(text).Should().Be(0.5m);
+    }
+
+    [Test]
+    public void DefaultConverter_ConvertBack_ShouldRoundTripPercentInVariousCultures()
+    {
+        var cultures = new[]
+        {
+            CultureInfo.InvariantCulture,
+            CultureInfo.GetCultureInfo("en-US"),
+            CultureInfo.GetCultureInfo("de-DE"),
+            CultureInfo.GetCultureInfo("fr-FR"),
+        };
+
+        foreach (var culture in cultures)
+        {
+            var converter = new DefaultConverter<double> { Format = () => "P", Culture = () => culture };
+            var value = 1234.5d;
+            var text = converter.Convert(value);
+
+            converter.ConvertBack(text).Should().Be(value, because: $"culture: {culture.Name}");
+        }
+    }
+
+    [Test]
+    public void DefaultConverter_ConvertBack_ShouldParseNegativePercentText()
+    {
+        var converter = new DefaultConverter<double> { Format = () => "P", Culture = () => CultureInfo.InvariantCulture };
+        var text = converter.Convert(-0.25d);
+
+        converter.ConvertBack(text).Should().Be(-0.25d);
+    }
+
+    [Test]
+    public void DefaultConverter_ConvertBack_ShouldParsePercentTextForNullableNumbers()
+    {
+        var converter = new DefaultConverter<decimal?> { Format = () => "P", Culture = () => CultureInfo.InvariantCulture };
+        var text = converter.Convert(0.5m);
+
+        converter.ConvertBack(text).Should().Be(0.5m);
+    }
+
+    [Test]
+    public void DefaultConverter_ConvertBack_ShouldNotDividePlainNumbersWithoutPercentSymbol()
+    {
+        var converter = new DefaultConverter<decimal> { Format = () => "P", Culture = () => CultureInfo.InvariantCulture };
+
+        converter.ConvertBack("50").Should().Be(50m);
+    }
+
+    [Test]
+    public void DefaultConverter_ConvertBack_ShouldStillThrowForInvalidPercentText()
+    {
+        var converter = new DefaultConverter<decimal> { Format = () => "P", Culture = () => CultureInfo.InvariantCulture };
+
+        var act = () => converter.ConvertBack("50.00 % more");
+
+        act.Should().Throw<ConversionException>();
+    }
+
     #endregion
 }
