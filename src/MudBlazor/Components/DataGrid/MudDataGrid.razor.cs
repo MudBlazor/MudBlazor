@@ -3180,16 +3180,9 @@ namespace MudBlazor
         /// </remarks>
         internal void SetGroupExpanded(string? columnName, object? key, bool expanded)
         {
-            var groupKey = new GroupKey(columnName, key);
-
-            // update the expansion state for _groupExpansionsDict
-            // if it has a key we see if it differs from the definition Expanded State and update accordingly
-            // if it doesn't we add it if the new state doesn't match the definition
-            var col = RenderedColumns.FirstOrDefault(x => x.PropertyName == columnName);
-            if (expanded == col?._groupExpandedState.Value)
-                _groupExpansionsDict.Remove(groupKey);
-            else
-                _groupExpansionsDict[groupKey] = expanded;
+            // Record the state even when it matches the column default.
+            // A group row builds its nested groups from definitions made at the last grid render, which can still carry the grid-level GroupExpanded default, so a missing entry would fall back to that stale value.
+            _groupExpansionsDict[new GroupKey(columnName, key)] = expanded;
 
             _groupInitialExpanded = false;
         }
