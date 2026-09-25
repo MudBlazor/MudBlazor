@@ -53,16 +53,34 @@
         <SelectedTemplate />
     </MudFileUpload>
 
-    <MudFileUpload T="IReadOnlyList<IBrowserFile>" Folder="true" FilesChanged="UploadFolderFiles">
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>" 
+                Folder="true" 
+                FilesWithFolderPathsChanged="HandleFolderUpload"
+                Context="fileUploadInstance">
         <CustomContent>
-            <MudButton Variant="Variant.Filled" 
-                    Color="Color.Secondary" 
-                    StartIcon="@Icons.Material.Filled.Folder" 
-                    OnClick="@context.OpenFilePickerAsync">
-                Upload Folder
+            <MudButton Variant="Variant.Filled"
+                    Color="Color.Info"
+                    StartIcon="@Icons.Material.Filled.Folder"
+                    OnClick="@fileUploadInstance.OpenFilePickerAsync">
+                Upload Entire Folder
             </MudButton>
         </CustomContent>
     </MudFileUpload>
+
+    @if (_folderItems.Any())
+    {
+        <MudText Typo="Typo.subtitle2" Class="mt-4">Uploaded Structures:</MudText>
+        <MudList T="string">
+            @foreach (var item in _folderItems)
+            {
+                <MudListItem Icon="@Icons.Material.Filled.InsertDriveFile">
+                    <b>@item.File.Name</b> <MudText Color="Color.Secondary" Inline="true">(@item.RelativePath)</MudText>
+                </MudListItem>
+            }
+        </MudList>
+    }
+
+
 </MudStack>
 
 <MudFlexBreak />
@@ -108,6 +126,17 @@
         foreach (var file in files)
         {
             _files.Add(file);
+        }
+    }
+
+    private List<MudFilesWithFolderPath> _folderItems = new List<MudFilesWithFolderPath>();
+
+    private void HandleFolderUpload(IReadOnlyList<MudFilesWithFolderPath> args)
+    {
+        _folderItems.Clear();
+        foreach (var item in args)
+        {
+            _folderItems.Add(item);
         }
     }
 }

@@ -930,19 +930,20 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFileUpload_FolderPathsChanged_JSInterop_Test()
         {
-            // 1. Arrange: Use an inline wildcard predicate (_ => true) to catch any structural string ID argument
-            var mockPaths = new List<string> { "folder/file1.txt", "folder/subfolder/file2.txt" };
+            // Fix 1: Pass an expression to Setup to catch any string input ID argument
             var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
-                "mudFileUpload.getRelativePaths",
-                _ => true // Smoothly matches any invocation signature regardless of dynamic IDs
-            ).SetResult(mockPaths);
+                "mudInput.getFolderPaths",
+                checkedArguments => true
+            );
+            jsMock.SetResult(new List<string> { "folder/file1.txt", "folder/file2.txt" });
 
-            IReadOnlyList<string> receivedPaths = null;
-            var callback = EventCallback.Factory.Create<IReadOnlyList<string>>(this, (paths) => receivedPaths = paths);
+            // Fix 2: Remove the '?' to fix the nullable annotations context error
+            IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
 
             var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
                 .Add(p => p.Folder, true)
-                .Add(p => p.FolderPathsChanged, callback));
+                .Add(p => p.Disabled, false)
+                .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
 
             // 2. Act: Target the child component element and dispatch the files
             var inputFileComponent = comp.FindComponent<InputFile>();
@@ -955,11 +956,15 @@ namespace MudBlazor.UnitTests.Components
             // 3. Assert: Allow the async render pipeline to catch up with WaitForAssertion
             comp.WaitForAssertion(() =>
             {
-                jsMock.VerifyInvoke("mudFileUpload.getRelativePaths");
-                receivedPaths.Should().NotBeNull();
-                receivedPaths.Count.Should().Be(2);
-                receivedPaths.ElementAt(0).Should().Be("folder/file1.txt");
+                jsMock.VerifyInvoke("mudInput.getFolderPaths");
+                        
+                uploadedItems.Should().NotBeNull();
+                uploadedItems.Count.Should().Be(2);
+                
+                uploadedItems.ElementAt(0).RelativePath.Should().Be("folder/file1.txt");
+                uploadedItems.ElementAt(0).File.Name.Should().Be("file1.txt"); 
             }, TimeSpan.FromSeconds(2));
         }
+
     }
 }
