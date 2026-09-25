@@ -1,0 +1,12 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSplitButton Label="Deploy" Color="Color.Success" Variant="Variant.Filled" @bind-Open="_open">
+    <MudMenuItem>Deploy to staging</MudMenuItem>
+    <MudMenuItem>Deploy to production</MudMenuItem>
+</MudSplitButton>
+
+<MudSwitch @bind-Value="_open" Class="ml-4" Color="Color.Success" Label="Menu is open" />
+
+@code {
+    private bool _open;
+}
