@@ -14,6 +14,11 @@ namespace MudBlazor
         public partial class Material
         {
         }
+
+        public partial class PictogrammersMaterial
+        {
+            
+        }
     }
 }
 
