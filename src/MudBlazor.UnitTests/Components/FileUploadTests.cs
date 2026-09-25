@@ -966,5 +966,42 @@ namespace MudBlazor.UnitTests.Components
             }, TimeSpan.FromSeconds(2));
         }
 
+        [Test]
+        public void MudFileUpload_FolderPathsChanged_EmptyFileInputs_Fallback_Test()
+        {
+            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
+                "mudInput.getFolderPaths",
+                checkedArguments => true
+            );
+            jsMock.SetResult(new List<string> { "folder/file1.txt" });
+
+            IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
+
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.Disabled, false)
+                .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
+
+            // Force _numberOfActiveFileInputs to 0 using reflection to test the < 1 guard condition
+            var field = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
+                .GetField("_numberOfActiveFileInputs", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            if (field != null)
+            {
+                field.SetValue(comp.Instance, 0);
+            }
+
+            // Act: Trigger the upload
+            var inputFileComponent = comp.FindComponent<InputFile>();
+            var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
+            inputFileComponent.UploadFiles(file1);
+
+            // Assert: Check that it ran through without crashing and invoked the JS
+            comp.WaitForAssertion(() =>
+            {
+                jsMock.VerifyInvoke("mudInput.getFolderPaths");
+                uploadedItems.Should().NotBeNull();
+            }, TimeSpan.FromSeconds(2));
+        }
     }
 }
