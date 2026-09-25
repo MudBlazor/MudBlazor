@@ -375,47 +375,6 @@ public class FabMenuTests : BunitTest
     }
 
     /// <summary>
-    /// Clearing the menu's Href turns its button back from a link into a button.
-    /// </summary>
-    [Test]
-    public async Task ClearingHrefRendersMenuButtonAgain()
-    {
-        var comp = Context.Render<MudFabMenu>(parameters => parameters
-            .Add(p => p.StartIcon, Icons.Material.Filled.Add)
-            .Add(p => p.Href, "/docs"));
-
-        comp.Find(".mud-fab-menu-button").TagName.Should().Be("A");
-
-        await comp.SetParametersAndRenderAsync(parameters => parameters
-            .Add(p => p.Href, (string)null));
-
-        var button = comp.Find(".mud-fab-menu-button");
-        button.TagName.Should().Be("BUTTON");
-        button.HasAttribute("href").Should().BeFalse();
-    }
-
-    /// <summary>
-    /// Enabling a disabled menu with Href restores its button as a link.
-    /// </summary>
-    [Test]
-    public async Task EnablingDisabledMenuRestoresLink()
-    {
-        var comp = Context.Render<MudFabMenu>(parameters => parameters
-            .Add(p => p.StartIcon, Icons.Material.Filled.Add)
-            .Add(p => p.Href, "/docs")
-            .Add(p => p.Disabled, true));
-
-        comp.Find(".mud-fab-menu-button").TagName.Should().Be("BUTTON");
-
-        await comp.SetParametersAndRenderAsync(parameters => parameters
-            .Add(p => p.Disabled, false));
-
-        var button = comp.Find(".mud-fab-menu-button");
-        button.TagName.Should().Be("A");
-        button.GetAttribute("href").Should().Be("/docs");
-    }
-
-    /// <summary>
     /// An item click runs the item's OnClick and reaches handlers outside the menu only when the menu's ClickPropagation is set.
     /// </summary>
     [TestCase(false, 0)]

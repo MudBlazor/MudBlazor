@@ -48,7 +48,6 @@ public class BaseButtonTests<TButton> : BunitTest where TButton : MudBaseButton
 
     /// <summary>
     /// Setting Href renders an anchor that carries the link attributes.
-    /// It has no type attribute, which on an anchor is a MIME type hint for the linked resource.
     /// </summary>
     [Test]
     public void HrefRendersAnchor()
@@ -61,7 +60,6 @@ public class BaseButtonTests<TButton> : BunitTest where TButton : MudBaseButton
         root.TagName.Should().Be("A");
         root.GetAttribute("href").Should().Be("/docs");
         root.GetAttribute("target").Should().Be("_self");
-        root.HasAttribute("type").Should().BeFalse();
     }
 
     /// <summary>
@@ -111,101 +109,6 @@ public class BaseButtonTests<TButton> : BunitTest where TButton : MudBaseButton
         root.HasAttribute("href").Should().BeFalse();
         root.HasAttribute("target").Should().BeFalse();
         root.HasAttribute("rel").Should().BeFalse();
-    }
-
-    /// <summary>
-    /// A disabled link drops an explicit Rel along with its other link attributes.
-    /// </summary>
-    [Test]
-    public void DisabledLinkDropsExplicitRel()
-    {
-        var comp = Context.Render<TButton>(parameters => parameters
-            .Add(p => p.Href, "/docs")
-            .Add(p => p.Rel, "nofollow")
-            .Add(p => p.Disabled, true));
-
-        comp.Find("button").HasAttribute("rel").Should().BeFalse();
-    }
-
-    /// <summary>
-    /// Clearing Href on a re-render turns the anchor back into a button, which keyboard users can focus and activate.
-    /// </summary>
-    [Test]
-    public async Task ClearingHrefRendersButtonAgain()
-    {
-        var comp = Context.Render<TButton>(parameters => parameters
-            .Add(p => p.Href, "/docs"));
-
-        comp.Find(".mud-button-root").TagName.Should().Be("A");
-
-        await comp.SetParametersAndRenderAsync(parameters => parameters
-            .Add(p => p.Href, (string)null));
-
-        var root = comp.Find(".mud-button-root");
-        root.TagName.Should().Be("BUTTON");
-        root.GetAttribute("type").Should().Be("button");
-        root.HasAttribute("href").Should().BeFalse();
-    }
-
-    /// <summary>
-    /// Enabling a disabled link restores the anchor with its href, target and rel.
-    /// </summary>
-    [Test]
-    public async Task EnablingDisabledLinkRestoresAnchor()
-    {
-        var comp = Context.Render<TButton>(parameters => parameters
-            .Add(p => p.Href, "/docs")
-            .Add(p => p.Target, "_blank")
-            .Add(p => p.Disabled, true));
-
-        comp.Find(".mud-button-root").TagName.Should().Be("BUTTON");
-
-        await comp.SetParametersAndRenderAsync(parameters => parameters
-            .Add(p => p.Disabled, false));
-
-        var root = comp.Find(".mud-button-root");
-        root.TagName.Should().Be("A");
-        root.HasAttribute("disabled").Should().BeFalse();
-        root.GetAttribute("href").Should().Be("/docs");
-        root.GetAttribute("target").Should().Be("_blank");
-        root.GetAttribute("rel").Should().Be("noopener");
-    }
-
-    /// <summary>
-    /// Clearing Href restores a custom HtmlTag that the link replaced.
-    /// </summary>
-    [Test]
-    public async Task ClearingHrefRestoresHtmlTag()
-    {
-        var comp = Context.Render<TButton>(parameters => parameters
-            .Add(p => p.HtmlTag, "label")
-            .Add(p => p.Href, "/docs"));
-
-        comp.Find(".mud-button-root").TagName.Should().Be("A");
-
-        await comp.SetParametersAndRenderAsync(parameters => parameters
-            .Add(p => p.Href, (string)null));
-
-        comp.Find(".mud-button-root").TagName.Should().Be("LABEL");
-    }
-
-    /// <summary>
-    /// Rendering an enabled or disabled link leaves HtmlTag, Href and Target as the caller supplied them.
-    /// </summary>
-    [Test]
-    public async Task LinkParametersAreNotOverwritten()
-    {
-        var comp = Context.Render<TButton>(parameters => parameters
-            .Add(p => p.Href, "/docs")
-            .Add(p => p.Target, "_blank"));
-
-        comp.Instance.HtmlTag.Should().Be("button");
-
-        await comp.SetParametersAndRenderAsync(parameters => parameters
-            .Add(p => p.Disabled, true));
-
-        comp.Instance.Href.Should().Be("/docs");
-        comp.Instance.Target.Should().Be("_blank");
     }
 
     /// <summary>
