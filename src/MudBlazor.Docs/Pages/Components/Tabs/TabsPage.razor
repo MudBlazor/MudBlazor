@@ -108,7 +108,10 @@
         <DocsPageSection>
             <SectionHeader Title="Badges">
                 <Description>
-                    Badges can be applied to icons or text within tabs for additional context.
+                    Badges can show notifications, counts, or status information for a tab.
+                    For text tabs, the badge remains visible at the label's trailing edge while long labels truncate.
+                    Material Design 3 recommends limiting badge content to four characters, including a trailing <CodeInline>+</CodeInline>.
+                    Use <CodeInline>BadgeMax</CodeInline> to format large numeric counts.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TabsWithBagdesExample)" ShowCode="false">
