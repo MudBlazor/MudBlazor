@@ -264,10 +264,10 @@ namespace MudBlazor
         public bool Folder { get; set; }
 
         /// <summary>
-        /// Triggered when files are uploaded in Folder mode, returning a list of their relative path structures.
+        /// Fired when folder upload mode is enabled, returning pairs of files and their relative directory paths.
         /// </summary>
         [Parameter]
-        public EventCallback<IReadOnlyList<string>> FolderPathsChanged { get; set; }
+        public EventCallback<IReadOnlyList<MudFilesWithFolderPath>> FilesWithFolderPathsChanged { get; set; }
 
         [CascadingParameter(Name = "ParentDisabled")]
         private bool ParentDisabled { get; set; }
@@ -503,27 +503,53 @@ namespace MudBlazor
 
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
-            _numberOfActiveFileInputs++;
-
             if (GetDisabledState())
                 return;
 
+            // 1. Instantly capture the active input index before state shifts
+            int currentInputIndex = _numberOfActiveFileInputs; 
+            if (currentInputIndex < 1)
+            {
+                currentInputIndex = 1;
+            }
+
+            // Fix 3: Initialize to an empty list instead of null to prevent all nullable warnings
+            IReadOnlyList<MudFilesWithFolderPath> combinedList = new List<MudFilesWithFolderPath>();
+
+            // 2. Fetch the path metadata right away if folder mode is active
+            if (Folder)
+            {
+                var inputId = GetInputId(currentInputIndex);
+
+                // Fetch raw paths from your updated mudInput.js method
+                var paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudInput.getFolderPaths", inputId);
+
+                // Fetch the files natively read in this batch
+                var nativeFiles = args.GetMultipleFiles(MaximumFileCount);
+                var list = new List<MudFilesWithFolderPath>();
+
+                for (int i = 0; i < nativeFiles.Count; i++)
+                {
+                    string path = (paths != null && i < paths.Count) ? paths[i] : string.Empty;
+                    list.Add(new MudFilesWithFolderPath(nativeFiles[i], path));
+                }
+                
+                combinedList = list;
+            }
+
+            // 3. Increment file inputs slot counter to preserve loop integrity
+            _numberOfActiveFileInputs++;
+
+            // 4. Execute native core file processing safely
             await ProcessFileChangeAsync(args);
 
-            if (Folder && FolderPathsChanged.HasDelegate)
+            // 5. Fire our single unified callback if the collection has folder files
+            if (Folder && combinedList.Count > 0 && FilesWithFolderPathsChanged.HasDelegate)
             {
-                //Use localIndex = 1 since MudBlazor initializes the first active input index at 1
-                var inputId = GetInputId(1);
-
-                // Pass the string ID to JS to extract webkitRelativePath arrays
-                var paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudFileUpload.getRelativePaths", inputId);
-
-                if (paths != null)
-                {
-                    await FolderPathsChanged.InvokeAsync(paths);
-                }
+                await FilesWithFolderPathsChanged.InvokeAsync(combinedList);
             }
         }
+
 
         private async Task ProcessFileChangeAsync(InputFileChangeEventArgs args)
         {
@@ -643,4 +669,17 @@ namespace MudBlazor
             return base.ResetValidationAsync();
         }
     }
+    
+    public class MudFilesWithFolderPath
+    {
+        public IBrowserFile File { get; set; }
+        public string RelativePath { get; set; }
+
+        public MudFilesWithFolderPath(IBrowserFile file, string relativePath)
+        {
+            File = file;
+            RelativePath = relativePath;
+        }
+    }
+
 }
