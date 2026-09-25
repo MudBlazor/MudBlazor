@@ -957,12 +957,12 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() =>
             {
                 jsMock.VerifyInvoke("mudInput.getFolderPaths");
-                        
+
                 uploadedItems.Should().NotBeNull();
                 uploadedItems.Count.Should().Be(2);
-                
+
                 uploadedItems.ElementAt(0).RelativePath.Should().Be("folder/file1.txt");
-                uploadedItems.ElementAt(0).File.Name.Should().Be("file1.txt"); 
+                uploadedItems.ElementAt(0).File.Name.Should().Be("file1.txt");
             }, TimeSpan.FromSeconds(2));
         }
 
