@@ -507,7 +507,7 @@ namespace MudBlazor
                 return;
 
             // 1. Instantly capture the active input index before state shifts
-            int currentInputIndex = _numberOfActiveFileInputs; 
+            int currentInputIndex = _numberOfActiveFileInputs;
             if (currentInputIndex < 1)
             {
                 currentInputIndex = 1;
@@ -533,7 +533,7 @@ namespace MudBlazor
                     string path = (paths != null && i < paths.Count) ? paths[i] : string.Empty;
                     list.Add(new MudFilesWithFolderPath(nativeFiles[i], path));
                 }
-                
+
                 combinedList = list;
             }
 
@@ -669,7 +669,7 @@ namespace MudBlazor
             return base.ResetValidationAsync();
         }
     }
-    
+
     public class MudFilesWithFolderPath
     {
         public IBrowserFile File { get; set; }
