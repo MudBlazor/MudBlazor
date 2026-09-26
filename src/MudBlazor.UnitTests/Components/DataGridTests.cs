@@ -1088,6 +1088,70 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DataGridPagerUsesMudPagination()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var pagination = comp.FindComponent<MudPagination>().Instance;
+
+            // the pager wires MudPagination to the grid's page state (20 items, 10 per page => 2 pages, first page selected)
+            pagination.Count.Should().Be(2);
+            pagination.Selected.Should().Be(1);
+
+            // first and last navigation buttons are shown, page numbers are hidden by default for backward compatibility
+            pagination.ShowFirstButton.Should().BeTrue();
+            pagination.ShowLastButton.Should().BeTrue();
+            pagination.ShowPageButtons.Should().BeFalse();
+        }
+
+        [Test]
+        public async Task DataGridPagerShowPageNumbers()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+            var pagerContent = comp.FindComponent<MudDataGridPager<DataGridPaginationTest.Item>>();
+
+            // page numbers are hidden by default
+            comp.FindComponent<MudPagination>().Instance.ShowPageButtons.Should().BeFalse();
+
+            // enable the clickable page numbers
+            await pagerContent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowPageNumbers, true));
+            comp.FindComponent<MudPagination>().Instance.ShowPageButtons.Should().BeTrue();
+
+            // we start on the first page
+            dataGrid.Instance.CurrentPage.Should().Be(0);
+
+            // clicking the "2" page number button jumps the grid directly to the second page
+            await comp.FindAll(".mud-pagination button").Single(button => button.TextContent.Trim() == "2").ClickAsync();
+            dataGrid.Instance.CurrentPage.Should().Be(1);
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("10");
+        }
+
+        [Test]
+        public async Task DataGridPagerPaginationAppearance()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var pagerContent = comp.FindComponent<MudDataGridPager<DataGridPaginationTest.Item>>();
+
+            // defaults match MudPagination's defaults
+            var pagination = comp.FindComponent<MudPagination>().Instance;
+            pagination.Variant.Should().Be(Variant.Text);
+            pagination.Size.Should().Be(Size.Medium);
+            pagination.Color.Should().Be(Color.Primary);
+
+            await pagerContent.SetParametersAndRenderAsync(parameters =>
+            {
+                parameters.Add(x => x.PaginationVariant, Variant.Filled);
+                parameters.Add(x => x.PaginationSize, Size.Large);
+                parameters.Add(x => x.PaginationColor, Color.Secondary);
+            });
+
+            pagination = comp.FindComponent<MudPagination>().Instance;
+            pagination.Variant.Should().Be(Variant.Filled);
+            pagination.Size.Should().Be(Size.Large);
+            pagination.Color.Should().Be(Color.Secondary);
+        }
+
+        [Test]
         public async Task DataGridRowsPerPageTwoWayBinding()
         {
             var comp = Context.Render<DataGridRowsPerPageBindingTest>();
