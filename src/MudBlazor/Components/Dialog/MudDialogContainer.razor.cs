@@ -428,6 +428,11 @@ namespace MudBlazor
                 Style = _dialog?.Style;
             }
 
+            if (TitleContent != _dialog?.TitleContent)
+            {
+                TitleContent = _dialog?.TitleContent;
+            }
+
             StateHasChanged();
         }
 
