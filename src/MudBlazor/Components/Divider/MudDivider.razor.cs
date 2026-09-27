@@ -72,4 +72,11 @@ public partial class MudDivider : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Divider.Appearance)]
     public DividerType DividerType { get; set; } = DividerType.FullWidth;
+    
+    /// <summary>
+    /// The content within this component.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Divider.Behavior)]
+    public RenderFragment? ChildContent { get; set; }
 }
