@@ -1746,13 +1746,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Each class parameter lands on the element it styles: the input, the popover, the list and every result.
+        /// Each class parameter lands on the element it styles: the outer element, the input, the popover, the list and every result.
         /// </summary>
         [Test]
         public async Task Autocomplete_ClassParameters_ApplyToTheirElements()
         {
             var provider = Context.Render<MudPopoverProvider>();
             var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.OuterClass, "my-outer-class")
                 .Add(x => x.InputClass, "my-input-class")
                 .Add(x => x.PopoverClass, "my-popover-class")
                 .Add(x => x.ListClass, "my-list-class")
@@ -1760,6 +1761,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.DebounceInterval, 0)
                 .Add(x => x.SearchFunc, SearchStatesAsync));
 
+            comp.Find(".mud-autocomplete").ClassList.Should().Contain("my-outer-class");
             comp.Find(".mud-select-input").ClassList.Should().Contain("my-input-class");
             provider.Find("div.mud-popover").ClassList.Should().Contain("my-popover-class");
 
