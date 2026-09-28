@@ -47,13 +47,26 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 100%;
+
+  // Inset : marge de 72px à gauche, le wrapper doit rester dans son parent
+  &.mud-divider-inset:not(.mud-divider-with-content-vertical) {
+    width: calc(100% - 72px);
+  }
+
+  // Middle : marge de 16px de chaque côté
+  &.mud-divider-middle:not(.mud-divider-with-content-vertical) {
+    width: calc(100% - 32px);
+  }
 
   &.mud-divider-with-content-vertical {
     flex-direction: column;
     width: auto;
     height: 100%;
     align-self: stretch;
+  }
+
+  &.mud-divider-flexitem {
+    height: auto;
   }
 }
 

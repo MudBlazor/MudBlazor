@@ -13,21 +13,31 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudDivider : MudComponentBase
 {
+    private bool HasContent => ChildContent is not null;
+
+// Même règle qu'avant : pas de classe de type pour un divider vertical FullWidth
+    private bool ApplyDividerType => DividerType != DividerType.FullWidth || !Vertical;
+
+    private string DividerTypeClass => $"mud-divider-{DividerType.ToStringFast(true)}";
+
     protected string Classname =>
         new CssBuilder("mud-divider")
-            .AddClass("mud-divider-absolute", Absolute)
-            .AddClass("mud-divider-flexitem", FlexItem)
             .AddClass("mud-divider-light", Light)
             .AddClass("mud-divider-vertical", Vertical)
-            .AddClass("mud-divider-with-content-line", ChildContent is not null)
-            .AddClass($"mud-divider-{DividerType.ToStringFast(true)}",
-                ChildContent == null && (DividerType != DividerType.FullWidth || (DividerType == DividerType.FullWidth && !Vertical)))
-            .AddClass(Class)
+            .AddClass("mud-divider-with-content-line", HasContent)
+            .AddClass("mud-divider-absolute", Absolute && !HasContent)
+            .AddClass("mud-divider-flexitem", FlexItem && !HasContent)
+            .AddClass(DividerTypeClass, !HasContent && ApplyDividerType)
+            .AddClass(Class, !HasContent)
             .Build();
-    
+
     protected string WrapperClassname =>
         new CssBuilder("mud-divider-with-content")
             .AddClass("mud-divider-with-content-vertical", Vertical)
+            .AddClass("mud-divider-absolute", Absolute)
+            .AddClass("mud-divider-flexitem", FlexItem)
+            .AddClass(DividerTypeClass, ApplyDividerType)
+            .AddClass(Class)
             .Build();
 
     /// <summary>
