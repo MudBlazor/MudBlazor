@@ -21,20 +21,20 @@
                     @if(SelectedIconOrigin == IconOrigin.Material)
                     {
                         <MudChipSet T="string" CheckMark>
-                            <MudChip Default="true" Text="Filled" OnClick="@(() => ChangeIconCategory(IconType.Filled))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="Outlined" OnClick="@(() => ChangeIconCategory(IconType.Outlined))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="Rounded" OnClick="@(() => ChangeIconCategory(IconType.Rounded))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="Sharp" OnClick="@(() => ChangeIconCategory(IconType.Sharp))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="TwoTone" OnClick="@(() => ChangeIconCategory(IconType.TwoTone))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip Default="true" Value='"Filled"' OnClick="@(() => ChangeIconCategory(IconType.Filled))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip Value='"Outlined"' OnClick="@(() => ChangeIconCategory(IconType.Outlined))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip Value='"Rounded"' OnClick="@(() => ChangeIconCategory(IconType.Rounded))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip Value='"Sharp"' OnClick="@(() => ChangeIconCategory(IconType.Sharp))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip Value='"TwoTone"' OnClick="@(() => ChangeIconCategory(IconType.TwoTone))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                         </MudChipSet>
                     }
                     else if(SelectedIconOrigin == IconOrigin.Custom)
                     {
                         <MudChipSet T="string" CheckMark>
-                            <MudChip Default="true" Text="All" OnClick="@(() => ChangeIconCategory(IconType.All))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="Brands" OnClick="@(() => ChangeIconCategory(IconType.Brands))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="FileFormats" OnClick="@(() => ChangeIconCategory(IconType.FileFormats))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
-                            <MudChip Text="Uncategorized" OnClick="@(() => ChangeIconCategory(IconType.Uncategorized))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip Default="true" Value='"All"' OnClick="@(() => ChangeIconCategory(IconType.All))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip Value='"Brands"' OnClick="@(() => ChangeIconCategory(IconType.Brands))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip Value='"FileFormats"' OnClick="@(() => ChangeIconCategory(IconType.FileFormats))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
+                            <MudChip Value='"Uncategorized"' OnClick="@(() => ChangeIconCategory(IconType.Uncategorized))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                         </MudChipSet>
                     }
                 </MudItem>

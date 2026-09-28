@@ -1,13 +1,13 @@
 ﻿<MudToggleGroup @bind-Value="_value" T="string" Color="Color.Primary" Disabled="true">
-    <MudToggleItem T="string" Value="@("Enabled 1")" Text="Enabled Item 1" />
-    <MudToggleItem T="string" Value="@("Enabled 2")" Text="Enabled Item 2" />
-    <MudToggleItem T="string" Value="@("Disabled")" Text="Disabled Item" Disabled="true" />
+    <MudToggleItem T="string" Value='"Enabled 1"'>Enabled Item 1</MudToggleItem>
+    <MudToggleItem T="string" Value='"Enabled 2"'>Enabled Item 2</MudToggleItem>
+    <MudToggleItem T="string" Value='"Disabled"' Disabled="true">Disabled Item</MudToggleItem>
 </MudToggleGroup>
 
 <MudToggleGroup @bind-Value="_value" T="string" Color="Color.Primary">
-    <MudToggleItem T="string" Value="@("Enabled 1")" Text="Enabled Item 1" />
-    <MudToggleItem T="string" Value="@("Enabled 2")" Text="Enabled Item 2" />
-    <MudToggleItem T="string" Value="@("Disabled")" Text="Disabled Item" Disabled="true" />
+    <MudToggleItem T="string" Value='"Enabled 1"'>Enabled Item 1</MudToggleItem>
+    <MudToggleItem T="string" Value='"Enabled 2"'>Enabled Item 2</MudToggleItem>
+    <MudToggleItem T="string" Value='"Disabled"' Disabled="true">Disabled Item</MudToggleItem>
 </MudToggleGroup>
 
 @code {

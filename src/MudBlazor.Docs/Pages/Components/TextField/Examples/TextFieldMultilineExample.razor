@@ -9,14 +9,14 @@
                           Variant="Variant.Outlined"
                           Lines="3"
                           Sizing="InputSizing.Fixed"
-                          Text="@_fixedText" />
+                          @bind-Value="_fixedText" />
             
             <MudTextField T="string"
                           Label="Fixed (5 lines)"
                           Variant="Variant.Filled"
                           Lines="5"
                           Sizing="InputSizing.Fixed"
-                          Text="@_fixedText2" />
+                          @bind-Value="_fixedText2" />
         </MudStack>
     </MudItem>
     <MudItem xs="12" sm="6">
