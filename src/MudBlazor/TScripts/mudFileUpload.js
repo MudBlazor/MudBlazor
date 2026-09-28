@@ -13,11 +13,9 @@ class MudFileUpload {
      */
     openFilePicker (id) {
         const element = document.getElementById(id);
-
         if (!element) {
             return;
         }
-
         try {
             // Prefer showPicker when available because it follows native picker semantics more consistently.
             element.showPicker();
@@ -25,6 +23,17 @@ class MudFileUpload {
             // click() keeps older engines working when showPicker is unavailable/restricted.
             element.click();
         }
+    }
+
+    /**
+     * Retrieves the relative path paths from a folder upload input element.
+     */
+    getRelativePaths(id) {
+        const element = document.getElementById(id);
+        if (!element || !element.files) {
+            return [];
+        }
+        return Array.from(element.files).map(file => file.webkitRelativePath || "");
     }
 }
 

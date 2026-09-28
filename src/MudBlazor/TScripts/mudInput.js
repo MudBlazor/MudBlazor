@@ -9,6 +9,24 @@
  */
 class MudInput {
     /**
+     * Extracts relative directory paths from a specific file input element by ID.
+     */
+    getFolderPaths(id) {
+        const input = document.getElementById(id);
+        if (!input || !input.files) {
+            return [];
+        }
+
+        const paths = [];
+        for (let i = 0; i < input.files.length; i++) {
+            // webkitRelativePath contains the folder hierarchy structure
+            paths.push(input.files[i].webkitRelativePath || "");
+        }
+        return paths;
+    }
+
+
+    /**
      * Clears the value of an input element by ID.
      */
     resetValue(id) {
