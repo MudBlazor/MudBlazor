@@ -76,6 +76,12 @@ public partial class MudInputAdornment
     public string? AriaLabel { get; set; }
 
     /// <summary>
+    /// The tooltip displayed for this adornment.
+    /// </summary>
+    [Parameter]
+    public string? Tooltip { get; set; }
+
+    /// <summary>
     /// Occurs when this adornment is clicked.
     /// </summary>
     [Parameter]
