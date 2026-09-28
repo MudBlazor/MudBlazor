@@ -103,11 +103,11 @@ dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-bu
 - Do not use it when changes touch `TScripts`, styles, CSS, SCSS, asset-pipeline inputs such as `src/package.json` or `src/bun.lock`, or when verification depends on rebuilt JavaScript, CSS, or other static assets. When unsure, run the normal scoped build without it.
 
 ### Formatting
-Run `dotnet format --no-restore --include <path/to/changed/files>` once at the very end of the task as a final pre-PR pass to catch the whitespace, charset, and import-order mistakes that CI's format check rejects. Do not run it repeatedly during the normal edit-build-test loop.
+Run `dotnet format whitespace --folder --include <path/to/changed/files>` once at the very end of the task as a final pre-PR pass to catch whitespace/newline/charset/etc mistakes. It does not fix `using` order or other code style, which CI's format check also enforces. Do not run it repeatedly during the normal edit-build-test loop.
 
 Run this command from the `src` directory. When using `--include`, pass file paths relative to `src`, for example: `--include MudBlazor/Components/List/MudListItem.razor.cs`.
 
-New `.cs` files must be UTF-8 with a BOM (`charset = utf-8-bom` in `src/.editorconfig`). Most agent file-writing tools create files without a BOM, which builds and tests cleanly but fails CI's format check with `error CHARSET`. The final format pass fixes the encoding in place, so never skip it when new files were added. Keep line endings LF.
+New `.cs` files must be UTF-8 with a BOM (`charset = utf-8-bom` in `src/.editorconfig`). Most agent file-writing tools create files without a BOM, which builds and tests cleanly but fails CI's format check with `error CHARSET`. The final whitespace format pass fixes the encoding in place, so never skip it when new files were added. Keep line endings LF.
 
 If `src/.editorconfig` changed, format the whole `src` tree:
 
@@ -320,7 +320,6 @@ Verify with bUnit assertions on roles and `aria-*` attributes before and after i
 - Comments should explain why a decision exists, not restate what the code already shows or describe straightforward mechanics.
 - Break comment lines at sentence boundaries, one sentence per line, instead of wrapping at a column width.
 - Do not use `#region`.
-- In test code, a helper used by only one method should be a local function inside that method. Reserve private members for helpers shared across multiple methods.
 - Keep `src/MudBlazor/TScripts/entrypoint.ts` in sync with files in `src/MudBlazor/TScripts/`, except `entrypoint.ts` itself and `*.test.ts` files.
 - Test files are run by `bun test` and must never be imported by `entrypoint.ts`, which would pull the test runner into the shipped bundle.
 
