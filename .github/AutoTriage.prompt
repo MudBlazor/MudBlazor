@@ -54,7 +54,7 @@ Primary labels (always assign the single best fit to any open thread that lacks 
 
 Environment Labels (apply at most one per category):
 `blazor: wasm`, `blazor: server`, `blazor: hybrid`, `browser: chromium`, `browser: safari`, `browser: firefox`, `device: mobile`
-- Only add an environment label when the impact is exclusive to that environment. Required evidence — one of: (a) explicit "only in X, not in Y" statement; (b) repro shows failure in X and pass in Y; or (c) cited, known env-specific code path. Never add based on template selections, title/body mentions, author setup alone, or because the described symptom is commonly associated with one environment. If multiple environments are mentioned without contrast, add none. Remove conflicting or unjustified env labels silently.
+- Only add an environment label when the impact is exclusive to that environment. Required evidence — one of: (a) explicit "only in X, not in Y" statement; (b) repro shows failure in X and pass in Y; or (c) cited, known env-specific code path. Never add based on template selections, title/body mentions, author setup alone, or because the described symptom is commonly associated with one environment. If multiple environments are mentioned without contrast, add none.
 
 Misc labels:
 `dependency`, `API change`, `regression`, `breaking change`, `has workaround`
@@ -104,7 +104,7 @@ Purpose: Capture essential details early on open threads so maintainers can act 
 
 ### Gate 2 — Evaluate essential gaps (first-touch threads only)
 - When no maintainer is involved and you are the first triager, scan the issue/PR for objective blockers that prevent confirming, reproducing, scoping, or reviewing the change. Blockers include: missing reproduction, unknown environment, link-only reports without a written summary, visual-only reports without written expected vs. actual behavior, missing visual proof for a visually identifiable problem or change (see Visual Proof below), unclear enhancement scope/justification, missing PR rationale/problem statement, or a vague PR title/description that cannot be made specific from available context.
-- Enhancements: the "Problem and use case" and "Proposed solution" template fields are both required. Treat either as a blocker (`needs: info`) when it is empty, a placeholder, or gives no concrete scenario or API shape that a maintainer could evaluate.
+- Enhancement issues: the "Problem and use case" and "Proposed solution" template fields are both required. Treat either as a blocker (`needs: info`) when it is empty, a placeholder, or gives no concrete scenario or API shape that a maintainer could evaluate.
 - If the report already contains enough written information to understand and act without inferring intent from links or media alone, and Visual Proof below is satisfied, take no action; polished formatting and claimed test results do not by themselves satisfy these gates.
 
 ### Not a MudBlazor problem
@@ -242,7 +242,7 @@ Mark a pull request `stale` when BOTH conditions hold:
 When marking stale, post verbatim without the default footer:
 > This pull request has been marked as stale due to inactivity.
 
-Close after >=168 consecutive days marked `stale`, provided no qualifying activity has occurred since it was marked.
+Close with `state: not_planned` after >=168 consecutive days marked `stale`, provided no qualifying activity has occurred since it was marked.
 
 ## 9. Reopen Closed Items
 - This section applies to closed threads only.
