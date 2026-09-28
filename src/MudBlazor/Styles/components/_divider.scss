@@ -48,17 +48,33 @@
   flex-direction: row;
   align-items: center;
   width: 100%;
+
+  &.mud-divider-with-content-vertical {
+    flex-direction: column;
+    width: auto;
+    height: 100%;
+    align-self: stretch;
+  }
 }
 
 .mud-divider-with-content-line {
   flex: 1 1 0;
   width: auto;
   min-width: 0;
+  min-height: 0;
   margin: 0;
+
+  .mud-divider-with-content-vertical > & {
+    height: auto;
+  }
 }
 
 .mud-divider-with-content-text {
   flex: 0 0 auto;
   padding: 0 0.75rem;
   white-space: nowrap;
+
+  .mud-divider-with-content-vertical > & {
+    padding: 0.75rem 0;
+  }
 }
