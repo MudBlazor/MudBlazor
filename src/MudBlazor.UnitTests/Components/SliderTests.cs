@@ -513,5 +513,65 @@ namespace MudBlazor.UnitTests.Components
             IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
             AlertText().InnerHtml.Should().Be("20");
         }
+
+        /// <summary>
+        /// Verifies drag callbacks for supported pointer interactions and disabled sliders.
+        /// </summary>
+        [Test]
+        public async Task DragEvents()
+        {
+            bool? dragging = null;
+            var comp = Context.Render<MudSlider<int>>(x =>
+            {
+                x.Add(p => p.OnDragStart, () => dragging = true);
+                x.Add(p => p.OnDragEnd, () => dragging = false);
+            });
+
+            var slider = comp.Find(".mud-slider-input");
+            await slider.PointerDownAsync();
+            Assert.True(dragging);
+            await slider.PointerUpAsync();
+            Assert.False(dragging);
+
+            dragging = null;
+            await slider.PointerDownAsync();
+            await slider.PointerCancelAsync();
+            Assert.False(dragging);
+
+            dragging = null;
+            comp.Render(p =>
+            {
+                p.Add(x => x.Immediate, false);
+            });
+            await slider.PointerDownAsync();
+            Assert.True(dragging);
+            await slider.PointerCancelAsync();
+            Assert.False(dragging);
+
+            dragging = null;
+            await slider.PointerDownAsync();
+            Assert.True(dragging);
+            comp.Render(p =>
+            {
+                p.Add(x => x.Disabled, true);
+            });
+            Assert.False(dragging);
+
+            var touched = false;
+            comp = Context.Render<MudSlider<int>>(x =>
+            {
+                x.Add(p => p.OnDragStart, () => touched = true);
+                x.Add(p => p.OnDragEnd, () => touched = true);
+                x.Add(p => p.Disabled, true);
+            });
+
+            slider = comp.Find(".mud-slider-input");
+            await slider.PointerDownAsync();
+            Assert.False(touched);
+            await slider.PointerUpAsync();
+            Assert.False(touched);
+            await slider.PointerCancelAsync();
+            Assert.False(touched);
+        }
     }
 }

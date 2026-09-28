@@ -1,0 +1,27 @@
+@namespace MudBlazor.Docs.Examples
+
+@inject ISnackbar Snackbar
+
+<MudText>@_temperature.ToString("F1")°C</MudText>
+<MudSlider @bind-Value="@_temperature" Min="12" Step="0.1" Max="110" OnDragStart="TemperatureChangeInitialization"
+           OnDragEnd="TemperatureChangeOrdered">Heater Temperature</MudSlider>
+
+@code {
+    private double _temperature = 24;
+
+    private void TemperatureChangeInitialization() => Snackbar.Add($"Get on station, we need to change the temperatiure", Severity.Info);
+
+    private void TemperatureChangeOrdered()
+    {
+        var message = _temperature switch
+        {
+            < 16 => "It's getting chilly",
+            >= 16 and < 19 => "Thats nice but could be warmer",
+            >= 19 and < 23 => "Very cozy",
+            >= 23 and < 30 => "It's getting hot in here",
+            _ => "The temperature is in °C not °F"
+        };
+
+        Snackbar.Add(message, _temperature < 30 ? Severity.Info : Severity.Warning);
+    }
+}
