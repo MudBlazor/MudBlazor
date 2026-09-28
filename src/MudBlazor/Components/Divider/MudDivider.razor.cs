@@ -37,14 +37,14 @@ public partial class MudDivider : MudComponentBase
             .AddClass(Class, !HasContent)
             .Build();
 
-    protected string WrapperClassname =>
+    protected string? WrapperClassname => HasContent ?
         new CssBuilder("mud-divider-with-content")
             .AddClass("mud-divider-with-content-vertical", Vertical)
             .AddClass("mud-divider-absolute", Absolute)
             .AddClass("mud-divider-flexitem", FlexItem)
             .AddClass(DividerTypeClass, ApplyDividerType)
             .AddClass(Class)
-            .Build();
+            .Build() : null;
 
     /// <summary>
     /// Uses an absolute position for this divider.
