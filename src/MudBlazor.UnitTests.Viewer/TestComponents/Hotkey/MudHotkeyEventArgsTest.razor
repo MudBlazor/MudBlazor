@@ -3,8 +3,8 @@
 @* Several hotkeys wired to a single handler that tells them apart via HotkeyEventArgs.
    Includes two hotkeys on the SAME Key distinguished only by modifiers (issue #13125's motivation). *@
 <MudHotkey Key="JsKey.KeyA" OnHotkeyPressed="OnHotKey" />
-<MudHotkey Key="JsKey.KeyB" KeyModifiers="@(new[] { JsKeyModifier.ShiftLeft })" OnHotkeyPressed="OnHotKey" />
-<MudHotkey Key="JsKey.KeyB" KeyModifiers="@(new[] { JsKeyModifier.ControlLeft, JsKeyModifier.ShiftLeft })" OnHotkeyPressed="OnHotKey" />
+<MudHotkey Key="JsKey.KeyB" KeyModifiers="@(new[] { JsKeyModifier.Shift })" OnHotkeyPressed="OnHotKey" />
+<MudHotkey Key="JsKey.KeyB" KeyModifiers="@(new[] { JsKeyModifier.Control, JsKeyModifier.Shift })" OnHotkeyPressed="OnHotKey" />
 
 @code {
     public HotkeyEventArgs? LastArgs { get; private set; }
