@@ -2,7 +2,7 @@
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
-@if (ChildContent != null)
+@if (HasContent)
 {
     <div @attributes="UserAttributes" class="@WrapperClassname" style="@Style">
         <hr class="@Classname" />

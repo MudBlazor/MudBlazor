@@ -1,3 +1,6 @@
+$divider-inset-margin: 72px;
+$divider-middle-margin: 16px;
+
 .mud-divider {
   margin: 0;
   flex-shrink: 0;
@@ -14,8 +17,8 @@
 }
 
 .mud-divider-inset {
-  margin-left: 72px;
-  margin-inline-start: 72px;
+  margin-left: $divider-inset-margin;
+  margin-inline-start: $divider-inset-margin;
   margin-inline-end: unset;
 }
 
@@ -24,8 +27,8 @@
 }
 
 .mud-divider-middle {
-  margin-left: 16px;
-  margin-right: 16px;
+  margin-left: $divider-middle-margin;
+  margin-right: $divider-middle-margin;
 }
 
 .mud-divider-vertical {
@@ -48,14 +51,13 @@
   flex-direction: row;
   align-items: center;
 
-  // Inset : marge de 72px à gauche, le wrapper doit rester dans son parent
+  // The wrapper contains the inset/middle margin: this is subtracted from the width to ensure it does not extend beyond the parent element
   &.mud-divider-inset:not(.mud-divider-with-content-vertical) {
-    width: calc(100% - 72px);
+    width: calc(100% - #{$divider-inset-margin});
   }
 
-  // Middle : marge de 16px de chaque côté
   &.mud-divider-middle:not(.mud-divider-with-content-vertical) {
-    width: calc(100% - 32px);
+    width: calc(100% - #{$divider-middle-margin * 2});
   }
 
   &.mud-divider-with-content-vertical {

@@ -14,10 +14,16 @@ namespace MudBlazor;
 public partial class MudDivider : MudComponentBase
 {
     private bool HasContent => ChildContent is not null;
-
-// Même règle qu'avant : pas de classe de type pour un divider vertical FullWidth
+    
+    /// <summary>
+    /// A vertical divider of type <see cref="DividerType.FullWidth"/> must not get the "fullwidth" class,
+    /// since it would force <c>width: 100%</c> on an element that is meant to be a thin vertical line.
+    /// </summary>
     private bool ApplyDividerType => DividerType != DividerType.FullWidth || !Vertical;
 
+    /// <summary>
+    /// Return the scss class corresponding to <see cref="DividerType"/>.
+    /// </summary>
     private string DividerTypeClass => $"mud-divider-{DividerType.ToStringFast(true)}";
 
     protected string Classname =>
