@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Width="300px" Elevation="0">
+    <MudTreeView Items="@TreeItems" Virtualize="true" Height="300px" Hover>
+        <ItemTemplate>
+            <MudTreeViewItem @bind-Expanded="@context.Expanded" @bind-Selected="@context.Selected" Visible="@context.Visible"
+                             Items="@context.Children" Value="@context.Value" Icon="@context.Icon" Text="@context.Text" />
+        </ItemTemplate>
+    </MudTreeView>
+</MudPaper>
+
+@code {
+    public List<TreeItemData<string>> TreeItems { get; set; } = [];
+
+    protected override void OnInitialized()
+    {
+        for (var year = 2006; year <= 2025; year++)
+        {
+            TreeItems.Add(new TreeItemData<string>
+            {
+                Value = $"{year}",
+                Text = $"Reports {year}",
+                Icon = Icons.Material.Filled.Folder,
+                Expanded = true,
+                Children = Enumerable
+                    .Range(1, 50)
+                    .Select(week => new TreeItemData<string>
+                    {
+                        Value = $"{year}/week-{week}",
+                        Text = $"Week {week} report.pdf",
+                        Icon = Icons.Material.Filled.Description
+                    })
+                    .ToList<ITreeItemData<string>>()
+            });
+        }
+    }
+}
