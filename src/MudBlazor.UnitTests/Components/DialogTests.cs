@@ -1061,6 +1061,45 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ShowAsync_WithoutOptions_ShouldUseTheDialogsOwnOptions()
+        {
+            // Arrange
+            var provider = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            // Act - no options are passed, so the dialog's own Options are the defaults.
+            await provider.InvokeAsync(async () => await service.ShowAsync<DialogWithOwnOptions>("Custom title"));
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
+
+            // Assert - Options on the container is the raw parameter, so the effective
+            // options are read through IMudDialogInstance, which is what rendering uses.
+            var effective = ((IMudDialogInstance)dialogInstance.Instance).Options;
+            effective.FullScreen.Should().BeTrue();
+            effective.MaxWidth.Should().Be(MaxWidth.ExtraLarge);
+            effective.CloseButton.Should().BeTrue();
+            dialogInstance.Markup.Should().Contain("mud-dialog-fullscreen");
+        }
+
+        [Test]
+        public async Task ShowAsync_WithOptions_ShouldLayerThemOverTheDialogsOwnOptionsPerProperty()
+        {
+            // Arrange
+            var provider = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            // Act - only MaxWidth is supplied, so it wins on that property alone.
+            await provider.InvokeAsync(async () => await service.ShowAsync<DialogWithOwnOptions>(
+                "Custom title", new DialogOptions { MaxWidth = MaxWidth.Small }));
+            var dialogInstance = provider.FindComponent<MudDialogContainer>();
+
+            // Assert - MaxWidth came from ShowAsync, the other two from the dialog itself.
+            var effective = ((IMudDialogInstance)dialogInstance.Instance).Options;
+            effective.MaxWidth.Should().Be(MaxWidth.Small);
+            effective.FullScreen.Should().BeTrue();
+            effective.CloseButton.Should().BeTrue();
+        }
+
+        [Test]
         public async Task Show_ShouldRenderComponent()
         {
             // Arrange
