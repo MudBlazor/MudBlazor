@@ -81,6 +81,11 @@
 </div>
 
 @code {
+    private static bool HasBadge(MudTabPanel panel)
+    {
+        return panel.BadgeData is not null || panel.BadgeIcon is not null || panel.BadgeDot;
+    }
+
     private RenderFragment RenderTabWrapperSection(MudTabPanel panel) =>
         @<text>
             @if (panel.TabContent is null && panel.TabWrapperContent is null)
@@ -118,6 +123,17 @@
             {
                 @panel.TabContent
             }
+            else if (!string.IsNullOrEmpty(panel.Text) && HasBadge(panel))
+            {
+                <span class="mud-tab-content">
+                    @if (!string.IsNullOrEmpty(panel.Icon))
+                    {
+                        <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" Class="mud-tab-icon-text" />
+                    }
+                    <span class="mud-tab-label">@panel.Text</span>
+                    <MudBadge Dot="@panel.BadgeDot" Content="@panel.BadgeData" Icon="@panel.BadgeIcon" Max="@panel.BadgeMax" Color="@panel.BadgeColor" Class="mud-tab-badge" />
+                </span>
+            }
             else if (!string.IsNullOrEmpty(panel.Text) && string.IsNullOrEmpty(panel.Icon))
             {
                 @panel.Text
@@ -131,7 +147,7 @@
                 <MudIcon Icon="@panel.Icon" Color="@GetPanelIconColor(panel)" Class="mud-tab-icon-text" />
                 @panel.Text
             }
-            @if (panel.BadgeData is not null || panel.BadgeIcon is not null || panel.BadgeDot)
+            @if ((panel.TabContent is not null || string.IsNullOrEmpty(panel.Text)) && HasBadge(panel))
             {
                 <MudBadge Dot="@panel.BadgeDot" Content="@panel.BadgeData" Icon="@panel.BadgeIcon" Max="@panel.BadgeMax" Color="@panel.BadgeColor" Class="mud-tab-badge" />
             }
