@@ -238,19 +238,15 @@ namespace MudBlazor
         {
             await base.OnBlurredAsync(obj);
 
-            if (Immediate || DebounceInterval > 0)
+            // OnlyValidateIfDirty can defer validation while a text edit is still pending.
+            await SynchronizePendingValueForValidationAsync();
+
+            // A converter's formatted output need not be valid input (for example, percent text).
+            // Commit pending edits, but never parse the unchanged representation of the current value.
+            var formattedValueText = ConvertSet(ReadValue);
+            if (!string.Equals(ReadText, formattedValueText, StringComparison.Ordinal))
             {
-                await UpdateValuePropertyAsync(true); //Required to set the value after a blur before the debounce period has elapsed
-            }
-            else
-            {
-                // For non-immediate, non-debounced inputs, browser onchange timing can race with blur handlers.
-                // Parse current text only when it is not already the formatted representation of the current value.
-                var formattedValueText = ConvertSet(ReadValue);
-                if (!string.Equals(ReadText, formattedValueText, StringComparison.Ordinal))
-                {
-                    await UpdateValuePropertyAsync(true);
-                }
+                await UpdateValuePropertyAsync(true);
             }
 
             await UpdateTextPropertyAsync(false); //Required to update the string formatting after a blur before the debounce period has elapsed

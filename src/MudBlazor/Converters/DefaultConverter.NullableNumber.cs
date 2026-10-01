@@ -24,7 +24,9 @@ internal partial class DefaultConverter
                 return null;
             }
 
-            if (TryParseNumber<TNumber>(input, culture.Invoke(), out var result))
+            var currentCulture = culture.Invoke();
+
+            if (TNumber.TryParse(input, NumberStyles.Any, currentCulture, out var result))
             {
                 return result;
             }
