@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -447,6 +448,22 @@ namespace MudBlazor
         internal bool IsFixed => Fixed && DrawerContainer is MudLayout;
 
         internal Breakpoint NormalizedBreakpoint => NormalizeBreakpoint(Breakpoint);
+
+        // Only wire the pointer handlers when hovering can actually open or close this drawer. They used to be
+        // unconditional, so on Blazor Server every pointer enter and leave of any drawer was a network round-trip
+        // that evaluated the guards below and returned, and a navigation drawer is one of the largest hit targets
+        // on the page. Same reasoning as MudMenu's ContextMenuCallback.
+        private EventCallback<PointerEventArgs> PointerEnterCallback =>
+            EffectiveVariant == DrawerVariant.Mini && OpenMiniOnHover
+                ? EventCallback.Factory.Create<PointerEventArgs>(this, this.AsNonRenderingEventHandler(OnPointerEnterAsync))
+                : default;
+
+        // _closeOnPointerLeave as well as the parameter, so a drawer already opened by hover still closes when the
+        // pointer leaves even if OpenMiniOnHover is switched off while it is open.
+        private EventCallback<PointerEventArgs> PointerLeaveCallback =>
+            EffectiveVariant == DrawerVariant.Mini && (OpenMiniOnHover || _closeOnPointerLeave)
+                ? EventCallback.Factory.Create<PointerEventArgs>(this, this.AsNonRenderingEventHandler(OnPointerLeaveAsync))
+                : default;
 
         private async Task OnPointerEnterAsync()
         {
