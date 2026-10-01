@@ -845,6 +845,166 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Regression for #11241: generated display text must preserve values without requiring inverse parsing.
+        /// </summary>
+        [TestCase(false, 0, "P")]
+        [TestCase(true, 0, "P")]
+        [TestCase(false, 200, "P")]
+        [TestCase(true, 200, "P")]
+        [TestCase(true, 0, "p1")]
+        [TestCase(true, 0, "0.00 'units'")]
+        public async Task NumericField_FormattedValue_ShouldSurviveRepeatedBlur(bool immediate, int debounceInterval, string format)
+        {
+            var comp = Context.Render<MudNumericField<decimal?>>(parameters => parameters
+                .Add(x => x.Immediate, immediate)
+                .Add(x => x.DebounceInterval, debounceInterval)
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Format, format)
+                .Add(x => x.Value, 0.5m));
+
+            var expectedText = 0.5m.ToString(format, CultureInfo.InvariantCulture);
+            for (var i = 0; i < 2; i++)
+            {
+                await comp.Find("input").BlurAsync();
+                comp.Instance.ReadText.Should().Be(expectedText);
+                comp.Instance.ReadValue.Should().Be(0.5m);
+                comp.Instance.GetErrorText().Should().BeNullOrWhiteSpace();
+            }
+        }
+
+        /// <summary>
+        /// Raw edits commit on blur, and neither a later timer nor repeated blur reparses percent output.
+        /// </summary>
+        [TestCase(false, 0)]
+        [TestCase(true, 0)]
+        [TestCase(false, 200)]
+        [TestCase(true, 200)]
+        public async Task NumericField_PercentFormat_ShouldCommitInputBeforeRepeatedBlur(bool immediate, int debounceInterval)
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<MudNumericField<decimal?>>(parameters => parameters
+                .Add(x => x.Immediate, immediate)
+                .Add(x => x.DebounceInterval, debounceInterval)
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Format, "P")
+                .Add(x => x.Value, 0.5m));
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "7" });
+            var timers = timeProvider.TimersCreated;
+            if (immediate || debounceInterval > 0)
+            {
+                await comp.Find("input").InputAsync("0.75");
+                if (debounceInterval > 0)
+                {
+                    await timeProvider.WaitForTimerAsync(timers);
+                }
+            }
+            else
+            {
+                await comp.Find("input").ChangeAsync("0.75");
+            }
+
+            await comp.Find("input").BlurAsync();
+            comp.Instance.ReadValue.Should().Be(0.75m);
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("75.00 %"));
+            comp.Instance.GetErrorText().Should().BeNullOrWhiteSpace();
+
+            timeProvider.Advance(TimeSpan.FromMilliseconds(300));
+            await comp.Find("input").BlurAsync();
+            comp.Instance.ReadValue.Should().Be(0.75m);
+            await comp.WaitForAssertionAsync(() => comp.Instance.ReadText.Should().Be("75.00 %"));
+            comp.Instance.GetErrorText().Should().BeNullOrWhiteSpace();
+        }
+
+        /// <summary>
+        /// Display rounding must not alter the underlying value or raise change callbacks on blur.
+        /// </summary>
+        [TestCase(false, 0)]
+        [TestCase(true, 0)]
+        [TestCase(false, 200)]
+        [TestCase(true, 200)]
+        public async Task NumericField_RepeatedBlur_ShouldPreservePrecision(bool immediate, int debounceInterval)
+        {
+            var changes = 0;
+            var comp = Context.Render<MudNumericField<decimal?>>(parameters => parameters
+                .Add(x => x.Immediate, immediate)
+                .Add(x => x.DebounceInterval, debounceInterval)
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Format, "F2")
+                .Add(x => x.Value, 1.23456m)
+                .Add(x => x.ValueChanged, _ => changes++));
+
+            await comp.Find("input").BlurAsync();
+            await comp.Find("input").BlurAsync();
+
+            comp.Instance.ReadValue.Should().Be(1.23456m);
+            changes.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A completed debounce and its binding echo must leave percent text stable on later blurs.
+        /// </summary>
+        [Test]
+        public async Task NumericField_PercentFormat_AfterDebounce_ShouldSurviveRepeatedBlur()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            decimal? bound = 0.5m;
+            var elapsed = 0;
+            var comp = Context.Render<MudNumericField<decimal?>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 200d)
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Format, "P")
+                .Bind(x => x.Value, bound, value => bound = value)
+                .Add(x => x.OnDebounceIntervalElapsed, _ => elapsed++));
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "7" });
+            var timers = timeProvider.TimersCreated;
+            await comp.Find("input").InputAsync("0.75");
+            await timeProvider.WaitForTimerAsync(timers);
+            timeProvider.Advance(TimeSpan.FromMilliseconds(300));
+            await comp.WaitForAssertionAsync(() => bound.Should().Be(0.75m));
+            await comp.WaitForAssertionAsync(() => elapsed.Should().Be(1));
+
+            await comp.Find("input").BlurAsync();
+            await comp.Find("input").BlurAsync();
+
+            bound.Should().Be(0.75m);
+            comp.Find("input").GetAttribute("value").Should().Be("75.00 %");
+            comp.Instance.GetErrorText().Should().BeNullOrWhiteSpace();
+        }
+
+        /// <summary>
+        /// Pending edits commit on blur even when dirty-only validation skips synchronizing them.
+        /// </summary>
+        [Test]
+        public async Task NumericField_OnlyValidateIfDirty_ShouldCommitPendingRoundedTextOnBlur()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            decimal? bound = 1.23456m;
+            var comp = Context.Render<MudNumericField<decimal?>>(parameters => parameters
+                .Add(x => x.OnlyValidateIfDirty, true)
+                .Add(x => x.DebounceInterval, 200d)
+                .Add(x => x.Culture, CultureInfo.InvariantCulture)
+                .Add(x => x.Format, "F2")
+                .Bind(x => x.Value, bound, value => bound = value));
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "2" });
+            var timers = timeProvider.TimersCreated;
+            await comp.Find("input").InputAsync("1.2");
+            await timeProvider.WaitForTimerAsync(timers);
+            timers = timeProvider.TimersCreated;
+            await comp.Find("input").InputAsync("1.23");
+            await timeProvider.WaitForTimerAsync(timers);
+
+            await comp.Find("input").BlurAsync();
+
+            bound.Should().Be(1.23m, "typed text must commit even when it matches the rounded display");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(300));
+            await comp.Find("input").BlurAsync();
+            bound.Should().Be(1.23m);
+        }
+
+        /// <summary>
         /// A debounced field commits from oninput just like an Immediate one, so its own value echo must not rewrite the text the user is still typing.
         /// </summary>
         [Test]

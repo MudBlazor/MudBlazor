@@ -130,7 +130,11 @@ namespace MudBlazor
             ? new DebounceDispatcher(TimeSpan.FromMilliseconds(intervalMilliseconds), false, TimeProvider)
             : null;
 
-        private async Task<bool> SynchronizePendingValueForValidationAsync()
+        /// <summary>
+        /// Commits and cancels a pending text edit before validation or blur formatting.
+        /// </summary>
+        /// <returns>Whether committing the edit changed the value and triggered validation.</returns>
+        private protected async Task<bool> SynchronizePendingValueForValidationAsync()
         {
             if (DebounceInterval <= 0 || _debouncer is null || !_debouncer.IsPending)
             {
