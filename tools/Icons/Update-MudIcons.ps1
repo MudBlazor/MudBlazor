@@ -142,6 +142,18 @@ namespace MudBlazor
     foreach ($icon in $iconsMeta.icons.GetEnumerator()) {
         $iconName = $icon.name
         $iconVers = $icon.version
+        ## join tags with ; but trim weird "potential tags could relate to:\n\n"
+        $icon.tags = $icon.tags | ForEach-Object { $_ -replace "potential tags could relate to:\n\n", "" }
+        ## Handle issue where tags is null instead of empty array
+        if (!$icon.tags) {
+            $icon.tags = @()
+        }
+        $iconTags = [string]::Join(";", $icon.tags)
+        ## join categories with ;
+        if (!$icon.categories) {
+            $icon.categories = @()
+        }
+        $iconCategories = [string]::Join(";", $icon.categories)
 
         ## This should pull the SVG down as an XML document
         $iconUrl = "https://$iconsUrlHost/s/i/$famPath/$iconName/v$iconVers/24px.svg"
@@ -172,6 +184,7 @@ namespace MudBlazor
         $nextIcons[$famName][$iconVar] = $iconSvg
 
         Add-Content -Encoding utf8BOM -NoNewline -Path $csFile -Value @"
+                [IconFilter("$iconCategories", "$iconTags")]
                 public const string $iconVar = "$($iconSvg)";
 
 "@.Replace("`r`n", "`n")

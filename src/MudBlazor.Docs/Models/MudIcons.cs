@@ -12,12 +12,16 @@ public class MudIcons
     public string Code { get; }
 
     public string Category { get; }
+    public string[]? MaterialCategories { get; }
+    public string[]? MaterialTags { get; }
 
-    public MudIcons(string name, string code, string category)
+    public MudIcons(string name, string code, string category, string[]? materialCategories = null, string[]? materialTags = null)
     {
         Name = name;
         Code = code;
         Category = category;
+        MaterialCategories = materialCategories;
+        MaterialTags = materialTags;
     }
 
     public static readonly MudIcons Empty = new(string.Empty, string.Empty, string.Empty);
