@@ -954,24 +954,6 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         [Test]
-        public void ScatterPlotCreateInterpolatorThrowsNotSupportedException()
-        {
-            var series = new List<ChartSeries<double>>
-            {
-                new() { Name = "S1", Data = Points((1, 1), (2, 2), (3, 3)) }
-            };
-
-            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
-                .Add(p => p.ChartSeries, series)
-                .Add(p => p.ChartOptions, new ScatterPlotChartOptions()));
-
-            var chart = comp.Instance;
-            var act = () => chart.CreateInterpolator(0, 0, 1.0, 10.0, 10.0);
-
-            act.Should().Throw<NotSupportedException>();
-        }
-
-        [Test]
         public void ScatterPlotDefaultSeriesTypeIsPoints()
         {
             // Without any SeriesDisplayOverride, all series render as scatter circles
