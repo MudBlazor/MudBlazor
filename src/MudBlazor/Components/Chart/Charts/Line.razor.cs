@@ -100,9 +100,14 @@ namespace MudBlazor.Charts
             }
 
             var visibleSeries = Series.Where(series => series.Visible).ToArray();
-            var values = visibleSeries.SelectMany(series => series.Data.Points.Where(p => p.HasValue).Select(p => p.Y));
+            var values = visibleSeries
+                .Select(s => s.Data)
+                .Where(d => d != null)
+                .SelectMany(d => d.Points)
+                .Where(p => p.HasValue)
+                .Select(p => p.Y);
 
-            if (visibleSeries.Length > 0 && visibleSeries.Any(series => series.Data.Count != 0))
+            if (visibleSeries.Length > 0 && values.Any())
             {
                 var minY = values.Min();
                 var maxY = ChartOptions?.YAxisSuggestedMax is null
@@ -133,7 +138,7 @@ namespace MudBlazor.Charts
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
 
-                numVerticalLines = visibleSeries.Max(series => series.Data.Count);
+                numVerticalLines = visibleSeries.Max(series => series.Data?.Count ?? 0);
             }
             else
             {

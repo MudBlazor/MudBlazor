@@ -100,7 +100,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         VerticalLines.Clear();
         VerticalValues.Clear();
 
-        if (numVerticalLines == 0 || !Series.Any(x => x.Data.Count != 0))
+        if (numVerticalLines == 0 || !Series.Any(x => x.Data != null && x.Data.Count != 0))
         {
             return;
         }
@@ -155,8 +155,9 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         {
             var series = Series[i];
 
-            if (!series.Visible || !series.Data.Points.Any(p => p.HasValue))
+            if (!series.Visible || series.Data is null || series.Data.Points is null || !series.Data.Points.Any(p => p.HasValue))
             {
+                ChartDataPoints[i] = new List<SvgCircle>();
                 continue;
             }
 
