@@ -9,7 +9,7 @@ using System.Text.Json.Serialization;
 namespace MudBlazor.Utilities.Clone;
 
 /// <summary>
-/// Provides a deep copy implementation using System.Text.Json.
+/// Deep-copies objects by serializing and deserializing them with <c>System.Text.Json</c>.
 /// </summary>
 /// <remarks>
 /// This implementation is <b>not</b> trim safe.

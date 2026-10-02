@@ -1,0 +1,31 @@
+﻿@*each removed parameter appears once, on the component a consumer writes*@
+
+@*buttons: Link, DisableRipple, and DisableElevation come from MudBaseButton*@
+<MudButton Link="/button" DisableRipple="true" DisableElevation="true">Button</MudButton>
+<MudIconButton Icon="@Icons.Material.Filled.Add" Link="/icon-button" DisableRipple="@_flag" DisableElevation="@(!_flag)" />
+<MudFab Icon="@Icons.Material.Filled.Add" Link="/fab" DisableRipple="false" DisableElevation="@(_flag && _other)" />
+<MudToggleIconButton Icon="@Icons.Material.Filled.AlarmOff" ToggledIcon="@Icons.Material.Filled.AlarmOn" DisableRipple="true" DisableElevation="true" />
+<MudButtonGroup DisableElevation="true" VerticalAlign="true">
+    <MudButton>One</MudButton>
+</MudButtonGroup>
+
+@*selection controls*@
+<MudCheckBox T="bool" Checked="@_flag" CheckedChanged="@((bool value) => _flag = value)" DisableRipple="true" LabelPosition="LabelPosition.Start" />
+<MudSwitch T="bool" Checked="@_flag" CheckedChanged="@((bool value) => _flag = value)" DisableRipple="@_flag" LabelPosition="LabelPosition.End" />
+<MudRadioGroup T="string" SelectedOption="@_text" SelectedOptionChanged="@((string value) => _text = value)">
+    <MudRadio T="string" Option="@("a")" DisableRipple="true" Placement="Placement.End">A</MudRadio>
+</MudRadioGroup>
+<MudToggleGroup T="string" DisableRipple="true" Outline="false" />
+<MudRating DisableRipple="true" />
+<MudRatingItem DisableRipple="false" />
+
+@code
+{
+    public static string __description__ = "Removed button and selection-control parameters that MUD0002 explains";
+
+    private bool _flag = true;
+
+    private bool _other = true;
+
+    private string _text = "a";
+}

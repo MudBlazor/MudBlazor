@@ -148,6 +148,64 @@
                         <RegexMaskEmailExample />
                     </SectionContent>
                 </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="RegexMask.UsZipCode">
+                        <Description>
+                            <CodeInline>RegexMask.UsZipCode()</CodeInline> is a predefined <CodeInline>RegexMask</CodeInline> for a <b>United States ZIP code</b>,
+                            with an optional four-digit extension. The dash is inserted for you as soon as a sixth digit is typed.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent FullWidth="true" Outlined="true" Code="@nameof(RegexMaskUsZipCodeExample)" ShowCode="false">
+                        <RegexMaskUsZipCodeExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="RegexMask.MacAddress">
+                        <Description>
+                            <CodeInline>RegexMask.MacAddress()</CodeInline> is a predefined <CodeInline>RegexMask</CodeInline> for a <b>MAC address</b> (EUI-48).
+                            Pass <CodeInline>separator</CodeInline> to use a character other than the default colon, as the second field below does.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent FullWidth="true" Outlined="true" Code="@nameof(RegexMaskMacAddressExample)" ShowCode="false">
+                        <RegexMaskMacAddressExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="RegexMask.Guid">
+                        <Description>
+                            <CodeInline>RegexMask.Guid()</CodeInline> is a predefined <CodeInline>RegexMask</CodeInline> for the canonical 8-4-4-4-12 form of a
+                            <b>globally unique identifier</b>, in upper or lower case. The dashes are inserted for you, so you can paste or type the digits alone.
+                            The braced <CodeInline>{...}</CodeInline> form is not accepted.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent FullWidth="true" Outlined="true" Code="@nameof(RegexMaskGuidExample)" ShowCode="false">
+                        <RegexMaskGuidExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="RegexMask.HexColor">
+                        <Description>
+                            <CodeInline>RegexMask.HexColor()</CodeInline> is a predefined <CodeInline>RegexMask</CodeInline> for a <b>hexadecimal color</b>.
+                            The leading <CodeInline>#</CodeInline> is inserted for you, and up to eight digits are accepted so the CSS
+                            <CodeInline>#RGB</CodeInline>, <CodeInline>#RGBA</CodeInline>, <CodeInline>#RRGGBB</CodeInline>, and <CodeInline>#RRGGBBAA</CodeInline> forms all fit.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent FullWidth="true" Outlined="true" Code="@nameof(RegexMaskHexColorExample)" ShowCode="false">
+                        <RegexMaskHexColorExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="RegexMask.Time24">
+                        <Description>
+                            <CodeInline>RegexMask.Time24()</CodeInline> is a predefined <CodeInline>RegexMask</CodeInline> for a <b>time on a 24-hour clock</b>.
+                            Hours are limited to 23 and minutes to 59, and the colon is inserted for you. Pass <CodeInline>includeSeconds</CodeInline> to accept a
+                            third field, as the second field below does. For a calendar date, use <CodeInline>DateMask</CodeInline> instead.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent FullWidth="true" Outlined="true" Code="@nameof(RegexMaskTime24Example)" ShowCode="false">
+                        <RegexMaskTime24Example />
+                    </SectionContent>
+                </DocsPageSection>
             </SectionSubGroups>
         </DocsPageSection>
         

@@ -1,0 +1,34 @@
+﻿<MudDataGrid T="Item" Items="@_items" QuickFilter="@QuickFilter" Virtualize="true"
+             Groupable="true" GroupExpanded="true" Height="200px">
+    <NoRecordsContent>
+        <span class="no-records">No records</span>
+    </NoRecordsContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Groupable="false" />
+        <PropertyColumn Property="x => x.Category" Grouping="true" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = @"A virtualized, grouped grid must keep rendering its groups after the quick filter passes through a state where nothing matches.";
+
+    private string _search = string.Empty;
+
+    private readonly List<Item> _items =
+    [
+        new("Alpha1", "Alpha"),
+        new("Alpha2", "Alpha"),
+        new("Bravo1", "Bravo")
+    ];
+
+    private Func<Item, bool> QuickFilter => x =>
+        string.IsNullOrEmpty(_search) || x.Name.Contains(_search, StringComparison.OrdinalIgnoreCase);
+
+    public void SetSearch(string search)
+    {
+        _search = search;
+        StateHasChanged();
+    }
+
+    public record Item(string Name, string Category);
+}

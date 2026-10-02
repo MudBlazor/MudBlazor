@@ -26,6 +26,9 @@
     }
 
     <input @ref="_elementReferenceStart"
+           aria-required="@Required.ToString().ToLowerInvariant()"
+           aria-invalid="@(HasErrors ? "true" : null)"
+           aria-describedby="@GetAriaDescribedByString()"
            @attributes="UserAttributes"
            id="@(string.IsNullOrEmpty(InputElementId) ? null : $"{InputElementId}-start")"
            type="@InputTypeString"
@@ -41,10 +44,12 @@
            inputmode="@InputMode.ToStringFast(true)"
            pattern="@Pattern"
            required="@Required"
-           aria-required="@Required.ToString().ToLowerInvariant()"
            aria-label="@(StartInputAriaLabel ?? Localizer[LanguageResource.MudRangeInput_Start])" />
     <MudIcon Class="mud-range-input-separator mud-flip-x-rtl" Icon="@SeparatorIcon" Color="@Color.Default" />
     <input @ref="_elementReferenceEnd"
+           aria-required="@Required.ToString().ToLowerInvariant()"
+           aria-invalid="@(HasErrors ? "true" : null)"
+           aria-describedby="@GetAriaDescribedByString()"
            @attributes="UserAttributes"
            id="@(string.IsNullOrEmpty(InputElementId) ? null : $"{InputElementId}-end")"
            type="@InputTypeString"
@@ -60,7 +65,6 @@
            @onkeydown="@InvokeKeyDownAsync"
            @onkeyup="@InvokeKeyUpAsync"
            required="@Required"
-           aria-required="@Required.ToString().ToLowerInvariant()"
            aria-label="@(EndInputAriaLabel ?? Localizer[LanguageResource.MudRangeInput_End])" />
 
     @if (IsClearable() && !GetDisabledState())

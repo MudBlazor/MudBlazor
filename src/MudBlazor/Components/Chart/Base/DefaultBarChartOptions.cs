@@ -5,7 +5,7 @@
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents the default options for a bar chart.
+/// Default bar chart options such as justification, group spacing, bar width, and tooltip format.
 /// </summary>
 public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
 {

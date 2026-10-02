@@ -3,6 +3,9 @@ using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// The type of animation used when content transitions.
+    /// </summary>
     [EnumExtensions]
     public enum Transition
     {

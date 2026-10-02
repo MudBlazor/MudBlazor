@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudAutocomplete T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" DebounceInterval="10" Clearable="true" />
+<MudAutocomplete T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" DebounceInterval="0" Clearable="true" />
 
 @code {
     public static string __description__ = "Initially hidden clear button should show when text is entered or item selected.";
@@ -28,7 +28,7 @@
     private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5, token);
+        await Task.Yield();
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))

@@ -19,8 +19,8 @@ internal static class MudInputCssHelper
             .AddClass($"mud-input-{baseInput.Variant.ToStringFast(true)}")
             .AddClass($"mud-input-{baseInput.Variant.ToStringFast(true)}-with-label", !string.IsNullOrEmpty(baseInput.Label))
             .AddClass($"mud-input-adorned-{baseInput.Adornment.ToStringFast(true)}", baseInput.Adornment != Adornment.None)
-            .AddClass($"mud-input-margin-{baseInput.Margin.ToStringFast(true)}", () => baseInput.Margin != Margin.None)
-            .AddClass("mud-input-underline", () => baseInput.Underline && baseInput.Variant != Variant.Outlined)
+            .AddClass($"mud-input-margin-{baseInput.Margin.ToStringFast(true)}", baseInput.Margin != Margin.None)
+            .AddClass("mud-input-underline", baseInput.Underline && baseInput.Variant != Variant.Outlined)
             .AddClass("mud-shrink", shrinkWhen)
             .AddClass("mud-disabled", baseInput.Disabled)
             .AddClass("mud-input-error", baseInput.HasErrors)
@@ -40,7 +40,7 @@ internal static class MudInputCssHelper
             .AddClass("mud-input-root")
             .AddClass($"mud-input-root-{baseInput.Variant.ToStringFast(true)}")
             .AddClass($"mud-input-root-adorned-{baseInput.Adornment.ToStringFast(true)}", baseInput.Adornment != Adornment.None)
-            .AddClass($"mud-input-root-margin-{baseInput.Margin.ToStringFast(true)}", () => baseInput.Margin != Margin.None)
+            .AddClass($"mud-input-root-margin-{baseInput.Margin.ToStringFast(true)}", baseInput.Margin != Margin.None)
             .AddClass(baseInput.Class)
             .Build();
 

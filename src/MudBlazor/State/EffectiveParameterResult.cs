@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace MudBlazor.State;
 
 /// <summary>
-/// Represents the result of resolving which parameter is effective when coordinating between two related parameters.
+/// Outcome of resolving which of two related parameters takes precedence, carrying the selected parameter's name and value.
 /// </summary>
 /// <typeparam name="T1">The type of the first parameter.</typeparam>
 /// <typeparam name="T2">The type of the second parameter.</typeparam>

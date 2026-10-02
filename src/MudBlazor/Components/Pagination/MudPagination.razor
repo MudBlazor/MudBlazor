@@ -3,7 +3,7 @@
 @inherits MudComponentBase
 @inject InternalMudLocalizer Localizer
 
-<MudElement HtmlTag="ul" Class="@Classname" Style="@Style" Tag="@Tag" UserAttributes="@UserAttributes">
+<ul @attributes="UserAttributes" class="@Classname" style="@Style">
     @if (ShowFirstButton)
     {
         <li class="@ItemClassname">
@@ -24,7 +24,7 @@
             if (currentPage == -1)
             {
                 <li class="@ItemClassname">
-                    <MudText disabled="@Disabled">…</MudText>
+                    <MudText disabled="@Disabled" aria-hidden="true">…</MudText>
                 </li>
             }
             else if (currentPage == _selectedState.Value)
@@ -53,4 +53,4 @@
             <MudIconButton Icon="@LastIcon" Variant="@Variant" Size="@Size" Disabled="@(_selectedState.Value == _countState.Value || Disabled)" OnClick="@(() => OnClickControlButtonAsync(Page.Last))" aria-label="@Localizer[LanguageResource.MudPagination_LastPage]"></MudIconButton>
         </li>
     }
-</MudElement>
+</ul>

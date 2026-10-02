@@ -274,6 +274,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewWith_MultiSelection_ShouldCalculateTriStateAcrossAllDescendants()
+        {
+            var comp = Context.Render<TreeViewTriStateTraversalTest>(self => self
+                .Add(x => x.SelectedValues,
+                [
+                    "selected-leaf",
+                    "fully-selected", "fully-selected-child", "fully-selected-grandchild",
+                    "selected-parent", "selected-parent-child", "selected-parent-grandchild",
+                    "wide", "wide-selected", "wide-selected-2",
+                    "deep", "deep-1", "deep-2", "deep-3",
+                    "unselected-parent-grandchild"
+                ]));
+
+            static string CheckboxState(string className, IRenderedComponent<TreeViewTriStateTraversalTest> component) =>
+                component.Find($".{className} .mud-checkbox span").ClassList
+                    .Single(x => x is "mud-checkbox-true" or "mud-checkbox-false" or "mud-checkbox-null");
+
+            CheckboxState("selected-leaf", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("unselected-leaf", comp).Should().Be("mud-checkbox-false");
+            CheckboxState("fully-selected", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("fully-unselected", comp).Should().Be("mud-checkbox-false");
+            CheckboxState("selected-parent", comp).Should().Be("mud-checkbox-null");
+            CheckboxState("unselected-parent", comp).Should().Be("mud-checkbox-null");
+            CheckboxState("root", comp).Should().Be("mud-checkbox-null");
+            CheckboxState("wide", comp).Should().Be("mud-checkbox-null");
+            CheckboxState("deep", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("deep-1", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("deep-2", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("deep-3", comp).Should().Be("mud-checkbox-true");
+        }
+
+        [Test]
         public void TreeViewItemSelected_ShouldBeInitializedCorrectly_SingleSelection()
         {
             var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
@@ -628,6 +660,39 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Item1Selected.Should().BeTrue();
         }
 
+        /// <summary>
+        /// Only expandable items instantiate a toggle button; leaves render the arrow placeholder as plain markup.
+        /// </summary>
+        [Test]
+        public void LeafItems_DoNotInstantiateToggleButton()
+        {
+            var comp = Context.Render<TreeViewTest1>();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
+            // Every item keeps the arrow slot because it is the indent gutter that aligns leaves with their parents.
+            comp.FindAll("div.mud-treeview-item-arrow").Count.Should().Be(10);
+            // Four of the ten items have children, so the other six pay for no component.
+            comp.FindComponents<MudTreeViewItemToggleButton>().Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(4);
+        }
+
+        /// <summary>
+        /// Double-clicking a leaf's arrow placeholder must not reach the item, matching the expand button (#9419).
+        /// </summary>
+        [Test]
+        public async Task DoubleClickOnLeafArrow_ShouldNotSelectItem()
+        {
+            var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.SingleSelection));
+            // Index 2 is "MudBlazor.svg", a leaf, so its arrow is the empty placeholder rather than a button.
+            comp.FindAll("div.mud-treeview-item-arrow")[2].QuerySelector("button").Should().BeNull();
+
+            await comp.FindAll("div.mud-treeview-item-arrow")[2].DoubleClickAsync();
+            comp.Instance.SelectedValue.Should().BeNull();
+
+            // The same double-click on the item content does select, which is what the placeholder shields against.
+            await comp.FindAll("div.mud-treeview-item-content")[2].DoubleClickAsync();
+            comp.Instance.SelectedValue.Should().Be("MudBlazor.svg");
+        }
+
         [Test]
         public async Task Collapsed_ClickOnTreeItem_CheckClose()
         {
@@ -901,6 +966,40 @@ namespace MudBlazor.UnitTests.Components
             await treeViewItem.InvokeAsync(treeViewItem.Instance.ReloadAsync);
             comp.FindAll("p.mud-typography")[3].InnerHtml.MarkupMatches("This is item 4");
             comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item 5");
+        }
+
+        /// <summary>
+        /// The text and end text render the tag and typography classes their typo picks, including after the typo changes.
+        /// </summary>
+        [Test]
+        [TestCase(Typo.body1, "p", Typo.caption, "span")]
+        [TestCase(Typo.h6, "h6", Typo.subtitle2, "p")]
+        public async Task TreeViewItem_TextAndEndText_RenderTagForTypo(Typo textTypo, string textTag, Typo endTextTypo, string endTextTag)
+        {
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .AddChildContent<MudTreeViewItem<string>>(item => item
+                    .Add(x => x.Text, "Documents")));
+            var item = comp.FindComponent<MudTreeViewItem<string>>();
+
+            comp.Find(".mud-treeview-item-label").ClassName.Should().Be("mud-typography mud-typography-body1 mud-treeview-item-label");
+            comp.FindAll(".mud-typography").Should().ContainSingle();
+
+            await item.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.TextTypo, textTypo)
+                .Add(x => x.TextClass, "custom-text")
+                .Add(x => x.EndText, "3 files")
+                .Add(x => x.EndTextTypo, endTextTypo)
+                .Add(x => x.EndTextClass, "custom-end-text"));
+
+            var text = comp.Find(".mud-treeview-item-label");
+            text.LocalName.Should().Be(textTag);
+            text.ClassName.Should().Be($"mud-typography mud-typography-{textTypo} mud-treeview-item-label custom-text");
+            text.TextContent.Should().Be("Documents");
+
+            var endText = comp.Find(".custom-end-text");
+            endText.LocalName.Should().Be(endTextTag);
+            endText.ClassName.Should().Be($"mud-typography mud-typography-{endTextTypo} custom-end-text");
+            endText.TextContent.Should().Be("3 files");
         }
 
         [Test]
@@ -1414,5 +1513,182 @@ namespace MudBlazor.UnitTests.Components
             await arrows()[1].ClickAsync();
             comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (6)"));
         }
+
+        /// <summary>
+        /// Verifies that turning on the root's <see cref="MudTreeView{T}.Disabled"/> at runtime reaches items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeDisabled_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+            comp.Find(".lvl3.mud-treeview-item").ClassList.Should().NotContain("mud-treeview-item-disabled");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
+
+            comp.Find(".lvl1.mud-treeview-item").ClassList.Should().Contain("mud-treeview-item-disabled");
+            comp.Find(".lvl2.mud-treeview-item").ClassList.Should().Contain("mud-treeview-item-disabled");
+            comp.Find(".lvl3.mud-treeview-item").ClassList.Should().Contain("mud-treeview-item-disabled");
+            foreach (var input in comp.FindAll(".mud-treeview-item-checkbox input"))
+            {
+                input.HasAttribute("disabled").Should().BeTrue();
+            }
+        }
+
+        /// <summary>
+        /// Verifies that turning on the root's <see cref="MudTreeView{T}.ReadOnly"/> at runtime reaches items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeReadOnly_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+            comp.Find(".lvl3 .mud-treeview-item-content").ClassList.Should().Contain("cursor-pointer");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ReadOnly, true));
+
+            comp.Find(".lvl1 .mud-treeview-item-content").ClassList.Should().NotContain("cursor-pointer");
+            comp.Find(".lvl2 .mud-treeview-item-content").ClassList.Should().NotContain("cursor-pointer");
+            comp.Find(".lvl3 .mud-treeview-item-content").ClassList.Should().NotContain("cursor-pointer");
+        }
+
+        /// <summary>
+        /// Verifies that switching the root's <see cref="MudTreeView{T}.SelectionMode"/> at runtime gives every item a checkbox.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeSelectionMode_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.SingleSelection));
+            comp.FindAll(".mud-treeview-item-checkbox").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+
+            comp.FindAll(".mud-treeview-item-checkbox").Count.Should().Be(3);
+        }
+
+        /// <summary>
+        /// Verifies that changing the root's <see cref="MudTreeView{T}.UncheckedIcon"/> at runtime reaches items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeUncheckedIcon_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.UncheckedIcon, CustomIcon));
+
+            comp.FindAll(".mud-treeview-item-checkbox").Should().AllSatisfy(checkbox => checkbox.InnerHtml.Should().Contain(CustomIconPath));
+        }
+
+        /// <summary>
+        /// Verifies that a later selection change does not leave an unchanged item showing the root's previous <see cref="MudTreeView{T}.UncheckedIcon"/>.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeUncheckedIconThenSelection_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.UncheckedIcon, CustomIcon));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValues, new[] { "c1" }));
+
+            comp.Find(".lvl3 .mud-treeview-item-checkbox").InnerHtml.Should().Contain(CustomIconPath);
+        }
+
+        /// <summary>
+        /// Verifies that turning off the root's <see cref="MudTreeView{T}.Ripple"/> and turning on <see cref="MudTreeView{T}.ExpandOnDoubleClick"/> at runtime reach items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeRippleAndExpandOnDoubleClick_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+            comp.Find(".lvl3 .mud-treeview-item-content").ClassList.Should().Contain("mud-ripple");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Ripple, false));
+
+            comp.FindAll(".mud-treeview-item-content").Should().AllSatisfy(content => content.ClassList.Should().NotContain("mud-ripple"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ExpandOnDoubleClick, true));
+
+            comp.FindAll(".mud-treeview-item").Should().AllSatisfy(item => item.ClassList.Should().Contain("mud-treeview-select-none"));
+        }
+
+        private const string CustomIconPath = "M0 0h9";
+
+        private const string CustomIcon = "<path d=\"" + CustomIconPath + "\"/>";
+        /// <summary>
+        /// Mounting a tree must render each item once, not twice.
+        /// </summary>
+        /// <remarks>
+        /// Every top-level item asks the tree to refresh its selection state while it initialises, and the tree used to render unconditionally in response.
+        /// Nothing is selected in this tree, so the second pass produced exactly the markup the first one already had.
+        /// </remarks>
+        [Test]
+        public void TreeView_OnMount_RendersEachItemOnce()
+        {
+            var renders = 0;
+            Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.ChildContent, BuildItems(_ => renders++)));
+
+            renders.Should().Be(3);
+        }
+
+        /// <summary>
+        /// Mounting a multi-selection tree must also render each item once.
+        /// </summary>
+        /// <remarks>
+        /// The tri-state checkbox is derived from the sub-items, so a multi-selection item can go stale without its own state changing.
+        /// It is enough to render when that derived value stops matching what was rendered, which nothing selected never does.
+        /// </remarks>
+        [Test]
+        public void TreeView_MultiSelection_OnMount_RendersEachItemOnce()
+        {
+            var renders = 0;
+            Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.ChildContent, BuildItems(_ => renders++)));
+
+            renders.Should().Be(3);
+        }
+
+
+        /// <summary>
+        /// Selecting an item must re-render only that item, not every sibling.
+        /// </summary>
+        /// <remarks>
+        /// The tree refreshes the selection state of every item whenever the selection changes.
+        /// A sibling whose own state did not change has nothing new to show, and this guards the click path that the mount tests above do not reach.
+        /// </remarks>
+        [Test]
+        public void TreeView_SelectOneSibling_RendersOnlyChangedItem()
+        {
+            var renders = new int[3];
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.ChildContent, BuildItems(index => renders[index]++)));
+
+            var afterMount = (int[])renders.Clone();
+            comp.FindAll(".mud-treeview-item-content")[0].Click();
+
+            renders[0].Should().Be(afterMount[0] + 1, "the selected item has a new state to show");
+            renders[1].Should().Be(afterMount[1], "sibling 1 did not change and should not have re-rendered");
+            renders[2].Should().Be(afterMount[2], "sibling 2 did not change and should not have re-rendered");
+        }
+        /// <summary>
+        /// Builds three sibling items whose body content reports every time it is rendered.
+        /// </summary>
+        /// <param name="onRender">Called with the item's index once per render of that item.</param>
+        private static RenderFragment BuildItems(Action<int> onRender) => builder =>
+        {
+            for (var i = 0; i < 3; i++)
+            {
+                var index = i;
+                builder.OpenComponent<MudTreeViewItem<string>>(index * 3);
+                builder.AddComponentParameter((index * 3) + 1, nameof(MudTreeViewItem<string>.Value), $"item{index}");
+                builder.AddComponentParameter((index * 3) + 2, nameof(MudTreeViewItem<string>.BodyContent), (RenderFragment<MudTreeViewItem<string>>)(item => content =>
+                {
+                    onRender(index);
+                    content.AddContent(0, item.Value);
+                }));
+                builder.CloseComponent();
+            }
+        };
     }
 }

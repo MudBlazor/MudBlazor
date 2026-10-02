@@ -6,9 +6,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a picker for dates.
+    /// Selects a single date from a calendar shown in a drop-down, dialog, or inline.
     /// </summary>
-    /// <seealso cref="MudDateRangePicker"/>
+    /// <seealso cref="MudDateRangePicker" />
+    /// <seealso cref="MudTimePicker" />
     public class MudDatePicker : MudBaseDatePicker
     {
         private DateTime? _selectedDate;
@@ -63,7 +64,13 @@ namespace MudBlazor
             // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
             // will be null. We need to check if the text has been set my the user and if so handle tha validation
             // without this the UI doesn't display a validation error correctly
-            if (_value != date || (date is null && Text != null))
+            // Empty text is not user input that failed to convert, so it must not re-enter this branch.
+            // A clear-button click empties the text before ClearAsync runs, so re-entering would overwrite Text with null once the debounce window above had closed.
+            // That would leave the observable result dependent on the wall clock.
+            // Only the user can produce text the converter rejects, so the programmatic parameter write is excluded too.
+            // Blazor runs the Date setter on every render, even when the parent supplies the same value, so leaving it in
+            // let any unrelated re-render mid-typing (a form's bound Errors, for instance) wipe the half-typed date (#13887).
+            if (_value != date || (date is null && !suppressInteraction && !string.IsNullOrEmpty(Text)))
             {
                 if (!suppressInteraction)
                 {
@@ -402,7 +409,7 @@ namespace MudBlazor
 
                     break;
                 case "ArrowDown":
-                    if (Open == false && Editable == false)
+                    if (!Open && !Editable)
                     {
                         Open = true;
                     }

@@ -12,6 +12,17 @@ namespace MudBlazor.UnitTests.Services.Localization;
 public class InternalMudLocalizerTests
 {
     [Test]
+    public void Indexer_ReturnsString_SoBlazorCanCompareItByValue()
+    {
+        // Blazor only compares parameters by value for known-immutable types, and ChangeDetection.MayHaveChanged returns true for every other reference type.
+        // A LocalizedString return would therefore rebuild any component given a localized attribute, on every render of its parent, forever.
+        var indexer = typeof(InternalMudLocalizer).GetProperty("Item", new[] { typeof(string), typeof(object[]) });
+
+        indexer.Should().NotBeNull();
+        indexer!.PropertyType.Should().Be<string>();
+    }
+
+    [Test]
     public void Constructor_WithNullInterceptor_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -63,7 +74,7 @@ public class InternalMudLocalizerTests
         var result = internalMudLocalizer[LanguageResource.MudDataGrid_Clear];
 
         // Assert
-        result.Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_Clear, "Reset", false));
+        result.Should().Be("Reset");
     }
 
     [Test]
@@ -78,7 +89,7 @@ public class InternalMudLocalizerTests
         // Act
         var result = internalMudLocalizer[LanguageResource.MudDataGrid_Clear];
 
-        result.Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_Clear, "Reset", false));
+        result.Should().Be("Reset");
     }
 
     [Test]
@@ -90,9 +101,9 @@ public class InternalMudLocalizerTests
         var internalMudLocalizer = new InternalMudLocalizer(interceptorMock);
 
         // Act & Assert
-        internalMudLocalizer[LanguageResource.MudDataGrid_Contains].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_Contains, "contains", false, typeof(LanguageResource).FullName));
-        internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "is empty", false, typeof(LanguageResource).FullName));
-        internalMudLocalizer[LanguageResource.MudDataGrid_IsNotEmpty].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_IsNotEmpty, "is not empty", false, typeof(LanguageResource).FullName));
+        internalMudLocalizer[LanguageResource.MudDataGrid_Contains].Should().Be("contains");
+        internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty].Should().Be("is empty");
+        internalMudLocalizer[LanguageResource.MudDataGrid_IsNotEmpty].Should().Be("is not empty");
     }
 
     [Test]
@@ -104,9 +115,9 @@ public class InternalMudLocalizerTests
         var internalMudLocalizer = new InternalMudLocalizer(interceptorMock);
 
         // Act & Assert
-        internalMudLocalizer[LanguageResource.MudDataGrid_Contains].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_Contains, "contains", false, typeof(LanguageResource).FullName));
-        internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "is empty", false, typeof(LanguageResource).FullName));
-        internalMudLocalizer[LanguageResource.MudDataGrid_IsNotEmpty].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_IsNotEmpty, "is not empty", false, typeof(LanguageResource).FullName));
+        internalMudLocalizer[LanguageResource.MudDataGrid_Contains].Should().Be("contains");
+        internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty].Should().Be("is empty");
+        internalMudLocalizer[LanguageResource.MudDataGrid_IsNotEmpty].Should().Be("is not empty");
     }
 
     [Test]
@@ -121,9 +132,9 @@ public class InternalMudLocalizerTests
         var internalMudLocalizer = new InternalMudLocalizer(interceptor);
 
         // Act & Assert
-        internalMudLocalizer[LanguageResource.MudDataGrid_Contains].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_Contains, "contains", false, typeof(LanguageResource).FullName));
-        internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "is empty", false, typeof(LanguageResource).FullName));
-        internalMudLocalizer[LanguageResource.MudDataGrid_IsNotEmpty].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_IsNotEmpty, "is not empty", false, typeof(LanguageResource).FullName));
+        internalMudLocalizer[LanguageResource.MudDataGrid_Contains].Should().Be("contains");
+        internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty].Should().Be("is empty");
+        internalMudLocalizer[LanguageResource.MudDataGrid_IsNotEmpty].Should().Be("is not empty");
     }
 
     [Test]
@@ -138,8 +149,8 @@ public class InternalMudLocalizerTests
         var internalMudLocalizer = new InternalMudLocalizer(interceptor);
 
         // Act & Assert
-        internalMudLocalizer[LanguageResource.MudDataGrid_Contains].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_Contains, "contains", false, typeof(LanguageResource).FullName));
-        internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_IsEmpty, "XXX", false));
-        internalMudLocalizer[LanguageResource.MudDataGrid_IsNotEmpty].Should().BeEquivalentTo(new LocalizedString(LanguageResource.MudDataGrid_IsNotEmpty, "is not empty", false, typeof(LanguageResource).FullName));
+        internalMudLocalizer[LanguageResource.MudDataGrid_Contains].Should().Be("contains");
+        internalMudLocalizer[LanguageResource.MudDataGrid_IsEmpty].Should().Be("XXX");
+        internalMudLocalizer[LanguageResource.MudDataGrid_IsNotEmpty].Should().Be("is not empty");
     }
 }

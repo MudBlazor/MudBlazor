@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Nullable>enable</Nullable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <!-- Build-time analyzer-authoring (RS####) rules; does NOT affect the shipped analyzer's runtime
          compiler floor. The 3.x line targets the Roslyn 4.x API surface this analyzer builds against,
@@ -30,7 +30,7 @@
     <Compile Update="Resources.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="Resources.resx" />
     <EmbeddedResource Update="Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <InternalsVisibleTo Include="MudBlazor.UnitTests.Analyzers" />
   </ItemGroup>

@@ -9,6 +9,12 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Wraps a single item inside a <see cref="MudDropZone{T}"/> so it can be dragged and dropped between zones using mouse or touch gestures.
+/// </summary>
+/// <typeparam name="T">The type of the data item this element carries.</typeparam>
+/// <seealso cref="MudDropContainer{T}"/>
+/// <seealso cref="MudDropZone{T}"/>
 public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 {
     private bool _dragOperationIsInProgress = false;

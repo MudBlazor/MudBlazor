@@ -19,6 +19,51 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class MenuTests : BunitTest
     {
+        /// <summary>
+        /// A left-click menu must not register a contextmenu DOM listener, so a right-click cannot cost a round-trip.
+        /// </summary>
+        [Test]
+        public async Task Menu_LeftClickActivation_RegistersNoContextMenuListener()
+        {
+            var comp = Context.Render<MudMenu>(parameters => parameters.Add(p => p.Label, "Menu"));
+            var root = comp.Find("div.mud-menu");
+
+            var contextMenu = async () => await root.ContextMenuAsync(new MouseEventArgs { Button = 2 });
+
+            await contextMenu.Should().ThrowAsync<MissingEventHandlerException>();
+        }
+
+        /// <summary>
+        /// A right-click menu keeps its contextmenu DOM listener.
+        /// </summary>
+        [Test]
+        public async Task Menu_RightClickActivation_RegistersContextMenuListener()
+        {
+            var comp = Context.Render<MudMenu>(parameters => parameters
+                .Add(p => p.Label, "Menu")
+                .Add(p => p.ActivationEvent, MouseEvent.RightClick));
+
+            var contextMenu = async () => await comp.Find("div.mud-menu").ContextMenuAsync(new MouseEventArgs { Button = 2 });
+
+            await contextMenu.Should().NotThrowAsync();
+        }
+
+        /// <summary>
+        /// A right-click menu with ActivatorContent prevents the browser context menu, so it must register its own contextmenu listener.
+        /// Until .NET 10, Blazor ignores a handler-less preventDefault unless some other contextmenu listener exists on the page.
+        /// </summary>
+        [Test]
+        public async Task Menu_RightClickActivationWithActivatorContent_RegistersContextMenuListener()
+        {
+            var comp = Context.Render<MudMenu>(parameters => parameters
+                .Add(p => p.ActivationEvent, MouseEvent.RightClick)
+                .Add(p => p.ActivatorContent, _ => builder => builder.AddContent(0, "Activator")));
+
+            await comp.Find("div.mud-menu").ContextMenuAsync(new MouseEventArgs { Button = 2 });
+
+            comp.Instance.Open.Should().BeFalse("the activator content, not the menu root, decides when the menu opens");
+        }
+
         [Test]
         public async Task OpenMenu_ClickFirstItem_CheckClosed()
         {
@@ -57,6 +102,21 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
             await comp.InvokeAsync(() => menu.Instance.ToggleMenuAsync(new TouchEventArgs()));
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+        }
+
+        /// <summary>
+        /// Menu items still receive their element reference, which submenu positioning and focus rely on.
+        /// </summary>
+        [Test]
+        public async Task OpenMenu_ItemsCaptureElementReference()
+        {
+            var comp = Context.Render<MenuTest1>();
+
+            await comp.FindAll("button.mud-button-root")[0].ClickAsync();
+
+            var items = comp.FindComponents<MudMenuItem>();
+            items.Should().NotBeEmpty();
+            items.Select(x => x.Instance.ElementReference.Id).Should().OnlyContain(x => !string.IsNullOrEmpty(x));
         }
 
         [Test]
@@ -387,6 +447,22 @@ namespace MudBlazor.UnitTests.Components
             items[0].QuerySelector("svg").ClassList.Should().NotContainMatch("mud-*-text");
             items[1].QuerySelector("svg").ClassList.Should().Contain("mud-secondary-text");
             items[2].QuerySelector("svg").ClassList.Should().Contain("mud-tertiary-text");
+        }
+
+        /// <summary>
+        /// Menu item text uses body1 typography, or body2 in a dense menu.
+        /// </summary>
+        [Test]
+        [TestCase(false, "mud-typography mud-typography-body1 mud-menu-item-text")]
+        [TestCase(true, "mud-typography mud-typography-body2 mud-menu-item-text")]
+        public async Task MenuItem_TextTypography_FollowsDense(bool dense, string expectedClass)
+        {
+            var comp = Context.Render<MenuItemIconTest>(parameters => parameters.Add(p => p.Dense, dense));
+
+            await comp.Find(".mud-menu-button-activator").ClickAsync();
+            await comp.WaitForElementAsync("div.mud-popover-open");
+
+            comp.FindAll("div.mud-menu-item p").Should().HaveCount(3).And.OnlyContain(text => text.ClassName == expectedClass);
         }
 
         /// <summary>
@@ -1185,6 +1261,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Menu_RegisterItem_IgnoresDuplicatesAndResetsAfterClose()
+        {
+            var comp = Context.Render<MudMenu>();
+            var menu = comp.Instance;
+            var first = new object();
+            var second = new object();
+
+            menu.RegisterItem(first);
+            menu.RegisterItem(first);
+            menu.RegisterItem(second);
+
+            var menuItems = (IReadOnlyList<object>)typeof(MudMenu)
+                .GetField("_menuItems", BindingFlags.NonPublic | BindingFlags.Instance)!
+                .GetValue(menu)!;
+
+            menuItems.Should().Equal(first, second);
+
+            await comp.InvokeAsync(menu.CloseMenuAsync);
+
+            menuItems.Should().BeEmpty();
+
+            menu.RegisterItem(first);
+            menu.RegisterItem(first);
+            menu.RegisterItem(second);
+            menuItems.Should().Equal(first, second);
+        }
+
+        [Test]
         public async Task NestedMenu_SubMenuArrow_PointsRightInLtr()
         {
             var comp = Context.Render<MenuWithNestingTest>();
@@ -1509,5 +1613,124 @@ namespace MudBlazor.UnitTests.Components
             popoverOpenDuringClick.Should().BeTrue();
             await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-popover-open").Count.Should().Be(0));
         }
+
+        /// <summary>
+        /// A custom activator spells out aria-expanded as an explicit true or false token.
+        /// </summary>
+        [Test]
+        public async Task ActivatorContent_AriaExpanded_ReflectsOpenState()
+        {
+            Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudMenu>(parameters => parameters
+                .Add(p => p.ActivatorContent, _ => builder =>
+                {
+                    builder.OpenElement(0, "span");
+                    builder.AddContent(1, "Activate");
+                    builder.CloseElement();
+                }));
+
+            // A bare attribute renders with an empty value, which assistive technology resolves to the
+            // aria-expanded default, so the token has to be spelled out.
+            comp.Find("div[role=\"button\"]").GetAttribute("aria-expanded").Should().Be("false");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Open, true));
+
+            comp.Find("div[role=\"button\"]").GetAttribute("aria-expanded").Should().Be("true");
+        }
+
+        /// <summary>
+        /// The default button activator announces that it opens a menu and references the list only while it is rendered.
+        /// </summary>
+        [Test]
+        public async Task ButtonActivator_ExposesMenuRelationship()
+        {
+            var comp = Context.Render<MenuTest1>();
+            IElement Activator() => comp.Find("button.mud-button-root");
+
+            Activator().GetAttribute("aria-haspopup").Should().Be("menu");
+            Activator().GetAttribute("aria-expanded").Should().Be("false");
+            Activator().HasAttribute("aria-controls").Should().BeFalse();
+
+            await Activator().ClickAsync();
+
+            var list = comp.Find("div.mud-list");
+            list.GetAttribute("role").Should().Be("menu");
+            list.Id.Should().NotBeNullOrEmpty();
+            Activator().GetAttribute("aria-expanded").Should().Be("true");
+            Activator().GetAttribute("aria-controls").Should().Be(list.Id);
+            comp.FindAll(".mud-menu-item").Should().HaveCount(4).And.OnlyContain(item => item.GetAttribute("role") == "menuitem");
+        }
+
+        /// <summary>
+        /// The icon activator carries the same popup relationship as the button activator.
+        /// </summary>
+        [Test]
+        public void IconActivator_ExposesMenuRelationship()
+        {
+            Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudMenu>(parameters => parameters.Add(p => p.Icon, Icons.Material.Filled.MoreVert));
+
+            var activator = comp.Find("button.mud-icon-button");
+            activator.GetAttribute("aria-haspopup").Should().Be("menu");
+            activator.GetAttribute("aria-expanded").Should().Be("false");
+            activator.HasAttribute("aria-controls").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Menu items render an anchor with its link attributes when Href is set, and a div otherwise.
+        /// </summary>
+        [Test]
+        public async Task MenuItems_RenderAnchorWhenHrefIsSet()
+        {
+            var comp = Context.Render<MenuTest1>();
+            await comp.Find("button.mud-button-root").ClickAsync();
+
+            comp.FindAll("div.mud-menu-item").Count.Should().Be(2);
+            var links = comp.FindAll("a.mud-menu-item");
+            links.Count.Should().Be(2);
+            links[0].GetAttribute("href").Should().Be("https://www.test.com");
+            links[1].GetAttribute("target").Should().Be("_blank");
+        }
+
+        /// <summary>
+        /// A class or style supplied through UserAttributes keeps winning over the computed ones, as it did through the MudElement boundary.
+        /// </summary>
+        [Test]
+        public void MenuItem_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudMenuItem>(parameters => parameters
+                .Add(x => x.Label, "Copy")
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    ["class"] = "user-class",
+                    ["style"] = "color:red",
+                }));
+
+            var row = comp.Find("div");
+            row.GetAttribute("class").Should().Be("user-class");
+            row.GetAttribute("style").Should().Be("color:red");
+        }
+
+        /// <summary>
+        /// The same precedence holds on the anchor row.
+        /// </summary>
+        [Test]
+        public void MenuItemWithHref_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudMenuItem>(parameters => parameters
+                .Add(x => x.Label, "Docs")
+                .Add(x => x.Href, "/docs")
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    ["class"] = "user-class",
+                    ["style"] = "color:red",
+                }));
+
+            var row = comp.Find("a");
+            row.GetAttribute("class").Should().Be("user-class");
+            row.GetAttribute("style").Should().Be("color:red");
+            row.GetAttribute("href").Should().Be("/docs");
+        }
+
     }
 }

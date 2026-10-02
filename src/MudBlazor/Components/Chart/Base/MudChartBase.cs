@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a base class for chart components.
+/// Base class for MudBlazor chart components, providing the data series, options, legend, and selection shared by every chart type.
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 /// <typeparam name="TOptions">The type of options for the chart.</typeparam>

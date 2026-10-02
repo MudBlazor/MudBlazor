@@ -49,8 +49,8 @@ namespace MudBlazor
         /// </summary>
         /// <param name="title">name of the section will be displayed in the navigation</param>
         /// <param name="id">id of the section. It will be appending to the current url, if the section becomes active</param>
-        /// <param name="level">The level within the hierachy</param>
-        /// <param name="parent">The parent of the section. null if there is no parent or no hierachy</param>
+        /// <param name="level">The level within the hierarchy</param>
+        /// <param name="parent">The parent of the section. null if there is no parent or no hierarchy</param>
         public MudPageContentSection(string title, string id, int level, MudPageContentSection? parent)
         {
             Title = title;

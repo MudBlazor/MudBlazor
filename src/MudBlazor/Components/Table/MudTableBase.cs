@@ -7,7 +7,7 @@ namespace MudBlazor
     // note: the MudTable code is split. Everything that has nothing to do with the type parameter of MudTable<T> is here in MudTableBase
 
     /// <summary>
-    /// A base class for designing table components.
+    /// Base class for <see cref="MudTable{T}"/> holding the type-independent table members such as paging, layout, and editing options.
     /// </summary>
     public abstract class MudTableBase : MudComponentBase
     {
@@ -704,6 +704,7 @@ namespace MudBlazor
         // Applies an internal page change (pager/NavigateTo/clamp/reset); must not update _currentPageParameterValue or it would be mistaken for a parameter change (#13462).
         internal void SetCurrentPage(int page)
         {
+            page = Math.Max(0, page);
             if (_currentPage == page)
             {
                 return;

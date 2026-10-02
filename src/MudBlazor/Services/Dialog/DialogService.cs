@@ -69,8 +69,18 @@ namespace MudBlazor
         /// <summary>
         /// Initializes a new instance of the <see cref="DialogService"/> class.
         /// </summary>
+        /// <remarks>
+        /// Declared explicitly rather than as an optional parameter on the logger constructor to preserve source compatibility.
+        /// </remarks>
+        public DialogService() : this(null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DialogService"/> class.
+        /// </summary>
         /// <param name="logger">The logger used to surface configuration problems such as a missing provider.</param>
-        public DialogService(ILogger<DialogService>? logger = null)
+        public DialogService(ILogger<DialogService>? logger)
         {
             _logger = logger ?? NullLogger<DialogService>.Instance;
         }
@@ -100,6 +110,12 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogOptions options) where T : IComponent
+        {
+            return ShowAsync<T>(string.Empty, DialogParameters.Default, options);
+        }
+
+        /// <inheritdoc />
         public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogParameters parameters) where T : IComponent
         {
             return ShowAsync<T>(string.Empty, parameters, DialogOptions.Default);
@@ -116,6 +132,12 @@ namespace MudBlazor
             DialogOptions? options) where T : IComponent
         {
             return ShowAsync(typeof(T), title, parameters, options ?? DialogOptions.Default);
+        }
+
+        /// <inheritdoc />
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogParameters parameters, DialogOptions options) where T : IComponent
+        {
+            return ShowAsync<T>(string.Empty, parameters, options);
         }
 
         /// <inheritdoc />

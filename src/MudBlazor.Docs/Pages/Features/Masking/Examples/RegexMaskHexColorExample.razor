@@ -1,0 +1,18 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid Class="justify-space-between" Style="max-width: 800px;">
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@hexColorMask" Label="Color" HelperText="@hexColorMask.Mask"
+                      @bind-Value="hexColor" Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6" Class="d-flex align-center">
+        Color: <b class="ml-1">@hexColor</b>
+        <MudPaper Class="ml-2" Elevation="0" Style="@($"width: 24px; height: 24px; background: {hexColor};")" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string hexColor = "#594AE2";
+    public IMask hexColorMask = RegexMask.HexColor();
+}

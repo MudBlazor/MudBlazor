@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents a base component for charts with axes.
+/// Renders the SVG axes, grid lines, series paths, and tooltips shared by axis-based chart types.
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 /// <typeparam name="TChartOptions">The type of chart options.</typeparam>

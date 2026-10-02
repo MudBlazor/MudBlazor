@@ -7,7 +7,7 @@ using System;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a description of a <see cref="MudGrid"/> field.
+    /// Classifies the data type of a <see cref="MudDataGrid{T}"/> column — string, number, enum, date, boolean, or GUID — used to choose the filter operators available for that column.
     /// </summary>
     public class FieldType
     {

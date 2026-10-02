@@ -4,6 +4,7 @@
 
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
@@ -222,7 +223,7 @@ public class PatternMask : BaseMask
     protected virtual bool IsMatch(char maskChar, char textChar)
     {
         var maskDef = MaskDictionary[maskChar];
-        return Regex.IsMatch(textChar.ToString(), maskDef.Regex);
+        return Regex.IsMatch(textChar.ToString(), maskDef.Regex, RegexOptions.None, RegexDefaults.MatchTimeout);
     }
 
     /// <summary>

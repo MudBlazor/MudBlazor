@@ -102,7 +102,7 @@ namespace MudBlazor.Charts
             var visibleSeries = Series.Where(series => series.Visible).ToArray();
             var values = visibleSeries.SelectMany(series => series.Data.Points.Where(p => p.HasValue).Select(p => p.Y));
 
-            if (visibleSeries.Length > 0 && values.Any())
+            if (visibleSeries.Length > 0 && visibleSeries.Any(series => series.Data.Count != 0))
             {
                 var minY = values.Min();
                 var maxY = ChartOptions?.YAxisSuggestedMax is null
@@ -133,7 +133,7 @@ namespace MudBlazor.Charts
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
 
-                numVerticalLines = visibleSeries.Max(series => series.Data.Values.Count);
+                numVerticalLines = visibleSeries.Max(series => series.Data.Count);
             }
             else
             {
@@ -150,7 +150,7 @@ namespace MudBlazor.Charts
 
         protected override TReturn GetDataValue<TReturn>(int seriesIndex, int dataPointIndex)
         {
-            return (TReturn)Convert.ChangeType(Series[seriesIndex].Data.Values[dataPointIndex], typeof(TReturn));
+            return (TReturn)Convert.ChangeType(Series[seriesIndex].Data.GetValue(dataPointIndex), typeof(TReturn));
         }
 
         protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)

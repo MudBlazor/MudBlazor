@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Services;
+using MudBlazor.UnitTests.Shared.Mocks;
 
 namespace MudBlazor.UnitTests.Shared.Extensions
 {
@@ -27,9 +28,12 @@ namespace MudBlazor.UnitTests.Shared.Extensions
         /// <summary>
         /// Replaces the default time provider with a fake provider for the current bUnit context.
         /// </summary>
-        public static FakeTimeProvider AddFakeTimeProvider(this BunitContext ctx)
+        /// <remarks>
+        /// The provider counts the timers it creates, so tests of debounced inputs can wait for the debounce timer before advancing the clock.
+        /// </remarks>
+        public static TimerTrackingFakeTimeProvider AddFakeTimeProvider(this BunitContext ctx)
         {
-            var timeProvider = new FakeTimeProvider();
+            var timeProvider = new TimerTrackingFakeTimeProvider();
             ctx.Services.RemoveAll<TimeProvider>();
             ctx.Services.AddSingleton<TimeProvider>(timeProvider);
 

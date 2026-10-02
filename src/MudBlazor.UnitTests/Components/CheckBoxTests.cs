@@ -199,6 +199,7 @@ namespace MudBlazor.UnitTests.Components
             checkbox.Instance.GetState(x => x.Error).Should().BeTrue();
             checkbox.Markup.Should().Contain("You must select a value");
             checkbox.Instance.GetState(x => x.ErrorText).Should().Be("You must select a value");
+            checkbox.Find("label.mud-checkbox span.mud-typography").ClassList.Should().Contain("mud-error-text");
 
             // state: true, form should be valid
             await checkbox.Find("input").ChangeAsync(true);
@@ -206,6 +207,7 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeTrue();
             checkbox.Instance.GetState(x => x.Error).Should().BeFalse();
             checkbox.Instance.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
+            checkbox.Find("label.mud-checkbox span.mud-typography").ClassList.Should().NotContain("mud-error-text");
 
             // state: false, form should be valid
             await checkbox.Find("input").ChangeAsync(false);
@@ -551,6 +553,30 @@ namespace MudBlazor.UnitTests.Components
             Context.Render<MudCheckBox<bool>>(self => self.Add(x => x.Disabled, true).Add(x => x.ReadOnly, true)).Find("span").ClassList.Should().NotContain("hover:mud-default-hover");
         }
 
+        /// <summary>
+        /// The label and child content use body1 typography and take the error color while the checkbox has errors.
+        /// </summary>
+        [Test]
+        public async Task CheckBox_LabelAndChildContent_TakeErrorColor()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters
+                .Add(p => p.Label, "Agree")
+                .AddChildContent("Terms"));
+
+            comp.FindAll("label.mud-checkbox span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, true));
+
+            comp.FindAll("label.mud-checkbox span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1 mud-error-text");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, false));
+
+            comp.FindAll("label.mud-checkbox span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1");
+        }
+
         [Test]
         public void CheckBox_AriaLabel_OverRides()
         {
@@ -565,7 +591,7 @@ namespace MudBlazor.UnitTests.Components
             // checkbox two should have both a valid label with aria-hidden, an input with arialabelledby and the labelledby element
             checkboxes[1].GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element1 = comp.Find(".cb2 label.mud-checkbox span.mud-typography");
-            element1.HasAttribute("aria-hidden").Should().BeTrue();
+            element1.GetAttribute("aria-hidden").Should().Be("true");
             var input1 = comp.Find(".cb2 label.mud-checkbox input");
             var input1ForId = input1.GetAttribute("aria-labelledby");
             comp.Find($".cb2 label.mud-checkbox #{input1ForId}").Should().NotBeNull();
@@ -578,7 +604,7 @@ namespace MudBlazor.UnitTests.Components
             // checkbox four should look identical to two except this time it's with ChildContent
             checkboxes[3].GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
             var element3 = comp.Find(".cb4 label.mud-checkbox span.mud-typography");
-            element3.HasAttribute("aria-hidden").Should().BeTrue();
+            element3.GetAttribute("aria-hidden").Should().Be("true");
             var input3 = comp.Find(".cb4 label.mud-checkbox input");
             var input3ForId = input3.GetAttribute("aria-labelledby");
             comp.Find($".cb4 label.mud-checkbox #{input3ForId}").Should().NotBeNull();
@@ -589,6 +615,51 @@ namespace MudBlazor.UnitTests.Components
             var input4 = comp.Find(".cb5 label.mud-checkbox input");
             var input4ForId = input4.GetAttribute("aria-labelledby");
             comp.Find($".cb5 label.mud-checkbox #{input4ForId}").Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// An invalid checkbox sets aria-invalid and links aria-describedby to its error text.
+        /// </summary>
+        [Test]
+        public async Task CheckBox_ShouldLinkInputToErrorText()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters
+                .Add(p => p.ErrorId, "field-error")
+                .Add(p => p.ErrorText, "Required"));
+
+            comp.Find("input").HasAttribute("aria-invalid").Should().BeFalse();
+            comp.Find("input").HasAttribute("aria-describedby").Should().BeFalse();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, true));
+
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be("field-error");
+            comp.Find("#field-error").TextContent.Trim().Should().Be("Required");
+        }
+
+        /// <summary>
+        /// An invalid checkbox without an error id is still marked invalid but points at nothing.
+        /// </summary>
+        [Test]
+        public void CheckBox_WithoutErrorId_ShouldNotEmitAriaDescribedBy()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters.Add(p => p.Error, true));
+
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
+            comp.Find("input").HasAttribute("aria-describedby").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A user-supplied aria-invalid wins over the generated one.
+        /// </summary>
+        [Test]
+        public void CheckBox_ShouldAllowUserAriaInvalidOverride()
+        {
+            var comp = Context.Render<MudCheckBox<bool>>(parameters => parameters
+                .Add(p => p.Error, true)
+                .AddUnmatched("aria-invalid", "false"));
+
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("false");
         }
     }
 }

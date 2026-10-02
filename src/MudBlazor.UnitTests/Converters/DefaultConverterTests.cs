@@ -18,6 +18,95 @@ public class DefaultConverterTests
 {
     #region DefeultConverter
 
+    /// <summary>
+    /// Every type in the built-in table must resolve to its own converter, including the nullable variants.
+    /// </summary>
+    /// <remarks>
+    /// A type that resolves to nothing falls through to the ToString fallback, whose ConvertBack silently returns default, so only a round trip catches a wrong entry in the table.
+    /// </remarks>
+    [Test]
+    public void DefaultConverter_ShouldRoundTripEveryBuiltInType()
+    {
+        AssertRoundTrip("hello world");
+        AssertRoundTrip('Z');
+        AssertNullableRoundTrip<char>('Z');
+        AssertRoundTrip(true);
+        AssertNullableRoundTrip(true);
+        AssertRoundTrip(new Guid("8a1f0f3c-6f2e-4a1d-9c3b-0d5a6e7f8b90"));
+        AssertNullableRoundTrip(new Guid("8a1f0f3c-6f2e-4a1d-9c3b-0d5a6e7f8b90"));
+        AssertNumberRoundTrip<sbyte>(-12, 12);
+        AssertNumberRoundTrip<byte>(200, 12);
+        AssertNumberRoundTrip<short>(-1234, 12);
+        AssertNumberRoundTrip<ushort>(60000, 12);
+        AssertNumberRoundTrip(123456, 12);
+        AssertNumberRoundTrip(4000000000u, 12u);
+        AssertNumberRoundTrip(-123456789012345L, 12L);
+        AssertNumberRoundTrip(123456789012345ul, 12ul);
+        AssertNumberRoundTrip(1.25f, 12f);
+        AssertNumberRoundTrip(3.5d, 12d);
+        AssertNumberRoundTrip(12345.6789m, 12m);
+        AssertRoundTrip(BigInteger.Parse("123456789012345678901234567890", CultureInfo.InvariantCulture));
+        AssertNullableRoundTrip(BigInteger.Parse("123456789012345678901234567890", CultureInfo.InvariantCulture));
+        AssertRoundTrip(new DateTime(2025, 11, 30, 13, 45, 12, DateTimeKind.Unspecified), "o");
+        AssertNullableRoundTrip(new DateTime(2025, 11, 30, 13, 45, 12, DateTimeKind.Unspecified), "o");
+        AssertRoundTrip(new DateTimeOffset(2025, 11, 30, 13, 45, 12, TimeSpan.FromHours(2)), "o");
+        AssertNullableRoundTrip(new DateTimeOffset(2025, 11, 30, 13, 45, 12, TimeSpan.FromHours(2)), "o");
+        AssertRoundTrip(new DateOnly(2025, 11, 30), "yyyy-MM-dd");
+        AssertNullableRoundTrip(new DateOnly(2025, 11, 30), "yyyy-MM-dd");
+        AssertRoundTrip(new TimeOnly(14, 5, 6), "HH:mm:ss");
+        AssertNullableRoundTrip(new TimeOnly(14, 5, 6), "HH:mm:ss");
+        AssertRoundTrip(new TimeSpan(1, 2, 3, 4, 567), "c");
+        AssertNullableRoundTrip(new TimeSpan(1, 2, 3, 4, 567), "c");
+    }
+
+    /// <summary>
+    /// Converts a value to text and back, and asserts the value survives the trip.
+    /// </summary>
+    private static void AssertRoundTrip<TValue>(TValue value, string? format = null)
+    {
+        var converter = new DefaultConverter<TValue>
+        {
+            Culture = () => CultureInfo.InvariantCulture,
+            Format = () => format
+        };
+
+        converter.ConvertBack(converter.Convert(value)).Should().Be(value);
+    }
+
+    /// <summary>
+    /// Round-trips a number and asserts the built-in number converter handled it rather than the IParsable fallback.
+    /// </summary>
+    /// <remarks>
+    /// The built-in converter parses with <see cref="NumberStyles.Any"/>, so it accepts the invariant currency symbol.
+    /// The fallback parses through <c>IParsable</c> and rejects it, which is how a wrong entry in the table shows up.
+    /// </remarks>
+    private static void AssertNumberRoundTrip<TValue>(TValue value, TValue currencyParsed) where TValue : struct
+    {
+        AssertRoundTrip(value);
+        AssertNullableRoundTrip(value);
+
+        const string Currency = "¤12";
+        new DefaultConverter<TValue> { Culture = () => CultureInfo.InvariantCulture }.ConvertBack(Currency).Should().Be(currencyParsed);
+        new DefaultConverter<TValue?> { Culture = () => CultureInfo.InvariantCulture }.ConvertBack(Currency).Should().Be(currencyParsed);
+    }
+
+    /// <summary>
+    /// Runs <see cref="AssertRoundTrip{TValue}"/> against the nullable form of a value type, including the null case.
+    /// </summary>
+    private static void AssertNullableRoundTrip<TValue>(TValue value, string? format = null) where TValue : struct
+    {
+        AssertRoundTrip<TValue?>(value, format);
+
+        var converter = new DefaultConverter<TValue?>
+        {
+            Culture = () => CultureInfo.InvariantCulture,
+            Format = () => format
+        };
+
+        converter.Convert(null).Should().BeNull();
+        converter.ConvertBack(null).Should().BeNull();
+    }
+
     [Test]
     public void DefaultConverter_Roundtrip_AllSupportedTypes_ForwardAndBack()
     {

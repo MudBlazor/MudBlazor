@@ -186,6 +186,31 @@ namespace MudBlazor.UnitTests.Components
             picker.Date.Should().Be(null);
         }
 
+        /// <summary>
+        /// The clear button leaves Text as an empty string even when the SetDateAsync debounce window has already elapsed between the input clearing its text and the picker running ClearAsync.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_Should_Clear_WhenDebounceWindowElapsed()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            // A single clear-button click reaches SetDateAsync twice: once from the input emptying its text, and once from ClearAsync.
+            // On a loaded machine the second call can land after the 100ms debounce window, which used to overwrite the already-empty Text with null.
+            // Auto-advancing the clock on every read reproduces that slow machine deterministically.
+            timeProvider.AutoAdvanceAmount = TimeSpan.FromMilliseconds(150);
+
+            var comp = Context.Render<MudDatePicker>();
+            var picker = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Clearable, true)
+                .Add(p => p.Date, new DateTime(2020, 10, 26)));
+            picker.Date.Should().Be(new DateTime(2020, 10, 26));
+
+            await comp.Find(".mud-input-clear-button").ClickAsync();
+
+            picker.Text.Should().Be("");
+            picker.Date.Should().Be(null);
+        }
+
         [Test]
         public async Task DataPicker_ShouldClearText_WhenDateSetNull()
         {
@@ -196,11 +221,11 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
 
-            var invalid = "INVALID_DATE";
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "INVALID_DATE"));
+            var date = new DateTime(2020, 10, 26);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, date));
 
-            picker.Date.Should().Be(null);
-            picker.Text.Should().Be(invalid);
+            picker.Date.Should().Be(date);
+            picker.Text.Should().Be(date.ToShortDateString());
 
             // Advance past the SetDateAsync debounce window so the clear is not debounced away.
             timeProvider.Advance(TimeSpan.FromMilliseconds(150));
@@ -209,6 +234,32 @@ namespace MudBlazor.UnitTests.Components
 
             picker.Date.Should().Be(null);
             picker.Text.Should().Be(null);
+        }
+
+        /// <summary>
+        /// Re-supplying the same null Date must leave text the converter rejected alone: https://github.com/MudBlazor/MudBlazor/issues/13887.
+        /// </summary>
+        [Test]
+        public async Task DataPicker_ShouldKeepInvalidText_WhenTheSameNullDateIsReSupplied()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            // Blazor re-runs the Date setter on every render of the parent, and a form that binds Errors re-renders on
+            // each keystroke. Auto-advancing the clock puts every one of those writes past the SetDateAsync debounce
+            // window, which is the slow machine that used to lose the half-typed date.
+            timeProvider.AutoAdvanceAmount = TimeSpan.FromMilliseconds(150);
+            var comp = Context.Render<MudDatePicker>();
+
+            var picker = comp.Instance;
+            const string Invalid = "INVALID_DATE";
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, Invalid));
+
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(Invalid);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, null));
+
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(Invalid);
         }
 
         [Test]
@@ -347,6 +398,48 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Date.Should().BeNull();
             // should show years
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Each year renders the same element a MudText would, with the current year highlighted.
+        /// </summary>
+        [Test]
+        public async Task OpenToYear_YearsRenderTheSameMarkupAsMudText()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Year));
+            var picker = comp.FindComponent<MudDatePicker>().Instance;
+            var currentYear = DateTime.Now.Year;
+
+            var currentYearMarkup = comp.Find($"div.mud-picker-year[id$='{currentYear}']").InnerHtml;
+            var otherYearMarkup = comp.Find($"div.mud-picker-year[id$='{currentYear - 1}']").InnerHtml;
+
+            var selected = Context.Render<MudText>(parameters => parameters
+                .Add(x => x.Typo, Typo.h5)
+                .Add(x => x.Class, $"mud-picker-year-selected mud-{picker.Color.ToString().ToLowerInvariant()}-text")
+                .AddChildContent(currentYear.ToString(CultureInfo.InvariantCulture)));
+            var other = Context.Render<MudText>(parameters => parameters
+                .Add(x => x.Typo, Typo.subtitle1)
+                .AddChildContent((currentYear - 1).ToString(CultureInfo.InvariantCulture)));
+
+            currentYearMarkup.Trim().Should().Be(selected.Markup.Trim());
+            otherYearMarkup.Trim().Should().Be(other.Markup.Trim());
+        }
+
+        /// <summary>
+        /// Scrolling the year list to the current year does not render the picker again.
+        /// </summary>
+        [Test]
+        public async Task OpenToYear_ScrollToYear_DoesNotRender()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Year));
+            var picker = comp.FindComponent<MudDatePicker>();
+            var renders = picker.RenderCount;
+
+            await comp.InvokeAsync(() => picker.Instance.ScrollToYearAsync());
+
+            picker.RenderCount.Should().Be(renders);
         }
 
         [Test]
@@ -1204,6 +1297,55 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Mask, mask));
 
             comp.Instance.Mask.Should().BeSameAs(mask);
+        }
+
+        /// <summary>
+        /// Setting the bound date to null from code must clear the masked input, not just the Date and Text properties: https://github.com/MudBlazor/MudBlazor/issues/12822.
+        /// </summary>
+        [Test]
+        public async Task Mask_ClearingDateFromCode_ClearsTheInput()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Mask, new DateMask("dd/MM/yyyy"))
+                .Add(p => p.Date, new DateTime(2026, 6, 15)));
+
+            comp.Find("input").GetAttribute("value").Should().NotBeNullOrEmpty();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, (DateTime?)null));
+
+            comp.Instance.Date.Should().BeNull();
+            comp.Instance.Text.Should().BeNullOrEmpty();
+            comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Typing into a masked, editable picker must survive the re-render a parent runs while the date is still incomplete: https://github.com/MudBlazor/MudBlazor/issues/13887.
+        /// </summary>
+        [Test]
+        public async Task Mask_TypingInsideFormWithBoundErrors_KeepsTheTypedText()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            // Model the real gap between a keystroke and the re-render that the form's bound Errors triggers.
+            // Every clock read lands past the debounce window in SetDateAsync, which is where the parameter write used to discard the text.
+            Context.AddFakeTimeProvider().AutoAdvanceAmount = TimeSpan.FromMilliseconds(150);
+            var comp = Context.Render<DatePickerFormErrorsTypingTest>();
+            var picker = comp.FindComponent<MudDatePicker>().Instance;
+            var mask = comp.FindComponent<MudMask>().Instance;
+
+            var expected = new[] { "1", "15/", "15/0", "15/06/", "15/06/2", "15/06/20", "15/06/202", "15/06/2026" };
+            var index = 0;
+            foreach (var key in "15062026")
+            {
+                await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(mask.ElementId, new KeyboardEventArgs { Key = key.ToString() }));
+
+                picker.Text.Should().Be(expected[index], $"the text must survive the parent re-render after the '{key}' keystroke");
+                comp.Find("input").GetAttribute("value").Should().Be(expected[index]);
+                index++;
+            }
+
+            picker.Date.Should().Be(new DateTime(2026, 6, 15));
+            comp.Instance.Date.Should().Be(new DateTime(2026, 6, 15));
         }
 
         [Test]
@@ -2211,6 +2353,91 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.PickerMonth, new DateTime(DateTime.Now.Year, 12, 01)));
             comp.Instance.PickerMonth?.Month.Should().Be(12);
             return comp;
+        }
+
+
+        /// <summary>
+        /// The inline popup is a dialog named after the field label so its purpose is announced when it opens.
+        /// </summary>
+        [Test]
+        public async Task Open_PopupIsNamedDialogAfterLabel()
+        {
+            var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDatePicker>();
+            await picker.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Label, "Start date"));
+
+            var popup = comp.Find("div.mud-picker-inline-paper");
+            popup.GetAttribute("role").Should().Be("dialog");
+            popup.GetAttribute("aria-label").Should().Be("Start date");
+            popup.HasAttribute("aria-labelledby").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A popup with nothing to name it is not announced as a dialog, because an unnamed dialog tells the user nothing.
+        /// </summary>
+        [Test]
+        public async Task Open_PopupWithoutNameIsNotADialog()
+        {
+            var comp = await OpenPicker();
+
+            var popup = comp.Find("div.mud-picker-inline-paper");
+            popup.HasAttribute("role").Should().BeFalse();
+            popup.HasAttribute("aria-label").Should().BeFalse();
+            popup.HasAttribute("aria-labelledby").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// PopupAriaLabel names the popup ahead of the field label.
+        /// </summary>
+        [Test]
+        public async Task Open_PopupAriaLabelWinsOverLabel()
+        {
+            var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDatePicker>();
+            await picker.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Label, "Start date")
+                .Add(x => x.PopupAriaLabel, "Choose the start date"));
+
+            var popup = comp.Find("div.mud-picker-inline-paper");
+            popup.GetAttribute("role").Should().Be("dialog");
+            popup.GetAttribute("aria-label").Should().Be("Choose the start date");
+        }
+
+        /// <summary>
+        /// PopupAriaLabelledBy names the popup by an element and suppresses the text fallbacks.
+        /// </summary>
+        [Test]
+        public async Task Open_PopupAriaLabelledByWinsOverEverything()
+        {
+            var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDatePicker>();
+            await picker.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Label, "Start date")
+                .Add(x => x.PopupAriaLabel, "Ignored")
+                .Add(x => x.PopupAriaLabelledBy, "trip-heading"));
+
+            var popup = comp.Find("div.mud-picker-inline-paper");
+            popup.GetAttribute("role").Should().Be("dialog");
+            popup.GetAttribute("aria-labelledby").Should().Be("trip-heading");
+            popup.HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The dialog variant is announced as a named dialog but not as modal, because the picker has no focus trap to back that claim.
+        /// </summary>
+        [Test]
+        public async Task DialogVariant_PopupIsNamedDialogWithoutModalClaim()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Dialog)
+                .Add(x => x.Label, "Start date"));
+
+            await comp.InvokeAsync(() => comp.Instance.OpenAsync());
+
+            var popup = comp.Find("div.mud-overlay-dialog div.mud-picker-paper");
+            popup.GetAttribute("role").Should().Be("dialog");
+            popup.GetAttribute("aria-label").Should().Be("Start date");
+            popup.HasAttribute("aria-modal").Should().BeFalse();
         }
     }
 }

@@ -14,10 +14,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Provides a simple way to select time values.
+    /// Selects a time of day from a clock shown in a drop-down, dialog, or inline.
     /// </summary>
-    /// <seealso cref="MudDatePicker"/>
-    /// <seealso cref="MudDateRangePicker"/>
+    /// <seealso cref="MudDatePicker" />
+    /// <seealso cref="MudDateRangePicker" />
     public partial class MudTimePicker : MudPicker<TimeSpan?>
     {
         private OpenTo _currentView;
@@ -159,7 +159,9 @@ namespace MudBlazor
         /// <param name="suppressInteraction">When <c>true</c>, the change is treated as programmatic and does not mark the picker touched or fire <c>FieldChanged</c>.</param>
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue, bool suppressInteraction = false)
         {
-            if (_value != time)
+            // Text that fails to convert leaves the value null, so a null assignment looks like a no-op and the bad text would stick.
+            // Run it anyway while text remains, as MudDatePicker does.
+            if (_value != time || (time is null && !string.IsNullOrEmpty(Text)))
             {
                 if (!suppressInteraction)
                 {
@@ -169,6 +171,7 @@ namespace MudBlazor
                 _value = time;
                 if (updateValue)
                 {
+                    ResetConverterErrors();
                     await SetTextAsync(ConvertSet(_value), false);
                 }
 
@@ -469,6 +472,12 @@ namespace MudBlazor
         }
 
         protected ElementReference ClockElementReference { get; private set; }
+
+        // The clock prevents the browser context menu, and before .NET 10 Blazor only honors a handler-less preventDefault while some other contextmenu listener is registered on the page.
+        // The handler does nothing, so it must not render either.
+        private Action<MouseEventArgs> SuppressContextMenuHandler => _suppressContextMenuHandler ??= this.AsNonRenderingEventHandler<MouseEventArgs>(static _ => { });
+
+        private Action<MouseEventArgs>? _suppressContextMenuHandler;
 
         /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)

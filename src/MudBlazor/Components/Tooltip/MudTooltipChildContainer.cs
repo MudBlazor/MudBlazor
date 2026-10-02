@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Components.Rendering;
 namespace MudBlazor;
 
 /// <summary>
-/// This component is used to prevent re-rendering of the child content when the tooltip's internal state changes.
-/// It only re-renders when the parent component of the tooltip re-renders (signaled by UpdateCount).
+/// Renders its child content only when <see cref="UpdateCount"/> changes, so a host's internal state changes do not rebuild that content.
 /// </summary>
+/// <remarks>
+/// <see cref="MudTooltip"/> and <see cref="MudSelect{T}"/> increment the count when their own parent renders them.
+/// </remarks>
 public class MudTooltipChildContainer : IComponent
 {
     private int _lastUpdateCount;

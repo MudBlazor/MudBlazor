@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -36,8 +36,7 @@ window.mudDragAndDrop = {
     getDropZoneIdentifierOnPosition: (x, y) => {
         const elems = document.elementsFromPoint(x, y);
         // Use top-to-bottom hit testing so nested layouts still resolve the visually closest zone.
-        const dropZones = elems.filter(e => e.classList.contains('mud-drop-zone'));
-        const dropZone = dropZones[0];
+        const dropZone = elems.find(e => e.classList.contains('mud-drop-zone'));
         if (dropZone) {
             return dropZone.getAttribute('identifier') || "";
         }
@@ -51,8 +50,7 @@ window.mudDragAndDrop = {
 
         const elems = document.elementsFromPoint(x, y);
 
-        const dropItems = elems.filter(e => e.classList.contains('mud-drop-item') && e.id != id);
-        const dropItem = dropItems[0];
+        const dropItem = elems.find(e => e.classList.contains('mud-drop-item') && e.id != id);
         if (dropItem) {
             return dropItem.getAttribute('index') || "";
         }

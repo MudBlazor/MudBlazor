@@ -9,7 +9,7 @@ namespace MudBlazor;
 
 
 /// <summary>
-/// Represents the information related to a <see cref="MudDataGrid{T}.RowClick"/> event.
+/// Event data for the <see cref="MudDataGrid{T}.RowClick"/> event, carrying the clicked row item, its index, and the pointer coordinates.
 /// </summary>
 /// <typeparam name="T">The item managed by the <see cref="MudDataGrid{T}"/>.</typeparam>
 public class DataGridRowClickEventArgs<T> : EventArgs

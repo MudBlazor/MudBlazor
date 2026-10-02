@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for selecting date, time, and color values.
+    /// Base class for MudBlazor pickers such as <see cref="MudDatePicker"/>, <see cref="MudTimePicker"/>, and <see cref="MudColorPicker"/>.
     /// </summary>
     /// <typeparam name="T">The type of value being chosen.</typeparam>
     /// <seealso cref="MudPickerContent" />
@@ -25,6 +25,45 @@ namespace MudBlazor
         private bool _keyInterceptorObserving;
 
         internal string ElementId { get; } = Identifier.Create("picker");
+
+        /// <summary>
+        /// The element that names the popup: an explicit <see cref="PopupAriaLabelledBy"/>, else nothing.
+        /// </summary>
+        private string? GetPopupAriaLabelledBy()
+        {
+            return string.IsNullOrWhiteSpace(PopupAriaLabelledBy) ? null : PopupAriaLabelledBy;
+        }
+
+        /// <summary>
+        /// The text that names the popup when no element does: an explicit <see cref="PopupAriaLabel"/>, else the field label, else the placeholder.
+        /// </summary>
+        private string? GetPopupAriaLabel()
+        {
+            if (GetPopupAriaLabelledBy() is not null)
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(PopupAriaLabel))
+            {
+                return PopupAriaLabel;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Label))
+            {
+                return Label;
+            }
+
+            return string.IsNullOrWhiteSpace(Placeholder) ? null : Placeholder;
+        }
+
+        /// <summary>
+        /// The popup is announced as a dialog only when it has a name, since an unnamed dialog tells the user nothing.
+        /// </summary>
+        private string? GetPopupRole()
+        {
+            return GetPopupAriaLabelledBy() is not null || GetPopupAriaLabel() is not null ? "dialog" : null;
+        }
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -135,6 +174,26 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? Placeholder { get; set; }
+
+        /// <summary>
+        /// The accessible name announced for the popup.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which names the popup after <see cref="Label"/>, or <see cref="Placeholder"/> when there is no label. Without any of these the popup is not announced as a dialog.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? PopupAriaLabel { get; set; }
+
+        /// <summary>
+        /// The id of the element that names the popup.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Takes precedence over <see cref="PopupAriaLabel"/> and the field text.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? PopupAriaLabelledBy { get; set; }
 
         /// <summary>
         /// Occurs when this picker has opened.
@@ -669,7 +728,8 @@ namespace MudBlazor
                 .HookKeyDown(OnHandleKeyDownAsync)
                 .When(CanHandleKeys, builder => builder
                     .OnKeyDown("Backspace", HandleBackspaceAsync)
-                    .OnKeyDownAny(["Escape", "Tab"], () => CloseAsync(false))));
+                    .OnKeyDown("Escape", () => CloseAsync(false))
+                    .OnKeyDown("Tab", () => CloseAsync(Open && PickerActions == null))));
         }
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();

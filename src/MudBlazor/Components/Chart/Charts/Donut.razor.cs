@@ -6,8 +6,9 @@ using MudBlazor.Extensions;
 namespace MudBlazor.Charts
 {
     /// <summary>
-    /// Represents a chart which displays values as a percentage of a circle.
+    /// Donut chart that renders each value as a proportional segment of a ring with a hollow center.
     /// </summary>
+    /// <typeparam name="T">The numeric type of the values being charted.</typeparam>
     /// <seealso cref="Bar{T}"/>
     /// <seealso cref="Donut{T}"/>
     /// <seealso cref="Pie{T}"/>

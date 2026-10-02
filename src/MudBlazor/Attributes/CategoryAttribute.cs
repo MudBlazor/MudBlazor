@@ -3,7 +3,7 @@ namespace MudBlazor
 {
 
     /// <summary>
-    /// Specifies the name of the category in which to group the property of a MudBlazor component when displayed in the API documentation.
+    /// Groups a MudBlazor component parameter under a named category on its API documentation page.
     /// </summary>
     /// <remarks>
     /// Use this attribute together with the <see cref="Microsoft.AspNetCore.Components.ParameterAttribute"/>. <br/>

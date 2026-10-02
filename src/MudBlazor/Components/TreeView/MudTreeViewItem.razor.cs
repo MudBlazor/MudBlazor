@@ -367,6 +367,10 @@ namespace MudBlazor
 
         private bool _loading;
 
+        private bool? _renderedCheckBoxState;
+
+        private bool _hasRenderedCheckBoxState;
+
         private bool HasChildren()
         {
             return ChildContent != null
@@ -417,19 +421,66 @@ namespace MudBlazor
             _isServerLoaded = isLoaded;
         }
 
+        /// <summary>
+        /// Gets the tri-state checkbox value, remembering what was rendered.
+        /// </summary>
+        /// <remarks>
+        /// The value is derived from the sub-items, which can change without this item being told.
+        /// Remembering what was last rendered lets <see cref="UpdateSelectionStateCoreAsync"/> tell whether a new render would actually produce anything different.
+        /// </remarks>
         private bool? GetCheckBoxStateTriState()
         {
-            var allChildrenChecked = GetChildItemsRecursive().All(x => x.GetState<bool>(nameof(Selected)));
-            var noChildrenChecked = GetChildItemsRecursive().All(x => !x.GetState<bool>(nameof(Selected)));
-            if (allChildrenChecked && _selectedState)
+            var state = ComputeCheckBoxStateTriState();
+            _renderedCheckBoxState = state;
+            _hasRenderedCheckBoxState = true;
+
+            return state;
+        }
+
+        private bool? ComputeCheckBoxStateTriState()
+        {
+            var hasSelectedDescendant = _selectedState.Value;
+            var hasUnselectedDescendant = !_selectedState.Value;
+
+            foreach (var child in _childItems)
             {
-                return true;
+                Traverse(child);
+                if (hasSelectedDescendant && hasUnselectedDescendant)
+                {
+                    break;
+                }
             }
-            if (noChildrenChecked && !_selectedState)
+
+            if (hasSelectedDescendant && hasUnselectedDescendant)
             {
-                return false;
+                return null;
             }
-            return null;
+
+            return hasSelectedDescendant;
+
+            void Traverse(MudTreeViewItem<T> item)
+            {
+                if (item.GetState<bool>(nameof(Selected)))
+                {
+                    hasSelectedDescendant = true;
+                }
+                else
+                {
+                    hasUnselectedDescendant = true;
+                }
+
+                if (!hasSelectedDescendant || !hasUnselectedDescendant)
+                {
+                    foreach (var child in item._childItems)
+                    {
+                        Traverse(child);
+                        if (hasSelectedDescendant && hasUnselectedDescendant)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -554,6 +605,11 @@ namespace MudBlazor
             await OnClick.InvokeAsync(ev);
         }
 
+        private void OnArrowDoubleClick()
+        {
+            /* Don't do anything on purpose. Fixes #9419 */
+        }
+
         private async Task OnItemDoubleClickedAsync(MouseEventArgs ev)
         {
             if (HasChildren() && GetExpandOnDoubleClick())
@@ -611,7 +667,7 @@ namespace MudBlazor
 
         private void RemoveChild(MudTreeViewItem<T> item) => _childItems.Remove(item);
 
-        internal List<MudTreeViewItem<T>> ChildItems => _childItems.ToList();
+        internal IReadOnlyCollection<MudTreeViewItem<T>> ChildItems => _childItems;
 
         private bool HasIcon => (_expandedState && (!string.IsNullOrWhiteSpace(IconExpanded) || !string.IsNullOrWhiteSpace(Icon))) || (!_expandedState && !string.IsNullOrWhiteSpace(Icon));
 
@@ -660,29 +716,59 @@ namespace MudBlazor
         /// </summary>
         /// <param name="selectedValues"></param>
         /// <returns>True if the item or any sub-item changed from non-selected to selected.</returns>
-        internal async Task<bool> UpdateSelectionStateAsync(HashSet<T> selectedValues)
+        /// <param name="forceRender">Renders every item regardless of whether its state changed.</param>
+        internal async Task<bool> UpdateSelectionStateAsync(HashSet<T> selectedValues, bool forceRender = false)
+        {
+            var (selectedBecameTrue, _) = await UpdateSelectionStateCoreAsync(selectedValues, forceRender);
+
+            return selectedBecameTrue;
+        }
+
+        /// <summary>
+        /// Updates the selection state of this item and its sub-items, reporting whether anything actually changed.
+        /// </summary>
+        /// <remarks>
+        /// The tree walks every item whenever the selection changes, and it does so once per item while the tree mounts.
+        /// Rendering unconditionally therefore rebuilt every item twice just to mount, and rebuilt the whole tree when a single item was clicked.
+        /// Multi-selection also renders when the tri-state checkbox no longer matches what was rendered, because that value is derived from the sub-items and can go stale without this item's own state changing.
+        /// </remarks>
+        /// <param name="selectedValues">The values that are currently selected.</param>
+        /// <param name="forceRender">
+        /// Renders every item regardless of whether its state changed.
+        /// The tree root is cascaded with a fixed value, so items are never told when a root parameter such as <see cref="MudTreeView{T}.Disabled"/> changes, and an item whose own parameters are unchanged is not re-rendered by the framework either.
+        /// Walking the tree is what pushes those values down, so a walk caused by a root parameter change has to render even where nothing about the selection moved.
+        /// </param>
+        /// <returns>Whether the item or any sub-item became selected, and whether anything rendered by this item changed.</returns>
+        private async Task<(bool SelectedBecameTrue, bool Changed)> UpdateSelectionStateCoreAsync(HashSet<T> selectedValues, bool forceRender)
         {
             if (MudTreeRoot == null)
             {
-                return false;
+                return (false, false);
             }
             var value = GetValue();
             var selected = value is not null && selectedValues.Contains(value);
-            var selectedBecameTrue = selected && !_selectedState;
+            var wasSelected = _selectedState.Value;
+            var selectedBecameTrue = selected && !wasSelected;
             await _selectedState.SetValueAsync(selected);
+            var changed = selected != wasSelected;
             // since the tree view doesn't know our children we need to take care of updating them
             bool childSelectedBecameTrue = false;
             foreach (var child in _childItems)
             {
-                var becameTrue = await child.UpdateSelectionStateAsync(selectedValues);
+                var (becameTrue, childChanged) = await child.UpdateSelectionStateCoreAsync(selectedValues, forceRender);
                 childSelectedBecameTrue = childSelectedBecameTrue || becameTrue;
+                changed = changed || childChanged;
             }
             if (GetAutoExpand() && CanExpand && childSelectedBecameTrue && !_expandedState)
             {
                 await _expandedState.SetValueAsync(true);
+                changed = true;
             }
-            StateHasChanged();
-            return selectedBecameTrue || childSelectedBecameTrue;
+            if (forceRender || changed || (MultiSelection && _hasRenderedCheckBoxState && ComputeCheckBoxStateTriState() != _renderedCheckBoxState))
+            {
+                StateHasChanged();
+            }
+            return (selectedBecameTrue || childSelectedBecameTrue, changed);
         }
 
         /// <summary>

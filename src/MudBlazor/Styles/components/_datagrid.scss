@@ -5,6 +5,34 @@
     position: relative;
   }
 
+  .grid-dropzone {
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+    height: 100% !important;
+    width: 2rem;
+    z-index: 100;
+    background-color: transparent;
+  }
+
+  .dropzone-pre {
+    inset-inline-start: -2.5rem;
+    inset-inline-end: auto;
+  }
+
+  .dropzone-post {
+    inset-inline-end: 0;
+    inset-inline-start: auto;
+  }
+
+  .dropzone-post > div {
+    height: 20rem;
+  }
+
+  .dropzone-pre > div {
+    height: 20rem;
+  }
+
   .drop-allowed {
     color: var(--mud-palette-success);
   }
@@ -17,6 +45,10 @@
     transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     opacity: 0;
     cursor: grab;
+  }
+
+  .overflow-visible-table .mud-table-root th {
+    overflow: visible !important;
   }
 
   .mud-table-cell {
@@ -241,5 +273,11 @@
 
   .mud-drop-item-preview-start {
     z-index: 0;
+  }
+}
+
+.mud-data-grid-columns-panel-dense {
+  .mud-icon-button-size-small {
+    padding: 2px;
   }
 }

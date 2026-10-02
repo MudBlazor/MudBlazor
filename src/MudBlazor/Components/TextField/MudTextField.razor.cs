@@ -108,14 +108,17 @@ namespace MudBlazor
         private bool HasMask => _mask is not null;
 
         /// <inheritdoc />
-        public override ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override ValueTask FocusAsync(bool preventScroll)
         {
             if (!HasMask)
             {
-                return InputReference.FocusAsync();
+                return InputReference.FocusAsync(preventScroll);
             }
 
-            return _maskReference.FocusAsync();
+            return _maskReference.FocusAsync(preventScroll);
         }
 
         /// <inheritdoc />

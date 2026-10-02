@@ -29,6 +29,17 @@ public class TextTests : BunitTest
         comp.MarkupMatches("""<p class="mud-typography mud-typography-body1"></p>""");
     }
 
+    /// <summary>
+    /// The typography element renders its content.
+    /// </summary>
+    [Test]
+    public void Text_RendersTypographyElementWithContent()
+    {
+        var comp = Context.Render<MudText>(parameters => parameters.AddChildContent("Flat white"));
+
+        comp.Find("p.mud-typography").TextContent.Should().Be("Flat white");
+    }
+
     [Test]
     public void UserAttributes_ShouldBeSplattedOnTheRootElement()
     {

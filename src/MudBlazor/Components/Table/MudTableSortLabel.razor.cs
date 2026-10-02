@@ -13,6 +13,8 @@ namespace MudBlazor
     {
         private SortDirection _direction = SortDirection.None;
 
+        private bool _firstSort = true;
+
         protected string Classname =>
             new CssBuilder("mud-table-sort-label")
                 .AddClass("mud-clickable", Enabled)
@@ -164,9 +166,12 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
+            var firstSort = _firstSort;
+            _firstSort = false;
+
             return SortDirection switch
             {
-                SortDirection.None => UpdateSortDirectionAsync(InitialSortDirection == SortDirection.None ? SortDirection.Ascending : InitialSortDirection),
+                SortDirection.None => UpdateSortDirectionAsync(InitialSortDirection == SortDirection.None || !firstSort ? SortDirection.Ascending : InitialSortDirection),
                 SortDirection.Ascending => UpdateSortDirectionAsync(SortDirection.Descending),
                 SortDirection.Descending => UpdateSortDirectionAsync(Table?.AllowUnsorted ?? false
                     ? SortDirection.None

@@ -154,5 +154,31 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain("mud-expanded");
             comp.Markup.Should().Contain("aria-hidden=\"false\"");
         }
+
+        /// <summary>
+        /// A caller-supplied id used to be erased by the trailing null literal, leaving the nav landmark with no id at all.
+        /// </summary>
+        [Test]
+        public void NavMenu_Should_KeepUserSuppliedId()
+        {
+            var comp = Context.Render<MudNavMenu>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "id", "main-nav" } }));
+
+            comp.Find("nav").GetAttribute("id").Should().Be("main-nav");
+        }
+
+        /// <summary>
+        /// Inside a nav group the generated menu id must still win so the toggle button's aria-controls stays wired.
+        /// </summary>
+        [Test]
+        public void NavMenu_Should_KeepGeneratedMenuIdInsideNavGroup()
+        {
+            var comp = Context.Render<MudNavGroup>(parameters => parameters
+                .Add(p => p.Expanded, true));
+
+            var controls = comp.Find("button").GetAttribute("aria-controls");
+            controls.Should().NotBeNullOrEmpty();
+            comp.FindAll("nav").Should().Contain(nav => nav.GetAttribute("id") == controls);
+        }
     }
 }

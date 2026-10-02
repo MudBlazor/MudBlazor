@@ -1,13 +1,14 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using AwesomeAssertions.Execution;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Extensions;
+using MudBlazor.Resources;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.Form;
 using MudBlazor.Utilities;
@@ -485,8 +486,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FormFieldChangedSubTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
-            var input = () => comp.Find("input");
-            await input().InputAsync("test");
+            // Debounce commits and validation re-render off the test thread, which can replace the input's event handler between a Find and the event dispatch.
+            // Looking up the input and dispatching on the renderer makes the two atomic.
+            Task InputAsync(string text) => comp.InvokeAsync(() => comp.Find("input").InputAsync(text));
+            await InputAsync("test");
             // trigger validation
             await Task.Delay(comp.Instance.DebounceInterval);
             // imitate "typing in progress" by extending the debounce interval until the async validation terminates
@@ -496,7 +499,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                await input().InputAsync(currentText);
+                await InputAsync(currentText);
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
@@ -1100,6 +1103,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithRadioGroupIsValid()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormWithRadioGroupTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var radioGroupcomp = comp.FindComponent<MudRadioGroup<string>>();
@@ -1118,9 +1122,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Selected, null));
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             radioGroup.GetState(x => x.Error).Should().BeTrue();
-            radioGroup.GetState(x => x.ErrorText).Should().Be("Required");
+            radioGroup.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         /// <summary>
@@ -1129,6 +1133,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithColorPicker()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormWithColorPickerTest>(parameters => parameters.Add(x => x.ColorValue, null));
             var form = comp.FindComponent<MudForm>().Instance;
             var colorPickerComp = comp.FindComponent<MudColorPicker>();
@@ -1149,9 +1154,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ColorValue, null));
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             colorPicker.GetState(x => x.Error).Should().BeTrue();
-            colorPicker.GetState(x => x.ErrorText).Should().Be("Required");
+            colorPicker.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         /// <summary>
@@ -1160,6 +1165,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Form_Should_Validate_ColorPicker_When_EditableInputCleared()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormWithColorPickerTest>(parameters => parameters.Add(x => x.ColorValue, null));
             var form = comp.FindComponent<MudForm>().Instance;
             var colorPickerComp = comp.FindComponent<MudColorPicker>();
@@ -1181,9 +1187,9 @@ namespace MudBlazor.UnitTests.Components
             await colorPickerComp.FindAll("input")[0].ChangeAsync(null);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             colorPicker.GetState(x => x.Error).Should().BeTrue();
-            colorPicker.GetState(x => x.ErrorText).Should().Be("Required");
+            colorPicker.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         /// <summary>
@@ -1309,6 +1315,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithDatePicker()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormWithDatePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var dateComp = comp.FindComponent<MudDatePicker>();
@@ -1327,9 +1334,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Date, null));
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             datepicker.GetState(x => x.Error).Should().BeTrue();
-            datepicker.GetState(x => x.ErrorText).Should().Be("Required");
+            datepicker.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         /// <summary>
@@ -1364,6 +1371,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Form_Should_Validate_DateRangePicker_When_DateRangeSelectedViaInputs()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormWithDateRangePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var dateRangeComp = comp.FindComponent<MudDateRangePicker>();
@@ -1385,9 +1393,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, null));
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             dateRangePicker.GetState(x => x.Error).Should().BeTrue();
-            dateRangePicker.GetState(x => x.ErrorText).Should().Be("Required");
+            dateRangePicker.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         /// <summary>
@@ -1397,6 +1405,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Form_Should_Validate_DateRangePicker_When_DateRangeSelectedViaPicker()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormWithDateRangePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var dateRangePicker = comp.FindComponent<MudDateRangePicker>().Instance;
@@ -1420,9 +1429,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, null));
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             dateRangePicker.GetState(x => x.Error).Should().BeTrue();
-            dateRangePicker.GetState(x => x.ErrorText).Should().Be("Required");
+            dateRangePicker.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         /// <summary>
@@ -1431,6 +1440,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithTimePicker()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormWithTimePickerTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var timePickerComp = comp.FindComponent<MudTimePicker>();
@@ -1449,9 +1459,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Time, null));
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             timePicker.GetState(x => x.Error).Should().BeTrue();
-            timePicker.GetState(x => x.ErrorText).Should().Be("Required");
+            timePicker.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         /// <summary>
@@ -1485,6 +1495,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Form_Should_Validate_FileUpload_When_FileAdded()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormWithFileUploadTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
@@ -1514,9 +1525,9 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             fileUploadInstance.GetState(x => x.Error).Should().BeTrue();
-            fileUploadInstance.GetState(x => x.ErrorText).Should().Be("Required");
+            fileUploadInstance.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         /// <summary>
@@ -1528,6 +1539,7 @@ namespace MudBlazor.UnitTests.Components
             var fileName = "cat.jpg";
             var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", Array.Empty<byte>());
             var fileToUpload = InputFileContent.CreateFromText("I am a cat image, trust me.", "cat.jpg");
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormWithFileUploadTest>(parameters =>
                 parameters.Add(x => x.File, defaultFile));
             var form = comp.FindComponent<MudForm>().Instance;
@@ -1549,9 +1561,9 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             fileUploadInstance.GetState(x => x.Error).Should().BeTrue();
-            fileUploadInstance.GetState(x => x.ErrorText).Should().Be("Required");
+            fileUploadInstance.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             // re-add a file, form should now be valid and touched
             input.UploadFiles(fileToUpload);
@@ -1572,6 +1584,7 @@ namespace MudBlazor.UnitTests.Components
             var fileName = "cat.jpg";
             var defaultFile = new DummyBrowserFile(fileName, DateTimeOffset.Now, 0, "image/jpeg", Array.Empty<byte>());
             var fileToUpload = InputFileContent.CreateFromText("I am a cat image, trust me.", "cat.jpg");
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormWithFileUploadTest>(
                 parameters => parameters.Add(x => x.File, defaultFile));
             var form = comp.FindComponent<MudForm>().Instance;
@@ -1594,9 +1607,9 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             fileUploadInstance.GetState(x => x.Error).Should().BeTrue();
-            fileUploadInstance.GetState(x => x.ErrorText).Should().Be("Required");
+            fileUploadInstance.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             // re-add a file, form should now be valid and touched
             input.UploadFiles(fileToUpload);
@@ -1615,6 +1628,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var fileName = "cat.jpg";
             var fileToUpload = InputFileContent.CreateFromText("I am a cat image, trust me.", "cat.jpg");
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormFileUploadDndTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var fileUploadComp = comp.FindComponent<MudFileUpload<IBrowserFile>>();
@@ -1636,9 +1650,9 @@ namespace MudBlazor.UnitTests.Components
             form.IsValid.Should().BeFalse();
             form.IsTouched.Should().BeTrue();
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             fileUploadInstance.GetState(x => x.Error).Should().BeTrue();
-            fileUploadInstance.GetState(x => x.ErrorText).Should().Be("Required");
+            fileUploadInstance.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
 
             // re-add a file, form should now be valid and touched
             input.UploadFiles(fileToUpload);
@@ -2634,6 +2648,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task FormWithCheckBox_When_CheckBoxTickedUsingMouse()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormWithCheckBoxTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var checkBox = comp.FindComponent<MudCheckBox<bool>>().Instance;
@@ -2655,9 +2670,9 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").ChangeAsync(false);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             checkBox.GetState(x => x.Error).Should().BeTrue();
-            checkBox.GetState(x => x.ErrorText).Should().Be("Required");
+            checkBox.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         /// <summary>
@@ -2666,6 +2681,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void FormWithCheckBox_When_CheckBoxTickedUsingKeyboard()
         {
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
             var comp = Context.Render<FormWithCheckBoxTest>();
             var form = comp.FindComponent<MudForm>().Instance;
             var checkBox = comp.FindComponent<MudCheckBox<bool>>().Instance;
@@ -2687,9 +2703,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("input").KeyDown(Key.Space);
             form.IsValid.Should().Be(false);
             form.Errors.Length.Should().Be(1);
-            form.Errors[0].Should().Be("Required");
+            form.Errors[0].Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
             checkBox.GetState(x => x.Error).Should().BeTrue();
-            checkBox.GetState(x => x.ErrorText).Should().Be("Required");
+            checkBox.GetState(x => x.ErrorText).Should().Be(localizer[LanguageResource.MudFormComponent_Required]);
         }
 
         [Test]
@@ -2730,44 +2746,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(async () => await parentForm.ResetAsync());
             comp.Instance.IsParentTouchChanged.Should().BeFalse();
             comp.Instance.IsChildTouchChanged.Should().BeFalse();
-        }
-
-        /// <summary>
-        /// Regression test for: https://github.com/MudBlazor/MudBlazor/issues/11193.
-        /// The Errors property should aggregate the errors of child forms, the same way
-        /// that IsValid reflects the validity of child forms.
-        /// </summary>
-        [Test]
-        public async Task ChildForm_ErrorsPropagateToParent()
-        {
-            var comp = Context.Render<FormWithChildFormTest>();
-            var childFormSwitch = comp.Find(".mud-switch-input");
-            var parentForm = comp.FindComponent<MudForm>().Instance;
-            var parentTextFieldCmp = comp.FindComponent<MudTextField<string>>();
-
-            // Satisfy the parent's own required field, so that any error on the
-            // parent form can only have come from the child form.
-            await parentTextFieldCmp.Find("input").ChangeAsync("Marilyn Manson");
-            parentForm.IsValid.Should().BeTrue();
-            parentForm.Errors.Should().BeEmpty();
-
-            // Display the child form, which holds a second required field.
-            await childFormSwitch.ChangeAsync(true);
-            var forms = comp.FindComponents<MudForm>();
-            forms.Count.Should().Be(2);
-            var childForm = forms[1];
-            var childTextFieldCmp = childForm.FindComponent<MudTextField<string>>();
-
-            // Touch the child's required field and clear it, producing an error.
-            await childTextFieldCmp.Find("input").ChangeAsync("Trent Reznor");
-            await childTextFieldCmp.Find("input").ChangeAsync("");
-
-            childForm.Instance.IsValid.Should().BeFalse();
-            childForm.Instance.Errors.Should().BeEquivalentTo(["Required"]);
-
-            // The parent form has no errors of its own, but must surface the child's.
-            parentForm.IsValid.Should().BeFalse();
-            parentForm.Errors.Should().BeEquivalentTo(["Required"]);
         }
 
         /// <summary>

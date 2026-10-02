@@ -10,10 +10,12 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a single cell in a <see cref="HeatMap{T}"/>. You can override the value from the <see cref="ChartSeries{T}"/> 
-    /// or provide a custom graphic to be shown inside the cell. You should provide a width and height for the custom graphic you are including
-    /// so the Heat Map can resize it dynamically. 
+    /// Overrides a single cell in a <see cref="HeatMap{T}" /> chart, replacing the value from the <see cref="ChartSeries{T}" /> or rendering custom SVG content inside the cell.
     /// </summary>
+    /// <remarks>
+    /// Provide a width and height for custom content so the heat map can resize it dynamically.
+    /// </remarks>
+    /// <typeparam name="T">The numeric type of the cell value.</typeparam>
     public partial class MudHeatMapCell<T> : MudComponentBase where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         [CascadingParameter]

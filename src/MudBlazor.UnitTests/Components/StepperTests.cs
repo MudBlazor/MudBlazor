@@ -55,6 +55,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void ActionsClass_AppliesCustomClass_Issue13478()
+        {
+            var stepper = Context.Render<MudStepper>(self =>
+            {
+                self.Add(x => x.ActionsClass, "sticky-actions");
+            });
+
+            stepper.Find(".mud-stepper-actions").ClassList.Should().Contain("sticky-actions");
+        }
+
+        [Test]
         public async Task StepperStepContext_ShouldBeAvailableInsideChildContent()
         {
             MudStepContext? firstStepContext = null;

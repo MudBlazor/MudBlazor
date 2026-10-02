@@ -1,14 +1,14 @@
 ﻿<MudPopoverProvider />
 
 <MudTooltip Text="@TooltipTextContent" Touch="@EnableTouch" Placement="Placement.Start">
-	<MudButton id="sample-button">My Button</MudButton>
+    <MudButton id="sample-button">My Button</MudButton>
 </MudTooltip>
 
 @code {
-	[Parameter]
+    [Parameter]
     public string? TooltipTextContent { get; set; }
 
-	[Parameter]
+    [Parameter]
     public bool EnableTouch { get; set; }
 }
 
