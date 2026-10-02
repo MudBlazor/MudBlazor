@@ -458,8 +458,7 @@ namespace MudBlazor
                 ? EventCallback.Factory.Create<PointerEventArgs>(this, this.AsNonRenderingEventHandler(OnPointerEnterAsync))
                 : default;
 
-        // _closeOnPointerLeave as well as the parameter, so a drawer already opened by hover still closes when the
-        // pointer leaves even if OpenMiniOnHover is switched off while it is open.
+        // _closeOnPointerLeave as well as the parameter, so a drawer already opened by hover still closes when the pointer leaves even if OpenMiniOnHover is switched off while it is open.
         private EventCallback<PointerEventArgs> PointerLeaveCallback =>
             EffectiveVariant == DrawerVariant.Mini && (OpenMiniOnHover || _closeOnPointerLeave)
                 ? EventCallback.Factory.Create<PointerEventArgs>(this, this.AsNonRenderingEventHandler(OnPointerLeaveAsync))
