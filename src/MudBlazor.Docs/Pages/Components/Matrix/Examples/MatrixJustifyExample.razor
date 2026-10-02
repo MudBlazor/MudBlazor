@@ -1,0 +1,67 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(Units.Auto(), Units.Fr())">
+    <MudMatrixItem ColumnSpan="2">
+        <MudStack Style="margin-left: 124px;" Spacing="1">
+            <MudToggleGroup Class="mud-width-full mb-3" T="bool" @bind-Value="_horizantalFlow" Color="Color.Primary" CheckMark="true" SelectionMode="SelectionMode.SingleSelection">
+                <MudToggleItem Value="false" Text="Vertical Flow" />
+                <MudToggleItem Value="true" Text="Horizantal Flow" />
+            </MudToggleGroup>
+            <MudText Color="Color.Secondary" Typo="Typo.overline">Column Justify</MudText>
+            <MudToggleGroup Class="mud-width-full" T="MatrixJustify" @bind-Value="_justifyColumns" Color="Color.Secondary" CheckMark="true" SelectionMode="SelectionMode.SingleSelection">
+                <MudToggleItem Value="MatrixJustify.Start" Text="Start" />
+                <MudToggleItem Value="MatrixJustify.Center" Text="Center" />
+                <MudToggleItem Value="MatrixJustify.End" Text="End" />
+                <MudToggleItem Value="MatrixJustify.SpaceAround" Text="Space around" />
+                <MudToggleItem Value="MatrixJustify.SpaceBetween" Text="Space betweem" />
+                <MudToggleItem Value="MatrixJustify.SpaceEvenly" Text="Space evenly" />
+            </MudToggleGroup>
+        </MudStack>
+    </MudMatrixItem>
+
+    <MudMatrixItem>
+        <MudStack>
+            <MudText Color="Color.Tertiary" Typo="Typo.overline">Row Justify</MudText>
+            <MudToggleGroup Class="mud-height-full" T="MatrixJustify" @bind-Value="_justifyRows" Color="Color.Tertiary" Vertical="true" CheckMark="true" SelectionMode="SelectionMode.SingleSelection" Style="width: 100px;">
+                <MudToggleItem Value="MatrixJustify.Start" Text="Start" />
+                <MudToggleItem Value="MatrixJustify.Center" Text="Center" />
+                <MudToggleItem Value="MatrixJustify.End" Text="End" />
+                <MudToggleItem Value="MatrixJustify.SpaceAround" Text="Space around" />
+                <MudToggleItem Value="MatrixJustify.SpaceBetween" Text="Space betweem" />
+                <MudToggleItem Value="MatrixJustify.SpaceEvenly" Text="Space evenly" />
+            </MudToggleGroup>
+        </MudStack>
+     </MudMatrixItem>
+
+     <MudMatrixItem>
+        <MudMatrix ExplicitColumns="_explicitMatrix"
+                   ExplicitRows="_explicitMatrix"
+                   HorizontalFlow="_horizantalFlow"
+                   JustifyColumns="_justifyColumns"
+                   JustifyRows="_justifyRows"
+                   Class="overflow-auto"
+                   Style="height: 500px;">
+
+            @for (int i = 0; i < _itemCount; i++)
+            {
+                int index = i + 1;
+                <MudMatrixItem>
+                    <MudPaper Outlined="true" Class="mud-width-full mud-height-full d-flex align-center justify-center">
+                        <MudText Typo="Typo.caption">@index</MudText>
+                    </MudPaper>
+                </MudMatrixItem>
+            }
+        </MudMatrix>
+     </MudMatrixItem>
+</MudMatrix>
+
+@code {
+    int _itemCount = 5;
+
+    bool _horizantalFlow = false;
+
+    MatrixJustify _justifyColumns;
+    MatrixJustify _justifyRows;
+
+    ExplicitMatrix _explicitMatrix = ExplicitMatrix.Fit(Units.Pct(10));
+}
