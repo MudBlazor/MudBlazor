@@ -20,18 +20,17 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 
 namespace PrimitiveCalculator
 {
     public class Expression
     {
-        private List<Operation> _operations = new();
-        private SimpleParser _parser;
-        private bool _mustConsumeClosingBracket;
+        private readonly SimpleParser _parser;
+
+        /// <summary>
+        /// Gets the evaluated value of this expression.
+        /// </summary>
         public double? Value { get; set; }
 
         public Expression(string expression)
@@ -51,157 +50,167 @@ namespace PrimitiveCalculator
 
         public double Eval()
         {
-            var op_count = -1;
-            while (_parser.HasNext)
+            if (Value.HasValue)
             {
-                if (_operations.Count > op_count)
-                    op_count = _operations.Count;
-                else
-                    break;
-                _parser.ConsumeAny(' ');
-                if (_parser.NextIs('('))
-                {
-                    _parser.Skip(1);
-                    var exp = new Expression(_parser) { _mustConsumeClosingBracket = true };
-                    exp.Eval();
-                    var op = new Operation { Operator = "+", Expression = exp };
-                    _operations.Add(op);
-                }
-                else if (_parser.NextIs("+-*^/%".ToCharArray()))
-                {
-                    var op = new Operation() { Operator = _parser.NextChar.ToString() };
-                    _parser.Skip(1);
-                    _parser.ConsumeAny(' ');
-                    if (_parser.NextIs('('))
-                    {
-                        _parser.Skip(1);
-                        var exp = new Expression(_parser);
-                        exp._mustConsumeClosingBracket = true;
-                        op.Expression = exp;
-                        exp.Eval();
-                    }
-                    else
-                        op.Expression = new Expression(ReadNumber(_parser));
-                    _operations.Add(op);
-                }
-                else if (_parser.NextIs("0.123456789".ToCharArray()))
-                {
-                    _operations.Add(new Operation { Operator = "+", Expression = new Expression(ReadNumber(_parser)) });
-                }
-                else if (_parser.NextIs(')') && _mustConsumeClosingBracket)
-                {
-                    _parser.Skip(1);
-                    break;
-                }
+                return Value.Value;
             }
-            if (!_operations.Any())
-                return double.NaN;
-            var first_op = _operations.First();
-            if (string.IsNullOrEmpty(first_op.Operator))
-                first_op.Operator = "+";
-            else if (first_op.Operator == "-")
+
+            try
             {
-                first_op.Operator = "+";
-                first_op.Expression.Value = (first_op.Expression.Value ?? double.NaN) * (-1);
-            }
-            if (_operations.Count == 1)
-            {
-                var op = _operations[0];
-                var val = op.Expression.Value;
-                if (val == null)
+                SkipWhitespace();
+                if (!_parser.HasNext)
+                {
                     return double.NaN;
-                if (op.Operator == "-")
-                    Value = -1.0 * val.Value;
-                else
-                    Value = val;
-            }
-            else if (_operations.Count == 2)
-            {
-                Value = _operations[1].Apply(_operations[0].Apply(0));
-            }
-            else
-            {
-                if (Precedence(_operations[0].Operator) > 0)
-                    return double.NaN; // only + and minus may be first operator!
-                // repeated contraction by precedence
-                while (_operations.Count > 1)
-                {
-                    var highest_op = _operations.Select(x => x.Operator).OrderByDescending(x => Precedence(x)).First();
-                    if (Precedence(highest_op) == 0)
-                    {
-                        double sum = 0;
-                        foreach (var op in _operations)
-                            sum = op.Apply(sum);
-                        return sum;
-                    }
-                    var ops = new List<Operation>();
-                    var i = 0;
-                    foreach (var op in _operations)
-                    {
-                        if (op.Operator == highest_op)
-                        {
-                            var last_op = ops[ops.Count - 1];
-                            last_op.Expression.Value = op.Apply(last_op.Expression.Value ?? double.NaN);
-                            i++;
-                            continue;
-                        }
-                        ops.Add(op);
-                        i++;
-                    }
-                    _operations = ops;
                 }
-                return _operations[0].Apply(0);
+
+                var result = ParseExpression();
+                SkipWhitespace();
+                if (_parser.HasNext)
+                {
+                    return double.NaN;
+                }
+
+                Value = result;
+                return result;
             }
-            return Value ?? double.NaN;
-        }
-
-        private double ReadNumber(SimpleParser parser)
-        {
-            var factor = parser.NextIs('-') ? -1 : 1;
-            parser.ConsumeAny('+', '-');
-            if (!double.TryParse(parser.ConsumeAny("0.123456789".ToCharArray()), NumberStyles.Any, CultureInfo.InvariantCulture, out var result))
-                return double.NaN;
-            return factor * result;
-        }
-
-        private int Precedence(string op)
-        {
-            switch (op)
+            catch
             {
-                case "+":
-                case "-":
-                    return 0;
-                case "*":
-                case "/":
-                case "%":
-                    return 1;
-                case "^":
-                    return 2;
+                return double.NaN;
             }
-            return -1;
+        }
+
+        private void SkipWhitespace()
+        {
+            _parser.ConsumeAny(' ');
+        }
+
+        private double ParseExpression()
+        {
+            var value = ParseTerm();
+
+            while (true)
+            {
+                SkipWhitespace();
+                if (_parser.NextIs('+'))
+                {
+                    _parser.Skip(1);
+                    value += ParseTerm();
+                    continue;
+                }
+
+                if (_parser.NextIs('-'))
+                {
+                    _parser.Skip(1);
+                    value -= ParseTerm();
+                    continue;
+                }
+
+                break;
+            }
+
+            return value;
+        }
+
+        private double ParseTerm()
+        {
+            var value = ParsePower();
+
+            while (true)
+            {
+                SkipWhitespace();
+                if (_parser.NextIs('*'))
+                {
+                    _parser.Skip(1);
+                    value *= ParsePower();
+                    continue;
+                }
+
+                if (_parser.NextIs('/'))
+                {
+                    _parser.Skip(1);
+                    value /= ParsePower();
+                    continue;
+                }
+
+                if (_parser.NextIs('%'))
+                {
+                    _parser.Skip(1);
+                    value %= ParsePower();
+                    continue;
+                }
+
+                break;
+            }
+
+            return value;
+        }
+
+        private double ParsePower()
+        {
+            var value = ParseFactor();
+
+            while (true)
+            {
+                SkipWhitespace();
+                if (!_parser.NextIs('^'))
+                {
+                    break;
+                }
+
+                _parser.Skip(1);
+                value = Math.Pow(value, ParseFactor());
+            }
+
+            return value;
+        }
+
+        private double ParseFactor()
+        {
+            SkipWhitespace();
+
+            if (_parser.NextIs('+'))
+            {
+                _parser.Skip(1);
+                return ParseFactor();
+            }
+
+            if (_parser.NextIs('-'))
+            {
+                _parser.Skip(1);
+                return -ParseFactor();
+            }
+
+            if (_parser.NextIs('('))
+            {
+                _parser.Skip(1);
+                var inner = ParseExpression();
+                SkipWhitespace();
+                if (!_parser.NextIs(')'))
+                {
+                    throw new FormatException("Missing closing bracket.");
+                }
+
+                _parser.Skip(1);
+                return inner;
+            }
+
+            return ReadNumber(_parser);
+        }
+
+        private static double ReadNumber(SimpleParser parser)
+        {
+            if (!char.IsDigit(parser.NextChar ?? '\0') && !parser.NextIs('.'))
+            {
+                throw new FormatException("Expected number.");
+            }
+
+            var token = parser.ConsumeAny("0123456789.".ToCharArray());
+            if (!double.TryParse(token, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var result))
+            {
+                return double.NaN;
+            }
+
+            return result;
         }
     }
-
-    public class Operation
-    {
-        public string Operator { get; set; }
-        public Expression Expression { get; set; }
-
-        public double Apply(double v)
-        {
-            if (Expression == null)
-                return double.NaN;
-            return Operator switch
-            {
-                "+" => (v + Expression.Value) ?? double.NaN,
-                "-" => (v - Expression.Value) ?? double.NaN,
-                "*" => (v * Expression.Value) ?? double.NaN,
-                "/" => (v / Expression.Value) ?? double.NaN,
-                "%" => (v % Expression.Value) ?? double.NaN,
-                "^" => Math.Pow(v, Expression.Value ?? double.NaN),
-                _ => double.NaN,
-            };
-        }
-    }
-
 }
