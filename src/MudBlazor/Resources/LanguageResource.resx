@@ -159,6 +159,9 @@
   <data name="MudDataGrid_False" xml:space="preserve">
     <value>false</value>
   </data>
+  <data name="MudDataGrid_All" xml:space="preserve">
+    <value>all</value>
+  </data>
   <data name="MudDataGrid_Unsort" xml:space="preserve">
     <value>Unsort</value>
   </data>
