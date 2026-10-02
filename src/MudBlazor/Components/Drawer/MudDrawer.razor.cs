@@ -23,7 +23,10 @@ namespace MudBlazor
         private ElementReference _contentRef;
         private bool _closeOnPointerLeave;
         private bool _initial = true;
+        private bool _isBrowserViewportSubscribed;
+        private bool _lastNotifiedBreakpointInitialized;
         private bool _keepInitialState;
+        private Breakpoint _lastNotifiedBreakpoint = Breakpoint.None;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
 
         /// <summary>
@@ -160,6 +163,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
+
+        /// <summary>
+        /// Occurs when the current browser breakpoint observed by this drawer has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<Breakpoint> OnBreakpointChanged { get; set; }
 
         /// <summary>
         /// The content within this drawer.
@@ -305,15 +314,15 @@ namespace MudBlazor
             if (firstRender)
             {
                 await UpdateHeightAsync();
-                if (!_disposed)
-                {
-                    _ = BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
-                }
-
                 if (string.IsNullOrWhiteSpace(Height) && Anchor is Anchor.Bottom or Anchor.Top)
                 {
                     StateHasChanged();
                 }
+            }
+
+            if (!_disposed)
+            {
+                await UpdateBrowserViewportSubscriptionAsync();
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -327,7 +336,7 @@ namespace MudBlazor
 
                 DrawerContainer?.Remove(this);
 
-                if (IsJSRuntimeAvailable)
+                if (IsJSRuntimeAvailable && _isBrowserViewportSubscribed)
                 {
                     await BrowserViewportService.UnsubscribeAsync(this);
                 }
@@ -375,6 +384,24 @@ namespace MudBlazor
         private void OnRightToLeftParameterChanged() => DrawerContainerUpdate();
 
         private void DrawerContainerUpdate() => (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
+
+        private async Task UpdateBrowserViewportSubscriptionAsync()
+        {
+            var shouldSubscribe = ShouldSubscribeToBrowserViewport();
+
+            if (shouldSubscribe && !_isBrowserViewportSubscribed)
+            {
+                await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+                _isBrowserViewportSubscribed = true;
+            }
+            else if (!shouldSubscribe && _isBrowserViewportSubscribed)
+            {
+                await BrowserViewportService.UnsubscribeAsync(this);
+                _isBrowserViewportSubscribed = false;
+            }
+        }
+
+        private bool ShouldSubscribeToBrowserViewport() => IsResponsiveOrMini() || OnBreakpointChanged.HasDelegate;
 
         private Task CloseDrawerAsync()
         {
@@ -491,6 +518,11 @@ namespace MudBlazor
 
         async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
         {
+            if (!_lastNotifiedBreakpointInitialized || _lastNotifiedBreakpoint != browserViewportEventArgs.Breakpoint)
+            {
+                await NotifyBreakpointChangedAsync(browserViewportEventArgs.Breakpoint);
+            }
+
             if (browserViewportEventArgs.IsImmediate)
             {
                 var previousEffectiveVariant = EffectiveVariant;
@@ -556,6 +588,17 @@ namespace MudBlazor
                 Breakpoint.XlAndUp or Breakpoint.XlAndDown => Breakpoint.Xl,
                 _ => breakpoint,
             };
+        }
+
+        private async Task NotifyBreakpointChangedAsync(Breakpoint breakpoint)
+        {
+            _lastNotifiedBreakpoint = breakpoint;
+            _lastNotifiedBreakpointInitialized = true;
+
+            if (OnBreakpointChanged.HasDelegate)
+            {
+                await OnBreakpointChanged.InvokeAsync(breakpoint);
+            }
         }
     }
 }
