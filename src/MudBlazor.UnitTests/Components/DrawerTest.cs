@@ -305,8 +305,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MiniSmallScreen_OpenMiniOnHover_DoesNotWireHover()
         {
-            // Below the breakpoint the drawer behaves like Temporary, so hover must not open it - and the handler
-            // is not wired at all, which on Blazor Server is what keeps the pointer off the circuit.
+            // Below the breakpoint the drawer behaves like Temporary, so hover must not open it - and the handler is not wired at all, which on Blazor Server is what keeps the pointer off the circuit.
             _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xs));
             var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
                 .Add(x => x.Variant, DrawerVariant.Mini)
@@ -327,8 +326,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(DrawerVariant.Mini)]
         public void HoverHandlersAreNotWiredWhenHoverCannotOpenTheDrawer(DrawerVariant variant)
         {
-            // Nothing but a mini drawer with OpenMiniOnHover can act on these, and a handler that is registered
-            // anyway costs a Blazor Server round-trip on every pointer enter and leave of the drawer.
+            // Nothing but a mini drawer with OpenMiniOnHover can act on these, and a handler that is registered anyway costs a Blazor Server round-trip on every pointer enter and leave of the drawer.
             // DrawerVariant.Mini is included without OpenMiniOnHover, which is the default.
             _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
             var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
