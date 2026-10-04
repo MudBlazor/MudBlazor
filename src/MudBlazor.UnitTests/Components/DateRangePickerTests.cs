@@ -925,6 +925,50 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// ResetAsync clears the range and moves the calendar off the cleared range's month back to the current month (#9692).
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ResetAsync_ShouldReturnPickerMonthToCurrentMonth()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2024, 8, 22, 12, 0, 0, DateTimeKind.Utc));
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.DateRange, new DateRange(new DateTime(2021, 3, 10), new DateTime(2021, 3, 15))));
+            var picker = comp.Instance;
+            picker.PickerMonth.Should().Be(new DateTime(2021, 3, 1));
+
+            await comp.InvokeAsync(() => picker.ResetAsync());
+
+            picker.DateRange.Should().BeNull();
+            picker.PickerMonth.Should().Be(new DateTime(2024, 8, 1));
+        }
+
+        /// <summary>
+        /// ResetAsync returns the calendar to StartMonth when one is set, not to the month the user navigated to.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ResetAsync_ShouldReturnPickerMonthToStartMonth()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2024, 8, 22, 12, 0, 0, DateTimeKind.Utc));
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.StartMonth, new DateTime(2023, 5, 1)));
+            var picker = comp.Instance;
+            picker.PickerMonth.Should().Be(new DateTime(2023, 5, 1));
+
+            await comp.FindAll("button.mud-picker-nav-button-next")[0].ClickAsync();
+            picker.PickerMonth.Should().Be(new DateTime(2023, 6, 1));
+
+            await comp.InvokeAsync(() => picker.ResetAsync());
+
+            picker.PickerMonth.Should().Be(new DateTime(2023, 5, 1));
+            comp.FindAll("button.mud-button-month")[0].TrimmedText().Should().Be("2023 May");
+        }
+
+        /// <summary>
         /// Typing a range into the inputs updates Text as well as DateRange, even though the range input binds its Value rather than its Text.
         /// </summary>
         [Test]

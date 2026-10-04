@@ -522,7 +522,12 @@ namespace MudBlazor
             _secondDate = null;
         }
 
-        protected override Task ResetValueAsync() => ClearAsync();
+        protected override async Task ResetValueAsync()
+        {
+            await ClearAsync();
+            // Clearing keeps the month the user was looking at, but a reset should reopen the calendar where an empty picker starts.
+            PickerMonth = GetCalendarStartOfMonth();
+        }
 
         public override async Task ClearAsync(bool close = true)
         {
