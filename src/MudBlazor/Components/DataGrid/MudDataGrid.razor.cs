@@ -60,6 +60,11 @@ namespace MudBlazor
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
         private readonly ParameterState<bool> _expandSingleRowState;
 
+        // The SelectedItems set the grid last settled on, received or published, and a copy of its contents.
+        // An edit made to that same set in place keeps the reference, so only the copy can reveal it.
+        private HashSet<T>? _selectedItemsSnapshotSource;
+        private HashSet<T>? _selectedItemsSnapshot;
+
         private const string PrePrefix = "__mud_dg_pre__:";
         private const string PostPrefix = "__mud_dg_post__:";
 
@@ -1682,7 +1687,28 @@ namespace MudBlazor
         public override async Task SetParametersAsync(ParameterView parameters)
         {
             var sortModeBefore = SortMode;
+
+            // A bound set that is edited in place arrives as the same reference, so the parameter state sees no change.
+            // Compare it with the snapshot rather than the live Selection, which can hold a change the grid has not published yet or one made directly to Selection.
+            if (parameters.TryGetValue<HashSet<T>?>(nameof(SelectedItems), out var selectedItems)
+                && selectedItems is not null
+                && _selectedItemsSnapshot is not null
+                && ReferenceEquals(selectedItems, _selectedItemsState.Value)
+                && ReferenceEquals(selectedItems, _selectedItemsSnapshotSource)
+                && !_selectedItemsSnapshot.SetEquals(selectedItems))
+            {
+                Selection.Clear();
+                Selection.UnionWith(selectedItems);
+                _selectedItemsSnapshotSource = null;
+            }
+
             await base.SetParametersAsync(parameters);
+
+            if (!ReferenceEquals(_selectedItemsState.Value, _selectedItemsSnapshotSource))
+            {
+                _selectedItemsSnapshotSource = _selectedItemsState.Value;
+                _selectedItemsSnapshot = _selectedItemsSnapshotSource is null ? null : new HashSet<T>(_selectedItemsSnapshotSource, Comparer);
+            }
 
             VirtualItemsProviderInitialize();
             if (_isFirstRendered && parameters.TryGetValue(nameof(SortMode), out SortMode sortMode) && sortMode != sortModeBefore)

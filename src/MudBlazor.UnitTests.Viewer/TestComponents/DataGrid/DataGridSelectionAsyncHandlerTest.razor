@@ -1,0 +1,35 @@
+﻿@* Test component for a parent render while the grid awaits an async SelectedItemChanged handler *@
+
+<MudDataGrid T="Model" Items="@Items" MultiSelection="true" @bind-SelectedItems="SelectedItems" SelectedItemChanged="OnSelectedItemChangedAsync">
+    <Columns>
+        <SelectColumn T="Model" />
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "A row selection should survive a parent render that happens while SelectedItemChanged is still running.";
+
+    public List<Model> Items { get; } =
+    [
+        new Model("Sam", 56),
+        new Model("Alicia", 54),
+        new Model("Ira", 27)
+    ];
+
+    public HashSet<Model> SelectedItems { get; set; } = [];
+
+    /// <summary>
+    /// Holds SelectedItemChanged open until the test completes it.
+    /// </summary>
+    public TaskCompletionSource Gate { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    public void Refresh() => StateHasChanged();
+
+    private async Task OnSelectedItemChangedAsync(Model item)
+    {
+        await Gate.Task;
+    }
+
+    public record Model(string Name, int Age);
+}

@@ -37,6 +37,16 @@
         StateHasChanged();
     }
 
+    public void RemoveSelectedInPlace()
+    {
+        // Mutates both the list and the bound set without reassigning either reference.
+        Items.RemoveAll(SelectedItems.Contains);
+        SelectedItems.Clear();
+        StateHasChanged();
+    }
+
+    public void Refresh() => StateHasChanged();
+
     public void ClearItems()
     {
         Items = [];

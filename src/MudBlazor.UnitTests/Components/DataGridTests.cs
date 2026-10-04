@@ -9000,6 +9000,110 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => dataGrid.Instance.GetState(x => x.SelectedItems).Count.Should().Be(0));
         }
 
+        /// <summary>
+        /// Removing selected rows and clearing the bound SelectedItems set in place deselects them, so the next click selects only that row (#13896).
+        /// </summary>
+        [Test]
+        public async Task DataGrid_SelectedItems_ShouldResyncWhenBoundSetClearedInPlace()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupListTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupListTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await dataGrid.FindAll(".mud-table-body input.mud-checkbox-input")[0].ChangeAsync(true);
+            await dataGrid.FindAll(".mud-table-body input.mud-checkbox-input")[1].ChangeAsync(true);
+            testComponent.SelectedItems.Should().HaveCount(2);
+
+            await comp.InvokeAsync(testComponent.RemoveSelectedInPlace);
+
+            dataGrid.FindAll(".mud-table-body .mud-table-row").Should().HaveCount(2);
+            dataGrid.Instance.Selection.Should().BeEmpty();
+            dataGrid.FindAll(".mud-table-body input.mud-checkbox-input").Should().AllSatisfy(x => x.IsChecked().Should().BeFalse());
+
+            await dataGrid.FindAll(".mud-table-body input.mud-checkbox-input")[0].ChangeAsync(true);
+
+            var remaining = testComponent.Items[0];
+            testComponent.SelectedItems.Should().BeEquivalentTo([remaining]);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo([remaining]);
+            dataGrid.FindAll("thead input.mud-checkbox-input")[0].IsChecked().Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Clearing the grid's Selection directly is not undone by a parent render that passes the unchanged bound SelectedItems set.
+        /// </summary>
+        [Test]
+        public async Task DataGrid_Selection_DirectClearSurvivesParentRender()
+        {
+            var comp = Context.Render<DataGridSelectionCleanupListTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionCleanupListTest.Model>>();
+            var testComponent = comp.Instance;
+
+            await dataGrid.FindAll(".mud-table-body input.mud-checkbox-input")[0].ChangeAsync(true);
+            await dataGrid.FindAll(".mud-table-body input.mud-checkbox-input")[1].ChangeAsync(true);
+            testComponent.SelectedItems.Should().HaveCount(2);
+
+            await comp.InvokeAsync(() => dataGrid.Instance.Selection.Clear());
+            await comp.InvokeAsync(testComponent.Refresh);
+
+            dataGrid.Instance.Selection.Should().BeEmpty();
+            dataGrid.FindAll(".mud-table-body input.mud-checkbox-input").Should().AllSatisfy(x => x.IsChecked().Should().BeFalse());
+        }
+
+        /// <summary>
+        /// A row selection survives a parent render that happens while an async SelectedItemChanged handler is still running.
+        /// </summary>
+        [Test]
+        [CancelAfter(10000)]
+        public async Task DataGridSelection_SurvivesParentRenderDuringAsyncSelectedItemChanged()
+        {
+            var comp = Context.Render<DataGridSelectionAsyncHandlerTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridSelectionAsyncHandlerTest.Model>>();
+            var testComponent = comp.Instance;
+            var item = testComponent.Items[0];
+
+            // The grid has added the row to Selection but is still awaiting SelectedItemChanged, so SelectedItems is not published yet.
+            var click = dataGrid.FindAll(".mud-table-body input.mud-checkbox-input")[0].ChangeAsync(true);
+            dataGrid.Instance.Selection.Should().BeEquivalentTo([item]);
+            testComponent.SelectedItems.Should().BeEmpty();
+
+            await comp.InvokeAsync(testComponent.Refresh);
+            dataGrid.Instance.Selection.Should().BeEquivalentTo([item]);
+
+            testComponent.Gate.SetResult();
+            await click.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            testComponent.SelectedItems.Should().BeEquivalentTo([item]);
+            dataGrid.Instance.Selection.Should().BeEquivalentTo([item]);
+            dataGrid.FindAll(".mud-table-body input.mud-checkbox-input")[0].IsChecked().Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Re-supplying an unchanged one-way SelectedItems set keeps a selection made by clicking a row.
+        /// </summary>
+        [Test]
+        public async Task DataGrid_SelectedItems_OneWaySetKeepsClickedSelectionOnRerender()
+        {
+            var items = new List<TestModel1> { new("Sam", 56), new("Alicia", 54) };
+            var selectedItems = new HashSet<TestModel1>();
+            var dataGrid = Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.SelectedItems, selectedItems)
+                .Add(x => x.Columns, builder =>
+                {
+                    builder.OpenComponent<SelectColumn<TestModel1>>(0);
+                    builder.CloseComponent();
+                }));
+
+            await dataGrid.FindAll(".mud-table-body input.mud-checkbox-input")[0].ChangeAsync(true);
+            dataGrid.Instance.Selection.Should().BeEquivalentTo([items[0]]);
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedItems, selectedItems));
+
+            dataGrid.Instance.Selection.Should().BeEquivalentTo([items[0]]);
+            dataGrid.FindAll(".mud-table-body input.mud-checkbox-input")[0].IsChecked().Should().BeTrue();
+        }
+
         #endregion
 
         #region Hierarchy Cleanup Tests (ObservableCollection)
