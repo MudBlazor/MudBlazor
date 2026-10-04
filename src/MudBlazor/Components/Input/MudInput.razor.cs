@@ -283,8 +283,8 @@ namespace MudBlazor
         /// Returns <c>UserAttributes</c> unchanged for every render except hidden-input rendering with child content.
         /// In that render <see cref="GetDisplayUserAttributes"/> already moves the consumer attributes to the focusable display element.
         /// Splatting them onto the hidden input as well would duplicate selectors such as <c>data-testid</c> across two elements.
-        /// The hidden input keeps only <c>id</c> and <c>name</c>.
-        /// It is still the element that posts the value in a native form, so it needs <c>name</c>.
+        /// The hidden input keeps only <c>id</c>, <c>name</c>, and <c>form</c>.
+        /// It is still the element that posts the value in a native form, so it needs <c>name</c> and <c>form</c>.
         /// The explicit <c>id</c> attribute after the splat takes precedence, so keeping <c>id</c> here only preserves the previous attribute set.
         /// </remarks>
         private Dictionary<string, object?> GetInputElementUserAttributes()
@@ -297,7 +297,9 @@ namespace MudBlazor
             var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
             foreach (var (key, value) in UserAttributes)
             {
-                if (string.Equals(key, "id", StringComparison.OrdinalIgnoreCase) || string.Equals(key, "name", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(key, "id", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(key, "name", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(key, "form", StringComparison.OrdinalIgnoreCase))
                 {
                     attributes[key] = value;
                 }

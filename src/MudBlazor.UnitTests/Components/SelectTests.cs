@@ -2292,6 +2292,11 @@ namespace MudBlazor.UnitTests.Components
             var element = comp.FindAll("[data-testid='vehicle-select']").Should().ContainSingle().Subject;
             element.TagName.Should().Be("DIV");
             element.GetAttribute("tabindex").Should().Be("0");
+
+            // The hidden input still posts the value in a native form, so it keeps the form-posting attributes.
+            var hiddenInput = comp.Find("input[type='hidden']");
+            hiddenInput.GetAttribute("name").Should().Be("vehicle");
+            hiddenInput.GetAttribute("form").Should().Be("order-form");
         }
 
         /// <summary>
