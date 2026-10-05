@@ -9104,6 +9104,95 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-body input.mud-checkbox-input")[0].IsChecked().Should().BeTrue();
         }
 
+        /// <summary>
+        /// Editing the bound SelectedItems set in place and setting SelectedItem to a row it now contains keeps that row selected.
+        /// </summary>
+        [Test]
+        public async Task DataGrid_SelectedItems_InPlaceEditWithSelectedItemKeepsRowSelected()
+        {
+            var items = new List<TestModel1> { new("Sam", 56), new("Alicia", 54) };
+            var selectedItems = new HashSet<TestModel1> { items[0] };
+            var dataGrid = Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.SelectedItems, selectedItems)
+                .Add(x => x.Columns, builder =>
+                {
+                    builder.OpenComponent<SelectColumn<TestModel1>>(0);
+                    builder.CloseComponent();
+                }));
+            dataGrid.Instance.Selection.Should().BeEquivalentTo([items[0]]);
+
+            selectedItems.Clear();
+            selectedItems.Add(items[1]);
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedItems, selectedItems)
+                .Add(x => x.SelectedItem, items[1]));
+
+            dataGrid.Instance.Selection.Should().BeEquivalentTo([items[1]]);
+            dataGrid.Instance.GetState(x => x.SelectedItems).Should().BeEquivalentTo([items[1]]);
+            dataGrid.FindAll(".mud-table-body input.mud-checkbox-input")[1].IsChecked().Should().BeTrue();
+        }
+
+        /// <summary>
+        /// After a Comparer change that keeps the selection count, an in-place edit is compared with the new comparer.
+        /// </summary>
+        [Test]
+        public async Task DataGrid_SelectedItems_InPlaceEditAfterComparerChangeUsesNewComparer()
+        {
+            var items = new List<string> { "a", "A", "b" };
+            var selectedItems = new HashSet<string> { "a" };
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.Comparer, StringComparer.OrdinalIgnoreCase)
+                .Add(x => x.SelectedItems, selectedItems)
+                .Add(x => x.Columns, builder =>
+                {
+                    builder.OpenComponent<SelectColumn<string>>(0);
+                    builder.CloseComponent();
+                }));
+
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Comparer, StringComparer.Ordinal)
+                .Add(x => x.SelectedItems, selectedItems));
+            dataGrid.Instance.Selection.Should().BeEquivalentTo(["a"]);
+
+            selectedItems.Remove("a");
+            selectedItems.Add("A");
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedItems, selectedItems));
+
+            dataGrid.Instance.Selection.Should().BeEquivalentTo(["A"]);
+        }
+
+        /// <summary>
+        /// An in-place edit that arrives in the same render as a Comparer change is compared with the new comparer.
+        /// </summary>
+        [Test]
+        public async Task DataGrid_SelectedItems_InPlaceEditWithComparerChangeUsesNewComparer()
+        {
+            var items = new List<string> { "a", "A", "b" };
+            var selectedItems = new HashSet<string> { "a" };
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.Comparer, StringComparer.OrdinalIgnoreCase)
+                .Add(x => x.SelectedItems, selectedItems)
+                .Add(x => x.Columns, builder =>
+                {
+                    builder.OpenComponent<SelectColumn<string>>(0);
+                    builder.CloseComponent();
+                }));
+
+            selectedItems.Remove("a");
+            selectedItems.Add("A");
+            await dataGrid.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Comparer, StringComparer.Ordinal)
+                .Add(x => x.SelectedItems, selectedItems));
+
+            dataGrid.Instance.Selection.Should().BeEquivalentTo(["A"]);
+        }
+
         #endregion
 
         #region Hierarchy Cleanup Tests (ObservableCollection)

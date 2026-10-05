@@ -65,6 +65,9 @@ namespace MudBlazor
         private HashSet<T>? _selectedItemsSnapshotSource;
         private HashSet<T>? _selectedItemsSnapshot;
 
+        // True while the change handlers of a parameter pass run after that pass resynced Selection from an in-place edit.
+        private bool _selectedItemsResynced;
+
         private const string PrePrefix = "__mud_dg_pre__:";
         private const string PostPrefix = "__mud_dg_post__:";
 
@@ -1690,19 +1693,38 @@ namespace MudBlazor
 
             // A bound set that is edited in place arrives as the same reference, so the parameter state sees no change.
             // Compare it with the snapshot rather than the live Selection, which can hold a change the grid has not published yet or one made directly to Selection.
+            var resynced = false;
             if (parameters.TryGetValue<HashSet<T>?>(nameof(SelectedItems), out var selectedItems)
                 && selectedItems is not null
                 && _selectedItemsSnapshot is not null
                 && ReferenceEquals(selectedItems, _selectedItemsState.Value)
-                && ReferenceEquals(selectedItems, _selectedItemsSnapshotSource)
-                && !_selectedItemsSnapshot.SetEquals(selectedItems))
+                && ReferenceEquals(selectedItems, _selectedItemsSnapshotSource))
             {
-                Selection.Clear();
-                Selection.UnionWith(selectedItems);
-                _selectedItemsSnapshotSource = null;
+                // A Comparer arriving in the same pass decides equality from now on, so compare with it instead of the one the snapshot was built with.
+                var snapshot = parameters.TryGetValue<IEqualityComparer<T>?>(nameof(Comparer), out var comparer) && !ReferenceEquals(comparer, Comparer)
+                    ? new HashSet<T>(_selectedItemsSnapshot, comparer)
+                    : _selectedItemsSnapshot;
+
+                if (!snapshot.SetEquals(selectedItems))
+                {
+                    Selection.Clear();
+                    Selection.UnionWith(selectedItems);
+                    _selectedItemsSnapshotSource = null;
+                    resynced = true;
+                }
             }
 
-            await base.SetParametersAsync(parameters);
+            // A change handler can await a callback that renders the parent, which runs a nested pass, so restore the outer pass's value afterwards.
+            var outerResynced = _selectedItemsResynced;
+            _selectedItemsResynced = resynced;
+            try
+            {
+                await base.SetParametersAsync(parameters);
+            }
+            finally
+            {
+                _selectedItemsResynced = outerResynced;
+            }
 
             if (!ReferenceEquals(_selectedItemsState.Value, _selectedItemsSnapshotSource))
             {
@@ -1741,8 +1763,13 @@ namespace MudBlazor
                 Selection.Clear();
             }
 
-            // add new item to Selection
-            if (!Selection.Remove(args.Value))
+            // When the bound set was edited in place in this same pass, Selection already reflects it and may contain this row.
+            // Toggling would then deselect the row the parent just chose, so select it instead.
+            if (_selectedItemsResynced)
+            {
+                Selection.Add(args.Value);
+            }
+            else if (!Selection.Remove(args.Value))
             {
                 Selection.Add(args.Value);
             }
@@ -1773,6 +1800,9 @@ namespace MudBlazor
             Selection = new HashSet<T>(Selection, args.Value);
             _openHierarchies = new HashSet<T>(_openHierarchies, args.Value);
             _initialExpansions = new HashSet<T>(_initialExpansions, args.Value);
+
+            // The snapshot compares with the comparer it was built with, so retake it after this parameter pass.
+            _selectedItemsSnapshotSource = null;
 
             // A coarser comparer collapses entries that were previously distinct, which silently drops rows from the selection.
             // Publish that, otherwise the bound SelectedItems keeps contents the grid can no longer hold.
