@@ -303,9 +303,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public async Task MiniSmallScreen_OpenMiniOnHover_DoesNotOpen()
+        public void MiniSmallScreen_OpenMiniOnHover_DoesNotWireHover()
         {
-            // Below the breakpoint the drawer behaves like Temporary, so hover must not open it.
+            // Below the breakpoint the drawer behaves like Temporary, so hover must not open it - and the handler is not wired at all, which on Blazor Server is what keeps the pointer off the circuit.
             _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xs));
             var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
                 .Add(x => x.Variant, DrawerVariant.Mini)
@@ -313,8 +313,31 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.Drawer.Open.Should().BeFalse();
 
-            await comp.Find("aside.mud-drawer").TriggerEventAsync("onpointerenter", new PointerEventArgs());
+            var aside = comp.Find("aside.mud-drawer");
+            Assert.ThrowsAsync<MissingEventHandlerException>(async () =>
+                await aside.TriggerEventAsync("onpointerenter", new PointerEventArgs()));
             comp.Instance.Drawer.Open.Should().BeFalse();
+        }
+
+        [Test]
+        [TestCase(DrawerVariant.Responsive)]
+        [TestCase(DrawerVariant.Persistent)]
+        [TestCase(DrawerVariant.Temporary)]
+        [TestCase(DrawerVariant.Mini)]
+        public void HoverHandlersAreNotWiredWhenHoverCannotOpenTheDrawer(DrawerVariant variant)
+        {
+            // Nothing but a mini drawer with OpenMiniOnHover can act on these, and a handler that is registered anyway costs a Blazor Server round-trip on every pointer enter and leave of the drawer.
+            // DrawerVariant.Mini is included without OpenMiniOnHover, which is the default.
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Variant, variant));
+
+            var aside = comp.Find("aside.mud-drawer");
+
+            Assert.ThrowsAsync<MissingEventHandlerException>(async () =>
+                await aside.TriggerEventAsync("onpointerenter", new PointerEventArgs()));
+            Assert.ThrowsAsync<MissingEventHandlerException>(async () =>
+                await aside.TriggerEventAsync("onpointerleave", new PointerEventArgs()));
         }
 
         [Test]
