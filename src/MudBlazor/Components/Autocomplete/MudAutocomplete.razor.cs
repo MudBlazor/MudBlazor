@@ -30,6 +30,7 @@ namespace MudBlazor
         private MudInput<string> _elementReference = null!;
         private CancellationTokenSource? _cancellationTokenSrc;
         private Task? _currentSearchTask;
+        private int _searchVersion;
         private ITimer? _debounceTimer;
         private T[]? _items;
         private bool[] _itemDisabled = [];
@@ -739,6 +740,9 @@ namespace MudBlazor
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(ReadText) || ReadText.Length < MinCharacters))
             {
+                // A search still running for longer text must not reopen the menu when it finishes.
+                _searchVersion++;
+                _opening = false;
                 Open = false;
                 StateHasChanged();
                 return;
@@ -747,6 +751,7 @@ namespace MudBlazor
             _opening = true;
 
             var searchedItems = Array.Empty<T>();
+            var searchVersion = ++_searchVersion;
             CancelToken();
 
             var wasFocused = _isFocused;
@@ -785,6 +790,13 @@ namespace MudBlazor
             catch (Exception e)
             {
                 Logger.LogWarning("The search function failed to return results: " + e.Message);
+            }
+
+            // A newer search started while this one ran, so these results are stale. Searches can finish out of order,
+            // and the newer search owns the items and the popover.
+            if (searchVersion != _searchVersion)
+            {
+                return;
             }
 
             await SetReturnedItemsCountAsync(searchedItems.Length);

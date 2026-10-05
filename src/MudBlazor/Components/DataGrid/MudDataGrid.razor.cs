@@ -1852,7 +1852,23 @@ namespace MudBlazor
 
                 Debug.Assert(ServerData is not null);
                 Debug.Assert(_serverDataCancellationTokenSource is not null);
-                _serverData = await ServerData(state, _serverDataCancellationTokenSource.Token);
+                var token = _serverDataCancellationTokenSource.Token;
+                GridData<T> serverData;
+                try
+                {
+                    serverData = await ServerData(state, token);
+                }
+                catch (OperationCanceledException) when (token.IsCancellationRequested)
+                {
+                    // A newer load cancelled this one, and it owns the data and the loading state.
+                    return;
+                }
+
+                // A newer load started while this one ran, so this data is stale. Loads can finish out of order.
+                if (token.IsCancellationRequested)
+                    return;
+
+                _serverData = serverData;
                 _currentRenderFilteredItemsCache = null;
 
                 if (CurrentPage * RowsPerPage > _serverData.TotalItems)

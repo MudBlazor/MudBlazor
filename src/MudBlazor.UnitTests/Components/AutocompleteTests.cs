@@ -1394,6 +1394,72 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A search that ignores its token and finishes after a newer one does not replace the newer search's results (#3722).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_OlderSearchFinishingLast_DoesNotReplaceNewerResults()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searches = 0;
+            var first = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var second = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) => ++searches == 1 ? first.Task : second.Task));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().Be(1));
+
+            await comp.Find("input").InputAsync("Apple Pie");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().Be(2));
+
+            second.SetResult(["Apple Pie"]);
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple Pie"));
+
+            first.SetResult(["Apple", "Apple Cider", "Apple Pie"]);
+            await comp.InvokeAsync(() => first.Task);
+
+            provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple Pie");
+        }
+
+        /// <summary>
+        /// A search still running when the text drops below MinCharacters does not reopen the menu when it finishes.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_SearchFinishingAfterTextDropsBelowMinCharacters_KeepsMenuClosed()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var searchStarted = false;
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.MinCharacters, 3)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    searchStarted = true;
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searchStarted.Should().BeTrue());
+
+            await comp.Find("input").InputAsync("Ap");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.InvokeAsync(() => { });
+
+            search.SetResult(["Apple"]);
+            await comp.InvokeAsync(() => search.Task);
+
+            provider.FindAll("div.mud-popover-open").Should().BeEmpty();
+            provider.FindAll("div.mud-list-item").Should().BeEmpty();
+        }
+
+        /// <summary>
         /// FullWidth adds the full-width class to the autocomplete.
         /// </summary>
         [Test]

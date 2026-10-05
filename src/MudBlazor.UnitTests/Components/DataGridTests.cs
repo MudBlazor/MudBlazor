@@ -949,6 +949,63 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
         }
 
+        /// <summary>
+        /// A ServerData load that ignores its token and finishes after a newer load does not replace the newer load's data (#3722).
+        /// </summary>
+        [Test]
+        public async Task DataGridServerData_OlderLoadFinishingLast_DoesNotReplaceNewerData()
+        {
+            var loads = new List<TaskCompletionSource<GridData<string>>>();
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.ServerData, (_, _) =>
+                {
+                    var load = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    loads.Add(load);
+                    return load.Task;
+                }));
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().HaveCount(1));
+
+            var reload = dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().HaveCount(2));
+
+            loads[1].SetResult(new GridData<string> { Items = ["Apple Pie"], TotalItems = 1 });
+            await reload;
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+
+            loads[0].SetResult(new GridData<string> { Items = ["Apple", "Apple Cider", "Apple Pie"], TotalItems = 3 });
+            await dataGrid.InvokeAsync(() => loads[0].Task);
+
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+            dataGrid.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A ServerData load that observes its token and is cancelled by a newer load ends quietly instead of throwing.
+        /// </summary>
+        [Test]
+        public async Task DataGridServerData_CancelledLoad_DoesNotThrow()
+        {
+            var loads = 0;
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.ServerData, async (_, token) =>
+                {
+                    if (++loads == 2)
+                        await Task.Delay(Timeout.Infinite, token);
+
+                    return new GridData<string> { Items = ["Apple Pie"], TotalItems = 1 };
+                }));
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().Be(1));
+
+            var cancelled = dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().Be(2));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+
+            Func<Task> awaitCancelled = () => cancelled;
+            await awaitCancelled.Should().NotThrowAsync();
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+            dataGrid.Instance.Loading.Should().BeFalse();
+        }
+
         [Test]
         public async Task DataGridPagination()
         {
