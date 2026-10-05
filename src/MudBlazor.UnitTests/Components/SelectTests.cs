@@ -2297,6 +2297,8 @@ namespace MudBlazor.UnitTests.Components
             var hiddenInput = comp.Find("input[type='hidden']");
             hiddenInput.GetAttribute("name").Should().Be("vehicle");
             hiddenInput.GetAttribute("form").Should().Be("order-form");
+            comp.FindAll("[name='vehicle']").Should().ContainSingle();
+            comp.FindAll("[form='order-form']").Should().ContainSingle();
         }
 
         /// <summary>

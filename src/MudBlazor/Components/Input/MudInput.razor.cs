@@ -257,6 +257,10 @@ namespace MudBlazor
             attributes.Remove("id");
             attributes.Remove("tabindex");
 
+            // The hidden input keeps name and form because it is what posts the value; on a div they do nothing but duplicate selectors.
+            attributes.Remove("name");
+            attributes.Remove("form");
+
             var describedBy = GetAriaDescribedByString();
             if (describedBy is not null)
             {
