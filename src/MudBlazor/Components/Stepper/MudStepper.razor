@@ -150,12 +150,12 @@
             {
                 <div class="@step.LabelContentClassname">
                     <MudText Typo="@(isActive ? Typo.subtitle2 : Typo.body2)" Class="mud-step-label-content-title">
-                        @step.Title
+                        @step.TitleState.Value
                     </MudText>
 
-                    @if (!string.IsNullOrEmpty(step.SecondaryText))
+                    @if (!string.IsNullOrEmpty(step.SecondaryTextState.Value))
                     {
-                        <MudText Typo="Typo.caption" Class="mud-step-label-content-secondary-text">@step.SecondaryText</MudText>
+                        <MudText Typo="Typo.caption" Class="mud-step-label-content-secondary-text">@step.SecondaryTextState.Value</MudText>
                     }
                 </div>
             }

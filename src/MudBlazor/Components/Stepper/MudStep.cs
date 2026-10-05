@@ -14,6 +14,12 @@ public class MudStep : MudComponentBase, IStepContext, IAsyncDisposable
     public MudStep()
     {
         using var registerScope = CreateRegisterScope();
+        TitleState = registerScope.RegisterParameter<string?>(nameof(Title))
+            .WithParameter(() => Title)
+            .WithChangeHandler(OnParameterChanged);
+        SecondaryTextState = registerScope.RegisterParameter<string?>(nameof(SecondaryText))
+            .WithParameter(() => SecondaryText)
+            .WithChangeHandler(OnParameterChanged);
         CompletedState = registerScope.RegisterParameter<bool>(nameof(Completed))
             .WithParameter(() => Completed)
             .WithEventCallback(() => CompletedChanged)
@@ -33,6 +39,8 @@ public class MudStep : MudComponentBase, IStepContext, IAsyncDisposable
     }
 
     private bool _disposed;
+    internal readonly ParameterState<string?> TitleState;
+    internal readonly ParameterState<string?> SecondaryTextState;
     internal readonly ParameterState<bool> CompletedState;
     internal readonly ParameterState<bool> DisabledState;
     internal readonly ParameterState<bool> HasErrorState;
@@ -85,7 +93,7 @@ public class MudStep : MudComponentBase, IStepContext, IAsyncDisposable
     /// <remarks>
     /// Defaults to <c>null</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.List.Appearance)]
     public string? Title { get; set; }
 
@@ -95,7 +103,7 @@ public class MudStep : MudComponentBase, IStepContext, IAsyncDisposable
     /// <remarks>
     /// Defaults to <c>null</c>.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.List.Appearance)]
     public string? SecondaryText { get; set; }
 
