@@ -969,6 +969,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// ResetAsync on a static picker clears a bound DateRange and the touched state, even though clearing the range on its own marks the picker as touched.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ResetAsync_Static_ShouldClearBoundDateRangeAndTouched()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2024, 8, 22, 12, 0, 0, DateTimeKind.Utc));
+            DateRange boundRange = null;
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Bind(p => p.DateRange, boundRange, range => boundRange = range));
+            var picker = comp.Instance;
+
+            await comp.SelectDateAsync("10");
+            await comp.SelectDateAsync("12");
+            boundRange.Should().Be(new DateRange(new DateTime(2024, 8, 10), new DateTime(2024, 8, 12)));
+            picker.Touched.Should().BeTrue();
+
+            await comp.InvokeAsync(() => picker.ResetAsync());
+
+            boundRange.Should().BeNull();
+            picker.DateRange.Should().BeNull();
+            picker.Touched.Should().BeFalse();
+        }
+
+        /// <summary>
         /// Typing a range into the inputs updates Text as well as DateRange, even though the range input binds its Value rather than its Text.
         /// </summary>
         [Test]

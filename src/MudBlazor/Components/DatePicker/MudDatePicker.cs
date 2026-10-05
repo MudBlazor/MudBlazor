@@ -289,6 +289,16 @@ namespace MudBlazor
             }
         }
 
+        protected override async Task ResetValueAsync()
+        {
+            // The base reset raises DateChanged only through the input field, which a static picker doesn't have, so clear through ClearAsync first.
+            await ClearAsync();
+            // The base reset still clears the input field, even inside the debounce window that ClearAsync is subject to, and puts Touched back to false.
+            await base.ResetValueAsync();
+            // Clearing keeps the month the user was looking at, but a reset should reopen the calendar where an empty picker starts.
+            ResetCalendarToStart();
+        }
+
         protected override string GetTitleDateString()
         {
             return FormatTitleDate(_selectedDate ?? Date);

@@ -826,23 +826,34 @@ namespace MudBlazor
             AdornmentAriaLabel ??= Localizer[Resources.LanguageResource.MudBaseDatePicker_Open];
             CurrentView = OpenTo;
 
-            if (HighlightedDate is null)
-            {
-                var culture = GetCulture();
-                var calendar = culture.Calendar;
-                var today = TimeProvider.GetLocalNow().Date;
-
-                var year = FixYear ?? calendar.GetYear(today);
-                var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);
-                var day = FixDay ?? 1;
-
-                if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date))
-                {
-                    HighlightedDate = date;
-                }
-            }
+            HighlightedDate ??= GetInitialHighlightedDate();
 
             _picker_month ??= GetCalendarStartOfMonth();
+        }
+
+        private DateTime? GetInitialHighlightedDate()
+        {
+            var culture = GetCulture();
+            var calendar = culture.Calendar;
+            var today = TimeProvider.GetLocalNow().Date;
+
+            var year = FixYear ?? calendar.GetYear(today);
+            var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);
+            var day = FixDay ?? 1;
+
+            return DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date)
+                ? date
+                : null;
+        }
+
+        /// <summary>
+        /// Returns the calendar to where an empty picker starts, after a reset has cleared the value.
+        /// </summary>
+        private protected void ResetCalendarToStart()
+        {
+            // The start month can come from the highlighted day, which carries FixYear and FixMonth, so restore it rather than keep a highlight left over from the cleared value or keyboard navigation.
+            HighlightedDate = GetInitialHighlightedDate();
+            PickerMonth = GetCalendarStartOfMonth();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
