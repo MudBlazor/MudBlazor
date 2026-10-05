@@ -2073,6 +2073,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.ResetAsync());
             datePicker.Date.Should().BeNull();
             datePicker.Text.Should().BeNullOrEmpty();
+            datePicker.Touched.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
 
             // input a date
             await datePickerComp.Find("input").ChangeAsync(testDateString);
@@ -2082,6 +2084,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("button.reset").ClickAsync();
             datePicker.Date.Should().BeNull();
             datePicker.Text.Should().BeNullOrEmpty();
+            datePicker.Touched.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
         }
 
         /// <summary>
@@ -2107,6 +2111,8 @@ namespace MudBlazor.UnitTests.Components
             // call reset directly
             await comp.InvokeAsync(() => form.ResetAsync());
             dateRangePicker.DateRange.Should().BeNull();
+            dateRangePicker.Touched.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
 
             // input a date
             await dateRangePickerComp.FindAll("input")[0].ChangeAsync(testStartDate.ToShortDateString());
@@ -2116,6 +2122,8 @@ namespace MudBlazor.UnitTests.Components
             // hit reset button
             await comp.Find("button.reset").ClickAsync();
             dateRangePicker.DateRange.Should().BeNull();
+            dateRangePicker.Touched.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
         }
 
         /// <summary>
