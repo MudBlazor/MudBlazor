@@ -4,6 +4,7 @@
 
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using MudBlazor.Interop;
 using NUnit.Framework;
@@ -12,6 +13,71 @@ namespace MudBlazor.UnitTests.Charts;
 
 public class ChartSizingTests : BunitTest
 {
+    /// <summary>
+    /// Pending and legacy overlays retain their local title margin until a host supplies a margin for issue #13606.
+    /// </summary>
+    [Test]
+    public async Task LineOverlay_PendingAndLegacyGridPreserveLocalMargin()
+    {
+        var host = Context.Render<AxisChartProbe>();
+        var context = Context.Render<CascadingValue<AxisGridData<double>?>>(parameters => parameters
+            .AddCascadingValue<IMudChart<double>>(host.Instance)
+            .Add(p => p.Value, null)
+            .AddChildContent<AxisChartProbe>(overlay => overlay
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>
+                {
+                    new() { Name = "Revenue", Data = new double[] { 40, 80 } }
+                })
+                .Add(p => p.ChartOptions, new LineChartOptions { YAxisTitle = "Revenue", ShowDataMarkers = true })));
+        var overlay = context.FindComponent<AxisChartProbe>();
+
+        overlay.Instance.IsOverlayChart.Should().BeTrue();
+        overlay.Instance.LocalStartSpace.Should().Be(50, "a pending overlay still reserves its minimum margin and title space");
+        host.Instance.SharedData.Should().BeNull();
+
+        await host.InvokeAsync(host.Instance.RenderPendingOverlay);
+
+        overlay.Instance.SharedData.Should().BeNull("an empty host must not fabricate shared grid data");
+        host.FindAll(".mud-charts-line-series path").Should().BeEmpty("the overlay waits for grid data before plotting");
+
+        await context.SetParametersAndRenderAsync(parameters => parameters
+            .Add(p => p.Value, new AxisGridData<double>(0, 5, 20, 700, 350)));
+
+        var content = Context.Render(host.Instance.OverlayContent!);
+        var markers = content.FindAll("circle.mud-chart-point:not([opacity])");
+        markers.Should().HaveCount(2);
+        markers[0].GetAttribute("cx").Should().Be("50", "legacy grid data preserves the overlay's own title margin");
+        markers[1].GetAttribute("cx").Should().Be("670", "the last point respects the shared width and right margin");
+        markers[0].GetAttribute("cy").Should().Be("172.5");
+        markers[1].GetAttribute("cy").Should().Be("25");
+    }
+
+    /// <summary>
+    /// Removing options from an empty standalone chart restores the minimum untitled margin for issue #13606.
+    /// </summary>
+    [Test]
+    public async Task LineChart_RemovingOptionsRestoresMinimumMargin()
+    {
+        var comp = Context.Render<Line<double>>(parameters => parameters
+            .Add(p => p.ChartOptions, new LineChartOptions { YAxisTitle = "Revenue" }));
+        comp.Find("g.mud-charts-yaxis text").GetAttribute("x").Should().Be("40");
+
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ChartOptions, null));
+
+        comp.Find("g.mud-charts-yaxis text").GetAttribute("x").Should().Be("20");
+        comp.FindAll("text.mud-charts-yaxis").Should().BeEmpty();
+        comp.FindAll("path.mud-chart-line").Should().BeEmpty();
+    }
+
+    // Bar and Line rebuilds return before reading the margin when shared data is missing.
+    // Host rebuilds create grid data before calling RenderOverlay, even with no series.
+    private sealed class AxisChartProbe : Line<double>
+    {
+        public double LocalStartSpace => HorizontalStartSpace;
+
+        public void RenderPendingOverlay() => RenderOverlay();
+    }
+
     /// <summary>
     /// Identical host and overlay bars share measured margins after label growth and resizing for issue #13606.
     /// </summary>
