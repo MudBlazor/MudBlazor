@@ -621,6 +621,110 @@ namespace MudBlazor.UnitTests.Components
             heatmap.Instance._maxValue.Should().Be(max.HasValue ? max : .98);
         }
 
+        [Test]
+        public async Task HeatMap_CellMouseOver_SetsAndClearsHoveredCellTooltip()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2, 3]) },
+                new() { Name = "Series 2", Data = new([4, 5, 6]) }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ChartOptions { ShowToolTips = true })
+            );
+
+            // Hovering toggles the svg overflow to visible and surfaces the cell tooltip; OnCellMouseOut clears both.
+            var firstCellRect = comp.FindAll(".mud-chart-cell rect")[0];
+            await firstCellRect.MouseOverAsync();
+
+            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().Contain("overflow:visible");
+
+            await firstCellRect.MouseOutAsync();
+            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().NotContain("overflow:visible");
+            comp.FindAll("tspan").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task HeatMap_LegendMouseOver_SetsAndClearsHoveredLegend()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2, 3]) },
+                new() { Name = "Series 2", Data = new([4, 5, 6]) }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ChartOptions { ShowLegend = true, ShowToolTips = true })
+            );
+
+            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().NotContain("overflow:visible");
+
+            // Hovering a legend swatch sets _hoveredLegend, flipping the style and rendering the legend tooltip.
+            var legendRect = comp.FindAll(".mud-chart-heatmap-legend rect")[0];
+            await legendRect.MouseOverAsync();
+
+            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().Contain("overflow:visible");
+            comp.FindAll("tspan").Count.Should().BeGreaterThan(0);
+
+            await legendRect.MouseOutAsync();
+            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().NotContain("overflow:visible");
+        }
+
+        [Test]
+        public async Task HeatMap_ClickCell_SetsSelectedCellAndSelectedIndex()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2, 3]) },
+                new() { Name = "Series 2", Data = new([4, 5, 6]) }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+            );
+
+            var hm = comp.FindComponent<HeatMap<double>>().Instance;
+
+            // Pre-seed a non-zero selection so the click is proven to mutate state, not merely match the default.
+            await comp.InvokeAsync(() => hm.SetSelectedCellAsync(1, 2));
+            hm.SelectedCell.Should().Be((1, 2));
+
+            // Click a cell on the second row (rect index 3 == row 1, column 0).
+            var rects = comp.FindAll(".mud-chart-cell rect");
+            await rects[3].ClickAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            hm.SelectedCell.Should().Be((1, 0));
+            // SelectedIndex is driven by the row through SetSelectedIndexAsync.
+            hm.SelectedIndex.Should().Be(1);
+        }
+
+        [TestCase("400px", "300px", "0 0 400 300")]
+        [TestCase("100%", "100%", "0 0 800 350")]
+        public void HeatMap_MatchBoundsToSize_ProducesExpectedViewBox(string width, string height, string expectedViewBox)
+        {
+            // With MatchBoundsToSize and no JS-provided element size, SetBounds parses px Width/Height;
+            // non-px values cannot be parsed and fall back to the default 800x350 bounds.
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>
+                {
+                    new() { Name = "Series 1", Data = new([1, 2, 3]) },
+                    new() { Name = "Series 2", Data = new([4, 5, 6]) }
+                })
+                .Add(p => p.MatchBoundsToSize, true)
+                .Add(p => p.Width, width)
+                .Add(p => p.Height, height)
+            );
+
+            comp.Find("svg.mud-chart-heat").GetAttribute("viewBox").Should().Be(expectedViewBox);
+        }
+
         [TestCase(ChartType.Donut)]
         [TestCase(ChartType.Line)]
         [TestCase(ChartType.Pie)]

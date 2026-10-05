@@ -1,0 +1,20 @@
+@using System.Globalization
+@namespace MudBlazor.UnitTests.TestComponents.NumericField
+
+<MudNumericField @bind-Value="_value" Immediate="true" Min="0.0" OnKeyDown="OnKeyDown" Label="Hit Enter to reset to 0" />
+<br />
+<span id="value-display">value: @(_value.ToString(CultureInfo.InvariantCulture))</span>
+
+@code {
+    public static string __description__ = "After hitting Enter both the value and the displayed text should reset to 0 (issues #8565 / #10486).";
+
+    private double _value;
+
+    private void OnKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter" && _value != 0)
+        {
+            _value = 0;
+        }
+    }
+}

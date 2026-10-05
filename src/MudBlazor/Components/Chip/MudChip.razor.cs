@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -18,6 +19,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
     private readonly string _chipContainerId = $"chip-container-{Guid.NewGuid()}";
+    private bool _hasKeyInterceptorSubscription;
 
     internal readonly ParameterState<bool> SelectedState;
 
@@ -37,10 +39,22 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         return ChipSet.OnChipSelectedChangedAsync(this, args.Value);
     }
 
+    /// <summary>
+    /// Updates whether this chip is selected.
+    /// </summary>
+    /// <remarks>
+    /// The set walks every chip whenever the selection changes, so rendering unconditionally rebuilt the whole set to move one check mark.
+    /// Nothing this chip renders depends on another chip, so a chip whose own state did not change has nothing new to show.
+    /// </remarks>
+    /// <param name="selected">Whether this chip is now selected.</param>
     internal async Task UpdateSelectionStateAsync(bool selected)
     {
+        var wasSelected = SelectedState.Value;
         await SelectedState.SetValueAsync(selected);
-        StateHasChanged();
+        if (SelectedState.Value != wasSelected)
+        {
+            StateHasChanged();
+        }
     }
 
     /// <summary>
@@ -69,8 +83,10 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool IsAnchor => !string.IsNullOrWhiteSpace(Href);
 
-    private bool IsButton => GetDisabled() is false
-                             && GetReadOnly() is false
+    // A link is left to the browser, so Href takes precedence over OnClick and selection.
+    private bool IsButton => !IsAnchor
+                             && !GetDisabled()
+                             && !GetReadOnly()
                              && (ChipSet is not null || OnClick.HasDelegate);
 
     private bool IsClosable => (OnClose.HasDelegate || ChipSet?.AllClosable == true) && !IsAnchor;
@@ -118,6 +134,23 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         else
         {
             attributes.Add("tabindex", -1);
+
+            if (ChipSet is not null || OnClick.HasDelegate)
+            {
+                // A disabled or read-only chip is still a button semantically; it only renders as a plain element.
+                attributes.Add("role", "button");
+
+                if (GetDisabled())
+                {
+                    attributes.Add("aria-disabled", "true");
+                }
+            }
+        }
+
+        if (ChipSet is not null && !IsAnchor)
+        {
+            // Chips inside a set act as toggle buttons; expose the selected state to assistive technology.
+            attributes.Add("aria-pressed", SelectedState.Value ? "true" : "false");
         }
 
         // User-defined attributes always take priority.
@@ -127,6 +160,22 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         }
 
         return attributes;
+    }
+
+    /// <summary>
+    /// Opens the chip element with its attributes; the Razor file renders the content and closes it.
+    /// </summary>
+    /// <remarks>
+    /// The tag is chosen at runtime, so the element is opened by name rather than written as markup.
+    /// class and style come before the splat so a class or style supplied through <see cref="MudComponentBase.UserAttributes"/> still wins, which is the precedence the MudElement boundary gave them.
+    /// </remarks>
+    private void OpenElement(RenderTreeBuilder builder)
+    {
+        builder.OpenElement(0, GetHtmlTag());
+        builder.AddAttribute(1, "class", Classname);
+        builder.AddAttribute(2, "style", Style);
+        builder.AddMultipleAttributes(3, GetAttributes()!);
+        builder.AddAttribute(4, "onclick", IsButton ? this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync) : null);
     }
 
     internal Variant GetVariant()
@@ -301,6 +350,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// </summary>
     /// <remarks>
     /// <para>Defaults to <c>null</c>.  Use <see cref="Target"/> to control where the URL is opened.</para>
+    /// <para>When set, the chip renders as a link and the browser handles the click, so <see cref="OnClick"/> is not raised and the chip cannot be selected in a <see cref="MudChipSet{T}"/>.</para>
     /// <para>Note: The close button cannot be enabled if this is set because <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#technical_summary">interactive content violates the HTML spec</see>.</para>
     /// </remarks>
     [Parameter]
@@ -414,21 +464,33 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (firstRender)
+        var needsKeyInterceptor = CanHandleKeys() && (IsButton || IsClosable);
+        if (needsKeyInterceptor && !_hasKeyInterceptorSubscription)
         {
-            var options = new KeyInterceptorOptions(
-                "mud-chip",
-                [
-                    new(" ", preventDown: "key+none", preventUp: "key+none"),
-                    new("Backspace", preventDown: "key+none"),
-                    new("Delete", preventDown: "key+none")
-                ]);
-
-            await KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keys => keys
-                .When(CanHandleKeys, builder => builder
-                    .OnKeyDown(" ", () => OnClickAsync(new MouseEventArgs()))
-                    .OnKeyDownAny(["Backspace", "Delete"], () => OnCloseAsync(new MouseEventArgs()))));
+            await SubscribeToKeyInterceptorAsync();
+            _hasKeyInterceptorSubscription = true;
         }
+        else if (!needsKeyInterceptor && _hasKeyInterceptorSubscription)
+        {
+            await KeyInterceptorService.UnsubscribeAsync(_chipContainerId);
+            _hasKeyInterceptorSubscription = false;
+        }
+    }
+
+    private Task SubscribeToKeyInterceptorAsync()
+    {
+        var options = new KeyInterceptorOptions(
+            "mud-chip",
+            [
+                new(" ", preventDown: "key+none", preventUp: "key+none"),
+                new("Backspace", preventDown: "key+none"),
+                new("Delete", preventDown: "key+none")
+            ]);
+
+        return KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keys => keys
+            .When(CanHandleKeys, builder => builder
+                .OnKeyDown(" ", () => OnClickAsync(new MouseEventArgs()))
+                .OnKeyDownAny(["Backspace", "Delete"], () => OnCloseAsync(new MouseEventArgs()))));
     }
 
     private bool CanHandleKeys() => !GetDisabled() && !GetReadOnly();
@@ -443,7 +505,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         }
         if (ChipSet != null)
         {
-            await SelectedState.SetValueAsync(!SelectedState.Value);
+            // Go through the same helper as the set does, so this chip renders because its own state changed rather than relying on the set to sweep every chip.
+            await UpdateSelectionStateAsync(!SelectedState.Value);
             await ChipSet.OnChipSelectedChangedAsync(this, SelectedState.Value);
         }
 
@@ -452,7 +515,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     protected async Task OnCloseAsync(MouseEventArgs ev)
     {
-        if (GetReadOnly() || IsClosable is false)
+        if (GetReadOnly() || !IsClosable)
         {
             return;
         }
@@ -477,9 +540,10 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
                 await ChipSet.RemoveAsync(this);
             }
 
-            if (IsJSRuntimeAvailable)
+            if (IsJSRuntimeAvailable && _hasKeyInterceptorSubscription)
             {
                 await KeyInterceptorService.UnsubscribeAsync(_chipContainerId);
+                _hasKeyInterceptorSubscription = false;
             }
         }
         catch (Exception)

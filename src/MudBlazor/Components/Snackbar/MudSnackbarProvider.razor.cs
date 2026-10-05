@@ -8,6 +8,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Displays snackbar notifications queued through the <see cref="ISnackbar"/> service, positioning and stacking them on the page.
+    /// </summary>
     public partial class MudSnackbarProvider : MudComponentBase, IDisposable
     {
         [Inject]

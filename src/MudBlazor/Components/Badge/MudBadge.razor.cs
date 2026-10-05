@@ -161,6 +161,14 @@ namespace MudBlazor
 
         private string? _content;
 
+        // Without this gate the badge always registers a DOM click listener, even when nobody subscribed to OnClick.
+        // A null delegate is not enough, because Razor still hands Blazor an EventCallback carrying this component as the receiver, which the render tree treats as a live handler.
+        // Only a default EventCallback keeps the listener off the element.
+        private EventCallback<MouseEventArgs> BadgeClickCallback =>
+            OnClick.HasDelegate
+                ? EventCallback.Factory.Create<MouseEventArgs>(this, this.AsNonRenderingEventHandler<MouseEventArgs>(HandleBadgeClick))
+                : default;
+
         internal Task HandleBadgeClick(MouseEventArgs e)
         {
             if (OnClick.HasDelegate)

@@ -1,0 +1,20 @@
+@using MudBlazor.Utilities
+
+@* Several hotkeys wired to a single handler that tells them apart via HotkeyEventArgs.
+   Includes two hotkeys on the SAME Key distinguished only by modifiers (issue #13125's motivation). *@
+<MudHotkey Key="JsKey.KeyA" OnHotkeyPressed="OnHotKey" />
+<MudHotkey Key="JsKey.KeyB" KeyModifiers="@(new[] { JsKeyModifier.ShiftLeft })" OnHotkeyPressed="OnHotKey" />
+<MudHotkey Key="JsKey.KeyB" KeyModifiers="@(new[] { JsKeyModifier.ControlLeft, JsKeyModifier.ShiftLeft })" OnHotkeyPressed="OnHotKey" />
+
+@code {
+    public HotkeyEventArgs? LastArgs { get; private set; }
+
+    public int PressedCount { get; private set; }
+
+    // Single handler for every hotkey; the args identify which one fired.
+    private void OnHotKey(HotkeyEventArgs args)
+    {
+        LastArgs = args;
+        PressedCount++;
+    }
+}

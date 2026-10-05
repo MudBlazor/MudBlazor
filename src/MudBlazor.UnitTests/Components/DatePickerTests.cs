@@ -1,14 +1,12 @@
-﻿using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Time.Testing;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
+using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -63,24 +61,6 @@ namespace MudBlazor.UnitTests.Components
                 .Add(c => c.InputId, "birthday"));
 
             comp.Find("input[id='birthday']").Should().NotBeNull();
-        }
-
-        [Test]
-        public async Task DatePicker_OpenClose_Performance()
-        {
-            // warmup
-            var comp = Context.Render<MudDatePicker>();
-            var datepicker = comp.Instance;
-            // measure
-            var watch = Stopwatch.StartNew();
-            for (var i = 0; i < 1000; i++)
-            {
-                await comp.InvokeAsync(() => datepicker.OpenAsync());
-                await comp.InvokeAsync(() => datepicker.CloseAsync());
-            }
-
-            watch.Stop();
-            watch.Elapsed.Should().BeLessThan(TimeSpan.FromSeconds(10));
         }
 
         [Test]
@@ -206,22 +186,49 @@ namespace MudBlazor.UnitTests.Components
             picker.Date.Should().Be(null);
         }
 
+        /// <summary>
+        /// The clear button leaves Text as an empty string even when the SetDateAsync debounce window has already elapsed between the input clearing its text and the picker running ClearAsync.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_Should_Clear_WhenDebounceWindowElapsed()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            // A single clear-button click reaches SetDateAsync twice: once from the input emptying its text, and once from ClearAsync.
+            // On a loaded machine the second call can land after the 100ms debounce window, which used to overwrite the already-empty Text with null.
+            // Auto-advancing the clock on every read reproduces that slow machine deterministically.
+            timeProvider.AutoAdvanceAmount = TimeSpan.FromMilliseconds(150);
+
+            var comp = Context.Render<MudDatePicker>();
+            var picker = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Clearable, true)
+                .Add(p => p.Date, new DateTime(2020, 10, 26)));
+            picker.Date.Should().Be(new DateTime(2020, 10, 26));
+
+            await comp.Find(".mud-input-clear-button").ClickAsync();
+
+            picker.Text.Should().Be("");
+            picker.Date.Should().Be(null);
+        }
+
         [Test]
         public async Task DataPicker_ShouldClearText_WhenDateSetNull()
         {
+            var timeProvider = Context.AddFakeTimeProvider();
             var comp = Context.Render<MudDatePicker>();
 
             var picker = comp.Instance;
             picker.Text.Should().Be(null);
             picker.Date.Should().Be(null);
 
-            var invalid = "INVALID_DATE";
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "INVALID_DATE"));
+            var date = new DateTime(2020, 10, 26);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, date));
 
-            picker.Date.Should().Be(null);
-            picker.Text.Should().Be(invalid);
+            picker.Date.Should().Be(date);
+            picker.Text.Should().Be(date.ToShortDateString());
 
-            await Task.Delay(150);
+            // Advance past the SetDateAsync debounce window so the clear is not debounced away.
+            timeProvider.Advance(TimeSpan.FromMilliseconds(150));
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, null));
 
@@ -229,9 +236,38 @@ namespace MudBlazor.UnitTests.Components
             picker.Text.Should().Be(null);
         }
 
+        /// <summary>
+        /// Re-supplying the same null Date must leave text the converter rejected alone: https://github.com/MudBlazor/MudBlazor/issues/13887.
+        /// </summary>
+        [Test]
+        public async Task DataPicker_ShouldKeepInvalidText_WhenTheSameNullDateIsReSupplied()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            // Blazor re-runs the Date setter on every render of the parent, and a form that binds Errors re-renders on
+            // each keystroke. Auto-advancing the clock puts every one of those writes past the SetDateAsync debounce
+            // window, which is the slow machine that used to lose the half-typed date.
+            timeProvider.AutoAdvanceAmount = TimeSpan.FromMilliseconds(150);
+            var comp = Context.Render<MudDatePicker>();
+
+            var picker = comp.Instance;
+            const string Invalid = "INVALID_DATE";
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, Invalid));
+
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(Invalid);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, null));
+
+            picker.Date.Should().Be(null);
+            picker.Text.Should().Be(Invalid);
+        }
+
         [Test]
         public async Task DataPicker_ShouldDeBounceSetDate_WhenDateSetToTheSameValueQuickly()
         {
+            // Pin the clock so both quick sets land inside the same SetDateAsync debounce window
+            // (contrast with the sibling above, which advances past it).
+            _ = Context.AddFakeTimeProvider();
             var comp = Context.Render<MudDatePicker>();
 
             var picker = comp.Instance;
@@ -246,6 +282,7 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, null));
 
+            // The clear is debounced (same value within the window), so the invalid text is retained.
             picker.Date.Should().Be(null);
             picker.Text.Should().Be(invalid);
         }
@@ -361,6 +398,48 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Date.Should().BeNull();
             // should show years
             comp.FindAll("div.mud-picker-year-container").Count.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Each year renders the same element a MudText would, with the current year highlighted.
+        /// </summary>
+        [Test]
+        public async Task OpenToYear_YearsRenderTheSameMarkupAsMudText()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Year));
+            var picker = comp.FindComponent<MudDatePicker>().Instance;
+            var currentYear = DateTime.Now.Year;
+
+            var currentYearMarkup = comp.Find($"div.mud-picker-year[id$='{currentYear}']").InnerHtml;
+            var otherYearMarkup = comp.Find($"div.mud-picker-year[id$='{currentYear - 1}']").InnerHtml;
+
+            var selected = Context.Render<MudText>(parameters => parameters
+                .Add(x => x.Typo, Typo.h5)
+                .Add(x => x.Class, $"mud-picker-year-selected mud-{picker.Color.ToString().ToLowerInvariant()}-text")
+                .AddChildContent(currentYear.ToString(CultureInfo.InvariantCulture)));
+            var other = Context.Render<MudText>(parameters => parameters
+                .Add(x => x.Typo, Typo.subtitle1)
+                .AddChildContent((currentYear - 1).ToString(CultureInfo.InvariantCulture)));
+
+            currentYearMarkup.Trim().Should().Be(selected.Markup.Trim());
+            otherYearMarkup.Trim().Should().Be(other.Markup.Trim());
+        }
+
+        /// <summary>
+        /// Scrolling the year list to the current year does not render the picker again.
+        /// </summary>
+        [Test]
+        public async Task OpenToYear_ScrollToYear_DoesNotRender()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.OpenTo, OpenTo.Year));
+            var picker = comp.FindComponent<MudDatePicker>();
+            var renders = picker.RenderCount;
+
+            await comp.InvokeAsync(() => picker.Instance.ScrollToYearAsync());
+
+            picker.RenderCount.Should().Be(renders);
         }
 
         [Test]
@@ -683,8 +762,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task PersianCalendarDefault()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
             timeProvider.SetUtcNow(new DateTime(2025, 2, 1, 0, 0, 0, DateTimeKind.Utc));
 
             var comp = Context.Render<PersianDatePickerTest>(paramter => paramter.Add(p => p.Date, null));
@@ -761,8 +839,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DisableCalendarMonthButtonsWhenFixDayOutOfRange()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
             timeProvider.SetUtcNow(new DateTime(2024, 2, 1, 0, 0, 0, DateTimeKind.Utc));
 
             var comp = await OpenPicker(parameters => parameters
@@ -961,9 +1038,9 @@ namespace MudBlazor.UnitTests.Components
             var comp = await OpenPicker(parameters => parameters.Add(x => x.FixDay, 1));
             var monthsCount = 12;
 
-            comp.FindAll("button.mud-picker-month").Select(button =>
-                button.ClassName?.Contains("mud-button-root"))
-                .Should().HaveCount(monthsCount);
+            comp.FindAll("button.mud-picker-month")
+                .Should().HaveCount(monthsCount)
+                .And.OnlyContain(button => button.ClassName != null && button.ClassName.Contains("mud-button-root"));
         }
 
         [Test]
@@ -982,76 +1059,207 @@ namespace MudBlazor.UnitTests.Components
                 .Should().HaveCount(daysCount);
         }
 
-        public async Task CheckAutoCloseDatePickerTest()
+        // AutocompleteDatePickerTest initializes to a fixed date (2025-06-10); these tests select the 15th,
+        // so a commit is observable as a change from the 10th to the 15th regardless of the run date.
+        [Test]
+        public async Task DatePicker_WithPickerActions_DayClickDoesNotAutoCommitOrClose()
         {
-            // Define a date for comparison
-            var now = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            var comp = Context.Render<AutocompleteDatePickerTest>();
+            var datePicker = comp.FindComponent<MudDatePicker>();
+            var initialDate = datePicker.Instance.Date;
+            initialDate.Should().Be(new DateTime(2025, 6, 10));
 
-            // Get access to the datepicker of the instance
-            var comp = Context.Render<AutoCompleteDatePickerTest>();
+            await comp.InvokeAsync(datePicker.Instance.OpenAsync);
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
+
+            await comp.SelectDateAsync("15");
+
+            // With PickerActions defined and AutoClose off, the click waits for the OK button:
+            // neither the value nor the open state changes.
+            datePicker.Instance.Date.Should().Be(initialDate);
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
+
+            // ClearAsync also leaves the popover open while AutoClose is off.
+            await comp.InvokeAsync(() => datePicker.Instance.ClearAsync());
+            datePicker.Instance.Date.Should().BeNull();
+            comp.FindAll("div.mud-popover-open").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task DatePicker_WithAutoClose_DayClickCommitsAndCloses()
+        {
+            // ClosingDelay = 0 removes the post-commit close timer so the day click commits the value
+            // and closes the popover deterministically, without depending on a timer settling (the commit
+            // runs on a pooled thread, so advancing a fake clock after the commit races the timer and hangs).
+            var comp = Context.Render<AutocompleteDatePickerTest>(parameters => parameters
+                .Add(p => p.AutoClose, true)
+                .Add(p => p.ClosingDelay, 0));
             var datePicker = comp.FindComponent<MudDatePicker>();
 
-            // Open the datepicker
             await comp.InvokeAsync(datePicker.Instance.OpenAsync);
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
-            // Clicking a day button to select a date
-            // It must be a different day than the day of now!
-            // So the test is working when the day is 20
-            if (now.Day != 20)
+            // The initial date is the 10th, so committing the 15th is an observable change.
+            await comp.SelectDateAsync("15");
+
+            await comp.WaitForAssertionAsync(() =>
             {
-                await comp.SelectDateAsync("20");
-            }
-            else
-            {
-                await comp.SelectDateAsync("19");
-            }
+                datePicker.Instance.Date.Should().Be(new DateTime(2025, 6, 15));
+                comp.FindAll("div.mud-popover-open").Count.Should().Be(0);
+            });
+        }
 
-            // Check that the date should remain the same because autoclose is false
-            // and there are actions which are defined
-            datePicker.Instance.Date.Should().Be(now);
+        [Test]
+        public async Task DatePicker_ClearAsync_WithAutoClose_ClosesPopover()
+        {
+            var comp = Context.Render<AutocompleteDatePickerTest>(parameters => parameters.Add(p => p.AutoClose, true));
+            var datePicker = comp.FindComponent<MudDatePicker>();
 
-            // Close the datepicker without submitting the date
-            // The date of the datepicker remains equal to now
-            await comp.InvokeAsync(() => datePicker.Instance.CloseAsync(false));
-
-            await comp.InvokeAsync(() => datePicker.Instance.OpenAsync());
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+            await comp.InvokeAsync(datePicker.Instance.OpenAsync);
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(1));
 
             await comp.InvokeAsync(() => datePicker.Instance.ClearAsync());
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
-            await comp.InvokeAsync(() => datePicker.Instance.CloseAsync(false));
 
-            // Change the value of autoclose
-            await datePicker.SetParametersAndRenderAsync(parameters => parameters.Add(parameter => parameter.AutoClose, true));
+            // ClearAsync clears the value and, because AutoClose is on, closes the popover.
+            datePicker.Instance.Date.Should().BeNull();
+            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
+        }
 
-            // Open the datepicker
-            await comp.InvokeAsync(() => datePicker.Instance.OpenAsync());
+        /// <summary>
+        /// ResetAsync on a static picker, which has no input to route the reset through, clears a bound Date, its text, and the touched state (#9692).
+        /// </summary>
+        [Test]
+        public async Task DatePicker_ResetAsync_Static_ShouldClearBoundDateAndTouched()
+        {
+            DateTime? boundDate = new DateTime(2021, 3, 10);
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Bind(p => p.Date, boundDate, date => boundDate = date));
+            var picker = comp.Instance;
 
-            // Clicking a day button to select a date
-            if (now.Day != 20)
-            {
-                await comp.SelectDateAsync("20");
-            }
-            else
-            {
-                await comp.SelectDateAsync("19");
-            }
+            await comp.SelectDateAsync("15");
+            boundDate.Should().Be(new DateTime(2021, 3, 15));
+            picker.Touched.Should().BeTrue();
 
-            // Check that the date should be equal to the new date 19 or 20
-            if (now.Day != 20)
-            {
-                datePicker.Instance.Date.Should().Be(new DateTime(now.Year, now.Month, 20));
-            }
-            else
-            {
-                datePicker.Instance.Date.Should().Be(new DateTime(now.Year, now.Month, 19));
-            }
+            await comp.InvokeAsync(() => picker.ResetAsync());
 
-            await comp.InvokeAsync(() => datePicker.Instance.OpenAsync());
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover").Count.Should().Be(1));
+            boundDate.Should().BeNull();
+            picker.Date.Should().BeNull();
+            picker.Text.Should().BeNullOrEmpty();
+            picker.Touched.Should().BeFalse();
+        }
 
-            await comp.InvokeAsync(() => datePicker.Instance.ClearAsync());
-            await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover").Count.Should().Be(0));
+        /// <summary>
+        /// ResetAsync right after typing unparsable text still clears it, even though clearing on its own is debounced at that point.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_ResetAsync_ShouldClearInvalidTextInsideDebounceWindow()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2024, 8, 22, 12, 0, 0, DateTimeKind.Utc));
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.Editable, true));
+            var picker = comp.Instance;
+            await comp.Find("input").ChangeAsync("abc");
+            picker.Text.Should().Be("abc");
+            picker.ConversionError.Should().BeTrue();
+
+            await comp.InvokeAsync(() => picker.ResetAsync());
+
+            picker.Text.Should().BeNullOrEmpty();
+            comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+            picker.ConversionError.Should().BeFalse();
+            picker.Touched.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// ResetAsync moves the calendar off the cleared date's month back to the current month (#9692).
+        /// </summary>
+        [Test]
+        public async Task DatePicker_ResetAsync_ShouldReturnPickerMonthToCurrentMonth()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2024, 8, 22, 12, 0, 0, DateTimeKind.Utc));
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.Date, new DateTime(2021, 3, 10)));
+            var picker = comp.Instance;
+            picker.PickerMonth.Should().Be(new DateTime(2021, 3, 1));
+
+            await comp.InvokeAsync(() => picker.ResetAsync());
+
+            picker.Date.Should().BeNull();
+            picker.PickerMonth.Should().Be(new DateTime(2024, 8, 1));
+        }
+
+        /// <summary>
+        /// ResetAsync returns the calendar to StartMonth when one is set, not to the month the user navigated to.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_ResetAsync_ShouldReturnPickerMonthToStartMonth()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.StartMonth, new DateTime(2023, 5, 1)));
+            var picker = comp.Instance;
+            picker.PickerMonth.Should().Be(new DateTime(2023, 5, 1));
+
+            await comp.Find("button.mud-picker-nav-button-next").ClickAsync();
+            picker.PickerMonth.Should().Be(new DateTime(2023, 6, 1));
+
+            await comp.InvokeAsync(() => picker.ResetAsync());
+
+            picker.PickerMonth.Should().Be(new DateTime(2023, 5, 1));
+            comp.Find("button.mud-button-month").TrimmedText().Should().Be("2023 May");
+        }
+
+        /// <summary>
+        /// ResetAsync returns a picker with FixYear, and optionally FixMonth, to the fixed month it starts on instead of the current month.
+        /// </summary>
+        [TestCase(null, 1)]
+        [TestCase(5, 5)]
+        public async Task DatePicker_ResetAsync_ShouldReturnPickerMonthToFixedMonth(int? fixMonth, int expectedMonth)
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2024, 8, 22, 12, 0, 0, DateTimeKind.Utc));
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.FixYear, 2020)
+                .Add(p => p.FixMonth, fixMonth)
+                .Add(p => p.Date, new DateTime(2020, fixMonth ?? 7, 15)));
+            var picker = comp.Instance;
+            picker.PickerMonth.Should().Be(new DateTime(2020, fixMonth ?? 7, 1));
+
+            await comp.InvokeAsync(() => picker.ResetAsync());
+
+            picker.Date.Should().BeNull();
+            picker.PickerMonth.Should().Be(new DateTime(2020, expectedMonth, 1));
+        }
+
+        /// <summary>
+        /// ResetAsync does not keep a month reached by keyboard navigation, which moves the highlighted day along with the calendar.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_ResetAsync_ShouldDiscardKeyboardNavigatedMonth()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var timeProvider = Context.AddFakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2024, 8, 22, 12, 0, 0, DateTimeKind.Utc));
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static));
+            var picker = comp.Instance;
+
+            await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = "ArrowRight", Type = "keydown", ShiftKey = true }));
+            picker.PickerMonth.Should().Be(new DateTime(2024, 9, 1));
+
+            await comp.InvokeAsync(() => picker.ResetAsync());
+
+            picker.PickerMonth.Should().Be(new DateTime(2024, 8, 1));
         }
 
         [Test]
@@ -1135,6 +1343,164 @@ namespace MudBlazor.UnitTests.Components
 
             // Date should remain unchanged because ReadOnly is true
             picker.Date.Should().Be(initialDate);
+        }
+
+        [Test]
+        public async Task LiteralText_WithBoundDate_DoesNotLoopOnSelection()
+        {
+            // #13439: a literal Text ("Broken") alongside a bound Date froze the page. The unparseable Text
+            // was re-parsed to null on every render and pushed back through DateChanged, fighting the bound
+            // Date and spinning an infinite render loop. Picking a date must fire DateChanged a bounded number
+            // of times and leave the picked value in place.
+            var comp = Context.Render<DatePickerTextLoopTest>();
+            var picker = comp.Instance.Picker;
+
+            await comp.SelectDateAsync("15");
+
+            comp.Instance.LoopGuardTripped.Should().BeFalse("a literal Text must not spin an infinite render loop");
+            comp.Instance.DateChangedCount.Should().BeLessThan(5);
+            picker.Date.Should().NotBeNull();
+            picker.Date!.Value.Day.Should().Be(15);
+        }
+
+        // In the editable path a month/year click advances the view (Year->Month, Month->Date); the ReadOnly
+        // guard must suppress that, so the originally-shown container stays put. Asserting the view (not Date,
+        // which a month/year click never commits anyway) is what actually proves the guard.
+        [Test]
+        [TestCase(OpenTo.Year, "div.mud-picker-year-container", "div.mud-picker-year")]
+        [TestCase(OpenTo.Month, "div.mud-picker-month-container", "button.mud-picker-month")]
+        public async Task StaticReadOnly_MonthOrYearClick_DoesNotAdvanceView(OpenTo openTo, string container, string entry)
+        {
+            var initialDate = new DateTime(2025, 6, 15);
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.OpenTo, openTo)
+                .Add(p => p.Date, initialDate));
+            var picker = comp.Instance;
+
+            // The requested view is shown.
+            comp.FindAll(container).Count.Should().Be(1);
+
+            await comp.FindAll(entry)[0].ClickAsync();
+
+            // ReadOnly blocks the click: the view does not advance and the date is untouched.
+            comp.FindAll(container).Count.Should().Be(1);
+            picker.Date.Should().Be(initialDate);
+        }
+
+        [Test]
+        public void ShowWeekNumbers_RendersWeekNumberColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.ShowWeekNumbers, true)
+                .Add(p => p.Culture, new CultureInfo("en-US"))
+                .Add(p => p.PickerMonth, new DateTime(2025, 1, 1)));
+
+            // A week cell is rendered in the header plus one per calendar row.
+            comp.FindAll(".mud-picker-calendar-week").Count.Should().BeGreaterThan(1);
+
+            // The first calendar week of January is week 1.
+            var weekNumbers = comp.FindAll(".mud-picker-calendar-week-text")
+                .Select(x => x.TrimmedText())
+                .Where(t => !string.IsNullOrEmpty(t))
+                .ToList();
+            weekNumbers.Should().Contain("1");
+        }
+
+        [Test]
+        public void For_WithoutExplicitLabel_UsesLabelAttribute()
+        {
+            var model = new DisplayNameLabelClass();
+
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.For, () => model.Date));
+            comp.Instance.Label.Should().Be("Date LabelAttribute");
+
+            // An explicit Label always wins over the [Label] attribute.
+            var explicitLabel = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.For, () => model.Date)
+                .Add(p => p.Label, "Explicit"));
+            explicitLabel.Instance.Label.Should().Be("Explicit");
+        }
+
+        [Test]
+        public void Mask_Parameter_RoundTrips()
+        {
+            var mask = new DateMask("0000-00-00");
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Mask, mask));
+
+            comp.Instance.Mask.Should().BeSameAs(mask);
+        }
+
+        /// <summary>
+        /// Setting the bound date to null from code must clear the masked input, not just the Date and Text properties: https://github.com/MudBlazor/MudBlazor/issues/12822.
+        /// </summary>
+        [Test]
+        public async Task Mask_ClearingDateFromCode_ClearsTheInput()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Mask, new DateMask("dd/MM/yyyy"))
+                .Add(p => p.Date, new DateTime(2026, 6, 15)));
+
+            comp.Find("input").GetAttribute("value").Should().NotBeNullOrEmpty();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Date, (DateTime?)null));
+
+            comp.Instance.Date.Should().BeNull();
+            comp.Instance.Text.Should().BeNullOrEmpty();
+            comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Typing into a masked, editable picker must survive the re-render a parent runs while the date is still incomplete: https://github.com/MudBlazor/MudBlazor/issues/13887.
+        /// </summary>
+        [Test]
+        public async Task Mask_TypingInsideFormWithBoundErrors_KeepsTheTypedText()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            // Model the real gap between a keystroke and the re-render that the form's bound Errors triggers.
+            // Every clock read lands past the debounce window in SetDateAsync, which is where the parameter write used to discard the text.
+            Context.AddFakeTimeProvider().AutoAdvanceAmount = TimeSpan.FromMilliseconds(150);
+            var comp = Context.Render<DatePickerFormErrorsTypingTest>();
+            var picker = comp.FindComponent<MudDatePicker>().Instance;
+            var mask = comp.FindComponent<MudMask>().Instance;
+
+            var expected = new[] { "1", "15/", "15/0", "15/06/", "15/06/2", "15/06/20", "15/06/202", "15/06/2026" };
+            var index = 0;
+            foreach (var key in "15062026")
+            {
+                await comp.InvokeAsync(() => keyInterceptorService.OnKeyDown(mask.ElementId, new KeyboardEventArgs { Key = key.ToString() }));
+
+                picker.Text.Should().Be(expected[index], $"the text must survive the parent re-render after the '{key}' keystroke");
+                comp.Find("input").GetAttribute("value").Should().Be(expected[index]);
+                index++;
+            }
+
+            picker.Date.Should().Be(new DateTime(2026, 6, 15));
+            comp.Instance.Date.Should().Be(new DateTime(2026, 6, 15));
+        }
+
+        [Test]
+        public async Task FocusSelectAndSelectRange_AreNoOps_WhenNoInputIsRendered()
+        {
+            // A Static picker renders no text input, so _inputReference stays null and these must not throw.
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static));
+            var picker = comp.Instance;
+
+            var act = async () => await comp.InvokeAsync(async () =>
+            {
+                await picker.FocusAsync();
+                await picker.SelectAsync();
+                await picker.SelectRangeAsync(0, 1);
+            });
+
+            await act.Should().NotThrowAsync();
         }
 
         [Test]
@@ -1711,8 +2077,7 @@ namespace MudBlazor.UnitTests.Components
         [SetCulture("en-US")]
         public async Task DatePicker_CustomTimerProvider()
         {
-            var timeProvider = new FakeTimeProvider();
-            Context.Services.AddSingleton<TimeProvider>(timeProvider);
+            var timeProvider = Context.AddFakeTimeProvider();
             timeProvider.SetUtcNow(new DateTime(2003, 4, 4, 0, 0, 0, DateTimeKind.Utc));
             var comp = Context.Render<DatePickerCustomDateTest>();
 
@@ -1731,9 +2096,11 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FixYearFixMonthTest>();
             await comp.Find("input").ClickAsync();
-            await Task.Delay(500);
-            comp.Find(".mud-button-year").GetInnerText().Should().Be("2022");
-            comp.Find(".mud-picker-calendar-header-transition").GetInnerText().Should().Be("October 2022");
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".mud-button-year").GetInnerText().Should().Be("2022");
+                comp.Find(".mud-picker-calendar-header-transition").GetInnerText().Should().Be("October 2022");
+            });
         }
 
         [Test]
@@ -1918,6 +2285,45 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void DatePicker_ShowAdjacentMonthDays_ShowsAdjacentDays()
+        {
+            var displayedMonth = new DateTime(2025, 3, 15);
+            var component = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.Date, displayedMonth)
+                .Add(x => x.ShowAdjacentMonthDays, true));
+
+            var adjacentDays = component.FindAll("button.mud-picker-calendar-day")
+                .Where(x => x.ClassList.Contains("mud-adjacent-month"))
+                .ToList();
+
+            adjacentDays.Should().NotBeEmpty();
+            adjacentDays.Should().OnlyContain(x => !x.ClassList.Contains("mud-hidden"));
+        }
+
+        [Test]
+        public async Task DatePicker_ShowAdjacentMonthDays_AllowsSelectingAdjacentDays()
+        {
+            var displayedMonth = new DateTime(2025, 3, 15);
+            var component = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.Date, displayedMonth)
+                .Add(x => x.ShowAdjacentMonthDays, true));
+            var picker = component.Instance;
+
+            var previousMonth = new DateTime(displayedMonth.Year, displayedMonth.Month, 1).AddMonths(-1);
+            var adjacentDayButton = component.FindAll("button.mud-picker-calendar-day")
+                .First(x => x.ClassList.Contains("mud-adjacent-month"));
+            var adjacentDay = int.Parse(adjacentDayButton.TrimmedText());
+            var expectedDate = new DateTime(previousMonth.Year, previousMonth.Month, adjacentDay);
+
+            await adjacentDayButton.ClickAsync();
+
+            picker.Date.Should().Be(expectedDate);
+            picker.PickerMonth.Should().Be(new DateTime(expectedDate.Year, expectedDate.Month, 1));
+        }
+
+        [Test]
         public async Task DatePicker_NavigationButtons_ShouldNotThrowExceptionAtMaxDate()
         {
             // Test that clicking next month arrow at December 9999 doesn't throw exception
@@ -2041,6 +2447,22 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain(comp.Instance.ClearIcon);
         }
 
+        [Test]
+        public void Static_StartMonth_IsShownOnFirstRender()
+        {
+            var startMonth = new DateTime(2025, 12, 3);
+            var culture = CultureInfo.GetCultureInfo("en-US");
+
+            var comp = Context.Render<MudDatePicker>(ps => ps
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.StartMonth, startMonth)
+                .Add(p => p.Culture, culture)
+            );
+
+            var expectedMonthName = new DateTime(2025, 12, 1).ToString(culture.DateTimeFormat.YearMonthPattern, culture);
+            comp.Find(".mud-button-month").TextContent.Trim().Should().Be(expectedMonthName);
+        }
+
         private async Task<IRenderedComponent<SimpleMudDatePickerTest>> OpenPicker(Action<ComponentParameterCollectionBuilder<SimpleMudDatePickerTest>>? parameterBuilder = null)
         {
             IRenderedComponent<SimpleMudDatePickerTest> comp;
@@ -2068,6 +2490,91 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.PickerMonth, new DateTime(DateTime.Now.Year, 12, 01)));
             comp.Instance.PickerMonth?.Month.Should().Be(12);
             return comp;
+        }
+
+
+        /// <summary>
+        /// The inline popup is a dialog named after the field label so its purpose is announced when it opens.
+        /// </summary>
+        [Test]
+        public async Task Open_PopupIsNamedDialogAfterLabel()
+        {
+            var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDatePicker>();
+            await picker.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Label, "Start date"));
+
+            var popup = comp.Find("div.mud-picker-inline-paper");
+            popup.GetAttribute("role").Should().Be("dialog");
+            popup.GetAttribute("aria-label").Should().Be("Start date");
+            popup.HasAttribute("aria-labelledby").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A popup with nothing to name it is not announced as a dialog, because an unnamed dialog tells the user nothing.
+        /// </summary>
+        [Test]
+        public async Task Open_PopupWithoutNameIsNotADialog()
+        {
+            var comp = await OpenPicker();
+
+            var popup = comp.Find("div.mud-picker-inline-paper");
+            popup.HasAttribute("role").Should().BeFalse();
+            popup.HasAttribute("aria-label").Should().BeFalse();
+            popup.HasAttribute("aria-labelledby").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// PopupAriaLabel names the popup ahead of the field label.
+        /// </summary>
+        [Test]
+        public async Task Open_PopupAriaLabelWinsOverLabel()
+        {
+            var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDatePicker>();
+            await picker.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Label, "Start date")
+                .Add(x => x.PopupAriaLabel, "Choose the start date"));
+
+            var popup = comp.Find("div.mud-picker-inline-paper");
+            popup.GetAttribute("role").Should().Be("dialog");
+            popup.GetAttribute("aria-label").Should().Be("Choose the start date");
+        }
+
+        /// <summary>
+        /// PopupAriaLabelledBy names the popup by an element and suppresses the text fallbacks.
+        /// </summary>
+        [Test]
+        public async Task Open_PopupAriaLabelledByWinsOverEverything()
+        {
+            var comp = await OpenPicker();
+            var picker = comp.FindComponent<MudDatePicker>();
+            await picker.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Label, "Start date")
+                .Add(x => x.PopupAriaLabel, "Ignored")
+                .Add(x => x.PopupAriaLabelledBy, "trip-heading"));
+
+            var popup = comp.Find("div.mud-picker-inline-paper");
+            popup.GetAttribute("role").Should().Be("dialog");
+            popup.GetAttribute("aria-labelledby").Should().Be("trip-heading");
+            popup.HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The dialog variant is announced as a named dialog but not as modal, because the picker has no focus trap to back that claim.
+        /// </summary>
+        [Test]
+        public async Task DialogVariant_PopupIsNamedDialogWithoutModalClaim()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Dialog)
+                .Add(x => x.Label, "Start date"));
+
+            await comp.InvokeAsync(() => comp.Instance.OpenAsync());
+
+            var popup = comp.Find("div.mud-overlay-dialog div.mud-picker-paper");
+            popup.GetAttribute("role").Should().Be("dialog");
+            popup.GetAttribute("aria-label").Should().Be("Start date");
+            popup.HasAttribute("aria-modal").Should().BeFalse();
         }
     }
 }

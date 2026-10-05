@@ -97,6 +97,19 @@ public class CollectionComparerTests
         comparer.GetHashCode(["a", "b", "c"]).Should().NotBe(comparer.GetHashCode(["a", "a", "x"]));
     }
 
+    [Test]
+    public void Equals_NullElements_TreatedAsDistinctValue()
+    {
+        // MudChipSet uses CollectionComparer<T?>, so null entries are a real scenario.
+        var comparer = new CollectionComparer<string?>();
+
+        comparer.Equals([null], [null]).Should().Be(true);
+        comparer.Equals([null, "a", null], ["a", null]).Should().Be(true);
+        comparer.Equals([null, "a"], ["a"]).Should().Be(false);
+        comparer.Equals(["a"], [null, "a"]).Should().Be(false);
+        comparer.Equals([null], ["a"]).Should().Be(false);
+    }
+
     private class LowercaseEqualityComparer : IEqualityComparer<string?>
     {
         public bool Equals(string? x, string? y) => EqualityComparer<string>.Default.Equals(x?.ToLowerInvariant(), y?.ToLowerInvariant());

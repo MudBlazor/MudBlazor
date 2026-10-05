@@ -1,0 +1,47 @@
+@using MudBlazor.Utilities
+
+<MudForm @ref="Form" FieldChanged="v => FormFieldChangedEventArgs = v">
+    <MudDatePicker @bind-Date="_date" />
+    <MudTimePicker @bind-Time="_time" />
+    <MudDateRangePicker @bind-DateRange="_dateRange" />
+    <MudColorPicker @bind-Value="_color" />
+</MudForm>
+
+@code {
+    public static string __description__ =
+        "Pickers with non-default initial (or async-loaded) values must NOT become Touched and must NOT fire FieldChanged without user interaction (#13246, #13064).";
+
+    public MudForm Form = null!;
+    public FormFieldChangedEventArgs? FormFieldChangedEventArgs { get; private set; }
+
+    private DateTime? _date;
+    private TimeSpan? _time;
+    private DateRange? _dateRange;
+    private MudColor _color = "#594ae2"; // default-ish; changed by ApplyValues
+
+    /// <summary>When true, the pickers start with non-default values (#13246 initial-load case).</summary>
+    [Parameter] public bool Preloaded { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Preloaded)
+        {
+            ApplyValues();
+        }
+    }
+
+    /// <summary>Simulates a data load that arrives after the first render (#13064 async-load case).</summary>
+    public Task LoadValuesAsync()
+    {
+        ApplyValues();
+        return InvokeAsync(StateHasChanged);
+    }
+
+    private void ApplyValues()
+    {
+        _date = new DateTime(2020, 1, 15);
+        _time = new TimeSpan(10, 30, 0);
+        _dateRange = new DateRange(new DateTime(2020, 1, 1), new DateTime(2020, 1, 5));
+        _color = "#ff0000";
+    }
+}

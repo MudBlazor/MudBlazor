@@ -28,18 +28,7 @@
         <DocsPageSection>
             <SectionHeader Title="Helper Text">
                 <Description>
-                    Helper text provides additional context or instructions below the text field. It helps users understand what to enter or provides formatting guidance.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldFormPropsHelperTextExample)" ShowCode="false">
-                <TextFieldFormPropsHelperTextExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Helper Text On Focus">
-                <Description>
-                    When <CodeInline>HelperTextOnFocus</CodeInline> is enabled, the helper text only appears when the field is focused, reducing visual clutter while still providing guidance when needed.
+                    Helper text provides additional context or instructions below the text field. Enable <CodeInline>HelperTextOnFocus</CodeInline> to only show it while the field is focused, reducing visual clutter.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TextFieldHelperTextExample)" ShowCode="false">
@@ -48,24 +37,13 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Disabled State">
+            <SectionHeader Title="Disabled & Read-Only">
                 <Description>
-                    Disabled text fields prevent user interaction and are typically used when a field should not be editable under certain conditions.
+                    Disabled fields prevent all interaction, while read-only fields still allow users to select and copy the value but not modify it.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldFormPropsDisabledExample)" ShowCode="false">
-                <TextFieldFormPropsDisabledExample/>
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Read Only">
-                <Description>
-                    Read-only text fields display data that users can see and select but cannot modify. The field remains interactive for copying text.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldFormPropsReadOnlyExample)" ShowCode="false">
-                <TextFieldFormPropsReadOnlyExample/>
+            <SectionContent Code="@nameof(TextFieldDisabledReadOnlyExample)" ShowCode="false">
+                <TextFieldDisabledReadOnlyExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -86,76 +64,31 @@
 <DocsPageSection>
     <SectionHeader Title="Appearance & Styling">
         <Description>
-            Customize the visual appearance of text fields to match your design requirements.
+            Customize the visual appearance of text fields with <CodeInline>Margin="Margin.Dense"</CodeInline> to reduce the height for compact layouts,
+            <CodeInline>Typo</CodeInline> to match different content hierarchies, and <CodeInline>ShrinkLabel</CodeInline> to keep the label in its reduced-size position instead of resting over an empty field.
         </Description>
     </SectionHeader>
-    <SectionSubGroups>
-
-        <DocsPageSection>
-            <SectionHeader Title="Dense Layout">
-                <Description>
-                    Use the <CodeInline>Margin="Margin.Dense"</CodeInline> property to reduce the text field height for compact layouts.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldDenseExample)" ShowCode="false">
-                <TextFieldDenseExample/>
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Typography">
-                <Description>
-                    Control the text appearance with the <CodeInline>Typo</CodeInline> property to match different content hierarchies.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldTypoExample)" ShowCode="false">
-                <TextFieldTypoExample/>
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Shrink Label">
-                <Description>
-                    When <CodeInline>ShrinkLabel</CodeInline> is enabled, the label remains in its reduced size position and doesn't move when the field is empty.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldShrinkLabelExample)" ShowCode="false">
-                <TextFieldShrinkLabelExample/>
-            </SectionContent>
-        </DocsPageSection>
-
-    </SectionSubGroups>
+    <SectionContent Code="@nameof(TextFieldAppearanceExample)" ShowCode="false">
+        <TextFieldAppearanceExample/>
+    </SectionContent>
 </DocsPageSection>
 
 <DocsPageSection>
     <SectionHeader Title="Adornments">
         <Description>
             Adornments allow you to add icons, text, or buttons to the start or end of text fields. They're perfect for adding context, actions, or visual cues.
+            Use <CodeInline>AdornmentColor</CodeInline> to tint an adornment independently from the rest of the field.
         </Description>
     </SectionHeader>
     <SectionContent Code="@nameof(TextFieldAdornmentsExample)" ShowCode="false" Block="true" FullWidth="true">
         <TextFieldAdornmentsExample />
     </SectionContent>
-    <SectionSubGroups>
-        
-        <DocsPageSection>
-            <SectionHeader Title="Adornment Color">
-                <Description>
-                    The color of adornments can be customized independently from the text field using the <CodeInline>AdornmentColor</CodeInline> property.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldAdornmentColorExample)" ShowCode="false">
-                <TextFieldAdornmentColorExample />
-            </SectionContent>
-        </DocsPageSection>
-
-    </SectionSubGroups>
 </DocsPageSection>
 
 <DocsPageSection>
     <SectionHeader Title="Character Counter">
         <Description>
-            Display character counts and enforce length limits to help users stay within content boundaries. Set <CodeInline>Counter</CodeInline> to show the count, 
+            Display character counts and enforce length limits to help users stay within content boundaries. Set <CodeInline>Counter</CodeInline> to show the count,
             and combine with <CodeInline>MaxLength</CodeInline> to enforce limits at the input level.
         </Description>
     </SectionHeader>
@@ -200,8 +133,9 @@
         <DocsPageSection>
             <SectionHeader Title="Update Timing">
                 <Description>
-                    By default, text fields update on Enter or blur. Use <CodeInline>Immediate="true"</CodeInline> for real-time updates, or set <CodeInline>DebounceInterval</CodeInline> 
-                    to delay updates until the user stops typing. The debounced example updates 500ms after typing stops.
+                    By default, text fields update on Enter or <MudLink href="https://developer.mozilla.org/en-US/docs/Web/API/Element/blur_event">blur</MudLink> using the OnChange event. 
+                    To get input events instantly, set <MudLink href="https://www.mudblazor.com/api/mudtextfield#properties">Immediate</MudLink> to true and component will use OnInput events.
+                    To wait for a user to stop typing and then receive input events, set the <MudLink href="https://www.mudblazor.com/api/mudtextfield#properties">Debounce Interval</MudLink> to a non-zero value.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DebouncedTextFieldExample)" ShowCode="false">
@@ -271,56 +205,14 @@
 <DocsPageSection>
     <SectionHeader Title="Programmatic Control">
         <Description>
-            Text fields provide methods for programmatically controlling focus and text selection. These are useful for creating better user experiences and accessibility features.
+            Capture a text field with <CodeInline>@@ref</CodeInline> to control it from code. <CodeInline>FocusAsync()</CodeInline> sets focus;
+            <CodeInline>SelectAsync()</CodeInline> selects all text and <CodeInline>SelectRangeAsync(start, end)</CodeInline> selects a specific range;
+            and <CodeInline>GetCurrentCaretPositionAsync()</CodeInline>, <CodeInline>InsertTextAtCurrentCaretPositionAsync()</CodeInline> and <CodeInline>InsertTextAsync(text, position)</CodeInline> read the caret and insert text.
         </Description>
     </SectionHeader>
-    <SectionSubGroups>
-
-        <DocsPageSection>
-            <SectionHeader Title="Focus Control">
-                <Description>
-                    Use the <CodeInline>FocusAsync()</CodeInline> method to programmatically set focus to a text field. This is particularly useful for form validation feedback or guiding user attention.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldFocusExample)" ShowCode="false" Block="true" FullWidth="true">
-                <TextFieldFocusExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Text Selection">
-                <Description>
-                    The <CodeInline>SelectAsync()</CodeInline> method selects all text in the field, while <CodeInline>SelectRangeAsync()</CodeInline> allows you to select specific character ranges.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldSelectExample)" ShowCode="false" Block="true" FullWidth="true">
-                <TextFieldSelectExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Range Selection">
-                <Description>
-                    Select specific ranges of text using <CodeInline>SelectRangeAsync(start, end)</CodeInline>. This example selects characters 5-10 when you click the button.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldSelectRangeExample)" ShowCode="false" Block="true" FullWidth="true">
-                <TextFieldSelectRangeExample />
-            </SectionContent>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Text Insertion">
-                <Description>
-                    There are three functions which allow you to insert text: <CodeInline>GetCurrentCaretPositionAsync</CodeInline>, <CodeInline>InsertAtCurrentCaretPositionAsync</CodeInline> and <CodeInline>InsertTextAsync</CodeInline>. 
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(TextFieldTextInsertionExample)" ShowCode="false" Block="true" FullWidth="true">
-                <TextFieldTextInsertionExample />
-            </SectionContent>
-        </DocsPageSection>
-
-    </SectionSubGroups>
+    <SectionContent Code="@nameof(TextFieldProgrammaticExample)" ShowCode="false" Block="true" FullWidth="true">
+        <TextFieldProgrammaticExample />
+    </SectionContent>
 </DocsPageSection>
 
 <DocsPageSection>

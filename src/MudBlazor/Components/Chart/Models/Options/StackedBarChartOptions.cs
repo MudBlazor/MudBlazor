@@ -9,10 +9,19 @@ namespace MudBlazor;
 /// <summary>
 /// Options specific to stacked bar charts, extending <see cref="DefaultBarChartOptions"/>.
 /// </summary>
-public class StackedBarChartOptions : DefaultBarChartOptions
+public class StackedBarChartOptions : DefaultBarChartOptions, IHasValueLabelOptions
 {
     /// <inheritdoc />
     public override double SeriesSpacingRatio { get; set; } = 0.8;
+
+    /// <summary>
+    /// Whether to show the total of all visible series above each bar.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// Labels are formatted using <see cref="DefaultAxisChartOptions.YAxisFormat"/> or <see cref="DefaultAxisChartOptions.YAxisToStringFunc"/>.
+    /// </remarks>
+    public bool ShowValues { get; set; }
 
     /// <summary>
     /// Determines whether to show zero values

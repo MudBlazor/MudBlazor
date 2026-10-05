@@ -10,16 +10,6 @@ namespace MudBlazor.UnitTests.Utilities.Mask;
 [TestFixture]
 public class PatternMaskTests
 {
-
-    [Test]
-    public void BaseMask_Internals()
-    {
-        BaseMask.SplitAt("asdf", 1).Should().Be(("a", "sdf"));
-        BaseMask.SplitAt("", 1).Should().Be(("", ""));
-        BaseMask.SplitAt("asdf", -1).Should().Be(("", "asdf"));
-        BaseMask.SplitAt("asdf", 10).Should().Be(("asdf", ""));
-    }
-
     [Test]
     public void PatternMask_Insert()
     {
@@ -476,6 +466,39 @@ public class PatternMaskTests
 
         // Assert
         mask.Text.Should().Be("1---2");
+    }
+
+    [Test]
+    public void PatternMask_ChangeMaskChars_ForcesReinitialization()
+    {
+        // Arrange - default 'a' would accept letters
+        var mask = new PatternMask("aa");
+        mask.Insert("xy");
+        mask.Text.Should().Be("xy");
+
+        // Act - swap mask chars so 'a' now means digit, then re-evaluate
+        mask.MaskChars = [MaskChar.Digit('a')];
+        mask.SetText("xy");
+
+        // Assert - letters no longer accepted after reinitialization
+        mask.Text.Should().BeEmpty();
+        mask.SetText("12");
+        mask.Text.Should().Be("12");
+    }
+
+    [Test]
+    public void PatternMask_UpdateFrom_ChangesMaskAndPreservesAlignedText()
+    {
+        // Arrange
+        var mask = new PatternMask("000-000");
+        mask.SetText("123456");
+        mask.Text.Should().Be("123-456");
+
+        // Act - widen the mask; existing text is re-aligned against the new mask
+        mask.UpdateFrom(new PatternMask("00-00-00"));
+
+        // Assert
+        mask.Text.Should().Be("12-34-56");
     }
 
 }

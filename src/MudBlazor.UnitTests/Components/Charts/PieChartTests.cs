@@ -4,6 +4,7 @@
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using NUnit.Framework;
 
@@ -209,6 +210,46 @@ namespace MudBlazor.UnitTests.Charts
             seriesCheckboxes = comp.FindAll(".mud-checkbox-input"); // Re-find
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Slice 3 checkbox should be checked after re-showing");
             comp.FindAll($"path.mud-chart-serie{series3}").Count.Should().Be(1, "Slice 3 path should be visible again");
+        }
+
+        [Test]
+        public async Task PieChart_ClickingSerie_UpdatesSelectedIndex()
+        {
+            var selectedIndex = -1;
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Pie)
+                .Add(p => p.Width, "300px")
+                .Add(p => p.Height, "300px")
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20, 30 } } })
+                .Add(p => p.ChartLabels, new[] { "A", "B", "C" })
+                .Add(p => p.ChartOptions, new PieChartOptions { ChartPalette = _baseChartPalette })
+                .Add(p => p.SelectedIndex, selectedIndex)
+                .Add(p => p.SelectedIndexChanged, EventCallback.Factory.Create<int>(this, v => selectedIndex = v)));
+
+            var paths = comp.FindAll("path.mud-chart-serie");
+            paths.Count.Should().BeGreaterThan(1);
+
+            // Clicking the last serie path raises SelectedIndexChanged with that index.
+            await paths.Last().ClickAsync();
+            selectedIndex.Should().Be(2);
+        }
+
+        [Test]
+        public void PieChart_WhitespaceLabel_IsSkippedInLegend()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Pie)
+                .Add(p => p.Width, "300px")
+                .Add(p => p.Height, "300px")
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20, 30 } } })
+                .Add(p => p.ChartLabels, new[] { "Visible", "   ", "Other" })
+                .Add(p => p.ChartOptions, new PieChartOptions { ChartPalette = _baseChartPalette }));
+
+            var pie = comp.FindComponent<Pie<double>>().Instance;
+
+            // The blank/whitespace label produces no legend entry.
+            pie._legends.Should().HaveCount(2);
+            pie._legends.Select(l => l.Labels).Should().Contain("Visible").And.Contain("Other");
         }
     }
 }

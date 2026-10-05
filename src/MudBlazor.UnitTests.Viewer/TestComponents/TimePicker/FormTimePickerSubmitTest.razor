@@ -1,0 +1,16 @@
+@using MudBlazor.Utilities
+<MudPopoverProvider />
+
+<MudForm @ref="Form" FieldChanged="v => FormFieldChangedEventArgs = v">
+    <MudTimePicker @bind-Time="_time" />
+</MudForm>
+
+@code {
+    public static string __description__ =
+        "Submitting a user-picked time (Enter) must mark the picker Touched and fire FieldChanged, even though the Time parameter setter is suppressed for programmatic changes (#13328 review).";
+
+    public MudForm Form = null!;
+    public FormFieldChangedEventArgs? FormFieldChangedEventArgs { get; private set; }
+
+    private TimeSpan? _time;
+}

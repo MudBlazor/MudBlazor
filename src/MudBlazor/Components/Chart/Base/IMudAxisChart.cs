@@ -20,7 +20,7 @@ public record struct AxisGridData<T>(int LowestHorizontalLine, int HorizontalLin
     where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable;
 
 /// <summary>
-/// Represents a chart that has axes.
+/// Axis chart abstraction extending <see cref="IMudChart{T}"/> with shared grid data and support for overlaying one chart on another.
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 public interface IMudAxisChart<T> : IMudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable

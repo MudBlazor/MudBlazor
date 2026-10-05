@@ -1,8 +1,11 @@
 ﻿namespace MudBlazor
 {
     /// <summary>
-    /// Represents the theme settings for the MudBlazor user interface.
+    /// Theme settings that define the light and dark color palettes, typography, shadows, layout dimensions, and z-index values for MudBlazor components.
     /// </summary>
+    /// <remarks>
+    /// Applied to a page through a <see cref="MudThemeProvider"/>.
+    /// </remarks>
     public class MudTheme
     {
         /// <summary>

@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Renders the data rows of a <see cref="MudDataGrid{T}"/>, using virtualization to keep only the visible rows in the DOM for large data sets.
+    /// </summary>
+    /// <typeparam name="T">The type of item displayed in the data grid.</typeparam>
     public partial class DataGridVirtualizeRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         /// <summary>

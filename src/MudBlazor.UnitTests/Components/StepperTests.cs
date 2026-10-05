@@ -55,6 +55,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void ActionsClass_AppliesCustomClass_Issue13478()
+        {
+            var stepper = Context.Render<MudStepper>(self =>
+            {
+                self.Add(x => x.ActionsClass, "sticky-actions");
+            });
+
+            stepper.Find(".mud-stepper-actions").ClassList.Should().Contain("sticky-actions");
+        }
+
+        [Test]
         public async Task StepperStepContext_ShouldBeAvailableInsideChildContent()
         {
             MudStepContext? firstStepContext = null;
@@ -562,6 +573,32 @@ namespace MudBlazor.UnitTests.Components
             await stepper.FindComponents<MudStep>()[2].SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Completed, true));
             stepper.FindAll(".mud-step-label-icon")[2].QuerySelectorAll("path").Last().GetAttribute("d").Should().Be("M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z");
             stepper.FindAll(".mud-step")[2].ClassList.Should().Contain("mud-step-completed");
+        }
+
+        /// <summary>
+        /// Changing a step's Title or SecondaryText updates the stepper header without needing another render (#13925).
+        /// </summary>
+        [Test]
+        public async Task StepTitleAndSecondaryText_UpdateHeaderInSameRender_Issue13925()
+        {
+            var stepper = Context.Render<MudStepper>(self =>
+            {
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "Hello");
+                    step.Add(x => x.SecondaryText, "Greeting");
+                });
+            });
+
+            stepper.Find(".mud-step-label-content .mud-typography-subtitle2").TextContent.Trim().Should().Be("Hello");
+            stepper.Find(".mud-step-label-content .mud-typography-caption").TextContent.Trim().Should().Be("Greeting");
+
+            await stepper.FindComponent<MudStep>().SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Title, "Hallo")
+                .Add(x => x.SecondaryText, "Begrüßung"));
+
+            stepper.Find(".mud-step-label-content .mud-typography-subtitle2").TextContent.Trim().Should().Be("Hallo");
+            stepper.Find(".mud-step-label-content .mud-typography-caption").TextContent.Trim().Should().Be("Begrüßung");
         }
 
         [Test]

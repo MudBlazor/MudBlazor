@@ -1,0 +1,7 @@
+# Throwaway viewer repro components (e.g. created while reproducing an issue) live here.
+# They are discovered and routable at /viewer/Scratch/<Name> like any other test component,
+# but are intentionally not committed. Delete them when you are done.
+#
+# This .gitignore keeps the folder in the repo while ignoring everything placed in it.
+*
+!.gitignore

@@ -10,7 +10,7 @@ namespace MudBlazor;
 
 
 /// <summary>
-/// A base class for implementing Popover components.
+/// Base class for popover components such as <see cref="MudPopover"/>, handling creation and lifecycle through the <see cref="IPopoverService"/>.
 /// </summary>
 /// <remarks>
 /// This class provides a base implementation for a Popover component. It implements the <see cref="IPopover"/> interface
@@ -89,7 +89,13 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
                 await PopoverService.DestroyPopoverAsync(this);
             }
         }
-        catch (JSDisconnectedException) { }
-        catch (TaskCanceledException) { }
+        catch (JSDisconnectedException)
+        {
+            // The circuit is gone, so the popover's browser-side state went with it.
+        }
+        catch (TaskCanceledException)
+        {
+            // The destroy call was cancelled while tearing down, and dispose must not throw.
+        }
     }
 }

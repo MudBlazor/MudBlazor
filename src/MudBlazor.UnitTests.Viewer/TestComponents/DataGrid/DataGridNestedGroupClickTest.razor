@@ -1,0 +1,129 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents.DataGrid
+
+<MudDataGrid T="Item" Items="@_items" Groupable="true" MultiSelection="true"
+             ReadOnly="@ReadOnly" EditMode="@DataGridEditMode.Cell" EditTrigger="@EditTrigger"
+             RowClick="@OnRowClick" RowContextMenuClick="@ContextMenuCallback"
+             StartedEditingItem="@(item => StartedEditing.Add(item))">
+    <Columns>
+        <SelectColumn T="Item" />
+        <PropertyColumn Property="x => x.Group" Grouping="@Grouped" GroupExpanded Editable="false" />
+        <PropertyColumn Property="x => x.SubGroup" Grouping="@Grouped" GroupExpanded Editable="false" />
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Two grouping levels, so row and context-menu clicks reach the grid through nested DataGridGroupRow forwarding";
+
+    /// <summary>
+    /// Groups by two columns; set false for the flat grid, which reaches DataGridVirtualizeRow without any group row.
+    /// </summary>
+    [Parameter]
+    public bool Grouped { get; set; } = true;
+
+    /// <summary>
+    /// Gives <see cref="MudDataGrid{T}.RowContextMenuClick"/> a delegate; set false to leave it empty so no listener is attached.
+    /// </summary>
+    [Parameter]
+    public bool ContextMenuEnabled { get; set; } = true;
+
+    /// <summary>
+    /// Makes the consumer's row-click handler throw, to check the exception still surfaces.
+    /// </summary>
+    [Parameter]
+    public bool ThrowOnRowClick { get; set; }
+
+    /// <summary>
+    /// Makes the consumer's context-menu handler throw, to check the exception still surfaces.
+    /// </summary>
+    [Parameter]
+    public bool ThrowOnContextMenuClick { get; set; }
+
+    [Parameter]
+    public bool ReadOnly { get; set; } = true;
+
+    [Parameter]
+    public DataGridEditTrigger EditTrigger { get; set; } = DataGridEditTrigger.Manual;
+
+    /// <summary>
+    /// Counts reads of the bound cell value, which is one per cell per render pass.
+    /// </summary>
+    public int Reads { get; set; }
+
+    public List<DataGridRowClickEventArgs<Item>> RowClicks { get; } = new();
+
+    public List<DataGridRowClickEventArgs<Item>> ContextClicks { get; } = new();
+
+    public List<Item> StartedEditing { get; } = new();
+
+    private readonly List<Item> _items = new();
+
+    private EventCallback<DataGridRowClickEventArgs<Item>> ContextMenuCallback
+        => ContextMenuEnabled
+            ? EventCallback.Factory.Create<DataGridRowClickEventArgs<Item>>(this, OnRowContextMenuClick)
+            : default;
+
+    protected override void OnInitialized()
+    {
+        // Two outer groups, each with two inner groups of two rows: 8 rows, so a full body pass is 8 reads.
+        foreach (var group in new[] { "A", "B" })
+        {
+            foreach (var subGroup in new[] { "X", "Y" })
+            {
+                for (var i = 1; i <= 2; i++)
+                {
+                    _items.Add(new Item(this, group, subGroup, $"{group}{subGroup}{i}"));
+                }
+            }
+        }
+    }
+
+    private void OnRowClick(DataGridRowClickEventArgs<Item> args)
+    {
+        RowClicks.Add(args);
+        if (ThrowOnRowClick)
+        {
+            throw new InvalidOperationException("row click handler failed");
+        }
+    }
+
+    private void OnRowContextMenuClick(DataGridRowClickEventArgs<Item> args)
+    {
+        ContextClicks.Add(args);
+        if (ThrowOnContextMenuClick)
+        {
+            throw new InvalidOperationException("context menu handler failed");
+        }
+    }
+
+    public class Item
+    {
+        private readonly DataGridNestedGroupClickTest _owner;
+        private string _name;
+
+        public Item(DataGridNestedGroupClickTest owner, string group, string subGroup, string name)
+        {
+            _owner = owner;
+            Group = group;
+            SubGroup = subGroup;
+            _name = name;
+        }
+
+        public string Group { get; }
+
+        public string SubGroup { get; }
+
+        /// <summary>
+        /// Only this property counts a read; the grouping keys are read by the grouping machinery too.
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                _owner.Reads++;
+                return _name;
+            }
+            set => _name = value;
+        }
+    }
+}

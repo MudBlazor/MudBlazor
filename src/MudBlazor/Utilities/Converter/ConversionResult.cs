@@ -3,7 +3,7 @@
 namespace MudBlazor.Utilities.Converter.Base;
 
 /// <summary>
-/// Represents the result of a conversion attempt performed by a converter.
+/// Outcome of a converter's attempt to convert a value, carrying either the converted result or the error that occurred.
 /// </summary>
 /// <typeparam name="T">The target type produced by the conversion.</typeparam>
 /// <remarks>

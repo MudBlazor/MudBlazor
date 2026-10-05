@@ -171,6 +171,7 @@
         margin: 0 11px 0 11px;
         padding: 0;
         position: relative;
+        overflow: hidden;
       }
     }
 
@@ -180,7 +181,9 @@
       }
     }
 
-    &.mud-shrink > .mud-input-outlined-border {
+    // Autofill must open the label notch too since mud-shrink is not set (#9050).
+    &.mud-shrink > .mud-input-outlined-border,
+    &:has(:-webkit-autofill) > .mud-input-outlined-border {
       legend {
         width: auto;
         padding: 0 5px;

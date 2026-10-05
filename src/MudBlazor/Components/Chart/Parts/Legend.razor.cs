@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor.Charts
 {
     /// <summary>
-    /// Represents a set of text labels which describe data values in a <see cref="MudChart{T}"/>.
+    /// Legend that lists text labels identifying each data series shown in a <see cref="MudChart{T}" />.
     /// </summary>
+    /// <typeparam name="T">The numeric type of the charted values.</typeparam>
     public partial class Legend<T> : MudChartBase<T, IChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     {
         /// <summary>

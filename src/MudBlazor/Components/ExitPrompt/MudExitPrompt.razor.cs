@@ -108,7 +108,6 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
         if (!await IsNavigationAllowedAsync())
         {
             context.PreventNavigation();
-            return;
         }
     }
 
@@ -126,7 +125,7 @@ public partial class MudExitPrompt : MudComponentBase, IAsyncDisposable
             TextToDisplay,
             Localizer[LanguageResource.MudExitPrompt_Exit],
             Localizer[LanguageResource.MudExitPrompt_Cancel]
-        ) == true;
+        ) ?? false;
     }
 
     private async Task EnableAsync()

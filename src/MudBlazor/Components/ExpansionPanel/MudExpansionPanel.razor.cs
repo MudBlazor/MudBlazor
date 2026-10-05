@@ -7,13 +7,13 @@ namespace MudBlazor
 {
 
     /// <summary>
-    /// A component which can be expanded to show more content or collapsed to show only its header.
+    /// Accordion-style collapsible panel within a <see cref="MudExpansionPanels"/> group that expands to reveal content or collapses to show only its header.
     /// </summary>
     /// <remarks>
     /// This component is always inside a <see cref="MudExpansionPanels"/> component.
     /// </remarks>
-    /// <seealso cref="MudExpansionPanels"/>
-    /// <seealso cref="MudCollapse"/>
+    /// <seealso cref="MudCollapse" />
+    /// <seealso cref="MudExpansionPanels" />
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
         internal readonly ParameterState<bool> _expandedState;
@@ -25,7 +25,6 @@ namespace MudBlazor
             new CssBuilder("mud-expand-panel")
                 .AddClass("mud-panel-expanded", _expandedState.Value)
                 .AddClass("mud-panel-next-expanded", NextPanelExpanded)
-                .AddClass("mud-disabled", Disabled)
                 .AddClass($"mud-elevation-{Parent?.Elevation.ToString()}")
                 .AddClass($"mud-expand-panel-border", Parent?.Outlined == true)
                 .AddClass(Class)
@@ -34,6 +33,7 @@ namespace MudBlazor
         protected string HeaderClassname =>
             new CssBuilder("mud-expand-panel-header")
                 .AddClass("mud-expand-panel-header-gutters", Gutters && Parent?.Gutters != false)
+                .AddClass("mud-disabled", Disabled)
                 .AddClass(HeaderClass)
                 .Build();
 

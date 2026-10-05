@@ -53,6 +53,19 @@ public class DateTimeExtensionTests
     }
 
     [Test]
+    public void ToIsoDateString_ShouldZeroPad_WhenComponentsAreSingleDigit()
+    {
+        // Arrange
+        var dateTime = new DateTime(7, 1, 9); // Year 7, January 9th.
+
+        // Act
+        var result = dateTime.ToIsoDateString();
+
+        // Assert
+        result.Should().Be("0007-01-09");
+    }
+
+    [Test]
     public void StartOfMonth_ShouldReturnFirstDayOfMonth()
     {
         // Arrange
@@ -78,6 +91,20 @@ public class DateTimeExtensionTests
 
         // Assert
         result.Should().Be(new DateTime(2023, 10, 31));
+    }
+
+    [Test]
+    public void EndOfMonth_ShouldReturn29Days_ForFebruaryInLeapYear()
+    {
+        // Arrange
+        var dateTime = new DateTime(2024, 2, 10); // 2024 is a leap year.
+        var culture = CultureInfo.InvariantCulture;
+
+        // Act
+        var result = dateTime.EndOfMonth(culture);
+
+        // Assert
+        result.Should().Be(new DateTime(2024, 2, 29));
     }
 
     [Test]

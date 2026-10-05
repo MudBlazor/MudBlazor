@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" DebounceInterval="10" PopoverClass="autocomplete-popover-class" />
+<MudAutocomplete id="autocompleteLabelTest" T="string" Label="US States" @bind-Value="_value1" SearchFunc="@Search1" DebounceInterval="0" PopoverClass="autocomplete-popover-class" />
 
 @code {
     public static string __description__ = "Initial value should be shown and popup should not open.";
@@ -28,7 +28,7 @@
     private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(50, token);
+        await Task.Yield();
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))

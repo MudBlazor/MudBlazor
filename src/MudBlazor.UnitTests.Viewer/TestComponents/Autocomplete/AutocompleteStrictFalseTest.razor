@@ -17,7 +17,7 @@
 
     public async Task<IEnumerable<State?>> SearchStateAsync(string value, CancellationToken token)
     {
-        await Task.Delay(5, token);
+        await Task.Yield();
         if (string.IsNullOrEmpty(value))
             return _states.Select(x => new State(x));
         return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Select(x => new State(x));
@@ -25,7 +25,7 @@
 
     public async Task<IEnumerable<State?>> SearchStateToStringAsync(string value, CancellationToken token)
     {
-        await Task.Delay(5, token);
+        await Task.Yield();
         if (string.IsNullOrEmpty(value))
             return _states.Select(x => new StateToString(x));
         return _states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase)).Select(x => new StateToString(x));

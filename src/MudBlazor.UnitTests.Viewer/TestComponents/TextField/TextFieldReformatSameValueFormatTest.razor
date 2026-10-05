@@ -1,0 +1,18 @@
+@* #13096 repro C: formatting via the field's Format (the idiomatic case). *@
+@using System.Globalization
+
+<MudTextField T="decimal?"
+              Value="@Value"
+              ValueChanged="@OnValueChangedAsync"
+              Culture="@CultureInfo.GetCultureInfo("en-US")"
+              Format="F2" />
+
+@code {
+    public decimal? Value { get; set; }
+
+    private Task OnValueChangedAsync(decimal? value)
+    {
+        Value = value;
+        return Task.CompletedTask;
+    }
+}

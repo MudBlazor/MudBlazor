@@ -1,0 +1,37 @@
+﻿@*each removed parameter appears once, on the component a consumer writes*@
+
+@*chips and lists*@
+<MudChipSet T="string" Filter="true">
+    <MudChip T="string" Link="/chip" DisableRipple="false" />
+</MudChipSet>
+<MudList T="string" DisablePadding="true" Clickable="@_flag" DisableGutters="true">
+    <MudListSubheader DisableGutters="true">Header</MudListSubheader>
+    <MudListItem T="string" DisableRipple="true" DisableGutters="false" AdornmentColor="Color.Primary" OnClickHandlerPreventDefault="true" InitiallyExpanded="true" />
+</MudList>
+
+@*menus*@
+<MudMenu DisableRipple="true" DisableElevation="@_flag" IsOpenChanged="@((bool open) => _flag = open)" PositionAtCurser="true">
+    <MudMenuItem Link="/menu-item">Item</MudMenuItem>
+</MudMenu>
+
+@*alerts, dialogs, tooltips, and visibility*@
+<MudAlert AlertTextPosition="AlertTextPosition.Center">Alert</MudAlert>
+<MudDialog IsVisible="@_flag" IsVisibleChanged="@((bool visible) => _flag = visible)" DisableSidePadding="true" ClassActions="actions" ClassContent="content" />
+<MudMessageBox IsVisible="@_flag" IsVisibleChanged="@((bool visible) => _flag = visible)" />
+<MudTooltip Text="Tooltip" IsVisible="@_flag" IsVisibleChanged="@((bool visible) => _flag = visible)" Delayed="0.5" />
+<MudHidden Breakpoint="Breakpoint.Sm" IsHidden="@_flag" IsHiddenChanged="@((bool hidden) => _flag = hidden)" />
+
+@*layout*@
+<MudExpansionPanels DisableBorders="true" DisableGutters="true">
+    <MudExpansionPanel Text="Panel" IsExpanded="@_flag" IsExpandedChanged="@((bool expanded) => _flag = expanded)" DisableGutters="true" IsInitiallyExpanded="true" />
+</MudExpansionPanels>
+<MudAppBar DisableGutters="true" />
+<MudToolBar DisableGutters="true" />
+<MudDrawer DisableOverlay="true" />
+
+@code
+{
+    public static string __description__ = "Removed list, menu, dialog, and layout parameters that MUD0002 explains";
+
+    private bool _flag = true;
+}

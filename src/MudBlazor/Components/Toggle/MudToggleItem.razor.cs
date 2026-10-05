@@ -25,7 +25,6 @@ namespace MudBlazor
             .AddClass("mud-toggle-item-fixed", AssertedParent.CheckMark && AssertedParent.FixedContent)
             .AddClass($"mud-toggle-item-size-{AssertedParent.Size.ToStringFast(true)}")
             .AddClass("mud-ripple", AssertedParent.Ripple)
-            .AddClass("mud-typography-input")
             .AddClass(Class)
             .Build();
 

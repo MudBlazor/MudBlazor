@@ -95,6 +95,30 @@ public class ConverterExtensionsTests
     }
 
     [Test]
+    public void TryConvertBack_OnReversible_WhenConvertBackThrowsConversionException_IsCaptured()
+    {
+        var rev = new ThrowOnConvertBackConverter();
+        var res = rev.TryConvertBack("anything");
+
+        res.Success.Should().BeFalse();
+        res.ExceptionError.Should().BeOfType<ConversionException>();
+        res.ErrorMessageKey.Should().Be("BACK_KEY");
+        res.ErrorMessageArgs.Should().Contain("b");
+    }
+
+    [Test]
+    public void TryConvertBack_OnNonReversibleIConverter_CapturesInvalidOperationException()
+    {
+        // The IConverter overload routes through the ConvertBack extension, which throws for non-reversible converters.
+        IConverter<int, string> conv = new NoBackwardConverter();
+        var res = conv.TryConvertBack("test");
+
+        res.Success.Should().BeFalse();
+        res.ExceptionError.Should().BeOfType<InvalidOperationException>();
+        res.ErrorMessageKey.Should().BeNull();
+    }
+
+    [Test]
     public void Reverse_ReversibleConverter_ReturnsReversedChain()
     {
         var rev = new ReversibleIntString();
@@ -156,6 +180,12 @@ public class ConverterExtensionsTests
     {
         public string Convert(int input) => (input + 100).ToString();
         public int ConvertBack(string input) => int.Parse(input) - 100;
+    }
+
+    private sealed class ThrowOnConvertBackConverter : IReversibleConverter<int, string>
+    {
+        public string Convert(int input) => input.ToString();
+        public int ConvertBack(string input) => throw new ConversionException("BACK_KEY", ["b"]);
     }
 
     private sealed class NoBackwardConverter : IConverter<int, string>

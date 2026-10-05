@@ -1,0 +1,47 @@
+﻿<MudDataGrid T="Item" Items="@_items" MultiSelection="true" RowsPerPage="10">
+    <Columns>
+        <SelectColumn T="Item" DisabledFunc="@(x => x.Disabled)" />
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Item" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Used to verify the select-all checkbox does not scan every filtered row";
+
+    public int DisabledFuncCalls { get; set; }
+
+    private readonly List<Item> _items = new();
+
+    protected override void OnInitialized()
+    {
+        for (var i = 0; i < 500; i++)
+        {
+            _items.Add(new Item(this, i));
+        }
+    }
+
+    public class Item
+    {
+        private readonly DataGridSelectAllScanTest _owner;
+
+        public Item(DataGridSelectAllScanTest owner, int index)
+        {
+            _owner = owner;
+            Name = $"Name{index}";
+        }
+
+        public string Name { get; }
+
+        public bool Disabled
+        {
+            get
+            {
+                _owner.DisabledFuncCalls++;
+                return false;
+            }
+        }
+    }
+}

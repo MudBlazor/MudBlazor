@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
-using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -77,11 +76,29 @@ internal sealed class MudSelectContext<T>
         // Note: Do NOT add to _shadowLookup here - that's only for shadow items
         // Shadow items are registered separately via RegisterShadowItem
 
-        // Check if this item's value is currently selected
-        return _select.MultiSelection switch
+        return IsItemSelected(item);
+    }
+
+    /// <summary>
+    /// Check if this item's value is currently selected using the select comparer if specified
+    /// </summary>
+    /// <param name="item">The item to check</param>
+    /// <returns></returns>
+    public bool IsItemSelected(MudSelectItem<T> item)
+    {
+        var comparer = _select.Comparer ?? EqualityComparer<T?>.Default;
+        if (!_select.MultiSelection)
         {
-            true => _select.GetSelectedValues()?.Contains(item.Value) == true,
-            false => _select.ReadValue?.Equals(item.Value) == true
+            return comparer.Equals(_select.ReadValue, item.Value);
+        }
+
+        return _select.GetSelectedValues() switch
+        {
+            null => false,
+            // MudSelect keeps its selection in a HashSet built with the select's comparer, so its O(1) lookup gives the same answer.
+            HashSet<T?> set when set.Comparer.Equals(comparer) => set.Contains(item.Value),
+            // A caller-supplied collection can be a list or use a different comparer.
+            var values => values.Contains(item.Value, comparer),
         };
     }
 
@@ -168,23 +185,76 @@ internal sealed class MudSelectContext<T>
 
         _shadowLookup[newValue] = item;
         _select.InvalidateFitContent();
-        ((IMudStateHasChanged)_select).StateHasChanged();
+
+        // Re-render only when the changed value is the one shown by the selected-value presenter
+        // (single selection only). An unconditional StateHasChanged loops forever when an item's
+        // Value is a fresh reference each render, e.g. an inline Value="@(new ...)" (#13281).
+        if (!_select.MultiSelection)
+        {
+            var comparer = Comparer ?? EqualityComparer<T?>.Default;
+            if (comparer.Equals(oldValue, _select.ReadValue) || comparer.Equals(newValue, _select.ReadValue))
+            {
+                ((IMudStateHasChanged)_select).StateHasChanged();
+            }
+        }
     }
 
     /// <summary>
     /// Attempts to get an item by its value from visible items.
     /// </summary>
+    /// <remarks>
+    /// When a custom <see cref="Comparer"/> is set the lookup honors it via a linear scan;
+    /// otherwise the fast dictionary lookup (default equality) is used. This keeps value-to-item
+    /// resolution consistent with the comparer-aware selection state.
+    /// </remarks>
     public bool TryGetItemByValue(T? value, [NotNullWhen(true)] out MudSelectItem<T>? item)
     {
-        return _valueLookup.TryGetValue(value, out item);
+        var comparer = Comparer;
+        if (comparer is null)
+        {
+            return _valueLookup.TryGetValue(value, out item);
+        }
+
+        foreach (var candidate in _items)
+        {
+            if (comparer.Equals(candidate.Value, value))
+            {
+                item = candidate;
+                return true;
+            }
+        }
+
+        item = null;
+        return false;
     }
 
     /// <summary>
     /// Attempts to get an item by its value from all items (including shadow items).
     /// </summary>
+    /// <remarks>
+    /// When a custom <see cref="Comparer"/> is set the lookup honors it via a linear scan;
+    /// otherwise the fast dictionary lookup (default equality) is used. This keeps value-to-item
+    /// resolution consistent with the comparer-aware selection state.
+    /// </remarks>
     public bool TryGetShadowItemByValue(T? value, [NotNullWhen(true)] out MudSelectItem<T>? item)
     {
-        return _shadowLookup.TryGetValue(value, out item);
+        var comparer = Comparer;
+        if (comparer is null)
+        {
+            return _shadowLookup.TryGetValue(value, out item);
+        }
+
+        foreach (var candidate in _shadowLookup.Values)
+        {
+            if (comparer.Equals(candidate.Value, value))
+            {
+                item = candidate;
+                return true;
+            }
+        }
+
+        item = null;
+        return false;
     }
 
     /// <summary>

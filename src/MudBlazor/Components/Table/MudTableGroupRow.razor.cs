@@ -21,6 +21,7 @@ namespace MudBlazor
 
         protected string HeaderClassname => new CssBuilder("mud-table-row")
             .AddClass(HeaderClass)
+            .AddClass(GroupDefinition?.GroupHeaderClass)
             .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level - 1}",
                 (GroupDefinition?.Indentation ?? false) && GroupDefinition?.Level > 1)
             .Build();
@@ -182,7 +183,15 @@ namespace MudBlazor
             if (GroupDefinition != null)
             {
                 Expanded = GroupDefinition.IsInitiallyExpanded;
-                ((TableContext<T>?)Context)?.GroupRows.Add(this);
+                var context = (TableContext<T>?)Context;
+                if (context is not null)
+                {
+                    context.GroupRows.Add(this);
+                    if (Checkable && Items is not null)
+                    {
+                        _checked = context.GetGroupCheckedState(Items);
+                    }
+                }
                 SyncInnerGroupItems();
             }
             return base.OnInitializedAsync();

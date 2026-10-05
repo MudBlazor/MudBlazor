@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents the top portion of a <see cref="MudCard"/>.
+    /// The header area of a <see cref="MudCard"/>, typically holding an avatar, title, and action buttons.
     /// </summary>
     /// <seealso cref="MudCard" />
     /// <seealso cref="MudCardActions" />

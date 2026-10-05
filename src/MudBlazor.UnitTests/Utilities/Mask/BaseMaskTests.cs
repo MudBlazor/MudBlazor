@@ -261,6 +261,17 @@ public class BaseMaskTests
     }
 
     [Test]
+    public void PatternMask_ToString_NegativeCaret()
+    {
+        // ConsolidateCaret clamps a negative caret to 0, so the marker lands at the start.
+        var mask = new PatternMask("000");
+        mask.Insert("123");
+        mask.CaretPos = -5;
+
+        mask.ToString().Should().Be("|123");
+    }
+
+    [Test]
     public void PatternMask_UpdateFrom_NullOther()
     {
         // Arrange

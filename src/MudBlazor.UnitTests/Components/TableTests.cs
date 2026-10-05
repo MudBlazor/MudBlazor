@@ -15,6 +15,25 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TableTests : BunitTest
     {
+        /// <summary>
+        /// A row's index is its position in the filtered items, and duplicates resolve to the first match.
+        /// </summary>
+        [Test]
+        public void TableRowIndex_IsPositionInFilteredItems()
+        {
+            var comp = Context.Render<TableRowIndexTest>();
+
+            // "a" appears twice, so the third row resolves to the first match, matching List.IndexOf.
+            comp.Instance.SeenIndexes.Should().Equal(0, 1, 0, 3);
+
+            var rowIds = comp.FindAll("tbody tr").Select(row => row.Id).ToList();
+            rowIds.Should().HaveCount(4);
+            rowIds[0].Should().EndWith("_row_0");
+            rowIds[1].Should().EndWith("_row_1");
+            rowIds[2].Should().EndWith("_row_0");
+            rowIds[3].Should().EndWith("_row_3");
+        }
+
         [Test]
         public async Task CustomTableClass()
         {
@@ -140,6 +159,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("C");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
+            // descending -> unsorted
+            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            // unsorted -> ascending
+            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
 
             comp = Context.Render<TableInitialSortDirectionTest>(parameters => parameters
                 .Add(p => p.InitialSortDirection, SortDirection.Ascending));
@@ -289,10 +315,11 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No records");
 
-            // It should be equal to 3 = header row + loading progress row + loading text
+            // LoadingContent replaces the progress bar when there are no records (#11514):
+            // 2 rows = header row + loading text
             await switchElement.ChangeAsync(true);
-            comp.FindAll("tr").Count.Should().Be(3);
-            comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("Loading...");
 
             // Remove filter
             await searchString.ChangeAsync("");
@@ -321,10 +348,12 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
 
-            // It should be equal to 3 = empty row string + header row + loading row
+            // LoadingContent replaces the progress bar when there are no records (#11514):
+            // 2 rows = header row + loading content row
             await switchElement.ChangeAsync(true);
-            comp.FindAll("tr").Count.Should().Be(3);
-            comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("Loading...");
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(0);
         }
 
         /// <summary>
@@ -353,12 +382,36 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
 
-            // It should be equal to 6 = 4 loading rows + header row + loading row
+            // LoadingContentBody replaces the progress bar when there are no records (#11514):
+            // 5 rows = 4 loading rows + header row
             await switchElement.ChangeAsync(true);
-            comp.FindAll("tr").Count.Should().Be(6);
+            comp.FindAll("tr").Count.Should().Be(5);
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(0);
 
             // It should be equal to 20 = 4 rows * 5 columns
             comp.FindAll(".mud-skeleton").Count.Should().Be(20);
+        }
+
+        /// <summary>
+        /// Regression test for #11514: when Loading is true and LoadingContent is set, the custom content replaces the built-in progress bar rather than showing both.
+        /// The progress bar is still used when the current page has items (e.g. a background refresh), where the custom content is not rendered.
+        /// </summary>
+        [Test]
+        public async Task LoadingContentReplacesProgressBar()
+        {
+            var comp = Context.Render<TableLoadingTest>();
+            var searchString = comp.Find("#searchString");
+            var switchElement = comp.Find("#switch");
+
+            // Items present + loading => progress bar is shown, custom content is not.
+            await switchElement.ChangeAsync(true);
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(1);
+            comp.Markup.Should().NotContain("Loading...");
+
+            // No items + loading => custom content is shown, progress bar is not (the actual bug).
+            await searchString.ChangeAsync("ZZZ");
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(0);
+            comp.FindAll("tr").Select(tr => tr.TextContent).Should().Contain("Loading...");
         }
 
         /// <summary>
@@ -511,6 +564,19 @@ namespace MudBlazor.UnitTests.Components
             //navigate to specified page
             await table.InvokeAsync(() => table.Instance.NavigateTo(pageIndex));
             comp.FindAll("tr.mud-table-row")[0].TextContent.Should().Be(expectedFirstItem);
+        }
+
+        /// <summary>
+        /// Issue #13619: Navigating an empty table keeps the current page at zero.
+        /// </summary>
+        [Test]
+        public async Task TableNavigateToEmptyTableKeepsCurrentPageAtZero()
+        {
+            var table = Context.Render<MudTable<string>>();
+
+            await table.InvokeAsync(() => table.Instance.NavigateTo(0));
+
+            table.Instance.CurrentPage.Should().Be(0);
         }
 
         /// <summary>
@@ -723,7 +789,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task TableMultiSelection_IgnoreCheckbox_RowClick()
         {
-            var comp = Context.Render<TableMultiSelection_IgnoreCheckbox_RowClickTest>();
+            var comp = Context.Render<TableMultiSelectIgnoreRowTest>();
             var rows = comp.FindComponent<MudTable<int>>().FindAll("tr").ToArray();
             var table = comp.FindComponent<MudTable<int>>().Instance;
 
@@ -737,7 +803,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TableMultiSelection_MultiGrouping_DefaultCheckboxStates()
         {
-            var comp = Context.Render<TableMultiSelection_MultiGrouping_DefaultCheckboxStatesTest>();
+            var comp = Context.Render<TableMultiGroupCheckboxTest>();
             var mudTable = comp.Instance.MudTable;
 
             // All row checkbox states must be false.
@@ -1234,9 +1300,12 @@ namespace MudBlazor.UnitTests.Components
         public async Task TablePaginationTest1()
         {
             var comp = Context.Render<TablePaginationTest1>();
-            await Task.Delay(200);
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(11); // ten rows + header row
-            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
+            // The items load after a delay, so wait for the render that shows them instead of sleeping.
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll("tr.mud-table-row").Count.Should().Be(11); // ten rows + header row
+                comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
+            });
         }
 
         /// <summary>
@@ -1595,6 +1664,31 @@ namespace MudBlazor.UnitTests.Components
                 await trs[(i % 3) + 1].ClickAsync();
             }
             validator.ControlCount.Should().Be(1);
+        }
+
+        /// <summary>
+        /// A row whose editor uses an asynchronous validation function must not commit while invalid, and must commit once valid.
+        /// The commit path awaits <see cref="TableRowValidator.ValidateAsync"/> instead of reading the synchronous <c>IsValid</c>, which reported async validators as valid.
+        /// </summary>
+        [Test]
+        public async Task TableInlineEdit_AsyncValidation_GatesCommit()
+        {
+            var comp = Context.Render<TableInlineEditAsyncValidationTest>();
+
+            await comp.Find("button[aria-label=\"Edit row\"]").ClickAsync();
+
+            // The initial value fails the async rule, so committing is rejected and the row stays in edit mode.
+            await comp.Find("button[aria-label=\"Commit edit\"]").ClickAsync();
+            comp.Instance.CommitCount.Should().Be(0);
+            comp.FindAll("input").Should().NotBeEmpty();
+
+            // A value that passes the async rule commits and leaves edit mode.
+            // The value is set through the field rather than the DOM because the async rule re-renders the row, which re-registers the input's onchange handler while bUnit keeps serving the element it parsed before that render.
+            // The clicks either side still go through the DOM.
+            await comp.InvokeAsync(() => comp.FindComponent<MudTextField<string>>().Instance.ValueChanged.InvokeAsync("B"));
+            await comp.Find("button[aria-label=\"Commit edit\"]").ClickAsync();
+            comp.Instance.CommitCount.Should().Be(1);
+            comp.FindAll("input").Should().BeEmpty();
         }
 
         [Theory]
@@ -2375,6 +2469,94 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        [Test]
+        public async Task TableGrouping_NestedGroupCheckboxesUpdateWhenParentExpandsAfterSelection()
+        {
+            // Regression for https://github.com/MudBlazor/MudBlazor/issues/9474
+            var comp = Context.Render<TableGroupingNestedTest>();
+            var tableComponent = comp.FindComponent<MudTable<TableGroupingNestedTest.Item>>();
+            await tableComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.MultiSelection, true));
+            var table = tableComponent.Instance;
+
+            IRenderedComponent<MudTableGroupRow<TableGroupingNestedTest.Item>> FindGroup(string key)
+            {
+                return comp.FindComponents<MudTableGroupRow<TableGroupingNestedTest.Item>>()
+                    .Single(group => group.Instance.Items?.Key.ToString() == key);
+            }
+
+            // Control: expanding an unselected parent creates unchecked child groups.
+            var unselectedParent = FindGroup("G2");
+            await unselectedParent.FindComponent<MudIconButton>().Find("button").ClickAsync();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G2 > N1").Checked.Should().BeFalse();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G2 > N2").Checked.Should().BeFalse();
+
+            // Select a different parent while its child groups have not been rendered.
+            table.Context.GroupRows.Should().NotContain(group => group.Items != null && group.Items.Key.ToString().StartsWith("G1 >"));
+            var selectedParent = FindGroup("G1");
+            await selectedParent.FindComponent<MudCheckBox<bool?>>().Find("input").ChangeAsync(true);
+            table.SelectedItems.Should().HaveCount(3);
+            table.SelectedItems.Should().OnlyContain(item => item.Group == "G1");
+
+            // Expanding the selected parent must immediately initialize its child checkboxes.
+            await selectedParent.FindComponent<MudIconButton>().Find("button").ClickAsync();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G1 > N1").Checked.Should().BeTrue();
+            table.Context.GroupRows.Single(group => group.Items?.Key.ToString() == "G1 > N2").Checked.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Each grouping level's <see cref="TableGroupDefinition{T}.GroupHeaderClass"/> is applied only to that level's group header rows.
+        /// </summary>
+        /// <remarks>
+        /// https://github.com/MudBlazor/MudBlazor/issues/10959
+        /// </remarks>
+        [Test]
+        public void TableGrouping_GroupHeaderClass_AppliedPerLevel()
+        {
+            var comp = Context.Render<TableGroupHeaderClassTest>(parameters => parameters
+                .Add(x => x.OuterHeaderClass, "outer-group-header")
+                .Add(x => x.InnerHeaderClass, "inner-group-header"));
+
+            var groupRows = comp.FindComponents<MudTableGroupRow<TableGroupHeaderClassTest.Item>>();
+            var outerRows = groupRows.Where(row => row.Instance.GroupDefinition?.InnerGroup is not null).ToList();
+            var innerRows = groupRows.Where(row => row.Instance.GroupDefinition?.InnerGroup is null).ToList();
+            outerRows.Should().HaveCount(2);
+            innerRows.Should().HaveCount(4);
+
+            foreach (var outerRow in outerRows)
+            {
+                var header = outerRow.Find("tr");
+                header.ClassList.Should().Contain("outer-group-header");
+                header.ClassList.Should().NotContain("inner-group-header");
+            }
+
+            foreach (var innerRow in innerRows)
+            {
+                var header = innerRow.Find("tr");
+                header.ClassList.Should().Contain("inner-group-header");
+                header.ClassList.Should().NotContain("outer-group-header");
+            }
+
+            comp.FindAll("tr.outer-group-header").Should().HaveCount(2);
+            comp.FindAll("tr.inner-group-header").Should().HaveCount(4);
+        }
+
+        /// <summary>
+        /// A null <see cref="TableGroupDefinition{T}.GroupHeaderClass"/> adds no class to the group header rows.
+        /// </summary>
+        [Test]
+        public void TableGrouping_GroupHeaderClass_NullAddsNoClass()
+        {
+            var comp = Context.Render<TableGroupHeaderClassTest>();
+
+            var groupRows = comp.FindComponents<MudTableGroupRow<TableGroupHeaderClassTest.Item>>();
+            groupRows.Should().HaveCount(6);
+
+            foreach (var groupRow in groupRows)
+            {
+                groupRow.Find("tr").ClassList.Should().BeEquivalentTo("mud-table-row");
+            }
+        }
+
         /// <summary>
         /// Tests the grouping behavior and ensure that it won't break anything else.
         /// </summary>
@@ -2523,6 +2705,17 @@ namespace MudBlazor.UnitTests.Components
 
             // assert correct info-text
             tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be(expectedInfoText);
+        }
+
+        [Test]
+        public void TablePagerInfoTextIsExcludedFromBrowserTranslation()
+        {
+            var tableComponent = Context.Render<TablePagerInfoTextTest1>();
+
+            tableComponent.Find("div.mud-table-page-number-information")
+                .GetAttribute("translate")
+                .Should()
+                .Be("no");
         }
 
         /// <summary>
@@ -2680,6 +2873,26 @@ namespace MudBlazor.UnitTests.Components
             await testComponent.WaitForAssertionAsync(() => table.RowsPerPage.Should().Be(35));
         }
 
+        // Issue #13462
+        // A one-way RowsPerPage parameter is re-applied on every parent re-render. Re-applying the
+        // same value must not clobber a page size the user picked via the pager.
+        [Test]
+        public async Task RowsPerPageParameterReapplyDoesNotResetPager()
+        {
+            var testComponent = Context.Render<TableRowsPerPageParameterReapplyTest>();
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+            var buttonComponent = testComponent.FindComponent<MudButton>();
+            table.RowsPerPage.Should().Be(100);
+
+            // Simulate the user changing the page size through the pager.
+            await testComponent.InvokeAsync(() => table.SetRowsPerPage(25));
+            table.RowsPerPage.Should().Be(25);
+
+            // A parent re-render re-applies the unchanged RowsPerPage="100" parameter; the pager choice must survive.
+            await buttonComponent.Find("button").ClickAsync();
+            table.RowsPerPage.Should().Be(25);
+        }
+
         /// <summary>
         /// Tests whether record type table items are kept track of when edited
         /// </summary>
@@ -2742,6 +2955,40 @@ namespace MudBlazor.UnitTests.Components
             context.Comparer.Should().Be(comp.Instance.Comparer);
             context.Selection.Comparer.Should().Be(comp.Instance.Comparer); //check comparer is set in HashSet and Dictionary
             context.Rows.Comparer.Should().Be(comp.Instance.Comparer);
+        }
+
+        /// <summary>
+        /// Uses the selection hash set when its comparer matches the table comparer.
+        /// </summary>
+        [Test]
+        public async Task IsCheckedRow_UsesHashSetWithMatchingComparer()
+        {
+            var comparer = new CountingIntComparer();
+            var comp = Context.Render<TestableMudTable<int>>();
+            var table = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Comparer, comparer));
+            table.Context.Selection.UnionWith(Enumerable.Range(0, 100));
+            comparer.Reset();
+
+            table.IsRowChecked(50).Should().BeTrue();
+            comparer.EqualsCalls.Should().Be(1);
+            comparer.GetHashCodeCalls.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Uses the table comparer when externally supplied selection has a different comparer.
+        /// </summary>
+        [Test]
+        public async Task IsCheckedRow_UsesTableComparerWithMismatchedSelectionComparer()
+        {
+            var comparer = StringComparer.OrdinalIgnoreCase;
+            var comp = Context.Render<TestableMudTable<string>>();
+            var table = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Comparer, comparer)
+                .Add(x => x.SelectedItems, new HashSet<string>(["selected"], StringComparer.Ordinal)));
+
+            table.IsRowChecked("SELECTED").Should().BeTrue();
         }
 
         /// <summary>
@@ -2813,6 +3060,95 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
         }
 
+        // A one-way CurrentPage parameter is re-applied on every parent re-render. Re-applying the
+        // same value must not clobber a page the user navigated to via the pager (same class as #13462).
+        // A genuine parameter change from code must still navigate.
+        [Test]
+        public async Task CurrentPageParameterReapplyDoesNotResetPager()
+        {
+            var testComponent = Context.Render<TableCurrentPageParameterReapplyTest>();
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+            var buttons = testComponent.FindComponents<MudButton>();
+            table.CurrentPage.Should().Be(0);
+
+            // Simulate the user navigating with the pager (the one-way parameter is not written back).
+            await testComponent.InvokeAsync(() => table.NavigateTo(3));
+            table.CurrentPage.Should().Be(3);
+
+            // A parent re-render re-applies the unchanged CurrentPage parameter; the pager choice must survive.
+            await buttons[0].Find("button").ClickAsync();
+            table.CurrentPage.Should().Be(3);
+
+            // A genuine parameter change from code must still navigate.
+            await buttons[1].Find("button").ClickAsync();
+            table.CurrentPage.Should().Be(5);
+        }
+
+        // With ServerData, re-applying an unchanged one-way CurrentPage on a parent re-render must not
+        // trigger a redundant server load (#13462); a genuine code-driven change still loads the new page.
+        [Test]
+        public async Task CurrentPageParameterReapplyDoesNotTriggerRedundantServerLoad()
+        {
+            var testComponent = Context.Render<TableCurrentPageServerDataReapplyTest>();
+            var component = testComponent.Instance;
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+
+            // Wait for the initial server load to render the first page.
+            await testComponent.WaitForAssertionAsync(() => testComponent.FindAll("tbody tr.mud-table-row").Count.Should().BeGreaterThan(0));
+            table.CurrentPage.Should().Be(0);
+            var loadsAfterInit = component.LoadCount;
+
+            // Internal navigation triggers exactly one load for the requested page.
+            await testComponent.InvokeAsync(() => table.NavigateTo(3));
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(3);
+                component.LastRequestedPage.Should().Be(3);
+                component.LoadCount.Should().Be(loadsAfterInit + 1);
+            });
+
+            // A parent re-render re-applies the unchanged CurrentPage: the page must stay selected.
+            await testComponent.Find("#rerender").ClickAsync();
+            table.CurrentPage.Should().Be(3);
+
+            // A genuine code-driven change navigates with exactly one more load; the re-render added none
+            // (otherwise this total would be loadsAfterInit + 3).
+            await testComponent.Find("#setcode").ClickAsync();
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(5);
+                component.LastRequestedPage.Should().Be(5);
+                component.LoadCount.Should().Be(loadsAfterInit + 2);
+            });
+        }
+
+        // The ServerData reset path: when a load reveals the current page no longer exists, the table
+        // resets to page 0 through SetCurrentPage (MudTable.InvokeServerLoadFunc).
+        [Test]
+        public async Task ServerDataResetsToFirstPageWhenCurrentPageOverflows()
+        {
+            var testComponent = Context.Render<TableCurrentPageServerDataReapplyTest>();
+            var component = testComponent.Instance;
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+
+            await testComponent.WaitForAssertionAsync(() => testComponent.FindAll("tbody tr.mud-table-row").Count.Should().BeGreaterThan(0));
+
+            await testComponent.InvokeAsync(() => table.NavigateTo(5));
+            await testComponent.WaitForAssertionAsync(() => table.CurrentPage.Should().Be(5));
+
+            // Data shrinks so page 5 no longer exists; the next load must snap back to page 0.
+            await testComponent.InvokeAsync(() =>
+            {
+                component.ShrinkTo(20);
+                return table.ReloadServerData();
+            });
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(0);
+                component.LastRequestedPage.Should().Be(0);
+            });
+        }
+
         /// <summary>
         /// Table initialized to display the third page
         /// </summary>
@@ -2852,6 +3188,24 @@ namespace MudBlazor.UnitTests.Components
             icon.ClassList.Should().Contain("mud-table-sort-label-icon");
             icon.ClassList.Contains("mud-direction-asc").Should().Be(direction == SortDirection.Ascending);
             icon.ClassList.Contains("mud-direction-desc").Should().Be(direction == SortDirection.Descending);
+        }
+
+        [Test]
+        public void TableSortLabelFullWidthAddsFullWidthClass()
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>(parameters => parameters
+                .Add(p => p.FullWidth, true)
+            );
+
+            comp.Find("span.mud-table-sort-label").ClassList.Should().Contain("mud-table-sort-label-full-width");
+        }
+
+        [Test]
+        public void TableSortLabelFullWidthFalseDoesNotAddFullWidthClass()
+        {
+            var comp = Context.Render<MudTableSortLabel<string>>();
+
+            comp.Find("span.mud-table-sort-label").ClassList.Should().NotContain("mud-table-sort-label-full-width");
         }
 
         private Mock<IScrollManager> _mockScrollManager = null!;
@@ -3146,6 +3500,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        [Obsolete("Remove when MudTableBase.AriaLabel is removed")]
         public async Task TableAriaLabel_RendersOnTable()
         {
             var comp = Context.Render<TableRowClickTest>();
@@ -3154,6 +3509,20 @@ namespace MudBlazor.UnitTests.Components
 
             var table = comp.FindComponent<MudTable<int>>();
             await table.SetParametersAndRenderAsync(p => p.Add(x => x.AriaLabel, "My Accessible Table"));
+
+            tableEl = comp.Find("table");
+            tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
+        }
+
+        [Test]
+        public async Task TableAttributes_RendersAriaLabel()
+        {
+            var comp = Context.Render<TableRowClickTest>();
+            var tableEl = comp.Find("table");
+            tableEl.HasAttribute("aria-label").Should().BeFalse();
+
+            var table = comp.FindComponent<MudTable<int>>();
+            await table.SetParametersAndRenderAsync(p => p.Add(x => x.TableAttributes, new Dictionary<string, object> { { "aria-label", "My Accessible Table" } }));
 
             tableEl = comp.Find("table");
             tableEl.GetAttribute("aria-label").Should().Be("My Accessible Table");
@@ -3218,5 +3587,252 @@ namespace MudBlazor.UnitTests.Components
             row.ClassList.Should().NotContain("mud-table-row-clickable");
             row.ClassList.Should().Contain("mud-table-row-disabled");
         }
+
+        [Test]
+        public void Pager_RendersAboveTable_WhenPagerPositionIsTop()
+        {
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.Top)
+            );
+
+            var html = comp.Markup;
+            var toolbarIndex = html.IndexOf("test-toolbar");
+            var pagerIndex = html.IndexOf("mud-table-pagination");
+            var tableIndex = html.IndexOf("mud-table-container");
+
+            toolbarIndex.Should().NotBe(-1);
+            pagerIndex.Should().NotBe(-1);
+            tableIndex.Should().NotBe(-1);
+            toolbarIndex.Should().BeLessThan(pagerIndex);
+            pagerIndex.Should().BeLessThan(tableIndex);
+
+            comp.Find(".mud-table-pagination").ClassList.Should().Contain("mud-table-pagination-top");
+        }
+
+        [Test]
+        public void Pager_RendersBelowTable_WhenPagerPositionIsBottom()
+        {
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.Bottom)
+            );
+
+            var html = comp.Markup;
+            var pagerIndex = html.IndexOf("mud-table-pagination");
+            var tableIndex = html.IndexOf("mud-table-container");
+
+            pagerIndex.Should().NotBe(-1);
+            tableIndex.Should().NotBe(-1);
+            pagerIndex.Should().BeGreaterThan(tableIndex);
+
+            comp.Find(".mud-table-pagination").ClassList.Should().NotContain("mud-table-pagination-top");
+        }
+
+        [Test]
+        public void TablePagerPosition_TopAndBottom_RendersTwoPagers()
+        {
+            var comp = Context.Render<TablePagerPositionTest>(parameters =>
+                parameters.Add(p => p.Position, PagerPosition.TopAndBottom)
+            );
+
+            var pagers = comp.FindAll(".mud-table-pagination");
+
+            pagers.Count.Should().Be(2);
+
+            pagers[0].ClassList.Should().Contain("mud-table-pagination-top");
+            pagers[1].ClassList.Should().NotContain("mud-table-pagination-top");
+        }
+
+        /// <summary>
+        /// Rows spell out aria-disabled as an explicit true or false token.
+        /// </summary>
+        [Test]
+        public void RowAriaDisabled_ReflectsDisabledState()
+        {
+            var comp = Context.Render<MudTable<int>>(parameters => parameters
+                .Add(p => p.Items, new[] { 1, 2 })
+                .Add(p => p.RowTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent",
+                        (RenderFragment)(b => b.AddContent(2, item)));
+                    builder.CloseComponent();
+                })
+                .Add(p => p.RowDisabledFunc, item => item == 2)
+            );
+
+            var rows = comp.FindAll("tbody tr.mud-table-row");
+
+            rows.Count.Should().Be(2);
+
+            // A bare attribute renders with an empty value, which assistive technology resolves to the
+            // aria-disabled default of false, so the token has to be spelled out.
+            rows[1].ClassList.Should().Contain("mud-table-row-disabled");
+            rows[1].GetAttribute("aria-disabled").Should().Be("true");
+
+            rows[0].ClassList.Should().NotContain("mud-table-row-disabled");
+            rows[0].GetAttribute("aria-disabled").Should().Be("false");
+        }
+
+        private sealed class TestableMudTable<T> : MudTable<T>
+        {
+            public bool IsRowChecked(T item) => IsCheckedRow(item);
+        }
+
+        private sealed class CountingIntComparer : IEqualityComparer<int>
+        {
+            public int EqualsCalls { get; private set; }
+            public int GetHashCodeCalls { get; private set; }
+
+            public bool Equals(int x, int y)
+            {
+                EqualsCalls++;
+                return x == y;
+            }
+
+            public int GetHashCode(int obj)
+            {
+                GetHashCodeCalls++;
+                return obj;
+            }
+
+            public void Reset()
+            {
+                EqualsCalls = 0;
+                GetHashCodeCalls = 0;
+            }
+        }
+        /// <summary>
+        /// The select-all checkbox must follow the rows as they are checked one at a time.
+        /// </summary>
+        /// <remarks>
+        /// The header used to pick this up only because changing one row re-rendered the whole table.
+        /// This case binds nothing, because a bound <c>SelectedItems</c> re-renders the table anyway and hides the problem.
+        /// </remarks>
+        [Test]
+        public void TableMultiSelection_CheckingRowsIndividually_UpdatesSelectAllCheckbox()
+        {
+            var comp = Context.Render<TableMultiSelectionHeaderStateTest>();
+            var header = () => comp.Find("thead .mud-checkbox span").ClassList;
+            var rowBoxes = () => comp.FindAll("tbody .mud-checkbox input");
+            var rowCount = rowBoxes().Count;
+
+            header().Should().Contain("mud-checkbox-false");
+
+            rowBoxes()[0].Change(true);
+            header().Should().Contain("mud-checkbox-null", "some but not all rows are selected");
+
+            for (var i = 1; i < rowCount; i++)
+            {
+                rowBoxes()[i].Change(true);
+            }
+
+            header().Should().Contain("mud-checkbox-true", "every row is selected");
+
+            rowBoxes()[0].Change(false);
+            header().Should().Contain("mud-checkbox-null", "a row was deselected again");
+        }
+
+        /// <summary>
+        /// Content derived from the selection, such as the toolbar and row classes, must follow the row checkboxes.
+        /// </summary>
+        /// <remarks>
+        /// <c>ToolBarContent</c> and <c>RowClassFunc</c> are evaluated while the table renders, so skipping that
+        /// render leaves them showing the previous selection. A bound <c>SelectedItems</c> hides the problem.
+        /// </remarks>
+        [Test]
+        public void TableMultiSelection_SelectionDerivedContent_FollowsRowCheckbox()
+        {
+            var comp = Context.Render<TableSelectionDerivedContentTest>();
+
+            comp.Find("#selected-count").TextContent.Trim().Should().Be("0");
+            comp.FindAll("tbody tr")[0].ClassList.Should().NotContain("row-selected");
+
+            comp.FindAll("tbody .mud-checkbox input")[0].Change(true);
+
+            comp.Find("#selected-count").TextContent.Trim().Should().Be("1");
+            comp.FindAll("tbody tr")[0].ClassList.Should().Contain("row-selected");
+        }
+
+        /// <summary>
+        /// Row selection checkboxes have a localized accessible name.
+        /// </summary>
+        [Test]
+        public void TableMultiSelection_CheckboxesShouldHaveAccessibleNames()
+        {
+            var comp = Context.Render<TableMultiSelectionTest1>();
+
+            string LabelOf(AngleSharp.Dom.IElement input) =>
+                comp.Find($"#{input.GetAttribute("aria-labelledby")}").TextContent.Trim();
+
+            comp.FindAll("tbody input[type=\"checkbox\"]").Count.Should().Be(3);
+            foreach (var input in comp.FindAll("tbody input[type=\"checkbox\"]"))
+            {
+                LabelOf(input).Should().Be("Select row");
+            }
+        }
+
+        /// <summary>
+        /// Select-all, group, and row checkboxes each have a distinct accessible name.
+        /// </summary>
+        [Test]
+        public async Task TableGrouping_GroupCheckboxShouldHaveAccessibleName()
+        {
+            var comp = Context.Render<TableGroupingTest>();
+            var table = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>();
+            await table.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.GroupBy, new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category) { GroupName = "Category" }));
+
+            string LabelOf(AngleSharp.Dom.IElement input) =>
+                comp.Find($"#{input.GetAttribute("aria-labelledby")}").TextContent.Trim();
+
+            var inputs = comp.FindAll("input[type=\"checkbox\"]");
+            LabelOf(inputs[0]).Should().Be("Select all rows");
+            LabelOf(inputs[1]).Should().Be("Select group");
+            LabelOf(inputs[2]).Should().Be("Select row");
+        }
+
+        /// <summary>
+        /// The placeholder row shown while a table has no records is a data cell, so the column headers refer to data cells (#13762).
+        /// </summary>
+        [Test]
+        public void NoRecordsContent_RendersAsDataCell()
+        {
+            var comp = Context.Render<MudTable<string>>(parameters => parameters
+                .Add(p => p.Items, Array.Empty<string>())
+                .Add(p => p.HeaderContent, "<th>Name</th>")
+                .Add(p => p.NoRecordsContent, "No records"));
+
+            comp.Find("tbody td.mud-table-empty-row").TextContent.Trim().Should().Be("No records");
+            comp.FindAll("tbody th").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// The loading indicator row is made of data cells for the same reason as the empty row (#13762).
+        /// </summary>
+        [Test]
+        public void LoadingRow_RendersAsDataCell()
+        {
+            var comp = Context.Render<MudTable<string>>(parameters => parameters
+                .Add(p => p.Items, Array.Empty<string>())
+                .Add(p => p.Loading, true)
+                .Add(p => p.HeaderContent, "<th>Name</th>"));
+
+            comp.Find("tr.mud-table-loading-row > td").Should().NotBeNull();
+            comp.FindAll("tr.mud-table-loading-row > th").Should().BeEmpty();
+        }
+
+
+        /// <summary>
+        /// The checkbox of a selectable row renders inside a table cell.
+        /// </summary>
+        [Test]
+        public void MultiSelection_RendersCheckboxInsideTableCell()
+        {
+            var comp = Context.Render<TableMultiSelectionTest1>();
+
+            comp.FindAll("tbody tr td.mud-table-cell .mud-table-cell-checkbox").Count.Should().Be(3);
+        }
+
     }
 }

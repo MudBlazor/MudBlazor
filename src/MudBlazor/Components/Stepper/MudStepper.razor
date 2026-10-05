@@ -20,7 +20,7 @@
                 .AddClass("mud-step-skipped", step.SkippedState.Value)
                 .Build();
 
-            <button class="@stepClassname" role="tab" type="button" id="@GetStepButtonId(step)" aria-controls="@GetStepPanelIdIfRendered(step)" aria-selected="@(isActive.ToString().ToLower())"
+            <button class="@stepClassname" role="tab" type="button" id="@GetStepButtonId(step)" aria-controls="@GetStepPanelIdIfRendered(step)" aria-selected="@(isActive.ToString().ToLowerInvariant())"
                     @onclick="@(async e => await OnStepClickAsync(step, e))" disabled="@step.DisabledState.Value">
                 @RenderStepLabel(step, isActive)
             </button>
@@ -60,7 +60,7 @@
         @ChildContent
     </CascadingValue>
 
-    <MudCardActions Class="mud-stepper-actions">
+    <MudCardActions Class="@ActionsClassname">
         @if (ActionContent == null)
         {
             @if (ShowResetButton)
@@ -150,12 +150,12 @@
             {
                 <div class="@step.LabelContentClassname">
                     <MudText Typo="@(isActive ? Typo.subtitle2 : Typo.body2)" Class="mud-step-label-content-title">
-                        @step.Title
+                        @step.TitleState.Value
                     </MudText>
 
-                    @if (!string.IsNullOrEmpty(step.SecondaryText))
+                    @if (!string.IsNullOrEmpty(step.SecondaryTextState.Value))
                     {
-                        <MudText Typo="Typo.caption" Class="mud-step-label-content-secondary-text">@step.SecondaryText</MudText>
+                        <MudText Typo="Typo.caption" Class="mud-step-label-content-secondary-text">@step.SecondaryTextState.Value</MudText>
                     }
                 </div>
             }

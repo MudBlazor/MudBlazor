@@ -43,6 +43,24 @@ namespace MudBlazor
             registerScope.RegisterParameter<bool>(nameof(ReadOnly))
                 .WithParameter(() => ReadOnly)
                 .WithChangeHandler(OnParameterChangedAsync);
+            registerScope.RegisterParameter<bool>(nameof(ExpandOnClick))
+                .WithParameter(() => ExpandOnClick)
+                .WithChangeHandler(OnParameterChangedAsync);
+            registerScope.RegisterParameter<bool>(nameof(ExpandOnDoubleClick))
+                .WithParameter(() => ExpandOnDoubleClick)
+                .WithChangeHandler(OnParameterChangedAsync);
+            registerScope.RegisterParameter<bool>(nameof(Ripple))
+                .WithParameter(() => Ripple)
+                .WithChangeHandler(OnParameterChangedAsync);
+            registerScope.RegisterParameter<string>(nameof(CheckedIcon))
+                .WithParameter(() => CheckedIcon)
+                .WithChangeHandler(OnParameterChangedAsync);
+            registerScope.RegisterParameter<string>(nameof(UncheckedIcon))
+                .WithParameter(() => UncheckedIcon)
+                .WithChangeHandler(OnParameterChangedAsync);
+            registerScope.RegisterParameter<string>(nameof(IndeterminateIcon))
+                .WithParameter(() => IndeterminateIcon)
+                .WithChangeHandler(OnParameterChangedAsync);
             _selection = new();
         }
 
@@ -492,7 +510,8 @@ namespace MudBlazor
             {
                 return Task.CompletedTask;
             }
-            return UpdateItemsAsync();
+            // Items read these from the root through a fixed cascade, so walking the tree is the only thing that pushes the new value down to them.
+            return UpdateItemsAsync(forceRender: true);
         }
 
         internal async Task OnItemClickAsync(MudTreeViewItem<T> clickedItem)
@@ -647,12 +666,13 @@ namespace MudBlazor
         /// Let the items update their selection state visualization and state according to
         /// the selection in the tree view
         /// </summary>
-        private async Task UpdateItemsAsync()
+        /// <param name="forceRender">Renders every item regardless of whether its state changed.</param>
+        private async Task UpdateItemsAsync(bool forceRender = false)
         {
             var selection = GetSelection();
             foreach (var item in _childItems)
             {
-                await item.UpdateSelectionStateAsync(selection);
+                await item.UpdateSelectionStateAsync(selection, forceRender);
             }
         }
 

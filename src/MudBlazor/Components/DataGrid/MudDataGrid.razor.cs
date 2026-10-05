@@ -10,7 +10,6 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
-using MudBlazor.Resources;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
@@ -18,9 +17,15 @@ using MudBlazor.Utilities.Clone;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a sortable, filterable data grid with multiselection, pagination, editing, grouping, aggregation, and server-side <see cref="IQueryable{T}"/> support.
+    /// Displays rows of data in a sortable, filterable grid with multiselection, pagination, inline editing, grouping, and aggregation.
     /// </summary>
+    /// <remarks>
+    /// Supports server-side sorting, filtering, and paging of large datasets, including through an <see cref="IQueryable{T}"/> source.
+    /// </remarks>
     /// <typeparam name="T">The type of data represented by each row in this grid.</typeparam>
+    /// <seealso cref="Column{T}" />
+    /// <seealso cref="MudDataGridPager{T}" />
+    /// <seealso cref="MudTable{T}" />
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
@@ -32,8 +37,8 @@ namespace MudBlazor
         private bool _isFirstRendered = false;
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
-        internal HashSet<T> _openHierarchies = [];
-        private readonly HashSet<T> _initialExpansions = [];
+        internal HashSet<T> _openHierarchies;
+        private HashSet<T> _initialExpansions;
         private Func<T, bool>? _initialExpandedFunc = null;
         private Func<T, bool>? _buttonDisabledFunc = null;
         private EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> _hierarchyColumnVisibilityToggled;
@@ -49,10 +54,19 @@ namespace MudBlazor
         private Func<IFilterDefinition<T>> _defaultFilterDefinitionFactory = () => new FilterDefinition<T>();
         private (double Top, double Left) _filtersMenuPosition = (0, 0);
         private (double Top, double Left) _columnsPanelPosition = (0, 0);
+        private Guid? _filterDefinitionIdToFocus;
 
         private readonly ParameterState<T?> _selectedItemState;
         private readonly ParameterState<HashSet<T>?> _selectedItemsState;
         private readonly ParameterState<bool> _expandSingleRowState;
+
+        private const string PrePrefix = "__mud_dg_pre__:";
+        private const string PostPrefix = "__mud_dg_post__:";
+
+        /// <summary>
+        /// Holds the editors of the row being edited, which are the only controls a commit validates.
+        /// </summary>
+        internal readonly DataGridInlineEditValidator _inlineEditValidator;
 
         /// <summary>
         /// Inline data attributes for positioning the menu at the cursor's location.
@@ -71,8 +85,11 @@ namespace MudBlazor
 
         public MudDataGrid()
         {
+            _inlineEditValidator = new DataGridInlineEditValidator(() => Validator);
             Selection = new HashSet<T>(Comparer);
             SelectedItems = new HashSet<T>(Comparer);
+            _openHierarchies = new HashSet<T>(Comparer);
+            _initialExpansions = new HashSet<T>(Comparer);
             using var registerScope = CreateRegisterScope();
             registerScope.RegisterParameter<IEnumerable<T>?>(nameof(Items))
                 .WithParameter(() => Items)
@@ -91,6 +108,10 @@ namespace MudBlazor
             _expandSingleRowState = registerScope.RegisterParameter<bool>(nameof(ExpandSingleRow))
                 .WithParameter(() => ExpandSingleRow)
                 .WithChangeHandler(OnExpandSingleRowChangedAsync);
+
+            registerScope.RegisterParameter<IEqualityComparer<T>?>(nameof(Comparer))
+                .WithParameter(() => Comparer)
+                .WithChangeHandler(OnComparerChanged);
         }
 
         protected string Classname =>
@@ -123,14 +144,19 @@ namespace MudBlazor
         protected string TableStyle =>
             new StyleBuilder()
                 .AddStyle("height", Height, !string.IsNullOrWhiteSpace(Height))
-                .AddStyle("width", "max-content", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
-                .AddStyle("overflow", "clip", when: (HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container) && HasStickyColumns)
                 .AddStyle("display", "block", when: HorizontalScrollbar)
+                .Build();
+
+        protected string TableRootStyle =>
+            new StyleBuilder()
+                .AddStyle("width", "max-content", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
+                .AddStyle("min-width", "100%", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
                 .Build();
 
         protected string TableClass =>
             new CssBuilder("mud-table-container")
                 .AddClass("cursor-col-resize", when: IsResizing)
+                .AddClass("overflow-visible-table", when: ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
                 .Build();
 
         protected string HeadClassname =>
@@ -152,6 +178,14 @@ namespace MudBlazor
             new StyleBuilder()
                 .AddStyle("position", "sticky", when: HasStickyColumns)
                 .AddStyle("left", "0px", when: HasStickyColumns)
+                .Build();
+
+        protected string ColumnsPanelClassname =>
+            new CssBuilder()
+                .AddClass("mud-data-grid-columns-panel")
+                .AddClass("px-2")
+                .AddClass("mud-popover-position-override")
+                .AddClass("mud-data-grid-columns-panel-dense", when: Dense)
                 .Build();
 
         protected override void OnParametersSet()
@@ -225,6 +259,24 @@ namespace MudBlazor
 
         internal static bool RenderedColumnsItemsSelector(Column<T> item, string dropZone) => item?.PropertyName == dropZone;
 
+        private static void Move<TItem>(List<TItem> list, int fromIndex, int toIndex, int positionModifier)
+        {
+            if (fromIndex == toIndex)
+            {
+                return;
+            }
+
+            var item = list[fromIndex];
+            list.RemoveAt(fromIndex);
+
+            if (fromIndex < toIndex)
+            {
+                toIndex--;
+            }
+
+            list.Insert(toIndex + positionModifier, item);
+        }
+
         private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
         {
             (list[indexB], list[indexA]) = (list[indexA], list[indexB]);
@@ -236,23 +288,37 @@ namespace MudBlazor
             dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
 
             var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item?.PropertyName);
-            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.DropzoneIdentifier);
+            var destinationPropertyName = dropItem.DropzoneIdentifier;
+            if (ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
+            {
+                if (dropItem.DropzoneIdentifier.StartsWith(PrePrefix, StringComparison.Ordinal))
+                {
+                    destinationPropertyName = dropItem.DropzoneIdentifier[PrePrefix.Length..];
+                }
+                else if (dropItem.DropzoneIdentifier.StartsWith(PostPrefix, StringComparison.Ordinal))
+                {
+                    destinationPropertyName = dropItem.DropzoneIdentifier[PostPrefix.Length..];
+                }
+            }
+
+            var dragAndDropDestination = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == destinationPropertyName);
             if (dragAndDropSource != null && dragAndDropDestination != null)
             {
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
                 var dragAndDropDestinationIndex = RenderedColumns.IndexOf(dragAndDropDestination);
 
-                Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+                if (ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
+                {
+                    var position = dropItem.DropzoneIdentifier.StartsWith(PostPrefix, StringComparison.Ordinal) ? 1 : 0;
+                    Move(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex, position);
+                }
+                else
+                {
+                    Swap(RenderedColumns, dragAndDropSourceIndex, dragAndDropDestinationIndex);
+                }
 
                 Debug.Assert(dragAndDropSource.HeaderCell is not null);
                 Debug.Assert(dragAndDropDestination.HeaderCell is not null);
-
-                // swap source / destination
-                var dest = dragAndDropDestination.HeaderCell.Width;
-                var src = dragAndDropSource.HeaderCell.Width;
-
-                dragAndDropSource.HeaderCell.Width = dest;
-                dragAndDropDestination.HeaderCell.Width = src;
 
                 StateHasChanged();
             }
@@ -277,8 +343,6 @@ namespace MudBlazor
         #region Notify Children Delegates
 
         internal Action<Dictionary<string, SortDefinition<T>>, HashSet<string>?>? SortChangedEvent { get; set; }
-        internal Action<HashSet<T>>? SelectedItemsChangedEvent { get; set; }
-        internal Action<bool>? SelectedAllItemsChangedEvent { get; set; }
         internal Action? StartedEditingItemEvent { get; set; }
         internal Action? EditingCanceledEvent { get; set; }
 
@@ -331,6 +395,20 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<DataGridRowClickEventArgs<T>> RowContextMenuClick { get; set; }
+
+        /// <summary>
+        /// Occurs when a cell has been clicked.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public EventCallback<DataGridCellClickEventArgs<T>> CellClick { get; set; }
+
+        /// <summary>
+        /// Occurs when a cell has been right-clicked.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public EventCallback<DataGridCellClickEventArgs<T>> CellContextMenuClick { get; set; }
 
         /// <summary>
         /// Occurs when edit mode begins for an item.
@@ -404,6 +482,12 @@ namespace MudBlazor
         #endregion
 
         #region Parameters
+        /// <summary>
+        /// Attributes for the HTML table element, such as <c>aria-label</c> and <c>aria-labelledby</c>.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Behavior)]
+        public Dictionary<string, object?> TableAttributes { get; set; } = [];
 
         /// <summary>
         /// Allows columns to be reordered via the columns panel.
@@ -787,13 +871,24 @@ namespace MudBlazor
         public bool MultiSelection { get; set; }
 
         /// <summary>
-        /// Toggles the row checkbox when the row is clicked.
+        /// Selects or deselects a row when it is clicked.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <c>true</c>.  When <c>false</c>, rows are only selected through a <see cref="SelectColumn{T}"/> checkbox or in code.
+        /// <see cref="RowClick"/> is raised either way, so a click can still be handled without changing <see cref="SelectedItem"/> or <see cref="SelectedItems"/>.
         /// </remarks>
         [Parameter]
         public bool SelectOnRowClick { get; set; } = true;
+
+        /// <summary>
+        /// Allows the selection to be changed by the user.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>false</c>, <see cref="SelectedItem"/> and <see cref="SelectedItems"/> can still be set in code.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public bool SelectionChangeable { get; set; } = true;
 
         /// <summary>
         /// Controls how cell values are edited.
@@ -999,13 +1094,12 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Fires SelectedItemsChanged event and invokes SelectedItemsChangedEvent.
+        /// Publishes the current selection so bound parameters and their change callbacks see it.
         /// </summary>
         private async Task FireSelectionChangedEventsAsync()
         {
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
             await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
-            SelectedItemsChangedEvent?.Invoke(Selection);
         }
 
         private void ApplyInitialExpansionForNewItems(NotifyCollectionChangedEventArgs e)
@@ -1139,7 +1233,8 @@ namespace MudBlazor
         /// The culture used to format numeric and date values.  Can be overridden by <see cref="Column{T}.Culture"/>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
+        /// Defaults to <c>null</c>.  When no culture is set, cells use the current culture via .NET's default formatting behavior.
+        /// Set this to <see cref="CultureInfo.InvariantCulture"/> when invariant numeric and date formatting is required.
         /// </remarks>
         [Parameter]
         public CultureInfo? Culture { get; set; }
@@ -1267,6 +1362,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// This property can be bound (<c>@bind-SelectedItems</c>) to initially select rows.  Use <see cref="SelectedItem"/> when <see cref="MultiSelection"/> is <c>false</c>.
+        /// To change the selection from code, assign a new set.  A change is detected by reference, so editing the bound set in place, such as calling <c>Clear()</c>, does not update the grid.
         /// </remarks>
         [Parameter, ParameterState]
         public HashSet<T>? SelectedItems { get; set; }
@@ -1372,9 +1468,11 @@ namespace MudBlazor
         /// The comparer used to determine row selection.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>. When set, this comparer will be used to determine if a row is selected.
+        /// Defaults to <see cref="EqualityComparer{T}.Default" />.
+        /// This comparer decides whether a row is selected and whether an expanded hierarchy row is still the same row after the data is refreshed.
+        /// Pass a stable instance: a change is detected by reference, so an inline <c>Comparer="@(new MyComparer())"</c> creates a fresh instance on every render and rebuilds the selection set every time.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         public IEqualityComparer<T>? Comparer { get; set; } = EqualityComparer<T>.Default;
 
         /// <summary>
@@ -1383,6 +1481,16 @@ namespace MudBlazor
         /// <remarks>Can be overridden by using the column level GroupTemplate, defaults to <c>null</c>.</remarks>
         [Parameter]
         public RenderFragment<GroupDefinition<T>>? GroupTemplate { get; set; }
+
+        /// <summary>
+        /// The behavior of the grid when the user reorders column headers via drag and drop.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>DataGridDragAndDropColumnReorderMode.Swap</c>.
+        /// This mode applies to header drag-and-drop reordering. Reordering from the columns panel uses insert-by-index behavior.
+        /// </remarks>
+        [Parameter]
+        public DataGridDragAndDropColumnReorderMode ColumnReorderMode { get; set; } = DataGridDragAndDropColumnReorderMode.Swap;
 
         #endregion
 
@@ -1578,7 +1686,7 @@ namespace MudBlazor
             await base.SetParametersAsync(parameters);
 
             VirtualItemsProviderInitialize();
-            if (parameters.TryGetValue(nameof(SortMode), out SortMode sortMode) && sortMode != sortModeBefore)
+            if (_isFirstRendered && parameters.TryGetValue(nameof(SortMode), out SortMode sortMode) && sortMode != sortModeBefore)
                 await ClearCurrentSortings();
         }
 
@@ -1629,6 +1737,23 @@ namespace MudBlazor
             {
                 Selection.Clear();
                 Selection.UnionWith(args.Value);
+            }
+        }
+
+        private async Task OnComparerChanged(ParameterChangedEventArgs<IEqualityComparer<T>?> args)
+        {
+            // A HashSet keeps the comparer it was constructed with, so every item-keyed set has to be rebuilt to adopt the new one.
+            // These are safe to reassign because CellContext captures them by reference but is constructed fresh inside the render fragment on every render.
+            var previousSelectionCount = Selection.Count;
+            Selection = new HashSet<T>(Selection, args.Value);
+            _openHierarchies = new HashSet<T>(_openHierarchies, args.Value);
+            _initialExpansions = new HashSet<T>(_initialExpansions, args.Value);
+
+            // A coarser comparer collapses entries that were previously distinct, which silently drops rows from the selection.
+            // Publish that, otherwise the bound SelectedItems keeps contents the grid can no longer hold.
+            if (Selection.Count != previousSelectionCount)
+            {
+                await FireSelectionChangedEventsAsync();
             }
         }
 
@@ -1870,21 +1995,6 @@ namespace MudBlazor
                        FilterOperator.DateTime.Empty or FilterOperator.DateTime.NotEmpty;
         }
 
-        private Task OnColumnFilterInputKeyDownAsync(KeyboardEventArgs args, Column<T>? column)
-        {
-            if (column is null)
-            {
-                return Task.CompletedTask;
-            }
-
-            return args.Key switch
-            {
-                "Enter" => column.FilterContext.HeaderCell?.ApplyFilterAsync() ?? Task.CompletedTask,
-                "Escape" => column.FilterContext.HeaderCell?.ClearFilterAsync() ?? Task.CompletedTask,
-                _ => Task.CompletedTask
-            };
-        }
-
         private async Task ApplyFilterFromSimpleModeAsync(IFilterDefinition<T> filterDefinition)
         {
             if (FilterDefinitions.All(x => x.Id != filterDefinition.Id))
@@ -1969,6 +2079,7 @@ namespace MudBlazor
             filterDefinition.Title = column?.Title;
             filterDefinition.Column = column;
             FilterDefinitions.Add(filterDefinition);
+            _filterDefinitionIdToFocus = filterDefinition.Id;
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -2036,11 +2147,15 @@ namespace MudBlazor
             await NotifyFilterChangedAsync();
         }
 
-        private Task NotifyFilterChangedAsync() => FilterChanged.InvokeAsync(FilterDefinitions.AsReadOnly());
+        internal Task NotifyFilterChangedAsync() => FilterChanged.InvokeAsync(FilterDefinitions.AsReadOnly());
 
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
             Debug.Assert(item is not null);
+
+            if (!SelectionChangeable)
+                return;
+
             if (IsRowSelectionDisabled(item))
                 return; // Do not change selection if the item is disabled
 
@@ -2075,17 +2190,16 @@ namespace MudBlazor
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
             await _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer));
-            await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
 
             await InvokeAsync(StateHasChanged);
         }
 
         /// <summary>
-        /// Set the currently selected item in the data grid.
+        /// Toggles the selection of an item the same way a row click does.
         /// </summary>
-        /// <param name="item">The item to select.</param>
+        /// <param name="item">The item to select or deselect.</param>
         /// <remarks>
-        /// When <see cref="MultiSelection"/> is <c>true</c> and <see cref="SelectOnRowClick"/> is <c>true</c>, the <see cref="SelectedItems"/> are updated.  The <see cref="SelectedItem"/> is also updated.
+        /// Updates <see cref="SelectedItem"/> and <see cref="SelectedItems"/>.  Does nothing when <see cref="SelectOnRowClick"/> is <c>false</c>.
         /// </remarks>
         public Task SetSelectedItemAsync(T item)
         {
@@ -2104,28 +2218,127 @@ namespace MudBlazor
             if (!MultiSelection)
                 return;
 
-            Selection.Clear(); // Clear selection first, regardless of selecting or unselecting all.
+            if (!SelectionChangeable)
+                return;
 
-            if (value) // Logic for selecting all
+            var selectableItems = GetSelectableItems();
+
+            if (value)
             {
-                var itemsToSelect = HasServerData ? ServerItems : FilteredItems;
-                var selectColumn = GetSelectColumn();
-                itemsToSelect = itemsToSelect.Where(item => !IsRowSelectionDisabled(item, selectColumn));
-
-                Selection.UnionWith(itemsToSelect);
+                Selection.UnionWith(selectableItems);
+            }
+            else
+            {
+                // Only remove the rows the checkbox controls so selections it cannot restore, such as disabled rows, survive.
+                Selection.ExceptWith(selectableItems);
             }
 
             // Create new HashSet instance to ensure ParameterState's comparer detects changes
             await InvokeAsync(() => _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer)));
-            await InvokeAsync(() => SelectedItemsChangedEvent?.Invoke(Selection));
-            await InvokeAsync(() => SelectedAllItemsChangedEvent?.Invoke(value));
+
+            await InvokeAsync(StateHasChanged);
+        }
+
+        /// <summary>
+        /// Selects or clears every selectable row of a single group, leaving rows outside of the group untouched.
+        /// </summary>
+        /// <param name="value">When <c>true</c>, the group's rows are added to the selection; otherwise they are removed from it.</param>
+        /// <param name="groupItems">The rows belonging to the group.</param>
+        internal async Task SetGroupSelectAllAsync(bool value, IEnumerable<T> groupItems)
+        {
+            // nothing should happen if multiselection is false
+            if (!MultiSelection)
+                return;
+
+            if (!SelectionChangeable)
+                return;
+
+            var selectableItems = GetSelectableItems(groupItems);
+
+            if (value)
+            {
+                Selection.UnionWith(selectableItems);
+            }
+            else
+            {
+                Selection.ExceptWith(selectableItems);
+            }
+
+            // Create new HashSet instance to ensure ParameterState's comparer detects changes
+            await InvokeAsync(() => _selectedItemsState.SetValueAsync(new HashSet<T>(Selection, Comparer)));
 
             await InvokeAsync(StateHasChanged);
         }
 
         private SelectColumn<T>? GetSelectColumn()
         {
-            return RenderedColumns.OfType<SelectColumn<T>>().FirstOrDefault();
+            // Called once per rendered row, so avoid the LINQ iterator; RenderedColumns is a List and foreach uses its struct enumerator.
+            foreach (var column in RenderedColumns)
+            {
+                if (column is SelectColumn<T> selectColumn)
+                {
+                    return selectColumn;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// The items which select-all would select, i.e. every displayed row whose selection is not disabled.
+        /// </summary>
+        internal IEnumerable<T> GetSelectableItems() => GetSelectableItems(HasServerData ? ServerItems : FilteredItems);
+
+        /// <summary>
+        /// The items of <paramref name="items"/> whose selection is not disabled.
+        /// </summary>
+        internal IEnumerable<T> GetSelectableItems(IEnumerable<T> items)
+        {
+            var selectColumn = GetSelectColumn();
+
+            return items.Where(item => !IsRowSelectionDisabled(item, selectColumn));
+        }
+
+        /// <summary>
+        /// The state of a select-all checkbox covering <paramref name="items"/>: <c>true</c> when every selectable row is selected, <c>false</c> when none of them is, otherwise <c>null</c>.
+        /// </summary>
+        /// <param name="items">The rows the checkbox covers, e.g. all displayed rows for the header checkbox or a group's rows for a group footer checkbox.</param>
+        internal bool? GetSelectionState(IEnumerable<T> items)
+        {
+            // The checkbox covers every filtered row, not just the visible page, so walk the rows once and stop as soon as the answer cannot change.
+            if (Selection.Count == 0)
+            {
+                return false;
+            }
+
+            var selectColumn = GetSelectColumn();
+            var anySelected = false;
+            var anyUnselected = false;
+
+            foreach (var item in items)
+            {
+                if (IsRowSelectionDisabled(item, selectColumn))
+                {
+                    continue;
+                }
+
+                if (Selection.Contains(item))
+                {
+                    anySelected = true;
+                }
+                else
+                {
+                    anyUnselected = true;
+                }
+
+                if (anySelected && anyUnselected)
+                {
+                    return null;
+                }
+            }
+
+            // No selectable row is selected, or every one of them is.
+            return anySelected;
         }
 
         internal bool? GetRowSelectionState(T item)
@@ -2231,20 +2444,146 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Checks if the specified item is currently being edited in inline mode.
+        /// </summary>
+        /// <param name="item">The item to check.</param>
+        /// <returns><c>true</c> if the item is being edited; otherwise, <c>false</c>.</returns>
+        public bool IsEditingItem(T item)
+        {
+            if (EditMode != DataGridEditMode.Inline || EqualityComparer<T?>.Default.Equals(_editingSourceItem, default))
+                return false;
+
+            var comparer = Comparer ?? EqualityComparer<T>.Default;
+
+            // Check both the source item and the editing copy since the context may have either
+            return comparer.Equals(_editingSourceItem, item) || (!EqualityComparer<T?>.Default.Equals(_editingItem, default) && comparer.Equals(_editingItem, item));
+        }
+
+        /// <summary>
+        /// Gets the editing copy of the item if it's currently being edited in inline mode;
+        /// otherwise, returns the original item.
+        /// </summary>
+        /// <param name="item">The source item to check.</param>
+        /// <returns>The editing copy if the item is being edited; otherwise, the original item.</returns>
+        internal T GetEditingItemOrSource(T item)
+        {
+            if (EditMode != DataGridEditMode.Inline || EqualityComparer<T?>.Default.Equals(_editingSourceItem, default))
+                return item;
+
+            var comparer = Comparer ?? EqualityComparer<T>.Default;
+
+            // Check both the source item and the editing copy since the context may have either
+            if (comparer.Equals(_editingSourceItem, item) || (!EqualityComparer<T?>.Default.Equals(_editingItem, default) && comparer.Equals(_editingItem, item)))
+            {
+                var editingItem = _editingItem;
+                if (editingItem is not null)
+                    return editingItem;
+            }
+
+            return item;
+        }
+
+        /// <summary>
+        /// Commits inline edits, persists changes to the source item, and exits edit mode.
+        /// </summary>
+        /// <remarks>
+        /// The row's editors are validated first, and the commit is abandoned when any of them reports an error.
+        /// Use the <see cref="CommittedItemChanges"/> callback for validation the editors cannot express.
+        /// Return <see cref="DataGridEditFormAction.KeepOpen"/> to prevent the commit and keep the row in edit mode.
+        /// </remarks>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public async Task CommitInlineEditAsync()
+        {
+            if (EditMode != DataGridEditMode.Inline || _editingItem is not { } editingItem || _editingSourceItem is not { } editingSourceItem)
+                return;
+
+            // Mirror Form mode, which validates before copying anything back to the source item.
+            // Errors is read instead of IsValid because that getter starts a second, unawaited validation pass which would clear the errors this one just collected.
+            await _inlineEditValidator.ValidateAsync();
+            if (_inlineEditValidator.Errors.Length > 0)
+                return;
+
+            // Allow consumer to validate/persist
+            if (CommittedItemChanges != null)
+            {
+                var closeBehavior = await CommittedItemChanges(editingItem);
+
+                if (closeBehavior == DataGridEditFormAction.KeepOpen)
+                    return;
+            }
+
+            // Copy values from editing copy back to source
+            foreach (var property in _properties.Where(p => p.CanWrite))
+                property.SetValue(editingSourceItem, property.GetValue(editingItem));
+
+            await CommittedItemChanged.InvokeAsync(editingSourceItem);
+
+            ClearEditingItem();
+        }
+
         internal async Task OnRowClickedAsync(MouseEventArgs args, T item, int rowIndex)
         {
             await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
-
-            if (EditMode != DataGridEditMode.Cell && EditTrigger == DataGridEditTrigger.OnRowClick)
-                await SetEditingItemAsync(item);
-
-            await SetSelectedItemAsync(item);
+            await ActivateRowBehaviorsAsync(item);
         }
 
         internal Task OnContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex)
         {
             return RowContextMenuClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
         }
+
+        internal async Task OnCellClickedAsync(MouseEventArgs args, T item, int rowIndex, int columnIndex, Column<T> column)
+        {
+            // stopPropagation on the <td> prevents this click from bubbling to the <tr> handler
+            // (OnRowClickedAsync), so we share the same row behaviors via ActivateRowBehaviorsAsync.
+            // RowClick is intentionally not raised here; whether it should fire on a cell click
+            // is an explicit API decision.
+            await CellClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
+            await ActivateRowBehaviorsAsync(item);
+        }
+
+        /// <summary>
+        /// Applies the row-level side effects that should occur on any click interaction with a row
+        /// or one of its cells: edit activation (when configured) and selection update.
+        /// Both <see cref="OnRowClickedAsync"/> and <see cref="OnCellClickedAsync"/> delegate here
+        /// so that new row-click behaviors only need to be added in one place.
+        /// </summary>
+        private async Task ActivateRowBehaviorsAsync(T item)
+        {
+            if (EditTrigger == DataGridEditTrigger.OnRowClick)
+            {
+                if (EditMode == DataGridEditMode.Cell)
+                    await BeginCellEditAsync(item);
+                else
+                    await SetEditingItemAsync(item);
+            }
+
+            await SetSelectedItemAsync(item);
+        }
+
+        internal Task OnCellContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex, int columnIndex, Column<T> column)
+        {
+            return CellContextMenuClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, columnIndex, column));
+        }
+
+        // The lambdas live in their own methods because the compiler allocates a closure on entry to whichever method
+        // declares one, even when the branch that needs it is never taken.
+        private EventCallback<MouseEventArgs> GetCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => CellClick.HasDelegate
+                ? CreateCellClickCallback(item, rowIndex, colIndex, column)
+                : default;
+
+        private EventCallback<MouseEventArgs> CreateCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellClickedAsync(args, item, rowIndex, colIndex, column));
+
+        private EventCallback<MouseEventArgs> GetCellContextMenuClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => CellContextMenuClick.HasDelegate
+                ? CreateCellContextMenuClickCallback(item, rowIndex, colIndex, column)
+                : default;
+
+        private EventCallback<MouseEventArgs> CreateCellContextMenuClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellContextMenuClickedAsync(args, item, rowIndex, colIndex, column));
 
         /// <summary>
         /// Gets the total count of filtered items in the data grid.
@@ -2451,10 +2790,40 @@ namespace MudBlazor
             _editingSourceItem = item;
             EditingCanceledEvent?.Invoke();
             _previousEditingItem = _editingItem;
+
+            // In cell edit mode changes are written directly to the source item, so there is no working copy to clone and no edit form to open; only StartedEditingItem is raised.
+            if (EditMode == DataGridEditMode.Cell)
+            {
+                _editingItem = default;
+                StartedEditingItemEvent?.Invoke();
+                await StartedEditingItem.InvokeAsync(item);
+                return;
+            }
+
             _editingItem = CloneStrategy.CloneObject(item);
             StartedEditingItemEvent?.Invoke();
             await StartedEditingItem.InvokeAsync(_editingItem);
-            _isEditFormOpen = true;
+
+            // Only open the dialog form for Form mode, not for Inline mode
+            if (EditMode == DataGridEditMode.Form)
+            {
+                _isEditFormOpen = true;
+            }
+        }
+
+        /// <summary>
+        /// Raises <see cref="StartedEditingItem"/> when cell editing begins for an item, without re-raising it for subsequent cell changes on the same item.
+        /// </summary>
+        /// <param name="item">The item whose cell is being edited.</param>
+        internal async Task BeginCellEditAsync(T item)
+        {
+            // Use the grid's Comparer (same identity used for selection) so a custom comparer can distinguish otherwise-equal rows, e.g. records.
+            // The first edit always starts since nothing is being edited yet.
+            var comparer = Comparer ?? EqualityComparer<T>.Default;
+            if (_editingSourceItem is not null && comparer.Equals(_editingSourceItem, item))
+                return;
+
+            await SetEditingItemAsync(item);
         }
 
         /// <summary>
@@ -2490,6 +2859,12 @@ namespace MudBlazor
         /// </summary>
         public void OpenFilters()
         {
+            OpenFilters(FilterDefinitions.FirstOrDefault()?.Id);
+        }
+
+        internal void OpenFilters(Guid? filterDefinitionIdToFocus)
+        {
+            _filterDefinitionIdToFocus = filterDefinitionIdToFocus;
             _filtersMenuVisible = true;
             StateHasChanged();
         }
@@ -2549,6 +2924,20 @@ namespace MudBlazor
         {
             _columnsPanelVisible = false;
             StateHasChanged();
+        }
+
+        /// <summary>
+        /// Hides the columns panel only when it is open.
+        /// </summary>
+        /// <remarks>
+        /// A column filter menu lives in its header cell, so opening one renders that cell and needs a grid render only to close an open columns panel.
+        /// </remarks>
+        internal void HideColumnsPanelIfVisible()
+        {
+            if (_columnsPanelVisible)
+            {
+                HideColumnsPanel();
+            }
         }
 
         private Task ColumnOrderUpdated(MudItemDropInfo<Column<T>> dropItem)
@@ -2767,19 +3156,24 @@ namespace MudBlazor
         /// <param name="expanded">Whether the group should be expanded (true) or collapsed (false).</param>
         public void ToggleGroupExpand(string? columnName, object? key, bool expanded)
         {
-            var groupKey = new GroupKey(columnName, key);
+            SetGroupExpanded(columnName, key, expanded);
+            StateHasChanged();
+        }
 
-            // update the expansion state for _groupExpansionsDict
-            // if it has a key we see if it differs from the definition Expanded State and update accordingly
-            // if it doesn't we add it if the new state doesn't match the definition
-            var col = RenderedColumns.FirstOrDefault(x => x.PropertyName == columnName);
-            if (expanded == col?._groupExpandedState.Value)
-                _groupExpansionsDict.Remove(groupKey);
-            else
-                _groupExpansionsDict[groupKey] = expanded;
+        /// <summary>
+        /// Records whether a group is expanded without rendering the grid.
+        /// </summary>
+        /// <remarks>
+        /// A group row renders its own rows, so a click on its expander only needs that row to render.
+        /// The grid reads the recorded state the next time it renders.
+        /// </remarks>
+        internal void SetGroupExpanded(string? columnName, object? key, bool expanded)
+        {
+            // Record the state even when it matches the column default.
+            // A group row builds its nested groups from definitions made at the last grid render, which can still carry the grid-level GroupExpanded default, so a missing entry would fall back to that stale value.
+            _groupExpansionsDict[new GroupKey(columnName, key)] = expanded;
 
             _groupInitialExpanded = false;
-            StateHasChanged();
         }
 
         /// <summary>

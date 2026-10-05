@@ -63,7 +63,8 @@
                 <DocsPageSection>
                     <SectionHeader Title="Mini">
                         <Description>
-                            The Mini variant is a streamlined version of the Responsive Drawer. It automatically shrinks to a narrow strip (default width: 56px) according to its breakpoint configuration.
+                            The Mini variant is a streamlined version of the Responsive Drawer. On screens at or above its configured <CodeInline>Breakpoint</CodeInline> it shrinks to a narrow strip (default width: 56px) that can expand on hover when <CodeInline>OpenMiniOnHover</CodeInline> is enabled.
+                            Below the breakpoint it behaves like a <CodeInline>DrawerVariant.Temporary</CodeInline> drawer: hidden when closed, shown over the content with an overlay when open, and closed automatically on navigation.
                             <br />Currently, Mini Drawers have built-in style support only for <CodeInline>MudNavLink</CodeInline> components.
                             To control whether the Mini Drawer is open or closed, use the <CodeInline>Open</CodeInline> parameter.
                             <br />To disable automatic responsiveness and manage the open state manually, set <CodeInline>Breakpoint="Breakpoint.None"</CodeInline>.

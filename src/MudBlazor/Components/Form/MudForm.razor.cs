@@ -113,11 +113,17 @@ namespace MudBlazor
         public bool SuppressRenderingOnValidation { get; set; } = false;
 
         /// <summary>
-        /// Prevents this form from being submitted when <c>Enter</c> is pressed.
+        /// Prevents <c>Enter</c> from triggering the browser's implicit submission of this form.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  When <c>false</c>, the form will submit when <c>Enter</c> is pressed, and any parent dialog will close.  See: 
-        /// <see href="https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission">Implicit Form Submission</see>.
+        /// Defaults to <c>true</c>, which adds a hidden disabled submit button so that pressing <c>Enter</c> in an input does nothing.  This is also what stops a parent dialog from closing when <c>Enter</c> is pressed.
+        /// <para>
+        /// Setting this to <c>false</c> only removes that suppression; it does not add a submit-on-<c>Enter</c> feature, and <see cref="MudForm"/> has no submit handler.  Whether <c>Enter</c> then submits is decided by the browser's
+        /// <see href="https://www.w3.org/TR/2018/SPSD-html5-20180327/forms.html#implicit-submission">implicit submission</see> rules: a form with a single text field submits, but a form with two or more text fields and no enabled submit button does nothing.
+        /// </para>
+        /// <para>
+        /// To run logic when <c>Enter</c> is pressed, use <see cref="OnEnterPressed"/>.  For standard submit semantics such as an <c>OnValidSubmit</c> handler, wrap your inputs in an <see cref="Microsoft.AspNetCore.Components.Forms.EditForm"/> rather than placing a submit button inside <see cref="MudForm"/>.
+        /// </para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.Behavior)]
@@ -234,12 +240,7 @@ namespace MudBlazor
             _errors.Clear();
             foreach (var error in _formControls.SelectMany(control => control.ValidationErrors))
                 _errors.Add(error);
-            // form can only be valid if:
-            // - none have an error
-            // - all required fields have been touched (and thus validated)
-            var noErrors = _formControls.All(x => x.HasErrors == false);
-            var requiredAllTouched = _formControls.Where(x => x.Required).All(x => x.Touched);
-            var valid = noErrors && requiredAllTouched;
+            var valid = EvaluateIsValid();
 
             var oldTouched = _touched;
             _touched = _formControls.Any(x => x.Touched);
@@ -263,6 +264,15 @@ namespace MudBlazor
             }
         }
 
+        private bool EvaluateIsValid()
+        {
+            // The form is valid when no control has an error and every required control holds a value.
+            // A required field is satisfied by having a value, not by being touched.
+            var noErrors = _formControls.All(x => !x.HasErrors);
+            var requiredAllHaveValue = _formControls.Where(x => x.Required).All(x => x.HasValue());
+            return noErrors && requiredAllHaveValue;
+        }
+
         protected override bool ShouldRender()
         {
             return !SuppressRenderingOnValidation || _shouldRender;
@@ -272,7 +282,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                var valid = _formControls.All(x => x.Required == false);
+                var valid = EvaluateIsValid();
                 if (valid != IsValid)
                 {
                     // the user probably bound a variable to IsValid, and it conflicts with our state.
@@ -311,7 +321,17 @@ namespace MudBlazor
         /// </remarks>
         public async Task ValidateAsync()
         {
-            await Task.WhenAll(_formControls.Select(x => x.ValidateAsync()));
+            // Snapshot the controls so a field registering or unregistering mid-validation can't throw, and the set is enumerated only once.
+            var controls = _formControls.ToArray();
+
+            // Re-apply the form-level default Validation before validating.
+            // A child that binds Validation to an expression evaluating to null (e.g. a conditional) has the copy made at registration overwritten to null on every parent render, so without this the form's Validation would only run on the first validation (#12842).
+            foreach (var control in controls)
+            {
+                SetDefaultControlValidation(control);
+            }
+
+            await Task.WhenAll(controls.Select(x => x.ValidateAsync()));
 
             if (ChildForms.Count > 0)
             {

@@ -1,4 +1,5 @@
-﻿using AngleSharp.Dom;
+﻿using System.Collections.Generic;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -231,7 +232,8 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(9, 3, 2)]
         [TestCase(5, 1, 1)]
         [TestCase(5, -1, 1)]
-        [TestCase(5, 1, -1)]
+        [TestCase(4, 1, -1)]
+        [TestCase(4, 1, 0)]
         [Test]
         public async Task PaginationCountWithoutEllipsis(int count, int middleCount, int boundaryCount)
         {
@@ -243,7 +245,7 @@ namespace MudBlazor.UnitTests.Components
 
             //Expected values
             pagination.GetState(x => x.MiddleCount).Should().Be(Math.Max(1, middleCount));
-            pagination.GetState(x => x.BoundaryCount).Should().Be(Math.Max(1, boundaryCount));
+            pagination.GetState(x => x.BoundaryCount).Should().Be(Math.Max(0, boundaryCount));
 
             for (var i = 1; i <= count; i++)
             {
@@ -265,17 +267,22 @@ namespace MudBlazor.UnitTests.Components
         /// <param name="middleCount">The number of items between the ellipsis.</param>
         /// <param name="boundaryCount">The number of items at the start and end of the pagination.</param>
         /// <param name="expectedValues">The expected content of the items.</param>
-        [TestCase(6, 11, 3, 2, new[] { "1", "2", "...", "5", "6", "7", "...", "10", "11" })]
-        [TestCase(7, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "9", "10", "11" })]
-        [TestCase(11, 11, 3, 2, new[] { "1", "2", "...", "6", "7", "8", "9", "10", "11" })]
-        [TestCase(5, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "...", "10", "11" })]
-        [TestCase(3, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "...", "10", "11" })]
-        [TestCase(11, 22, 1, 1, new[] { "1", "...", "11", "...", "22" })]
-        [TestCase(1, 22, 1, 1, new[] { "1", "2", "3", "...", "22" })]
-        [TestCase(8, 22, 5, 3, new[] { "1", "2", "3", "...", "6", "7", "8", "9", "10", "...", "20", "21", "22" })]
-        [TestCase(7, 22, 5, 3, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "...", "20", "21", "22" })]
-        [TestCase(16, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
-        [TestCase(22, 22, 5, 3, new[] { "1", "2", "3", "...", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
+        [TestCase(6, 11, 3, 2, new[] { "1", "2", "…", "5", "6", "7", "…", "10", "11" })]
+        [TestCase(7, 11, 3, 2, new[] { "1", "2", "…", "6", "7", "8", "9", "10", "11" })]
+        [TestCase(11, 11, 3, 2, new[] { "1", "2", "…", "6", "7", "8", "9", "10", "11" })]
+        [TestCase(5, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "…", "10", "11" })]
+        [TestCase(3, 11, 3, 2, new[] { "1", "2", "3", "4", "5", "6", "…", "10", "11" })]
+        [TestCase(11, 22, 1, 1, new[] { "1", "…", "11", "…", "22" })]
+        [TestCase(1, 22, 1, 1, new[] { "1", "2", "3", "…", "22" })]
+        [TestCase(8, 22, 5, 3, new[] { "1", "2", "3", "…", "6", "7", "8", "9", "10", "…", "20", "21", "22" })]
+        [TestCase(7, 22, 5, 3, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "…", "20", "21", "22" })]
+        [TestCase(16, 22, 5, 3, new[] { "1", "2", "3", "…", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
+        [TestCase(22, 22, 5, 3, new[] { "1", "2", "3", "…", "14", "15", "16", "17", "18", "19", "20", "21", "22" })]
+        [TestCase(8, 30, 11, 0, new[] { "…", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "…" })]
+        [TestCase(1, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "…" })]
+        [TestCase(30, 30, 11, 0, new[] { "…", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30" })]
+        [TestCase(6, 30, 11, 0, new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "…" })]
+        [TestCase(7, 30, 11, 0, new[] { "…", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "…" })]
         [Test]
         public async Task PaginationCountWithEllipsis(int selectedPage, int count, int middleCount,
             int boundaryCount, string[] expectedValues)
@@ -293,11 +300,36 @@ namespace MudBlazor.UnitTests.Components
 
             //Expected values
             var items = comp.FindAll(".mud-pagination-item");
-            items.Count.Should().Be(middleCount + (2 * boundaryCount) + 2);
+            items.Count.Should().Be(expectedValues.Length);
+            if (boundaryCount >= 1)
+            {
+                //Boundary pages keep the item count constant so the control doesn't change width while navigating.
+                items.Count.Should().Be(middleCount + (2 * boundaryCount) + 2);
+            }
+
             for (var j = 0; j < items.Count; j++)
             {
                 items[j].TextContent.Should().Be(expectedValues[j]);
             }
+        }
+
+        /// <summary>
+        /// #13181: a <see cref="MudPagination.BoundaryCount"/> of zero set via the initial parameters hides the boundary pages instead of being clamped to one.
+        /// </summary>
+        [Test]
+        public void PaginationBoundaryCountZeroInitialParameter()
+        {
+            var comp = Context.Render<MudPagination>(parameters => parameters
+                .Add(x => x.Count, 30)
+                .Add(x => x.MiddleCount, 11)
+                .Add(x => x.BoundaryCount, 0)
+                .Add(x => x.Selected, 8)
+                .Add(x => x.ShowPreviousButton, false)
+                .Add(x => x.ShowNextButton, false));
+
+            var items = comp.FindAll(".mud-pagination-item");
+            items.Select(x => x.TextContent).Should()
+                .Equal("…", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "…");
         }
 
         /// <summary>
@@ -341,6 +373,44 @@ namespace MudBlazor.UnitTests.Components
 
             //test if rtl is used
             pagination.ClassName.Should().Contain("mud-pagination-rtl");
+        }
+
+        /// <summary>
+        /// Pagination ellipses are hidden from assistive technology.
+        /// </summary>
+        [Test]
+        public void Pagination_EllipsisShouldBeHiddenFromAssistiveTechnologies()
+        {
+            var comp = Context.Render<MudPagination>(parameters => parameters
+                .Add(p => p.Count, 20)
+                .Add(p => p.Selected, 10));
+
+            var ellipses = comp.FindAll("li").Where(li => li.TextContent.Trim() == "…").ToList();
+            ellipses.Should().NotBeEmpty();
+            ellipses.Should().OnlyContain(li => li.FirstElementChild!.GetAttribute("aria-hidden") == "true");
+        }
+
+        /// <summary>
+        /// UserAttributes are forwarded to the list element, and the computed class and style keep winning over a class or style supplied there, as they did through the MudElement boundary.
+        /// </summary>
+        [Test]
+        public void Pagination_UserAttributes_ForwardedWithComputedClassAndStyleWinning()
+        {
+            var comp = Context.Render<MudPagination>(parameters => parameters
+                .Add(x => x.Count, 5)
+                .Add(x => x.Class, "own-class")
+                .Add(x => x.Style, "color:blue")
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    ["class"] = "user-class",
+                    ["style"] = "color:red",
+                    ["data-test"] = "pager",
+                }));
+
+            var root = comp.Find("ul");
+            root.GetAttribute("data-test").Should().Be("pager");
+            root.ClassList.Should().Contain("mud-pagination").And.Contain("own-class").And.NotContain("user-class");
+            root.GetAttribute("style").Should().Be("color:blue");
         }
     }
 }

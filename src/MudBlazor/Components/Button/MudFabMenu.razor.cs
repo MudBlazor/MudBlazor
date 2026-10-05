@@ -184,7 +184,17 @@ public partial class MudFabMenu : MudFab
         }
     }
 
-    private void HandleOpenChanged(ParameterChangedEventArgs<bool> args) => HandleOpenChanged(args.Value);
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        if (_openState.Value && GetDisabledState())
+        {
+            await ToggleMenuAsync(false);
+        }
+    }
+
+    private void HandleOpenChanged(ParameterChangedEventArgs<bool> args) => HandleOpenChanged(_openState.Value);
 
     private void HandleOpenChanged(bool open)
     {
@@ -223,7 +233,7 @@ public partial class MudFabMenu : MudFab
 
     private async Task OnMouseEnterLeaveAsync(bool enter)
     {
-        if (OpenOnMouseHover && !_lastInteractionWasTouch)
+        if (OpenOnMouseHover && !_lastInteractionWasTouch && !GetDisabledState())
         {
             await ToggleMenuAsync(enter);
         }

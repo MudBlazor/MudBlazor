@@ -6,7 +6,7 @@ namespace MudBlazor;
 
 
 /// <summary>
-/// Represents an observer that listens for pointer down and pointer up events on a specific HTML element with <c>pointer-events: none</c>.
+/// Receives pointer-down and pointer-up events for an HTML element styled <c>pointer-events: none</c>, relayed from JavaScript by the <see cref="IPointerEventsNoneService"/>.
 /// </summary>
 /// <remarks>
 /// This observer is associated with a unique HTML element ID and is used by the

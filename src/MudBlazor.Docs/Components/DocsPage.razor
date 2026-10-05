@@ -1,4 +1,4 @@
-﻿﻿@using System.Runtime.Versioning
+﻿@using System.Runtime.Versioning
 
 <MudMainContent Class="mudblazor-main-content">
     <MudContainer MaxWidth="MaxWidth.Large">
@@ -43,6 +43,16 @@
         @if (_renderAds)
         {
             <MudElement HtmlTag="script" async type="text/javascript" src="//cdn.carbonads.com/carbon.js?serve=CESDLK3E&placement=mudblazorcom" id="_carbonads_js" data-consent-category="carbon"></MudElement>
+        }
+        @if (_adBlockerDetected)
+        {
+            <MudAlert Severity="Severity.Error" Class="ma-4" Elevation="1">
+                <MudText Typo="Typo.subtitle2" GutterBottom="true">Support MudBlazor</MudText>
+                <MudText Typo="Typo.body2" Class="ms-n8">
+                    It looks like an ad blocker is hiding the ad in this slot.
+                    Please consider allowing ads on this site.
+                </MudText>
+            </MudAlert>
         }
     </MudDrawer>
 </MudMainContent>

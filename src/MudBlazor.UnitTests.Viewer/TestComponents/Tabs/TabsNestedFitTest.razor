@@ -1,0 +1,33 @@
+<div style="max-width: 520px; border: 1px solid var(--mud-palette-lines-default);">
+    <MudTabs Position="Position.Left" Elevation="1">
+        <MudTabPanel Text="Outer 1">
+            <MudTabs>
+                @foreach (var tab in _tabs)
+                {
+                    <MudTabPanel @key="tab" Text="@tab">
+                        <MudText>@tab content</MudText>
+                    </MudTabPanel>
+                }
+            </MudTabs>
+        </MudTabPanel>
+        <MudTabPanel Text="Outer 2">
+            <MudText>Second outer tab</MudText>
+        </MudTabPanel>
+    </MudTabs>
+</div>
+
+@code {
+    public static string __description__ = "nested tabs should fit inside a left-positioned parent tab";
+
+    private readonly List<string> _tabs =
+    [
+        "Accounts",
+        "Billing",
+        "Documents",
+        "Notifications",
+        "Permissions",
+        "Audit history",
+        "Integrations",
+        "Advanced settings"
+    ];
+}

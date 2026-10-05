@@ -2,7 +2,7 @@
 
 <MudTabs Rounded ApplyEffectsToContainer TabPanelsClass="pa-6" Color="Color.Primary" Centered>
     <MudTabPanel Text="Example One">
-        <MudChart ChartType="ChartType.HeatMap"
+        <MudChart T="double" ChartType="ChartType.HeatMap"
                     ChartSeries="@exampleOne"
                     ChartOptions="@chartOptions"
                     ChartLabels="@testLabels"
@@ -11,7 +11,7 @@
         </MudChart>
     </MudTabPanel>
     <MudTabPanel Text="Example Two">
-        <MudChart ChartType="ChartType.HeatMap"
+        <MudChart T="double" ChartType="ChartType.HeatMap"
                     ChartSeries="@exampleTwo"
                     ChartOptions="@chartOptions"
                     ChartLabels="@testLabels"

@@ -16,10 +16,11 @@ namespace MudBlazor
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
         /// </summary>
         private readonly string _componentId = Identifier.Create();
+        private readonly string _listboxId = Identifier.Create("listbox");
 
         private bool _isCleared;
-        private bool _isClearing;
         private bool _isProcessingValue;
+        private bool _skipNextEnterKeyUp;
         private int _selectedListItemIndex;
         private readonly int _elementKey = 0;
         private int _returnedItemsCount;
@@ -31,6 +32,7 @@ namespace MudBlazor
         private Task? _currentSearchTask;
         private ITimer? _debounceTimer;
         private T[]? _items;
+        private bool[] _itemDisabled = [];
         private List<int> _enabledItemIndices = [];
         private bool _handleNextFocus;
 
@@ -59,6 +61,7 @@ namespace MudBlazor
                 .AddClass("mud-autocomplete")
                 .AddClass("mud-width-full", FullWidth)
                 .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
+                .AddClass(OuterClass)
                 .Build();
 
         protected string CircularProgressClassname =>
@@ -72,6 +75,15 @@ namespace MudBlazor
                 .AddClass(ListItemClass)
                 .Build();
 
+        /// <summary>
+        /// The CSS classes applied to the outer <c>div</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter]
+        public string? OuterClass { get; set; }
         /// <summary>
         /// Input's classnames, separated by space.
         /// </summary>
@@ -611,7 +623,7 @@ namespace MudBlazor
 
         protected override void OnAfterRender(bool firstRender)
         {
-            if (_isClearing || _isProcessingValue)
+            if (_elementReference.IsClearing || _isProcessingValue)
             {
                 //When you select a value in the popover, SelectOptionAsync will be called.
                 //When it reaches SetValueAsync, it will be awaited.
@@ -646,6 +658,9 @@ namespace MudBlazor
             else if (Immediate)
                 await CoerceValueToTextAsync();
 
+            if (_elementReference?.IsClearing == true)
+                return;
+
             if (DebounceInterval <= 0)
                 await OpenMenuAsync();
             else
@@ -661,14 +676,21 @@ namespace MudBlazor
 
         private void CancelToken()
         {
+            // Swap in a fresh source before cancelling so the next search never observes the cancelled one.
+            // The previous source must be disposed or it leaks along with its registrations on every search.
+            var previous = _cancellationTokenSrc;
+            _cancellationTokenSrc = new CancellationTokenSource();
             try
             {
-                _cancellationTokenSrc?.Cancel();
+                previous?.Cancel();
             }
-            catch { /*ignored*/ }
+            catch (ObjectDisposedException)
+            {
+                // Already disposed, such as when the component was disposed mid-search.
+            }
             finally
             {
-                _cancellationTokenSrc = new CancellationTokenSource();
+                previous?.Dispose();
             }
         }
 
@@ -710,6 +732,9 @@ namespace MudBlazor
         /// <summary>
         /// Opens the drop-down of items, or refreshes the list if it is already open.
         /// </summary>
+        /// <remarks>
+        /// The drop-down stays closed when the search returns no items and no <see cref="NoItemsTemplate"/> is set.
+        /// </remarks>
         public async Task OpenMenuAsync()
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(ReadText) || ReadText.Length < MinCharacters))
@@ -751,9 +776,11 @@ namespace MudBlazor
             }
             catch (TaskCanceledException)
             {
+                // Cancellation is routine when a newer search or CloseMenuAsync calls CancelToken(), so it must not be logged as a failure like the catch below.
             }
             catch (OperationCanceledException)
             {
+                // Same routine cancellation, thrown by SearchFunc observing the token instead of by awaiting the cancelled task.
             }
             catch (Exception e)
             {
@@ -801,17 +828,19 @@ namespace MudBlazor
                 }
             }
 
-            _items = searchedItems;
-
-            var enabledItemIndices = new List<int>(_items.Length);
-            for (int i = 0; i < _items.Length; i++)
+            var itemDisabled = new bool[searchedItems.Length];
+            var enabledItemIndices = new List<int>(searchedItems.Length);
+            for (int i = 0; i < searchedItems.Length; i++)
             {
-                if (ItemDisabledFunc?.Invoke(_items[i]) != true)
+                itemDisabled[i] = ItemDisabledFunc?.Invoke(searchedItems[i]) == true;
+                if (!itemDisabled[i])
                 {
                     enabledItemIndices.Add(i);
                 }
             }
 
+            _items = searchedItems;
+            _itemDisabled = itemDisabled;
             _enabledItemIndices = enabledItemIndices;
             if (searchingWhileSelected) //compute the index of the currently select value, if it exists
             {
@@ -822,7 +851,13 @@ namespace MudBlazor
                 _selectedListItemIndex = _enabledItemIndices.Any() ? _enabledItemIndices[0] : -1;
             }
 
-            if (_isFocused || !wasFocused)
+            // An empty result with no NoItemsTemplate would render an invisible zero-height popover, so keep the menu closed instead (#13360).
+            var hasPopoverContent = _items.Length != 0 || NoItemsTemplate is not null;
+            if (!hasPopoverContent)
+            {
+                Open = false;
+            }
+            else if (_isFocused || !wasFocused)
             {
                 // Open after the search has finished if we're still focused (UI), or were never focused in the first place (programmatically).
                 Open = true;
@@ -849,7 +884,7 @@ namespace MudBlazor
         /// </summary>
         public async Task ClearAsync()
         {
-            _isClearing = true;
+            _elementReference.IsClearing = true;
             try
             {
                 _isCleared = true;
@@ -865,7 +900,7 @@ namespace MudBlazor
             }
             finally
             {
-                _isClearing = false;
+                _elementReference.IsClearing = false;
             }
         }
 
@@ -892,6 +927,9 @@ namespace MudBlazor
 
         private async Task OnInputKeyDownAsync(KeyboardEventArgs args)
         {
+            // A genuine keystroke on the input starts with keydown, so any pending stray-keyup suppression is over.
+            _skipNextEnterKeyUp = false;
+
             switch (args.Key)
             {
                 // We need to catch Tab here because a tab will move focus to the next element and thus we'd never get the tab key in OnInputKeyUpAsync.
@@ -938,12 +976,25 @@ namespace MudBlazor
             {
                 case "Enter":
                 case "NumpadEnter":
+                    if (_skipNextEnterKeyUp || _elementReference.IsClearing)
+                    {
+                        // A stray keyup from clear-button activation; the keystroke began on the button, not the input.
+                        _skipNextEnterKeyUp = false;
+                        break;
+                    }
+
                     if (Open)
                     {
                         await OnEnterKeyAsync();
                     }
                     else
                     {
+                        // The menu stays closed when a search finds nothing, so Enter must coerce the value here rather than through OnEnterKeyAsync.
+                        // When Immediate is enabled the value was already coerced by TextChanged.
+                        if (!Immediate)
+                        {
+                            await CoerceValueToTextAsync();
+                        }
                         await OpenMenuAsync();
                     }
                     break;
@@ -992,7 +1043,7 @@ namespace MudBlazor
         /// <param name="index">The index of the item to scroll to. If it's out of range then nothing will happen.</param>
         private ValueTask SelectItemAsync(int index)
         {
-            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any() || index < 0 || index > _enabledItemIndices.Count - 1)
+            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any() || index < 0 || index >= _items.Length)
                 return ValueTask.CompletedTask;
 
             _selectedListItemIndex = index;
@@ -1028,6 +1079,39 @@ namespace MudBlazor
             return $"{_componentId}_item{index}";
         }
 
+        /// <summary>
+        /// Builds fallback combobox attributes for the text input so caller-supplied values still win.
+        /// </summary>
+        /// <remarks>
+        /// The suggestion list only exists in the DOM while it is open and has items, so the list and the highlighted option are referenced only then.
+        /// </remarks>
+        private Dictionary<string, object?> GetInputAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+            foreach (var userAttribute in UserAttributes)
+            {
+                attributes[userAttribute.Key] = userAttribute.Value;
+            }
+
+            var listRendered = _open && _items is { Length: > 0 };
+            attributes.TryAdd("role", "combobox");
+            attributes.TryAdd("aria-autocomplete", "list");
+            attributes.TryAdd("aria-haspopup", "listbox");
+            attributes.TryAdd("aria-expanded", listRendered ? "true" : "false");
+
+            if (listRendered)
+            {
+                attributes.TryAdd("aria-controls", _listboxId);
+
+                if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items!.Length)
+                {
+                    attributes.TryAdd("aria-activedescendant", GetListItemId(_selectedListItemIndex));
+                }
+            }
+
+            return attributes;
+        }
+
         internal async Task OnEnterKeyAsync()
         {
             if (!Open || _items == null || _items.Length == 0)
@@ -1060,6 +1144,12 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
+            if (_elementReference.IsClearing)
+            {
+                // To avoid reacting to the clicking of the clear button, we ignore this event because it is propagated.
+                return Task.CompletedTask;
+            }
+
             return OnInputActivatedAsync(true);
         }
 
@@ -1074,6 +1164,12 @@ namespace MudBlazor
             if (GetReadOnlyState())
             {
                 // A readonly input doesn't trigger onblur later correctly, so we have to disable focus features for it.
+                return;
+            }
+
+            if (_elementReference.IsClearing)
+            {
+                // To avoid reacting to the clicking of the clear button, we have to disable focus features while the clearing event chain is happening.
                 return;
             }
 
@@ -1109,17 +1205,24 @@ namespace MudBlazor
         {
             // clear button clicked, let's make sure text is cleared and the menu has focus
 
+            // Enter activates the clear button on keydown, and the matching keyup lands on the input the clear transaction focuses.
+            // Arm the suppression before the first await so the keyup can't slip in while an asynchronous clear callback is still pending.
+            _skipNextEnterKeyUp = true;
+
             // These lines prevent the menu from opening when OpenOnFocus is true, which is the default.
             _debounceTimer?.Dispose();
             if (_items?.Length > 0)
                 _items = [];
-            _open = true;
             await SetValueAndUpdateTextAsync(default, false);
             await SetTextAndUpdateValueAsync(null, false);
             _selectedListItemIndex = 0;
             StateHasChanged();
             await OnClearButtonClick.InvokeAsync(e);
             await BeginValidateAsync();
+            if (Open)
+            {
+                await OpenMenuAsync();
+            }
         }
         internal async Task AdornmentClickHandlerAsync()
         {
@@ -1136,22 +1239,31 @@ namespace MudBlazor
             }
         }
 
-        private Task OnInputBlurredAsync(FocusEventArgs args)
+        private async Task OnInputBlurredAsync(FocusEventArgs args)
         {
             _isFocused = false;
             _handleNextFocus = false;
 
-            // When Immediate is enabled, then the CoerceValue is set by TextChanged
-            // So only coerce the value on blur when Immediate is disabled
+            // When Immediate is enabled, then the CoerceValue is set by TextChanged.
+            // So only coerce the value on blur when Immediate is disabled, then fall through to the same validation path.
             if (!Immediate)
             {
-                return CoerceValueToTextAsync();
+                await CoerceValueToTextAsync();
             }
 
-            return OnBlur.InvokeAsync(args);
-            // we should not validate on blur in autocomplete, because the user needs to click out of the input to select a value,
-            // resulting in a premature validation. thus, don't call base
-            //base.OnBlurred(args);
+            // A blur while the menu is open or a value is being committed is part of selecting an item: the item's mousedown blurs the input before its click lands, so validating now would flag a premature error.
+            // Only a genuine leave runs the base blur, so a required autocomplete surfaces its error on blur like other inputs (#5489).
+            // A leave while a search is still running (menu not yet open) is genuine, so the in-flight opening flag is intentionally not gated on.
+            if (Open || _isProcessingValue)
+            {
+                await OnBlur.InvokeAsync(args);
+                return;
+            }
+
+            // A genuine leave with the menu closed (such as after a search returned nothing) can't rely on the overlay close to revert the text, so coerce it here.
+            await CoerceTextToValueAsync();
+
+            await base.OnBlurredAsync(args);
         }
 
         private Task OnOverlayClosedAsync()
@@ -1237,9 +1349,12 @@ namespace MudBlazor
         /// <summary>
         /// Sets focus to this Autocomplete.
         /// </summary>
-        public override ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override ValueTask FocusAsync(bool preventScroll)
         {
-            return _elementReference.FocusAsync();
+            return _elementReference.FocusAsync(preventScroll);
         }
 
         /// <summary>

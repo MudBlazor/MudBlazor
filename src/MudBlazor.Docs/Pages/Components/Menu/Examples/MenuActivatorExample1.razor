@@ -37,3 +37,26 @@
     </ChildContent>
 </MudMenu>
 
+<MudMenu ActivationEvent="@MouseEvent.RightClick">
+    <ActivatorContent>
+        <div @oncontextmenu="@context.ToggleAsync" @oncontextmenu:preventDefault style="display: inline-flex">
+            <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Right Click</MudChip>
+        </div>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem Label="Profile" />
+        <MudMenuItem Label="Theme" />
+        <MudMenuItem Label="Usage" />
+    </ChildContent>
+</MudMenu>
+
+<MudMenu ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+    <ActivatorContent>
+        <MudChip T="string" Icon="@Icons.Material.Filled.Mouse" Color="Color.Primary">Mouse Over</MudChip>
+    </ActivatorContent>
+    <ChildContent>
+        <MudMenuItem Label="Profile" />
+        <MudMenuItem Label="Theme" />
+        <MudMenuItem Label="Usage" />
+    </ChildContent>
+</MudMenu>

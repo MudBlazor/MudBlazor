@@ -13,7 +13,6 @@ namespace MudBlazor
         public SnackbarState SnackbarState { get; set; }
         private readonly TimeProvider _timeProvider;
         private DateTimeOffset _transitionStartTime;
-        private long _elapsedMilliseconds;
 
         public SnackBarMessageState(SnackbarOptions options, TimeProvider timeProvider)
         {
@@ -29,15 +28,6 @@ namespace MudBlazor
         internal void StartTransition(DateTimeOffset now)
         {
             _transitionStartTime = now;
-            _elapsedMilliseconds = 0;
-        }
-
-        /// <summary>
-        /// Stops tracking the transition and records the elapsed time.
-        /// </summary>
-        internal void StopTransition(DateTimeOffset now)
-        {
-            _elapsedMilliseconds = (long)(now - _transitionStartTime).TotalMilliseconds;
         }
 
         private long GetElapsedMilliseconds()
@@ -52,17 +42,6 @@ namespace MudBlazor
 
         public bool HideIcon => Options.HideIcon;
         public string Icon => Options.Icon;
-        public Color IconColor => Options.IconColor;
-        public Size IconSize => Options.IconSize;
-
-        public string ProgressBarStyle
-        {
-            get
-            {
-                var duration = RemainingTransitionMilliseconds(Options.VisibleStateDuration);
-                return $"width:100;animation:{AnimationId} {duration}ms;";
-            }
-        }
 
         public string AnimationStyle
         {

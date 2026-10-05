@@ -10,10 +10,10 @@ namespace MudBlazor.Docs.Compiler
             var success = true;
             try
             {
-                // Early exit: if Snippets.generated.cs exists and is newer than all example files, skip generation
-                if (File.Exists(Paths.SnippetsFilePath))
+                // Early exit: if the generated file exists and our stamp is newer than all example files, skip generation.
+                if (File.Exists(Paths.SnippetsFilePath) && File.Exists(Paths.SnippetsStampFilePath))
                 {
-                    var snippetsLastWrite = File.GetLastWriteTimeUtc(Paths.SnippetsFilePath);
+                    var stampLastWrite = File.GetLastWriteTimeUtc(Paths.SnippetsStampFilePath);
                     var exampleFiles = Directory.EnumerateFiles(Paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
                         .Where(f => Path.GetFileNameWithoutExtension(f).Contains(Paths.ExampleDiscriminator));
                     var newestExampleTime = exampleFiles
@@ -21,7 +21,7 @@ namespace MudBlazor.Docs.Compiler
                         .DefaultIfEmpty(DateTime.MinValue)
                         .Max();
 
-                    if (snippetsLastWrite > newestExampleTime)
+                    if (stampLastWrite > newestExampleTime)
                     {
                         Console.WriteLine("CodeSnippets: Snippets.generated.cs is up-to-date, skipping generation.");
                         return true;
@@ -66,10 +66,11 @@ namespace MudBlazor.Docs.Compiler
                 }
                 else
                 {
-                    // Touch the file to update its timestamp so future checks skip regeneration
-                    File.SetLastWriteTimeUtc(Paths.SnippetsFilePath, DateTime.UtcNow);
-                    Console.WriteLine("CodeSnippets: Snippets.generated.cs content unchanged, touched timestamp.");
+                    Console.WriteLine("CodeSnippets: Snippets.generated.cs content unchanged.");
                 }
+
+                // Stamp (not the .cs) so the next build's early-exit works without forcing a recompile.
+                Paths.TouchStamp(Paths.SnippetsStampFilePath);
             }
             catch (Exception e)
             {

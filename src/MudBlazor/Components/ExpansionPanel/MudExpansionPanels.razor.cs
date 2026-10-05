@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -11,6 +12,23 @@ namespace MudBlazor
     public partial class MudExpansionPanels : MudComponentBase
     {
         private readonly List<MudExpansionPanel> _panels = new();
+
+        public MudExpansionPanels()
+        {
+            using var registerScope = CreateRegisterScope();
+            registerScope.RegisterParameter<int>(nameof(Elevation))
+                .WithParameter(() => Elevation)
+                .WithChangeHandler(RenderPanels);
+            registerScope.RegisterParameter<bool>(nameof(Dense))
+                .WithParameter(() => Dense)
+                .WithChangeHandler(RenderPanels);
+            registerScope.RegisterParameter<bool>(nameof(Gutters))
+                .WithParameter(() => Gutters)
+                .WithChangeHandler(RenderPanels);
+            registerScope.RegisterParameter<bool>(nameof(Outlined))
+                .WithParameter(() => Outlined)
+                .WithChangeHandler(RenderPanels);
+        }
 
         protected string Classname =>
             new CssBuilder("mud-expansion-panels")
@@ -92,6 +110,18 @@ namespace MudBlazor
         /// Expansion panels are controlled by adding more <see cref="MudExpansionPanel"/> components in the Razor page.
         /// </remarks>
         public IReadOnlyList<MudExpansionPanel> Panels => _panels;
+
+        /// <summary>
+        /// Renders every panel after a parameter that panels read from this component has changed.
+        /// </summary>
+        /// <remarks>
+        /// Panels read these values through a fixed cascade, so a panel without content of its own is not re-rendered when they change.
+        /// </remarks>
+        private void RenderPanels()
+        {
+            foreach (IMudStateHasChanged panel in _panels)
+                panel.StateHasChanged();
+        }
 
         internal async Task AddPanelAsync(MudExpansionPanel panel)
         {

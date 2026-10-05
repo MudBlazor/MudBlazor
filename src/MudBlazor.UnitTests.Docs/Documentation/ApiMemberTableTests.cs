@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using AwesomeAssertions;
+using Bunit;
 using MudBlazor.Docs.Components;
 using MudBlazor.Docs.Models;
 using NUnit.Framework;
@@ -55,9 +56,9 @@ public sealed class ApiMemberTableTests : BunitTest
 
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
 
-        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1\">Show Protected</span>", "There should be a switch for protected properties");
 
-        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"Classname\">", "The \"Classname\" protected property should be visible");
+        comp.FindAll("td#Classname").Should().ContainSingle("The \"Classname\" protected property should be visible");
     }
 
     /// <summary>
@@ -75,9 +76,9 @@ public sealed class ApiMemberTableTests : BunitTest
 
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
 
-        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1\">Show Protected</span>", "There should be a switch for protected properties");
 
-        comp.Markup.Should().NotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"Classname\">", "The \"Classname\" protected property should NOT be visible");
+        comp.FindAll("td#Classname").Should().BeEmpty("The \"Classname\" protected property should NOT be visible");
     }
 
     /// <summary>
@@ -95,9 +96,9 @@ public sealed class ApiMemberTableTests : BunitTest
 
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
 
-        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1\">Show Protected</span>", "There should be a switch for protected properties");
 
-        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"BeginValidateAsync\">", "The \"BeginValidateAsync\" protected method should be visible");
+        comp.FindAll("td#BeginValidateAsync").Should().ContainSingle("The \"BeginValidateAsync\" protected method should be visible");
     }
 
     /// <summary>
@@ -115,9 +116,9 @@ public sealed class ApiMemberTableTests : BunitTest
 
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
 
-        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1\">Show Protected</span>", "There should be a switch for protected properties");
 
-        comp.Markup.Should().NotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"BeginValidateAsync\">", "The \"BeginValidateAsync\" protected method should NOT be visible");
+        comp.FindAll("td#BeginValidateAsync").Should().BeEmpty("The \"BeginValidateAsync\" protected method should NOT be visible");
     }
 
     /// <summary>
@@ -135,9 +136,9 @@ public sealed class ApiMemberTableTests : BunitTest
 
         comp.Markup.Should().NotContain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should NOT be a message saying no members are found");
 
-        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1\">Show Protected</span>", "There should be a switch for protected properties");
 
-        comp.Markup.Should().Contain("<td data-label=\"Name\" class=\"mud-table-cell  docs-content-api-cell\" id=\"CurrentView\">", "The \"CurrentView\" protected field should be visible");
+        comp.FindAll("td#CurrentView").Should().ContainSingle("The \"CurrentView\" protected field should be visible");
     }
 
     /// <summary>
@@ -155,9 +156,9 @@ public sealed class ApiMemberTableTests : BunitTest
 
         comp.Markup.Should().Contain("<div class=\"mud-alert-message\">No members match the current filters.</div>", "There should be a message saying no members are found  (since the protected field was the ONLY field)");
 
-        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1 mud-switch mud-input-content-placement-end\">Show Protected</span>", "There should be a switch for protected properties");
+        comp.Markup.Should().Contain("<span class=\"mud-typography mud-typography-body1\">Show Protected</span>", "There should be a switch for protected properties");
 
-        comp.Markup.Should().NotContain("<td data-label=\"Name\" class=\"mud-table-cell docs-content-api-cell\" id=\"CurrentView\">", "The \"CurrentView\" protected field should NOT be visible");
+        comp.FindAll("td#CurrentView").Should().BeEmpty("The \"CurrentView\" protected field should NOT be visible");
     }
 
     /// <summary>

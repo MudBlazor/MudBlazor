@@ -150,7 +150,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, new[] { "mud-tooltip-root", "mud-tooltip-inline" })]
         public void ContainerClass_PropertyRelations(bool inlineValue, string[] expectedClasses)
         {
-            var comp = Context.Render<ToolTipContainerPropertyTest>(p =>
+            var comp = Context.Render<TooltipContainerPropertyTest>(p =>
             p.Add(x => x.Inline, inlineValue));
 
             comp.Nodes.Last().Should().BeAssignableTo<IHtmlElement>();
@@ -163,7 +163,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task InnerClass_ChildContentWrapper()
         {
-            var comp = Context.Render<ToolTipPopoverClassPropertyTest>();
+            var comp = Context.Render<TooltipPopoverClassPropertyTest>();
 
             var button = comp.Find("button");
             await button.ParentElement.PointerEnterAsync(new PointerEventArgs());
@@ -178,7 +178,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(true, new[] { "mud-tooltip", "mud-tooltip-arrow" })]
         public async Task PopoverClass_PropertyArrow(bool arrowValue, string[] expectedClasses)
         {
-            var comp = Context.Render<ToolTipPopoverClassPropertyTest>(p =>
+            var comp = Context.Render<TooltipPopoverClassPropertyTest>(p =>
             p.Add(x => x.Arrow, arrowValue));
 
             var button = comp.Find("button");
@@ -196,7 +196,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Dark, new[] { "mud-tooltip", "mud-theme-dark" })]
         public async Task PopoverClass_PropertyColor(Color colorValue, string[] expectedClasses)
         {
-            var comp = Context.Render<ToolTipPopoverClassPropertyTest>(p =>
+            var comp = Context.Render<TooltipPopoverClassPropertyTest>(p =>
             p.Add(x => x.Color, colorValue));
 
             var button = comp.Find("button");
@@ -214,7 +214,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Color.Success, false, new[] { "mud-tooltip", "mud-theme-success" })]
         public async Task PopoverClass_PropertyColorAndArrow(Color colorValue, bool arrowValue, string[] expectedClasses)
         {
-            var comp = Context.Render<ToolTipPopoverClassPropertyTest>(p =>
+            var comp = Context.Render<TooltipPopoverClassPropertyTest>(p =>
             {
                 p.Add(x => x.Color, colorValue);
                 p.Add(x => x.Arrow, arrowValue);
@@ -244,7 +244,7 @@ namespace MudBlazor.UnitTests.Components
 
         public async Task PopoverClass_Placement(Placement placementValue, bool rtlValue, string[] expectedClasses)
         {
-            var comp = Context.Render<ToolTipPlacementPropertyTest>(p =>
+            var comp = Context.Render<TooltipPlacementPropertyTest>(p =>
             {
                 p.Add(x => x.Placement, placementValue);
                 p.Add(x => x.RightToLeft, rtlValue);
@@ -261,7 +261,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Tooltip_On_Focus()
         {
-            var comp = Context.Render<ToolTipPlacementPropertyTest>();
+            var comp = Context.Render<TooltipPlacementPropertyTest>();
 
             var button = comp.Find("button");
             await button.ParentElement.FocusInAsync(new FocusEventArgs());

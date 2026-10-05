@@ -143,12 +143,15 @@ internal sealed class PointerEventsNoneService : IPointerEventsNoneService
 
             _observerManager.Clear();
 
+            // Only tear down the JS listener if one was ever created. During prerendering the DI scope
+            // disposes this service before a circuit exists; skipping the call avoids a first-chance
+            // InvalidOperationException and cannot leak, since nothing was registered on the JS side.
             if (_dotNetObjectReference.IsValueCreated)
             {
                 _dotNetObjectReference.Value.Dispose();
-            }
 
-            await _pointerEventsNoneInterop.DisposeAsync(CancellationToken.None);
+                await _pointerEventsNoneInterop.DisposeAsync(CancellationToken.None);
+            }
 
             _cancellationTokenSource.Dispose();
         }

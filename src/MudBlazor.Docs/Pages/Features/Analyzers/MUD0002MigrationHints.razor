@@ -1,0 +1,256 @@
+﻿<MudText Typo="Typo.h6" Class="mb-2">Renamed</MudText>
+<MudText Class="mb-2">
+    The value carries over unchanged, so only the attribute name changes.
+</MudText>
+<MudSimpleTable Dense="true" Elevation="0" Bordered="true" Class="mb-6">
+    <thead>
+        <tr>
+            <th>Removed</th>
+            <th>Replacement</th>
+            <th>Components</th>
+            <th>Removed in</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><CodeInline>Link</CodeInline></td><td><CodeInline>Href</CodeInline></td><td>MudButton, MudIconButton, MudFab, MudChip, MudMenuItem</td><td>v7</td></tr>
+        <tr><td><CodeInline>Icon</CodeInline></td><td><CodeInline>StartIcon</CodeInline></td><td>MudFab</td><td>v7</td></tr>
+        <tr><td><CodeInline>VerticalAlign</CodeInline></td><td><CodeInline>Vertical</CodeInline></td><td>MudButtonGroup</td><td>v7</td></tr>
+        <tr><td><CodeInline>Option</CodeInline></td><td><CodeInline>Value</CodeInline></td><td>MudRadio</td><td>v7</td></tr>
+        <tr><td><CodeInline>Outline</CodeInline></td><td><CodeInline>Outlined</CodeInline></td><td>MudToggleGroup</td><td>v7</td></tr>
+        <tr><td><CodeInline>Filter</CodeInline></td><td><CodeInline>CheckMark</CodeInline></td><td>MudChipSet</td><td>v7</td></tr>
+        <tr><td><CodeInline>AdornmentColor</CodeInline></td><td><CodeInline>ExpandIconColor</CodeInline></td><td>MudListItem</td><td>v7</td></tr>
+        <tr><td><CodeInline>OnClickHandlerPreventDefault</CodeInline></td><td><CodeInline>OnClickPreventDefault</CodeInline></td><td>MudListItem</td><td>v7</td></tr>
+        <tr><td><CodeInline>IsOpenChanged</CodeInline></td><td><CodeInline>OpenChanged</CodeInline></td><td>MudMenu, MudAutocomplete</td><td>v7</td></tr>
+        <tr><td><CodeInline>PositionAtCurser</CodeInline></td><td><CodeInline>PositionAtCursor</CodeInline></td><td>MudMenu</td><td>v7</td></tr>
+        <tr><td><CodeInline>ClassActions</CodeInline></td><td><CodeInline>ActionsClass</CodeInline></td><td>MudDialog, MudDatePicker, MudDateRangePicker, MudTimePicker, MudColorPicker</td><td>v7</td></tr>
+        <tr><td><CodeInline>ClassContent</CodeInline></td><td><CodeInline>ContentClass</CodeInline></td><td>MudDialog</td><td>v7</td></tr>
+        <tr><td><CodeInline>SelectOnClick</CodeInline></td><td><CodeInline>SelectOnActivation</CodeInline></td><td>MudAutocomplete</td><td>v7</td></tr>
+        <tr><td><CodeInline>InputIcon</CodeInline></td><td><CodeInline>AdornmentIcon</CodeInline></td><td>MudDatePicker, MudDateRangePicker, MudTimePicker, MudColorPicker</td><td>v7</td></tr>
+        <tr><td><CodeInline>InputVariant</CodeInline></td><td><CodeInline>Variant</CodeInline></td><td>MudDatePicker, MudDateRangePicker, MudTimePicker, MudColorPicker</td><td>v7</td></tr>
+        <tr><td><CodeInline>Minimum</CodeInline>, <CodeInline>Maximum</CodeInline></td><td><CodeInline>Min</CodeInline>, <CodeInline>Max</CodeInline></td><td>MudProgressCircular, MudProgressLinear</td><td>v7</td></tr>
+        <tr><td><CodeInline>ShowDelimiters</CodeInline>, <CodeInline>DelimitersColor</CodeInline>, <CodeInline>DelimitersClass</CodeInline>, <CodeInline>DelimiterTemplate</CodeInline></td><td><CodeInline>ShowBullets</CodeInline>, <CodeInline>BulletsColor</CodeInline>, <CodeInline>BulletsClass</CodeInline>, <CodeInline>BulletTemplate</CodeInline></td><td>MudCarousel</td><td>v7</td></tr>
+        <tr><td><CodeInline>IsEditable</CodeInline></td><td><CodeInline>Editable</CodeInline></td><td>PropertyColumn, TemplateColumn, MudTr</td><td>v7</td></tr>
+        <tr><td><CodeInline>IsCheckable</CodeInline></td><td><CodeInline>Checkable</CodeInline></td><td>MudTr, MudTHeadRow, MudTFootRow, MudTableGroupRow</td><td>v7</td></tr>
+        <tr><td><CodeInline>IsExpandable</CodeInline></td><td><CodeInline>Expandable</CodeInline></td><td>MudTr, MudTHeadRow, MudTFootRow</td><td>v7</td></tr>
+        <tr><td><CodeInline>CanHover</CodeInline></td><td><CodeInline>Hover</CodeInline></td><td>MudTreeView</td><td>v7</td></tr>
+        <tr><td><CodeInline>ActivatedValueChanged</CodeInline></td><td><CodeInline>SelectedValueChanged</CodeInline></td><td>MudTreeView</td><td>v7</td></tr>
+        <tr><td><CodeInline>ExpandedIconColor</CodeInline></td><td><CodeInline>ExpandButtonIconColor</CodeInline></td><td>MudTreeViewItem</td><td>v7</td></tr>
+        <tr><td><CodeInline>ItemIsDisabled</CodeInline></td><td><CodeInline>ItemDisabled</CodeInline></td><td>MudDropContainer, MudDropZone</td><td>v7</td></tr>
+        <tr><td><CodeInline>CancelledEditingItem</CodeInline></td><td><CodeInline>CanceledEditingItem</CodeInline></td><td>MudDataGrid</td><td>v8</td></tr>
+        <tr><td><CodeInline>XAxisLabels</CodeInline>, <CodeInline>InputLabels</CodeInline></td><td><CodeInline>ChartLabels</CodeInline></td><td>MudChart</td><td>v9</td></tr>
+    </tbody>
+</MudSimpleTable>
+
+<MudText Typo="Typo.h6" Class="mb-2">Two-way bindings</MudText>
+<MudText Class="mb-2">
+    All of these were removed in v7.
+    Both halves of the binding were renamed, so the value, its callback, and the <CodeInline>@("@bind-")</CodeInline> spelling all change: <CodeInline>@("@bind-Checked")</CodeInline> becomes <CodeInline>@("@bind-Value")</CodeInline>.
+    A generic component such as MudCheckBox needs an explicit <CodeInline>T</CodeInline> before the old binding reaches the analyzer; without one, the compiler reports that it cannot infer the type first.
+</MudText>
+<MudSimpleTable Dense="true" Elevation="0" Bordered="true" Class="mb-6">
+    <thead>
+        <tr>
+            <th>Removed</th>
+            <th>Replacement</th>
+            <th>Components</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><CodeInline>Checked</CodeInline>, <CodeInline>CheckedChanged</CodeInline></td><td><CodeInline>Value</CodeInline>, <CodeInline>ValueChanged</CodeInline></td><td>MudCheckBox, MudSwitch</td></tr>
+        <tr><td><CodeInline>SelectedOption</CodeInline>, <CodeInline>SelectedOptionChanged</CodeInline></td><td><CodeInline>Value</CodeInline>, <CodeInline>ValueChanged</CodeInline></td><td>MudRadioGroup</td></tr>
+        <tr><td><CodeInline>IsVisible</CodeInline>, <CodeInline>IsVisibleChanged</CodeInline></td><td><CodeInline>Visible</CodeInline>, <CodeInline>VisibleChanged</CodeInline></td><td>MudDialog, MudMessageBox, MudTooltip</td></tr>
+        <tr><td><CodeInline>IsHidden</CodeInline>, <CodeInline>IsHiddenChanged</CodeInline></td><td><CodeInline>Hidden</CodeInline>, <CodeInline>HiddenChanged</CodeInline></td><td>MudHidden</td></tr>
+        <tr><td><CodeInline>IsExpanded</CodeInline>, <CodeInline>IsExpandedChanged</CodeInline></td><td><CodeInline>Expanded</CodeInline>, <CodeInline>ExpandedChanged</CodeInline></td><td>MudExpansionPanel</td></tr>
+        <tr><td><CodeInline>IsChecked</CodeInline>, <CodeInline>IsCheckedChanged</CodeInline></td><td><CodeInline>Checked</CodeInline>, <CodeInline>CheckedChanged</CodeInline></td><td>MudTr</td></tr>
+    </tbody>
+</MudSimpleTable>
+
+<MudText Typo="Typo.h6" Class="mb-2">Inverted booleans</MudText>
+<MudText Class="mb-2">
+    The replacement means the opposite, so the value flips: <CodeInline>DisableRipple="true"</CodeInline> becomes <CodeInline>Ripple="false"</CodeInline>, and <CodeInline>DisableRipple="@("@expression")"</CodeInline> becomes <CodeInline>Ripple="@("@(!expression)")"</CodeInline>.
+    For the rows in this table, leaving the new parameter unset behaves like leaving the old one unset.
+    All of these were removed in v7.
+</MudText>
+<MudSimpleTable Dense="true" Elevation="0" Bordered="true" Class="mb-6">
+    <thead>
+        <tr>
+            <th>Removed</th>
+            <th>Replacement</th>
+            <th>Components</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><CodeInline>DisableRipple</CodeInline></td><td><CodeInline>Ripple</CodeInline></td><td>MudButton, MudIconButton, MudFab, MudToggleIconButton, MudCheckBox, MudSwitch, MudRadio, MudToggleGroup, MudListItem, MudMenu, MudNavGroup, MudNavLink, MudTabs</td></tr>
+        <tr><td><CodeInline>DisableElevation</CodeInline></td><td><CodeInline>DropShadow</CodeInline></td><td>MudButton, MudIconButton, MudFab, MudToggleIconButton, MudButtonGroup, MudMenu, MudPagination</td></tr>
+        <tr><td><CodeInline>DisableGutters</CodeInline></td><td><CodeInline>Gutters</CodeInline></td><td>MudAppBar, MudToolBar, MudExpansionPanels, MudExpansionPanel, MudList, MudListSubheader</td></tr>
+        <tr><td><CodeInline>DisableUnderLine</CodeInline></td><td><CodeInline>Underline</CodeInline></td><td>MudTextField, MudNumericField, MudSelect, MudAutocomplete, MudInput, MudField, MudDatePicker, MudDateRangePicker, MudTimePicker, MudColorPicker</td></tr>
+        <tr><td><CodeInline>DisableToolbar</CodeInline></td><td><CodeInline>ShowToolbar</CodeInline></td><td>MudDatePicker, MudDateRangePicker, MudTimePicker, MudColorPicker, MudPickerToolbar</td></tr>
+        <tr><td><CodeInline>DisableBorders</CodeInline></td><td><CodeInline>Outlined</CodeInline></td><td>MudExpansionPanels</td></tr>
+        <tr><td><CodeInline>DisableSidePadding</CodeInline></td><td><CodeInline>Gutters</CodeInline></td><td>MudDialog</td></tr>
+        <tr><td><CodeInline>DisableOverlay</CodeInline></td><td><CodeInline>Overlay</CodeInline></td><td>MudDrawer</td></tr>
+        <tr><td><CodeInline>DisableSliderAnimation</CodeInline></td><td><CodeInline>SliderAnimation</CodeInline></td><td>MudTabs</td></tr>
+        <tr><td><CodeInline>DisableModifiers</CodeInline></td><td><CodeInline>Modifiers</CodeInline></td><td>MudTimeline</td></tr>
+        <tr><td><CodeInline>DisableSliders</CodeInline>, <CodeInline>DisablePreview</CodeInline>, <CodeInline>DisableModeSwitch</CodeInline>, <CodeInline>DisableInputs</CodeInline>, <CodeInline>DisableColorField</CodeInline>, <CodeInline>DisableAlpha</CodeInline></td><td><CodeInline>ShowSliders</CodeInline>, <CodeInline>ShowPreview</CodeInline>, <CodeInline>ShowModeSwitch</CodeInline>, <CodeInline>ShowInputs</CodeInline>, <CodeInline>ShowColorField</CodeInline>, <CodeInline>ShowAlpha</CodeInline></td><td>MudColorPicker</td></tr>
+        <tr><td><CodeInline>DisableDragEffect</CodeInline></td><td><CodeInline>DragEffect</CodeInline></td><td>MudColorPicker</td></tr>
+        <tr><td><CodeInline>DisableRowsPerPage</CodeInline></td><td><CodeInline>PageSizeSelector</CodeInline></td><td>MudDataGridPager</td></tr>
+    </tbody>
+</MudSimpleTable>
+
+<MudText Typo="Typo.h6" Class="mb-2">Needs more than a rename</MudText>
+<MudText Class="mb-2">
+    These change a default, a type, a unit, or a signature along with the name.
+    Unless a row says otherwise, they were removed in v7.
+</MudText>
+<MudSimpleTable Dense="true" Elevation="0" Bordered="true" Class="mb-4">
+    <thead>
+        <tr>
+            <th>Removed</th>
+            <th>Replacement</th>
+            <th>What changes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>MudRating and MudRatingItem <CodeInline>DisableRipple</CodeInline></td>
+            <td><CodeInline>Ripple</CodeInline></td>
+            <td>
+                The value inverts, and <CodeInline>Ripple</CodeInline> now defaults to <CodeInline>false</CodeInline>.
+                A rating that never set <CodeInline>DisableRipple</CodeInline> needs <CodeInline>Ripple="true"</CodeInline> to keep its ripple.
+            </td>
+        </tr>
+        <tr>
+            <td>MudList <CodeInline>DisablePadding</CodeInline></td>
+            <td><CodeInline>Padding</CodeInline></td>
+            <td>
+                The value inverts, and <CodeInline>Padding</CodeInline> defaults to <CodeInline>false</CodeInline>.
+                A list that never set <CodeInline>DisablePadding</CodeInline> needs <CodeInline>Padding="true"</CodeInline> to keep its padding.
+            </td>
+        </tr>
+        <tr>
+            <td>MudList <CodeInline>Clickable</CodeInline></td>
+            <td><CodeInline>ReadOnly</CodeInline></td>
+            <td>
+                The value inverts: <CodeInline>Clickable="true"</CodeInline> becomes <CodeInline>ReadOnly="false"</CodeInline>.
+                Lists are now interactive by default, so a list that never set <CodeInline>Clickable</CodeInline> needs <CodeInline>ReadOnly="true"</CodeInline> to stay static.
+            </td>
+        </tr>
+        <tr>
+            <td>MudChip <CodeInline>DisableRipple</CodeInline></td>
+            <td><CodeInline>Ripple</CodeInline></td>
+            <td>
+                <CodeInline>DisableRipple="true"</CodeInline> becomes <CodeInline>Ripple="false"</CodeInline>.
+                For <CodeInline>DisableRipple="false"</CodeInline>, leave <CodeInline>Ripple</CodeInline> unset so the chip follows its MudChipSet, because <CodeInline>Ripple="true"</CodeInline> overrides the chip set.
+                An expression keeps that behavior as <CodeInline>Ripple="@("@(expression ? false : null)")"</CodeInline>.
+            </td>
+        </tr>
+        <tr>
+            <td>MudListItem <CodeInline>DisableGutters</CodeInline></td>
+            <td><CodeInline>Gutters</CodeInline></td>
+            <td>
+                <CodeInline>DisableGutters="true"</CodeInline> becomes <CodeInline>Gutters="false"</CodeInline>.
+                For <CodeInline>DisableGutters="false"</CodeInline>, leave <CodeInline>Gutters</CodeInline> unset so the item follows its MudList, because <CodeInline>Gutters="true"</CodeInline> now overrides a list that sets <CodeInline>Gutters="false"</CodeInline>.
+                An expression keeps that behavior as <CodeInline>Gutters="@("@(expression ? false : null)")"</CodeInline>.
+            </td>
+        </tr>
+        <tr>
+            <td>MudExpansionPanel <CodeInline>IsInitiallyExpanded</CodeInline>, MudListItem <CodeInline>InitiallyExpanded</CodeInline></td>
+            <td><CodeInline>Expanded</CodeInline></td>
+            <td>
+                <CodeInline>IsInitiallyExpanded="true"</CodeInline> becomes <CodeInline>Expanded="true"</CodeInline>.
+                <CodeInline>Expanded</CodeInline> holds the current state rather than a starting value, so merge it with any existing <CodeInline>Expanded</CodeInline> or <CodeInline>@("@bind-Expanded")</CodeInline> instead of adding a second attribute.
+            </td>
+        </tr>
+        <tr>
+            <td>MudCheckBox and MudSwitch <CodeInline>LabelPosition</CodeInline></td>
+            <td><CodeInline>LabelPlacement</CodeInline></td>
+            <td>
+                The type changes from LabelPosition to Placement: <CodeInline>LabelPosition="LabelPosition.Start"</CodeInline> becomes <CodeInline>LabelPlacement="Placement.Start"</CodeInline>, and <CodeInline>LabelPosition.End</CodeInline> becomes <CodeInline>Placement.End</CodeInline>.
+                Removed in v8.
+            </td>
+        </tr>
+        <tr>
+            <td>MudRadio <CodeInline>Placement</CodeInline></td>
+            <td><CodeInline>LabelPlacement</CodeInline></td>
+            <td>
+                The value carries over, but <CodeInline>Placement.Left</CodeInline> and <CodeInline>Placement.Right</CodeInline> no longer swap sides in right-to-left layouts, so use <CodeInline>Placement.Start</CodeInline> or <CodeInline>Placement.End</CodeInline> there.
+                Removed in v8.
+            </td>
+        </tr>
+        <tr>
+            <td>MudAlert <CodeInline>AlertTextPosition</CodeInline></td>
+            <td><CodeInline>ContentAlignment</CodeInline></td>
+            <td>
+                The type changes to HorizontalAlignment, which has the same member names: <CodeInline>AlertTextPosition="AlertTextPosition.Center"</CodeInline> becomes <CodeInline>ContentAlignment="HorizontalAlignment.Center"</CodeInline>.
+            </td>
+        </tr>
+        <tr>
+            <td>MudTooltip <CodeInline>Delayed</CodeInline></td>
+            <td><CodeInline>Delay</CodeInline></td>
+            <td>
+                The unit changes from seconds to milliseconds: <CodeInline>Delayed="0.5"</CodeInline> becomes <CodeInline>Delay="500"</CodeInline>, and <CodeInline>Delayed="@("@seconds")"</CodeInline> becomes <CodeInline>Delay="@("@(seconds * 1000)")"</CodeInline>.
+            </td>
+        </tr>
+        <tr>
+            <td>Input <CodeInline>OnKeyPress</CodeInline></td>
+            <td><CodeInline>OnKeyDown</CodeInline></td>
+            <td>
+                The handler receives the same KeyboardEventArgs, but <CodeInline>OnKeyDown</CodeInline> also fires for keys that type no character, such as Tab, Shift, and the arrow keys, so check the key in the handler.
+            </td>
+        </tr>
+        <tr>
+            <td>MudTextField and MudInput <CodeInline>AutoGrow</CodeInline></td>
+            <td><CodeInline>Sizing</CodeInline></td>
+            <td>
+                <CodeInline>AutoGrow="true"</CodeInline> becomes <CodeInline>Sizing="InputSizing.Auto"</CodeInline>, and <CodeInline>AutoGrow="false"</CodeInline> becomes <CodeInline>Sizing="InputSizing.Fixed"</CodeInline>, which is the default.
+                An expression needs the equivalent conditional, such as <CodeInline>Sizing="@("@(grow ? InputSizing.Auto : InputSizing.Fixed)")"</CodeInline>.
+                <CodeInline>Lines</CodeInline> and <CodeInline>MaxLines</CodeInline> keep their meaning, and a masked MudTextField ignores <CodeInline>Sizing</CodeInline> just as it ignored <CodeInline>AutoGrow</CodeInline>.
+                Custom CSS that targets <CodeInline>mud-input-auto-grow</CodeInline> needs to target <CodeInline>mud-input-sizing-auto</CodeInline> instead.
+                Removed in v9.
+            </td>
+        </tr>
+        <tr>
+            <td>MudAutocomplete <CodeInline>SearchFuncWithCancel</CodeInline></td>
+            <td><CodeInline>SearchFunc</CodeInline></td>
+            <td>
+                <CodeInline>SearchFunc</CodeInline> now takes the same cancellable delegate, so <CodeInline>SearchFuncWithCancel="Search"</CodeInline> becomes <CodeInline>SearchFunc="Search"</CodeInline>.
+                An old <CodeInline>SearchFunc</CodeInline> without a CancellationToken parameter has to gain one; that is a compile error rather than this warning.
+            </td>
+        </tr>
+        <tr>
+            <td>MudSelect <CodeInline>OnOpen</CodeInline>, <CodeInline>OnClose</CodeInline></td>
+            <td><CodeInline>OpenChanged</CodeInline></td>
+            <td>
+                One callback receives <CodeInline>true</CodeInline> when the list opens and <CodeInline>false</CodeInline> when it closes: <CodeInline>OnOpen="Handler"</CodeInline> becomes <CodeInline>OpenChanged="@("@(open => { if (open) Handler(); })")"</CodeInline>.
+                When the handler returns a Task, await it: <CodeInline>OpenChanged="@("@(async open => { if (open) await Handler(); })")"</CodeInline>.
+                It is raised only when the open state actually changes, and a select that used both needs a single handler.
+                Removed in v9.
+            </td>
+        </tr>
+        <tr>
+            <td>MudTablePager <CodeInline>DisableRowsPerPage</CodeInline></td>
+            <td><CodeInline>HideRowsPerPage</CodeInline></td>
+            <td>
+                The value stays the same: <CodeInline>DisableRowsPerPage="true"</CodeInline> becomes <CodeInline>HideRowsPerPage="true"</CodeInline>.
+                Only MudDataGridPager inverts this name.
+            </td>
+        </tr>
+        <tr>
+            <td>MudTabs <CodeInline>TabPanelClass</CodeInline>, <CodeInline>PanelClass</CodeInline></td>
+            <td><CodeInline>TabButtonsClass</CodeInline>, <CodeInline>TabPanelsClass</CodeInline></td>
+            <td>
+                <CodeInline>TabPanelClass</CodeInline> always styled each tab button, and <CodeInline>TabButtonsClass</CodeInline> styles the same element.
+                <CodeInline>PanelClass</CodeInline> styled the wrapper around all panels, and <CodeInline>TabPanelsClass</CodeInline> styles the same element.
+                MudTabPanel's own <CodeInline>PanelClass</CodeInline> is a current parameter that styles a single panel, so it is not affected.
+                Removed in v9.
+            </td>
+        </tr>
+        <tr>
+            <td>MudTreeViewItem <CodeInline>ExpandedIcon</CodeInline></td>
+            <td><CodeInline>ExpandButtonIcon</CodeInline></td>
+            <td>
+                The value is the icon on the expand button.
+                It is not <CodeInline>IconExpanded</CodeInline>, which replaces the item's own icon while the item is expanded.
+            </td>
+        </tr>
+    </tbody>
+</MudSimpleTable>

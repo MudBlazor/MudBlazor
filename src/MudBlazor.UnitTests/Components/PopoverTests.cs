@@ -228,6 +228,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Popover_ResponsiveLayoutShiftViewer_RendersFixedWidthSelect()
+        {
+            var comp = Context.Render<PopoverResponsiveLayoutShiftTest>();
+
+            comp.Find(".popover-layout-shift-host").Should().NotBeNull();
+            comp.Find("button").TextContent.Should().Contain("Toggle Rail");
+            comp.Find("div.mud-input-control").Should().NotBeNull();
+            comp.Markup.Should().Contain("width: 280px");
+        }
+
+        [Test]
         public void MudPopover_Property_Elevation()
         {
             var comp = Context.Render<PopoverPropertyTest>(p =>

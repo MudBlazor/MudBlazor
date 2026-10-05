@@ -1,0 +1,31 @@
+<MudPopoverProvider />
+
+<MudSelect T="Coffee" Label="Coffee"
+           Value="_value"
+           Comparer="Comparer"
+           ToStringFunc="@(x => x?.Name)">
+    <MudSelectItem Value="@(new Coffee("cap", "Cappuccino"))" />
+    <MudSelectItem Value="@(new Coffee("lat", "Cafe Latte"))" />
+    <MudSelectItem Value="@(new Coffee("esp", "Espresso"))" />
+    <MudSelectItem Value="@(new Coffee("ire", "Irish Coffee"))" />
+</MudSelect>
+
+@code {
+    private static CoffeeComparer Comparer { get; } = new();
+
+    // A value whose key matches no item; the comparer scan must exhaust without a match.
+    private readonly Coffee _value = new("zzz", "Unknown");
+
+    private class Coffee(string key, string name)
+    {
+        public string Key { get; } = key;
+        public string Name { get; } = name;
+    }
+
+    private class CoffeeComparer : IEqualityComparer<Coffee?>
+    {
+        public bool Equals(Coffee? a, Coffee? b) => a?.Key == b?.Key;
+
+        public int GetHashCode(Coffee? x) => HashCode.Combine(x?.Key);
+    }
+}

@@ -25,7 +25,15 @@
                 </SectionContent>
             </DocsPageSection>
             <DocsPageSection>
-                <SectionHeader Title="Event callback"/>
+                <SectionHeader Title="Event callback">
+                    <Description>
+                        The handler receives a <CodeInline>HotkeyEventArgs</CodeInline> identifying the
+                        <CodeInline>Key</CodeInline> and <CodeInline>KeyModifiers</CodeInline> that triggered it,
+                        plus the <CodeInline>MudHotkey</CodeInline> that raised it via <CodeInline>Sender</CodeInline>,
+                        so several hotkeys can share a single handler. Handlers that don't need it can stay
+                        parameterless.
+                    </Description>
+                </SectionHeader>
                 <SectionContent Code="@nameof(HotkeyExampleEventCallback)">
                     <HotkeyExampleEventCallback/>
                 </SectionContent>

@@ -49,7 +49,7 @@
     private async Task<IEnumerable<string?>> Search(string? value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an API.
-        await Task.Delay(5, token);
+        await Task.Yield();
 
         // If text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))

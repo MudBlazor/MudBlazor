@@ -1,0 +1,18 @@
+@inherits MudComponentBase
+@namespace MudBlazor.UnitTests
+
+<span class="value">@Value</span>
+<span class="parameters-set">@_parametersSetCount</span>
+
+@code {
+    private int _parametersSetCount;
+
+    [Parameter]
+    public int Value { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        _parametersSetCount++;
+    }
+}

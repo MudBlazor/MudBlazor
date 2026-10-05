@@ -4,6 +4,10 @@
   border-radius: var(--mud-default-borderradius);
   display: inline-flex;
 
+  > .mud-tooltip-root {
+    display: flex;
+  }
+
   .mud-button-root {
     border-radius: var(--mud-default-borderradius);
   }

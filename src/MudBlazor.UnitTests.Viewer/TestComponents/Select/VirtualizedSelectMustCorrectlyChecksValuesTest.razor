@@ -1,0 +1,123 @@
+﻿@using Microsoft.AspNetCore.Components.Web.Virtualization;
+
+<style>
+    .mud-select + div {
+        display: none;
+    }
+</style>
+
+<MudSelect T="Product"
+           Variant="Variant.Outlined"
+           @bind-SelectedValues="_productSelectedMultiselect"
+           ToStringFunc="SelectToString"
+           MultiSelectionTextFunc="GetMultiSelectionText"
+           MultiSelection="true"
+           Comparer="@Product_Comparer.Default">
+    <!-- Wrapping the MudSelect in a MudItem to avoid issue https://github.com/MudBlazor/MudBlazor/issues/3229 -->
+    <!-- Size must be set to work with Virtualize component, remark : popover can auto-choise if it pop up or down -->
+    <MudItem Class="overflow-auto" Style="height: 300px">
+        <MudVirtualize T="Product"
+                       Enabled="true"
+                       ItemsProvider="MudSelectSearchAsync"
+                       Context="virtualizeContext"
+                       OverscanCount="20">
+            <ChildContent>
+                <MudSelectItem Value=virtualizeContext T=Product>[@virtualizeContext.Id]</MudSelectItem>
+            </ChildContent>
+            <Placeholder>
+                <MudItem Class="mud-list-item mud-list-item-gutters">
+                    <MudText>Loading</MudText>
+                </MudItem>
+            </Placeholder>
+            <NoRecordsContent>
+                <MudItem Class="d-flex align-center justify-center" Style="height: inherit;">
+                    <MudText>No records</MudText>
+                </MudItem>
+            </NoRecordsContent>
+        </MudVirtualize>
+    </MudItem>
+</MudSelect>
+
+@code {
+    public static string __description__ = "Select one or multiples values, scroll to load multiple others chunks (you can check some others values) back to the begining itmes must be checked and no item in between must be selected.";
+
+    private Product[] simulateDbSet = Enumerable.Range(0, 20000).Select(x => new Product { Id = x.ToString() })
+        //.Shuffle()
+        .ToArray();
+
+    private IReadOnlyCollection<Product> _productSelectedMultiselect = new HashSet<Product>(Product_Comparer.Default);
+
+    private async ValueTask<ItemsProviderResult<Product>> MudSelectSearchAsync(ItemsProviderRequest request)
+    {
+        // prevent over cancellation
+        await Task.Delay(20, request.CancellationToken);
+
+        var items = simulateDbSet
+                    //.OrderBy(x => x.Id)
+                    .Skip(request.StartIndex)
+                    .Take(request.Count)
+                    // Simulate new object instance comming for the DB
+                    .Select(x => new Product { Id = x.Id })
+                    .ToList();
+        Console.WriteLine($"Loaded : Start {request.StartIndex}, Count {request.Count}");
+        request.CancellationToken.ThrowIfCancellationRequested();
+        return new ItemsProviderResult<Product>(items, simulateDbSet.Count());
+    }
+
+    private static string SelectToString(Product? item)
+    {
+        if (item is null)
+        {
+            return string.Empty;
+        }
+        return $"[{item.Id}]";
+    }
+
+    private string GetMultiSelectionText(IReadOnlyList<string>? selectedValues)
+    {
+        if (selectedValues is null || selectedValues.Count == 0)
+        {
+            return string.Empty;
+        }
+        else if (selectedValues.Count == 1)
+        {
+            return selectedValues[0];
+        }
+        else
+        {
+            return string.Join(", ", selectedValues);
+        }
+    }
+
+    public class Product
+    {
+        public required string Id { get; set; }
+
+        public override string ToString()
+        {
+            return $"Id:{Id}";
+        }
+    }
+
+    public class Product_Comparer : IEqualityComparer<Product>
+    {
+        public static readonly Product_Comparer Default = new();
+
+        /// <inheritdoc/>
+        public bool Equals(Product? x, Product? y)
+        {
+            var result = string.Equals(x?.Id, y?.Id);
+            if (result)
+            {
+
+            }
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public int GetHashCode(Product? obj)
+        {
+            return obj?.Id.GetHashCode() ?? 0;
+        }
+    }
+}

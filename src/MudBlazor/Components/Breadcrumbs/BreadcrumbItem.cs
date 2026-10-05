@@ -2,11 +2,11 @@
 
 
 /// <summary>
-/// Represents a portion of a list of breadcrumbs.
+/// A single entry in a <see cref="MudBreadcrumbs"/> trail, carrying its display text, link URL, optional icon, and disabled state.
 /// </summary>
-/// <seealso cref="MudBreadcrumbs" />
 /// <seealso cref="BreadcrumbLink" />
 /// <seealso cref="BreadcrumbSeparator" />
+/// <seealso cref="MudBreadcrumbs" />
 public record BreadcrumbItem
 {
     /// <summary>

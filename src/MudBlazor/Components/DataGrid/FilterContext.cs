@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents the current state of a filter in a <see cref="MudDataGrid{T}"/>.
+    /// Filter state and actions passed to a <see cref="MudDataGrid{T}"/> column filter template, exposing the filter definition and apply, clear, and close commands.
     /// </summary>
     /// <typeparam name="T">The type of item managed by the <see cref="MudDataGrid{T}"/>.</typeparam>
     /// <seealso cref="MudDataGrid{T}"/>
@@ -82,7 +82,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Represents the apply and clear behaviors for a filter of a<see cref="MudDataGrid{T}"/>.
+        /// Apply, clear, and close delegates for a <see cref="MudDataGrid{T}"/> column filter, exposed through <see cref="FilterContext{T}"/>.
         /// </summary>
         public class FilterActions
         {

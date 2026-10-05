@@ -133,7 +133,7 @@
             }
             @if (panel.BadgeData is not null || panel.BadgeIcon is not null || panel.BadgeDot)
             {
-                <MudBadge Dot="@panel.BadgeDot" Content="@panel.BadgeData" Icon="@panel.BadgeIcon" Color="@panel.BadgeColor" Class="mud-tab-badge" />
+                <MudBadge Dot="@panel.BadgeDot" Content="@panel.BadgeData" Icon="@panel.BadgeIcon" Max="@panel.BadgeMax" Color="@panel.BadgeColor" Class="mud-tab-badge" />
             }
             @if (TabPanelHeaderPosition == TabHeaderPosition.After && TabPanelHeader is not null)
             {

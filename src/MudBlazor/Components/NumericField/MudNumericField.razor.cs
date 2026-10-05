@@ -174,11 +174,35 @@ namespace MudBlazor
 
         private string EffectiveKeyFilterPattern => (Pattern ?? DefaultKeyFilterPattern).TrimEnd('*');
 
+        private string? EffectivePattern
+        {
+            get
+            {
+                if (Pattern is null)
+                {
+                    return null;
+                }
+
+                var trimmed = Pattern.TrimEnd('*');
+                if (trimmed.Length == 0)
+                {
+                    return trimmed;
+                }
+
+                return trimmed[^1] is '+' or '?' or '}' or '$'
+                    ? trimmed
+                    : trimmed + "*";
+            }
+        }
+
+        /// <inheritdoc />
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
-        public override ValueTask FocusAsync()
+        internal override ValueTask FocusAsync(bool preventScroll)
         {
-            return _elementReference.FocusAsync();
+            return _elementReference.FocusAsync(preventScroll);
         }
 
         /// <inheritdoc />
@@ -299,7 +323,49 @@ namespace MudBlazor
                 return (T)(object)Convert.ToInt64(FromInt64(ReadValue) + (FromInt64(Step) * factor));
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
                 return (T)(object)Convert.ToUInt64(FromUInt64(ReadValue) + (FromUInt64(Step) * factor));
+            // double/float do their arithmetic in decimal to avoid IEEE 754 precision errors (e.g. 0.1 + 0.2 -> 0.30000000000000004).
+            // Values that don't convert to decimal losslessly (out of range, more significant digits than the conversion keeps, or below decimal's epsilon) fall through to the double arithmetic below.
+            if ((typeof(T) == typeof(double) || typeof(T) == typeof(double?) || typeof(T) == typeof(float) || typeof(T) == typeof(float?))
+                && TryToDecimal(ReadValue, out var currentDecimal) && TryToDecimal(Step, out var stepDecimal))
+            {
+                try
+                {
+                    var nextDecimal = currentDecimal + (stepDecimal * (decimal)factor);
+                    // Decimal preserves zero's sign, so canonicalize it before converting back to float or double.
+                    if (nextDecimal == decimal.Zero)
+                        nextDecimal = decimal.Zero;
+                    return Num.To<T>((double)nextDecimal);
+                }
+                catch (OverflowException)
+                {
+                    // The sum exceeds decimal's range even though both operands fit; fall through to the double arithmetic below.
+                }
+            }
             return Num.To<T>(Num.From(ReadValue) + (Num.From(Step) * factor));
+
+            static bool TryToDecimal(T? value, out decimal result)
+            {
+                result = default;
+                if (Num.From(value) is not { } d || d < (double)decimal.MinValue || d > (double)decimal.MaxValue)
+                    return false;
+                try
+                {
+                    // Convert from the value's own type: a float widened to double first would re-expose the binary noise the decimal step is meant to remove (float 0.01 stepping would show 0.16000001).
+                    if (value is float f)
+                    {
+                        result = (decimal)f;
+                        // Reject lossy conversions: a value that comes back from decimal even slightly lower than it went in would trip the overflow clamp in Change and jump to Max.
+                        return (float)result == f;
+                    }
+                    result = (decimal)d;
+                    return (double)result == d;
+                }
+                catch (OverflowException)
+                {
+                    // The doubles nearest decimal.MinValue/MaxValue pass the range check but round outside decimal's range.
+                    return false;
+                }
+            }
         }
 
         /// <summary>
@@ -379,48 +445,21 @@ namespace MudBlazor
 
         protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
         {
+            // Track focus like MudBaseInput.InvokeKeyDownAsync (which MudTextField uses) so the
+            // "preserve user text while editing" guard in SetParametersAsync engages while typing.
+            // Without this, the wrapper's _isFocused stays false and the value->text resync reformats
+            // mid-typing on Blazor Server (#13266/#13002 family).
+            _isFocused = true;
             await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
             await OnKeyDown.InvokeAsync(obj);
         }
 
         protected Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
-            if (GetDisabledState() || GetReadOnlyState())
-                return Task.CompletedTask;
+            _isFocused = true;
 
             return OnKeyUp.InvokeAsync(obj);
         }
-
-        protected async Task OnMouseWheelAsync(WheelEventArgs obj)
-        {
-            if (!obj.ShiftKey || GetDisabledState() || GetReadOnlyState())
-                return;
-            if (obj.DeltaY < 0)
-            {
-                if (InvertMouseWheel == false)
-                    await Increment();
-                else
-                    await Decrement();
-            }
-            else if (obj.DeltaY > 0)
-            {
-                if (InvertMouseWheel == false)
-                    await Decrement();
-                else
-                    await Increment();
-            }
-        }
-
-        /// <summary>
-        /// Reverses the mouse wheel direction.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  
-        /// When <c>true</c>, moving the mouse wheel up will decrease the value, and down will increase the value.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool InvertMouseWheel { get; set; } = false;
 
         /// <summary>
         /// The minimum allowed value.
@@ -516,9 +555,14 @@ namespace MudBlazor
         {
             await SetTextAndUpdateValueAsync(text);
 
-            // Keep formatted text in sync when using formatted input mode.
-            // This also covers onchange updates that can occur around blur timing.
-            if (UsesManagedFormatting && DebounceInterval <= 0 && !ConversionError)
+            // Keep formatted text in sync with the value when using managed formatting, but only for a
+            // committed change (onchange), never for live typing (oninput). When Immediate is true this
+            // callback runs on every keystroke; reformatting then would rewrite the text mid-typing and
+            // jump the caret to the end, making multi-digit or decimal entry impossible (e.g. typing
+            // "1234" with Format="F3" collapses to "1.000", and "1." loses its trailing characters).
+            // The parsed value stays correct while typing; the text is reformatted on blur instead
+            // (see OnBlurredAsync). This matches the non-Immediate behavior and pre-v9.1 formatting.
+            if (!Immediate && UsesManagedFormatting && DebounceInterval <= 0 && !ConversionError)
             {
                 var formattedText = ConvertSet(ReadValue);
                 if (!string.Equals(ReadText, formattedText, StringComparison.Ordinal))

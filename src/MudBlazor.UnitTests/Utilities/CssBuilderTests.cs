@@ -133,22 +133,6 @@ namespace UtilityTests
         }
 
         [Test]
-        public void AddClass_With_Value_And_Condition_Func_Adds_Class_Correctly()
-        {
-            // Arrange
-            const bool ConditionResult = true;
-
-            // Act
-            var cssBuilder = new CssBuilder()
-                .AddClass("class1", () => ConditionResult)
-                .AddClass("class2", () => !ConditionResult)
-                .AddClass("class3", () => ConditionResult);
-
-            // Assert
-            cssBuilder.Build().Should().Be("class1 class3");
-        }
-
-        [Test]
         public void AddClass_With_Value_Function_And_Condition_Func_Adds_Class_Correctly()
         {
             // Arrange
@@ -335,5 +319,19 @@ namespace UtilityTests
             // Assert
             classToRender.Should().Be("item-one");
         }
+
+        [TestCase(true, "base extra")]
+        [TestCase(false, "base")]
+        [TestCase(null, "base")]
+        public void AddClass_With_Nullable_Bool_Condition(bool? when, string expected)
+        {
+            // when==true adds; both false and null skip.
+            var cssBuilder = new CssBuilder("base")
+                .AddClass("extra", when)
+                .Build();
+
+            cssBuilder.Should().Be(expected);
+        }
+
     }
 }

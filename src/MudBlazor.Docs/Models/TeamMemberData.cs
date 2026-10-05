@@ -49,7 +49,7 @@ namespace MudBlazor.Docs.Models
                 Name = "Daniel Chalmers",
                 From = "Texas, United States",
                 GitHub = "danielchalmers",
-                LinkedIn = "https://www.linkedin.com/in/daniel-c-5799252b1",
+                LinkedIn = "https://www.linkedin.com/in/danchal",
                 Bio = "Full Stack Engineer | AI, .NET, Blazor, WPF",
                 Team = Team.CoreMaintainer
             },

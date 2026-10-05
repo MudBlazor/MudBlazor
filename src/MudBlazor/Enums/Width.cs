@@ -3,6 +3,9 @@ using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// A width based on a responsive breakpoint.
+    /// </summary>
     [EnumExtensions]
     public enum Width
     {

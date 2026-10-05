@@ -23,5 +23,17 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => button.Instance.OnClick.InvokeAsync());
             await comp.WaitForAssertionAsync(() => numeric.Instance.Value.Should().Be(1));
         }
+
+        /// <summary>
+        /// A caller-supplied title used to be erased by the trailing null literal.
+        /// </summary>
+        [Test]
+        public void CardMedia_Should_KeepUserSuppliedTitle()
+        {
+            var comp = Context.Render<MudCardMedia>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "title", "Cover art" } }));
+
+            comp.Find("div").GetAttribute("title").Should().Be("Cover art");
+        }
     }
 }

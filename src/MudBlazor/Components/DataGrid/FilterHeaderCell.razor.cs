@@ -15,7 +15,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a column filter shown when <see cref="MudDataGrid{T}.FilterMode"/> is <see cref="DataGridFilterMode.ColumnFilterRow"/>.
+    /// The filter row cell shown for a <see cref="MudDataGrid{T}"/> column when <see cref="MudDataGrid{T}.FilterMode"/> is <see cref="DataGridFilterMode.ColumnFilterRow"/>.
     /// </summary>
     /// <typeparam name="T">The type of value managed by the <see cref="MudDataGrid{T}"/></typeparam>
     /// <seealso cref="MudDataGrid{T}"/>
@@ -191,7 +191,16 @@ namespace MudBlazor
             if (DataGrid.HasServerData)
                 await DataGrid.ReloadServerData();
 
-            DataGrid.GroupItems();
+            // Regroup without rendering, so a select or picker that applies the filter after an await renders the grid once instead of twice.
+            DataGrid.GroupItems(noStateChange: true);
+            DataGrid.DropContainerHasChanged();
+            var filterChanged = DataGrid.NotifyFilterChangedAsync();
+            if (!filterChanged.IsCompleted)
+            {
+                // Show the filtered rows while a FilterChanged handler is still running.
+                ((IMudStateHasChanged)DataGrid).StateHasChanged();
+            }
+            await filterChanged;
             ((IMudStateHasChanged)DataGrid).StateHasChanged();
         }
 
