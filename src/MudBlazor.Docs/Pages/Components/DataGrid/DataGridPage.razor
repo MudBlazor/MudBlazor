@@ -296,6 +296,10 @@
                     Use the <CodeInline>MultiSelection</CodeInline> property (default: <CodeInline>false</CodeInline>) to control whether users can select one or multiple rows.
                     Single selection is enabled by default.
                     <br><br>
+                    To change the selection from code, assign a new set to the bound <CodeInline>SelectedItems</CodeInline> instead of editing the existing one.
+                    The grid detects a change by reference, so calling <CodeInline>Clear</CodeInline>, <CodeInline>Add</CodeInline> or <CodeInline>Remove</CodeInline> on the bound set does not update the grid's selection.
+                    Likewise, assign a new list to <CodeInline>Items</CodeInline> when removing rows, so selected rows that were removed are dropped from the selection.
+                    <br><br>
                     To disable selection for specific rows, use the <CodeInline>DisabledFunc</CodeInline> parameter on the <CodeInline>SelectColumn</CodeInline>.<br>
                     For example, rows 5 and 10 can be disabled by returning true for those rows in the function.
                 </Description>
