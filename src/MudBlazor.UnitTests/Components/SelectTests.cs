@@ -2282,6 +2282,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Consumer attributes land only on the presenter, not also on the hidden input it replaces (#13929).
+        /// </summary>
+        [Test]
+        public void Select_UserAttributes_NotDuplicatedOnHiddenInput()
+        {
+            var comp = Context.Render<SelectOnFocusTest>();
+
+            var element = comp.FindAll("[data-testid='vehicle-select']").Should().ContainSingle().Subject;
+            element.TagName.Should().Be("DIV");
+            element.GetAttribute("tabindex").Should().Be("0");
+
+            // The hidden input still posts the value in a native form, so it keeps the form-posting attributes.
+            var hiddenInput = comp.Find("input[type='hidden']");
+            hiddenInput.GetAttribute("name").Should().Be("vehicle");
+            hiddenInput.GetAttribute("form").Should().Be("order-form");
+            comp.FindAll("[name='vehicle']").Should().ContainSingle();
+            comp.FindAll("[form='order-form']").Should().ContainSingle();
+        }
+
+        /// <summary>
         /// The presenter never duplicates the consumer's id, and a forwarded tabindex does not make a disabled presenter focusable.
         /// </summary>
         [Test]
