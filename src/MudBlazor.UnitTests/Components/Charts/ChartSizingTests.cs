@@ -12,6 +12,118 @@ namespace MudBlazor.UnitTests.Charts;
 
 public class ChartSizingTests : BunitTest
 {
+    /// <summary>
+    /// Identical host and overlay bars share measured margins after label growth and resizing for issue #13606.
+    /// </summary>
+    [TestCase(10)]
+    [TestCase(80)]
+    public async Task BarOverlay_MatchesHostGeometryAfterLabelMeasurementAndResize(double labelWidth)
+    {
+        var series = new List<ChartSeries<double>>
+        {
+            new() { Name = "Revenue", Data = new double[] { 40, 60, 80 } }
+        };
+        var options = new BarChartOptions();
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Bar)
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "800px")
+            .Add(p => p.Height, "400px")
+            .Add(p => p.ChartSeries, series)
+            .Add(p => p.ChartOptions, options)
+            .AddChildContent<Bar<double>>(overlay => overlay
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, options)));
+
+        var host = comp.FindComponents<Bar<double>>().Single(chart => !chart.Instance.IsOverlayChart);
+        host.Instance.OverlayChart.Should().NotBeNull();
+        var axis = comp.FindComponent<BaseAxisChart<double, BarChartOptions>>();
+
+        await comp.InvokeAsync(async () =>
+        {
+            await axis.Instance.YAxisLabelSizeChanged.InvokeAsync(new ElementSize { Width = labelWidth, Height = 20 });
+            host.Instance.OnElementSizeChanged(new ElementSize { Width = 800, Height = 400, Timestamp = 1 });
+            host.Instance.RebuildChart();
+        });
+
+        comp.Find("svg").GetAttribute("viewBox").Should().Be("0 0 800 400");
+        var grid = comp.Find(".mud-charts-gridlines-yaxis path").GetAttribute("d")!;
+        if (labelWidth == 10)
+        {
+            grid.Should().StartWith("M 30 ", "narrow labels retain the minimum margin");
+        }
+        else
+        {
+            grid.Should().NotStartWith("M 30 ", "wide labels expand the host margin");
+        }
+
+        AssertMatchingBarGeometry();
+
+        await comp.InvokeAsync(async () =>
+        {
+            await axis.Instance.YAxisLabelSizeChanged.InvokeAsync(new ElementSize { Width = 120, Height = 20 });
+            host.Instance.OnElementSizeChanged(new ElementSize { Width = 960, Height = 400, Timestamp = 2 });
+            host.Instance.RebuildChart();
+        });
+
+        comp.Find("svg").GetAttribute("viewBox").Should().Be("0 0 960 400");
+        comp.Find(".mud-charts-gridlines-yaxis path").GetAttribute("d").Should().NotBe(grid);
+        AssertMatchingBarGeometry();
+
+        void AssertMatchingBarGeometry()
+        {
+            var groups = comp.FindAll("svg > g.mud-charts-bar-series");
+            groups.Count.Should().Be(2);
+            var hostBars = groups[0].QuerySelectorAll("path.mud-chart-bar");
+            var overlayBars = groups[1].QuerySelectorAll("path.mud-chart-bar");
+            hostBars.Should().HaveCount(3);
+            overlayBars.Should().HaveCount(3);
+            for (var i = 0; i < hostBars.Length; i++)
+            {
+                overlayBars[i].GetAttribute("d").Should().Be(hostBars[i].GetAttribute("d"),
+                    "identical overlay bars must use the host's measured plot area");
+                overlayBars[i].GetAttribute("stroke-width").Should().Be(hostBars[i].GetAttribute("stroke-width"));
+            }
+        }
+    }
+
+    /// <summary>
+    /// A line overlay spans the host's measured horizontal grid bounds for issue #13606.
+    /// </summary>
+    [TestCase(10)]
+    [TestCase(80)]
+    public async Task LineOverlay_MatchesHostHorizontalBoundsAfterLabelMeasurement(double labelWidth)
+    {
+        var series = new List<ChartSeries<double>>
+        {
+            new() { Name = "Revenue", Data = new double[] { 40, 60, 80 } }
+        };
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Bar)
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "800px")
+            .Add(p => p.Height, "400px")
+            .Add(p => p.ChartSeries, series)
+            .AddChildContent<Line<double>>(overlay => overlay
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new LineChartOptions { ShowDataMarkers = true })));
+        var host = comp.FindComponent<Bar<double>>();
+        var axis = comp.FindComponent<BaseAxisChart<double, BarChartOptions>>();
+
+        await comp.InvokeAsync(async () =>
+        {
+            await axis.Instance.YAxisLabelSizeChanged.InvokeAsync(new ElementSize { Width = labelWidth, Height = 20 });
+            host.Instance.OnElementSizeChanged(new ElementSize { Width = 800, Height = 400, Timestamp = 1 });
+            host.Instance.RebuildChart();
+        });
+
+        var grid = comp.Find(".mud-charts-gridlines-yaxis path").GetAttribute("d")!.Split(' ');
+        var markers = comp.FindAll("circle.mud-chart-point:not([opacity])");
+        markers.Count.Should().Be(3);
+        markers[0].GetAttribute("cx").Should().Be(grid[1]);
+        markers[^1].GetAttribute("cx").Should().Be(grid[4]);
+    }
+
     [Test]
     public async Task MudAxisChartBase_MatchBoundsToSize_ShouldMatchMeasuredSizeExactly()
     {
