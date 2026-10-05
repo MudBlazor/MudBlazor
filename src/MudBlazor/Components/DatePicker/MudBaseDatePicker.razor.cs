@@ -281,7 +281,9 @@ namespace MudBlazor
             await base.OnPickerOpenedAsync();
             if (Editable && Text != null)
             {
-                var dateTime = ConvertGet(Text);
+                // Opening only moves the calendar, so convert without ConvertGet, which records a conversion error and marks the picker as touched.
+                // A range picker's text holds both dates and never converts to one, so opening it flagged a valid range as invalid.
+                var dateTime = GetConverter().TryConvertBack(Text).Value;
                 if (dateTime.HasValue)
                 {
                     var culture = GetCulture();
