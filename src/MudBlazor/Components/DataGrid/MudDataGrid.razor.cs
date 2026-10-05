@@ -1362,6 +1362,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// This property can be bound (<c>@bind-SelectedItems</c>) to initially select rows.  Use <see cref="SelectedItem"/> when <see cref="MultiSelection"/> is <c>false</c>.
+        /// To change the selection from code, assign a new set.  A change is detected by reference, so editing the bound set in place, such as calling <c>Clear()</c>, does not update the grid.
         /// </remarks>
         [Parameter, ParameterState]
         public HashSet<T>? SelectedItems { get; set; }
