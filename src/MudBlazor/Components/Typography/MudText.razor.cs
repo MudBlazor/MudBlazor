@@ -104,7 +104,7 @@ public partial class MudText : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Text.Behavior)]
     public bool Truncate { get; set; }
-    
+
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
