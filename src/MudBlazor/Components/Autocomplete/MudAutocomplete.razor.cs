@@ -792,8 +792,8 @@ namespace MudBlazor
                 Logger.LogWarning("The search function failed to return results: " + e.Message);
             }
 
-            // A newer search started while this one ran, so these results are stale. Searches can finish out of order,
-            // and the newer search owns the items and the popover.
+            // Searches can finish out of order, so a search that a newer one replaced must not touch the items or the popover.
+            // The newer search owns them (#13943).
             if (searchVersion != _searchVersion)
             {
                 return;

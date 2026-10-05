@@ -1394,7 +1394,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A search that ignores its token and finishes after a newer one does not replace the newer search's results (#3722).
+        /// A search that ignores its token and finishes after a newer one does not replace the newer search's results (#13943).
         /// </summary>
         [Test]
         public async Task Autocomplete_OlderSearchFinishingLast_DoesNotReplaceNewerResults()
@@ -1426,7 +1426,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A search still running when the text drops below MinCharacters does not reopen the menu when it finishes.
+        /// A search still running when the text drops below MinCharacters does not reopen the menu when it finishes (#13943).
         /// </summary>
         [Test]
         public async Task Autocomplete_SearchFinishingAfterTextDropsBelowMinCharacters_KeepsMenuClosed()

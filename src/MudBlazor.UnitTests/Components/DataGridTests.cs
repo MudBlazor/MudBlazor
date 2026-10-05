@@ -950,9 +950,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A ServerData load that ignores its token and finishes after a newer load does not replace the newer load's data (#3722).
+        /// A ServerData load that ignores its token and finishes after a newer load does not replace the newer load's data (#13943).
         /// </summary>
         [Test]
+        [CancelAfter(5000)]
         public async Task DataGridServerData_OlderLoadFinishingLast_DoesNotReplaceNewerData()
         {
             var loads = new List<TaskCompletionSource<GridData<string>>>();
@@ -969,7 +970,7 @@ namespace MudBlazor.UnitTests.Components
             await dataGrid.WaitForAssertionAsync(() => loads.Should().HaveCount(2));
 
             loads[1].SetResult(new GridData<string> { Items = ["Apple Pie"], TotalItems = 1 });
-            await reload;
+            await reload.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
             dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
 
             loads[0].SetResult(new GridData<string> { Items = ["Apple", "Apple Cider", "Apple Pie"], TotalItems = 3 });
@@ -980,19 +981,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A ServerData load that observes its token and is cancelled by a newer load ends quietly instead of throwing.
+        /// A ServerData load that observes its token and is cancelled by a newer load ends quietly instead of throwing (#13943).
         /// </summary>
         [Test]
+        [CancelAfter(5000)]
         public async Task DataGridServerData_CancelledLoad_DoesNotThrow()
         {
             var loads = 0;
             var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
-                .Add(x => x.ServerData, async (_, token) =>
+                .Add(x => x.ServerData, (_, token) =>
                 {
-                    if (++loads == 2)
-                        await Task.Delay(Timeout.Infinite, token);
+                    if (++loads != 2)
+                        return Task.FromResult(new GridData<string> { Items = ["Apple Pie"], TotalItems = 1 });
 
-                    return new GridData<string> { Items = ["Apple Pie"], TotalItems = 1 };
+                    // The second load waits until a newer load cancels it, as an observing HttpClient call would.
+                    var pending = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    token.Register(() => pending.TrySetCanceled(token));
+                    return pending.Task;
                 }));
             await dataGrid.WaitForAssertionAsync(() => loads.Should().Be(1));
 
@@ -1000,7 +1005,7 @@ namespace MudBlazor.UnitTests.Components
             await dataGrid.WaitForAssertionAsync(() => loads.Should().Be(2));
             await dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
 
-            Func<Task> awaitCancelled = () => cancelled;
+            Func<Task> awaitCancelled = () => cancelled.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
             await awaitCancelled.Should().NotThrowAsync();
             dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
             dataGrid.Instance.Loading.Should().BeFalse();

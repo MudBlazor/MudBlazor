@@ -1864,7 +1864,7 @@ namespace MudBlazor
                     return;
                 }
 
-                // A newer load started while this one ran, so this data is stale. Loads can finish out of order.
+                // Loads can finish out of order, so data from a load that a newer one replaced is stale (#13943).
                 if (token.IsCancellationRequested)
                     return;
 
