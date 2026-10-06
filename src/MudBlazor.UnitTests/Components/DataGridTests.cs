@@ -7325,6 +7325,68 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The ServerData reset path: when a load reveals the current page no longer exists, the grid resets to page 0
+        /// (MudDataGrid.InvokeServerLoadFunc).
+        /// </summary>
+        [Test]
+        public async Task ServerDataResetsToFirstPageWhenCurrentPageOverflows()
+        {
+            var comp = Context.Render<DataGridServerDataPageResetTest>();
+            var component = comp.Instance;
+            var dataGridComponent = comp.FindComponent<MudDataGrid<int>>();
+            var dataGrid = dataGridComponent.Instance;
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(10));
+
+            await dataGridComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CurrentPage, 5));
+            await comp.WaitForAssertionAsync(() => component.LastRequestedPage.Should().Be(5));
+
+            // Data shrinks so page 5 no longer exists; the next load must snap back to page 0.
+            await comp.InvokeAsync(() =>
+            {
+                component.ShrinkTo(20);
+                return dataGrid.ReloadServerData();
+            });
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.CurrentPage.Should().Be(0);
+                component.LastRequestedPage.Should().Be(0);
+                comp.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(10);
+            });
+        }
+
+        /// <summary>
+        /// Boundary of the reset path: TotalItems equal to the offset of the current page also means the page is empty,
+        /// so the grid must reset to page 0 instead of showing an empty page (#13948).
+        /// </summary>
+        [Test]
+        public async Task ServerDataResetsToFirstPageWhenTotalItemsEqualsPageOffset()
+        {
+            var comp = Context.Render<DataGridServerDataPageResetTest>();
+            var component = comp.Instance;
+            var dataGridComponent = comp.FindComponent<MudDataGrid<int>>();
+            var dataGrid = dataGridComponent.Instance;
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(10));
+
+            await dataGridComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CurrentPage, 2));
+            await comp.WaitForAssertionAsync(() => component.LastRequestedPage.Should().Be(2));
+
+            // 20 items with 10 rows per page: page 2 starts exactly at the end of the data and is empty.
+            await comp.InvokeAsync(() =>
+            {
+                component.ShrinkTo(20);
+                return dataGrid.ReloadServerData();
+            });
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.CurrentPage.Should().Be(0);
+                component.LastRequestedPage.Should().Be(0);
+                comp.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(10);
+            });
+        }
+
+        /// <summary>
         /// Verifies data grid does not reuse row child components for different items (the @key for the row is set to the user supplied item).
         /// </summary>
         [Test]
