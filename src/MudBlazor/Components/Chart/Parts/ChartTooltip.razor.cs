@@ -10,7 +10,7 @@ namespace MudBlazor.Charts;
 /// </summary>
 public partial class ChartTooltip : ComponentBase
 {
-    private sealed record BBox(double X = 0, double Y = 0, double Width = 0, double Height = 0);
+    internal sealed record BBox(double X = 0, double Y = 0, double Width = 0, double Height = 0);
 
     private const double TriangleWidth = 16;
     private const double TriangleHeight = 8;
@@ -124,6 +124,12 @@ public partial class ChartTooltip : ComponentBase
     private string? _previousFontSize;
     private string? _previousTitle;
     private string? _previousSubtitle;
+    private bool _isMeasured;
+
+    // The box is sized from the text that the browser measures after the first render.
+    // Until then the text would be shown at the origin of the chart without its background.
+    // Later measurements keep the tooltip visible, so labels that update don't blink.
+    private string? Visibility => _isMeasured ? null : "hidden";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -189,6 +195,7 @@ public partial class ChartTooltip : ComponentBase
                                         $"{ToS(X)},{ToS(Y - TriangleStrokeWidth)}"; // Bottom
         }
 
+        _isMeasured = true;
         StateHasChanged();
     }
 }
