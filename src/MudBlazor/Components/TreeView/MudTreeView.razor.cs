@@ -524,9 +524,11 @@ namespace MudBlazor
             {
                 var items = clickedItem.GetChildItemsRecursive();
                 items.Add(clickedItem!);
+                // Items without a value can never be selected, so counting them would keep allSelected false and the selection could never be cleared.
+                items.RemoveAll(x => x.GetValue() is null);
                 var allSelected = items.All(x => x.GetState<bool>(nameof(MudTreeViewItem<T>.Selected)));
                 // toggle selection of the clickedItem and its children
-                foreach (var item in items.Where(x => x.GetValue() is not null))
+                foreach (var item in items)
                 {
                     if (allSelected)
                     {
