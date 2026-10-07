@@ -8,6 +8,11 @@
   color-scheme: var(--mud-native-html-color-scheme);
   line-height: 1.1876em;
 
+  // Use the input's baseline rather than a leading adornment's baseline
+  & > .mud-input-root {
+    align-self: baseline;
+  }
+
   &.mud-input-full-width {
     width: 100%;
   }
