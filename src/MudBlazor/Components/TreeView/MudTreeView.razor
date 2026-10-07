@@ -4,23 +4,54 @@
 @attribute [CascadingTypeParameter(nameof(T))]
 
 <ul @attributes="UserAttributes" class="@Classname" style="@Stylename">
-    <CascadingValue Value="@MudTreeRoot" IsFixed="true">
-        @* Expose the current data node to ItemTemplate-created MudTreeViewItem instances so
-           per-node server-loading state can live on the tree root instead of the component instance. *@
-        <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="default(ITreeItemData<T>)" IsFixed="true">
-            @if (ItemTemplate != null && Items != null)
+    @* Nested trees and their items already receive the root from the root tree's cascade. *@
+    @if (MudTreeRoot == this)
+    {
+        <CascadingValue Value="@MudTreeRoot" IsFixed="true">
+            @RenderItems
+        </CascadingValue>
+    }
+    else
+    {
+        @RenderItems
+    }
+</ul>
+
+@code {
+    private void RenderItems(RenderTreeBuilder __builder)
+    {
+        // The data node lets ItemTemplate-created items keep their server-loading state on the tree root instead of the component instance.
+        // Only ServerData reads it, so other trees skip one cascade per item.
+        var cascadeItemData = MudTreeRoot?.ServerData is not null;
+        @if (ItemTemplate != null && Items != null)
+        {
+            @foreach (var item in Items)
             {
-                @foreach (var item in Items)
+                @if (cascadeItemData)
                 {
                     <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="item" IsFixed="true">
                         @ItemTemplate(item)
                     </CascadingValue>
                 }
+                else
+                {
+                    @ItemTemplate(item)
+                }
             }
-            else if (ChildContent != null)
+        }
+        else if (ChildContent != null)
+        {
+            @if (cascadeItemData)
+            {
+                // Hand-written children must not inherit the data node of an enclosing ItemTemplate item.
+                <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="default(ITreeItemData<T>)" IsFixed="true">
+                    @ChildContent
+                </CascadingValue>
+            }
+            else
             {
                 @ChildContent
             }
-        </CascadingValue>
-    </CascadingValue>
-</ul>
+        }
+    }
+}
