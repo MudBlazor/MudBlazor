@@ -254,25 +254,42 @@ public class BaseButtonTests<TButton> : BunitTest where TButton : MudBaseButton
     }
 
     /// <summary>
-    /// An OnClick exception still reaches the ErrorBoundary when the handler removed the button before throwing (#13952).
+    /// An OnClick exception still reaches the ErrorBoundary when the handler removed the button before throwing, alone (#13952) or with the components around it, as when a dialog closes (#11201).
     /// </summary>
-    [Test]
-    public async Task OnClickExceptionReachesErrorBoundaryAfterButtonIsRemoved()
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task OnClickExceptionReachesErrorBoundaryAfterButtonIsRemoved(bool nested)
     {
-        RenderFragment<EventCallback<MouseEventArgs>> button = onClick => builder =>
-        {
-            builder.OpenComponent<TButton>(0);
-            builder.AddComponentParameter(1, nameof(MudBaseButton.OnClick), onClick);
-            builder.CloseComponent();
-        };
         var comp = Context.Render<ErrorBoundary>(parameters => parameters
             .AddChildContent<ButtonRemovedOnClickTest>(test => test
-                .Add(p => p.Button, button))
+                .Add(p => p.Button, RenderButton)
+                .Add(p => p.Nested, nested))
             .Add(p => p.ErrorContent, exception => $"<p class=\"error\">{exception.Message}</p>"));
 
         await comp.Find("button").ClickAsync();
 
         comp.Find("p.error").TextContent.Should().Be("save failed");
+    }
+
+    /// <summary>
+    /// An OnClick exception surfaces unhandled, as before, when everything that rendered the button is gone by the time it throws.
+    /// </summary>
+    [Test]
+    [CancelAfter(10000)]
+    public async Task OnClickExceptionIsUnhandledWhenNoAncestorIsLeft()
+    {
+        var pending = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var comp = Context.Render<ButtonRemovedOnClickTest>(parameters => parameters
+            .Add(p => p.Button, RenderButton)
+            .Add(p => p.Pending, pending.Task));
+
+        var click = comp.Find("button").ClickAsync();
+        await Context.DisposeComponentsAsync();
+        pending.SetResult();
+        await click;
+
+        var exception = await Context.Renderer.UnhandledException.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+        exception.Should().BeOfType<InvalidOperationException>().Which.Message.Should().Be("save failed");
     }
 
     /// <summary>
@@ -357,6 +374,16 @@ public class BaseButtonTests<TButton> : BunitTest where TButton : MudBaseButton
         root.GetAttribute("type").Should().Be("submit");
         root.HasAttribute("disabled").Should().BeTrue();
     }
+
+    /// <summary>
+    /// Renders this button type with the given click handler, for <see cref="ButtonRemovedOnClickTest.Button"/>.
+    /// </summary>
+    private static RenderFragment RenderButton(EventCallback<MouseEventArgs> onClick) => builder =>
+    {
+        builder.OpenComponent<TButton>(0);
+        builder.AddComponentParameter(1, nameof(MudBaseButton.OnClick), onClick);
+        builder.CloseComponent();
+    };
 
     private sealed class RecordingActivatable(List<string> events) : IActivatable
     {
