@@ -61,6 +61,10 @@ namespace MudBlazor
         /// <summary>
         /// The format for selected dates.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which uses the <see cref="DateTimeFormatInfo.ShortDatePattern"/> of <see cref="MudFormComponent{T, U}.Culture"/>.
+        /// A <c>/</c> in the format is replaced by the culture's date separator; use <c>'/'</c> for a literal slash.
+        /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? DateFormat { get; set; }
