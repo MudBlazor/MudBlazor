@@ -78,6 +78,55 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         /// <summary>
+        /// Verifies that a measurement started for an older text neither shows nor resizes the tooltip, whichever measurement returns first (#13422).
+        /// </summary>
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task TooltipIgnoresAMeasurementOfAnOlderText(bool olderMeasurementReturnsFirst)
+        {
+            var olderMeasurement = Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true);
+
+            var comp = Context.Render<ChartTooltip>(parameters => parameters
+                    .Add(p => p.Title, "Some Title")
+                    .Add(p => p.X, 200)
+                    .Add(p => p.Y, 100)
+                );
+
+            // The text changes before its first measurement returns, so a second measurement starts.
+            var currentMeasurement = Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                    .Add(p => p.Title, "A longer title")
+                    .Add(p => p.X, 50)
+                );
+
+            if (olderMeasurementReturnsFirst)
+            {
+                olderMeasurement.SetResult(new ChartTooltip.BBox(Width: 300, Height: 14));
+
+                // Lets the result of the older measurement be handled before checking that it changed nothing.
+                await comp.InvokeAsync(() => { });
+                comp.Find("g.svg-tooltip").GetAttribute("visibility").Should().Be("hidden");
+                comp.Find("g.svg-tooltip rect").GetAttribute("width").Should().Be("0");
+
+                currentMeasurement.SetResult(new ChartTooltip.BBox(Width: 60, Height: 14));
+                comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+            }
+            else
+            {
+                currentMeasurement.SetResult(new ChartTooltip.BBox(Width: 60, Height: 14));
+                comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+
+                olderMeasurement.SetResult(new ChartTooltip.BBox(Width: 300, Height: 14));
+
+                // Lets the result of the older measurement be handled before checking that it changed nothing.
+                await comp.InvokeAsync(() => { });
+            }
+
+            comp.Find("g.svg-tooltip rect").GetAttribute("width").Should().Be("70");
+            comp.Find("g.svg-tooltip text").GetAttribute("x").Should().Be("50");
+        }
+
+        /// <summary>
         /// Verifies that a measured tooltip stays visible while it is measured again for a new text, so labels that update don't blink (#13422).
         /// </summary>
         [Test]

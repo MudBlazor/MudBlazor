@@ -125,6 +125,7 @@ public partial class ChartTooltip : ComponentBase
     private string? _previousTitle;
     private string? _previousSubtitle;
     private bool _isMeasured;
+    private int _measurementId;
 
     // The box is sized from the text that the browser measures after the first render.
     // Until then the text would be shown at the origin of the chart without its background.
@@ -149,7 +150,16 @@ public partial class ChartTooltip : ComponentBase
         _previousSubtitle = Subtitle;
         _previousFontSize = FontSize;
 
+        var measurementId = ++_measurementId;
         var textBBox = await JsRuntime.InvokeAsync<BBox>("mudGetSvgBBox", _text);
+
+        // A newer measurement started because the text or position changed while this one was running.
+        // Its box belongs to the older text, so only the latest measurement is applied.
+        if (measurementId != _measurementId)
+        {
+            return;
+        }
+
         var textWidth = textBBox?.Width ?? 0;
         var textHeight = textBBox?.Height ?? 0;
 

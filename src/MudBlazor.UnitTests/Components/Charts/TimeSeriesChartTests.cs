@@ -328,7 +328,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         /// <summary>
-        /// Verifies that the tooltip of a hovered data point is only shown once its text has been measured (#13422).
+        /// Verifies that the tooltip of a hovered data point is only shown once its text has been measured, on every hover (#13422).
         /// </summary>
         [Test]
         public async Task TimeSeriesChart_HoverDataPoint_ShowsTooltipOnceMeasured()
@@ -356,6 +356,20 @@ namespace MudBlazor.UnitTests.Charts
 
             comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
             comp.Find("g.svg-tooltip rect").GetAttribute("width").Should().Be("130");
+
+            // leaving the point removes the tooltip, so hovering the next one renders a new tooltip that has to be measured again
+            await comp.FindAll("circle.mud-chart-point").First().MouseOutAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+            comp.FindComponents<ChartTooltip>().Should().BeEmpty();
+
+            var nextTooltipMeasurement = Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true);
+            await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            comp.Find("g.svg-tooltip").GetAttribute("visibility").Should().Be("hidden");
+
+            nextTooltipMeasurement.SetResult(new ChartTooltip.BBox(Width: 80, Height: 28));
+
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+            comp.Find("g.svg-tooltip rect").GetAttribute("width").Should().Be("90");
         }
 
         [Test]
