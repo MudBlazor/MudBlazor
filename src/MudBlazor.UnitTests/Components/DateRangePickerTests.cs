@@ -1014,6 +1014,36 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Opening an editable range picker must not read its text, which holds both dates, as a single date.
+        /// That recorded a conversion error, so a form holding a valid range failed validation once the picker had been opened.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_Editable_OpenAndClose_ShouldKeepValidRangeValid()
+        {
+            var range = new DateRange(new DateTime(2020, 10, 20), new DateTime(2020, 10, 27));
+            var comp = Context.Render<MudForm>(parameters => parameters
+                .AddChildContent<MudDateRangePicker>(pickerParameters => pickerParameters
+                    .Add(p => p.Editable, true)
+                    .Add(p => p.Required, true)
+                    .Add(p => p.DateRange, range)));
+            var form = comp.Instance;
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
+
+            await comp.InvokeAsync(picker.OpenAsync);
+
+            picker.ConversionError.Should().BeFalse();
+            picker.Touched.Should().BeFalse("opening the picker is not an edit");
+
+            await comp.InvokeAsync(() => picker.CloseAsync());
+            await comp.InvokeAsync(form.ValidateAsync);
+
+            picker.ConversionError.Should().BeFalse();
+            picker.DateRange.Should().Be(range);
+            form.IsValid.Should().BeTrue();
+            form.Errors.Should().BeEmpty();
+        }
+
+        /// <summary>
         /// A start date that fails to convert must not take the end date with it, because the null range echoes back through a two-way binding while the user is still editing.
         /// </summary>
         [Test]
