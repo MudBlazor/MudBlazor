@@ -355,6 +355,34 @@ namespace MudBlazor.UnitTests.Components
             await CheckColorRelatedValues(comp, selectorX, selectorY, expectedColor, mode);
         }
 
+        /// <summary>
+        /// Blurring the channel inputs under a comma-decimal UI culture keeps the color instead of re-parsing "0,5" as 5 and clamping it.
+        /// </summary>
+        [Test]
+        [SetCulture("de-DE")]
+        [SetUICulture("de-DE")]
+        [TestCase(ColorPickerMode.RGB)]
+        [TestCase(ColorPickerMode.HSL)]
+        public async Task ChannelInputs_BlurWithoutTyping_CommaDecimalCulture_KeepsColor(ColorPickerMode mode)
+        {
+            var color = new MudColor("#594ae280");
+            var comp = Context.Render<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ColorValue, color);
+                p.Add(x => x.ColorPickerMode, mode);
+            });
+
+            for (var i = 0; i < 4; i++)
+            {
+                await GetColorInput(comp, i).BlurAsync(new FocusEventArgs());
+            }
+
+            comp.Instance.ColorValue.Should().Be(color);
+
+            // The channel inputs default to invariant text, so fractional channels show a dot.
+            GetColorInputs(comp).Select(x => x.Value).Should().OnlyContain(x => !x.Contains(','));
+        }
+
         [Test]
         public void ColorPickerOpenButtonDefaultAriaLabel()
         {
