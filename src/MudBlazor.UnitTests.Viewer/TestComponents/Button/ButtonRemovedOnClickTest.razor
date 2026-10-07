@@ -1,0 +1,34 @@
+﻿@if (_open)
+{
+    var onClick = EventCallback.Factory.Create<MouseEventArgs>(this, ConfirmAsync);
+    if (Button is null)
+    {
+        <MudButton OnClick="onClick">Confirm</MudButton>
+    }
+    else
+    {
+        @Button(onClick)
+    }
+}
+
+@code {
+    public static string __description__ = "Clicking Confirm removes the button and then throws, which should reach the surrounding ErrorBoundary.";
+
+    /// <summary>
+    /// Renders the button under test, wired to the click handler that removes it and then throws.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to a MudButton.
+    /// </remarks>
+    [Parameter]
+    public RenderFragment<EventCallback<MouseEventArgs>>? Button { get; set; }
+
+    private bool _open = true;
+
+    private async Task ConfirmAsync()
+    {
+        _open = false;
+        await Task.Yield();
+        throw new InvalidOperationException("save failed");
+    }
+}

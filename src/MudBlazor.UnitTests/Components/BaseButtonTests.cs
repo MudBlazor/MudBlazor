@@ -3,6 +3,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
+using MudBlazor.UnitTests.TestComponents.Button;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
@@ -250,6 +251,28 @@ public class BaseButtonTests<TButton> : BunitTest where TButton : MudBaseButton
 
         comp.Find("p.error").TextContent.Should().Be("Something went wrong");
         comp.FindAll("button").Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// An OnClick exception still reaches the ErrorBoundary when the handler removed the button before throwing (#13952).
+    /// </summary>
+    [Test]
+    public async Task OnClickExceptionReachesErrorBoundaryAfterButtonIsRemoved()
+    {
+        RenderFragment<EventCallback<MouseEventArgs>> button = onClick => builder =>
+        {
+            builder.OpenComponent<TButton>(0);
+            builder.AddComponentParameter(1, nameof(MudBaseButton.OnClick), onClick);
+            builder.CloseComponent();
+        };
+        var comp = Context.Render<ErrorBoundary>(parameters => parameters
+            .AddChildContent<ButtonRemovedOnClickTest>(test => test
+                .Add(p => p.Button, button))
+            .Add(p => p.ErrorContent, exception => $"<p class=\"error\">{exception.Message}</p>"));
+
+        await comp.Find("button").ClickAsync();
+
+        comp.Find("p.error").TextContent.Should().Be("save failed");
     }
 
     /// <summary>
