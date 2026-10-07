@@ -94,12 +94,19 @@
             <SectionHeader Class="mt-6">
                 <Description>
                     To use the format across your app, set the changed culture at startup in <CodeInline>Program.cs</CodeInline>.
-                    With request localization, pass the changed cultures to <CodeInline>RequestLocalizationOptions</CodeInline>, because the middleware replaces the startup culture on every request.
-                    This also changes other short dates that use the current culture, such as <CodeInline>DateTime.ToShortDateString()</CodeInline>.
+                    This works in WebAssembly, and in a server app without request localization.
+                    It also changes other short dates that use the current culture, such as <CodeInline>DateTime.ToShortDateString()</CodeInline>.
                     To change only the pickers, create a component that inherits <CodeInline>MudDatePicker</CodeInline> and sets <CodeInline>DateFormat</CodeInline> in its constructor.
                 </Description>
             </SectionHeader>
-            <SectionContent Code="@nameof(DatePickerCultureFormatRegistration)" />
+            <SectionContent Code="@nameof(DatePickerCultureFormatStartup)" />
+            <SectionHeader Class="mt-6">
+                <Description>
+                    With request localization, the middleware replaces the startup culture on every request, so pass the changed cultures to <CodeInline>RequestLocalizationOptions</CodeInline> instead.
+                    Pass the <CodeInline>CultureInfo</CodeInline> instances rather than their names, because names create fresh cultures without the change.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerCultureFormatRequestLocalization)" />
         </DocsPageSection>
 
         <DocsPageSection>
