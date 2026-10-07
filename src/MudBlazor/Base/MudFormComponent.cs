@@ -176,7 +176,9 @@ namespace MudBlazor
         /// The culture used to format and interpret values such as dates and currency.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
+        /// Defaults to <see cref="CultureInfo.CurrentUICulture"/> when the component is created.
+        /// <see cref="MudDatePicker"/> and <see cref="MudDateRangePicker"/> default to <see cref="CultureInfo.CurrentCulture"/> instead.
+        /// <see cref="MudNumericField{T}"/> uses <see cref="CultureInfo.InvariantCulture"/> unless <c>Culture</c>, <c>Format</c>, or <c>Pattern</c> is set.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]

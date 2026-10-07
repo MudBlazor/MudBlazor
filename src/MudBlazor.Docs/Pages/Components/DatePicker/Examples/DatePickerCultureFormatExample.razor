@@ -1,0 +1,21 @@
+@using System.Globalization
+@namespace MudBlazor.Docs.Examples
+
+<MudDatePicker Label="Delivery date" @bind-Date="_date" Culture="_culture" />
+<MudDateRangePicker Label="Booking dates" @bind-DateRange="_range" Culture="_culture" />
+
+@code {
+    private DateTime? _date = new DateTime(2024, 3, 5);
+    private DateRange _range = new(new DateTime(2024, 3, 5), new DateTime(2024, 3, 9));
+    private readonly CultureInfo _culture = CreateCulture();
+
+    private static CultureInfo CreateCulture()
+    {
+        // Cultures from GetCultureInfo are read-only, so change a clone.
+        var culture = (CultureInfo)CultureInfo.GetCultureInfo("de-DE").Clone();
+
+        // Quote the slash; an unquoted "/" is replaced by the German separator ".".
+        culture.DateTimeFormat.ShortDatePattern = "dd'/'MM'/'yyyy";
+        return culture;
+    }
+}

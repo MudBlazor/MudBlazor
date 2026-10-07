@@ -1,0 +1,10 @@
+<div class="mud-codeblock">
+<div class="csharp"><pre>
+<span class="keyword">using</span> System.Globalization;
+
+<span class="keyword">var</span> <span class="localVar">culture</span> = (<span class="class">CultureInfo</span>)<span class="class">CultureInfo</span>.<span class="function">GetCultureInfo</span>(<span class="string">"en-US"</span>).<span class="function">Clone</span>();
+<span class="localVar">culture</span>.DateTimeFormat.ShortDatePattern = <span class="string">"dd'/'MM'/'yyyy"</span>;
+<span class="class">CultureInfo</span>.DefaultThreadCurrentCulture = <span class="localVar">culture</span>;
+<span class="class">CultureInfo</span>.DefaultThreadCurrentUICulture = <span class="localVar">culture</span>;
+</pre></div>
+</div>
