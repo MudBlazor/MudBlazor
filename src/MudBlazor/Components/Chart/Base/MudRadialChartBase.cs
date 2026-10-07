@@ -3,13 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Interop;
+using MudBlazor.Utilities;
 using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor.Charts;
@@ -262,10 +262,8 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
                 _boundWidth = _elementSize.Width;
                 _boundHeight = _elementSize.Height;
             }
-            else if (Width.EndsWith("px")
-                && Height.EndsWith("px")
-                && double.TryParse(Width.AsSpan(0, Width.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var width)
-                && double.TryParse(Height.AsSpan(0, Height.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var height))
+            else if (StringHelpers.TryParsePixels(Width, out var width)
+                && StringHelpers.TryParsePixels(Height, out var height))
             {
                 _boundWidth = width;
                 _boundHeight = height;
