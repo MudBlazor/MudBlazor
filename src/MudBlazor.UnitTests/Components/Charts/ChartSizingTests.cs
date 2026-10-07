@@ -294,4 +294,92 @@ public class ChartSizingTests : BunitTest
         paths.Should().HaveCount(3);
         paths.Should().OnlyContain(p => p.Data.Contains($"A {expectedRadius} {expectedRadius}"));
     }
+
+    /// <summary>
+    /// Verifies a radial chart parses fractional pixel sizes with the invariant culture when the current culture uses a decimal comma.
+    /// </summary>
+    [Test]
+    [SetCulture("de-DE")]
+    public async Task MudRadialChartBase_SetBounds_ParsesFractionalPixelsInvariantly_DecimalCommaCulture()
+    {
+        var comp = Context.Render<Pie<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20, 30 } } })
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "200.5px")
+            .Add(p => p.Height, "160.5px"));
+
+        // Without a measured element size, RebuildChart -> SetBounds parses the px Width/Height.
+        // min(200.5, 160.5) / 2 = 80.25, rounded to a radius of 80.
+        List<SvgPath> paths = null!;
+        await comp.InvokeAsync(() =>
+        {
+            comp.Instance.RebuildChart();
+            paths = new List<SvgPath>(comp.Instance._paths);
+        });
+
+        paths.Should().HaveCount(3);
+        paths.Should().OnlyContain(p => p.Data.Contains("A 80 80"));
+    }
+
+    /// <summary>
+    /// Verifies a radial chart parses fractional pixel sizes with the invariant culture when the current culture uses a decimal comma and a space group separator, which would make parsing fail.
+    /// </summary>
+    [Test]
+    [SetCulture("sv-SE")]
+    public async Task MudRadialChartBase_SetBounds_ParsesFractionalPixelsInvariantly_SwedishCulture()
+    {
+        var comp = Context.Render<Pie<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20, 30 } } })
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "200.5px")
+            .Add(p => p.Height, "160.5px"));
+
+        // Without a measured element size, RebuildChart -> SetBounds parses the px Width/Height.
+        // min(200.5, 160.5) / 2 = 80.25, rounded to a radius of 80.
+        List<SvgPath> paths = null!;
+        await comp.InvokeAsync(() =>
+        {
+            comp.Instance.RebuildChart();
+            paths = new List<SvgPath>(comp.Instance._paths);
+        });
+
+        paths.Should().HaveCount(3);
+        paths.Should().OnlyContain(p => p.Data.Contains("A 80 80"));
+    }
+
+    /// <summary>
+    /// Verifies the heat map parses fractional pixel sizes with the invariant culture when the current culture uses a decimal comma.
+    /// </summary>
+    [Test]
+    [SetCulture("de-DE")]
+    public void HeatMap_SetBounds_ParsesFractionalPixelsInvariantly_DecimalCommaCulture()
+    {
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.HeatMap)
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series 1", Data = new double[] { 1, 2, 3 } } })
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "640.5px")
+            .Add(p => p.Height, "320.5px"));
+
+        comp.Find("svg.mud-chart-heat").GetAttribute("viewBox").Should().Be("0 0 640.5 320.5");
+    }
+
+    /// <summary>
+    /// Verifies the Sankey chart parses fractional pixel sizes with the invariant culture when the current culture uses a decimal comma.
+    /// </summary>
+    [Test]
+    [SetCulture("de-DE")]
+    public void Sankey_SetBounds_ParsesFractionalPixelsInvariantly_DecimalCommaCulture()
+    {
+        var edges = new List<SankeyEdge<double>> { new("Source", "Target", 10) };
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Sankey)
+            .Add(p => p.ChartSeries, [new() { Name = "Flow", Data = edges }])
+            .Add(p => p.ChartOptions, new SankeyChartOptions())
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "640.5px")
+            .Add(p => p.Height, "320.5px"));
+
+        comp.Find("svg.mud-chart-sankey").GetAttribute("viewBox").Should().Be("0 0 640.5 320.5");
+    }
 }
