@@ -1600,6 +1600,17 @@ namespace MudBlazor.UnitTests.Components
             await act.Should().NotThrowAsync();
         }
 
+        /// <summary>
+        /// Children of an item whose type has no tree above it get no root either, so they take no tree settings such as Ripple (#13739).
+        /// </summary>
+        [Test]
+        public void TreeViewItem_WithoutRoot_ChildrenStayWithoutRoot()
+        {
+            var comp = Context.Render<TreeViewHeterogeneousNestedTest>();
+
+            comp.Find(".L3 > div.mud-treeview-item-content").ClassList.Should().NotContain("mud-ripple");
+        }
+
         [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12833")]
         public async Task TreeView_NewItem_ShouldBeSelected()
         {
@@ -1630,6 +1641,27 @@ namespace MudBlazor.UnitTests.Components
 
             await arrows()[1].ClickAsync();
             comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (6)"));
+        }
+
+        /// <summary>
+        /// Items show their expand button and load children when ServerData is supplied after the first render (#13739).
+        /// </summary>
+        [Test]
+        public async Task TreeView_ServerDataSetAfterFirstRender_LoadsChildren()
+        {
+            List<TreeItemData<string>> items = [new() { Value = "Inbox" }];
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add<MudTreeViewItem<string>, ITreeItemData<string>>(x => x.ItemTemplate, item => itemParameters => itemParameters
+                    .Add(x => x.Value, item.Value)
+                    .Add(x => x.Items, item.Children)));
+            comp.FindAll("button.mud-treeview-item-expand-button").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ServerData, _ => Task.FromResult<IReadOnlyCollection<TreeItemData<string>>>([new() { Value = "Unread" }])));
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
+
+            comp.WaitForAssertion(() => comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent).Should().Equal("Inbox", "Unread"));
         }
 
         /// <summary>
