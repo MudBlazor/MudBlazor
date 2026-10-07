@@ -322,7 +322,7 @@ public class ChartSizingTests : BunitTest
     }
 
     /// <summary>
-    /// Verifies a radial chart parses fractional pixel sizes with the invariant culture when the current culture uses U+2212 as its minus sign.
+    /// Verifies a radial chart parses fractional pixel sizes with the invariant culture when the current culture uses a decimal comma and a space group separator, which would make parsing fail.
     /// </summary>
     [Test]
     [SetCulture("sv-SE")]
