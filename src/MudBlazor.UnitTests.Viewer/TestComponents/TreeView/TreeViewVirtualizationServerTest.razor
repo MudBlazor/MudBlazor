@@ -1,0 +1,226 @@
+﻿@using System.Collections.Concurrent
+<MudTreeView T="string" Items="_treeItems" Virtualize="@Virtualize" Height="@Height" ExpandOnClick="true" ServerData="LoadServerData"
+             OverscanCount="@OverscanCount" MaxItemCount="@MaxItemCount" @bind-SelectedValue="SelectedValue">
+    <ItemTemplate>
+        @if (BindItems)
+        {
+            <MudTreeViewItem Expanded="@context.Expanded" ExpandedChanged="expanded => OnExpandedChangedAsync(context, expanded)"
+                             Items="@context.Children" ItemsChanged="@((IReadOnlyCollection<ITreeItemData<string>>? items) => OnItemsChangedAsync(context, items))"
+                             Value="@context.Value" Text="@context.Text" CanExpand="@context.Expandable" />
+        }
+        else
+        {
+            <MudTreeViewItem Expanded="@context.Expanded" ExpandedChanged="expanded => OnExpandedChangedAsync(context, expanded)"
+                             Items="@context.Children" Value="@context.Value" Text="@context.Text" CanExpand="@context.Expandable" />
+        }
+    </ItemTemplate>
+</MudTreeView>
+
+@code {
+    private IReadOnlyList<TreeItemData<string>> _treeItems = [];
+    private int _loadCount;
+    private readonly TaskCompletionSource _serverDataStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly ConcurrentDictionary<int, TaskCompletionSource> _loadStarted = new();
+    private readonly TaskCompletionSource<IReadOnlyCollection<TreeItemData<string>>> _serverDataCompletion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly Dictionary<int, TaskCompletionSource<IReadOnlyCollection<TreeItemData<string>>>> _independentServerDataCompletions = [];
+    private readonly TaskCompletionSource _expandedChangeStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource _expandedChangeCompletion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource _itemsChangeStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource _secondItemsChangeStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource _itemsChangeCompletion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private int _itemsChangeCount;
+
+    [Parameter]
+    public bool Virtualize { get; set; } = true;
+
+    [Parameter]
+    public string Height { get; set; } = "200px";
+
+    [Parameter]
+    public int OverscanCount { get; set; } = 3;
+
+    [Parameter]
+    public int MaxItemCount { get; set; } = int.MaxValue;
+
+    [Parameter]
+    public bool UseTextFallback { get; set; }
+
+    [Parameter]
+    public bool DelayServerData { get; set; }
+
+    [Parameter]
+    public bool DelayServerDataIndependently { get; set; }
+
+    [Parameter]
+    public bool DelayExpandedChanged { get; set; }
+
+    [Parameter]
+    public int RootCount { get; set; } = 1;
+
+    [Parameter]
+    public bool BindItems { get; set; }
+
+    [Parameter]
+    public bool DelayItemsChanged { get; set; }
+
+    [Parameter]
+    public int InitialChildCount { get; set; }
+
+    [Parameter]
+    public bool DisableExpandOnExpandedChanged { get; set; }
+
+    public string? SelectedValue { get; set; }
+
+    public IReadOnlyList<TreeItemData<string>> TreeItems => _treeItems;
+
+    public int LoadCount => _loadCount;
+
+    public Task ServerDataStarted => _serverDataStarted.Task;
+
+    public Task ExpandedChangeStarted => _expandedChangeStarted.Task;
+
+    public Task ItemsChangeStarted => _itemsChangeStarted.Task;
+
+    public Task SecondItemsChangeStarted => _secondItemsChangeStarted.Task;
+
+    public List<string?> LoadedParentValues { get; } = [];
+
+    /// <summary>
+    /// Completes once the server load with the given one-based number has started.
+    /// </summary>
+    public Task LoadStarted(int loadNumber) => GetLoadStartedSource(loadNumber).Task;
+
+    protected override void OnInitialized()
+    {
+        _treeItems = Enumerable.Range(0, RootCount)
+            .Select(index => new TreeItemData<string>
+            {
+                Value = UseTextFallback ? null : "Root",
+                Text = UseTextFallback ? $"Node {(char)('A' + index)}" : RootCount == 1 ? "Root" : $"Root {index + 1}",
+                Expandable = true,
+                Children = index == 0 && InitialChildCount > 0
+                    ? Enumerable.Range(0, InitialChildCount)
+                        .Select(childIndex => new TreeItemData<string>
+                        {
+                            Value = $"Initial {childIndex + 1}",
+                            Text = $"Initial {childIndex + 1}"
+                        })
+                        .ToList()
+                    : null
+            })
+            .ToList();
+    }
+
+    public async Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string? parentValue)
+    {
+        var loadNumber = ++_loadCount;
+        LoadedParentValues.Add(parentValue);
+        GetLoadStartedSource(loadNumber).TrySetResult();
+        if (DelayServerDataIndependently)
+        {
+            var completion = new TaskCompletionSource<IReadOnlyCollection<TreeItemData<string>>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _independentServerDataCompletions.Add(loadNumber, completion);
+            _serverDataStarted.TrySetResult();
+            return await completion.Task;
+        }
+        if (DelayServerData)
+        {
+            _serverDataStarted.TrySetResult();
+            return await _serverDataCompletion.Task;
+        }
+
+        return CreateLoadedItems(loadNumber);
+    }
+
+    public void ReplaceRootWithTextFallback()
+    {
+        _treeItems =
+        [
+            new TreeItemData<string>
+            {
+                Text = "Node B",
+                Expandable = true
+            }
+        ];
+        StateHasChanged();
+    }
+
+    public void CompleteServerData()
+    {
+        _serverDataCompletion.TrySetResult(CreateLoadedItems());
+    }
+
+    public void CompleteServerData(int loadNumber)
+    {
+        if (_independentServerDataCompletions.TryGetValue(loadNumber, out var completion))
+        {
+            completion.TrySetResult(CreateLoadedItems(loadNumber));
+        }
+    }
+
+    public void FailServerData(int loadNumber)
+    {
+        if (_independentServerDataCompletions.TryGetValue(loadNumber, out var completion))
+        {
+            completion.TrySetException(new InvalidOperationException($"Server data request {loadNumber} failed."));
+        }
+    }
+
+    public void CompleteAllServerDataRequests()
+    {
+        foreach (var (loadNumber, completion) in _independentServerDataCompletions)
+        {
+            completion.TrySetResult(CreateLoadedItems(loadNumber));
+        }
+    }
+
+    public void CompleteExpandedChange()
+    {
+        _expandedChangeCompletion.TrySetResult();
+    }
+
+    public void CompleteItemsChange()
+    {
+        _itemsChangeCompletion.TrySetResult();
+    }
+
+    private async Task OnExpandedChangedAsync(ITreeItemData<string> item, bool expanded)
+    {
+        item.Expanded = expanded;
+        if (DisableExpandOnExpandedChanged)
+        {
+            item.Expandable = false;
+        }
+        if (DelayExpandedChanged)
+        {
+            _expandedChangeStarted.TrySetResult();
+            await _expandedChangeCompletion.Task;
+        }
+    }
+
+    private async Task OnItemsChangedAsync(ITreeItemData<string> item, IReadOnlyCollection<ITreeItemData<string>>? items)
+    {
+        item.Children = items;
+        if (++_itemsChangeCount == 2)
+        {
+            _secondItemsChangeStarted.TrySetResult();
+        }
+        if (DelayItemsChanged)
+        {
+            _itemsChangeStarted.TrySetResult();
+            await _itemsChangeCompletion.Task;
+        }
+    }
+
+    private IReadOnlyCollection<TreeItemData<string>> CreateLoadedItems() => CreateLoadedItems(_loadCount);
+
+    private static IReadOnlyCollection<TreeItemData<string>> CreateLoadedItems(int loadNumber)
+    {
+        return [new TreeItemData<string> { Value = $"Loaded {loadNumber}", Text = $"Loaded {loadNumber}" }];
+    }
+
+    private TaskCompletionSource GetLoadStartedSource(int loadNumber)
+    {
+        return _loadStarted.GetOrAdd(loadNumber, _ => new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously));
+    }
+}

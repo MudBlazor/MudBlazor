@@ -1,0 +1,28 @@
+<MudTreeView T="string" Items="_items">
+    <ItemTemplate>
+        <MudTreeViewItem Value="@context.Value" Text="@context.Text">
+            <BodyContent Context="item">
+                <MudText>@context.Text</MudText>
+                <MudTreeView T="string" Items="_innerItems" Virtualize="true" Height="200px" Class="nested-tree">
+                    <ItemTemplate Context="inner">
+                        <MudTreeViewItem Value="@inner.Value" Text="@inner.Text" Items="@inner.Children" Expanded="@inner.Expanded" ExpandedChanged="expanded => inner.Expanded = expanded" />
+                    </ItemTemplate>
+                </MudTreeView>
+            </BodyContent>
+        </MudTreeViewItem>
+    </ItemTemplate>
+</MudTreeView>
+
+@code {
+    private readonly List<TreeItemData<string>> _items =
+    [
+        new TreeItemData<string> { Value = "Outer", Text = "Outer" }
+    ];
+
+    // Nested trees render their groups through the root tree's template, so the inner items stay flat to avoid rendering this tree inside itself.
+    private readonly List<TreeItemData<string>> _innerItems =
+    [
+        new TreeItemData<string> { Value = "Inner A", Text = "Inner A" },
+        new TreeItemData<string> { Value = "Inner B", Text = "Inner B" }
+    ];
+}
