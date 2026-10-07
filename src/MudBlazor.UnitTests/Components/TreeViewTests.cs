@@ -1644,24 +1644,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Items show their expand button and load children when ServerData is supplied after the first render (#13739).
+        /// Supplying or removing ServerData after the first render keeps the existing items and the content inside them (#13739).
         /// </summary>
-        [Test]
-        public async Task TreeView_ServerDataSetAfterFirstRender_LoadsChildren()
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_ServerDataChange_KeepsItems(bool startWithServerData)
         {
-            List<TreeItemData<string>> items = [new() { Value = "Inbox" }];
-            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+            Func<string, Task<IReadOnlyCollection<TreeItemData<string>>>> serverData = _ => Task.FromResult<IReadOnlyCollection<TreeItemData<string>>>([]);
+            List<TreeItemData<string>> items = [new() { Value = "Inbox", Expanded = true, Children = [new TreeItemData<string> { Value = "Unread" }] }];
+            var templated = Context.Render<MudTreeView<string>>(parameters => parameters
                 .Add(x => x.Items, items)
+                .Add(x => x.ServerData, startWithServerData ? serverData : null)
                 .Add<MudTreeViewItem<string>, ITreeItemData<string>>(x => x.ItemTemplate, item => itemParameters => itemParameters
                     .Add(x => x.Value, item.Value)
-                    .Add(x => x.Items, item.Children)));
-            comp.FindAll("button.mud-treeview-item-expand-button").Should().BeEmpty();
+                    .Add(x => x.Items, item.Children)
+                    .Add(x => x.Expanded, item.Expanded)));
+            var handWritten = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.ServerData, startWithServerData ? serverData : null)
+                .AddChildContent<MudTreeViewItem<string>>(item => item
+                    .Add(x => x.Value, "Archive")
+                    .Add(x => x.Expanded, true)
+                    .AddChildContent<MudTreeViewItem<string>>(child => child.Add(x => x.Value, "2025"))));
+            var itemsBefore = templated.FindComponents<MudTreeViewItem<string>>().Concat(handWritten.FindComponents<MudTreeViewItem<string>>()).Select(x => x.Instance).ToList();
 
-            await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.ServerData, _ => Task.FromResult<IReadOnlyCollection<TreeItemData<string>>>([new() { Value = "Unread" }])));
-            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
+            await templated.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ServerData, startWithServerData ? null : serverData));
+            await handWritten.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ServerData, startWithServerData ? null : serverData));
 
-            comp.WaitForAssertion(() => comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent).Should().Equal("Inbox", "Unread"));
+            var itemsAfter = templated.FindComponents<MudTreeViewItem<string>>().Concat(handWritten.FindComponents<MudTreeViewItem<string>>()).Select(x => x.Instance).ToList();
+            itemsAfter.Should().HaveCount(4).And.Equal(itemsBefore);
         }
 
         /// <summary>
