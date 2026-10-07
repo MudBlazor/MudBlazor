@@ -15,6 +15,9 @@ namespace MudBlazor.UnitTests.Services
     {
         private class PseudoElementReferenceContext : ElementReferenceContext;
 
+        // A fixed seed keeps the generated sizes the same on every run.
+        private const int Seed = 42;
+
         private Mock<IJSRuntime> _runtimeMock;
         private ResizeObserver _service;
 
@@ -29,7 +32,7 @@ namespace MudBlazor.UnitTests.Services
         public async Task ObserveAndCache()
         {
             // Arrange
-            var random = new Random();
+            var random = new Random(Seed);
 
             List<ElementReference> allReferences = new();
             List<ElementReference> notObservedReferences = new();
@@ -129,7 +132,7 @@ namespace MudBlazor.UnitTests.Services
         public async Task Unobserve()
         {
             // Arrange
-            var random = new Random();
+            var random = new Random(Seed);
 
             Dictionary<ElementReference, BoundingClientRect> resolvedElements = new(ElementReferenceComparer.Default);
 
@@ -187,7 +190,7 @@ namespace MudBlazor.UnitTests.Services
         public async Task OnSizeChanged()
         {
             // Arrange
-            var random = new Random();
+            var random = new Random(Seed);
 
             Dictionary<ElementReference, BoundingClientRect> resolvedElements = new(ElementReferenceComparer.Default);
 
@@ -224,7 +227,8 @@ namespace MudBlazor.UnitTests.Services
                 var item = resolvedElements.ElementAt(i);
                 var correspondingId = ids[i];
 
-                if (random.NextDouble() > 0.5)
+                // Alternate unknown ids with observed elements so both paths run and the expected set is never empty.
+                if (i % 2 == 1)
                 {
                     changes.Add(new ResizeObserver.SizeChangeUpdateInfo(Guid.NewGuid(), GetRandomRect(random)));
                 }
@@ -271,7 +275,7 @@ namespace MudBlazor.UnitTests.Services
         public async Task Observe_AlreadyCachedElement_SkipsSecondJsConnect()
         {
             // Arrange
-            var random = new Random();
+            var random = new Random(Seed);
             var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
             var rect = GetRandomRect(random);
 
