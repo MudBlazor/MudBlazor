@@ -18,43 +18,24 @@
 </ul>
 
 @code {
-    private bool? _cascadeItemData;
-
     private void RenderItems(RenderTreeBuilder __builder)
     {
-        // The data node lets ItemTemplate-created items keep their server-loading state on the tree root instead of the component instance.
-        // Only ServerData reads it, so other trees skip one cascade per item.
-        // The choice is made once, because switching the structure later would dispose and recreate every item and the consumer content inside it.
-        var cascadeItemData = _cascadeItemData ??= MudTreeRoot?.ServerData is not null;
         @if (ItemTemplate != null && Items != null)
         {
             @foreach (var item in Items)
             {
-                @if (cascadeItemData)
-                {
-                    <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="item" IsFixed="true">
-                        @ItemTemplate(item)
-                    </CascadingValue>
-                }
-                else
-                {
+                // The data node lets ItemTemplate-created items keep their server-loading state on the tree root instead of the component instance.
+                <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="item" IsFixed="true">
                     @ItemTemplate(item)
-                }
+                </CascadingValue>
             }
         }
         else if (ChildContent != null)
         {
-            @if (cascadeItemData)
-            {
-                // Hand-written children must not inherit the data node of an enclosing ItemTemplate item.
-                <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="default(ITreeItemData<T>)" IsFixed="true">
-                    @ChildContent
-                </CascadingValue>
-            }
-            else
-            {
+            // Hand-written children must not inherit the data node of an enclosing ItemTemplate item.
+            <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="default(ITreeItemData<T>)" IsFixed="true">
                 @ChildContent
-            }
+            </CascadingValue>
         }
     }
 }
