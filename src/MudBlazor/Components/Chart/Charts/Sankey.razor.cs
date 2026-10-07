@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -204,8 +205,8 @@ namespace MudBlazor.Charts
                 }
                 else if (Width.EndsWith("px")
                     && Height.EndsWith("px")
-                    && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
-                    && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
+                    && double.TryParse(Width.AsSpan(0, Width.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var width)
+                    && double.TryParse(Height.AsSpan(0, Height.Length - 2), NumberStyles.Float, CultureInfo.InvariantCulture, out var height))
                 {
                     _boundWidth = width;
                     _boundHeight = height;

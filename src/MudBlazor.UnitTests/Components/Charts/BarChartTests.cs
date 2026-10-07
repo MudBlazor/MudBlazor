@@ -215,6 +215,22 @@ namespace MudBlazor.UnitTests.Charts
             rotatedPlotBottom.Should().BeLessThan(unrotatedPlotBottom, because: "rotated labels need more bottom plot spacing");
         }
 
+        /// <summary>
+        /// Verifies a negative X-axis label rotation is written with an ASCII minus sign when the current culture uses U+2212.
+        /// </summary>
+        [Test]
+        [SetCulture("sv-SE")]
+        public void BarChartXAxisLabelRotationUsesInvariantMinusSign()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Sales", Data = new double[] { 40, 20 } } })
+                .Add(p => p.ChartLabels, new[] { "January", "February" })
+                .Add(p => p.ChartOptions, new BarChartOptions { XAxisLabelRotation = 45 }));
+
+            comp.Find("g.mud-charts-xaxis text").GetAttribute("transform").Should().StartWith("rotate(-45 ");
+        }
+
         [Test]
         public async Task BarChartColoring()
         {
