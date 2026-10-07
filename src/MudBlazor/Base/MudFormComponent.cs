@@ -176,7 +176,7 @@ namespace MudBlazor
         /// The culture used to format and interpret values such as dates and currency.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="CultureInfo.InvariantCulture"/>.
+        /// Defaults to <see cref="CultureInfo.CurrentUICulture"/> in the base implementation. Derived components may override this default.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
