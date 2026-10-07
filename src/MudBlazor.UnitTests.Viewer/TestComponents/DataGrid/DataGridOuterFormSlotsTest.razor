@@ -1,0 +1,36 @@
+﻿<MudForm @ref="Form">
+    <MudDataGrid T="Model" Items="@_items" ReadOnly="false" EditMode="DataGridEditMode.Cell">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" />
+        </Columns>
+        <ChildRowContent>
+            <MudTextField T="string" Class="child-row-field" />
+        </ChildRowContent>
+        <ChildRowRenderer>
+            <tr>
+                <td>
+                    <MudTextField T="string" Class="child-row-renderer-field" />
+                </td>
+            </tr>
+        </ChildRowRenderer>
+    </MudDataGrid>
+    <MudDataGrid T="Model" Items="@_noItems" Virtualize="true">
+        <Columns>
+            <PropertyColumn Property="x => x.Name" />
+        </Columns>
+        <NoRecordsContent>
+            <MudTextField T="string" Class="no-records-field" />
+        </NoRecordsContent>
+    </MudDataGrid>
+</MudForm>
+
+@code {
+    public static string __description__ = "Child row, child row renderer and no-records fields belong to the enclosing form, cell editors to the grid's validator.";
+
+    public MudForm Form { get; private set; } = null!;
+
+    private readonly List<Model> _items = [new("Ada")];
+    private readonly List<Model> _noItems = [];
+
+    public record Model(string Name);
+}

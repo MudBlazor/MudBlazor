@@ -5,6 +5,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -41,5 +42,9 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.DataGrid.Selecting)]
         public EventCallback<(MouseEventArgs args, T item, int index)> ContextRowClick { get; set; }
+
+        // Child rows, the loading placeholder and no-records content are consumer markup, so their fields belong to this form rather than the grid's Validator.
+        [CascadingParameter]
+        private IForm? OuterForm { get; set; }
     }
 }

@@ -1127,17 +1127,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Cell edit mode already cascades the grid validator once per row, so it must not add another
-        /// cascading component around every editable cell (#11860).
+        /// Cell edit mode cascades the grid validator once for all rows, not once per row or per cell (#11860, #13739).
         /// </summary>
         [Test]
-        public void DataGridCellEditCascadesValidatorOncePerRow()
+        public void DataGridCellEditCascadesValidatorOnce()
         {
             var comp = Context.Render<DataGridCellEditTest>();
-            var rowCount = comp.FindAll(".mud-table-body tr").Count;
 
             comp.FindComponents<CascadingValue<IForm>>()
-                .Should().HaveCount(rowCount, "per-cell validator cascades multiply component diff work in large editable grids");
+                .Should().ContainSingle("per-row and per-cell validator cascades multiply component diff work in large editable grids");
+        }
+
+        /// <summary>
+        /// Fields in child rows and no-records content register with the enclosing form while cell editors use the grid's validator (#13739).
+        /// </summary>
+        [Test]
+        public void DataGridOuterFormSlots_KeepEnclosingForm()
+        {
+            var comp = Context.Render<DataGridOuterFormSlotsTest>();
+            var form = comp.Instance.Form;
+            var grid = comp.FindComponents<MudDataGrid<DataGridOuterFormSlotsTest.Model>>()[0].Instance;
+            var fields = comp.FindComponents<MudTextField<string>>().Select(x => x.Instance).ToList();
+
+            fields.Single(x => x.Class == "child-row-field").Form.Should().BeSameAs(form);
+            fields.Single(x => x.Class == "child-row-renderer-field").Form.Should().BeSameAs(form);
+            fields.Single(x => x.Class == "no-records-field").Form.Should().BeSameAs(form);
+            fields.Where(x => x.Class is null).Should().NotBeEmpty()
+                .And.AllSatisfy(x => x.Form.Should().BeSameAs(grid.Validator));
         }
 
         [Test]

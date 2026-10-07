@@ -10,43 +10,46 @@
     var resolvedItems = BuildIndexBags(sourceItems);
 }
 
-<MudVirtualize @ref="DataGrid._mudVirtualize"
-               ItemsProvider="@DataGrid.VirtualItemsProvider"
-               Enabled="@DataGrid.Virtualize"
-               Items="@resolvedItems"
-               OverscanCount="@DataGrid.OverscanCount"
-               ItemSize="@DataGrid.ItemSize"
-               SpacerElement="tr"
-               Context="itemBag">
-    <Placeholder>
-        @if (DataGrid.RowLoadingContent != null)
-        {
-            @DataGrid.RowLoadingContent
-        }
-        else
-        {
-            <tr class="mud-table-row">
-                <td class="mud-table-cell" colspan="1000">
-                    @Localizer[LanguageResource.MudDataGrid_Loading]
-                </td>
-            </tr>
-        }
-    </Placeholder>
+@* Cascading the Validator once around all rows instead of inside each row saves a component per row. *@
+<CascadingValue Value="@DataGrid.Validator" IsFixed="true">
+    <MudVirtualize @ref="DataGrid._mudVirtualize"
+                   ItemsProvider="@DataGrid.VirtualItemsProvider"
+                   Enabled="@DataGrid.Virtualize"
+                   Items="@resolvedItems"
+                   OverscanCount="@DataGrid.OverscanCount"
+                   ItemSize="@DataGrid.ItemSize"
+                   SpacerElement="tr"
+                   Context="itemBag">
+        <Placeholder>
+            @if (DataGrid.RowLoadingContent != null)
+            {
+                <CascadingValue Value="@OuterForm" IsFixed="true">
+                    @DataGrid.RowLoadingContent
+                </CascadingValue>
+            }
+            else
+            {
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell" colspan="1000">
+                        @Localizer[LanguageResource.MudDataGrid_Loading]
+                    </td>
+                </tr>
+            }
+        </Placeholder>
 
-    <ChildContent>
-        @{
-            var rowClass = new CssBuilder(DataGrid.RowClass)
-                .AddClass(DataGrid.RowClassFunc?.Invoke(itemBag.Item, itemBag.Index))
-                .AddClass("mud-table-row-stripe", DataGrid.Striped && itemBag.Index % 2 == 0)
-                .Build();
-            var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle).AddStyle(DataGrid.RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
-        }
-        <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
-            @attributes="GetRowAttributes(itemBag.Item)"
-            @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(args => RowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
-            @oncontextmenu="@GetContextMenuCallback(itemBag)"
-            @oncontextmenu:preventDefault="@DataGrid.RowContextMenuClick.HasDelegate">
-            <CascadingValue Value="@DataGrid.Validator" IsFixed="true">
+        <ChildContent>
+            @{
+                var rowClass = new CssBuilder(DataGrid.RowClass)
+                    .AddClass(DataGrid.RowClassFunc?.Invoke(itemBag.Item, itemBag.Index))
+                    .AddClass("mud-table-row-stripe", DataGrid.Striped && itemBag.Index % 2 == 0)
+                    .Build();
+                var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle).AddStyle(DataGrid.RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
+            }
+            <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
+                @attributes="GetRowAttributes(itemBag.Item)"
+                @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(args => RowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
+                @oncontextmenu="@GetContextMenuCallback(itemBag)"
+                @oncontextmenu:preventDefault="@DataGrid.RowContextMenuClick.HasDelegate">
                 @{
                     var colIdx = 0;
                     foreach (var column in DataGrid.RenderedColumns)
@@ -58,34 +61,38 @@
                         colIdx++;
                     }
                 }
-            </CascadingValue>
-        </tr>
-        @if ((DataGrid.ChildRowContent != null || DataGrid.ChildRowRenderer != null)&& (DataGrid._openHierarchies.Contains(itemBag.Item) || !DataGrid.HasHierarchyColumn))
-        {
-            @if (DataGrid.ChildRowRenderer != null)
+            </tr>
+            @if ((DataGrid.ChildRowContent != null || DataGrid.ChildRowRenderer != null)&& (DataGrid._openHierarchies.Contains(itemBag.Item) || !DataGrid.HasHierarchyColumn))
             {
-                @DataGrid.ChildRowRenderer(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Item))
+                <CascadingValue Value="@OuterForm" IsFixed="true">
+                    @if (DataGrid.ChildRowRenderer != null)
+                    {
+                        @DataGrid.ChildRowRenderer(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Item))
+                    }
+                    @if (DataGrid.ChildRowContent != null)
+                    {
+                        <tr class="mud-table-row">
+                            <td class="mud-table-cell mud-table-child-content" colspan="1000">
+                                @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Item))
+                            </td>
+                        </tr>
+                    }
+                </CascadingValue>
             }
-            @if (DataGrid.ChildRowContent != null)
-            {
-                <tr class="mud-table-row">
-                    <td class="mud-table-cell mud-table-child-content" colspan="1000">
-                        @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Item))
-                    </td>
-                </tr>
-            }
-        }
-    </ChildContent>
-    <NoRecordsContent>
-        <tr>
-            <th colspan="1000" class="mud-table-empty-row">
-                <div Class="my-3">
-                    @DataGrid.NoRecordsContent
-                </div>
-            </th>
-        </tr>
-    </NoRecordsContent>
-</MudVirtualize>
+        </ChildContent>
+        <NoRecordsContent>
+            <tr>
+                <th colspan="1000" class="mud-table-empty-row">
+                    <div Class="my-3">
+                        <CascadingValue Value="@OuterForm" IsFixed="true">
+                            @DataGrid.NoRecordsContent
+                        </CascadingValue>
+                    </div>
+                </th>
+            </tr>
+        </NoRecordsContent>
+    </MudVirtualize>
+</CascadingValue>
 
 @code {
     private readonly List<IndexBag<T>> _resolvedItems = new();
