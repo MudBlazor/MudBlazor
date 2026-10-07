@@ -17,6 +17,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         private bool _iconDrawerOpen;
         private ElementReference _killZone;
         private List<MudIcons> _displayedIcons = new();
+        private List<string> MaterialIconCategories = new();
         private const double IconCardWidth = 136.88; // single icon card width including margins
         private const float IconCardHeight = 144; // single icon card height including margins
         private IResizeObserver? _resizeObserver;
@@ -52,14 +53,22 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         private Color PreviewIconColor { get; set; } = Color.Dark;
 
         private IconOrigin SelectedIconOrigin { get; set; } = IconOrigin.Material;
+        private string SelectedIconType { get; set; } = IconType.Filled;
 
         private string IconCodeOutput { get; set; } = string.Empty;
 
         private string SearchText { get; set; } = string.Empty;
 
+        private string SelectedMaterialIconCategory { get; set; } = string.Empty;
+
         private List<MudVirtualizedIcons> SelectedIcons => string.IsNullOrWhiteSpace(SearchText)
             ? GetVirtualizedIcons(_displayedIcons)
-            : GetVirtualizedIcons(_displayedIcons.Where(mudIcon => mudIcon.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)).ToList());
+            : GetVirtualizedIcons(
+                _displayedIcons.Where(mudIcon =>
+                    mudIcon.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase) ||
+                    (mudIcon.MaterialTags?.Any(tag => tag.Equals(SearchText, StringComparison.OrdinalIgnoreCase)) ?? false)
+                ).ToList()
+            );
 
         private List<MudVirtualizedIcons> GetVirtualizedIcons(List<MudIcons> iconList)
         {
@@ -92,6 +101,16 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             MaterialTwoTone = await LoadMaterialIcons(IconType.TwoTone);
 
             await LoadCustomIcons();
+
+            MaterialIconCategories = MaterialFilled
+                .Concat(MaterialOutlined)
+                .Concat(MaterialRounded)
+                .Concat(MaterialSharp)
+                .Concat(MaterialTwoTone)
+                .SelectMany(icon => icon.MaterialCategories ?? [])
+                .Distinct()
+                .ToList();
+
             await base.OnInitializedAsync();
         }
 
@@ -164,11 +183,33 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             return iconType
                 .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                .Select(prop => new MudIcons(prop.Name, GetIconCodeOrDefault(prop), category))
+                .Select(prop =>
+                {
+                    // Get the IconFilterAttribute for the current property, if it exists
+                    var attribute = prop.GetCustomAttribute<IconFilterAttribute>();
+                    var materialCategory = attribute?.Categories;
+                    var materialTags = attribute?.Tags;
+                    return new MudIcons(prop.Name, GetIconCodeOrDefault(prop), category, materialCategory?.Split(';'), materialTags?.Split(';'));
+                })
                 .ToList();
         }
 
         private string GetIconCodeOrDefault(FieldInfo fieldInfo) => fieldInfo.GetRawConstantValue()?.ToString() ?? string.Empty;
+
+        private void ChangeMaterialCategory(string category)
+        {
+            SelectedMaterialIconCategory = category;
+            ChangeIconCategory(SelectedIconType); // Change it back so we have all the icons...
+            if (string.IsNullOrWhiteSpace(category))
+            {
+                return;
+            }
+
+            _displayedIcons = _displayedIcons
+                .Where(icon => icon.MaterialCategories != null && icon.MaterialCategories.Contains(category))
+                .ToList();
+
+        }
 
         private void ChangeIconCategory(string type)
         {
@@ -185,6 +226,8 @@ namespace MudBlazor.Docs.Pages.Features.Icons
                 IconType.Uncategorized => CustomUncategorized,
                 _ => _displayedIcons
             };
+            SelectedIconType = type;
+            SelectedMaterialIconCategory = string.Empty;
         }
 
         private void OnSelectedValue(IconOrigin origin)
@@ -205,7 +248,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         private void SetIconDrawer(MudIcons icon)
         {
             _iconDrawerOpen = true;
-            SelectedIcon = new MudIcons(icon.Name, icon.Code, icon.Category);
+            SelectedIcon = new MudIcons(icon.Name, icon.Code, icon.Category, icon.MaterialCategories, icon.MaterialTags);
             IconCodeOutput = $"@Icons{(SelectedIconOrigin == IconOrigin.Material ? ".Material" : ".Custom")}.{icon.Category}.{icon.Name}";
         }
 
