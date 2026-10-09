@@ -38,14 +38,14 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: autotriage-db
-  cancel-in-progress: false
-
 jobs:
   triage:
     if: ${{ github.repository_owner == 'MudBlazor' }}
     runs-on: ubuntu-latest
+    # Queue every run instead of keeping only the newest pending one, so event runs wait for the sweep instead of being cancelled.
+    concurrency:
+      group: autotriage-db
+      queue: max
     steps:
       - name: Generate app token
         id: app-token
@@ -56,12 +56,11 @@ jobs:
 
       - uses: actions/checkout@v7
 
-      - name: Cache triage DB
-        id: cache-db
-        uses: actions/cache@v6
+      - name: Restore triage DB
+        uses: actions/cache/restore@v6
         with:
           path: triage-db.json
-          key: ${{ runner.os }}-triage-db-${{ github.run_id }}
+          key: ${{ runner.os }}-triage-db-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
             ${{ runner.os }}-triage-db-
 
@@ -79,6 +78,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      # Saved even when the run fails, so the items it did triage aren't sent again tomorrow.
+      # The key includes the attempt, so a re-run can save too.
+      - name: Save triage DB
+        if: always() && hashFiles('triage-db.json') != ''
+        uses: actions/cache/save@v6
+        with:
+          path: triage-db.json
+          key: ${{ runner.os }}-triage-db-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Upload artifacts
         if: always()

@@ -7,14 +7,14 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: autotriage-db
-  cancel-in-progress: false
-
 jobs:
   triage_pr:
     if: ${{ github.repository_owner == 'MudBlazor' && (github.event.action != 'opened' || !github.event.pull_request.draft) }}
     runs-on: ubuntu-latest
+    # Queue every run instead of keeping only the newest pending one, so a burst of new PRs all get triaged.
+    concurrency:
+      group: autotriage-db
+      queue: max
     steps:
       - name: Generate app token
         id: app-token
@@ -24,15 +24,6 @@ jobs:
           private-key: ${{ secrets.MUDBOT_PRIVATE_KEY }}
 
       - uses: actions/checkout@v7
-
-      - name: Cache triage DB
-        id: cache-db
-        uses: actions/cache@v6
-        with:
-          path: triage-db.json
-          key: ${{ runner.os }}-triage-db-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-triage-db-
 
       - name: AutoTriage - triage pull request
         uses: danielchalmers/AutoTriage@v4
@@ -50,6 +41,4 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: triage-artifacts-pr-${{ github.event.pull_request.number }}
-          path: |
-            triage-db.json
-            artifacts/
+          path: artifacts/
