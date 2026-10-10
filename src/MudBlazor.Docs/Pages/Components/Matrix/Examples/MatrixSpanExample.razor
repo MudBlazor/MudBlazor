@@ -1,0 +1,94 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(Units.Auto(), Units.Auto())"
+           ColumnGap="3"
+           RowGap="3"
+           JustifyColumns="MatrixJustify.Center">
+
+    <MudMatrixItem>
+        <MudText Typo="Typo.h5" Color="Color.Primary">ColumnSpan: </MudText>
+    </MudMatrixItem>
+    <MudMatrixItem Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Primary" />
+    </MudMatrixItem>
+    <MudMatrixItem>
+        <MudText Typo="Typo.h5" Color="Color.Secondary">RowSpan: </MudText>
+    </MudMatrixItem>
+    <MudMatrixItem Class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Secondary" />
+    </MudMatrixItem>
+</MudMatrix>
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(_itemsCountSquared, Units.Fr())"
+           ImplicitRows="ImplicitMatrix.Pattern(Units.Pct(100.0 / _itemsCountSquared) - Units.Px((int)Math.Ceiling((24 * (_itemsCountSquared - 1.0)) / _itemsCountSquared)))"
+           Style="height: 500px; overflow: auto;">
+       
+    @for (int i = 0; i < _itemsCount; i++)
+    {
+        int index = i;
+        int columnSpan = _columnSpans[index];
+        int rowSpan = _rowSpans[index];
+
+        <MudMatrixItem RowSpan="rowSpan" ColumnSpan="columnSpan">
+            <MudPaper Outlined="true" Class="mud-width-full mud-height-full">
+                <MudStack Spacing="1" 
+                          Class="mud-height-full" 
+                          Justify="Justify.Center" 
+                          AlignItems="AlignItems.Center">
+
+                    <MudStack Row="true" AlignItems="AlignItems.Center">
+                        <MudIconButton Icon="@Icons.Material.Outlined.Add" 
+                                       Color="Color.Primary" 
+                                       Disabled="columnSpan == _itemsCountSquared"
+                                       OnClick="@(() => { _columnSpans[index]++; })"/>
+
+                        <MudIconButton Icon="@Icons.Material.Outlined.Remove"
+                                       Color="Color.Primary"
+                                       Disabled="columnSpan == 1"
+                                       OnClick="@(() => { _columnSpans[index]--; })" />
+                    </MudStack>
+
+                    <MudDivider Vertical="true" FlexItem="true"/>
+
+                    <MudStack Row="true" AlignItems="AlignItems.Center">
+
+                        <MudIconButton Icon="@Icons.Material.Outlined.Add"
+                                       Color="Color.Secondary"
+                                       OnClick="@(() => { _rowSpans[index]++; })" />
+
+                        <MudIconButton Icon="@Icons.Material.Outlined.Remove" 
+                                       Color="Color.Secondary" 
+                                       Disabled="rowSpan == 1"
+                                       OnClick="@(() => { _rowSpans[index]--; })" />
+                    </MudStack>
+
+                </MudStack>
+            </MudPaper>
+        </MudMatrixItem>
+    }
+</MudMatrix>
+
+    @code {
+    int _itemsCount = 3;
+    int _itemsCountSquared;
+
+    int[] _columnSpans;
+    int[] _rowSpans;
+
+    protected override void OnInitialized()
+    {
+        _itemsCountSquared = _itemsCount * _itemsCount;
+
+        List<int> rowSpans = new();
+        List<int> columnSpans = new();
+
+        for (int i = 0; i < _itemsCount; i++)
+        {
+            rowSpans.Add(_itemsCount);
+            columnSpans.Add(_itemsCount);
+        }
+
+        _columnSpans = columnSpans.ToArray();
+        _rowSpans = rowSpans.ToArray();
+    }
+}

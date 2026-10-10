@@ -38,6 +38,7 @@ namespace MudBlazor.Docs.Services
             .AddItem("Drawer", typeof(MudDrawer), typeof(MudDrawerHeader), typeof(MudDrawerContainer))
             .AddItem("Drop Zone", typeof(MudDropZone<T>), typeof(MudDropContainer<T>), typeof(MudDynamicDropItem<T>))
             .AddItem("Link", typeof(MudLink))
+            .AddItem("Matrix", typeof(MudMatrix), typeof(MudMatrixItem))
             .AddItem("Menu", typeof(MudMenu), typeof(MudMenuItem))
             .AddItem("Message Box", typeof(MudMessageBox))
             .AddItem("Nav Menu", typeof(MudNavMenu), typeof(MudNavLink), typeof(MudNavGroup))
