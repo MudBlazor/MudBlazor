@@ -13,15 +13,38 @@ namespace MudBlazor;
 /// </summary>
 public partial class MudDivider : MudComponentBase
 {
+    private bool HasContent => ChildContent is not null;
+
+    /// <summary>
+    /// A vertical divider of type <see cref="DividerType.FullWidth"/> must not get the "fullwidth" class,
+    /// since it would force <c>width: 100%</c> on an element that is meant to be a thin vertical line.
+    /// </summary>
+    private bool ApplyDividerType => DividerType != DividerType.FullWidth || !Vertical;
+
+    /// <summary>
+    /// Return the scss class corresponding to <see cref="DividerType"/>.
+    /// </summary>
+    private string DividerTypeClass => $"mud-divider-{DividerType.ToStringFast(true)}";
+
     protected string Classname =>
         new CssBuilder("mud-divider")
-            .AddClass("mud-divider-absolute", Absolute)
-            .AddClass("mud-divider-flexitem", FlexItem)
             .AddClass("mud-divider-light", Light)
             .AddClass("mud-divider-vertical", Vertical)
-            .AddClass($"mud-divider-{DividerType.ToStringFast(true)}", DividerType != DividerType.FullWidth || (DividerType == DividerType.FullWidth && !Vertical))
-            .AddClass(Class)
+            .AddClass("mud-divider-with-content-line", HasContent)
+            .AddClass("mud-divider-absolute", Absolute && !HasContent)
+            .AddClass("mud-divider-flexitem", FlexItem && !HasContent)
+            .AddClass(DividerTypeClass, !HasContent && ApplyDividerType)
+            .AddClass(Class, !HasContent)
             .Build();
+
+    protected string? WrapperClassname => HasContent ?
+        new CssBuilder("mud-divider-with-content")
+            .AddClass("mud-divider-with-content-vertical", Vertical)
+            .AddClass("mud-divider-absolute", Absolute)
+            .AddClass("mud-divider-flexitem", FlexItem)
+            .AddClass(DividerTypeClass, ApplyDividerType)
+            .AddClass(Class)
+            .Build() : null;
 
     /// <summary>
     /// Uses an absolute position for this divider.
@@ -72,4 +95,11 @@ public partial class MudDivider : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Divider.Appearance)]
     public DividerType DividerType { get; set; } = DividerType.FullWidth;
+
+    /// <summary>
+    /// The content within this component.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Divider.Behavior)]
+    public RenderFragment? ChildContent { get; set; }
 }

@@ -2,4 +2,15 @@
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
-<hr @attributes="UserAttributes" class="@Classname" style="@Style"/>
+@if (HasContent)
+{
+    <div @attributes="UserAttributes" class="@WrapperClassname" style="@Style">
+        <hr class="@Classname" />
+        <span class="mud-divider-with-content-text">@ChildContent</span>
+        <hr class="@Classname" />
+    </div>
+}
+else
+{
+    <hr @attributes="UserAttributes" class="@Classname" style="@Style" />
+}
