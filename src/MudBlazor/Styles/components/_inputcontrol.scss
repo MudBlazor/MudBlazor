@@ -9,6 +9,10 @@
   flex-direction: column;
   vertical-align: top;
 
+  &.mud-input-control-width-auto {
+    flex: 0 1 auto;
+  }
+
   &.mud-input-control-full-width {
     width: 100%;
   }
