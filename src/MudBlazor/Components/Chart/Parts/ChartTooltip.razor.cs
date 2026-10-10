@@ -10,7 +10,7 @@ namespace MudBlazor.Charts;
 /// </summary>
 public partial class ChartTooltip : ComponentBase
 {
-    private sealed record BBox(double X = 0, double Y = 0, double Width = 0, double Height = 0);
+    internal sealed record BBox(double X = 0, double Y = 0, double Width = 0, double Height = 0);
 
     private const double TriangleWidth = 16;
     private const double TriangleHeight = 8;
@@ -124,6 +124,13 @@ public partial class ChartTooltip : ComponentBase
     private string? _previousFontSize;
     private string? _previousTitle;
     private string? _previousSubtitle;
+    private bool _isMeasured;
+    private int _measurementId;
+
+    // The box is sized from the text that the browser measures after the first render.
+    // Until then the text would be shown at the origin of the chart without its background.
+    // Later measurements keep the tooltip visible, so labels that update don't blink.
+    private string? Visibility => _isMeasured ? null : "hidden";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -143,7 +150,16 @@ public partial class ChartTooltip : ComponentBase
         _previousSubtitle = Subtitle;
         _previousFontSize = FontSize;
 
+        var measurementId = ++_measurementId;
         var textBBox = await JsRuntime.InvokeAsync<BBox>("mudGetSvgBBox", _text);
+
+        // A newer measurement started because the text or position changed while this one was running.
+        // Its box belongs to the older text, so only the latest measurement is applied.
+        if (measurementId != _measurementId)
+        {
+            return;
+        }
+
         var textWidth = textBBox?.Width ?? 0;
         var textHeight = textBBox?.Height ?? 0;
 
@@ -189,6 +205,7 @@ public partial class ChartTooltip : ComponentBase
                                         $"{ToS(X)},{ToS(Y - TriangleStrokeWidth)}"; // Bottom
         }
 
+        _isMeasured = true;
         StateHasChanged();
     }
 }
