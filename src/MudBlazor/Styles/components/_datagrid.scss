@@ -124,6 +124,20 @@
         }
       }
 
+      // Keyboard focus needs the same reveal as hover, and must not depend on a hover-capable pointer.
+      // :focus-visible rather than :focus-within, so focus left behind by a pointer click does not keep the controls shown.
+      &:has(:focus-visible) {
+        .column-options .sort-direction-icon, .column-options .column-options-icon, .column-options .drag-icon-options {
+          opacity: 0.8;
+          color: var(--mud-palette-action-default);
+        }
+
+        .column-options .mud-menu .mud-icon-button-label {
+          opacity: 1.0;
+          color: var(--mud-palette-action-default);
+        }
+      }
+
       .column-options {
         display: inline-flex;
         align-items: center;
