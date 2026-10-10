@@ -371,8 +371,16 @@
             IOrderedEnumerable<USState>? orderedQuery = null;
             foreach (var sort in sortDefinitions)
             {
-                orderedQuery = data.OrderByDirection(sort.Descending ? SortDirection.Descending : SortDirection.Ascending,
-                                                     obj => GetPropertyValue(obj, sort.SortBy));
+                Func<USState, object?> keySelector = obj => GetPropertyValue(obj, sort.SortBy);
+                if (orderedQuery is null)
+                {
+                    orderedQuery = data.OrderByDirection(sort.Descending ? SortDirection.Descending : SortDirection.Ascending, keySelector);
+                }
+                else
+                {
+                    // Later sort definitions only order the states that the earlier ones consider equal.
+                    orderedQuery = sort.Descending ? orderedQuery.ThenByDescending(keySelector) : orderedQuery.ThenBy(keySelector);
+                }
             }
             data = orderedQuery!.ToList();
         }
