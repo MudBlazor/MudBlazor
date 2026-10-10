@@ -1,0 +1,23 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid Items="@_persons" T="Person">
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="Id" />
+        <PropertyColumn Property="x => x.Name" Title="Name" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Person" PageSizeOptions="@([5,10,15,20])" ShowPageNumbers="true" PaginationColor="Color.Secondary" PaginationVariant="Variant.Filled" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private readonly List<Person> _persons = Enumerable.Repeat(0, 42)
+                .Select((_, i) => new Person { Id = i, Name = $"Name{i}" })
+                .ToList();
+
+    public class Person
+    {
+        public required int Id { get; init; }
+        public required string Name { get; init; }
+    }
+}
