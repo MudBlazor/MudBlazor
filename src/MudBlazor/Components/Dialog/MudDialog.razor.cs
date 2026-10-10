@@ -253,14 +253,16 @@ namespace MudBlazor
                 };
 #pragma warning restore CS0618 // Type or member is obsolete
 
-                _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
+                var reference = _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
 
                 await _visibleState.SetValueAsync(true);
 
                 // Do not await this!
-                _reference.Result.ContinueWith(t =>
+                reference.Result.ContinueWith(t =>
                 {
-                    return InvokeAsync(() => _visibleState.SetValueAsync(false));
+                    return InvokeAsync(() => ReferenceEquals(_reference, reference)
+                        ? _visibleState.SetValueAsync(false)
+                        : Task.CompletedTask);
                 }).CatchAndLog();
             }
             finally
