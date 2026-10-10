@@ -1,0 +1,61 @@
+﻿@if (_open)
+{
+    var button = (Button ?? DefaultButton)(EventCallback.Factory.Create<MouseEventArgs>(this, ConfirmAsync));
+    if (Nested)
+    {
+        <CascadingValue Value="1" IsFixed="true">
+            <MudPaper>@button</MudPaper>
+        </CascadingValue>
+    }
+    else
+    {
+        @button
+    }
+}
+
+@code {
+    public static string __description__ = "Clicking Confirm removes the button and then throws, which should reach the surrounding ErrorBoundary.";
+
+    /// <summary>
+    /// Renders the button under test, wired to the click handler that removes it and then throws.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to a MudButton.
+    /// </remarks>
+    [Parameter]
+    public RenderFragment<EventCallback<MouseEventArgs>>? Button { get; set; }
+
+    /// <summary>
+    /// Renders the button inside a CascadingValue and a MudPaper that are removed with it, as when a dialog closes.
+    /// </summary>
+    [Parameter]
+    public bool Nested { get; set; }
+
+    /// <summary>
+    /// Awaited by the click handler before it throws, so a test can act while the click is pending.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to yielding once.
+    /// </remarks>
+    [Parameter]
+    public Task? Pending { get; set; }
+
+    private bool _open = true;
+
+    private RenderFragment<EventCallback<MouseEventArgs>> DefaultButton => onClick => @<MudButton OnClick="onClick">Confirm</MudButton>;
+
+    private async Task ConfirmAsync()
+    {
+        _open = false;
+        if (Pending is null)
+        {
+            await Task.Yield();
+        }
+        else
+        {
+            await Pending;
+        }
+
+        throw new InvalidOperationException("save failed");
+    }
+}
