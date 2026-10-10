@@ -87,7 +87,7 @@ namespace MudBlazor
         /// The default options for this dialog.
         /// </summary>
         /// <remarks>
-        /// These options are used if none are provided during the <see cref="ShowAsync(string, DialogOptions)"/> method.  This is typically used for inline dialogs.
+        /// These options are the dialog's defaults.  Any options given to <see cref="ShowAsync(string, DialogOptions)"/> are layered over them one property at a time, so a property left unset there falls back to the value here.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Misc)]  // Behavior and Appearance
