@@ -1600,6 +1600,17 @@ namespace MudBlazor.UnitTests.Components
             await act.Should().NotThrowAsync();
         }
 
+        /// <summary>
+        /// Children of an item whose type has no tree above it get no root either, so they take no tree settings such as Ripple (#13739).
+        /// </summary>
+        [Test]
+        public void TreeViewItem_WithoutRoot_ChildrenStayWithoutRoot()
+        {
+            var comp = Context.Render<TreeViewHeterogeneousNestedTest>();
+
+            comp.Find(".L3 > div.mud-treeview-item-content").ClassList.Should().NotContain("mud-ripple");
+        }
+
         [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12833")]
         public async Task TreeView_NewItem_ShouldBeSelected()
         {
@@ -1630,6 +1641,37 @@ namespace MudBlazor.UnitTests.Components
 
             await arrows()[1].ClickAsync();
             comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (6)"));
+        }
+
+        /// <summary>
+        /// Supplying or removing ServerData after the first render keeps the existing items and the content inside them (#13739).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_ServerDataChange_KeepsItems(bool startWithServerData)
+        {
+            Func<string, Task<IReadOnlyCollection<TreeItemData<string>>>> serverData = _ => Task.FromResult<IReadOnlyCollection<TreeItemData<string>>>([]);
+            List<TreeItemData<string>> items = [new() { Value = "Inbox", Expanded = true, Children = [new TreeItemData<string> { Value = "Unread" }] }];
+            var templated = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.ServerData, startWithServerData ? serverData : null)
+                .Add<MudTreeViewItem<string>, ITreeItemData<string>>(x => x.ItemTemplate, item => itemParameters => itemParameters
+                    .Add(x => x.Value, item.Value)
+                    .Add(x => x.Items, item.Children)
+                    .Add(x => x.Expanded, item.Expanded)));
+            var handWritten = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.ServerData, startWithServerData ? serverData : null)
+                .AddChildContent<MudTreeViewItem<string>>(item => item
+                    .Add(x => x.Value, "Archive")
+                    .Add(x => x.Expanded, true)
+                    .AddChildContent<MudTreeViewItem<string>>(child => child.Add(x => x.Value, "2025"))));
+            var itemsBefore = templated.FindComponents<MudTreeViewItem<string>>().Concat(handWritten.FindComponents<MudTreeViewItem<string>>()).Select(x => x.Instance).ToList();
+
+            await templated.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ServerData, startWithServerData ? null : serverData));
+            await handWritten.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ServerData, startWithServerData ? null : serverData));
+
+            var itemsAfter = templated.FindComponents<MudTreeViewItem<string>>().Concat(handWritten.FindComponents<MudTreeViewItem<string>>()).Select(x => x.Instance).ToList();
+            itemsAfter.Should().HaveCount(4).And.Equal(itemsBefore);
         }
 
         /// <summary>

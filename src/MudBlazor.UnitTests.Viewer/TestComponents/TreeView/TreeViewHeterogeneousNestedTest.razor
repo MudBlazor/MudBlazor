@@ -1,0 +1,11 @@
+﻿<MudTreeView T="string">
+    <MudTreeViewItem Text="L1" Expanded="true">
+        <MudTreeViewItem Value="0" Text="L2" Expanded="true">
+            <MudTreeViewItem Value="1" Text="L3" Class="L3" />
+        </MudTreeViewItem>
+    </MudTreeViewItem>
+</MudTreeView>
+
+@code {
+    public static string __description__ = "Int items inside a string tree have no root, so L3 must not get the tree's ripple.";
+}
