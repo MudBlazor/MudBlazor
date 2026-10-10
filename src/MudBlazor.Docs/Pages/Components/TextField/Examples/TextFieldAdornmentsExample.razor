@@ -3,7 +3,7 @@
 <div class="d-flex">
     <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.AttachMoney" AdornmentColor="Color.Primary" />
     <MudTextField @bind-Value="Weight" HelperText="Weight" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentText="Kg" AdornmentColor="Color.Secondary" Class="mx-8" />
-    <MudTextField @bind-Value="Password" Label="Password" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="TogglePasswordVisibility" AdornmentAriaLabel="Show Password" />
+    <MudTextField @bind-Value="Password" Label="Password" Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="TogglePasswordVisibility" AdornmentAriaLabel="Show Password" AdornmentTooltip="Show or hide password" />
 </div>
 
 @code {
