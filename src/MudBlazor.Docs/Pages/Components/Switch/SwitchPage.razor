@@ -73,6 +73,20 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Asynchronous updates">
+                <Description>
+                    Update the value before awaiting asynchronous work in <CodeInline>ValueChanged</CodeInline>.
+                    Bind <CodeInline>Disabled</CodeInline> to a loading flag to prevent additional changes while saving,
+                    and clear the flag in a <CodeInline>finally</CodeInline> block.
+                    If saving fails, restore the previous value when your application requires a rollback.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SwitchAsyncUpdateExample)" ShowCode="false">
+                <SwitchAsyncUpdateExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Keyboard Navigation">
                 <Description>
                     <MudText>MudSwitch supports keyboard navigation.</MudText>

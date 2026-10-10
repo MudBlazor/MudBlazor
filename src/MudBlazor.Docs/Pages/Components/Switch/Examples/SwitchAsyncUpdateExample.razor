@@ -1,0 +1,28 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudStack AlignItems="AlignItems.Center" Spacing="0" Class="mud-width-full">
+    <MudSwitch T="bool" Value="@_notifications" ValueChanged="SaveNotificationsAsync"
+               Disabled="@_saving" Label="Enable notifications" Color="Color.Primary" />
+    <MudText role="status" Style="min-height: 1lh;">@(_saving ? "Saving preferences..." : string.Empty)</MudText>
+</MudStack>
+
+@code {
+    private bool _notifications;
+    private bool _saving;
+
+    private async Task SaveNotificationsAsync(bool value)
+    {
+        _notifications = value;
+        _saving = true;
+
+        try
+        {
+            // Replace this simulated save with your asynchronous persistence call.
+            await Task.Delay(1000);
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}
