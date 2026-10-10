@@ -1,38 +1,79 @@
-﻿@if (Codes != null || ChildContent != null)
+﻿@if (ChildContent != null)
 {
+    @*
+        Preview and source share one shell, and the bar between them is the
+        divider. Both of its actions concern the code, so this is where they
+        belong; its left half names the file instead of being a bare spacer.
+    *@
     <div class="@Classname">
-        @if (Codes != null || (_hasCode && ChildContent != null))
+        <div class="@InnerClassname">
+            @ChildContent
+        </div>
+
+        @if (_hasCode)
         {
-            <MudToolBar Class="@ToolbarClassname">
-                @if(Codes != null)
+            @* Not MudToolBar: role="toolbar" has no accessible name here and
+               none of the roving-tabindex behaviour the role promises. *@
+            <div class="@ToolbarClassname">
+                @if (Codes != null)
                 {
                     @foreach (var codeFile in Codes)
                     {
                         <MudButton Class="@GetActiveCode(codeFile.Code)" OnClick="@(() => SetActiveCode(codeFile.Code))" Size="Size.Small">@codeFile.Title</MudButton>
                     }
                 }
-                <MudSpacer/>
-                @if (_hasCode && ChildContent != null)
+                else
                 {
-                    <MudTooltip Text="Online Playground" Arrow="true" Color="Color.Dark" Placement="Placement.Top" Delay="300" Duration="500" ShowOnFocus="false">
-                        <MudButton OnClick="RunOnTryMudBlazorAsync" StartIcon="@Icons.Material.Rounded.PlayArrow" IconColor="Color.Success" Color="Color.Default" Size="Size.Small">Run</MudButton>
-                    </MudTooltip>
-                    <MudButton OnClick="OnShowCode" StartIcon="@(ShowCode ? Icons.Material.Rounded.CodeOff : Icons.Material.Rounded.Code)" Color="Color.Default" Size="Size.Small">
-                        @(ShowCode ? "Hide code" : "Show code")
-                    </MudButton>
+                    <span class="docs-section-filename">@Code<span class="extension">.razor</span></span>
                 }
-            </MudToolBar>
-        }
-        @if (ChildContent != null)
-        {
-            <div class="@InnerClassname">
-                @ChildContent
+                <MudSpacer/>
+                <MudButton OnClick="RunOnTryMudBlazorAsync"
+                           StartIcon="@Icons.Material.Rounded.PlayArrow"
+                           IconColor="Color.Success"
+                           Color="Color.Default"
+                           Size="Size.Small"
+                           aria-label="Open this example in the TryMudBlazor playground (opens in a new tab)">
+                    Open in playground
+                </MudButton>
+                <MudButton OnClick="OnShowCode"
+                           EndIcon="@Icons.Material.Rounded.ExpandMore"
+                           Class="@ToggleClassname"
+                           Color="Color.Default"
+                           Size="Size.Small"
+                           aria-expanded="@(_showCode ? "true" : "false")"
+                           aria-controls="@_sourceId">
+                    @(_showCode ? "Hide code" : "Show code")
+                </MudButton>
+            </div>
+
+            @* hidden on the whole region, not max-height:0 on the inner
+               container — the latter hides pixels but leaves the markup in the
+               accessibility tree, and would leave this strip showing as an
+               empty band with a floating copy button. *@
+            <div class="@SourceClassname" id="@_sourceId" hidden="@(!_showCode)">
+                <div class="docs-section-source-container" id="@_snippetId">
+                    @CodeComponent(_activeCode)
+                </div>
+                <MudIconButton Icon="@Icons.Material.Outlined.FileCopy" Size="Size.Small" Class="copy-code-button" @onclick="CopyTextToClipboard" aria-label="Copy code to clipboard" />
             </div>
         }
     </div>
 }
-@if (_hasCode)
+else if (_hasCode)
 {
+    @* Code-only section: there is no preview for the bar to sit under, so the
+       file tabs stay at the top of the card. *@
+    @if (Codes != null)
+    {
+        <div class="@Classname">
+            <div class="@ToolbarClassname">
+                @foreach (var codeFile in Codes)
+                {
+                    <MudButton Class="@GetActiveCode(codeFile.Code)" OnClick="@(() => SetActiveCode(codeFile.Code))" Size="Size.Small">@codeFile.Title</MudButton>
+                }
+            </div>
+        </div>
+    }
     <div class="@SourceClassname">
         <div class="docs-section-source-container" id="@_snippetId">
             @CodeComponent(_activeCode)

@@ -63,15 +63,19 @@ public partial class SectionHeader
         }
     }
 
-    private string GetSectionId() => SectionInfo?.Id ?? Guid.NewGuid().ToString();
+    // Computed once. Calling Guid.NewGuid() from the render path handed the
+    // element a different id on every pass, churning diffs and breaking
+    // anything that referenced it.
+    private readonly string _fallbackId = Identifier.Create();
 
-    private Typo GetTitleTypo()
-    {
-        if (Section.Level >= 1)
-        {
-            return Typo.h6;
-        }
+    private string GetSectionId() => SectionInfo?.Id ?? _fallbackId;
 
-        return Typo.h5;
-    }
+    private Typo GetTitleTypo() => Section?.Level >= 1 ? Typo.h6 : Typo.h5;
+
+    /// <summary>
+    /// The heading element for this section's depth, kept separate from <see cref="GetTitleTypo"/>
+    /// so the visual scale and the document outline can differ. The page title is h1, so a
+    /// top-level section is h2 and each nesting level goes one deeper.
+    /// </summary>
+    private string GetTitleTag() => $"h{Math.Clamp((Section?.Level ?? 0) + 2, 2, 6)}";
 }
