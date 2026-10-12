@@ -573,6 +573,17 @@ window.mudpopoverHelper = {
                             flipAttr === 'top-and-right'
                         );
 
+                        // A bottom transform origin grows the popover upward from the anchor unless it flipped down.
+                        // Horizontal flips keep the vertical anchor, so anchorY stays its bottom edge.
+                        const growsUpward =
+                            (classList.contains('mud-popover-bottom-left') ||
+                                classList.contains('mud-popover-bottom-center') ||
+                                classList.contains('mud-popover-bottom-right')) &&
+                            flipAttr !== 'bottom' &&
+                            flipAttr !== 'bottom-and-left' &&
+                            flipAttr !== 'bottom-and-right';
+
+                        const minVisibleHeight = overflowPadding * 3;
                         let availableHeight;
                         let shouldClamp = false;
 
@@ -583,6 +594,15 @@ window.mudpopoverHelper = {
                                 top = overflowPadding;
                                 offsetY = 0;
                             }
+                        } else if (growsUpward && anchorY - minTop >= minVisibleHeight) {
+                            // Measure the space above the anchor, so an anchor near the viewport bottom doesn't shrink the list (#13998).
+                            // Without room for the minimum height it falls through, rather than pushing a short list above the viewport.
+                            availableHeight = anchorY - minTop;
+                            shouldClamp = popoverContentNode.offsetHeight > availableHeight;
+                            if (shouldClamp) {
+                                top = minTop;
+                                offsetY = 0;
+                            }
                         } else {
                             // Space from popover top down to bottom of screen
                             const popoverTopEdge = top + offsetY;
@@ -591,7 +611,6 @@ window.mudpopoverHelper = {
                         }
 
                         if (shouldClamp) {
-                            const minVisibleHeight = overflowPadding * 3;
                             const newMaxHeight = Math.max(availableHeight, minVisibleHeight);
                             popoverContentNode.style.maxHeight = `${newMaxHeight}px`;
                             listChild.style.maxHeight = `${newMaxHeight}px`;
