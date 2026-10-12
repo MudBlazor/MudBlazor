@@ -4,12 +4,12 @@
   overflow: hidden;
 }
 
-// Keep clipping ripple spans after their host loses `.mud-ripple` during animation (#13283).
+// Keep clipping active while the ripple host loses `.mud-ripple` (#13283).
 :not(.mud-ripple):has(> .mud-ripple-effect) {
   overflow: hidden;
 }
 
-// Keep the position fallback at zero specificity so component positioning wins (#13895).
+// Preserve component positioning with a zero-specificity fallback (#13895).
 :where(:not(.mud-ripple):has(> .mud-ripple-effect)) {
   position: relative;
 }
