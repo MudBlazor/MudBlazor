@@ -4,13 +4,13 @@
   overflow: hidden;
 }
 
-// Keep clipping the ripple span while its host loses `.mud-ripple` during animation (#13283).
+// Keep clipping ripple spans after their host loses `.mud-ripple` during animation (#13283).
 :not(.mud-ripple):has(> .mud-ripple-effect) {
   overflow: hidden;
 }
 
-// Use relative positioning only as a fallback for hosts without their own position.
-// `:where()` gives this selector zero specificity, preserving component positioning such as `.mud-switch-base` (#13895).
+// Use relative positioning only when the host has no position of its own.
+// `:where()` gives the fallback zero specificity and preserves component positioning (#13895).
 :where(:not(.mud-ripple):has(> .mud-ripple-effect)) {
   position: relative;
 }
