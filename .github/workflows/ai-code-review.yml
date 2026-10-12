@@ -67,5 +67,5 @@ jobs:
             const review = { ...context.repo, pull_number: pr.number, commit_id: pr.head.sha, event: 'COMMENT' };
             const body = `**AI code review:** ${summary}`;
             // One finding off the diff rejects the whole review, so fall back to listing them all in the body.
-            await github.rest.pulls.createReview({ ...review, body, comments: findings.map(({ path, line, body }) => ({ path, line, body })) })
+            await github.rest.pulls.createReview({ ...review, body, comments: findings.map(({ path, line, body }) => ({ path, line, side: 'RIGHT', body })) })
               .catch(() => github.rest.pulls.createReview({ ...review, body: [body, ...findings.map(f => `${f.body}\n\n\`${f.path}:${f.line}\``)].join('\n\n---\n\n') }));
