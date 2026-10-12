@@ -9,7 +9,8 @@
 </MudMenu>
 
 @* Pinned to the viewport bottom so the anchors end 8px above it, like the reporter's page scrolled to the end. *@
-<MudPaper Elevation="0" Style="background: var(--mud-palette-background-gray); position: fixed; inset-inline: 0; bottom: 0;">
+@* Raised above the Viewer's drawer so the buttons stay clickable with the sidebar open. *@
+<MudPaper Elevation="0" Style="background: var(--mud-palette-background-gray); position: fixed; inset-inline: 0; bottom: 0; z-index: calc(var(--mud-zindex-drawer) + 1);">
     <MudToolBar Gutters="false" Class="mx-1">
         <MudMenu Icon="@Icons.Material.Filled.Add" AriaLabel="Add" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.BottomLeft" PopoverClass="popover-upward-short">
             <MudMenuItem Label="Preview" Icon="@Icons.Material.Filled.Visibility" />

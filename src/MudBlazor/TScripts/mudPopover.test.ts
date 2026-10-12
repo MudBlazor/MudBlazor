@@ -28,6 +28,7 @@ function renderPopover(origins: string, anchor: Rect, naturalHeight: number): HT
     (popoverNode.parentNode as HTMLElement).getBoundingClientRect = () => new DOMRect(anchor.x, anchor.y, anchor.width, anchor.height);
     content.getBoundingClientRect = () => new DOMRect(0, 0, 200, height());
     Object.defineProperty(content, "offsetHeight", { get: height });
+    Object.defineProperty(content, "offsetWidth", { get: () => 200 });
     clearStyleOnNull(content.style);
     clearStyleOnNull((content.querySelector(".mud-list") as HTMLElement).style);
     return popoverNode;
@@ -61,16 +62,38 @@ describe("mudpopoverHelper.placePopover list height clamp", () => {
     afterEach(() => { document.body.innerHTML = ""; });
     afterAll(() => happyDOM.setViewport(originalViewport));
 
-    // #13998: a menu that grows upward and fits above its anchor keeps its natural height.
-    test("upward list that fits keeps its natural height", () => {
-        const popoverNode = renderPopover("mud-popover-bottom-left mud-popover-anchor-bottom-right", anchorNearBottom, 209);
+    const flipOf = () => document.getElementById("popovercontent-test")?.getAttribute("data-mudpopover-flip");
+
+    // #13998: a menu that grows upward and fits above its anchor keeps its natural height, whichever bottom origin it uses.
+    test.each(["mud-popover-bottom-left", "mud-popover-bottom-center", "mud-popover-bottom-right"])("upward list that fits keeps its natural height (%s)", (transform) => {
+        const popoverNode = renderPopover(`${transform} mud-popover-anchor-bottom-right`, anchorNearBottom, 209);
         expect(placeRepeatedly(popoverNode)).toEqual(Array(4).fill({ maxHeight: "", top: "503px" }));
+    });
+
+    // #13998: a horizontal flip at the right edge keeps the vertical anchor, so the list still grows upward from it.
+    test("upward list flipped horizontally keeps its natural height", () => {
+        const popoverNode = renderPopover("mud-popover-bottom-left mud-popover-anchor-bottom-right", { x: 1200, y: 676, width: 48, height: 36 }, 209);
+        expect(placeRepeatedly(popoverNode)).toEqual(Array(4).fill({ maxHeight: "", top: "503px" }));
+        expect(flipOf()).toBe("left");
     });
 
     // #13998: an upward list taller than the space above clamps to that space once, instead of shrinking on every pass.
     test("upward list that overflows clamps to the space above and stays stable", () => {
         const popoverNode = renderPopover("mud-popover-bottom-left mud-popover-anchor-bottom-right", anchorNearBottom, 1440);
         expect(placeRepeatedly(popoverNode)).toEqual(Array(4).fill({ maxHeight: "688px", top: "24px" }));
+    });
+
+    // The edge clamp skips an anchor that starts above the viewport, so the upward clamp itself must keep the bottom edge on the anchor.
+    test("upward list that overflows keeps its bottom edge on an anchor partly above the viewport", () => {
+        const popoverNode = renderPopover("mud-popover-bottom-left mud-popover-anchor-bottom-left", { x: 100, y: -50, width: 200, height: 500 }, 800);
+        expect(placeRepeatedly(popoverNode)).toEqual(Array(4).fill({ maxHeight: "450px", top: "0px" }));
+    });
+
+    // A bottom origin list that flipped down grows downward, so it is clamped to the space below like any downward list.
+    test("bottom origin list flipped down clamps to the space below", () => {
+        const popoverNode = renderPopover("mud-popover-bottom-left mud-popover-anchor-top-left", { x: 100, y: 200, width: 200, height: 36 }, 500);
+        expect(placeRepeatedly(popoverNode)).toEqual(Array(4).fill({ maxHeight: "460px", top: "236px" }));
+        expect(flipOf()).toBe("bottom");
     });
 
     // An upward list with less than the minimum height above its anchor stays inside the viewport instead of being pushed above it.
