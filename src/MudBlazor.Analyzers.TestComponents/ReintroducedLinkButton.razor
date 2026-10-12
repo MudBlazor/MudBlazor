@@ -1,0 +1,12 @@
+﻿@*derives from MudButton and legitimately declares its own Link parameter*@
+@inherits MudButton
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code
+{
+    [Parameter]
+    public string? Link { get; set; }
+}

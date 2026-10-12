@@ -405,6 +405,34 @@ namespace MudBlazor.UnitTests.Components
             axisLabels.Should().NotBeEmpty();
         }
 
+        /// <summary>
+        /// Verifies negative heat map axis label offsets are written with an ASCII minus sign when the current culture uses U+2212.
+        /// </summary>
+        [Test]
+        [SetCulture("sv-SE")]
+        public void HeatMap_AxisLabelOffsetsUseInvariantMinusSign()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2]) }
+            };
+            var options = new HeatMapChartOptions
+            {
+                XAxisLabelPosition = XAxisLabelPosition.Top,
+                YAxisLabelPosition = YAxisLabelPosition.Left
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartLabels, new[] { "Monday", "Tuesday" })
+                .Add(p => p.ChartOptions, options)
+            );
+
+            comp.Find("text.mud-charts-xaxis").GetAttribute("y").Should().Be("-5");
+            comp.Find("text.mud-charts-yaxis").GetAttribute("x").Should().Be("-5");
+        }
+
         [Test]
         public void HeatMap_ShouldShowTooltipsWhenEnabled()
         {

@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid Class="justify-space-between" Style="max-width: 800px;">
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@macAddressMask" Label="MAC Address" HelperText="@macAddressMask.Mask"
+                      @bind-Value="macAddress" Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@macAddressDashMask" Label="MAC Address with Dashes" HelperText="@macAddressDashMask.Mask"
+                      @bind-Value="macAddressDash" Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        MAC: <b>@macAddress</b>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        MAC w/Dashes: <b>@macAddressDash</b>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string macAddress;
+    public string macAddressDash;
+    public IMask macAddressMask = RegexMask.MacAddress();
+    public IMask macAddressDashMask = RegexMask.MacAddress(separator: '-');
+}

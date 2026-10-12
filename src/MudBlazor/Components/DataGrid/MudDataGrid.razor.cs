@@ -153,6 +153,7 @@ namespace MudBlazor
         protected string TableRootStyle =>
             new StyleBuilder()
                 .AddStyle("width", "max-content", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
+                .AddStyle("min-width", "100%", when: HorizontalScrollbar || ColumnResizeMode == ResizeMode.Container)
                 .Build();
 
         protected string TableClass =>
@@ -888,13 +889,24 @@ namespace MudBlazor
         public bool MultiSelection { get; set; }
 
         /// <summary>
-        /// Toggles the row checkbox when the row is clicked.
+        /// Selects or deselects a row when it is clicked.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <c>true</c>.  When <c>false</c>, rows are only selected through a <see cref="SelectColumn{T}"/> checkbox or in code.
+        /// <see cref="RowClick"/> is raised either way, so a click can still be handled without changing <see cref="SelectedItem"/> or <see cref="SelectedItems"/>.
         /// </remarks>
         [Parameter]
         public bool SelectOnRowClick { get; set; } = true;
+
+        /// <summary>
+        /// Allows the selection to be changed by the user.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  When <c>false</c>, <see cref="SelectedItem"/> and <see cref="SelectedItems"/> can still be set in code.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public bool SelectionChangeable { get; set; } = true;
 
         /// <summary>
         /// Controls how cell values are edited.
@@ -1368,6 +1380,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// This property can be bound (<c>@bind-SelectedItems</c>) to initially select rows.  Use <see cref="SelectedItem"/> when <see cref="MultiSelection"/> is <c>false</c>.
+        /// To change the selection from code, assign a new set.  A change is detected by reference, so editing the bound set in place, such as calling <c>Clear()</c>, does not update the grid.
         /// </remarks>
         [Parameter, ParameterState]
         public HashSet<T>? SelectedItems { get; set; }
@@ -1866,7 +1879,7 @@ namespace MudBlazor
                 _serverData = await ServerData(state, _serverDataCancellationTokenSource.Token);
                 _currentRenderFilteredItemsCache = null;
 
-                if (CurrentPage * RowsPerPage > _serverData.TotalItems)
+                if (CurrentPage * RowsPerPage >= _serverData.TotalItems)
                     CurrentPage = 0;
 
                 Loading = false;
@@ -2150,6 +2163,10 @@ namespace MudBlazor
         internal async Task SetSelectedItemAsync(bool value, T item)
         {
             Debug.Assert(item is not null);
+
+            if (!SelectionChangeable)
+                return;
+
             if (IsRowSelectionDisabled(item))
                 return; // Do not change selection if the item is disabled
 
@@ -2189,11 +2206,11 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Set the currently selected item in the data grid.
+        /// Toggles the selection of an item the same way a row click does.
         /// </summary>
-        /// <param name="item">The item to select.</param>
+        /// <param name="item">The item to select or deselect.</param>
         /// <remarks>
-        /// When <see cref="MultiSelection"/> is <c>true</c> and <see cref="SelectOnRowClick"/> is <c>true</c>, the <see cref="SelectedItems"/> are updated.  The <see cref="SelectedItem"/> is also updated.
+        /// Updates <see cref="SelectedItem"/> and <see cref="SelectedItems"/>.  Does nothing when <see cref="SelectOnRowClick"/> is <c>false</c>.
         /// </remarks>
         public Task SetSelectedItemAsync(T item)
         {
@@ -2210,6 +2227,9 @@ namespace MudBlazor
         {
             // nothing should happen if multiselection is false
             if (!MultiSelection)
+                return;
+
+            if (!SelectionChangeable)
                 return;
 
             var selectableItems = GetSelectableItems();
@@ -2239,6 +2259,9 @@ namespace MudBlazor
         {
             // nothing should happen if multiselection is false
             if (!MultiSelection)
+                return;
+
+            if (!SelectionChangeable)
                 return;
 
             var selectableItems = GetSelectableItems(groupItems);
@@ -2915,6 +2938,20 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Hides the columns panel only when it is open.
+        /// </summary>
+        /// <remarks>
+        /// A column filter menu lives in its header cell, so opening one renders that cell and needs a grid render only to close an open columns panel.
+        /// </remarks>
+        internal void HideColumnsPanelIfVisible()
+        {
+            if (_columnsPanelVisible)
+            {
+                HideColumnsPanel();
+            }
+        }
+
+        /// <summary>
         /// Updates the order of a column after drag-and-drop in the columns panel.
         /// </summary>
         /// <param name="dropItem">The dropped column information.</param>
@@ -3300,19 +3337,24 @@ namespace MudBlazor
         /// <param name="expanded">Whether the group should be expanded (true) or collapsed (false).</param>
         public void ToggleGroupExpand(string? columnName, object? key, bool expanded)
         {
-            var groupKey = new GroupKey(columnName, key);
+            SetGroupExpanded(columnName, key, expanded);
+            StateHasChanged();
+        }
 
-            // update the expansion state for _groupExpansionsDict
-            // if it has a key we see if it differs from the definition Expanded State and update accordingly
-            // if it doesn't we add it if the new state doesn't match the definition
-            var col = RenderedColumns.FirstOrDefault(x => x.PropertyName == columnName);
-            if (expanded == col?._groupExpandedState.Value)
-                _groupExpansionsDict.Remove(groupKey);
-            else
-                _groupExpansionsDict[groupKey] = expanded;
+        /// <summary>
+        /// Records whether a group is expanded without rendering the grid.
+        /// </summary>
+        /// <remarks>
+        /// A group row renders its own rows, so a click on its expander only needs that row to render.
+        /// The grid reads the recorded state the next time it renders.
+        /// </remarks>
+        internal void SetGroupExpanded(string? columnName, object? key, bool expanded)
+        {
+            // Record the state even when it matches the column default.
+            // A group row builds its nested groups from definitions made at the last grid render, which can still carry the grid-level GroupExpanded default, so a missing entry would fall back to that stale value.
+            _groupExpansionsDict[new GroupKey(columnName, key)] = expanded;
 
             _groupInitialExpanded = false;
-            StateHasChanged();
         }
 
         /// <summary>

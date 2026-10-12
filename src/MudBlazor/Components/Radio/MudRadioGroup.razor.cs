@@ -113,6 +113,11 @@ namespace MudBlazor
 
         internal bool GetReadOnlyState() => ReadOnly || ParentReadOnly; //internal because the MudRadio reads this value directly
 
+        /// <summary>
+        /// The id of the rendered error text, so each <see cref="MudRadio{T}"/> can reference it through <c>aria-describedby</c>.
+        /// </summary>
+        internal string? GetErrorId() => ErrorIdState.Value;
+
         protected async Task SetSelectedOptionAsync(T? option, bool updateRadio, bool updateValue = true)
         {
             if (!OptionEquals(_value, option))

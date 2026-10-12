@@ -16,6 +16,7 @@ namespace MudBlazor
         /// We need a random id for the year items in the year list so we can scroll to the item safely in every DatePicker.
         /// </summary>
         private readonly string _componentId = Identifier.Create();
+        private readonly string _listboxId = Identifier.Create("listbox");
 
         private bool _isCleared;
         private bool _isProcessingValue;
@@ -60,6 +61,7 @@ namespace MudBlazor
                 .AddClass("mud-autocomplete")
                 .AddClass("mud-width-full", FullWidth)
                 .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
+                .AddClass(OuterClass)
                 .Build();
 
         protected string CircularProgressClassname =>
@@ -73,6 +75,15 @@ namespace MudBlazor
                 .AddClass(ListItemClass)
                 .Build();
 
+        /// <summary>
+        /// The CSS classes applied to the outer <c>div</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter]
+        public string? OuterClass { get; set; }
         /// <summary>
         /// Input's classnames, separated by space.
         /// </summary>
@@ -1032,7 +1043,7 @@ namespace MudBlazor
         /// <param name="index">The index of the item to scroll to. If it's out of range then nothing will happen.</param>
         private ValueTask SelectItemAsync(int index)
         {
-            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any() || index < 0 || index > _enabledItemIndices.Count - 1)
+            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any() || index < 0 || index >= _items.Length)
                 return ValueTask.CompletedTask;
 
             _selectedListItemIndex = index;
@@ -1066,6 +1077,39 @@ namespace MudBlazor
         private string GetListItemId(in int index)
         {
             return $"{_componentId}_item{index}";
+        }
+
+        /// <summary>
+        /// Builds fallback combobox attributes for the text input so caller-supplied values still win.
+        /// </summary>
+        /// <remarks>
+        /// The suggestion list only exists in the DOM while it is open and has items, so the list and the highlighted option are referenced only then.
+        /// </remarks>
+        private Dictionary<string, object?> GetInputAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+            foreach (var userAttribute in UserAttributes)
+            {
+                attributes[userAttribute.Key] = userAttribute.Value;
+            }
+
+            var listRendered = _open && _items is { Length: > 0 };
+            attributes.TryAdd("role", "combobox");
+            attributes.TryAdd("aria-autocomplete", "list");
+            attributes.TryAdd("aria-haspopup", "listbox");
+            attributes.TryAdd("aria-expanded", listRendered ? "true" : "false");
+
+            if (listRendered)
+            {
+                attributes.TryAdd("aria-controls", _listboxId);
+
+                if (_selectedListItemIndex >= 0 && _selectedListItemIndex < _items!.Length)
+                {
+                    attributes.TryAdd("aria-activedescendant", GetListItemId(_selectedListItemIndex));
+                }
+            }
+
+            return attributes;
         }
 
         internal async Task OnEnterKeyAsync()

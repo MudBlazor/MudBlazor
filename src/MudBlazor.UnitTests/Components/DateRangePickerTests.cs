@@ -925,6 +925,77 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// ResetAsync clears the range and moves the calendar off the cleared range's month back to the current month (#9692).
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ResetAsync_ShouldReturnPickerMonthToCurrentMonth()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2024, 8, 22, 12, 0, 0, DateTimeKind.Utc));
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.DateRange, new DateRange(new DateTime(2021, 3, 10), new DateTime(2021, 3, 15))));
+            var picker = comp.Instance;
+            picker.PickerMonth.Should().Be(new DateTime(2021, 3, 1));
+
+            await comp.InvokeAsync(() => picker.ResetAsync());
+
+            picker.DateRange.Should().BeNull();
+            picker.PickerMonth.Should().Be(new DateTime(2024, 8, 1));
+        }
+
+        /// <summary>
+        /// ResetAsync returns the calendar to StartMonth when one is set, not to the month the user navigated to.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ResetAsync_ShouldReturnPickerMonthToStartMonth()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2024, 8, 22, 12, 0, 0, DateTimeKind.Utc));
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.StartMonth, new DateTime(2023, 5, 1)));
+            var picker = comp.Instance;
+            picker.PickerMonth.Should().Be(new DateTime(2023, 5, 1));
+
+            await comp.FindAll("button.mud-picker-nav-button-next")[0].ClickAsync();
+            picker.PickerMonth.Should().Be(new DateTime(2023, 6, 1));
+
+            await comp.InvokeAsync(() => picker.ResetAsync());
+
+            picker.PickerMonth.Should().Be(new DateTime(2023, 5, 1));
+            comp.FindAll("button.mud-button-month")[0].TrimmedText().Should().Be("2023 May");
+        }
+
+        /// <summary>
+        /// ResetAsync on a static picker clears a bound DateRange and the touched state, even though clearing the range on its own marks the picker as touched.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ResetAsync_Static_ShouldClearBoundDateRangeAndTouched()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            timeProvider.SetUtcNow(new DateTime(2024, 8, 22, 12, 0, 0, DateTimeKind.Utc));
+            DateRange boundRange = null;
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Bind(p => p.DateRange, boundRange, range => boundRange = range));
+            var picker = comp.Instance;
+
+            await comp.SelectDateAsync("10");
+            await comp.SelectDateAsync("12");
+            boundRange.Should().Be(new DateRange(new DateTime(2024, 8, 10), new DateTime(2024, 8, 12)));
+            picker.Touched.Should().BeTrue();
+
+            await comp.InvokeAsync(() => picker.ResetAsync());
+
+            boundRange.Should().BeNull();
+            picker.DateRange.Should().BeNull();
+            picker.Touched.Should().BeFalse();
+        }
+
+        /// <summary>
         /// Typing a range into the inputs updates Text as well as DateRange, even though the range input binds its Value rather than its Text.
         /// </summary>
         [Test]
@@ -940,6 +1011,36 @@ namespace MudBlazor.UnitTests.Components
 
             picker.DateRange.Should().Be(new DateRange(start, end));
             picker.Text.Should().Be(RangeUtility.Join(start.ToShortDateString(), end.ToShortDateString()));
+        }
+
+        /// <summary>
+        /// Opening an editable range picker must not read its text, which holds both dates, as a single date.
+        /// That recorded a conversion error, so a form holding a valid range failed validation once the picker had been opened.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_Editable_OpenAndClose_ShouldKeepValidRangeValid()
+        {
+            var range = new DateRange(new DateTime(2020, 10, 20), new DateTime(2020, 10, 27));
+            var comp = Context.Render<MudForm>(parameters => parameters
+                .AddChildContent<MudDateRangePicker>(pickerParameters => pickerParameters
+                    .Add(p => p.Editable, true)
+                    .Add(p => p.Required, true)
+                    .Add(p => p.DateRange, range)));
+            var form = comp.Instance;
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
+
+            await comp.InvokeAsync(picker.OpenAsync);
+
+            picker.ConversionError.Should().BeFalse();
+            picker.Touched.Should().BeFalse("opening the picker is not an edit");
+
+            await comp.InvokeAsync(() => picker.CloseAsync());
+            await comp.InvokeAsync(form.ValidateAsync);
+
+            picker.ConversionError.Should().BeFalse();
+            picker.DateRange.Should().Be(range);
+            form.IsValid.Should().BeTrue();
+            form.Errors.Should().BeEmpty();
         }
 
         /// <summary>
@@ -1822,6 +1923,27 @@ namespace MudBlazor.UnitTests.Components
             public Task ClickDayAsync(DateTime date) => OnDayClickedAsync(date);
 
             public Task Submit() => SubmitAsync();
+        }
+
+        /// <summary>
+        /// Both range inputs link to the error text when the picker is invalid.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_ShouldLinkInputsToErrorText()
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.ErrorId, "range-error")
+                .Add(p => p.ErrorText, "Invalid range"));
+
+            comp.FindAll("input").Should().OnlyContain(input => !input.HasAttribute("aria-invalid"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, true));
+
+            var inputs = comp.FindAll("input");
+            inputs.Count.Should().Be(2);
+            inputs.Should().OnlyContain(input => input.GetAttribute("aria-invalid") == "true");
+            inputs.Should().OnlyContain(input => input.GetAttribute("aria-describedby") == "range-error");
+            comp.Find("#range-error").TextContent.Trim().Should().Be("Invalid range");
         }
     }
     public static class DatePickerRenderedFragmentExtensions

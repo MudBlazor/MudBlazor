@@ -12,12 +12,19 @@
             }
             else
             {
-                <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@(HasChildren() && AreChildrenVisible())" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+                @if (HasChildren())
+                {
+                    <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@AreChildrenVisible()" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+                }
+                else
+                {
+                    <div class="mud-treeview-item-arrow" @ondblclick="OnArrowDoubleClick" @ondblclick:stopPropagation="true"></div>
+                }
 
                 @if (MultiSelection)
                 {
                     <MudCheckBox T="bool?" TriState Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@GetIndeterminateIcon()"
-                                 @bind-Value:get="GetCheckBoxStateTriState()" @bind-Value:set="@(x => OnCheckboxChangedAsync())" Disabled="@GetDisabled()" ReadOnly="@GetReadOnly()"></MudCheckBox>
+                                 @bind-Value:get="GetCheckBoxStateTriState()" @bind-Value:set="@(x => OnCheckboxChangedAsync())" Disabled="@GetDisabled()" ReadOnly="@GetCheckBoxReadOnly()"></MudCheckBox>
                 }
 
                 @if (HasIcon)
@@ -33,15 +40,11 @@
                 }
                 else
                 {
-                    <MudText Typo="@TextTypo" Class="@TextClassname">
-                        @GetText()
-                    </MudText>
+                    @MudText.RenderText(TextTypo, TextClassname, GetText())
 
                     @if (!string.IsNullOrEmpty(EndText))
                     {
-                        <MudText Typo="@EndTextTypo" Class="@EndTextClass">
-                            @EndText
-                        </MudText>
+                        @MudText.RenderText(EndTextTypo, EndTextClass, EndText)
                     }
 
                     @if (!string.IsNullOrEmpty(EndIcon))

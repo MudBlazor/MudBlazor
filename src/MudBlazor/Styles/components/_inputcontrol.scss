@@ -94,6 +94,11 @@
     content: "*";
   }
 
+  // The label's asterisk comes from a pseudo-element, so the outlined notch has to reserve the same width or the glyph sits on the border (#11050).
+  &.mud-input-required > .mud-input-control-input-container .mud-input-outlined-border > legend::after {
+    content: "*";
+  }
+
   &.mud-input-number-control {
     & input::-webkit-outer-spin-button,
     & input::-webkit-inner-spin-button {

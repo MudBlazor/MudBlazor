@@ -44,6 +44,30 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(true));
         }
 
+        /// <summary>
+        /// The label and child content use body1 typography and take the error color while the switch has errors.
+        /// </summary>
+        [Test]
+        public async Task Switch_LabelAndChildContent_TakeErrorColor()
+        {
+            var comp = Context.Render<MudSwitch<bool>>(parameters => parameters
+                .Add(p => p.Label, "Notifications")
+                .AddChildContent("Email"));
+
+            comp.FindAll("label.mud-switch span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, true));
+
+            comp.FindAll("label.mud-switch span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1 mud-error-text");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, false));
+
+            comp.FindAll("label.mud-switch span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1");
+        }
+
         [Test]
         public void Switch_AriaLabel()
         {
@@ -257,6 +281,39 @@ namespace MudBlazor.UnitTests.Components
             Context.Render<MudSwitch<bool>>(self => self.Add(x => x.Disabled, false)).Find("span.mud-button-root").ClassList.Should().Contain("hover:mud-default-hover");
             Context.Render<MudSwitch<bool>>(self => self.Add(x => x.Disabled, true).Add(x => x.ReadOnly, false)).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
             Context.Render<MudSwitch<bool>>(self => self.Add(x => x.Disabled, true).Add(x => x.ReadOnly, true)).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
+        }
+
+        /// <summary>
+        /// An invalid switch sets aria-invalid and links aria-describedby to its error text.
+        /// </summary>
+        [Test]
+        public async Task Switch_ShouldLinkInputToErrorText()
+        {
+            var comp = Context.Render<MudSwitch<bool>>(parameters => parameters
+                .Add(p => p.ErrorId, "field-error")
+                .Add(p => p.ErrorText, "Required"));
+
+            comp.Find("input").HasAttribute("aria-invalid").Should().BeFalse();
+            comp.Find("input").HasAttribute("aria-describedby").Should().BeFalse();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, true));
+
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("true");
+            comp.Find("input").GetAttribute("aria-describedby").Should().Be("field-error");
+            comp.Find("#field-error").TextContent.Trim().Should().Be("Required");
+        }
+
+        /// <summary>
+        /// A user-supplied aria-invalid wins over the generated one.
+        /// </summary>
+        [Test]
+        public void Switch_ShouldAllowUserAriaInvalidOverride()
+        {
+            var comp = Context.Render<MudSwitch<bool>>(parameters => parameters
+                .Add(p => p.Error, true)
+                .AddUnmatched("aria-invalid", "false"));
+
+            comp.Find("input").GetAttribute("aria-invalid").Should().Be("false");
         }
     }
 }

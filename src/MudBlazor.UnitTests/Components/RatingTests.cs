@@ -314,5 +314,30 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => item.Instance.HandlePointerOutAsync(new PointerEventArgs()));
             await comp.InvokeAsync(() => item.Instance.HandlePointerOverAsync(new PointerEventArgs()));
         }
+
+        /// <summary>
+        /// The rating group is named and its radios drop the unsupported aria-readonly.
+        /// </summary>
+        [Test]
+        public void Rating_ShouldExposeAccessibleNameAndValidRadioAttributes()
+        {
+            var comp = Context.Render<MudRating>();
+
+            comp.Find("span.mud-rating-root").GetAttribute("aria-label").Should().Be("Rating");
+            // aria-readonly is not supported on the radio role; it lives on the radiogroup instead.
+            comp.FindAll("input.mud-rating-input").Should().OnlyContain(input => !input.HasAttribute("aria-readonly"));
+            comp.Find("span.mud-rating-root").GetAttribute("aria-readonly").Should().Be("false");
+        }
+
+        /// <summary>
+        /// A user-supplied aria-label replaces the default rating name.
+        /// </summary>
+        [Test]
+        public void Rating_ShouldAllowUserAriaLabelOverride()
+        {
+            var comp = Context.Render<MudRating>(parameters => parameters.AddUnmatched("aria-label", "Quality"));
+
+            comp.Find("span.mud-rating-root").GetAttribute("aria-label").Should().Be("Quality");
+        }
     }
 }

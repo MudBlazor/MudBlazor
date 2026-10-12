@@ -839,7 +839,7 @@ namespace MudBlazor
             // Get data via the ServerData function
             _serverData = await ServerData(state, _cancellationTokenSrc!.Token);
 
-            if (CurrentPage * RowsPerPage > _serverData.TotalItems)
+            if (CurrentPage * RowsPerPage >= _serverData.TotalItems)
             {
                 SetCurrentPage(0);
             }

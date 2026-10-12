@@ -144,6 +144,39 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// The <c>aria-sort</c> value for the primary sorted header cell, or <c>null</c> otherwise.
+        /// </summary>
+        private string? GetAriaSort()
+        {
+            if (!sortable || SortDirection == SortDirection.None || Column?.PropertyName is not { } propertyName || DataGrid.SortDefinitions.Count == 0)
+            {
+                return null;
+            }
+
+            var primarySort = DataGrid.SortDefinitions.MinBy(sort => sort.Value.Index);
+            if (!string.Equals(primarySort.Key, propertyName, StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            var ariaSortOwner = DataGrid.RenderedColumns.FirstOrDefault(column =>
+                !column.HiddenState.Value
+                && (column.Sortable ?? (DataGrid.SortMode != SortMode.None))
+                && string.Equals(column.PropertyName, primarySort.Key, StringComparison.Ordinal));
+            if (!ReferenceEquals(Column, ariaSortOwner))
+            {
+                return null;
+            }
+
+            return SortDirection switch
+            {
+                SortDirection.Ascending => "ascending",
+                SortDirection.Descending => "descending",
+                _ => null
+            };
+        }
+
         private bool resizable
         {
             get
@@ -191,7 +224,7 @@ namespace MudBlazor
         {
             get
             {
-                if (!sortable && !filterable && !groupable)
+                if (!sortable && !filterable && !groupable && !hideable)
                     return false;
                 if (!sortable && DataGrid?.FilterMode == DataGridFilterMode.ColumnFilterRow)
                     return false;
@@ -541,7 +574,7 @@ namespace MudBlazor
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
-                DataGrid.HideColumnsPanel();
+                DataGrid.HideColumnsPanelIfVisible();
                 DataGrid.DropContainerHasChanged();
             }
         }
@@ -564,7 +597,7 @@ namespace MudBlazor
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
-                DataGrid.HideColumnsPanel();
+                DataGrid.HideColumnsPanelIfVisible();
                 DataGrid.DropContainerHasChanged();
             }
         }

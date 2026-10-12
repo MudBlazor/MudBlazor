@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
+using MudBlazor.Utilities;
 using static System.String;
 
 namespace MudBlazor
@@ -11,16 +13,16 @@ namespace MudBlazor
     public abstract class MudBaseButton : MudComponentBase
     {
         /// <summary>
-        /// Stores the rendered element reference without re-rendering this button.
+        /// Stores the rendered element reference.
         /// </summary>
         /// <remarks>
-        /// Only the button markup in this assembly binds it, so it stays off the public API surface.
+        /// Kept as a field so the capture does not allocate a closure on every render.
         /// </remarks>
-        private protected readonly EventCallback<ElementReference> _captureElementReference;
+        private readonly Action<ElementReference> _captureElementReference;
 
         protected MudBaseButton()
         {
-            _captureElementReference = MudElement.CaptureRef(reference => _elementReference = reference);
+            _captureElementReference = reference => _elementReference = reference;
         }
 
         /// <summary>
@@ -176,6 +178,30 @@ namespace MudBlazor
         protected ElementReference _elementReference;
 
         protected bool GetClickPropagation() => HtmlTag != "button" || ClickPropagation;
+
+        /// <summary>
+        /// Opens the root element with the attributes every button shares.
+        /// The caller renders its content and closes the element.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="HtmlTag"/> is a public parameter with no fixed set of values, so the element is opened by name rather than written as markup.
+        /// class and style come before the splat so a class or style supplied through <see cref="MudComponentBase.UserAttributes"/> still wins, which is the precedence the MudElement boundary gave them.
+        /// </remarks>
+        private protected void OpenRoot(RenderTreeBuilder builder, string classname)
+        {
+            builder.OpenElement(0, HtmlTag);
+            builder.AddAttribute(1, "class", classname);
+            builder.AddAttribute(2, "style", Style);
+            builder.AddMultipleAttributes(3, UserAttributes!);
+            builder.AddAttribute(4, "onclick", this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler));
+            builder.AddAttribute(5, "type", ButtonType.ToStringFast(true));
+            builder.AddAttribute(6, "href", Href);
+            builder.AddAttribute(7, "target", Target);
+            builder.AddAttribute(8, "rel", GetRel());
+            builder.AddAttribute(9, "disabled", GetDisabledState());
+            builder.AddEventStopPropagationAttribute(10, "onclick", !GetClickPropagation());
+            builder.AddElementReferenceCapture(11, _captureElementReference);
+        }
 
         /// <summary>
         /// Obtains focus for this button.

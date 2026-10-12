@@ -439,8 +439,10 @@ namespace MudBlazor
 
         private bool? ComputeCheckBoxStateTriState()
         {
-            var hasSelectedDescendant = _selectedState.Value;
-            var hasUnselectedDescendant = !_selectedState.Value;
+            // Items without a value can never be selected, so only items with a value count towards the state.
+            var hasValue = GetValue() is not null;
+            var hasSelectedDescendant = hasValue && _selectedState.Value;
+            var hasUnselectedDescendant = hasValue && !_selectedState.Value;
 
             foreach (var child in _childItems)
             {
@@ -460,13 +462,17 @@ namespace MudBlazor
 
             void Traverse(MudTreeViewItem<T> item)
             {
-                if (item.GetState<bool>(nameof(Selected)))
+                // An item without a value has nothing to count, but its sub-items may still have values.
+                if (item.GetValue() is not null)
                 {
-                    hasSelectedDescendant = true;
-                }
-                else
-                {
-                    hasUnselectedDescendant = true;
+                    if (item.GetState<bool>(nameof(Selected)))
+                    {
+                        hasSelectedDescendant = true;
+                    }
+                    else
+                    {
+                        hasUnselectedDescendant = true;
+                    }
                 }
 
                 if (!hasSelectedDescendant || !hasUnselectedDescendant)
@@ -575,6 +581,11 @@ namespace MudBlazor
 
         private bool GetReadOnly() => ReadOnly || MudTreeRoot?.ReadOnly == true;
 
+        // A leaf without a value has nothing to select, so a click changes nothing in the tree.
+        // The checkbox would still move to its next state on its own and show a selection that doesn't exist.
+        // A parent stays clickable because its children may have values to select.
+        private bool GetCheckBoxReadOnly() => GetReadOnly() || (GetValue() is null && !HasChildren());
+
         private bool GetExpandOnClick() => MudTreeRoot?.ExpandOnClick == true;
 
         private bool GetExpandOnDoubleClick() => MudTreeRoot?.ExpandOnDoubleClick == true;
@@ -603,6 +614,11 @@ namespace MudBlazor
                 }
             }
             await OnClick.InvokeAsync(ev);
+        }
+
+        private void OnArrowDoubleClick()
+        {
+            /* Don't do anything on purpose. Fixes #9419 */
         }
 
         private async Task OnItemDoubleClickedAsync(MouseEventArgs ev)
@@ -711,9 +727,10 @@ namespace MudBlazor
         /// </summary>
         /// <param name="selectedValues"></param>
         /// <returns>True if the item or any sub-item changed from non-selected to selected.</returns>
-        internal async Task<bool> UpdateSelectionStateAsync(HashSet<T> selectedValues)
+        /// <param name="forceRender">Renders every item regardless of whether its state changed.</param>
+        internal async Task<bool> UpdateSelectionStateAsync(HashSet<T> selectedValues, bool forceRender = false)
         {
-            var (selectedBecameTrue, _) = await UpdateSelectionStateCoreAsync(selectedValues);
+            var (selectedBecameTrue, _) = await UpdateSelectionStateCoreAsync(selectedValues, forceRender);
 
             return selectedBecameTrue;
         }
@@ -727,8 +744,13 @@ namespace MudBlazor
         /// Multi-selection also renders when the tri-state checkbox no longer matches what was rendered, because that value is derived from the sub-items and can go stale without this item's own state changing.
         /// </remarks>
         /// <param name="selectedValues">The values that are currently selected.</param>
+        /// <param name="forceRender">
+        /// Renders every item regardless of whether its state changed.
+        /// The tree root is cascaded with a fixed value, so items are never told when a root parameter such as <see cref="MudTreeView{T}.Disabled"/> changes, and an item whose own parameters are unchanged is not re-rendered by the framework either.
+        /// Walking the tree is what pushes those values down, so a walk caused by a root parameter change has to render even where nothing about the selection moved.
+        /// </param>
         /// <returns>Whether the item or any sub-item became selected, and whether anything rendered by this item changed.</returns>
-        private async Task<(bool SelectedBecameTrue, bool Changed)> UpdateSelectionStateCoreAsync(HashSet<T> selectedValues)
+        private async Task<(bool SelectedBecameTrue, bool Changed)> UpdateSelectionStateCoreAsync(HashSet<T> selectedValues, bool forceRender)
         {
             if (MudTreeRoot == null)
             {
@@ -744,7 +766,7 @@ namespace MudBlazor
             bool childSelectedBecameTrue = false;
             foreach (var child in _childItems)
             {
-                var (becameTrue, childChanged) = await child.UpdateSelectionStateCoreAsync(selectedValues);
+                var (becameTrue, childChanged) = await child.UpdateSelectionStateCoreAsync(selectedValues, forceRender);
                 childSelectedBecameTrue = childSelectedBecameTrue || becameTrue;
                 changed = changed || childChanged;
             }
@@ -753,7 +775,7 @@ namespace MudBlazor
                 await _expandedState.SetValueAsync(true);
                 changed = true;
             }
-            if (changed || (MultiSelection && _hasRenderedCheckBoxState && ComputeCheckBoxStateTriState() != _renderedCheckBoxState))
+            if (forceRender || changed || (MultiSelection && _hasRenderedCheckBoxState && ComputeCheckBoxStateTriState() != _renderedCheckBoxState))
             {
                 StateHasChanged();
             }

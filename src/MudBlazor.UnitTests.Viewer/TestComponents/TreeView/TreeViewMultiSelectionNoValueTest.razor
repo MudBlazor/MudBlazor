@@ -1,0 +1,49 @@
+﻿<MudTreeView T="string" SelectionMode="SelectionMode.MultiSelection" AutoSelectParent="@AutoSelectParent" @bind-SelectedValues="SelectedValues">
+    <MudTreeViewItem Class="group" Expanded="true">
+        <BodyContent>Group</BodyContent>
+        <ChildContent>
+            <MudTreeViewItem Class="group-child-1" Value='"group-child-1"' />
+            <MudTreeViewItem Class="group-child-2" Value='"group-child-2"' />
+        </ChildContent>
+    </MudTreeViewItem>
+    <MudTreeViewItem Class="parent" Value='"parent"' Expanded="true">
+        <MudTreeViewItem Class="parent-child" Value='"parent-child"' />
+        <MudTreeViewItem Class="parent-note">
+            <BodyContent>Note</BodyContent>
+        </MudTreeViewItem>
+    </MudTreeViewItem>
+    <MudTreeViewItem Class="note">
+        <BodyContent>Note</BodyContent>
+    </MudTreeViewItem>
+</MudTreeView>
+
+<p class="selected-values">@string.Join(", ", SelectedValues.Order())</p>
+
+@* The item template doesn't pass the data's value to the items *@
+<MudTreeView T="string" Items="@_treeItems" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValues="TemplateSelectedValues">
+    <ItemTemplate Context="item">
+        <MudTreeViewItem Class="@item.Value">
+            <BodyContent>@item.Text</BodyContent>
+        </MudTreeViewItem>
+    </ItemTemplate>
+</MudTreeView>
+
+<p class="template-selected-values">@string.Join(", ", TemplateSelectedValues.Order())</p>
+
+@code {
+    private readonly List<TreeItemData<string>> _treeItems =
+    [
+        new() { Value = "template-item-1", Text = ".github" },
+        new() { Value = "template-item-2", Text = ".vscode", Children = [] },
+        new() { Value = "template-item-3", Text = "content" },
+    ];
+
+    [Parameter]
+    public bool AutoSelectParent { get; set; }
+
+    [Parameter]
+    public IReadOnlyCollection<string> SelectedValues { get; set; } = [];
+
+    [Parameter]
+    public IReadOnlyCollection<string> TemplateSelectedValues { get; set; } = [];
+}

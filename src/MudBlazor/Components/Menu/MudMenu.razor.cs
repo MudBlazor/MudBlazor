@@ -20,6 +20,7 @@ namespace MudBlazor
     public partial class MudMenu : MudComponentBase, IDisposable
     {
         private readonly ParameterState<bool> _openState;
+        private Action<MouseEventArgs>? _suppressContextMenuHandler;
         private readonly List<MudMenu> _subMenus = [];
         private (double Top, double Left) _openPosition;
         private bool _isPointerOver;
@@ -36,6 +37,7 @@ namespace MudBlazor
         private readonly List<object> _menuItems = [];
         private readonly HashSet<object> _registeredItems = [];
         private readonly string _elementId = Identifier.Create("menu");
+        private readonly string _listId = Identifier.Create("menu-list");
         private DateTimeOffset _lastKeyboardActivation = DateTimeOffset.MinValue;
         private readonly MenuContext _menuContext;
 
@@ -388,6 +390,11 @@ namespace MudBlazor
         protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
 
         /// <summary>
+        /// The id of the popup list while it is rendered, so the activator only references an element that exists.
+        /// </summary>
+        private string? GetAriaControls() => _openState.Value ? _listId : null;
+
+        /// <summary>
         /// Gets the transition duration for the popover, using dense menus to disable animations.
         /// </summary>
         protected double GetTransitionDuration() => GetDense() ? 0 : PopoverService.PopoverOptions.Duration.TotalMilliseconds;
@@ -625,10 +632,13 @@ namespace MudBlazor
 
         // Only wire oncontextmenu when right-click actually activates this menu.
         // The no-op lambda this replaces was still a live delegate, so every menu registered a real DOM listener that did nothing, which on Blazor Server turns every right-click inside a menu into a wasted network round-trip.
-        private EventCallback<MouseEventArgs> ContextMenuCallback =>
-            ActivationEvent == MouseEvent.RightClick && ActivatorContent is null
-                ? EventCallback.Factory.Create<MouseEventArgs>(this, ToggleMenuAsync)
-                : default;
+        // With ActivatorContent the activator opens the menu, but the root still prevents the browser context menu, and before .NET 10 Blazor only honors that while a contextmenu listener is registered on the page.
+        private EventCallback<MouseEventArgs> ContextMenuCallback => ActivationEvent switch
+        {
+            MouseEvent.RightClick when ActivatorContent is null => EventCallback.Factory.Create<MouseEventArgs>(this, ToggleMenuAsync),
+            MouseEvent.RightClick => EventCallback.Factory.Create<MouseEventArgs>(this, _suppressContextMenuHandler ??= this.AsNonRenderingEventHandler<MouseEventArgs>(static _ => { })),
+            _ => default
+        };
 
         /// <summary>
         /// Toggles the menu's open or closed state.
