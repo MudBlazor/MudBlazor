@@ -23,6 +23,15 @@ public partial class MudDivider : MudComponentBase
             .AddClass(Class)
             .Build();
 
+    protected string Stylename =>
+        new StyleBuilder()
+            .AddStyle("border-width", $"{_thickness}px", _thickness > 0)
+            .AddStyle("border-color", "#e0e0e0", Light)
+            .AddStyle(Style)
+            .Build();
+
+    private int _thickness;
+
     /// <summary>
     /// Uses an absolute position for this divider.
     /// </summary>
@@ -72,4 +81,21 @@ public partial class MudDivider : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Divider.Appearance)]
     public DividerType DividerType { get; set; } = DividerType.FullWidth;
+
+    /// <summary>
+    /// The thickness of the divider, in pixels.
+    /// </summary>
+    [Parameter]
+    public int Thickness
+    {
+        get => _thickness;
+        set
+        {
+            _thickness = value;
+            if (value > 10)
+            {
+                Vertical = true;
+            }
+        }
+    }
 }
