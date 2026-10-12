@@ -3,20 +3,18 @@
 <MudStack AlignItems="AlignItems.Center" Spacing="0" Class="mud-width-full">
     <MudSwitch T="bool" Value="@_notifications" ValueChanged="SaveNotificationsAsync"
                Disabled="@_saving" Label="Enable notifications" Color="Color.Primary" />
-    <MudText role="status" Style="min-height: 1lh;">@(_saving ? "Saving preferences..." : _saveFailed ? "Saving failed. The previous value was restored." : string.Empty)</MudText>
+    <MudText role="status" Style="min-height: 1lh;">@(_saving ? "Saving preferences..." : string.Empty)</MudText>
 </MudStack>
 
 @code {
     private bool _notifications;
     private bool _saving;
-    private bool _saveFailed;
 
     private async Task SaveNotificationsAsync(bool value)
     {
         var previous = _notifications;
         _notifications = value;
         _saving = true;
-        _saveFailed = false;
 
         try
         {
@@ -26,7 +24,6 @@
         catch
         {
             _notifications = previous;
-            _saveFailed = true;
         }
         finally
         {
