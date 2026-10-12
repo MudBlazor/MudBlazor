@@ -9,6 +9,7 @@ permissions: {}
 
 jobs:
   trigger:
+    if: ${{ !github.event.pull_request.draft && github.event.pull_request.user.login != 'renovate[bot]' }}
     runs-on: ubuntu-latest
     steps:
       - run: echo "Requesting an AI code review."
