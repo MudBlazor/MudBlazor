@@ -62,10 +62,9 @@ jobs:
           script: |
             // Break @-mentions so the model can't ping anyone.
             const { summary, findings } = JSON.parse(process.env.REVIEW.replace(/@(?=\w)/g, '@\\u200b'));
-            if (!findings.length) return;
             const pr = context.payload.pull_request;
-            const review = { ...context.repo, pull_number: pr.number, commit_id: pr.head.sha, event: 'COMMENT' };
-            const body = `**AI code review:** ${summary}`;
+            const review = { ...context.repo, pull_number: pr.number, commit_id: pr.head.sha, event: findings.length ? 'COMMENT' : 'APPROVE', body: summary };
+            if (!findings.length) return github.rest.pulls.createReview(review);
             // One finding off the diff rejects the whole review, so fall back to listing them all in the body.
-            await github.rest.pulls.createReview({ ...review, body, comments: findings.map(({ path, line, body }) => ({ path, line, side: 'RIGHT', body })) })
-              .catch(() => github.rest.pulls.createReview({ ...review, body: [body, ...findings.map(f => `${f.body}\n\n\`${f.path}:${f.line}\``)].join('\n\n---\n\n') }));
+            await github.rest.pulls.createReview({ ...review, comments: findings.map(({ path, line, body }) => ({ path, line, side: 'RIGHT', body })) })
+              .catch(() => github.rest.pulls.createReview({ ...review, body: [summary, ...findings.map(f => `${f.body}\n\n\`${f.path}:${f.line}\``)].join('\n\n---\n\n') }));

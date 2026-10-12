@@ -181,6 +181,16 @@
             ],
             "groupName": "test platform",
             "groupSlug": "test-platform"
+        },
+        {
+            "description": "Claude Code ships almost daily, so take one bump a week.",
+            "matchPackageNames": [
+                "@anthropic-ai/claude-code"
+            ],
+            "schedule": [
+                "before 4am on monday"
+            ],
+            "minimumReleaseAge": "3 days"
         }
     ],
     "customManagers": [
@@ -205,6 +215,18 @@
                 "\"constraints\":\\s*\\{[^}]*?\"bun\":\\s*\"(?<currentValue>[^\"]+)\""
             ],
             "depNameTemplate": "bun",
+            "datasourceTemplate": "npm"
+        },
+        {
+            "description": "The AI code review runs Claude Code through npx in a workflow step, which no built-in manager reads.",
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/^\\.github/workflows/ai-code-review\\.yml$/"
+            ],
+            "matchStrings": [
+                "@anthropic-ai/claude-code@(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+            ],
+            "depNameTemplate": "@anthropic-ai/claude-code",
             "datasourceTemplate": "npm"
         }
     ]
