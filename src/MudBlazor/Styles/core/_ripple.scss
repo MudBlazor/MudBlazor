@@ -9,8 +9,7 @@
   overflow: hidden;
 }
 
-// Use relative positioning only when the host has no position of its own.
-// `:where()` gives the fallback zero specificity and preserves component positioning (#13895).
+// Keep the position fallback at zero specificity so component positioning wins (#13895).
 :where(:not(.mud-ripple):has(> .mud-ripple-effect)) {
   position: relative;
 }
