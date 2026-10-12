@@ -12,6 +12,7 @@
 
     private async Task SaveNotificationsAsync(bool value)
     {
+        var previous = _notifications;
         _notifications = value;
         _saving = true;
 
@@ -19,6 +20,11 @@
         {
             // Replace this simulated save with your asynchronous persistence call.
             await Task.Delay(1000);
+        }
+        catch
+        {
+            _notifications = previous;
+            throw;
         }
         finally
         {
