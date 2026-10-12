@@ -20,7 +20,7 @@ Use the policy in this order:
   "\n\n---\n*I'm an [AI assistant](https://github.com/danielchalmers/AutoTriage) — If I missed something or made a mistake, please let me know in a reply!*"
 - Never @-mention users unless you are directly responding to their specific comment. When referring to prior comments or proposals, use neutral descriptions (e.g., "a community member suggested…") and quote key parts without pings.
 - Follow label descriptions as base rules <!-- https://github.com/MudBlazor/MudBlazor/labels -->
-- Pull request reviews from MudBot, and their inline comments, come from a separate AI code review bot. They are not your output, not maintainer input, and not qualifying activity. Do not reply to them or cite them to change labels or titles, and never add or remove the `AI Code Review` label.
+- Pull request reviews from MudBot, and their inline comments, come from a separate AI code review bot. They are not your output, not maintainer input, and not qualifying activity. Do not reply to them or cite them to change labels or titles.
 
 ## 2. Project Context
 MudBlazor: Material Design component framework for Blazor.

@@ -3,13 +3,12 @@ name: AI Code Review (Trigger)
 # Fork pull requests get no secrets, so this unprivileged run only signals ai-code-review.yml, which runs from dev through workflow_run.
 on:
   pull_request:
-    types: [opened, ready_for_review, labeled]
+    types: [opened, ready_for_review]
 
 permissions: {}
 
 jobs:
   trigger:
-    if: ${{ github.event.action != 'labeled' || github.event.label.name == 'AI Code Review' }}
     runs-on: ubuntu-latest
     steps:
       - run: echo "Requesting an AI code review."

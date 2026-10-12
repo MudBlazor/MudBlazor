@@ -1,6 +1,6 @@
 name: AI Code Review
 
-# Reviews each pull request once when it opens or becomes ready, and again when a maintainer adds the "AI Code Review" label or runs this workflow.
+# Reviews each pull request once when it opens or becomes ready, and again when a maintainer runs this workflow with its number.
 # workflow_run always runs this file from dev with secrets, including for fork pull requests, without needing pull_request_target.
 on:
   workflow_run:
@@ -54,7 +54,7 @@ jobs:
               if (!pull_number) return core.notice('No open pull request for this run.');
             }
             const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number });
-            const requested = context.eventName === 'workflow_dispatch' || pr.labels.some(l => l.name === 'AI Code Review');
+            const requested = context.eventName === 'workflow_dispatch';
             if (pr.state !== 'open') return core.notice('Skipped: closed.');
             if (!requested) {
               if (pr.draft || pr.user.login === 'renovate[bot]') return core.notice('Skipped: draft or Renovate.');
@@ -158,7 +158,7 @@ jobs:
             const review = JSON.parse(process.env.REVIEW);
 
             const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number });
-            const requested = context.eventName === 'workflow_dispatch' || pr.labels.some(l => l.name === 'AI Code Review');
+            const requested = context.eventName === 'workflow_dispatch';
             // Inline comments must land on a line the diff adds or keeps; if the head moved, every finding goes in the body.
             const files = pr.head.sha === process.env.SHA ? await github.paginate(github.rest.pulls.listFiles, { owner, repo, pull_number }) : [];
             const lines = new Map(files.map(f => [f.filename, rightLines(f.patch)]));
@@ -173,9 +173,6 @@ jobs:
               await github.rest.pulls.createReview({ owner, repo, pull_number, commit_id: process.env.SHA, event: 'COMMENT', body, comments });
             }
             await github.rest.reactions.createForIssue({ owner, repo, issue_number: pull_number, content: 'eyes' });
-            if (pr.labels.some(l => l.name === 'AI Code Review')) {
-              await github.rest.issues.removeLabel({ owner, repo, issue_number: pull_number, name: 'AI Code Review' });
-            }
 
             function rightLines(patch = '') {
               const result = new Set();
