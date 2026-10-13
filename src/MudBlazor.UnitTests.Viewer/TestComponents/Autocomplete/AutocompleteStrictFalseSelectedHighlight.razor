@@ -20,7 +20,7 @@
 
     public async Task<IEnumerable<string>> Search(string text, CancellationToken token)
     {
-        await Task.Delay(100, token);
+        await Task.Yield();
 
         if (string.IsNullOrWhiteSpace(text))
         {

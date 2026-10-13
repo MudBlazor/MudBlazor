@@ -17,7 +17,10 @@ namespace MudBlazor.Charts;
 /// <param name="BoundHeight">The height of the chart bounds.</param>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 public record struct AxisGridData<T>(int LowestHorizontalLine, int HorizontalLineCount, T YAxisTicks, double BoundWidth, double BoundHeight)
-    where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable;
+    where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
+{
+    internal double? HorizontalStartSpace { get; init; }
+}
 
 /// <summary>
 /// Axis chart abstraction extending <see cref="IMudChart{T}"/> with shared grid data and support for overlaying one chart on another.

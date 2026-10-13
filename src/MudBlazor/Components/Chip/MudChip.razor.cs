@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -82,7 +83,9 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     private bool IsAnchor => !string.IsNullOrWhiteSpace(Href);
 
-    private bool IsButton => !GetDisabled()
+    // A link is left to the browser, so Href takes precedence over OnClick and selection.
+    private bool IsButton => !IsAnchor
+                             && !GetDisabled()
                              && !GetReadOnly()
                              && (ChipSet is not null || OnClick.HasDelegate);
 
@@ -157,6 +160,22 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         }
 
         return attributes;
+    }
+
+    /// <summary>
+    /// Opens the chip element with its attributes; the Razor file renders the content and closes it.
+    /// </summary>
+    /// <remarks>
+    /// The tag is chosen at runtime, so the element is opened by name rather than written as markup.
+    /// class and style come before the splat so a class or style supplied through <see cref="MudComponentBase.UserAttributes"/> still wins, which is the precedence the MudElement boundary gave them.
+    /// </remarks>
+    private void OpenElement(RenderTreeBuilder builder)
+    {
+        builder.OpenElement(0, GetHtmlTag());
+        builder.AddAttribute(1, "class", Classname);
+        builder.AddAttribute(2, "style", Style);
+        builder.AddMultipleAttributes(3, GetAttributes()!);
+        builder.AddAttribute(4, "onclick", IsButton ? this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickAsync) : null);
     }
 
     internal Variant GetVariant()
@@ -331,6 +350,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     /// </summary>
     /// <remarks>
     /// <para>Defaults to <c>null</c>.  Use <see cref="Target"/> to control where the URL is opened.</para>
+    /// <para>When set, the chip renders as a link and the browser handles the click, so <see cref="OnClick"/> is not raised and the chip cannot be selected in a <see cref="MudChipSet{T}"/>.</para>
     /// <para>Note: The close button cannot be enabled if this is set because <see href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#technical_summary">interactive content violates the HTML spec</see>.</para>
     /// </remarks>
     [Parameter]

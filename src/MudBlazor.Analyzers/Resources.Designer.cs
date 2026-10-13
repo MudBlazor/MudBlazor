@@ -79,11 +79,191 @@ namespace MudBlazor.Analyzers {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Illegal Attribute &apos;{0}&apos; on &apos;{1}&apos; using pattern &apos;{2}&apos; source location &apos;{3}&apos;.
+        ///   Looks up a localized string similar to Illegal Attribute &apos;{0}&apos; on &apos;{1}&apos; using pattern &apos;{2}&apos; source location &apos;{3}&apos;{4}.
         /// </summary>
         internal static string MUD0002MessageFormat {
             get {
                 return ResourceManager.GetString("MUD0002MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;{0}&apos; was removed in {1} and replaced by &apos;{2}&apos;, which takes the same value. Its partner &apos;{3}&apos; became &apos;{4}&apos;, so @bind-{5} becomes @bind-{6}. See {7}.
+        /// </summary>
+        internal static string MUD0002MigrationHintBinding {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintBinding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;{0}&apos; was removed in {1} and replaced by &apos;{2}&apos;, which inverts the value: {0}=&quot;true&quot; becomes {2}=&quot;false&quot;, and {0}=&quot;@expression&quot; becomes {2}=&quot;@(expression ? false : null)&quot;. For {0}=&quot;false&quot;, leave &apos;{2}&apos; unset so it follows the parent {3}, because {2}=&quot;true&quot; now overrides the parent. See {4}.
+        /// </summary>
+        internal static string MUD0002MigrationHintInheritedInversion {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintInheritedInversion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;{0}&apos; was removed in {1} and replaced by &apos;{2}&apos;: {0}=&quot;true&quot; becomes {2}=&quot;true&quot;. &apos;{2}&apos; holds the current state rather than a starting value, so merge it with any existing {2} or @bind-{2} instead of adding a second attribute. See {3}.
+        /// </summary>
+        internal static string MUD0002MigrationHintInitialState {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintInitialState", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;{0}&apos; was removed in {1} and replaced by &apos;{2}&apos;, which inverts the value: {0}=&quot;true&quot; becomes {2}=&quot;false&quot;, {0}=&quot;false&quot; becomes {2}=&quot;true&quot;, and {0}=&quot;@expression&quot; becomes {2}=&quot;@(!expression)&quot;. See {3}.
+        /// </summary>
+        internal static string MUD0002MigrationHintInversion {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintInversion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;{0}&apos; was removed in {1} and replaced by &apos;{2}&apos;, which inverts the value: {0}=&quot;true&quot; becomes {2}=&quot;false&quot;, {0}=&quot;false&quot; becomes {2}=&quot;true&quot;, and {0}=&quot;@expression&quot; becomes {2}=&quot;@(!expression)&quot;. The default changed as well, so a {3} that never set &apos;{0}&apos; now needs {2}=&quot;true&quot; to keep its old behavior. See {4}.
+        /// </summary>
+        internal static string MUD0002MigrationHintInversionWithNewDefault {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintInversionWithNewDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;LabelPosition&apos; was removed in v8 and replaced by &apos;LabelPlacement&apos;, which takes a Placement instead of a LabelPosition: LabelPosition=&quot;LabelPosition.Start&quot; becomes LabelPlacement=&quot;Placement.Start&quot;, and LabelPosition=&quot;LabelPosition.End&quot; becomes LabelPlacement=&quot;Placement.End&quot;. An expression has to produce a Placement instead. See https://github.com/MudBlazor/MudBlazor/discussions/12659.
+        /// </summary>
+        internal static string MUD0002MigrationHintLabelPosition {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintLabelPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;AlertTextPosition&apos; was removed in v7 and replaced by &apos;ContentAlignment&apos;, which takes a HorizontalAlignment with the same member names instead of an AlertTextPosition: AlertTextPosition=&quot;AlertTextPosition.Center&quot; becomes ContentAlignment=&quot;HorizontalAlignment.Center&quot;. An expression has to produce a HorizontalAlignment instead. See https://github.com/MudBlazor/MudBlazor/discussions/12658.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudAlertAlertTextPosition {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudAlertAlertTextPosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;SearchFuncWithCancel&apos; was removed in v7 and replaced by &apos;SearchFunc&apos;, which now takes the same cancellable delegate: SearchFuncWithCancel=&quot;Search&quot; becomes SearchFunc=&quot;Search&quot;. Remove any old SearchFunc that has no CancellationToken parameter, because SearchFunc no longer accepts that signature. See https://github.com/MudBlazor/MudBlazor/discussions/12658.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudAutocompleteSearchFuncWithCancel {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudAutocompleteSearchFuncWithCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;OnKeyPress&apos; was removed in v7. Use &apos;OnKeyDown&apos;, which receives the same KeyboardEventArgs but also fires for keys that type no character, such as Tab, Shift, and the arrow keys, so check the key in the handler. See https://github.com/MudBlazor/MudBlazor/discussions/12658.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudBaseInputOnKeyPress {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudBaseInputOnKeyPress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;AutoGrow&apos; was removed in v9 and replaced by &apos;Sizing&apos;: AutoGrow=&quot;true&quot; becomes Sizing=&quot;InputSizing.Auto&quot;, AutoGrow=&quot;false&quot; becomes Sizing=&quot;InputSizing.Fixed&quot;, and AutoGrow=&quot;@expression&quot; becomes Sizing=&quot;@(expression ? InputSizing.Auto : InputSizing.Fixed)&quot;. Lines and MaxLines keep their meaning. See https://mudblazor.com/features/analyzers#migration-hints.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudInputAutoGrow {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudInputAutoGrow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;Placement&apos; was removed in v8 and replaced by &apos;LabelPlacement&apos;, which takes the same Placement value. Placement.Left and Placement.Right no longer swap sides in right-to-left layouts, so use Placement.Start or Placement.End there. See https://github.com/MudBlazor/MudBlazor/discussions/12659.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudRadioPlacement {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudRadioPlacement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;OnClose&apos; was removed in v9. Use &apos;OpenChanged&apos;, which receives true when the list opens and false when it closes: OnClose=&quot;Handler&quot; becomes OpenChanged=&quot;@(open =&gt; { if (!open) Handler(); })&quot;, or OpenChanged=&quot;@(async open =&gt; { if (!open) await Handler(); })&quot; when Handler returns a Task. It is raised only when the open state actually changes, and a component that also used OnOpen needs a single OpenChanged handler for both. See https://mudblazor.com/features/analyzers#migration-hints.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudSelectOnClose {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudSelectOnClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;OnOpen&apos; was removed in v9. Use &apos;OpenChanged&apos;, which receives true when the list opens and false when it closes: OnOpen=&quot;Handler&quot; becomes OpenChanged=&quot;@(open =&gt; { if (open) Handler(); })&quot;, or OpenChanged=&quot;@(async open =&gt; { if (open) await Handler(); })&quot; when Handler returns a Task. It is raised only when the open state actually changes. See https://mudblazor.com/features/analyzers#migration-hints.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudSelectOnOpen {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudSelectOnOpen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;DisableRowsPerPage&apos; was removed in v7 and replaced by &apos;HideRowsPerPage&apos;, which keeps the same value: DisableRowsPerPage=&quot;true&quot; becomes HideRowsPerPage=&quot;true&quot;. Do not invert it; that only applies to MudDataGridPager. See https://mudblazor.com/features/analyzers#migration-hints.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudTablePagerDisableRowsPerPage {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudTablePagerDisableRowsPerPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;PanelClass&apos; was removed in v9 and replaced by &apos;TabPanelsClass&apos;, which takes the same value and still styles the wrapper around all panels. MudTabPanel&apos;s own PanelClass is a different parameter that styles one panel. See https://github.com/MudBlazor/MudBlazor/issues/12666.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudTabsPanelClass {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudTabsPanelClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;TabPanelClass&apos; was removed in v9 and replaced by &apos;TabButtonsClass&apos;, which takes the same value and still styles each tab button. TabPanelsClass and MudTabPanel&apos;s PanelClass style the panels instead. See https://github.com/MudBlazor/MudBlazor/issues/12666.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudTabsTabPanelClass {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudTabsTabPanelClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;AutoGrow&apos; was removed in v9 and replaced by &apos;Sizing&apos;: AutoGrow=&quot;true&quot; becomes Sizing=&quot;InputSizing.Auto&quot;, AutoGrow=&quot;false&quot; becomes Sizing=&quot;InputSizing.Fixed&quot;, and AutoGrow=&quot;@expression&quot; becomes Sizing=&quot;@(expression ? InputSizing.Auto : InputSizing.Fixed)&quot;. Lines and MaxLines keep their meaning, and a masked MudTextField ignores Sizing just as it ignored AutoGrow. See https://mudblazor.com/features/analyzers#migration-hints.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudTextFieldAutoGrow {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudTextFieldAutoGrow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;Delayed&apos; was removed in v7 and replaced by &apos;Delay&apos;, which is in milliseconds instead of seconds: Delayed=&quot;0.5&quot; becomes Delay=&quot;500&quot;, and Delayed=&quot;@seconds&quot; becomes Delay=&quot;@(seconds * 1000)&quot;. See https://mudblazor.com/features/analyzers#migration-hints.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudTooltipDelayed {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudTooltipDelayed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;ExpandedIcon&apos; was removed in v7 and replaced by &apos;ExpandButtonIcon&apos;, which takes the same value and still sets the expand button&apos;s icon. It is not IconExpanded, which replaces the item&apos;s own icon while the item is expanded. See https://github.com/MudBlazor/MudBlazor/discussions/12658.
+        /// </summary>
+        internal static string MUD0002MigrationHintMudTreeViewItemExpandedIcon {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintMudTreeViewItemExpandedIcon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  &apos;{0}&apos; was removed in {1} and replaced by &apos;{2}&apos;, which takes the same value. See {3}.
+        /// </summary>
+        internal static string MUD0002MigrationHintRename {
+            get {
+                return ResourceManager.GetString("MUD0002MigrationHintRename", resourceCulture);
             }
         }
         

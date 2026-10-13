@@ -61,6 +61,7 @@ namespace MudBlazor
                 .AddClass("mud-autocomplete")
                 .AddClass("mud-width-full", FullWidth)
                 .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
+                .AddClass(OuterClass)
                 .Build();
 
         protected string CircularProgressClassname =>
@@ -74,6 +75,15 @@ namespace MudBlazor
                 .AddClass(ListItemClass)
                 .Build();
 
+        /// <summary>
+        /// The CSS classes applied to the outer <c>div</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter]
+        public string? OuterClass { get; set; }
         /// <summary>
         /// Input's classnames, separated by space.
         /// </summary>
@@ -1033,7 +1043,7 @@ namespace MudBlazor
         /// <param name="index">The index of the item to scroll to. If it's out of range then nothing will happen.</param>
         private ValueTask SelectItemAsync(int index)
         {
-            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any() || index < 0 || index > _enabledItemIndices.Count - 1)
+            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any() || index < 0 || index >= _items.Length)
                 return ValueTask.CompletedTask;
 
             _selectedListItemIndex = index;

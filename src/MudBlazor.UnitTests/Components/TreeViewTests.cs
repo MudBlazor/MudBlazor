@@ -305,6 +305,124 @@ namespace MudBlazor.UnitTests.Components
             CheckboxState("deep-3", comp).Should().Be("mud-checkbox-true");
         }
 
+        /// <summary>
+        /// A leaf without a value has nothing to select, so its checkbox is read-only and stays unchecked (#13233).
+        /// </summary>
+        [Test]
+        public async Task TreeViewWith_MultiSelection_LeafWithoutValue_ShouldNotBeCheckable()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionNoValueTest>();
+
+            // The item template doesn't pass a value, so these items have nothing to select
+            // A browser ignores clicks on a read-only checkbox, but ChangeAsync would still raise the event, so the read-only state is what's checked
+            foreach (var item in new[] { "template-item-1", "template-item-2", "template-item-3" })
+            {
+                IsItemCheckboxReadOnly(comp, item).Should().BeTrue();
+                await comp.Find($"li.{item} > .mud-treeview-item-content").ClickAsync();
+                ItemCheckboxState(comp, item).Should().Be("mud-checkbox-false");
+            }
+            comp.Find("p.template-selected-values").TrimmedText().Should().BeEmpty();
+
+            IsItemCheckboxReadOnly(comp, "note").Should().BeTrue();
+            IsItemCheckboxReadOnly(comp, "parent-note").Should().BeTrue();
+
+            // An item with a value, or with children to select, stays checkable
+            IsItemCheckboxReadOnly(comp, "group").Should().BeFalse();
+            IsItemCheckboxReadOnly(comp, "parent").Should().BeFalse();
+            IsItemCheckboxReadOnly(comp, "group-child-1").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A parent without a value checks and unchecks its children, and its checkbox shows their state (#13233).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeViewWith_MultiSelection_ParentWithoutValue_ShouldToggleAndReflectItsChildren(bool autoSelectParent)
+        {
+            var comp = Context.Render<TreeViewMultiSelectionNoValueTest>(self => self.Add(x => x.AutoSelectParent, autoSelectParent));
+
+            // The group has no value of its own, so checking it selects its children and it shows their state
+            await comp.Find("li.group > .mud-treeview-item-content .mud-checkbox input").ChangeAsync(true);
+            comp.Find("p.selected-values").TrimmedText().Should().Be("group-child-1, group-child-2");
+            ItemCheckboxState(comp, "group").Should().Be("mud-checkbox-true");
+
+            await comp.Find("li.group > .mud-treeview-item-content .mud-checkbox input").ChangeAsync(false);
+            comp.Find("p.selected-values").TrimmedText().Should().BeEmpty();
+            ItemCheckboxState(comp, "group").Should().Be("mud-checkbox-false");
+
+            await comp.Find("li.group-child-1 > .mud-treeview-item-content").ClickAsync();
+            ItemCheckboxState(comp, "group").Should().Be("mud-checkbox-null");
+
+            await comp.Find("li.group-child-2 > .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-values").TrimmedText().Should().Be("group-child-1, group-child-2");
+            ItemCheckboxState(comp, "group").Should().Be("mud-checkbox-true");
+        }
+
+        /// <summary>
+        /// A child without a value doesn't keep its parent partially checked or stop the parent from being unchecked (#13233).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeViewWith_MultiSelection_ChildWithoutValue_ShouldNotBlockParentToggle(bool autoSelectParent)
+        {
+            var comp = Context.Render<TreeViewMultiSelectionNoValueTest>(self => self.Add(x => x.AutoSelectParent, autoSelectParent));
+
+            // The note can't be selected, so it must not count as an unselected child of the parent
+            await comp.Find("li.parent > .mud-treeview-item-content .mud-checkbox input").ChangeAsync(true);
+            comp.Find("p.selected-values").TrimmedText().Should().Be("parent, parent-child");
+            ItemCheckboxState(comp, "parent").Should().Be("mud-checkbox-true");
+            ItemCheckboxState(comp, "parent-note").Should().Be("mud-checkbox-false");
+
+            await comp.Find("li.parent > .mud-treeview-item-content .mud-checkbox input").ChangeAsync(false);
+            comp.Find("p.selected-values").TrimmedText().Should().BeEmpty();
+            ItemCheckboxState(comp, "parent").Should().Be("mud-checkbox-false");
+        }
+
+        /// <summary>
+        /// With <see cref="MudTreeView{T}.AutoSelectParent"/>, a parent selected through its children shows as checked although one child has no value (#13233).
+        /// </summary>
+        [Test]
+        public async Task TreeViewWith_MultiSelection_AutoSelectParent_ShouldCheckParentWithChildWithoutValue()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionNoValueTest>(self => self.Add(x => x.AutoSelectParent, true));
+
+            await comp.Find("li.parent-child > .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-values").TrimmedText().Should().Be("parent, parent-child");
+            ItemCheckboxState(comp, "parent").Should().Be("mud-checkbox-true");
+
+            await comp.Find("li.parent-child > .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-values").TrimmedText().Should().BeEmpty();
+            ItemCheckboxState(comp, "parent").Should().Be("mud-checkbox-false");
+        }
+
+        /// <summary>
+        /// Items without a value don't keep their parent partially checked when the selection comes from <see cref="MudTreeView{T}.SelectedValues"/> (#13233).
+        /// </summary>
+        [Test]
+        public void TreeViewWith_MultiSelection_InitialSelection_ShouldIgnoreItemsWithoutValue()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionNoValueTest>(self => self
+                .Add(x => x.SelectedValues, ["group-child-1", "group-child-2", "parent", "parent-child"]));
+
+            ItemCheckboxState(comp, "group").Should().Be("mud-checkbox-true");
+            ItemCheckboxState(comp, "parent").Should().Be("mud-checkbox-true");
+            ItemCheckboxState(comp, "parent-note").Should().Be("mud-checkbox-false");
+            ItemCheckboxState(comp, "note").Should().Be("mud-checkbox-false");
+        }
+
+        /// <summary>
+        /// Gets the state class of an item's own checkbox in <see cref="TreeViewMultiSelectionNoValueTest"/>: <c>mud-checkbox-true</c>, <c>mud-checkbox-false</c> or <c>mud-checkbox-null</c>.
+        /// </summary>
+        private static string ItemCheckboxState(IRenderedComponent<TreeViewMultiSelectionNoValueTest> comp, string itemClass) =>
+            comp.Find($"li.{itemClass} > .mud-treeview-item-content .mud-checkbox span").ClassList
+                .Single(x => x is "mud-checkbox-true" or "mud-checkbox-false" or "mud-checkbox-null");
+
+        /// <summary>
+        /// Whether an item's own checkbox in <see cref="TreeViewMultiSelectionNoValueTest"/> is read-only.
+        /// </summary>
+        private static bool IsItemCheckboxReadOnly(IRenderedComponent<TreeViewMultiSelectionNoValueTest> comp, string itemClass) =>
+            comp.Find($"li.{itemClass} > .mud-treeview-item-content label.mud-checkbox").ClassList.Contains("mud-readonly");
+
         [Test]
         public void TreeViewItemSelected_ShouldBeInitializedCorrectly_SingleSelection()
         {
@@ -968,6 +1086,40 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item 5");
         }
 
+        /// <summary>
+        /// The text and end text render the tag and typography classes their typo picks, including after the typo changes.
+        /// </summary>
+        [Test]
+        [TestCase(Typo.body1, "p", Typo.caption, "span")]
+        [TestCase(Typo.h6, "h6", Typo.subtitle2, "p")]
+        public async Task TreeViewItem_TextAndEndText_RenderTagForTypo(Typo textTypo, string textTag, Typo endTextTypo, string endTextTag)
+        {
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .AddChildContent<MudTreeViewItem<string>>(item => item
+                    .Add(x => x.Text, "Documents")));
+            var item = comp.FindComponent<MudTreeViewItem<string>>();
+
+            comp.Find(".mud-treeview-item-label").ClassName.Should().Be("mud-typography mud-typography-body1 mud-treeview-item-label");
+            comp.FindAll(".mud-typography").Should().ContainSingle();
+
+            await item.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.TextTypo, textTypo)
+                .Add(x => x.TextClass, "custom-text")
+                .Add(x => x.EndText, "3 files")
+                .Add(x => x.EndTextTypo, endTextTypo)
+                .Add(x => x.EndTextClass, "custom-end-text"));
+
+            var text = comp.Find(".mud-treeview-item-label");
+            text.LocalName.Should().Be(textTag);
+            text.ClassName.Should().Be($"mud-typography mud-typography-{textTypo} mud-treeview-item-label custom-text");
+            text.TextContent.Should().Be("Documents");
+
+            var endText = comp.Find(".custom-end-text");
+            endText.LocalName.Should().Be(endTextTag);
+            endText.ClassName.Should().Be($"mud-typography mud-typography-{endTextTypo} custom-end-text");
+            endText.TextContent.Should().Be("3 files");
+        }
+
         [Test]
         public async Task TreeView_SetSelectedValue_SetsSelectedValue()
         {
@@ -1531,6 +1683,55 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll(".mud-treeview-item-checkbox").Count.Should().Be(3);
         }
+
+        /// <summary>
+        /// Verifies that changing the root's <see cref="MudTreeView{T}.UncheckedIcon"/> at runtime reaches items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeUncheckedIcon_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.UncheckedIcon, CustomIcon));
+
+            comp.FindAll(".mud-treeview-item-checkbox").Should().AllSatisfy(checkbox => checkbox.InnerHtml.Should().Contain(CustomIconPath));
+        }
+
+        /// <summary>
+        /// Verifies that a later selection change does not leave an unchanged item showing the root's previous <see cref="MudTreeView{T}.UncheckedIcon"/>.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeUncheckedIconThenSelection_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.UncheckedIcon, CustomIcon));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValues, new[] { "c1" }));
+
+            comp.Find(".lvl3 .mud-treeview-item-checkbox").InnerHtml.Should().Contain(CustomIconPath);
+        }
+
+        /// <summary>
+        /// Verifies that turning off the root's <see cref="MudTreeView{T}.Ripple"/> and turning on <see cref="MudTreeView{T}.ExpandOnDoubleClick"/> at runtime reach items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeRippleAndExpandOnDoubleClick_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+            comp.Find(".lvl3 .mud-treeview-item-content").ClassList.Should().Contain("mud-ripple");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Ripple, false));
+
+            comp.FindAll(".mud-treeview-item-content").Should().AllSatisfy(content => content.ClassList.Should().NotContain("mud-ripple"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ExpandOnDoubleClick, true));
+
+            comp.FindAll(".mud-treeview-item").Should().AllSatisfy(item => item.ClassList.Should().Contain("mud-treeview-select-none"));
+        }
+
+        private const string CustomIconPath = "M0 0h9";
+
+        private const string CustomIcon = "<path d=\"" + CustomIconPath + "\"/>";
         /// <summary>
         /// Mounting a tree must render each item once, not twice.
         /// </summary>

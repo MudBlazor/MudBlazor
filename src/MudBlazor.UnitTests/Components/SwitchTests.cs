@@ -44,6 +44,30 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => switchInstance.ReadValue.Should().Be(true));
         }
 
+        /// <summary>
+        /// The label and child content use body1 typography and take the error color while the switch has errors.
+        /// </summary>
+        [Test]
+        public async Task Switch_LabelAndChildContent_TakeErrorColor()
+        {
+            var comp = Context.Render<MudSwitch<bool>>(parameters => parameters
+                .Add(p => p.Label, "Notifications")
+                .AddChildContent("Email"));
+
+            comp.FindAll("label.mud-switch span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, true));
+
+            comp.FindAll("label.mud-switch span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1 mud-error-text");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, false));
+
+            comp.FindAll("label.mud-switch span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1");
+        }
+
         [Test]
         public void Switch_AriaLabel()
         {

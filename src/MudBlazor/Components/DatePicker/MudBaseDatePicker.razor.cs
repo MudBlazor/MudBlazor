@@ -61,6 +61,10 @@ namespace MudBlazor
         /// <summary>
         /// The format for selected dates.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which uses the <see cref="DateTimeFormatInfo.ShortDatePattern"/> of <see cref="MudFormComponent{T, U}.Culture"/>.
+        /// A <c>/</c> in the format is replaced by the culture's date separator; use <c>'/'</c> for a literal slash.
+        /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? DateFormat { get; set; }
@@ -281,7 +285,9 @@ namespace MudBlazor
             await base.OnPickerOpenedAsync();
             if (Editable && Text != null)
             {
-                var dateTime = ConvertGet(Text);
+                // Opening only moves the calendar, so convert without ConvertGet, which records a conversion error and marks the picker as touched.
+                // A range picker's text holds both dates and never converts to one, so opening it flagged a valid range as invalid.
+                var dateTime = GetConverter().TryConvertBack(Text).Value;
                 if (dateTime.HasValue)
                 {
                     var culture = GetCulture();
@@ -712,7 +718,6 @@ namespace MudBlazor
             var dateTime = date ?? GetMonthStart(0);
             var id = $"{_componentId}{calendar.GetYear(dateTime)}";
             await ScrollManager.ScrollToYearAsync(id);
-            StateHasChanged();
         }
 
         protected int GetMinYear()
@@ -827,23 +832,34 @@ namespace MudBlazor
             AdornmentAriaLabel ??= Localizer[Resources.LanguageResource.MudBaseDatePicker_Open];
             CurrentView = OpenTo;
 
-            if (HighlightedDate is null)
-            {
-                var culture = GetCulture();
-                var calendar = culture.Calendar;
-                var today = TimeProvider.GetLocalNow().Date;
-
-                var year = FixYear ?? calendar.GetYear(today);
-                var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);
-                var day = FixDay ?? 1;
-
-                if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date))
-                {
-                    HighlightedDate = date;
-                }
-            }
+            HighlightedDate ??= GetInitialHighlightedDate();
 
             _picker_month ??= GetCalendarStartOfMonth();
+        }
+
+        private DateTime? GetInitialHighlightedDate()
+        {
+            var culture = GetCulture();
+            var calendar = culture.Calendar;
+            var today = TimeProvider.GetLocalNow().Date;
+
+            var year = FixYear ?? calendar.GetYear(today);
+            var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);
+            var day = FixDay ?? 1;
+
+            return DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date)
+                ? date
+                : null;
+        }
+
+        /// <summary>
+        /// Returns the calendar to where an empty picker starts, after a reset has cleared the value.
+        /// </summary>
+        private protected void ResetCalendarToStart()
+        {
+            // The start month can come from the highlighted day, which carries FixYear and FixMonth, so restore it rather than keep a highlight left over from the cleared value or keyboard navigation.
+            HighlightedDate = GetInitialHighlightedDate();
+            PickerMonth = GetCalendarStartOfMonth();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
