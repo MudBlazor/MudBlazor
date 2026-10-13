@@ -23,7 +23,7 @@
 
                 @if (MultiSelection)
                 {
-                    <MudCheckBox T="bool?" TriState Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@GetIndeterminateIcon()"
+                    <MudCheckBox T="bool?" TriState AriaLabel="@GetText()" Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@GetIndeterminateIcon()"
                                  @bind-Value:get="GetCheckBoxStateTriState()" @bind-Value:set="@(x => OnCheckboxChangedAsync())" Disabled="@GetDisabled()" ReadOnly="@GetCheckBoxReadOnly()"></MudCheckBox>
                 }
 
