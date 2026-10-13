@@ -7,7 +7,7 @@
     <Columns>
         @if (ShowHierarchy)
         {
-            <HierarchyColumn T="Model" />
+            <HierarchyColumn T="Model" DragAndDropEnabled="HierarchyDragEnabled" />
         }
         @if (ShowSelect)
         {
@@ -26,7 +26,7 @@
         {
             @if (BindStatusOrder)
             {
-                <PropertyColumn Property="x => x.Status" Title="Status" @bind-Order="StatusOrder" />
+                <PropertyColumn Property="x => x.Status" Title="Status" Order="StatusOrder" OrderChanged="OnStatusOrderChanged" />
             }
             else
             {
@@ -56,6 +56,8 @@
 </MudPaper>
 
 <MudText Class="mt-2" Typo="Typo.body2">@StatusText</MudText>
+<div class="column-order-state" data-callback-count="@CallbackCount"
+     data-bound-values="@($"{NameOrder},{AgeOrder},{StatusOrder}")" data-callback-values="@CallbackValues"></div>
 
 @code {
     public static string __description__ = "Unit Test and Visual Test for DataGrid Column Order State";
@@ -78,6 +80,12 @@
 
     [Parameter]
     public bool ShowHierarchy { get; set; }
+
+    [Parameter]
+    public bool HierarchyDragEnabled { get; set; }
+
+    [Parameter]
+    public EventCallback<int?> StatusBindingChanged { get; set; }
 
     [Parameter]
     public bool BindAgeOrder { get; set; } = true;
@@ -153,6 +161,12 @@
     {
         SetOrders(_savedOrders.Name, _savedOrders.Age, _savedOrders.Status, _savedOrders.Select);
         StatusText = "Saved layout restored without a grid callback.";
+    }
+
+    private async Task OnStatusOrderChanged(int? value)
+    {
+        StatusOrder = value;
+        await StatusBindingChanged.InvokeAsync(value);
     }
 
     private Task OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Model> args)

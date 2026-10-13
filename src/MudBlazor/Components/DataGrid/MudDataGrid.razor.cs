@@ -39,7 +39,6 @@ namespace MudBlazor
         private bool _columnsPanelVisible = false;
         private bool _pendingParameterDrivenColumnOrderNormalization;
         private readonly HashSet<Column<T>> _columnsWithInitialOrderPlacement = [];
-        private ColumnOrderChangeOrigin _columnOrderChangeOrigin = ColumnOrderChangeOrigin.None;
         internal HashSet<T> _openHierarchies;
         private HashSet<T> _initialExpansions;
         private Func<T, bool>? _initialExpandedFunc = null;
@@ -289,7 +288,6 @@ namespace MudBlazor
         private Task ItemUpdatedAsync(MudItemDropInfo<Column<T>> dropItem)
         {
             Debug.Assert(dropItem.Item is not null);
-            dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
 
             var dragAndDropSource = RenderedColumns.SingleOrDefault(rc => rc.PropertyName == dropItem.Item?.PropertyName);
             var destinationPropertyName = dropItem.DropzoneIdentifier;
@@ -310,7 +308,12 @@ namespace MudBlazor
             {
                 var dragAndDropSourceIndex = RenderedColumns.IndexOf(dragAndDropSource);
                 var dragAndDropDestinationIndex = RenderedColumns.IndexOf(dragAndDropDestination);
+                if (!CanMoveColumn(dragAndDropSource, dragAndDropDestinationIndex))
+                {
+                    return Task.CompletedTask;
+                }
 
+                dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
                 if (ColumnReorderMode == DataGridDragAndDropColumnReorderMode.Insert)
                 {
                     var position = dropItem.DropzoneIdentifier.StartsWith(PostPrefix, StringComparison.Ordinal) ? 1 : 0;
@@ -2975,6 +2978,11 @@ namespace MudBlazor
         {
             Debug.Assert(dropItem.Item is not null);
             var previousIndex = RenderedColumns.IndexOf(dropItem.Item);
+            if (!CanMoveColumn(dropItem.Item, dropItem.IndexInZone))
+            {
+                return Task.CompletedTask;
+            }
+
             RenderedColumns.Remove(dropItem.Item);
             RenderedColumns.Insert(dropItem.IndexInZone, dropItem.Item);
             if (RenderedColumns.IndexOf(dropItem.Item) == previousIndex)
@@ -2992,7 +3000,7 @@ namespace MudBlazor
         private Task ColumnUp(Column<T> column)
         {
             var index = RenderedColumns.IndexOf(column);
-            if (index > 0)
+            if (CanMoveColumn(column, index - 1))
             {
                 RenderedColumns.RemoveAt(index);
                 RenderedColumns.Insert(index - 1, column);
@@ -3009,7 +3017,7 @@ namespace MudBlazor
         private Task ColumnDown(Column<T> column)
         {
             var index = RenderedColumns.IndexOf(column);
-            if (index >= 0 && index < RenderedColumns.Count - 1)
+            if (CanMoveColumn(column, index + 1))
             {
                 RenderedColumns.RemoveAt(index);
                 RenderedColumns.Insert(index + 1, column);
@@ -3017,6 +3025,15 @@ namespace MudBlazor
             }
 
             return Task.CompletedTask;
+        }
+
+        // Hierarchy columns are pinned; reject their movement or a pinned destination before normalizing bound values.
+        private bool CanMoveColumn(Column<T> column, int destinationIndex)
+        {
+            var sourceIndex = RenderedColumns.IndexOf(column);
+            return sourceIndex >= 0 && destinationIndex >= 0 && destinationIndex < RenderedColumns.Count
+                && sourceIndex != destinationIndex
+                && !IsHierarchyColumn(column) && !IsHierarchyColumn(RenderedColumns[destinationIndex]);
         }
 
         internal Task OnColumnOrderParameterChangedAsync(Column<T> column, ParameterChangedEventArgs<int?> args)
@@ -3148,8 +3165,7 @@ namespace MudBlazor
 
         private async Task NormalizeColumnOrderStateAsync(Column<T>? changedColumn, int previousIndex, ColumnOrderChangeOrigin origin)
         {
-            _columnOrderChangeOrigin = origin;
-            if (_columnOrderChangeOrigin != ColumnOrderChangeOrigin.ParameterUpdate)
+            if (origin != ColumnOrderChangeOrigin.ParameterUpdate)
             {
                 var orderedColumns = GetColumnsToNormalize();
                 for (var i = 0; i < orderedColumns.Count; i++)
@@ -3164,12 +3180,11 @@ namespace MudBlazor
             ApplyColumnOrdering();
             DropContainerHasChanged();
 
-            if (_columnOrderChangeOrigin == ColumnOrderChangeOrigin.UserInteraction && changedColumn is not null)
+            if (origin == ColumnOrderChangeOrigin.UserInteraction && changedColumn is not null)
             {
                 await NotifyColumnOrderChangedAsync(changedColumn, previousIndex, RenderedColumns.IndexOf(changedColumn));
             }
 
-            _columnOrderChangeOrigin = ColumnOrderChangeOrigin.None;
             await InvokeAsync(StateHasChanged);
         }
 

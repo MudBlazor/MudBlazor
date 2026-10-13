@@ -6502,6 +6502,117 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// An awaited binding overlapping a silent parent restore retains the user notification (#12827).
+        /// </summary>
+        [Test]
+        [CancelAfter(10000)]
+        public async Task DataGridAsyncOrderBindingRetainsUserNotificationAcrossParentRestore()
+        {
+            var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var blocked = false;
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.StatusBindingChanged, async _ =>
+                {
+                    if (!blocked)
+                    {
+                        blocked = true;
+                        entered.SetResult();
+                        await release.Task.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                    }
+                }));
+            var grid = comp.Instance.Grid!;
+            var status = grid.RenderedColumns.Single(x => x.PropertyName == "Status");
+            var move = comp.InvokeAsync(() => (Task)grid.GetType()
+                .GetMethod("ColumnUp", BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(grid, [status])!);
+            try
+            {
+                await entered.Task.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                comp.Instance.StatusOrder.Should().Be(1);
+                comp.Instance.CallbackCount.Should().Be(0);
+                await comp.InvokeAsync(() => comp.Instance.SetOrders(2, 1, 0));
+                await comp.WaitForAssertionAsync(() =>
+                {
+                    grid.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Status", "Age", "Name");
+                    grid.RenderedColumns.Select(x => x._orderState.Value).Should().Equal(0, 1, 2);
+                    comp.Instance.CallbackCount.Should().Be(0, "parent restoration itself is silent");
+                });
+            }
+            finally
+            {
+                release.TrySetResult();
+            }
+
+            await move;
+            comp.Instance.CallbackCount.Should().Be(1);
+            comp.Instance.CallbackValues.Should().Be("2,2,0", "the remaining awaited user binding completes after the parent restore");
+            grid.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Status", "Age", "Name");
+            comp.Instance.LastArgs!.PreviousIndex.Should().Be(2);
+            comp.Instance.LastArgs.CurrentIndex.Should().Be(0);
+            comp.Instance.LastArgs.Columns.Select(x => x.PropertyName).Should().Equal("Status", "Age", "Name");
+        }
+
+        /// <summary>
+        /// Pinned panel arrow/drop handlers reject moves before touching null bindings (#12827).
+        /// </summary>
+        [TestCase("ColumnDown", 0, 1)]
+        [TestCase("ColumnUp", 1, 0)]
+        [TestCase("ColumnOrderUpdated", 0, 2)]
+        [TestCase("ColumnOrderUpdated", 1, 0)]
+        [TestCase("ColumnOrderUpdated", 3, 0)]
+        public async Task DataGridPinnedPanelMovementLeavesNullBindingsUntouched(string handler, int source, int destination)
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(p => p.Add(x => x.ShowHierarchy, true));
+            var grid = comp.Instance.Grid!;
+            var before = grid.RenderedColumns.ToArray();
+            object argument = handler == "ColumnOrderUpdated"
+                ? new MudItemDropInfo<Column<DataGridColumnOrderStateTest.Model>>(before[source], "", destination)
+                : before[source];
+            await comp.InvokeAsync(() => (Task)grid.GetType()
+                .GetMethod(handler, BindingFlags.Instance | BindingFlags.NonPublic)!.Invoke(grid, [argument])!);
+
+            grid.RenderedColumns.Should().Equal(before);
+            grid.RenderedColumns.Select(x => x._orderState.Value).Should().OnlyContain(x => x == null);
+            comp.Instance.NameOrder.Should().BeNull();
+            comp.Instance.AgeOrder.Should().BeNull();
+            comp.Instance.StatusOrder.Should().BeNull();
+            comp.Instance.CallbackCount.Should().Be(0);
+            comp.Instance.LastArgs.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Actual header drops cannot move the hierarchy or target its pinned position (#12827).
+        /// </summary>
+        [TestCase(DataGridDragAndDropColumnReorderMode.Swap, true, false)]
+        [TestCase(DataGridDragAndDropColumnReorderMode.Swap, false, false)]
+        [TestCase(DataGridDragAndDropColumnReorderMode.Insert, true, false)]
+        [TestCase(DataGridDragAndDropColumnReorderMode.Insert, false, false)]
+        [TestCase(DataGridDragAndDropColumnReorderMode.Insert, false, true)]
+        public async Task DataGridPinnedHeaderDropLeavesNullBindingsUntouched(
+            DataGridDragAndDropColumnReorderMode mode, bool hierarchySource, bool insertionZone)
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(p => p
+                .Add(x => x.ShowHierarchy, true).Add(x => x.HierarchyDragEnabled, true).Add(x => x.ColumnReorderMode, mode));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            var before = dataGrid.Instance.RenderedColumns.ToArray();
+            var source = hierarchySource ? before[0] : before[3];
+            var target = hierarchySource ? before[3] : before[0];
+            var identifier = (insertionZone ? "__mud_dg_pre__:" : "") + target.PropertyName;
+            await dataGrid.FindAll(".mud-drop-zone").Single(x => x.GetAttribute("identifier") == source.PropertyName)
+                .Children[0].DragStartAsync(new DragEventArgs());
+            await dataGrid.FindAll(".mud-drop-zone").Single(x => x.GetAttribute("identifier") == identifier)
+                .DropAsync(new DragEventArgs());
+
+            dataGrid.Instance.RenderedColumns.Should().Equal(before);
+            dataGrid.Instance.RenderedColumns.Select(x => x._orderState.Value).Should().OnlyContain(x => x == null);
+            comp.Instance.NameOrder.Should().BeNull();
+            comp.Instance.AgeOrder.Should().BeNull();
+            comp.Instance.StatusOrder.Should().BeNull();
+            comp.Instance.CallbackCount.Should().Be(0);
+            comp.Instance.LastArgs.Should().BeNull();
+        }
+
+        /// <summary>
         /// A partial explicit order positions that column without materializing unset bound values.
         /// </summary>
         [Test]
