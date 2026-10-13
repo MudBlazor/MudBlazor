@@ -213,9 +213,10 @@ When NOT to edit:
 
 ### General Inactivity Rules
 - Skip closed threads and threads assigned to or created by maintainers or bots: never mark them `stale` or close them under this section, however long they've been inactive. A maintainer commenting on a thread, or changing its labels, does not exempt it.
-- Activity means any timeline event, including comments, commits, reviews, and cross-references from other issues or pull requests, EXCEPT:
+- Activity means any timeline event, including comments, commits, and reviews, EXCEPT:
   - Any action by a bot.
   - Labeled, unlabeled, renamed, reviewer-removed, and assignee-removed events, and project board changes, whoever made them, maintainers included. For example, a maintainer removing `good first issue` is neither activity nor a reason to skip the thread.
+  - Cross-references from other issues or pull requests. Being mentioned somewhere else isn't activity on this thread.
 - Find activity in the timeline events and their dates, not in the metadata's `updated_at`, which also changes for events that aren't activity.
 - Qualifying activity resets the inactivity timer. If a thread has `stale` and qualifying activity happened after the `stale` label was last added, remove `stale`. Excluded events do neither.
 - Exception: a maintainer removing `stale` restarts the inactivity timer as qualifying activity does, so measure from that removal if nothing qualifying came after it.
