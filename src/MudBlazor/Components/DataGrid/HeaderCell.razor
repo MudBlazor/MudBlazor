@@ -141,7 +141,7 @@ else if (Column != null && !Column.HiddenState.Value)
                 }
                 @if (DataGrid.DragDropColumnReordering && (Column.DragAndDropEnabled ?? true))
                 {
-                    <MudIconButton Icon="@DataGrid.DragIndicatorIcon" Size="@DataGrid.DragIndicatorSize" Class="drag-icon-options"></MudIconButton>
+                    <MudIconButton Icon="@DataGrid.DragIndicatorIcon" Size="@DataGrid.DragIndicatorSize" Class="drag-icon-options" aria-label="@Localizer[LanguageResource.MudDataGrid_ReorderColumn]"></MudIconButton>
                 }
             </span>
         </span>
