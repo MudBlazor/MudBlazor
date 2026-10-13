@@ -72,4 +72,24 @@ public partial class MudDivider : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Divider.Appearance)]
     public DividerType DividerType { get; set; } = DividerType.FullWidth;
+
+    /// <summary>
+    /// Displays the divider vertically when set above zero.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>0</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Divider.Appearance)]
+    public int VerticalAfter
+    {
+        get => _verticalAfter;
+        set
+        {
+            _verticalAfter = value;
+            Vertical = value > 0;
+        }
+    }
+
+    private int _verticalAfter;
 }
