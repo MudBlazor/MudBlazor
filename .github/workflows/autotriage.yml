@@ -2,9 +2,9 @@ name: AutoTriage
 
 on:
   issues:
-    types: [opened, reopened, edited]
+    types: [opened, reopened]
   pull_request_target:
-    types: [opened, reopened, ready_for_review, edited, synchronize]
+    types: [opened, reopened, ready_for_review]
   issue_comment:
     types: [created]
 # Manual runs go through autotriage-backlog.yml, which loads and saves the triage history.
@@ -15,18 +15,10 @@ permissions:
 jobs:
   triage:
     # Only in MudBlazor's own repository, skipping draft PRs, and issues and comments from bots.
-    # Description edits and pushes re-check an item only when its own author made them, and not on items a maintainer opened, so MudBot's renames and maintainers' edits or pushes don't.
     if: >-
       github.repository_owner == 'MudBlazor' && (
-      (github.event_name == 'pull_request_target' && !github.event.pull_request.draft && (
-      (github.event.action != 'edited' && github.event.action != 'synchronize') ||
-      (github.event.sender.login == github.event.pull_request.user.login && github.event.sender.type != 'Bot' &&
-      !contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.pull_request.author_association) &&
-      (github.event.action == 'synchronize' || github.event.changes.body)))) ||
-      (github.event_name != 'pull_request_target' && github.event.sender.type != 'Bot' && (
-      github.event.action != 'edited' ||
-      (github.event.sender.login == github.event.issue.user.login && github.event.changes.body &&
-      !contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.issue.author_association)))))
+      (github.event_name == 'pull_request_target' && !github.event.pull_request.draft) ||
+      (github.event_name != 'pull_request_target' && github.event.sender.type != 'Bot'))
     runs-on: ubuntu-latest
     timeout-minutes: 60
     # Queue every run instead of keeping only the newest pending one, so a burst of new items all get triaged, and event runs wait for the backlog sweep.

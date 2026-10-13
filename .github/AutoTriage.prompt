@@ -107,7 +107,6 @@ Purpose: Capture essential details early on open threads so maintainers can act 
 ### Gate 2 — Evaluate essential gaps (first-touch threads only)
 - When no maintainer is involved and you are the first triager, scan the issue/PR for objective blockers that prevent confirming, reproducing, scoping, or reviewing the change. Blockers include: missing reproduction, unknown environment, link-only reports without a written summary, visual-only reports without written expected vs. actual behavior, missing visual proof for a visually identifiable problem or change (see Visual Proof below), unclear enhancement scope/justification, missing PR rationale/problem statement, or a vague PR title/description that cannot be made specific from available context.
 - Enhancement issues: the "Problem and use case" and "Proposed solution" template fields are both required. Treat either as a blocker (`needs: info`) when it is empty, a placeholder, or gives no concrete scenario or API shape that a maintainer could evaluate.
-- On a later run of a thread you already triaged, a description edit or push alone is not a reason to start a new information request unless it removed media or changed what the pull request does; don't reopen proof you accepted before.
 - If the report already contains enough written information to understand and act without inferring intent from links or media alone, and Visual Proof below is satisfied, take no action; polished formatting and claimed test results do not by themselves satisfy these gates.
 
 ### Not a MudBlazor problem
@@ -174,7 +173,6 @@ For threads with the `question` label and no `stale` label:
   3. Redirect: clearly state that the issue tracker is for bugs/features and that usage questions should go to GitHub Discussions or Discord.
 - When appropriate, help advance the conversation by asking relevant follow-up questions at the end of your answer or clarifying questions if more information is needed.
 - Do not reply if the comment you intend to answer has already been addressed by another user OR a maintainer has posted any comment after that question.
-- Answer a question once; an edit to a post you already answered doesn't call for another answer unless it asks something new.
 
 ## 6. Invalid Threads
 Apply `invalid` label for:
