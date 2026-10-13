@@ -217,16 +217,16 @@ When NOT to edit:
   - Any action by a bot.
   - Labeled, unlabeled, renamed, reviewer-removed, and assignee-removed events, and project board changes, whoever made them, maintainers included. For example, a maintainer removing `good first issue` is neither activity nor a reason to skip the thread.
 - Find activity in the timeline events and their dates, not in the metadata's `updated_at`, which also changes for events that aren't activity.
-- Qualifying activity resets the inactivity timer. If a thread has `stale` and qualifying activity happened after the `stale` label was added, remove `stale`. Excluded events do neither.
+- Qualifying activity resets the inactivity timer. If a thread has `stale` and qualifying activity happened after the `stale` label was last added, remove `stale`. Excluded events do neither.
 - Exception: a maintainer removing `stale` restarts the inactivity timer as qualifying activity does, so measure from that removal if nothing qualifying came after it.
 - Measure inactivity from the latest qualifying activity, or creation if none.
-- Check every open thread that isn't skipped against the thresholds below, even when nothing else about it needs action: find the date of its latest qualifying activity, and of its `stale` label if it has one, then count the days to the current UTC timestamp. When a threshold is met, the stale, unstale, or close operation is required. These are date checks, so don't hold back because other parts of the thread are unclear.
+- Check every open thread that isn't skipped against the thresholds below, even when nothing else about it needs action: find the date of its latest qualifying activity, and of when `stale` was last added if it has it, then count the days to the current UTC timestamp. When a threshold is met, the stale, unstale, or close operation is required. These are date checks, so don't hold back because other parts of the thread are unclear.
 - Do not post a comment when closing stale threads.
 
 ### Issues
 If the issue doesn't have `stale`, mark it `stale` when ANY condition holds:
-- Bug: >=18 months of inactivity.
-- Feature: >=36 months of inactivity.
+- Bug: >=548 days (18 months) of inactivity.
+- Feature: >=1096 days (36 months) of inactivity.
 - Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days, with no qualifying activity during those 28 days.
 The 28-day label list is exhaustive; no other label, including `has workaround`, creates eligibility.
 
@@ -237,7 +237,7 @@ When marking stale, post verbatim without the default footer:
 >
 > If no response is received, it will be automatically closed.
 
-If the issue already has `stale`, close it with `state: not_planned` when >=84 days have passed since the `stale` label was added and no qualifying activity has happened since then.
+If the issue already has `stale`, close it with `state: not_planned` when >=84 days have passed since the `stale` label was last added and no qualifying activity has happened since then.
 
 ### Pull Requests
 If the pull request doesn't have `stale`, mark it `stale` when BOTH conditions hold:
@@ -247,7 +247,7 @@ If the pull request doesn't have `stale`, mark it `stale` when BOTH conditions h
 When marking stale, post verbatim without the default footer:
 > This pull request has been marked as stale due to inactivity.
 
-If the pull request already has `stale`, close it with `state: not_planned` when >=168 days have passed since the `stale` label was added and no qualifying activity has happened since then.
+If the pull request already has `stale`, close it with `state: not_planned` when >=168 days have passed since the `stale` label was last added and no qualifying activity has happened since then.
 
 ## 9. Reopen Closed Items
 - This section applies to closed threads only.
