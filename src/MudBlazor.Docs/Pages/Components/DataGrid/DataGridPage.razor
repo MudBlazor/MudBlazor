@@ -518,6 +518,8 @@
                 <Description>
                     Bind a column's <CodeInline>Order</CodeInline> and <CodeInline>OrderChanged</CodeInline> parameters to save and restore its position.
                     Header, columns-panel, and arrow reorders update the bound values and raise <CodeInline>ColumnOrderChanged</CodeInline> once when the position changes.
+                    Ordinary rerenders and conditional column changes preserve the relative order of existing columns, including direct <CodeInline>RenderedColumns</CodeInline> overrides.
+                    Newly added columns use their explicit index or default placement without resorting existing columns.
                     Parameter-driven restoration is silent, and resetting every value to <CodeInline>null</CodeInline> restores declaration order and default placement without replacing the null values.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         <div>* <CodeInline>HierarchyColumn</CodeInline> stays pinned and does not participate in <CodeInline>Order</CodeInline> state.</div>

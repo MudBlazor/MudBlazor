@@ -38,6 +38,7 @@ namespace MudBlazor
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
         private bool _pendingParameterDrivenColumnOrderNormalization;
+        private readonly HashSet<Column<T>> _columnsWithInitialOrderPlacement = [];
         private ColumnOrderChangeOrigin _columnOrderChangeOrigin = ColumnOrderChangeOrigin.None;
         internal HashSet<T> _openHierarchies;
         private HashSet<T> _initialExpansions;
@@ -1701,6 +1702,7 @@ namespace MudBlazor
                 await NormalizeColumnOrderStateAsync(null, -1, ColumnOrderChangeOrigin.ParameterUpdate);
             }
 
+            _columnsWithInitialOrderPlacement.Clear();
             await base.OnAfterRenderAsync(firstRender);
         }
 
@@ -1923,7 +1925,18 @@ namespace MudBlazor
             }
 
             RenderedColumns.Add(column);
-            ApplyColumnOrdering();
+            if (_isFirstRendered)
+            {
+                PlaceAddedColumn(column);
+                if (column._orderState.Value is not null)
+                {
+                    _columnsWithInitialOrderPlacement.Add(column);
+                }
+            }
+            else
+            {
+                ApplyColumnOrdering();
+            }
         }
 
         internal void CancelServerDataToken()
@@ -1951,7 +1964,10 @@ namespace MudBlazor
                 _buttonDisabledFunc = null;
             }
 
-            ApplyColumnOrdering();
+            if (!_isFirstRendered)
+            {
+                ApplyColumnOrdering();
+            }
         }
 
         internal IFilterDefinition<T> CreateFilterDefinitionInstance()
@@ -3010,6 +3026,12 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
+            // Ignore only the initial assignment already used to place a new column, not later parent updates in this render.
+            if (_columnsWithInitialOrderPlacement.Remove(column) && args.Value == column._orderState.InitialValue)
+            {
+                return Task.CompletedTask;
+            }
+
             _pendingParameterDrivenColumnOrderNormalization = true;
             return Task.CompletedTask;
         }
@@ -3094,6 +3116,31 @@ namespace MudBlazor
             }
         }
 
+        private void PlaceAddedColumn(Column<T> column)
+        {
+            RenderedColumns.Remove(column);
+
+            var hierarchyCount = RenderedColumns.Count(IsHierarchyColumn);
+            if (IsHierarchyColumn(column))
+            {
+                RenderedColumns.Insert(hierarchyCount, column);
+                return;
+            }
+
+            if (IsDefaultSelectColumn(column))
+            {
+                RenderedColumns.Insert(hierarchyCount, column);
+                return;
+            }
+
+            var defaultSelectCount = RenderedColumns.Count(IsDefaultSelectColumn);
+            var reorderableCount = RenderedColumns.Count - hierarchyCount - defaultSelectCount;
+            var insertIndex = column._orderState.Value is { } order && order >= 0 && order <= reorderableCount
+                ? order
+                : reorderableCount;
+            RenderedColumns.Insert(hierarchyCount + defaultSelectCount + insertIndex, column);
+        }
+
         private async Task UpdateColumnOrderStateAsync(Column<T> changedColumn, int previousIndex)
         {
             await NormalizeColumnOrderStateAsync(changedColumn, previousIndex, ColumnOrderChangeOrigin.UserInteraction);
@@ -3102,14 +3149,9 @@ namespace MudBlazor
         private async Task NormalizeColumnOrderStateAsync(Column<T>? changedColumn, int previousIndex, ColumnOrderChangeOrigin origin)
         {
             _columnOrderChangeOrigin = origin;
-            if (_columnOrderChangeOrigin == ColumnOrderChangeOrigin.ParameterUpdate)
-            {
-                ApplyColumnOrdering();
-            }
-
-            var orderedColumns = GetColumnsToNormalize();
             if (_columnOrderChangeOrigin != ColumnOrderChangeOrigin.ParameterUpdate)
             {
+                var orderedColumns = GetColumnsToNormalize();
                 for (var i = 0; i < orderedColumns.Count; i++)
                 {
                     if (orderedColumns[i]._orderState.Value != i)

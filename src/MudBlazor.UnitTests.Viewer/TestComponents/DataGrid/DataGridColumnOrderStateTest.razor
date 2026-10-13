@@ -1,4 +1,4 @@
-﻿<MudDataGrid Items="@Items"
+﻿<MudDataGrid @ref="Grid" Items="@Items"
              DragDropColumnReordering="true"
              ColumnsPanelReordering="true"
              ShowMenuIcon="true"
@@ -22,7 +22,17 @@
         {
             <PropertyColumn Property="x => x.Age" Title="Age" />
         }
-        <PropertyColumn Property="x => x.Status" Title="Status" @bind-Order="StatusOrder" />
+        @if (ShowStatus)
+        {
+            @if (BindStatusOrder)
+            {
+                <PropertyColumn Property="x => x.Status" Title="Status" @bind-Order="StatusOrder" />
+            }
+            else
+            {
+                <PropertyColumn Property="x => x.Status" Title="Status" />
+            }
+        }
     </Columns>
 </MudDataGrid>
 
@@ -73,6 +83,12 @@
     public bool BindAgeOrder { get; set; } = true;
 
     [Parameter]
+    public bool BindStatusOrder { get; set; } = true;
+
+    [Parameter]
+    public bool ShowStatus { get; set; } = true;
+
+    [Parameter]
     public DataGridDragAndDropColumnReorderMode ColumnReorderMode { get; set; } = DataGridDragAndDropColumnReorderMode.Insert;
 
     [Parameter]
@@ -89,6 +105,10 @@
 
     public int? SelectOrder { get; set; }
 
+    public MudDataGrid<Model>? Grid { get; private set; }
+
+    public string CallbackValues { get; private set; } = string.Empty;
+
     public int CallbackCount { get; private set; }
 
     public DataGridColumnOrderChangedEventArgs<Model>? LastArgs { get; private set; }
@@ -104,6 +124,8 @@
         StatusOrder = InitialStatusOrder;
         SelectOrder = InitialSelectOrder;
     }
+
+    public void RefreshGrid() => StateHasChanged();
 
     public void SetOrders(int? nameOrder, int? ageOrder, int? statusOrder, int? selectOrder = null)
     {
@@ -135,6 +157,7 @@
 
     private Task OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Model> args)
     {
+        CallbackValues = $"{NameOrder},{AgeOrder},{StatusOrder}";
         CallbackCount++;
         LastArgs = args;
         StatusText = $"{GetColumnLabel(args.Column)} moved from {args.PreviousIndex} to {args.CurrentIndex}.";
@@ -156,7 +179,10 @@
 
         rows.Add(("Name", FormatOrder(NameOrder)));
         rows.Add(("Age", BindAgeOrder ? FormatOrder(AgeOrder) : "Unbound"));
-        rows.Add(("Status", FormatOrder(StatusOrder)));
+        if (ShowStatus)
+        {
+            rows.Add(("Status", BindStatusOrder ? FormatOrder(StatusOrder) : "Unbound"));
+        }
         return rows;
     }
 
