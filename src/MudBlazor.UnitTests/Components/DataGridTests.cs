@@ -6440,6 +6440,9 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
         }
 
+        /// <summary>
+        /// Header column drag handles have an accessible name (#13979).
+        /// </summary>
         [Test]
         public void DataGridDragAndDrop_HeaderDragHandles_HaveAccessibleName()
         {
@@ -8805,6 +8808,9 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Columns panel drag handles have an accessible name (#13979).
+        /// </summary>
         [Test]
         public async Task DataGrid_ColumnsPanelDragHandles_HaveAccessibleName()
         {
