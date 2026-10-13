@@ -7,17 +7,7 @@ on:
     types: [opened, reopened, ready_for_review]
   issue_comment:
     types: [created]
-  workflow_dispatch:
-    inputs:
-      issues:
-        description: "Issue or PR numbers (blank = backlog)"
-        type: string
-        required: false
-      dry-run:
-        description: "Plan without applying"
-        type: boolean
-        required: false
-        default: true
+# Manual runs go through autotriage-backlog.yml, which loads and saves the triage history.
 
 permissions:
   contents: read
@@ -48,10 +38,6 @@ jobs:
 
       - name: AutoTriage - triage item
         uses: danielchalmers/AutoTriage@v5
-        with:
-          issues: ${{ inputs.issues }}
-          # New activity is triaged live, while a manual run, which can sweep the backlog, only plans unless dry-run is unticked.
-          dry-run: ${{ inputs.dry-run }}
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY_TRIAGE }}
