@@ -65,7 +65,7 @@ jobs:
             ${{ runner.os }}-triage-db-
 
       - name: AutoTriage - triage backlog
-        uses: danielchalmers/AutoTriage@v4
+        uses: danielchalmers/AutoTriage@v5
         with:
           issues: ${{ github.event.inputs.issues }}
           prompt-path: .github/AutoTriage.prompt
