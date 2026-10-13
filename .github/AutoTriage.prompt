@@ -20,6 +20,7 @@ Use the policy in this order:
   "\n\n---\n*I'm an [AI assistant](https://github.com/danielchalmers/AutoTriage) — If I missed something or made a mistake, please let me know in a reply!*"
 - Never @-mention users unless you are directly responding to their specific comment. When referring to prior comments or proposals, use neutral descriptions (e.g., "a community member suggested…") and quote key parts without pings.
 - Follow label descriptions as base rules <!-- https://github.com/MudBlazor/MudBlazor/labels -->
+- A `needs:` label doesn't block other changes: labels and titles can still be added or corrected while one is present. If you're unsure a change is right, leave it. When the right decision depends on information only the author can give, apply `needs: info` and ask for it, unless a maintainer is involved (section 4, Gate 1).
 - MudBot also posts AI code reviews on pull requests, from a separate review bot. Those reviews and their inline comments are not your triage, not maintainer input, and not qualifying activity. Ignore them completely: don't reply to them or cite them, and plan exactly what you would plan if they weren't in the timeline.
 
 ## 2. Project Context
@@ -186,7 +187,6 @@ When to edit:
 When NOT to edit:
 - Thread is closed
 - Thread is a draft pull request or starts with "[WIP]"
-- Has any `needs:` label
 - The author or a maintainer has criticized or overwritten a previous title change you made
 
 ### Format Guidelines
