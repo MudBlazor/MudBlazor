@@ -1,5 +1,6 @@
 ﻿using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Time.Testing;
 using MudBlazor.UnitTests.TestComponents.Carousel;
@@ -127,6 +128,85 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Default navigation controls follow the natural document tab order (#13975).
+        /// </summary>
+        [Test]
+        public async Task Carousel_DefaultControls_UseNaturalTabOrder()
+        {
+            var comp = Context.Render<MudCarousel<object>>(parameters => parameters
+                .Add(p => p.AutoCycle, false));
+
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+
+            foreach (var button in comp.FindAll("button.mud-icon-button"))
+            {
+                button.HasAttribute("tabindex").Should().BeFalse();
+            }
+        }
+
+        /// <summary>
+        /// Custom navigation controls expose button semantics (#13975).
+        /// </summary>
+        [Test]
+        public async Task Carousel_CustomControls_ExposeButtonSemantics()
+        {
+            RenderFragment previousTemplate = builder => builder.AddContent(0, "Previous");
+            RenderFragment nextTemplate = builder => builder.AddContent(0, "Next");
+            RenderFragment<bool> bulletTemplate = isSelected => builder => builder.AddContent(0, isSelected ? "Selected" : "Not selected");
+            var comp = Context.Render<MudCarousel<object>>(parameters => parameters
+                .Add(p => p.AutoCycle, false)
+                .Add(p => p.NavigationButtonsClass, "custom-navigation")
+                .Add(p => p.BulletsClass, "custom-bullet")
+                .Add(p => p.PreviousButtonTemplate, previousTemplate)
+                .Add(p => p.NextButtonTemplate, nextTemplate)
+                .Add(p => p.BulletTemplate, bulletTemplate));
+
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+
+            var controls = comp.FindAll("div.custom-navigation, div.custom-bullet");
+            controls.Should().HaveCount(4);
+            foreach (var control in controls)
+            {
+                control.GetAttribute("role").Should().Be("button");
+                control.GetAttribute("tabindex").Should().Be("0");
+                control.GetAttribute("aria-label").Should().NotBeNullOrEmpty();
+            }
+        }
+
+        /// <summary>
+        /// Custom navigation controls respond to keyboard activation (#13975).
+        /// </summary>
+        [Test]
+        public async Task Carousel_CustomControls_HandleKeyboardInput()
+        {
+            RenderFragment previousTemplate = builder => builder.AddContent(0, "Previous");
+            RenderFragment nextTemplate = builder => builder.AddContent(0, "Next");
+            RenderFragment<bool> bulletTemplate = isSelected => builder => builder.AddContent(0, isSelected ? "Selected" : "Not selected");
+            var comp = Context.Render<MudCarousel<object>>(parameters => parameters
+                .Add(p => p.AutoCycle, false)
+                .Add(p => p.NavigationButtonsClass, "custom-navigation")
+                .Add(p => p.BulletsClass, "custom-bullet")
+                .Add(p => p.PreviousButtonTemplate, previousTemplate)
+                .Add(p => p.NextButtonTemplate, nextTemplate)
+                .Add(p => p.BulletTemplate, bulletTemplate));
+
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+
+            await comp.FindAll("div.custom-navigation")[1].KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            comp.Instance.SelectedIndex.Should().Be(1);
+
+            await comp.FindAll("div.custom-navigation")[0].KeyDownAsync(new KeyboardEventArgs { Key = " " });
+            comp.Instance.SelectedIndex.Should().Be(0);
+
+            await comp.FindAll("div.custom-bullet")[2].KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            comp.Instance.SelectedIndex.Should().Be(2);
         }
 
         /// <summary>
