@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -299,14 +298,6 @@ namespace MudBlazor
                     if (RightToLeft) Previous();
                     else Next();
                     break;
-            }
-        }
-
-        private static void HandleNavigationKeyDown(KeyboardEventArgs args, Action action)
-        {
-            if (args.Key is "Enter" or " ")
-            {
-                action();
             }
         }
 
