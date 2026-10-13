@@ -104,7 +104,7 @@ namespace MudBlazor
         /// <param name="jsRuntime">The <see cref="IJSRuntime"/>.</param>
         /// <param name="identifier">An identifier for the function to invoke. For example, the value <c>"someScope.someFunction"</c> will invoke the function <c>window.someScope.someFunction</c>.</param>
         /// <param name="args">JSON-serializable arguments.</param>
-        /// <returns>A <see cref="ValueTask"/> that represents the asynchronous invocation operation and resolves to true in case no exception has occured otherwise false.</returns>
+        /// <returns>A <see cref="ValueTask"/> that represents the asynchronous invocation operation and resolves to true in case no exception has occurred otherwise false.</returns>
         public static async ValueTask<bool> InvokeVoidAsyncWithErrorHandling(this IJSRuntime jsRuntime, string identifier, params object?[] args)
         {
             try
@@ -149,7 +149,7 @@ namespace MudBlazor
         /// (<see cref="JSRuntime.DefaultAsyncTimeout"/>) from being applied.
         /// </param>
         /// <param name="args">JSON-serializable arguments.</param>
-        /// <returns>A <see cref="ValueTask"/> that represents the asynchronous invocation operation and resolves to true in case no exception has occured otherwise false.</returns>
+        /// <returns>A <see cref="ValueTask"/> that represents the asynchronous invocation operation and resolves to true in case no exception has occurred otherwise false.</returns>
         public static async ValueTask<bool> InvokeVoidAsyncWithErrorHandling(this IJSRuntime jsRuntime, string identifier, CancellationToken cancellationToken, params object?[] args)
         {
             try
@@ -185,7 +185,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Invokes the specified JavaScript function asynchronously and catches JSException, JSDisconnectedException and TaskCanceledException. In case an exception occured the default value of <typeparamref name="TValue"/> is returned
+        /// Invokes the specified JavaScript function asynchronously and catches JSException, JSDisconnectedException and TaskCanceledException. In case an exception occurred the default value of <typeparamref name="TValue"/> is returned
         /// </summary>
         /// <typeparam name="TValue">The JSON-serializable return type.</typeparam>
         /// <param name="jsRuntime">The <see cref="IJSRuntime"/>.</param>
@@ -196,7 +196,7 @@ namespace MudBlazor
             => await jsRuntime.InvokeAsyncWithErrorHandling(default(TValue), identifier, args);
 
         /// <summary>
-        /// Invokes the specified JavaScript function asynchronously and catches JSException, JSDisconnectedException and TaskCanceledException. In case an exception occured the default value of <typeparamref name="TValue"/> is returned
+        /// Invokes the specified JavaScript function asynchronously and catches JSException, JSDisconnectedException and TaskCanceledException. In case an exception occurred the default value of <typeparamref name="TValue"/> is returned
         /// </summary>
         /// <typeparam name="TValue">The JSON-serializable return type.</typeparam>
         /// <param name="jsRuntime">The <see cref="IJSRuntime"/>.</param>
@@ -215,7 +215,7 @@ namespace MudBlazor
         /// </summary>
         /// <typeparam name="TValue">The JSON-serializable return type.</typeparam>
         /// <param name="jsRuntime">The <see cref="IJSRuntime"/>.</param>
-        /// <param name="fallbackValue">The value that should be returned in case an exception occured</param>
+        /// <param name="fallbackValue">The value that should be returned in case an exception occurred</param>
         /// <param name="identifier">An identifier for the function to invoke. For example, the value <c>"someScope.someFunction"</c> will invoke the function <c>window.someScope.someFunction</c>.</param>
         /// <param name="args">JSON-serializable arguments.</param>
         /// <returns>An instance of <typeparamref name="TValue"/> obtained by JSON-deserializing the return value into a tuple. The first item (sucess) is true in case where there was no exception, otherwise fall.</returns>
@@ -258,7 +258,7 @@ namespace MudBlazor
         /// </summary>
         /// <typeparam name="TValue">The JSON-serializable return type.</typeparam>
         /// <param name="jsRuntime">The <see cref="IJSRuntime"/>.</param>
-        /// <param name="fallbackValue">The value that should be returned in case an exception occured</param>
+        /// <param name="fallbackValue">The value that should be returned in case an exception occurred</param>
         /// <param name="identifier">An identifier for the function to invoke. For example, the value <c>"someScope.someFunction"</c> will invoke the function <c>window.someScope.someFunction</c>.</param>
         /// <param name="cancellationToken">
         /// A cancellation token to signal the cancellation of the operation. Specifying this parameter will override any default cancellations such as due to timeouts
