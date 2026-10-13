@@ -38,9 +38,9 @@
                 }
                 else
                 {
-                    <div @onclick="Previous" @onkeydown="args => HandleNavigationKeyDown(args, Previous)" tabindex="0" role="button" aria-label="@Localizer[LanguageResource.MudCarousel_Previous]" class="@NavigationButtonsClassName" style="z-index:3">
+                    <button type="button" @onclick="Previous" aria-label="@Localizer[LanguageResource.MudCarousel_Previous]" class="@NavigationButtonsClassName" style="z-index:3">
                         @PreviousButtonTemplate
-                    </div>
+                    </button>
                 }
             }
 
@@ -58,9 +58,9 @@
                             }
                             else
                             {
-                                <div @onclick="() => MoveTo(current)" @onkeydown="args => HandleNavigationKeyDown(args, () => MoveTo(current))" tabindex="0" role="button" aria-label="@Localizer[LanguageResource.MudCarousel_Index, $"{current + 1}"]" class="@BulletsButtonsClassName" style="z-index:3">
+                                <button type="button" @onclick="() => MoveTo(current)" aria-label="@Localizer[LanguageResource.MudCarousel_Index, $"{current + 1}"]" class="@BulletsButtonsClassName" style="z-index:3">
                                     @BulletTemplate(current == SelectedIndex)
-                                </div>
+                                </button>
                             }
                         }
                     </div>
@@ -76,9 +76,9 @@
                 }
                 else
                 {
-                    <div @onclick="Next" @onkeydown="args => HandleNavigationKeyDown(args, Next)" tabindex="0" role="button" aria-label="@Localizer[LanguageResource.MudCarousel_Next]" class="@NavigationButtonsClassName" style="z-index:3">
+                    <button type="button" @onclick="Next" aria-label="@Localizer[LanguageResource.MudCarousel_Next]" class="@NavigationButtonsClassName" style="z-index:3">
                         @NextButtonTemplate
-                    </div>
+                    </button>
                 }
             }
         </div>
