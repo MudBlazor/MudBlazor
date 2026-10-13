@@ -1,0 +1,17 @@
+<MudDataGrid Items="_items" RowsPerPage="@RowsPerPage">
+    <Columns>
+        <PropertyColumn Property="x => x" Title="Item" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="int" PageSizeOptions="new[] { 10, 15, 25 }" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "RowsPerPage outside PageSizeOptions must remain visible and selectable (#11521).";
+
+    [Parameter]
+    public int RowsPerPage { get; set; } = 12;
+
+    private readonly int[] _items = Enumerable.Range(1, 40).ToArray();
+}

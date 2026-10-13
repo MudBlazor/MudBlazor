@@ -30,6 +30,45 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class DataGridTests : BunitTest
     {
+        /// <summary>
+        /// The rows-per-page selector must display the configured size even when it is not in PageSizeOptions (#11521).
+        /// </summary>
+        [Test]
+        public async Task DataGridPager_RowsPerPageOutsideOptions_IsSelectable()
+        {
+            Context.AddFakeTimeProvider();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<DataGridPagerNonOptionPageSizeTest>();
+            var select = comp.FindComponent<MudSelect<int>>();
+
+            select.Instance.Value.Should().Be(12);
+            await comp.InvokeAsync(select.Instance.OpenMenu);
+            await provider.WaitForAssertionAsync(() =>
+            {
+                var options = provider.FindAll(".mud-list-item");
+                options.Select(item => item.TextContent.Trim()).Should().Contain("12");
+                comp.Find(".mud-select-input").TextContent.Trim().Should().Be("12");
+            });
+        }
+
+        /// <summary>
+        /// The current rows-per-page option is not duplicated when already offered (#11521).
+        /// </summary>
+        [Test]
+        public async Task DataGridPager_RowsPerPageWithinOptions_IsNotDuplicated()
+        {
+            Context.AddFakeTimeProvider();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<DataGridPagerNonOptionPageSizeTest>(parameters =>
+                parameters.Add(x => x.RowsPerPage, 15));
+            var select = comp.FindComponent<MudSelect<int>>();
+
+            select.Instance.Value.Should().Be(15);
+            await comp.InvokeAsync(select.Instance.OpenMenu);
+            await provider.WaitForAssertionAsync(() =>
+                provider.FindAll(".mud-list-item").Count(item => item.TextContent.Trim() == "15").Should().Be(1));
+        }
+
         [Test]
         [SetCulture("")]
         [SetUICulture("")]
