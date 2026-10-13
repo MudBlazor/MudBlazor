@@ -22,6 +22,8 @@ namespace MudBlazor
     /// <seealso cref="MudTablePager" />
     public partial class MudDataGridPager<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
+        private readonly string _rowsPerPageLabelId = Identifier.Create("datagridpager-rows-per-page");
+
         /// <summary>
         /// The grid which contains this pager.
         /// </summary>
