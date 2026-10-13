@@ -2980,6 +2980,8 @@ namespace MudBlazor
             var previousIndex = RenderedColumns.IndexOf(dropItem.Item);
             if (!CanMoveColumn(dropItem.Item, dropItem.IndexInZone))
             {
+                // The drop zone has already reordered its cached indices before invoking this callback.
+                _columnsPanelDropContainer?.Refresh();
                 return Task.CompletedTask;
             }
 

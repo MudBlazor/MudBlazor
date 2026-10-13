@@ -6581,6 +6581,51 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A rejected real panel drop restores its cached display order without changing grid bindings (#12827).
+        /// </summary>
+        [Test]
+        public async Task DataGridPinnedPanelDropRestoresDisplayedOrder()
+        {
+            var popoverProvider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<DataGridColumnOrderStateTest>(p => p.Add(x => x.ShowHierarchy, true));
+            var grid = comp.Instance.Grid!;
+            var before = grid.RenderedColumns.ToArray();
+            await comp.InvokeAsync(() => grid.ShowColumnsPanel());
+            var panelContainer = popoverProvider.FindComponent<MudDropContainer<Column<DataGridColumnOrderStateTest.Model>>>().Instance;
+            MudDragAndDropTransactionFinishedEventArgs<Column<DataGridColumnOrderStateTest.Model>> ended = null;
+            panelContainer.TransactionEnded += (_, args) => ended = args;
+
+            await popoverProvider.FindAll(".mud-data-grid-columns-panel .mud-drop-item")
+                .Single(x => x.TextContent.Contains("Status", StringComparison.Ordinal)).DragStartAsync(new DragEventArgs());
+            await popoverProvider.Find(".mud-data-grid-columns-panel .mud-drop-item-preview-start").DragEnterAsync(new DragEventArgs());
+            await popoverProvider.Find(".mud-data-grid-columns-panel .mud-drop-zone").DropAsync(new DragEventArgs());
+
+            ended.Should().NotBeNull("the actual container transaction must finish before observing the settled panel");
+            ended!.Success.Should().BeTrue();
+            panelContainer.TransactionInProgress().Should().BeFalse();
+            await popoverProvider.WaitForAssertionAsync(() =>
+            {
+                grid.RenderedColumns.Should().Equal(before);
+                popoverProvider.FindComponents<MudDynamicDropItem<Column<DataGridColumnOrderStateTest.Model>>>()
+                    .Where(x => x.Instance.Item is not null).Select(x => x.Instance.Item).Should().Equal(before);
+            });
+
+            await comp.InvokeAsync(() => comp.Instance.RefreshGrid());
+            await popoverProvider.WaitForAssertionAsync(() =>
+            {
+                grid.RenderedColumns.Should().Equal(before);
+                popoverProvider.FindComponents<MudDynamicDropItem<Column<DataGridColumnOrderStateTest.Model>>>()
+                    .Where(x => x.Instance.Item is not null).Select(x => x.Instance.Item).Should().Equal(before);
+                grid.RenderedColumns.Select(x => x._orderState.Value).Should().OnlyContain(x => x == null);
+                comp.Instance.NameOrder.Should().BeNull();
+                comp.Instance.AgeOrder.Should().BeNull();
+                comp.Instance.StatusOrder.Should().BeNull();
+                comp.Instance.CallbackCount.Should().Be(0);
+                comp.Instance.LastArgs.Should().BeNull();
+            });
+        }
+
+        /// <summary>
         /// Actual header drops cannot move the hierarchy or target its pinned position (#12827).
         /// </summary>
         [TestCase(DataGridDragAndDropColumnReorderMode.Swap, true, false)]
