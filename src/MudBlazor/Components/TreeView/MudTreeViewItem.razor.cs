@@ -24,6 +24,7 @@ namespace MudBlazor
         private readonly ParameterState<IReadOnlyCollection<ITreeItemData<T>>?> _itemsState;
         private readonly DefaultConverter<T?> _converter = new();
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
+        private readonly string _checkboxTextId = Identifier.Create("treeviewitem-label");
 
         public MudTreeViewItem()
         {

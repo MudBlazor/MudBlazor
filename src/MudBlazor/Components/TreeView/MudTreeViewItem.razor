@@ -23,7 +23,7 @@
 
                 @if (MultiSelection)
                 {
-                    <MudCheckBox T="bool?" TriState Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@GetIndeterminateIcon()"
+                    <MudCheckBox T="bool?" TriState aria-labelledby="@(BodyContent is null ? _checkboxTextId : null)" Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@GetIndeterminateIcon()"
                                  @bind-Value:get="GetCheckBoxStateTriState()" @bind-Value:set="@(x => OnCheckboxChangedAsync())" Disabled="@GetDisabled()" ReadOnly="@GetCheckBoxReadOnly()"></MudCheckBox>
                 }
 
@@ -40,7 +40,7 @@
                 }
                 else
                 {
-                    @MudText.RenderText(TextTypo, TextClassname, GetText())
+                    @MudText.RenderText(TextTypo, TextClassname, GetText(), MultiSelection ? _checkboxTextId : null)
 
                     @if (!string.IsNullOrEmpty(EndText))
                     {

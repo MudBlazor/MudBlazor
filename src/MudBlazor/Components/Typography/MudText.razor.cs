@@ -120,11 +120,12 @@ public partial class MudText : MudComponentBase
 
     // Renders the element a MudText with only a typo, a class and text would render, for library components that repeat it per item.
     // It is a fragment so its hardcoded sequence numbers get their own region inside the caller's markup.
-    internal static RenderFragment RenderText(Typo typo, string? className, string? text) => builder =>
+    internal static RenderFragment RenderText(Typo typo, string? className, string? text, string? elementId = null) => builder =>
     {
         builder.OpenElement(0, GetTagName(typo));
-        builder.AddAttribute(1, "class", new CssBuilder("mud-typography").AddClass($"mud-typography-{typo.ToStringFast(true)}").AddClass(className).Build());
-        builder.AddContent(2, text);
+        builder.AddAttribute(1, "id", elementId);
+        builder.AddAttribute(2, "class", new CssBuilder("mud-typography").AddClass($"mud-typography-{typo.ToStringFast(true)}").AddClass(className).Build());
+        builder.AddContent(3, text);
         builder.CloseElement();
     };
 
