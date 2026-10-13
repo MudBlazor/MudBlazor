@@ -103,7 +103,7 @@
                                                 </MudStack>
 
                                                 <MudDropContainer @ref="_columnsPanelDropContainer" T="Column<T>" Items="@RenderedColumns" ItemsSelector="(item, dropzone) => true"
-                                                ItemDisabled="@((item) => !this.ColumnsPanelReordering)" ItemDropped="ColumnOrderUpdated">
+                                                ItemDisabled="@((item) => !this.ColumnsPanelReordering || IsHierarchyColumn(item))" ItemDropped="ColumnOrderUpdated">
                                                     <ChildContent>
                                                         <MudDropZone T="Column<T>" Class="flex-grow-1" AllowReorder=this.ColumnsPanelReordering />
                                                     </ChildContent>
@@ -116,11 +116,11 @@
                                                                     <MudStack Spacing="0">
                                                                         @if (RenderedColumns.IndexOf(context) != 0)
                                                                         {
-                                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropUp" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveUp] Disabled="@(RenderedColumns.IndexOf(context) == 0)" OnClick="@(e => ColumnUp(context))"></MudIconButton>
+                                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropUp" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveUp] Disabled="@(!CanMoveColumn(context, RenderedColumns.IndexOf(context) - 1))" OnClick="@(e => ColumnUp(context))"></MudIconButton>
                                                                         }
                                                                         @if (RenderedColumns.IndexOf(context) != RenderedColumns.Count - 1)
                                                                         {
-                                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropDown" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveDown] Disabled="@(RenderedColumns.IndexOf(context) == RenderedColumns.Count - 1)" OnClick="@(e => ColumnDown(context))"></MudIconButton>
+                                                                            <MudIconButton Ripple="false" Icon="@Icons.Material.Filled.ArrowDropDown" Size="@Size.Small" title=@Localizer[LanguageResource.MudDataGrid_MoveDown] Disabled="@(!CanMoveColumn(context, RenderedColumns.IndexOf(context) + 1))" OnClick="@(e => ColumnDown(context))"></MudIconButton>
                                                                         }
                                                                     </MudStack>
                                                                 }
