@@ -28,6 +28,12 @@ jobs:
           --no-restore -p:SkipBunCompile=true --
           --filter "FullyQualifiedName~TreeViewAccessibilityTests"
           --output Normal --no-ansi
+      - name: Run existing TreeView regression suite
+        run: >-
+          dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj
+          --no-restore -p:SkipBunCompile=true --
+          --filter "FullyQualifiedName~TreeViewTests"
+          --output Normal --no-ansi
       - name: Verify formatting
         working-directory: src
         run: >-
