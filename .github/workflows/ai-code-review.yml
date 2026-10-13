@@ -1,7 +1,6 @@
 name: AI Code Review
 
-# Reviews each pull request when it opens or becomes ready, and again after every push.
-# pull_request_target runs this file from dev, so the pull request can't change the workflow, the checkout, or AGENTS.md.
+# pull_request_target runs from dev, so a pull request can't change this workflow or AGENTS.md.
 on:
   pull_request_target:
     types: [opened, synchronize, ready_for_review]
@@ -11,8 +10,7 @@ permissions:
   contents: read
   pull-requests: read
 
-# One review at a time per pull request; a newer push replaces the waiting run, so a burst of pushes gets at most two reviews.
-# A running review is never cancelled, so every paid review finishes and counts toward the cap.
+# Never cancel a running review: it's already paid for and counts toward the cap.
 concurrency:
   group: ai-code-review-${{ github.event.pull_request.number }}
   cancel-in-progress: false
@@ -39,20 +37,19 @@ jobs:
           TITLE: ${{ github.event.pull_request.title }}
           BODY: ${{ github.event.pull_request.body }}
         run: |
-          # Stop after 5 reviews of one pull request, so pushing over and over can't run up the bill.
-          # Failed runs count too, since they may have paid for a review; replaced and skipped runs never started one.
+          # Cap paid reviews per pull request; a failed run may have paid for one too.
           reviews=$(gh api --paginate -X GET "repos/$REPO/actions/workflows/ai-code-review.yml/runs" -f event=pull_request_target -f branch="$BRANCH" -f per_page=100 \
             | jq -n --arg repo "$HEAD_REPO" --arg since "$CREATED" '[inputs.workflow_runs[] | select(.head_repository.full_name == $repo and .created_at >= $since and (.conclusion == "success" or .conclusion == "failure"))] | length')
           if [ "$reviews" -ge 5 ]; then echo "::notice::Skipped: this pull request has had 5 reviews."; exit 0; fi
           { printf '# %s\n\n%s\n\n~~~diff\n' "$TITLE" "$BODY"; gh pr diff "$PR" --repo "$REPO"; echo '~~~'; } > pull-request.md
-          # A separate file, so the pull request text can't pose as MudBot's earlier findings.
+          # Kept apart so the pull request text can't pose as earlier findings.
           {
             gh api --paginate "repos/$REPO/pulls/$PR/reviews" --jq '.[] | select(.user.login == "mudbot[bot]") | .body'
             gh api --paginate "repos/$REPO/pulls/$PR/comments" --jq '.[] | select(.user.login == "mudbot[bot]") | "\(.path):\(.original_line) \(.body | split("\n")[0])"'
           } > earlier-findings.md
           echo "run=true" >> "$GITHUB_OUTPUT"
 
-      # Claude reads untrusted content, so it gets only the Anthropic key and read-only file tools.
+      # Claude reads untrusted content, so it gets read-only file tools and no GitHub token.
       - name: Review
         id: claude
         if: ${{ steps.pr.outputs.run }}
@@ -71,7 +68,7 @@ jobs:
             --max-turns 40 --max-budget-usd 3 --output-format json --json-schema "$SCHEMA" < /dev/null > "$RUNNER_TEMP/result.json"
           echo "review=$(jq -ce .structured_output "$RUNNER_TEMP/result.json")" >> "$GITHUB_OUTPUT"
 
-      # Created only after Claude has exited, so the write token is never in its reach.
+      # Created after Claude exits, so it can't reach the write token.
       - name: Generate app token
         id: app-token
         if: ${{ steps.pr.outputs.run }}
@@ -95,16 +92,14 @@ jobs:
             const review = { ...context.repo, pull_number: pr.number, commit_id: pr.head.sha, body: summary };
             const mine = (await github.paginate(github.rest.pulls.listReviews, { ...context.repo, pull_number: pr.number })).filter(r => r.user.login === 'mudbot[bot]');
             if (approve && !findings.length) {
-              // Approve once; later clean pushes leave the standing approval alone.
               if (mine.at(-1)?.state !== 'APPROVED') await github.rest.pulls.createReview({ ...review, event: 'APPROVE' });
               return;
             }
             if (findings.length) {
-              // One finding off the diff rejects the whole review, so fall back to listing them all in the body.
+              // GitHub rejects the whole review if any line is off the diff.
               await github.rest.pulls.createReview({ ...review, event: 'COMMENT', comments: findings.map(({ path, line, body }) => ({ path, line, side: 'RIGHT', body })) })
                 .catch(() => github.rest.pulls.createReview({ ...review, event: 'COMMENT', body: [summary, ...findings.map(f => `${f.body}\n\n\`${f.path}:${f.line}\``)].join('\n\n---\n\n') }));
             }
-            // Something still needs fixing, so withdraw any earlier MudBot approval.
             for (const r of mine.filter(r => r.state === 'APPROVED')) {
               await github.rest.pulls.dismissReview({ ...context.repo, pull_number: pr.number, review_id: r.id, message: 'A later push has unresolved findings.' });
             }
