@@ -1,0 +1,38 @@
+name: MudExpansionPanel ARIA regression
+
+on:
+  push:
+    branches:
+      - fix/14005-expansionpanel-aria
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  expansionpanel-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+      - name: Restore
+        run: dotnet restore src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj
+      - name: Run ExpansionPanel tests
+        run: >-
+          dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj
+          --no-restore -p:SkipBunCompile=true --
+          --filter "FullyQualifiedName~ExpansionPanelTests"
+          --output Normal --no-ansi
+      - name: Verify formatting
+        working-directory: src
+        run: >-
+          dotnet format whitespace --folder --verify-no-changes
+          --include
+          MudBlazor/Components/ExpansionPanel/MudExpansionPanel.razor
+          MudBlazor/Components/ExpansionPanel/MudExpansionPanel.razor.cs
+          MudBlazor.UnitTests/Components/ExpansionPanelTests.cs
