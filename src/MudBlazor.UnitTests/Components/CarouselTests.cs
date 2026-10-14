@@ -176,6 +176,7 @@ namespace MudBlazor.UnitTests.Components
                 control.GetAttribute("type").Should().Be("button");
                 control.HasAttribute("tabindex").Should().BeFalse();
                 control.GetAttribute("aria-label").Should().NotBeNullOrEmpty();
+                control.ClassList.Should().Contain("mud-carousel-custom-button");
             }
         }
 
