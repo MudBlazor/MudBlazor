@@ -241,8 +241,8 @@ When NOT to edit:
 If the issue doesn't have `stale`, mark it `stale` when ANY condition holds:
 - Bug: >=365 days (12 months) of inactivity.
 - Feature: >=1096 days (36 months) of inactivity.
-- Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=14 consecutive days, with no qualifying activity during those 14 days.
-The 14-day label list is exhaustive; no other label, including `has workaround`, creates eligibility.
+- Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days, with no qualifying activity during those 28 days.
+The 28-day label list is exhaustive; no other label, including `has workaround`, creates eligibility.
 
 When marking stale, post verbatim without the default footer:
 
