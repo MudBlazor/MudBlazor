@@ -258,14 +258,14 @@ Only a pull request that is waiting on its author, shown by a `needs:` label, is
 
 If the pull request doesn't have `stale`, mark it `stale` when BOTH conditions hold:
 - Has any `needs:` label.
-- No qualifying activity for >=84 consecutive days.
+- No qualifying activity for >=28 consecutive days.
 
 When marking stale, post verbatim without the default footer:
 > This pull request has been marked as stale due to inactivity.
 
 If the pull request already has `stale`, close it with `state: not_planned` when ALL of these hold:
 - It still has a `needs:` label.
-- >=168 days have passed since the `stale` label was last added.
+- >=84 days have passed since the `stale` label was last added.
 - No qualifying activity has happened since then.
 
 If the pull request has `stale` but no `needs:` label, it is waiting on maintainers: remove `stale`, unless a maintainer added it. This authorizes the removal without a new timeline event, as an exception to the Basic Labeling rule about removing labels. Don't post a comment.
