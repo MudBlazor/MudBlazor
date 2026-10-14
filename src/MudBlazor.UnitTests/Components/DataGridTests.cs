@@ -69,6 +69,42 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A custom rows-per-page size is appended when it exceeds every configured option (#11521).
+        /// </summary>
+        [Test]
+        public async Task DataGridPager_RowsPerPageBeyondOptions_IsAppended()
+        {
+            Context.AddFakeTimeProvider();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = RenderDataGridWithPager(500, [10, 15, 25]);
+            var select = comp.FindComponent<MudSelect<int>>();
+
+            select.Instance.Value.Should().Be(500);
+            await comp.InvokeAsync(select.Instance.OpenMenu);
+            await provider.WaitForAssertionAsync(() =>
+                provider.FindAll(".mud-list-item").Select(item => item.TextContent.Trim())
+                    .Should().Equal("10", "15", "25", "500"));
+        }
+
+        /// <summary>
+        /// The pager shows the configured options without an enclosing data grid (#11521).
+        /// </summary>
+        [Test]
+        public async Task DataGridPager_WithoutDataGrid_RendersConfiguredOptions()
+        {
+            Context.AddFakeTimeProvider();
+            var provider = Context.Render<MudPopoverProvider>();
+            var pager = Context.Render<MudDataGridPager<int>>(parameters => parameters
+                .Add(p => p.PageSizeOptions, new[] { 10, 15, 25 }));
+            var select = pager.FindComponent<MudSelect<int>>();
+
+            await pager.InvokeAsync(select.Instance.OpenMenu);
+            await provider.WaitForAssertionAsync(() =>
+                provider.FindAll(".mud-list-item").Select(item => item.TextContent.Trim())
+                    .Should().Equal("10", "15", "25"));
+        }
+
+        /// <summary>
         /// An existing rows-per-page option is not duplicated (#11521).
         /// </summary>
         [Test]
