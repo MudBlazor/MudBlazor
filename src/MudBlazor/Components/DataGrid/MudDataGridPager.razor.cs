@@ -120,6 +120,16 @@ namespace MudBlazor
             }
         }
 
+        private int[] GetPageSizeOptions()
+        {
+            if (DataGrid is null || PageSizeOptions.Contains(DataGrid.RowsPerPage))
+            {
+                return PageSizeOptions;
+            }
+
+            return PageSizeOptions.Append(DataGrid.RowsPerPage).Order().ToArray();
+        }
+
         private bool BackButtonsDisabled => Disabled || DataGrid is { CurrentPage: 0 };
 
         private bool ForwardButtonsDisabled => Disabled || (DataGrid != null && (DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage >= DataGrid.GetFilteredItemsCount());
