@@ -40,7 +40,7 @@ jobs:
           # Cap paid reviews per pull request; a failed run may have paid for one too.
           reviews=$(gh api --paginate -X GET "repos/$REPO/actions/workflows/ai-code-review.yml/runs" -f event=pull_request_target -f branch="$BRANCH" -f per_page=100 \
             | jq -n --arg repo "$HEAD_REPO" --arg since "$CREATED" '[inputs.workflow_runs[] | select(.head_repository.full_name == $repo and .created_at >= $since and (.conclusion == "success" or .conclusion == "failure"))] | length')
-          if [ "$reviews" -ge 5 ]; then echo "::notice::Skipped: this pull request has had 5 reviews."; exit 0; fi
+          if [ "$reviews" -ge 10 ]; then echo "::notice::Skipped: this pull request has had 10 reviews."; exit 0; fi
           { printf '# %s\n\n%s\n\n~~~diff\n' "$TITLE" "$BODY"; gh pr diff "$PR" --repo "$REPO"; echo '~~~'; } > pull-request.md
           # Kept apart so the pull request text can't pose as earlier findings.
           {
