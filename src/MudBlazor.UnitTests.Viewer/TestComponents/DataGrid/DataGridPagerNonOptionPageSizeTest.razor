@@ -3,7 +3,7 @@
         <PropertyColumn Property="x => x" Title="Item" />
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="int" PageSizeOptions="new[] { 10, 15, 25 }" />
+        <MudDataGridPager T="int" PageSizeOptions="@PageSizeOptions" AllItemsText="All" />
     </PagerContent>
 </MudDataGrid>
 
@@ -12,6 +12,9 @@
 
     [Parameter]
     public int RowsPerPage { get; set; } = 12;
+
+    [Parameter]
+    public int[] PageSizeOptions { get; set; } = [10, 15, 25];
 
     private readonly int[] _items = Enumerable.Range(1, 40).ToArray();
 }

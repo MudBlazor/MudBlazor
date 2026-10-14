@@ -46,7 +46,7 @@ namespace MudBlazor.UnitTests.Components
             await provider.WaitForAssertionAsync(() =>
             {
                 var options = provider.FindAll(".mud-list-item");
-                options.Select(item => item.TextContent.Trim()).Should().Contain("12");
+                options.Select(item => item.TextContent.Trim()).Should().Equal("10", "12", "15", "25");
                 comp.Find(".mud-select-input").TextContent.Trim().Should().Be("12");
             });
         }
@@ -54,6 +54,25 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// The current rows-per-page option is not duplicated when already offered (#11521).
         /// </summary>
+        /// <summary>
+        /// Additional custom page sizes must be sorted before the All Items sentinel (#11521).
+        /// </summary>
+        [Test]
+        public async Task DataGridPager_RowsPerPageAboveOptions_PrecedesAllItems()
+        {
+            Context.AddFakeTimeProvider();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<DataGridPagerNonOptionPageSizeTest>(parameters => parameters
+                .Add(x => x.RowsPerPage, 500)
+                .Add(x => x.PageSizeOptions, new[] { 10, 15, 25, int.MaxValue }));
+            var select = comp.FindComponent<MudSelect<int>>();
+
+            await comp.InvokeAsync(select.Instance.OpenMenu);
+            await provider.WaitForAssertionAsync(() =>
+                provider.FindAll(".mud-list-item").Select(item => item.TextContent.Trim())
+                    .Should().Equal("10", "15", "25", "500", "All"));
+        }
+
         [Test]
         public async Task DataGridPager_RowsPerPageWithinOptions_IsNotDuplicated()
         {
