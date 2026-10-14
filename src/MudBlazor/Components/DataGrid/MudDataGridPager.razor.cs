@@ -127,7 +127,18 @@ namespace MudBlazor
                 return PageSizeOptions;
             }
 
-            return PageSizeOptions.Append(DataGrid.RowsPerPage).Order().ToArray();
+            var pageSizeOptions = PageSizeOptions.ToList();
+            var insertIndex = pageSizeOptions.FindIndex(size => size > DataGrid.RowsPerPage);
+            if (insertIndex < 0)
+            {
+                pageSizeOptions.Add(DataGrid.RowsPerPage);
+            }
+            else
+            {
+                pageSizeOptions.Insert(insertIndex, DataGrid.RowsPerPage);
+            }
+
+            return pageSizeOptions.ToArray();
         }
 
         private bool BackButtonsDisabled => Disabled || DataGrid is { CurrentPage: 0 };

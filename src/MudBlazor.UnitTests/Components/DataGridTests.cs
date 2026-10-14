@@ -31,14 +31,14 @@ namespace MudBlazor.UnitTests.Components
     public class DataGridTests : BunitTest
     {
         /// <summary>
-        /// The rows-per-page selector must display the configured size even when it is not in PageSizeOptions (#11521).
+        /// A custom rows-per-page size appears in numeric order when absent from the options (#11521).
         /// </summary>
         [Test]
         public async Task DataGridPager_RowsPerPageOutsideOptions_IsSelectable()
         {
             Context.AddFakeTimeProvider();
             var provider = Context.Render<MudPopoverProvider>();
-            var comp = Context.Render<DataGridPagerNonOptionPageSizeTest>();
+            var comp = RenderDataGridWithPager(12, [10, 15, 25]);
             var select = comp.FindComponent<MudSelect<int>>();
 
             select.Instance.Value.Should().Be(12);
@@ -52,19 +52,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The current rows-per-page option is not duplicated when already offered (#11521).
-        /// </summary>
-        /// <summary>
-        /// Additional custom page sizes must be sorted before the All Items sentinel (#11521).
+        /// A custom rows-per-page size appears before the All Items option (#11521).
         /// </summary>
         [Test]
         public async Task DataGridPager_RowsPerPageAboveOptions_PrecedesAllItems()
         {
             Context.AddFakeTimeProvider();
             var provider = Context.Render<MudPopoverProvider>();
-            var comp = Context.Render<DataGridPagerNonOptionPageSizeTest>(parameters => parameters
-                .Add(x => x.RowsPerPage, 500)
-                .Add(x => x.PageSizeOptions, new[] { 10, 15, 25, int.MaxValue }));
+            var comp = RenderDataGridWithPager(500, [10, 15, 25, int.MaxValue]);
             var select = comp.FindComponent<MudSelect<int>>();
 
             await comp.InvokeAsync(select.Instance.OpenMenu);
@@ -73,19 +68,58 @@ namespace MudBlazor.UnitTests.Components
                     .Should().Equal("10", "15", "25", "500", "All"));
         }
 
+        /// <summary>
+        /// An existing rows-per-page option is not duplicated (#11521).
+        /// </summary>
         [Test]
         public async Task DataGridPager_RowsPerPageWithinOptions_IsNotDuplicated()
         {
             Context.AddFakeTimeProvider();
             var provider = Context.Render<MudPopoverProvider>();
-            var comp = Context.Render<DataGridPagerNonOptionPageSizeTest>(parameters =>
-                parameters.Add(x => x.RowsPerPage, 15));
+            var comp = RenderDataGridWithPager(15, [10, 15, 25]);
             var select = comp.FindComponent<MudSelect<int>>();
 
             select.Instance.Value.Should().Be(15);
             await comp.InvokeAsync(select.Instance.OpenMenu);
             await provider.WaitForAssertionAsync(() =>
                 provider.FindAll(".mud-list-item").Count(item => item.TextContent.Trim() == "15").Should().Be(1));
+        }
+
+        /// <summary>
+        /// Inserting a missing page size preserves the caller's existing option order (#11521).
+        /// </summary>
+        [Test]
+        public async Task DataGridPager_RowsPerPageOutsideOptions_PreservesCustomOrder()
+        {
+            Context.AddFakeTimeProvider();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = RenderDataGridWithPager(12, [25, 10, 15]);
+            var select = comp.FindComponent<MudSelect<int>>();
+
+            await comp.InvokeAsync(select.Instance.OpenMenu);
+            await provider.WaitForAssertionAsync(() =>
+                provider.FindAll(".mud-list-item").Select(item => item.TextContent.Trim())
+                    .Should().Equal("12", "25", "10", "15"));
+        }
+
+        private IRenderedComponent<MudDataGrid<int>> RenderDataGridWithPager(int rowsPerPage, int[] pageSizeOptions)
+        {
+            return Context.Render<MudDataGrid<int>>(parameters => parameters
+                .Add(p => p.Items, Enumerable.Range(1, 40).ToArray())
+                .Add(p => p.RowsPerPage, rowsPerPage)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<int, int>>(0);
+                    builder.AddAttribute(1, nameof(PropertyColumn<int, int>.Property), (Expression<Func<int, int>>)(x => x));
+                    builder.CloseComponent();
+                })
+                .Add(p => p.PagerContent, builder =>
+                {
+                    builder.OpenComponent<MudDataGridPager<int>>(0);
+                    builder.AddAttribute(1, nameof(MudDataGridPager<int>.PageSizeOptions), pageSizeOptions);
+                    builder.AddAttribute(2, nameof(MudDataGridPager<int>.AllItemsText), "All");
+                    builder.CloseComponent();
+                }));
         }
 
         [Test]
