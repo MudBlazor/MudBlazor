@@ -1,0 +1,9 @@
+﻿@import '../../abstracts/variables';
+@import 'text-align.scss';
+
+@include textAlign("");
+@each $name, $value in $breakpoints-css-utilities-only {
+    @media (min-width:$value) {
+        @include textAlign($name+'-');
+    }
+}
