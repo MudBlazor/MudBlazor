@@ -166,6 +166,16 @@ namespace MudBlazor
         public string? AdornmentAriaLabel { get; set; }
 
         /// <summary>
+        /// The tooltip displayed for the adornment.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string? AdornmentTooltip { get; set; }
+
+        /// <summary>
         /// The text displayed in the input if no value is specified.
         /// </summary>
         /// <remarks>

@@ -2,6 +2,20 @@
 @using MudBlazor.Extensions
 
 <div class="@Classname">
+    @if (!string.IsNullOrWhiteSpace(Tooltip))
+    {
+        <MudTooltip Text="@Tooltip">
+            @AdornmentContent
+        </MudTooltip>
+    }
+    else
+    {
+        @AdornmentContent
+    }
+</div>
+
+@code {
+    private RenderFragment AdornmentContent => @<text>
     @if (!string.IsNullOrWhiteSpace(Text))
     {
         <MudText Class="mud-input-adornment-text"
@@ -34,4 +48,5 @@
                      tabindex="-1" />
         }
     }
-</div>
+    </text>;
+}
