@@ -474,6 +474,9 @@
   <data name="MudDataGrid_ShowColumnOptions" xml:space="preserve">
     <value>Column options</value>
   </data>
+  <data name="MudDataGrid_ReorderColumn" xml:space="preserve">
+    <value>Reorder column</value>
+  </data>
   <data name="MudFileUpload_DragAndDrop" xml:space="preserve">
     <value>Drag files here or click to browse</value>
   </data>
