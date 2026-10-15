@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Time.Testing;
@@ -376,6 +376,18 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Items.Count.Should().Be(2);
             comp.Instance.SelectedIndex.Should().Be(0);
             selectedIndexes.Should().Equal(0);
+        }
+
+        [Test]
+        public void Carousel_ShouldNotHavePositiveTabIndex()
+        {
+            var comp = Context.Render<CarouselTest>();
+            var buttons = comp.FindAll("button.mud-icon-button");
+            buttons.Count.Should().Be(5);
+            foreach (var button in buttons)
+            {
+                button.GetAttribute("tabindex").Should().BeNull();
+            }
         }
     }
 }
