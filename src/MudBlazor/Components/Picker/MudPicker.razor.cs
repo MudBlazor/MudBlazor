@@ -668,7 +668,7 @@ namespace MudBlazor
 
             _lastEditableSentToInterceptor = Editable;
 
-            //On the event that the Editable property is toggled, we need update the Key Interceptor
+            // In the event that the Editable property is toggled, we need to update the Key Interceptor
             //  for the space-character so that the user can enter a space before "AM"/"PM".
             var option = new KeyOptions(" ", preventDown: Editable ? "none" : "key+none");
 
