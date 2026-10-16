@@ -17,7 +17,7 @@
         {
             @if (ToolBarContent != null)
             {
-                <MudToolBar Class="mud-table-toolbar" Style="@HeaderFooterStyle">
+                <MudToolBar Class="mud-table-toolbar" Style="@HeaderFooterStyle" WrapContent="@ToolBarWrapContent">
                     @ToolBarContent
                     @if (ShowMenuIcon)
                     {
@@ -30,7 +30,7 @@
                 @if (ShowMenuIcon)
                 {
                     @*Add the default toolbar.*@
-                    <MudToolBar Class="mud-table-toolbar" Style="@HeaderFooterStyle">
+                    <MudToolBar Class="mud-table-toolbar" Style="@HeaderFooterStyle" WrapContent="@ToolBarWrapContent">
                         <MudSpacer />
                         @ToolbarMenu(this)
                     </MudToolBar>

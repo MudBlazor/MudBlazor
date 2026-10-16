@@ -1164,6 +1164,16 @@ namespace MudBlazor
         public RenderFragment? ToolBarContent { get; set; }
 
         /// <summary>
+        /// Allows the toolbar's content to wrap onto multiple lines.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. See <see cref="MudToolBar.WrapContent"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public bool ToolBarWrapContent { get; set; }
+
+        /// <summary>
         /// Shows a horizontal scrollbar.
         /// </summary>
         /// <remarks>
