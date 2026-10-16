@@ -46,6 +46,8 @@ public partial class MudDivider : MudComponentBase
             .AddClass(Class)
             .Build() : null;
 
+    private readonly string _labelId = Identifier.Create("divider-label");
+
     /// <summary>
     /// Uses an absolute position for this divider.
     /// </summary>
