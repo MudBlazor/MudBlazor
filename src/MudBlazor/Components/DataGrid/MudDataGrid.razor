@@ -162,7 +162,7 @@
 
                                                                 @if (ColumnsPanelReordering)
                                                                 {
-                                                                    <MudIconButton Ripple="false" Icon="@context.DataGrid.DragIndicatorIcon" Size="@Size.Small" Class="drag-icon-options"></MudIconButton>
+                                                                    <MudIconButton Ripple="false" Icon="@context.DataGrid.DragIndicatorIcon" Size="@Size.Small" Class="drag-icon-options" aria-label="@Localizer[LanguageResource.MudDataGrid_ReorderColumn]"></MudIconButton>
                                                                 }
                                                             </MudStack>
                                                         }
@@ -196,7 +196,7 @@
                                 {
                                     <tr>
                                         <th colspan="1000" class="mud-table-loading">
-                                            <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" />
+                                            <MudProgressLinear Color="@LoadingProgressColor" Class="mud-table-loading-progress" Indeterminate="true" aria-label="@Localizer[LanguageResource.MudDataGrid_Loading]" />
                                         </th>
                                     </tr>
                                 }
@@ -351,7 +351,7 @@
 
     internal RenderFragment ToolbarMenu(MudDataGrid<T> dataGrid) =>
     @<text>
-        <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" Dense="true">
+        <MudMenu Icon="@Icons.Material.Outlined.Settings" Size="Size.Small" Dense="true" AriaLabel="@Localizer[LanguageResource.MudDataGrid_Columns]">
             <MudMenuItem OnClick="@dataGrid.ShowColumnsPanel">@Localizer[LanguageResource.MudDataGrid_Columns]</MudMenuItem>
                 @if (dataGrid.IsGrouped)
                 {

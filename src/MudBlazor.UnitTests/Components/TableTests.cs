@@ -3149,6 +3149,34 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        // Boundary of the reset path: TotalItems equal to the offset of the current page also means the page is empty,
+        // so the table must reset to page 0 instead of showing an empty page (#13948).
+        [Test]
+        public async Task ServerDataResetsToFirstPageWhenTotalItemsEqualsPageOffset()
+        {
+            var testComponent = Context.Render<TableCurrentPageServerDataReapplyTest>();
+            var component = testComponent.Instance;
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+
+            await testComponent.WaitForAssertionAsync(() => testComponent.FindAll("tbody tr.mud-table-row").Count.Should().BeGreaterThan(0));
+
+            await testComponent.InvokeAsync(() => table.NavigateTo(2));
+            await testComponent.WaitForAssertionAsync(() => table.CurrentPage.Should().Be(2));
+
+            // 20 items with 10 rows per page: page 2 starts exactly at the end of the data and is empty.
+            await testComponent.InvokeAsync(() =>
+            {
+                component.ShrinkTo(20);
+                return table.ReloadServerData();
+            });
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(0);
+                component.LastRequestedPage.Should().Be(0);
+                testComponent.FindAll("tbody tr.mud-table-row").Count.Should().Be(10);
+            });
+        }
+
         /// <summary>
         /// Table initialized to display the third page
         /// </summary>

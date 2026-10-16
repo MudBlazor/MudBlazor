@@ -1569,6 +1569,33 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => datePicker.PickerMonth.Should().Be(new DateTime(2020, 10, 01)));
         }
 
+        /// <summary>
+        /// Reopening an editable picker returns the calendar to the month of the typed date, even after navigating away from it.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_Editable_Reopen_ShouldReturnToTypedMonth()
+        {
+            var comp = Context.Render<SimpleMudDatePickerTest>();
+            var datePickerComponent = comp.FindComponent<MudDatePicker>();
+            await datePickerComponent.SetParametersAndRenderAsync(parameters => parameters
+                .Add(parameter => parameter.Editable, true)
+                .Add(parameter => parameter.Culture, CultureInfo.InvariantCulture));
+            var datePicker = datePickerComponent.Instance;
+
+            await comp.Find("input").ChangeAsync("10/10/2020");
+            await comp.WaitForAssertionAsync(() => datePicker.Date.Should().Be(new DateTime(2020, 10, 10)));
+
+            await comp.InvokeAsync(datePicker.OpenAsync);
+            await comp.Find("button.mud-picker-nav-button-next").ClickAsync();
+            datePicker.PickerMonth.Should().Be(new DateTime(2020, 11, 1));
+            await comp.InvokeAsync(() => datePicker.CloseAsync(false));
+
+            await comp.InvokeAsync(datePicker.OpenAsync);
+
+            datePicker.PickerMonth.Should().Be(new DateTime(2020, 10, 1));
+            datePicker.ConversionError.Should().BeFalse();
+        }
+
         [Test]
         public async Task DatePicker_KeyboardNavigation()
         {

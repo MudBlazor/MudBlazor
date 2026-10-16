@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.Charts
+@using System.Globalization
 
 @inherits MudChartBase<T, HeatMapChartOptions>
 
@@ -172,7 +173,7 @@
             if (row == 0 && _options?.XAxisLabelPosition == XAxisLabelPosition.Top && col < xAxisLabels.Length)
             {
                 <g transform="translate(@((x + _cellDimension.Width / 2).ToStr()), @((y - CellPadding).ToStr()))">
-                    <text class="mud-charts-xaxis" x="0" y="@(-AxisLabelsPadding)" text-anchor="middle" font-size="@_dynamicFontSize.ToStr()">@xAxisLabels[col]</text>
+                    <text class="mud-charts-xaxis" x="0" y="@((-AxisLabelsPadding).ToString(CultureInfo.InvariantCulture))" text-anchor="middle" font-size="@_dynamicFontSize.ToStr()">@xAxisLabels[col]</text>
                 </g>
             }
             else if (row == RowCount - 1 && _options?.XAxisLabelPosition == XAxisLabelPosition.Bottom && col < xAxisLabels.Length)
@@ -187,7 +188,7 @@
         if (_options?.YAxisLabelPosition == YAxisLabelPosition.Left)
         {
             <g transform="translate(@((_horizontalStartSpace - CellPadding).ToStr()), @((y + _cellDimension.Height / 2).ToStr()))">
-                @((MarkupString)$"<text class='mud-charts-yaxis' x='{-AxisLabelsPadding}' y='0' dominant-baseline='middle' text-anchor='end' font-size='{_dynamicFontSize.ToStr()}'>{rowLabel}</text>")
+                @((MarkupString)$"<text class='mud-charts-yaxis' x='{(-AxisLabelsPadding).ToString(CultureInfo.InvariantCulture)}' y='0' dominant-baseline='middle' text-anchor='end' font-size='{_dynamicFontSize.ToStr()}'>{rowLabel}</text>")
             </g>
         }
         else if (_options?.YAxisLabelPosition == YAxisLabelPosition.Right)

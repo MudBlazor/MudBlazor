@@ -61,6 +61,10 @@ namespace MudBlazor
         /// <summary>
         /// The format for selected dates.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which uses the <see cref="DateTimeFormatInfo.ShortDatePattern"/> of <see cref="MudFormComponent{T, U}.Culture"/>.
+        /// A <c>/</c> in the format is replaced by the culture's date separator; use <c>'/'</c> for a literal slash.
+        /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? DateFormat { get; set; }
@@ -281,7 +285,9 @@ namespace MudBlazor
             await base.OnPickerOpenedAsync();
             if (Editable && Text != null)
             {
-                var dateTime = ConvertGet(Text);
+                // Opening only moves the calendar, so convert without ConvertGet, which records a conversion error and marks the picker as touched.
+                // A range picker's text holds both dates and never converts to one, so opening it flagged a valid range as invalid.
+                var dateTime = GetConverter().TryConvertBack(Text).Value;
                 if (dateTime.HasValue)
                 {
                     var culture = GetCulture();

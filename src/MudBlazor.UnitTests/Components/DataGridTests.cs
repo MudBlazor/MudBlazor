@@ -4479,6 +4479,9 @@ namespace MudBlazor.UnitTests.Components
             // 2 rows in the header (original + loading row) and 3 rows in the body (unchanged)
             updatedHeaderRows.Count.Should().Be(2);
             updatedBodyRows.Count.Should().Be(3);
+
+            // The loading progress bar must have an accessible name
+            comp.Find(".mud-table-loading-progress").GetAttribute("aria-label").Should().Be("Loading…");
         }
 
         [Test]
@@ -4806,6 +4809,9 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().BeEmpty();
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowMenuIcon, true));
             dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().NotBeEmpty();
+
+            // The settings menu activator must have an accessible name
+            dataGrid.Find(".mud-table-toolbar .mud-menu button").GetAttribute("aria-label").Should().Be("Columns");
         }
 
         [Test]
@@ -6434,6 +6440,20 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
         }
 
+        /// <summary>
+        /// Header column drag handles have an accessible name (#13979).
+        /// </summary>
+        [Test]
+        public void DataGridDragAndDrop_HeaderDragHandles_HaveAccessibleName()
+        {
+            var comp = Context.Render<DataGridDragAndDropTest_InsertMode>();
+
+            // Columns with DragAndDropEnabled="false" (Name, Hired) render no drag handle
+            var dragHandles = comp.FindAll("th button.drag-icon-options");
+            dragHandles.Should().HaveCount(3);
+            dragHandles.Should().AllSatisfy(handle => handle.GetAttribute("aria-label").Should().Be("Reorder column"));
+        }
+
         [Test]
         [TestCase(true)]
         [TestCase(false)]
@@ -7322,6 +7342,68 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll(".mud-table-pagination-actions .mud-button-root")[2].ClickAsync();
             await comp.WaitForAssertionAsync(() => dataGrid.CurrentPage.Should().Be(2));
             await comp.WaitForAssertionAsync(() => comp.Find(".mud-table-body .mud-table-row .mud-table-cell").TextContent.Should().Be("3"));
+        }
+
+        /// <summary>
+        /// The ServerData reset path: when a load reveals the current page no longer exists, the grid resets to page 0
+        /// (MudDataGrid.InvokeServerLoadFunc).
+        /// </summary>
+        [Test]
+        public async Task ServerDataResetsToFirstPageWhenCurrentPageOverflows()
+        {
+            var comp = Context.Render<DataGridServerDataPageResetTest>();
+            var component = comp.Instance;
+            var dataGridComponent = comp.FindComponent<MudDataGrid<int>>();
+            var dataGrid = dataGridComponent.Instance;
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(10));
+
+            await dataGridComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CurrentPage, 5));
+            await comp.WaitForAssertionAsync(() => component.LastRequestedPage.Should().Be(5));
+
+            // Data shrinks so page 5 no longer exists; the next load must snap back to page 0.
+            await comp.InvokeAsync(() =>
+            {
+                component.ShrinkTo(20);
+                return dataGrid.ReloadServerData();
+            });
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.CurrentPage.Should().Be(0);
+                component.LastRequestedPage.Should().Be(0);
+                comp.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(10);
+            });
+        }
+
+        /// <summary>
+        /// Boundary of the reset path: TotalItems equal to the offset of the current page also means the page is empty,
+        /// so the grid must reset to page 0 instead of showing an empty page (#13948).
+        /// </summary>
+        [Test]
+        public async Task ServerDataResetsToFirstPageWhenTotalItemsEqualsPageOffset()
+        {
+            var comp = Context.Render<DataGridServerDataPageResetTest>();
+            var component = comp.Instance;
+            var dataGridComponent = comp.FindComponent<MudDataGrid<int>>();
+            var dataGrid = dataGridComponent.Instance;
+
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(10));
+
+            await dataGridComponent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.CurrentPage, 2));
+            await comp.WaitForAssertionAsync(() => component.LastRequestedPage.Should().Be(2));
+
+            // 20 items with 10 rows per page: page 2 starts exactly at the end of the data and is empty.
+            await comp.InvokeAsync(() =>
+            {
+                component.ShrinkTo(20);
+                return dataGrid.ReloadServerData();
+            });
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.CurrentPage.Should().Be(0);
+                component.LastRequestedPage.Should().Be(0);
+                comp.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(10);
+            });
         }
 
         /// <summary>
@@ -8723,6 +8805,26 @@ namespace MudBlazor.UnitTests.Components
                     columnsPanel.ClassList.Should().NotContain("mud-data-grid-columns-panel-dense");
                     comp.FindAll(".mud-data-grid-columns-panel-dense").Should().BeEmpty();
                 }
+            });
+        }
+
+        /// <summary>
+        /// Columns panel drag handles have an accessible name (#13979).
+        /// </summary>
+        [Test]
+        public async Task DataGrid_ColumnsPanelDragHandles_HaveAccessibleName()
+        {
+            var comp = Context.Render<DataGridColumnsPanelTest>();
+
+            // Open the settings menu and show the columns panel
+            await comp.Find(".mud-table-toolbar .mud-menu button").ClickAsync();
+            await comp.Find(".mud-menu-item").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var dragHandles = comp.FindAll(".mud-data-grid-columns-panel button.drag-icon-options");
+                dragHandles.Should().HaveCount(3);
+                dragHandles.Should().AllSatisfy(handle => handle.GetAttribute("aria-label").Should().Be("Reorder column"));
             });
         }
 

@@ -327,6 +327,51 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindComponents<ChartTooltip>().Count.Should().Be(0);
         }
 
+        /// <summary>
+        /// Verifies that the tooltip of a hovered data point is only shown once its text has been measured, on every hover (#13422).
+        /// </summary>
+        [Test]
+        public async Task TimeSeriesChart_HoverDataPoint_ShowsTooltipOnceMeasured()
+        {
+            SetupBBoxInterop();
+            var tooltipMeasurement = Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true);
+            var time = new DateTime(2000, 1, 1);
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(time, count: 4))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions
+                {
+                    TimeLabelSpacing = TimeSpan.FromHours(1),
+                    ShowToolTips = true,
+                }));
+
+            var point = comp.FindAll("circle.mud-chart-point").First();
+            await point.MouseOverAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            // until the text is measured the tooltip has no background and would sit at the origin
+            comp.Find("g.svg-tooltip").GetAttribute("visibility").Should().Be("hidden");
+
+            tooltipMeasurement.SetResult(new ChartTooltip.BBox(Width: 120, Height: 28));
+
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+            comp.Find("g.svg-tooltip rect").GetAttribute("width").Should().Be("130");
+
+            // leaving the point removes the tooltip, so hovering the next one renders a new tooltip that has to be measured again
+            await comp.FindAll("circle.mud-chart-point").First().MouseOutAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+            comp.FindComponents<ChartTooltip>().Should().BeEmpty();
+
+            var nextTooltipMeasurement = Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true);
+            await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            comp.Find("g.svg-tooltip").GetAttribute("visibility").Should().Be("hidden");
+
+            nextTooltipMeasurement.SetResult(new ChartTooltip.BBox(Width: 80, Height: 28));
+
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+            comp.Find("g.svg-tooltip rect").GetAttribute("width").Should().Be("90");
+        }
+
         [Test]
         public async Task TimeSeriesChart_CanHideSeries()
         {

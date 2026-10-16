@@ -1855,7 +1855,7 @@ namespace MudBlazor
                 _serverData = await ServerData(state, _serverDataCancellationTokenSource.Token);
                 _currentRenderFilteredItemsCache = null;
 
-                if (CurrentPage * RowsPerPage > _serverData.TotalItems)
+                if (CurrentPage * RowsPerPage >= _serverData.TotalItems)
                     CurrentPage = 0;
 
                 Loading = false;

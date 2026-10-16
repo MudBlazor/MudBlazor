@@ -1,0 +1,34 @@
+﻿<MudLink Href="https://github.com/MudBlazor/MudBlazor/issues/13998" Target="_blank">MudBlazor/Issues/13998</MudLink>
+
+<MudMenu Label="Downward" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" PopoverClass="popover-downward-long">
+    @for (var i = 1; i <= 30; i++)
+    {
+        var label = $"Option {i}";
+        <MudMenuItem Label="@label" />
+    }
+</MudMenu>
+
+@* Pinned to the viewport bottom so the anchors end 8px above it, like the reporter's page scrolled to the end. *@
+@* Raised above the Viewer's drawer so the buttons stay clickable with the sidebar open. *@
+<MudPaper Elevation="0" Style="background: var(--mud-palette-background-gray); position: fixed; inset-inline: 0; bottom: 0; z-index: calc(var(--mud-zindex-drawer) + 1);">
+    <MudToolBar Gutters="false" Class="mx-1">
+        <MudMenu Icon="@Icons.Material.Filled.Add" AriaLabel="Add" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.BottomLeft" PopoverClass="popover-upward-short">
+            <MudMenuItem Label="Preview" Icon="@Icons.Material.Filled.Visibility" />
+            <MudMenuItem Label="Share" Icon="@Icons.Material.Filled.Share" />
+            <MudMenuItem Label="Get Link" Icon="@Icons.Material.Filled.Link" />
+            <MudDivider />
+            <MudMenuItem Label="Remove" Icon="@Icons.Material.Filled.Delete" />
+        </MudMenu>
+        <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="More options" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.BottomLeft" PopoverClass="popover-upward-long">
+            @for (var i = 1; i <= 30; i++)
+            {
+                var label = $"Option {i}";
+                <MudMenuItem Label="@label" />
+            }
+        </MudMenu>
+    </MudToolBar>
+</MudPaper>
+
+@code {
+    public static string __description__ = "Upward-opening menus near the viewport bottom keep their height; a long one clamps once to the space above its anchor.";
+}
