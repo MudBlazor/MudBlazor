@@ -59,14 +59,29 @@
         @if (HasChildren())
         {
             <MudCollapse Expanded="@_expandedState.Value">
-                <CascadingValue Value="@MudTreeRoot" IsFixed="true">
-                    <CascadingValue Value="this" IsFixed="true">
-                        <MudTreeView Items="@_itemsState.Value" ItemTemplate="MudTreeRoot?.ItemTemplate" Class="mud-treeview-group">
-                            @ChildContent
-                        </MudTreeView>
+                @if (MudTreeRoot is null)
+                {
+                    @* An item outside a tree passes its missing root on, so the nested tree does not become a root of its own. *@
+                    <CascadingValue Value="@MudTreeRoot" IsFixed="true">
+                        @RenderChildTree
                     </CascadingValue>
-                </CascadingValue>
+                }
+                else
+                {
+                    @RenderChildTree
+                }
             </MudCollapse>
         }
     </li>
+}
+
+@code {
+    private void RenderChildTree(RenderTreeBuilder __builder)
+    {
+        <CascadingValue Value="this" IsFixed="true">
+            <MudTreeView Items="@_itemsState.Value" ItemTemplate="MudTreeRoot?.ItemTemplate" Class="mud-treeview-group">
+                @ChildContent
+            </MudTreeView>
+        </CascadingValue>
+    }
 }
