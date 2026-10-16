@@ -31,7 +31,7 @@ public class DividerTests : BunitTest
         comp.FindAll("hr").Should().HaveCount(2);
         comp.Find(".mud-divider-with-content-text").TextContent.Should().Be("Hello");
     }
-    
+
     /// <summary>
     /// With content, the wrapper is a single separator whose accessible name is the content.
     /// </summary>
