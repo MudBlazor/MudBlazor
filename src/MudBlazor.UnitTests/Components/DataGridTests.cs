@@ -4814,6 +4814,9 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Find(".mud-table-toolbar .mud-menu button").GetAttribute("aria-label").Should().Be("Columns");
         }
 
+        /// <summary>
+        /// ToolBarWrapContent makes both the ToolBarContent toolbar and the default ShowMenuIcon toolbar wrap their content (#7595).
+        /// </summary>
         [Test]
         public async Task DataGridToolBarWrapContent()
         {
