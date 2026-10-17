@@ -20,6 +20,14 @@
     private int _rating;
     private readonly DialogOptions _inlineOptions = new() { FullWidth = true };
 
+    public void CloseAndReopen()
+    {
+        _visible = false;
+        StateHasChanged();
+        _visible = true;
+        StateHasChanged();
+    }
+
     private Task CloseAndOpen()
     {
         _visible = false;
