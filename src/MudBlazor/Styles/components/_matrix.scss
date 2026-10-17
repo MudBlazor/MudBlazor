@@ -1,0 +1,14 @@
+@import '../abstracts/variables';
+
+$base-gap: 4px; // Base unit for gap in the matrix.
+$max-gap-steps: 20; // Maximum gap steps.
+
+// width: 100% for both to mimic display block
+.mud-matrix {
+  width: 100%;
+  display: grid;
+}
+
+.mud-matrix-item {
+  width: 100%;
+}
