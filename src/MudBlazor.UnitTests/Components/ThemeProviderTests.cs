@@ -114,7 +114,7 @@ namespace MudBlazor.UnitTests.Components
                 "--mud-palette-table-hover: rgba(0,0,0,0.0392156862745098);",
                 "--mud-palette-divider: rgba(224,224,224,1);",
                 "--mud-palette-divider-rgb: 224,224,224;",
-                "--mud-palette-divider-light: rgba(0,0,0,0.8);",
+                "--mud-palette-divider-light: rgba(0,0,0,0.058823529411764705);",
                 "--mud-palette-skeleton: rgba(0,0,0,0.10980392156862745);",
                 "--mud-palette-gray-default: #9E9E9E;",
                 "--mud-palette-gray-light: #BDBDBD;",
