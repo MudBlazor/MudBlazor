@@ -4814,6 +4814,29 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Find(".mud-table-toolbar .mud-menu button").GetAttribute("aria-label").Should().Be("Columns");
         }
 
+        /// <summary>
+        /// ToolBarWrapContent makes both the ToolBarContent toolbar and the default ShowMenuIcon toolbar wrap their content (#7595).
+        /// </summary>
+        [Test]
+        public async Task DataGridToolBarWrapContent()
+        {
+            var comp = Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
+                .Add(p => p.Items, Array.Empty<TestModel1>())
+                .Add(p => p.ToolBarContent, "<span>Toolbar</span>")
+            );
+            comp.Find(".mud-table-toolbar").ClassList.Should().NotContain("mud-toolbar-wrap-content");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ToolBarWrapContent, true));
+            comp.Find(".mud-table-toolbar").ClassList.Should().Contain("mud-toolbar-wrap-content");
+
+            // The default toolbar shown for ShowMenuIcon without ToolBarContent wraps too
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.ToolBarContent, (RenderFragment)null)
+                .Add(p => p.ShowMenuIcon, true)
+            );
+            comp.Find(".mud-table-toolbar").ClassList.Should().Contain("mud-toolbar-wrap-content");
+        }
+
         [Test]
         public async Task DataGridColumnPopupFiltering()
         {
