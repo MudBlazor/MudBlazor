@@ -18,6 +18,17 @@ namespace MudBlazor
             .Build();
 
         /// <summary>
+        /// The accessible name of the breadcrumb navigation landmark.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which uses the localized <c>Breadcrumb</c> label.
+        /// Use distinct labels when displaying multiple breadcrumb trails.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Breadcrumbs.Behavior)]
+        public string? AriaLabel { get; set; }
+
+        /// <summary>
         /// The list of items to display.
         /// </summary>
         [Parameter]
