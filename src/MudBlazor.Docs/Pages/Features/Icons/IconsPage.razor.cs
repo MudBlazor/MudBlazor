@@ -45,6 +45,8 @@ namespace MudBlazor.Docs.Pages.Features.Icons
 
         private List<MudIcons> MaterialTwoTone { get; set; } = new();
 
+        private List<MudIcons> PictogrammersMaterialIcons { get; set; } = new();
+
         private MudIcons SelectedIcon { get; set; } = MudIcons.Empty;
 
         private Size PreviewIconSize { get; set; } = Size.Medium;
@@ -80,7 +82,8 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             { IconType.TwoTone, typeof(MudBlazor.Icons.Material.TwoTone) },
             { IconType.Brands, typeof(MudBlazor.Icons.Custom.Brands) },
             { IconType.FileFormats, typeof(MudBlazor.Icons.Custom.FileFormats) },
-            { IconType.Uncategorized, typeof(MudBlazor.Icons.Custom.Uncategorized) }
+            { IconType.Uncategorized, typeof(MudBlazor.Icons.Custom.Uncategorized) },
+            { IconType.PictogrammersMaterial, typeof(MudBlazor.Icons.PictogrammersMaterial.All) }
         };
 
         protected override async Task OnInitializedAsync()
@@ -90,6 +93,8 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             MaterialRounded = await LoadMaterialIcons(IconType.Rounded);
             MaterialSharp = await LoadMaterialIcons(IconType.Sharp);
             MaterialTwoTone = await LoadMaterialIcons(IconType.TwoTone);
+
+            PictogrammersMaterialIcons = await LoadMaterialIcons(IconType.PictogrammersMaterial);
 
             await LoadCustomIcons();
             await base.OnInitializedAsync();
@@ -183,6 +188,7 @@ namespace MudBlazor.Docs.Pages.Features.Icons
                 IconType.Brands => CustomBrands,
                 IconType.FileFormats => CustomFileFormats,
                 IconType.Uncategorized => CustomUncategorized,
+                IconType.PictogrammersMaterial => PictogrammersMaterialIcons,
                 _ => _displayedIcons
             };
         }
@@ -197,6 +203,9 @@ namespace MudBlazor.Docs.Pages.Features.Icons
                 case IconOrigin.Custom:
                     ChangeIconCategory(IconType.All);
                     break;
+                case IconOrigin.PictogrammersMaterial:
+                    ChangeIconCategory(IconType.PictogrammersMaterial);
+                    break;
             }
 
             SelectedIconOrigin = origin;
@@ -206,7 +215,19 @@ namespace MudBlazor.Docs.Pages.Features.Icons
         {
             _iconDrawerOpen = true;
             SelectedIcon = new MudIcons(icon.Name, icon.Code, icon.Category);
-            IconCodeOutput = $"@Icons{(SelectedIconOrigin == IconOrigin.Material ? ".Material" : ".Custom")}.{icon.Category}.{icon.Name}";
+            switch (SelectedIconOrigin)
+            {
+                case IconOrigin.Material:
+                    IconCodeOutput = $"@Icons.Material.{icon.Category}.{icon.Name}";
+                    break;
+                case IconOrigin.Custom:
+                    IconCodeOutput = $"@Icons.Custom.{icon.Category}.{icon.Name}";
+                    break;
+                case IconOrigin.PictogrammersMaterial:
+                    IconCodeOutput = $"@Icons.{icon.Category}.{icon.Name}";
+                    break;
+            }
+            
         }
 
         private void CloseIconDrawer() => _iconDrawerOpen = false;
@@ -226,11 +247,13 @@ namespace MudBlazor.Docs.Pages.Features.Icons
             public const string Brands = "Brands";
             public const string FileFormats = "FileFormats";
             public const string Uncategorized = "Uncategorized";
+            public const string PictogrammersMaterial = "PictogrammersMaterial.All";
         }
         private enum IconOrigin
         {
             Custom,
-            Material
+            Material, 
+            PictogrammersMaterial
         }
     }
 }
