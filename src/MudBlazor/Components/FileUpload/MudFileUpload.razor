@@ -11,23 +11,24 @@
         @for (var index = 1; index <= _numberOfActiveFileInputs; index++)
         {
             var localIndex = index;
-            <InputFile @key="@localIndex"
-                       OnChange="OnChangeAsync"
-                       class="@GetInputClass(localIndex)"
-                       style="@InputStyle"
-                       hidden="@(Hidden && !_draggingState.Value ? "" : null)"
-                       multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
-                       accept="@Accept"
-                       disabled="@(GetDisabledState())"
-                       aria-required="@Required.ToString().ToLowerInvariant()"
-                       aria-describedby="@(HasErrors ? ErrorIdState.Value : null)"
-                       @attributes="UserAttributes"
-                       @ondragenter="OnDragEnterAsync"
-                       @ondrop="OnDropAsync"
-                       @ondragleave="OnDragLeaveAsync"
-                       @ondragend="OnDragEndAsync"
-                       id="@GetInputId(localIndex)"
-                       required="@Required" />
+            <InputFile @key="@localIndex" 
+                    OnChange="OnChangeAsync" 
+                    class="@GetInputClass(localIndex)" 
+                    style="@InputStyle" 
+                    hidden="@(Hidden && !_draggingState.Value ? "" : null)" 
+                    multiple="@(Folder || typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)" 
+                    webkitdirectory="@(Folder ? "" : null)"
+                    accept="@Accept" 
+                    disabled="@(GetDisabledState())" 
+                    aria-required="@Required.ToString().ToLowerInvariant()" 
+                    aria-describedby="@(HasErrors ? ErrorIdState.Value : null)" 
+                    @attributes="UserAttributes" 
+                    @ondragenter="OnDragEnterAsync" 
+                    @ondrop="OnDropAsync" 
+                    @ondragleave="OnDragLeaveAsync" 
+                    @ondragend="OnDragEndAsync" 
+                    id="@GetInputId(localIndex)" 
+                    required="@Required" />
         }
         @if (CustomContent == null)
         {

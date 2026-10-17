@@ -911,5 +911,97 @@ namespace MudBlazor.UnitTests.Components
             input.GetAttribute("aria-describedby").Should().Be("upload-error");
             comp.Find("#upload-error").TextContent.Trim().Should().Be("File required");
         }
+
+        [Test]
+        public void MudFileUpload_FolderAttribute_Test()
+        {
+            // 1. Arrange & Render component with Folder mode enabled using the updated syntax
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.Folder, true));
+
+            // 2. Act: Find the target HTML file input element
+            var input = comp.Find("input[type=file]");
+
+            // 3. Assert: Ensure both key HTML attributes are successfully injected 
+            input.HasAttribute("webkitdirectory").Should().BeTrue();
+            input.HasAttribute("multiple").Should().BeTrue();
+        }
+
+        [Test]
+        public void MudFileUpload_FolderPathsChanged_JSInterop_Test()
+        {
+            // Fix 1: Pass an expression to Setup to catch any string input ID argument
+            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
+                "mudInput.getFolderPaths",
+                checkedArguments => true
+            );
+            jsMock.SetResult(new List<string> { "folder/file1.txt", "folder/file2.txt" });
+
+            // Fix 2: Remove the '?' to fix the nullable annotations context error
+            IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
+
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.Disabled, false)
+                .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
+
+            // 2. Act: Target the child component element and dispatch the files
+            var inputFileComponent = comp.FindComponent<InputFile>();
+
+            var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
+            var file2 = InputFileContent.CreateFromText("file2 content", "file2.txt");
+
+            inputFileComponent.UploadFiles(file1, file2);
+
+            // 3. Assert: Allow the async render pipeline to catch up with WaitForAssertion
+            comp.WaitForAssertion(() =>
+            {
+                jsMock.VerifyInvoke("mudInput.getFolderPaths");
+
+                uploadedItems.Should().NotBeNull();
+                uploadedItems.Count.Should().Be(2);
+
+                uploadedItems.ElementAt(0).RelativePath.Should().Be("folder/file1.txt");
+                uploadedItems.ElementAt(0).File.Name.Should().Be("file1.txt");
+            }, TimeSpan.FromSeconds(2));
+        }
+
+        [Test]
+        public void MudFileUpload_FolderPathsChanged_EmptyFileInputs_Fallback_Test()
+        {
+            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
+                "mudInput.getFolderPaths",
+                checkedArguments => true
+            );
+            jsMock.SetResult(new List<string> { "folder/file1.txt" });
+
+            IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
+
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.Disabled, false)
+                .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
+
+            // Force _numberOfActiveFileInputs to 0 using reflection to test the < 1 guard condition
+            var field = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
+                .GetField("_numberOfActiveFileInputs", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            if (field != null)
+            {
+                field.SetValue(comp.Instance, 0);
+            }
+
+            // Act: Trigger the upload
+            var inputFileComponent = comp.FindComponent<InputFile>();
+            var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
+            inputFileComponent.UploadFiles(file1);
+
+            // Assert: Check that it ran through without crashing and invoked the JS
+            comp.WaitForAssertion(() =>
+            {
+                jsMock.VerifyInvoke("mudInput.getFolderPaths");
+                uploadedItems.Should().NotBeNull();
+            }, TimeSpan.FromSeconds(2));
+        }
     }
 }
