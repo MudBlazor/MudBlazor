@@ -2349,6 +2349,59 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Rows loaded through <c>ServerData</c> keep the order the server sorted them in, with or without a pager (#10824).
+        /// </summary>
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        public async Task ServerDataRowsKeepTheServerSortOrder(bool withPager, bool virtualize)
+        {
+            // The server sorts the names by their number, so "File 2" comes before "File 10".
+            // The grid's own comparison puts "File 10" before "File 2", so sorting the rows again would change their order.
+            var serverItems = new List<TestDataItem>
+            {
+                new() { Name = "File 2" },
+                new() { Name = "File 10" },
+                new() { Name = "File 1" }
+            };
+
+            Task<GridData<TestDataItem>> ServerData(GridState<TestDataItem> state, CancellationToken token)
+            {
+                IEnumerable<TestDataItem> items = serverItems;
+                var sortDefinition = state.SortDefinitions.SingleOrDefault();
+                if (sortDefinition is not null)
+                {
+                    Func<TestDataItem, int> fileNumber = item => int.Parse(item.Name["File ".Length..], CultureInfo.InvariantCulture);
+                    items = sortDefinition.Descending ? items.OrderByDescending(fileNumber) : items.OrderBy(fileNumber);
+                }
+
+                return Task.FromResult(new GridData<TestDataItem> { Items = items.ToList(), TotalItems = serverItems.Count });
+            }
+
+            RenderFragment pager = builder =>
+            {
+                builder.OpenComponent<MudDataGridPager<TestDataItem>>(0);
+                builder.CloseComponent();
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.ServerData, ServerData)
+                .Add(p => p.Virtualize, virtualize)
+                .Add(p => p.PagerContent, withPager ? pager : null)
+                .Add(p => p.Columns, NamePropertyColumn));
+
+            string[] RowNames() => comp.FindAll("tbody tr.mud-table-row td").Select(cell => cell.TextContent).ToArray();
+
+            RowNames().Should().Equal("File 2", "File 10", "File 1");
+
+            await comp.Find("th .sortable-column-header").ClickAsync();
+            RowNames().Should().Equal("File 1", "File 2", "File 10");
+
+            await comp.Find("th .sortable-column-header").ClickAsync();
+            RowNames().Should().Equal("File 10", "File 2", "File 1");
+        }
+
         [Test]
         public async Task FilterDefinitionString()
         {

@@ -1588,6 +1588,7 @@ namespace MudBlazor
                     items = items.Where(QuickFilter);
                 }
 
+                // The server data functions receive the filter and sort definitions, so their items arrive already filtered and sorted.
                 if (!HasServerData)
                 {
                     foreach (var filterDefinition in FilterDefinitions)
@@ -1598,9 +1599,11 @@ namespace MudBlazor
                         });
                         items = items.Where(filterFunc);
                     }
+
+                    items = Sort(items);
                 }
 
-                _currentRenderFilteredItemsCache = Sort(items).ToList(); // To list to ensure evaluation only once per render
+                _currentRenderFilteredItemsCache = items.ToList(); // To list to ensure evaluation only once per render
                 unchecked { FilteringRunCount++; }
                 GroupItems(noStateChange: true);
                 return _currentRenderFilteredItemsCache;
