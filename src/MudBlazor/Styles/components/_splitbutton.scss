@@ -1,0 +1,63 @@
+@import '../abstracts/variables';
+
+.mud-split-button {
+  // The radius of the two corners where the segments meet. Material 3 tightens these rather
+  // than squaring them off, and exposing it as a custom property lets a theme dial it back to
+  // 0 for the flush look of a plain button group.
+  --mud-split-button-inner-radius: 2px;
+
+  // MudMenu centres itself (_menu.scss sets align-self: center), so inside the group's stretch
+  // layout the toggle ends up a pixel shorter than the primary segment. This is why the
+  // hand-assembled version in the docs had to pass Style="align-self: auto;" at every call site.
+  > .mud-split-button-toggle {
+    align-self: auto;
+  }
+
+  &.mud-button-group-horizontal {
+    &:not(.mud-button-group-rtl) {
+      > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
+        border-top-right-radius: var(--mud-split-button-inner-radius);
+        border-bottom-right-radius: var(--mud-split-button-inner-radius);
+      }
+
+      > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+        border-top-left-radius: var(--mud-split-button-inner-radius);
+        border-bottom-left-radius: var(--mud-split-button-inner-radius);
+      }
+    }
+
+    &.mud-button-group-rtl {
+      > .mud-button-root:not(:last-child), > :not(:last-child) .mud-button-root {
+        border-top-left-radius: var(--mud-split-button-inner-radius);
+        border-bottom-left-radius: var(--mud-split-button-inner-radius);
+      }
+
+      > .mud-button-root:not(:first-child), > :not(:first-child) .mud-button-root {
+        border-top-right-radius: var(--mud-split-button-inner-radius);
+        border-bottom-right-radius: var(--mud-split-button-inner-radius);
+      }
+    }
+  }
+
+  // The primary segment takes the slack under FullWidth so the toggle keeps its tap target.
+  &.mud-width-full {
+    > .mud-split-button-primary {
+      flex-grow: 1;
+    }
+
+    > .mud-split-button-toggle {
+      flex-shrink: 0;
+    }
+  }
+
+  // The caret points up while the menu is open.
+  .mud-menu-icon-button-activator {
+    .mud-icon-root {
+      transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    &[aria-expanded='true'] .mud-icon-root {
+      transform: rotate(180deg);
+    }
+  }
+}
