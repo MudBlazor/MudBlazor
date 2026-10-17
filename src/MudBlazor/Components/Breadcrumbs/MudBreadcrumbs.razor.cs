@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Resources;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -16,6 +19,16 @@ namespace MudBlazor
             .AddClass("mud-typography-body1")
             .AddClass(Class)
             .Build();
+
+        /// <summary>
+        /// The ARIA label for the navigation landmark element.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. When not set, the localized default ("Breadcrumb") is used.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Breadcrumbs.Behavior)]
+        public string? AriaLabel { get; set; }
 
         /// <summary>
         /// The list of items to display.
@@ -86,6 +99,41 @@ namespace MudBlazor
             return new CssBuilder("mud-breadcrumb-item")
                 .AddClass("mud-disabled", item.Disabled)
                 .Build();
+        }
+
+        private string? GetNavAriaLabel()
+        {
+            if (!string.IsNullOrEmpty(AriaLabel))
+            {
+                return AriaLabel;
+            }
+
+            foreach (var (key, value) in UserAttributes)
+            {
+                if (string.Equals(key, "aria-label", StringComparison.OrdinalIgnoreCase) && value is not null)
+                {
+                    return value.ToString();
+                }
+            }
+
+            return Localizer[LanguageResource.MudBreadcrumbs_Label];
+        }
+
+        private IReadOnlyDictionary<string, object?> GetListUserAttributes()
+        {
+            if (UserAttributes.Any(x => string.Equals(x.Key, "aria-label", StringComparison.OrdinalIgnoreCase)))
+            {
+                var filtered = new Dictionary<string, object?>(UserAttributes);
+                var keyToRemove = filtered.Keys.FirstOrDefault(k => string.Equals(k, "aria-label", StringComparison.OrdinalIgnoreCase));
+                if (keyToRemove is not null)
+                {
+                    filtered.Remove(keyToRemove);
+                }
+
+                return filtered;
+            }
+
+            return UserAttributes;
         }
 
         internal void Expand()

@@ -1,4 +1,4 @@
-﻿using AwesomeAssertions;
+using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using NUnit.Framework;
@@ -54,6 +54,38 @@ namespace MudBlazor.UnitTests.Components
             }));
 
             comp.Find("nav").GetAttribute("aria-label").Should().Be("Breadcrumb");
+        }
+
+        [Test]
+        public void MudBreadcrumbs_ShouldRenderNavWithCustomAriaLabelParameter()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.AriaLabel, "Custom Breadcrumb")
+                .Add(x => x.Items, new List<BreadcrumbItem>
+                {
+                    new("Link 1", "link1"),
+                    new("Link 2", "link2")
+                }));
+
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Custom Breadcrumb");
+            comp.Find("ol.mud-breadcrumbs").HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        [Test]
+        public void MudBreadcrumbs_ShouldRenderNavWithCustomAriaLabelUserAttribute()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.UserAttributes, new Dictionary<string, object> { ["aria-label"] = "Custom Breadcrumb", ["data-testid"] = "breadcrumbs" })
+                .Add(x => x.Items, new List<BreadcrumbItem>
+                {
+                    new("Link 1", "link1"),
+                    new("Link 2", "link2")
+                }));
+
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Custom Breadcrumb");
+            var list = comp.Find("ol.mud-breadcrumbs");
+            list.HasAttribute("aria-label").Should().BeFalse();
+            list.GetAttribute("data-testid").Should().Be("breadcrumbs");
         }
 
         [Test]
