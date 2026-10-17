@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@happy-dom/global-registrator": "20.14.5",
+    "@happy-dom/global-registrator": "21.0.1",
     "@types/bun": "1.4.2",
     "@types/node": "26.6.4",
     "eslint": "10.12.0",
