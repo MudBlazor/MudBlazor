@@ -1884,8 +1884,10 @@ namespace MudBlazor
                 }
             }
 
-            StateHasChanged();
+            // Group before rendering: with a pager, CurrentPageItems takes the server items directly instead of FilteredItems, which would group them.
+            // Rendering first showed the rows ungrouped, and the next render rebuilt every row under its group.
             GroupItems();
+            StateHasChanged();
         }
 
         internal void AddColumn(Column<T> column)
