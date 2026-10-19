@@ -83,7 +83,7 @@ If `src/package.json`, `src/bun.lock`, `src/eslint.config.ts`, `src/Directory.Bu
 - This repository uses Microsoft.Testing.Platform via `global.json`, so pass runner-specific options after `--` and use `--hangdump`/`--hangdump-timeout`; the test app rejects VSTest `--blame-hang` flags as unknown options.
 - "Zero tests ran" means the filter or a runner flag was wrong; treat it as a failed run, not a passing one.
 - Do not pipe `dotnet` output through filters such as `tail`; that masks the exit code. Read the log for `Build succeeded`, `error CS`, or the test summary instead.
-- On Windows, kill leftover `MudBlazor.UnitTests.exe` test hosts before rebuilding; they lock output assemblies and fail the build with `MSB3027`.
+- On Windows, leftover `MudBlazor.UnitTests.exe` test hosts lock output assemblies and fail the build with `MSB3027`. Before rebuilding, stop only this checkout's hosts by running this PowerShell from the repository root: `Get-Process MudBlazor.UnitTests -ErrorAction SilentlyContinue | Where-Object { $_.Path -like "$PWD\src\*" } | Stop-Process -Force`. Killing by name alone ends test runs in other worktrees; the `src\` segment keeps a main checkout from matching worktrees nested inside it.
 
 ```bash
 dotnet test --project src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj --no-restore -p:SkipBunCompile=true -- --filter "FullyQualifiedName~MenuTests" --output Normal --no-ansi --hangdump --hangdump-timeout 30s
