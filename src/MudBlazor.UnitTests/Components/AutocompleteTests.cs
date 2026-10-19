@@ -1538,6 +1538,171 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A search that ignores its token and finishes after a closing key does not reopen the menu.
+        /// </summary>
+        [TestCase("Escape", false, true)]
+        [TestCase("ArrowUp", true, false)]
+        public async Task Autocomplete_SearchFinishingAfterClosingKey_KeepsMenuClosed(string key, bool altKey, bool onKeyUp)
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var searchStarted = false;
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    searchStarted = true;
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searchStarted.Should().BeTrue());
+
+            var args = new KeyboardEventArgs { Key = key, AltKey = altKey };
+            if (onKeyUp)
+            {
+                await comp.Find("input").KeyUpAsync(args);
+            }
+            else
+            {
+                await comp.Find("input").KeyDownAsync(args);
+            }
+
+            search.SetResult(["Apple"]);
+            await comp.InvokeAsync(() => search.Task);
+
+            comp.Instance.Open.Should().BeFalse();
+            provider.FindAll("div.mud-popover-open").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A search that Escape cancels does not reopen the menu or report a result count, whether cancelling resumes it inline or later.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Autocomplete_SearchCancelledByEscape_DoesNotReopenMenu(bool resumesInline)
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searchStarted = false;
+            var openChanges = new List<bool>();
+            var returnedCounts = new List<int>();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.NoItemsTemplate, builder => builder.AddContent(0, "No matches"))
+                .Add(x => x.OpenChanged, open => openChanges.Add(open))
+                .Add(x => x.ReturnedItemsCountChanged, count => returnedCounts.Add(count))
+                .Add(x => x.SearchFunc, (_, token) =>
+                {
+                    searchStarted = true;
+                    // Without RunContinuationsAsynchronously, cancelling the token resumes the search inside Cancel().
+                    var search = new TaskCompletionSource<IEnumerable<string>>(resumesInline ? TaskCreationOptions.None : TaskCreationOptions.RunContinuationsAsynchronously);
+                    token.Register(() => search.TrySetCanceled(token));
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searchStarted.Should().BeTrue());
+
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Escape" });
+            await comp.InvokeAsync(() => { });
+
+            openChanges.Should().BeEmpty();
+            returnedCounts.Should().BeEmpty();
+            comp.Instance.Open.Should().BeFalse();
+            provider.FindAll(".mud-autocomplete-no-items").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Clicking the input after Escape abandoned a search starts a new search and opens the menu with its results.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_ClickAfterEscapeDuringSearch_OpensMenu()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searches = new List<TaskCompletionSource<IEnumerable<string>>>();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    searches.Add(search);
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().ContainSingle());
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Escape" });
+
+            var clickTask = comp.Find("div.mud-input-control").MouseDownAsync(new MouseEventArgs());
+            await comp.WaitForAssertionAsync(() => searches.Should().HaveCount(2));
+            searches[1].SetResult(["Apple"]);
+            await clickTask;
+
+            comp.Instance.Open.Should().BeTrue();
+            provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple");
+        }
+
+        /// <summary>
+        /// Escape removes the progress indicator of the search it abandons.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_EscapeDuringSearch_RemovesProgressIndicator()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.ShowProgressIndicator, true)
+                .Add(x => x.SearchFunc, (_, _) => search.Task));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".progress-indicator-circular").Should().ContainSingle());
+
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Escape" });
+
+            comp.FindAll(".progress-indicator-circular").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A SearchFunc that closes the menu before it returns does not leave the progress indicator showing.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_SearchFuncClosingMenu_DoesNotShowProgressIndicator()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var searchStarted = false;
+            IRenderedComponent<MudAutocomplete<string>> comp = null;
+            comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.ShowProgressIndicator, true)
+                .Add(x => x.SearchFunc, async (_, _) =>
+                {
+                    searchStarted = true;
+                    await comp.Instance.CloseMenuAsync();
+                    return await search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searchStarted.Should().BeTrue());
+
+            comp.FindAll(".progress-indicator-circular").Should().BeEmpty();
+
+            search.SetResult(["Apple"]);
+            await comp.InvokeAsync(() => search.Task);
+
+            comp.Instance.Open.Should().BeFalse();
+        }
+
+        /// <summary>
         /// FullWidth adds the full-width class to the autocomplete.
         /// </summary>
         [Test]

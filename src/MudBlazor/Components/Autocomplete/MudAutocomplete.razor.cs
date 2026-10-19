@@ -695,6 +695,19 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Stops a running search from replacing the items or reopening the menu when it finishes.
+        /// </summary>
+        private void AbandonSearch()
+        {
+            // Bump the version before cancelling, because a search that observes its token can resume inside Cancel().
+            // The abandoned search returns before it clears the opening and loading state, so clear them here.
+            _searchVersion++;
+            _opening = false;
+            _currentSearchTask = null;
+            CancelToken();
+        }
+
         private Task SetReturnedItemsCountAsync(int value)
         {
             _returnedItemsCount = value;
@@ -722,7 +735,7 @@ namespace MudBlazor
         /// </summary>
         public async Task CloseMenuAsync()
         {
-            CancelToken();
+            AbandonSearch();
             _debounceTimer?.Dispose();
             Open = false; // Before restoring position and triggering changes, make sure that we close the popover
             StateHasChanged();
@@ -741,11 +754,7 @@ namespace MudBlazor
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(ReadText) || ReadText.Length < MinCharacters))
             {
                 // A search still running for longer text must not reopen the menu when it finishes.
-                // It is no longer tracked either, so the progress indicator does not wait on it.
-                _searchVersion++;
-                CancelToken();
-                _currentSearchTask = null;
-                _opening = false;
+                AbandonSearch();
                 Open = false;
                 StateHasChanged();
                 return;
@@ -773,7 +782,11 @@ namespace MudBlazor
                 var searchText = searchingWhileSelected ? string.Empty : ReadText;
                 var searchTask = SearchFunc?.Invoke(searchText, _cancellationTokenSrc.Token);
 
-                _currentSearchTask = searchTask;
+                // SearchFunc can abandon its own search before returning, such as by closing the menu, and an abandoned search must not show as loading.
+                if (searchVersion == _searchVersion)
+                {
+                    _currentSearchTask = searchTask;
+                }
 
                 StateHasChanged();
                 searchedItems = searchTask switch
