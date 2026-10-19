@@ -455,6 +455,7 @@ namespace MudBlazor
                     .AddClass("mud-range")
                     .AddClass("mud-range-start-selected")
                     .AddClass("mud-range-selection", _firstDate != null)
+                    .AddClass("mud-range-selection-anchor", _firstDate != null && _secondDate is null)
                     .AddClass($"mud-theme-{Color.ToStringFast(true)}")
                     .Build();
             }
@@ -473,11 +474,13 @@ namespace MudBlazor
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToStringFast(true)}").Build();
             }
 
-            if (_firstDate?.Date < day)
+            // The first date already returned above, so any other day is a preview candidate on either side of it.
+            if (_firstDate is { } firstDate)
             {
                 return b.AddClass("mud-range", _secondDate is null && day != today)
                     .AddClass("mud-range-selection")
-                    .AddClass($"mud-range-selection-{Color.ToStringFast(true)}", _firstDate is not null)
+                    .AddClass("mud-range-selection-before", day < firstDate.Date)
+                    .AddClass($"mud-range-selection-{Color.ToStringFast(true)}")
                     .AddClass($"mud-current mud-{Color.ToStringFast(true)}-text mud-button-outlined mud-button-outlined-{Color.ToStringFast(true)}", day == today)
                     .Build();
             }
