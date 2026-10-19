@@ -1655,6 +1655,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// After the first click, days on both sides of it get the hover preview classes, with earlier days marked so the preview fills toward the first date.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_HoverPreview_CoversEarlierDates()
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(picker => picker.PickerVariant, PickerVariant.Static)
+                .Add(picker => picker.StartMonth, new DateTime(2025, 1, 1)));
+
+            IElement Day(int day) => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals(day.ToString()));
+
+            Day(10).ClassList.Should().NotContain("mud-range-selection");
+
+            await Day(15).ClickAsync(new MouseEventArgs());
+
+            Day(10).ClassList.Should().Contain(["mud-range", "mud-range-selection", "mud-range-selection-before", "mud-range-selection-primary"]);
+            Day(20).ClassList.Should().Contain(["mud-range", "mud-range-selection", "mud-range-selection-primary"]);
+            Day(20).ClassList.Should().NotContain("mud-range-selection-before");
+            Day(15).ClassList.Should().Contain(["mud-range-start-selected", "mud-range-selection-anchor"]);
+
+            await Day(10).ClickAsync(new MouseEventArgs());
+
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 10), new DateTime(2025, 1, 15)));
+            Day(10).ClassList.Should().Contain("mud-range-start-selected").And.NotContain("mud-range-selection-anchor");
+            Day(5).ClassList.Should().NotContain("mud-range-selection-before");
+        }
+
+        /// <summary>
         /// MinDays of one allows dates before the first clicked date, the same as leaving MinDays unset.
         /// </summary>
         [TestCase(true)]
