@@ -390,13 +390,9 @@ namespace MudBlazor.Charts
 
         private HeatMapCell<T>? GetCell(int row, int col)
         {
-            if (row < 0 || col < 0 || col >= _heatMapColumns)
-            {
-                return null;
-            }
-
+            // Series changed in place since the last RebuildChart can reach past the cells it laid out.
             var index = (row * _heatMapColumns) + col;
-            return index < _heatMapCells.Count ? _heatMapCells[index] : null;
+            return col < _heatMapColumns && index < _heatMapCells.Count ? _heatMapCells[index] : null;
         }
 
         private T? GetDataValue(int row, int col)
