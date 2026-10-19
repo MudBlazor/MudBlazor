@@ -3056,8 +3056,7 @@ namespace MudBlazor.UnitTests.Components
 
             #endregion
 
-            #region FilterOperator.Enum.IsAnyOf
-
+            // FilterOperator.Enum.IsAnyOf
             filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
             {
                 Column = statusColumn,
@@ -3100,8 +3099,6 @@ namespace MudBlazor.UnitTests.Components
             });
             func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
-
-            #endregion
 
             #region FilterOperator.Enum.Empty
 
