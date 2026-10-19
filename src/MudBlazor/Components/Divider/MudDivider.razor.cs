@@ -16,8 +16,7 @@ public partial class MudDivider : MudComponentBase
     private bool HasContent => ChildContent is not null;
 
     /// <summary>
-    /// A vertical divider of type <see cref="DividerType.FullWidth"/> must not get the "fullwidth" class,
-    /// since it would force <c>width: 100%</c> on an element that is meant to be a thin vertical line.
+    /// A vertical divider of type <see cref="DividerType.FullWidth"/> must not get the "fullwidth" class, since it would force <c>width: 100%</c> on an element that is meant to be a thin vertical line.
     /// </summary>
     private bool ApplyDividerType => DividerType != DividerType.FullWidth || !Vertical;
 
