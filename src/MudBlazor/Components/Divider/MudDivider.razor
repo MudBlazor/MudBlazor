@@ -4,10 +4,10 @@
 
 @if (HasContent)
 {
-    <div @attributes="UserAttributes"
-         role="separator"
+    <div role="separator"
          aria-orientation="@(Vertical ? "vertical" : null)"
          aria-labelledby="@_labelId"
+         @attributes="UserAttributes"
          class="@WrapperClassname"
          style="@Style">
         <hr class="@Classname" aria-hidden="true"/>
