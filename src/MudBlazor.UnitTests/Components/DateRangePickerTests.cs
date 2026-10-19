@@ -1703,10 +1703,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Setting MaxDays after the first click leaves dates selectable when disabled dates are not counted.
+        /// MinDays and MaxDays set after the first click apply immediately when disabled dates are not counted.
         /// </summary>
         [Test]
-        public async Task DateRangePicker_MaxDaysSetAfterFirstClick_KeepsDatesSelectable()
+        public async Task DateRangePicker_MinMaxDaysSetAfterFirstClick_ApplyImmediately()
         {
             var comp = Context.Render<MudDateRangePicker>(parameters => parameters
                 .Add(picker => picker.PickerVariant, PickerVariant.Static)
@@ -1716,13 +1716,43 @@ namespace MudBlazor.UnitTests.Components
             IElement Day(int day) => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals(day.ToString()));
 
             await Day(15).ClickAsync(new MouseEventArgs());
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.MaxDays, 5));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(picker => picker.MinDays, 3)
+                .Add(picker => picker.MaxDays, 5));
 
+            Day(10).HasAttribute("disabled").Should().BeTrue();
+            Day(11).HasAttribute("disabled").Should().BeFalse();
+            Day(14).HasAttribute("disabled").Should().BeTrue();
+            Day(16).HasAttribute("disabled").Should().BeTrue();
             Day(17).HasAttribute("disabled").Should().BeFalse();
+            Day(19).HasAttribute("disabled").Should().BeFalse();
+            Day(20).HasAttribute("disabled").Should().BeTrue();
 
-            await Day(17).ClickAsync(new MouseEventArgs());
+            await Day(19).ClickAsync(new MouseEventArgs());
 
-            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 15), new DateTime(2025, 1, 17)));
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 15), new DateTime(2025, 1, 19)));
+        }
+
+        /// <summary>
+        /// Raising MaxDate after the first click lets MaxDays reach past the old MaxDate when disabled dates are not counted.
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_MaxDateRaisedAfterFirstClick_ExtendsMaxDays()
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(picker => picker.PickerVariant, PickerVariant.Static)
+                .Add(picker => picker.StartMonth, new DateTime(2025, 1, 1))
+                .Add(picker => picker.MaxDate, new DateTime(2025, 1, 18))
+                .Add(picker => picker.MaxDays, 7)
+                .Add(picker => picker.AllowDisabledDatesInCount, false));
+
+            IElement Day(int day) => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals(day.ToString()));
+
+            await Day(15).ClickAsync(new MouseEventArgs());
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.MaxDate, new DateTime(2025, 1, 31)));
+
+            Day(21).HasAttribute("disabled").Should().BeFalse();
+            Day(22).HasAttribute("disabled").Should().BeTrue();
         }
 
         [Test]
