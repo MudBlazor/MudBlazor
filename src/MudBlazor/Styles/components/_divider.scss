@@ -86,9 +86,11 @@ $divider-middle-margin: 16px;
 }
 
 .mud-divider-with-content-text {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  min-width: 0;
   padding: 0 0.75rem;
-  white-space: nowrap;
+  text-align: center;
+  overflow-wrap: anywhere;
 
   .mud-divider-with-content-vertical > & {
     padding: 0.75rem 0;
