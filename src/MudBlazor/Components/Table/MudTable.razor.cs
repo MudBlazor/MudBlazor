@@ -868,6 +868,12 @@ namespace MudBlazor
             if (CurrentPage * RowsPerPage >= _serverData.TotalItems)
             {
                 SetCurrentPage(0);
+
+                // The reset started a load for the first page, so that load ends the loading state and updates the pager.
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
             }
 
             Loading = false;

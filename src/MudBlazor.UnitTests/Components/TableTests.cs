@@ -1840,7 +1840,50 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Renders a string table with a pager whose rows come from <paramref name="serverData"/>.
+        /// A ServerData load that finds its page out of range keeps the table loading, without the empty message, until the first page it resets to has loaded.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TableServerData_PageReset_StaysLoadingUntilFirstPageLoads()
+        {
+            var requestedPages = new List<int>();
+            var firstPage = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var comp = RenderServerDataTable((state, _) =>
+            {
+                requestedPages.Add(state.Page);
+                return requestedPages.Count switch
+                {
+                    // The data shrinks to 15 recipes, so page 2 no longer exists.
+                    3 => Task.FromResult(new TableData<string> { Items = [], TotalItems = 15 }),
+                    4 => firstPage.Task,
+                    _ => Task.FromResult(RecipePage(state)),
+                };
+            });
+            await comp.WaitForAssertionAsync(() => RowTexts(comp).Should().HaveCount(10));
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(2));
+            RowTexts(comp).First().Should().Be("Recipe 21");
+
+            await comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+
+            requestedPages.Should().Equal(0, 2, 2, 0);
+            comp.Instance.CurrentPage.Should().Be(0);
+            comp.Instance.Loading.Should().BeTrue();
+            comp.FindAll(".mud-table-loading-progress").Should().ContainSingle();
+            RowTexts(comp).Should().BeEmpty();
+            comp.Markup.Should().NotContain("No recipes found");
+
+            firstPage.SetResult(new TableData<string> { Items = RecipePage(new TableState { Page = 0, PageSize = 10 }).Items, TotalItems = 15 });
+            await comp.WaitForAssertionAsync(() => RowTexts(comp).Should().HaveCount(10));
+
+            RowTexts(comp).First().Should().Be("Recipe 1");
+            comp.Find(".mud-table-page-number-information").TextContent.Trim().Should().Be("1-10 of 15");
+            comp.Instance.Loading.Should().BeFalse();
+            comp.FindAll(".mud-table-loading-progress").Should().BeEmpty();
+            requestedPages.Should().Equal(0, 2, 2, 0);
+        }
+
+        /// <summary>
+        /// Renders a string table with a pager and an empty message whose rows come from <paramref name="serverData"/>.
         /// </summary>
         private IRenderedComponent<MudTable<string>> RenderServerDataTable(Func<TableState, CancellationToken, Task<TableData<string>>> serverData)
         {
@@ -1852,6 +1895,7 @@ namespace MudBlazor.UnitTests.Components
                     builder.AddAttribute(1, nameof(MudTd.ChildContent), (RenderFragment)(b => b.AddContent(2, item)));
                     builder.CloseComponent();
                 })
+                .Add(p => p.NoRecordsContent, builder => builder.AddContent(0, "No recipes found"))
                 .Add(p => p.PagerContent, builder =>
                 {
                     builder.OpenComponent<MudTablePager>(0);
