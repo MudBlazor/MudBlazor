@@ -13,6 +13,8 @@ namespace MudBlazor
     {
         private readonly string _mudPickerCalendarContentElementId;
         private readonly ParameterState<string?> _dateFormatState;
+        internal readonly ParameterState<DateTime?> MinDateState;
+        internal readonly ParameterState<DateTime?> MaxDateState;
 
         protected MudBaseDatePicker()
         {
@@ -23,6 +25,12 @@ namespace MudBlazor
             _dateFormatState = registerScope.RegisterParameter<string?>(nameof(DateFormat))
                 .WithParameter(() => DateFormat)
                 .WithChangeHandler(DateFormatChangedAsync);
+            MinDateState = registerScope.RegisterParameter<DateTime?>(nameof(MinDate))
+                .WithParameter(() => MinDate)
+                .WithChangeHandler(OnDateLimitsChanged);
+            MaxDateState = registerScope.RegisterParameter<DateTime?>(nameof(MaxDate))
+                .WithParameter(() => MaxDate)
+                .WithChangeHandler(OnDateLimitsChanged);
         }
 
         [Inject]
@@ -37,14 +45,14 @@ namespace MudBlazor
         /// <summary>
         /// The maximum selectable date.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
         public DateTime? MaxDate { get; set; }
 
         /// <summary>
         /// The minimum selectable date.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
         public DateTime? MinDate { get; set; }
 
@@ -78,6 +86,13 @@ namespace MudBlazor
         }
 
         private Task DateFormatChangedAsync(ParameterChangedEventArgs<string?> args) => DateFormatChangedAsync(args.Value);
+
+        /// <summary>
+        /// Occurs when <see cref="MinDate"/> or <see cref="MaxDate"/> has changed.
+        /// </summary>
+        internal virtual void OnDateLimitsChanged()
+        {
+        }
 
         /// <summary>
         /// The day representing the first day of the week.
@@ -480,8 +495,8 @@ namespace MudBlazor
 
         protected virtual bool IsDayDisabled(DateTime date)
         {
-            return date < MinDate ||
-                   date > MaxDate ||
+            return date < MinDateState.Value ||
+                   date > MaxDateState.Value ||
                    IsDateDisabledFunc(date);
         }
 
@@ -582,14 +597,14 @@ namespace MudBlazor
             var calendar = culture.Calendar;
             if (!FixDay.HasValue)
             {
-                return month.EndOfMonth(culture) < MinDate || month > MaxDate;
+                return month.EndOfMonth(culture) < MinDateState.Value || month > MaxDateState.Value;
             }
             if (calendar.GetDaysInMonth(calendar.GetYear(month), calendar.GetMonth(month)) < FixDay!.Value)
             {
                 return true;
             }
             var day = new DateTime(month.Year, month.Month, FixDay!.Value);
-            return day < MinDate || day > MaxDate || IsDateDisabledFunc(day);
+            return day < MinDateState.Value || day > MaxDateState.Value || IsDateDisabledFunc(day);
         }
 
         /// <summary>
@@ -724,8 +739,8 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            if (MinDate.HasValue)
-                return calendar.GetYear(MinDate.Value);
+            if (MinDateState.Value is { } minDate)
+                return calendar.GetYear(minDate);
             return calendar.GetYear(TimeProvider.GetLocalNow().Date) - 100;
         }
 
@@ -733,8 +748,8 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            if (MaxDate.HasValue)
-                return calendar.GetYear(MaxDate.Value);
+            if (MaxDateState.Value is { } maxDate)
+                return calendar.GetYear(maxDate);
             return calendar.GetYear(TimeProvider.GetLocalNow().Date) + 100;
         }
 
