@@ -349,7 +349,8 @@ namespace MudBlazor
             if (_firstDate is null) return;
 
             // Only the disabled-date-aware count reads these, and without MinDate or MaxDate each walk can scan 50 years of disabled dates.
-            var countEnabledDates = !_allowDisabledDatesInCountState.Value && (MinDays is not null || MaxDays is not null);
+            // They are computed even without MinDays or MaxDays, so a limit set later in the selection leaves every date open rather than none.
+            var countEnabledDates = !_allowDisabledDatesInCountState.Value;
             _laterValidDates = countEnabledDates ? GetValidDates(_firstDate.Value.Date, 1) : null;
             _earlierValidDates = countEnabledDates ? GetValidDates(_firstDate.Value.Date, -1) : null;
 
