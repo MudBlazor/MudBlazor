@@ -80,6 +80,7 @@ $divider-middle-margin: 16px;
   margin: 0;
 
   .mud-divider-with-content-vertical > & {
+    flex-basis: 8px;
     height: auto;
     min-width: 0;
   }
@@ -88,12 +89,12 @@ $divider-middle-margin: 16px;
 .mud-divider-with-content-text {
   flex: 0 1 auto;
   min-width: 0;
-  padding: 0 0.75rem;
+  padding: 0 12px;
   text-align: center;
   overflow-wrap: anywhere;
 
   .mud-divider-with-content-vertical > & {
-    padding: 0.75rem 0;
+    padding: 4px 0;
   }
 }
 
