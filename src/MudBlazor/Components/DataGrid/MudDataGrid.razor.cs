@@ -1836,7 +1836,22 @@ namespace MudBlazor
                     // Cancel any prior request
                     var token = CancelServerDataToken();
 
-                    _serverData = await VirtualizeServerData(state, token);
+                    GridData<T> serverData;
+                    try
+                    {
+                        serverData = await VirtualizeServerData(state, token);
+                    }
+                    catch (Exception) when (token.IsCancellationRequested)
+                    {
+                        // A newer load cancelled this one, and it owns the data and the loading state.
+                        return;
+                    }
+
+                    // Loads can finish out of order, so data from a load that a newer one replaced is stale (#13943).
+                    if (token.IsCancellationRequested)
+                        return;
+
+                    _serverData = serverData;
                     _currentRenderFilteredItemsCache = null;
 
                     Loading = false;
@@ -3358,7 +3373,20 @@ namespace MudBlazor
 
         protected virtual void Dispose(bool disposing)
         {
-            _serverDataCancellationTokenSource?.Dispose();
+            // Cancel a load still in flight so its data source can stop and its result is discarded.
+            var source = _serverDataCancellationTokenSource;
+            try
+            {
+                source?.Cancel();
+            }
+            catch
+            {
+                /*ignored*/
+            }
+            finally
+            {
+                source?.Dispose();
+            }
         }
 
         private sealed class EmptyGrouping<TKey, TElement> : IGrouping<TKey, TElement>

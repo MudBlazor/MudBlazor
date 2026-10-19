@@ -1103,6 +1103,95 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Disposing the grid cancels a ServerData load that is still running.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridServerData_Dispose_CancelsPendingLoad()
+        {
+            var token = CancellationToken.None;
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.ServerData, (_, cancellationToken) =>
+                {
+                    token = cancellationToken;
+                    return new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously).Task;
+                }));
+            await dataGrid.WaitForAssertionAsync(() => token.CanBeCanceled.Should().BeTrue());
+
+            await dataGrid.InvokeAsync(dataGrid.Instance.Dispose);
+
+            token.IsCancellationRequested.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// A VirtualizeServerData load that runs before any rows render, ignores its token and finishes after a newer load does not replace the newer load's data (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridVirtualizeServerData_OlderLoadFinishingLast_DoesNotReplaceNewerData()
+        {
+            var loads = new List<TaskCompletionSource<GridData<string>>>();
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.VirtualizeServerData, (_, _) =>
+                {
+                    var load = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    loads.Add(load);
+                    return load.Task;
+                }));
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().HaveCount(1));
+
+            var reload = dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().HaveCount(2));
+
+            loads[1].SetResult(new GridData<string> { Items = ["Apple Pie"], TotalItems = 1 });
+            await reload.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+
+            loads[0].SetResult(new GridData<string> { Items = ["Apple", "Apple Cider", "Apple Pie"], TotalItems = 3 });
+            await dataGrid.InvokeAsync(() => loads[0].Task);
+
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+            dataGrid.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A VirtualizeServerData load that runs before any rows render and is cancelled by a newer load ends quietly instead of throwing (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridVirtualizeServerData_CancelledLoad_DoesNotThrow()
+        {
+            var loads = 0;
+            var firstLoad = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.VirtualizeServerData, (_, token) =>
+                {
+                    loads++;
+
+                    // Rendered rows would route later loads through MudVirtualize, so the first load stays pending.
+                    if (loads == 1)
+                        return firstLoad.Task;
+
+                    if (loads > 2)
+                        return Task.FromResult(new GridData<string> { Items = ["Apple Pie"], TotalItems = 1 });
+
+                    var pending = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    token.Register(() => pending.TrySetCanceled(token));
+                    return pending.Task;
+                }));
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().Be(1));
+
+            var cancelled = dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().Be(2));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+
+            Func<Task> awaitCancelled = () => cancelled.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            await awaitCancelled.Should().NotThrowAsync();
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+            dataGrid.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
         /// A ServerData load that finds its page out of range keeps the grid loading, without the empty message, until the first page it resets to has loaded.
         /// </summary>
         [Test]
