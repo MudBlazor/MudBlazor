@@ -579,6 +579,8 @@ namespace MudBlazor
             {
                 // A search still running for the typed text must not reopen the menu after the selection.
                 AbandonSearch();
+                // A pending debounce must stop before ValueChanged is awaited, because it can fire while an async handler runs.
+                _debounceTimer?.Dispose();
 
                 // #1 needs to close before SetValueAndUpdateTextAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
                 // #2 Use "Open" field instead of property to prevent raising multiple OpenChanged events while selecting item.
@@ -926,6 +928,8 @@ namespace MudBlazor
             {
                 _isCleared = true;
                 AbandonSearch();
+                // A pending debounce must stop before the awaits below, or it can search the cleared text and reopen the menu.
+                _debounceTimer?.Dispose();
                 Open = false;
 
                 await SetTextAndUpdateValueAsync(string.Empty, updateValue: false);
