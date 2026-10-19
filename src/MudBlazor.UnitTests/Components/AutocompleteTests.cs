@@ -1703,6 +1703,93 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Selecting a result while a newer search is still running keeps the menu closed when that search finishes.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Autocomplete_SelectingWhileNewerSearchRuns_KeepsMenuClosed(bool click)
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searches = new List<TaskCompletionSource<IEnumerable<string>>>();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    searches.Add(search);
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("Ap");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().ContainSingle());
+            searches[0].SetResult(["Apple", "Apricot"]);
+            await comp.WaitForAssertionAsync(() => comp.Instance.Open.Should().BeTrue());
+
+            await comp.Find("input").InputAsync("Apr");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().HaveCount(2));
+
+            if (click)
+            {
+                await ListItem(provider, "Apple").ClickAsync();
+            }
+            else
+            {
+                await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            }
+
+            searches[1].SetResult(["Apricot"]);
+            await comp.InvokeAsync(() => searches[1].Task);
+
+            comp.Instance.ReadValue.Should().Be("Apple");
+            comp.Instance.Open.Should().BeFalse();
+            provider.FindAll("div.mud-popover-open").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Clearing while a search is still running keeps the menu closed when that search finishes.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Autocomplete_ClearingWhileSearchRuns_KeepsMenuClosed(bool clearButton)
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var searchStarted = false;
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.Clearable, true)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    searchStarted = true;
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searchStarted.Should().BeTrue());
+
+            if (clearButton)
+            {
+                await comp.Find("button.mud-input-clear-button").ClickAsync();
+            }
+            else
+            {
+                await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Backspace", CtrlKey = true, ShiftKey = true });
+            }
+
+            search.SetResult(["Apple"]);
+            await comp.InvokeAsync(() => search.Task);
+
+            comp.Instance.ReadText.Should().BeNullOrEmpty();
+            comp.Instance.Open.Should().BeFalse();
+            provider.FindAll("div.mud-popover-open").Should().BeEmpty();
+        }
+
+        /// <summary>
         /// FullWidth adds the full-width class to the autocomplete.
         /// </summary>
         [Test]
