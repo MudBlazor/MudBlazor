@@ -323,26 +323,54 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Focus skips the focus-visible check when the tooltip is already visible or ShowOnFocus is disabled.
+        /// Focus skips the focus-visible check when ShowOnFocus is disabled.
         /// </summary>
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public async Task ShouldNotInvokeInterop_WhenAlreadyVisibleOrShowOnFocusFalse(bool alreadyVisible)
+        public async Task ShowOnFocus_ShouldNotInvokeInterop_WhenShowOnFocusFalse()
         {
             var comp = Context.Render<MudTooltip>(p => p
                 .Add(x => x.Text, "tooltip text")
-                .Add(x => x.ShowOnFocus, alreadyVisible)
+                .Add(x => x.ShowOnFocus, false)
                 .AddChildContent("<button>Button</button>"));
-            var root = comp.Find(".mud-tooltip-root");
 
-            if (alreadyVisible)
-            {
-                await root.PointerEnterAsync(new PointerEventArgs());
-            }
             await comp.Find(".mud-tooltip-root").FocusInAsync(new FocusEventArgs());
 
-            comp.Instance.GetState(x => x.Visible).Should().Be(alreadyVisible);
+            comp.Instance.GetState(x => x.Visible).Should().BeFalse();
+            Context.JSInterop.VerifyNotInvoke("mudElementRef.isFocusVisible");
+        }
+
+        /// <summary>
+        /// Focus skips the focus-visible check when the tooltip is already visible.
+        /// </summary>
+        [Test]
+        public async Task ShowOnFocus_ShouldNotInvokeInterop_WhenAlreadyVisible()
+        {
+            var comp = Context.Render<MudTooltip>(p => p
+                .Add(x => x.Text, "tooltip text")
+                .Add(x => x.Visible, true)
+                .AddChildContent("<button>Button</button>"));
+
+            await comp.Find(".mud-tooltip-root").FocusInAsync(new FocusEventArgs());
+
+            comp.Instance.GetState(x => x.Visible).Should().BeTrue();
+            Context.JSInterop.VerifyNotInvoke("mudElementRef.isFocusVisible");
+        }
+
+        /// <summary>
+        /// Focus skips the focus-visible check when the tooltip is disabled or has nothing to show.
+        /// </summary>
+        [Test]
+        [TestCase(true, "tooltip text")]
+        [TestCase(false, "")]
+        public async Task ShowOnFocus_ShouldNotInvokeInterop_WhenNothingToShow(bool disabled, string text)
+        {
+            var comp = Context.Render<MudTooltip>(p => p
+                .Add(x => x.Text, text)
+                .Add(x => x.Disabled, disabled)
+                .AddChildContent("<button>Button</button>"));
+
+            await comp.Find(".mud-tooltip-root").FocusInAsync(new FocusEventArgs());
+
             Context.JSInterop.VerifyNotInvoke("mudElementRef.isFocusVisible");
         }
 
@@ -430,6 +458,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Tooltip_Disabled_Button_OnFocusIn_NoPopover()
         {
+            Context.JSInterop.Setup<bool>("mudElementRef.isFocusVisible").SetResult(true);
             var comp = Context.Render<TooltipDisabledPropertyTest>(p =>
             {
                 p.Add(x => x.TooltipDisabled, true);

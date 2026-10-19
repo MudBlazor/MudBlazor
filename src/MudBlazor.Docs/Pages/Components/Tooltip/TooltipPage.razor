@@ -53,7 +53,8 @@
             <SectionHeader Title="Activation Events">
                 <Description>
                     With the <CodeInline>ShowOnHover</CodeInline>, <CodeInline>ShowOnFocus</CodeInline> and <CodeInline>ShowOnClick</CodeInline> parameters, it is possible to choose which events activate and deactivate the tooltip.
-                    <CodeInline>ShowOnFocus</CodeInline> responds to keyboard focus that the browser marks as <CodeInline>:focus-visible</CodeInline>, so focus from a pointer click, from returning to the browser tab, or restored after closing a dialog with the pointer does not open the tooltip.
+                    <CodeInline>ShowOnFocus</CodeInline> opens the tooltip only for focus that the browser marks as <CodeInline>:focus-visible</CodeInline>, such as moving focus with the Tab key, so a pointer click or focus that returns after a pointer action, such as switching back to the browser tab or closing a dialog, does not open it.
+                    To show a tooltip from code, set <CodeInline>Visible</CodeInline> instead of focusing its content.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TooltipActivationExample)" FullWidth="true" ShowCode="false">
