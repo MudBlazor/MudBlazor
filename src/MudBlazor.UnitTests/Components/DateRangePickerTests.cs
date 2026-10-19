@@ -1146,6 +1146,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Clicking a day sets the hover position, so a day picked by keyboard does not preview from a stale or initial position.
+        /// </summary>
+        [Test]
+        public async Task DayClick_SetsSelectedDay()
+        {
+            var comp = await OpenPicker();
+
+            await comp.FindAll("button.mud-picker-calendar-day").Single(x => x.GetAttribute("style") == "--day-id: 15;").ClickAsync(new MouseEventArgs());
+
+            Context.JSInterop.Invocations["mudWindow.updateStyleProperty"].Single().Arguments.Should().Equal(comp.Find(".mud-picker-calendar-content").Id, "--selected-day", 15);
+        }
+
+        /// <summary>
         /// Optional DateRangePicker should not have required attribute and aria-required should be false.
         /// </summary>
         [Test]
