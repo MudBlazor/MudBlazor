@@ -939,5 +939,12 @@ namespace MudBlazor
         {
             return JsApiService.UpdateStyleProperty(_mudPickerCalendarContentElementId, "--selected-day", tempId);
         }
+
+        private async Task HandleDayButtonClickAsync(DateTime day, int tempId)
+        {
+            // A day picked by keyboard gets no pointerover, so the range preview would measure from a stale or initial hover position.
+            await HandleMouseoverOnPickerCalendarDayButton(tempId);
+            await OnDayClickedAsync(day);
+        }
     }
 }
