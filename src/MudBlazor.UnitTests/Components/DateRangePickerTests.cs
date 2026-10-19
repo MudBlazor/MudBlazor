@@ -1618,26 +1618,87 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// MinDays keeps every date before the first clicked date disabled when MaxDays is also set.
+        /// MinDays and MaxDays bound dates before the first clicked date the same way as dates after it, since an earlier second click becomes the range start.
         /// </summary>
-        [Test]
-        public async Task DateRangePicker_MinDays_DisablesEarlierDatesWithMaxDays()
+        [TestCase(true, 9, 13, 17, 21)]
+        [TestCase(false, 7, 13, 17, 23)]
+        public async Task DateRangePicker_MinMaxDays_BoundEarlierDates(bool allowDisabledDatesInCount, int earliestDay, int latestEarlierDay, int earliestLaterDay, int latestDay)
         {
             var comp = Context.Render<MudDateRangePicker>(parameters => parameters
                 .Add(picker => picker.PickerVariant, PickerVariant.Static)
                 .Add(picker => picker.StartMonth, new DateTime(2025, 1, 1))
                 .Add(picker => picker.MinDays, 3)
-                .Add(picker => picker.MaxDays, 7));
+                .Add(picker => picker.MaxDays, 7)
+                .Add(picker => picker.IsDateDisabledFunc, date => date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+                .Add(picker => picker.AllowDisabledDatesInRange, true)
+                .Add(picker => picker.AllowDisabledDatesInCount, allowDisabledDatesInCount));
 
             IElement Day(int day) => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals(day.ToString()));
 
-            await Day(20).ClickAsync(new MouseEventArgs());
+            // Wednesday, January 15, 2025.
+            await Day(15).ClickAsync(new MouseEventArgs());
 
+            Day(earliestDay - 1).HasAttribute("disabled").Should().BeTrue();
+            Day(earliestDay).HasAttribute("disabled").Should().BeFalse();
+            Day(latestEarlierDay).HasAttribute("disabled").Should().BeFalse();
             Day(14).HasAttribute("disabled").Should().BeTrue();
-            Day(19).HasAttribute("disabled").Should().BeTrue();
-            Day(22).HasAttribute("disabled").Should().BeFalse();
-            Day(26).HasAttribute("disabled").Should().BeFalse();
-            Day(27).HasAttribute("disabled").Should().BeTrue();
+            Day(15).HasAttribute("disabled").Should().BeTrue();
+            Day(16).HasAttribute("disabled").Should().BeTrue();
+            Day(earliestLaterDay).HasAttribute("disabled").Should().BeFalse();
+            Day(latestDay).HasAttribute("disabled").Should().BeFalse();
+            Day(latestDay + 1).HasAttribute("disabled").Should().BeTrue();
+
+            await Day(earliestDay).ClickAsync(new MouseEventArgs());
+
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, earliestDay), new DateTime(2025, 1, 15)));
+        }
+
+        /// <summary>
+        /// MinDays of one allows dates before the first clicked date, the same as leaving MinDays unset.
+        /// </summary>
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DateRangePicker_MinDaysOne_AllowsEarlierDates(bool allowDisabledDatesInCount)
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(picker => picker.PickerVariant, PickerVariant.Static)
+                .Add(picker => picker.StartMonth, new DateTime(2025, 1, 1))
+                .Add(picker => picker.MinDays, 1)
+                .Add(picker => picker.AllowDisabledDatesInCount, allowDisabledDatesInCount));
+
+            IElement Day(int day) => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals(day.ToString()));
+
+            await Day(15).ClickAsync(new MouseEventArgs());
+
+            Day(1).HasAttribute("disabled").Should().BeFalse();
+            Day(15).HasAttribute("disabled").Should().BeFalse();
+
+            await Day(1).ClickAsync(new MouseEventArgs());
+
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(2025, 1, 1), new DateTime(2025, 1, 15)));
+        }
+
+        /// <summary>
+        /// MinDays keeps the first clicked date disabled when every earlier date is disabled, so no earlier range can reach the minimum.
+        /// </summary>
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task DateRangePicker_MinDays_DisablesFirstDateWhenEarlierDatesAreDisabled(bool allowDisabledDatesInCount)
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(picker => picker.PickerVariant, PickerVariant.Static)
+                .Add(picker => picker.StartMonth, new DateTime(2025, 1, 1))
+                .Add(picker => picker.MinDays, 3)
+                .Add(picker => picker.IsDateDisabledFunc, date => date < new DateTime(2025, 1, 15))
+                .Add(picker => picker.AllowDisabledDatesInCount, allowDisabledDatesInCount));
+
+            IElement Day(int day) => comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText().Equals(day.ToString()));
+
+            await Day(15).ClickAsync(new MouseEventArgs());
+
+            Day(15).HasAttribute("disabled").Should().BeTrue();
+            Day(16).HasAttribute("disabled").Should().BeTrue();
+            Day(17).HasAttribute("disabled").Should().BeFalse();
         }
 
         [Test]
