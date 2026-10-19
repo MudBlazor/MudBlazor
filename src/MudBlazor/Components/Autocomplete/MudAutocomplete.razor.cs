@@ -577,6 +577,9 @@ namespace MudBlazor
             _isProcessingValue = true;
             try
             {
+                // A search still running for the typed text must not reopen the menu after the selection.
+                AbandonSearch();
+
                 // #1 needs to close before SetValueAndUpdateTextAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
                 // #2 Use "Open" field instead of property to prevent raising multiple OpenChanged events while selecting item.
                 _open = false;
@@ -922,6 +925,7 @@ namespace MudBlazor
             try
             {
                 _isCleared = true;
+                AbandonSearch();
                 Open = false;
 
                 await SetTextAndUpdateValueAsync(string.Empty, updateValue: false);
@@ -1245,6 +1249,12 @@ namespace MudBlazor
 
             // These lines prevent the menu from opening when OpenOnFocus is true, which is the default.
             _debounceTimer?.Dispose();
+            if (!Open)
+            {
+                // An open menu searches again below.
+                // Abandoning its search here would show it empty, or with NoItemsTemplate, until then.
+                AbandonSearch();
+            }
             if (_items?.Length > 0)
                 _items = [];
             await SetValueAndUpdateTextAsync(default, false);
