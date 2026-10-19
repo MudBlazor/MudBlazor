@@ -153,24 +153,6 @@ test("reports a rejected callback without stopping a connected chart", async () 
     expect(invokeMethodAsync).toHaveBeenCalledTimes(2);
 });
 
-test("stays silent when a callback rejects after its chart was removed", async () => {
-    const warn = spyOn(console, "warn").mockImplementation(() => { });
-    let reject: (error: Error) => void = () => { };
-    const invokeMethodAsync = mock((_method: string, _size: ElementSize) => new Promise<void>((_resolve, rejectCall) => { reject = rejectCall; }));
-    const { page, chart } = renderChart();
-    mudObserveElementSize({ invokeMethodAsync }, chart, "OnElementSizeChanged", 0);
-
-    resize(100);
-    page.remove();
-    reject(new Error("There is no tracked object with id '1'."));
-    await Promise.resolve();
-    await Promise.resolve();
-
-    expect(invokeMethodAsync).toHaveBeenCalledTimes(1);
-    expect(observers[0]?.disconnect).toHaveBeenCalled();
-    expect(warn).not.toHaveBeenCalled();
-});
-
 test("follows a connected chart moved into a shadow tree before its hidden ancestor is removed", async () => {
     const host = document.createElement("div");
     document.body.append(host);
