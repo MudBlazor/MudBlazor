@@ -1858,9 +1858,10 @@ namespace MudBlazor
                 {
                     serverData = await ServerData(state, token);
                 }
-                catch (OperationCanceledException) when (token.IsCancellationRequested)
+                catch (Exception) when (token.IsCancellationRequested)
                 {
                     // A newer load cancelled this one, and it owns the data and the loading state.
+                    // Data sources often report the cancellation as their own exception type, so the type does not matter.
                     return;
                 }
 

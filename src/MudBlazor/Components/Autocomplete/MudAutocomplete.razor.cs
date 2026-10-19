@@ -741,7 +741,10 @@ namespace MudBlazor
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(ReadText) || ReadText.Length < MinCharacters))
             {
                 // A search still running for longer text must not reopen the menu when it finishes.
+                // It is no longer tracked either, so the progress indicator does not wait on it.
                 _searchVersion++;
+                CancelToken();
+                _currentSearchTask = null;
                 _opening = false;
                 Open = false;
                 StateHasChanged();
@@ -800,6 +803,12 @@ namespace MudBlazor
             }
 
             await SetReturnedItemsCountAsync(searchedItems.Length);
+
+            // The consumer's ReturnedItemsCountChanged handler can yield, letting a newer search start and finish first.
+            if (searchVersion != _searchVersion)
+            {
+                return;
+            }
 
             if (MaxItems.HasValue)
             {

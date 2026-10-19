@@ -1460,6 +1460,84 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Dropping the text below MinCharacters while a search runs clears the progress indicator, and the search finishing later does not bring it back (#13943).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_TextDropsBelowMinCharacters_ClearsProgressIndicator()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.MinCharacters, 3)
+                .Add(x => x.ShowProgressIndicator, true)
+                .Add(x => x.SearchFunc, (_, _) => search.Task));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
+
+            await comp.Find("input").InputAsync("Ap");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
+
+            search.SetResult(["Apple"]);
+            await comp.InvokeAsync(() => search.Task);
+
+            comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress");
+            provider.FindAll("div.mud-popover-open").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A search paused in an awaiting ReturnedItemsCountChanged handler does not overwrite a newer search that finishes meanwhile (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task Autocomplete_OlderSearchResumingAfterReturnedItemsCountChanged_DoesNotReplaceNewerResults()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searches = new List<TaskCompletionSource<IEnumerable<string>>>();
+            var firstCountReported = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var releaseFirstCount = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var countReports = 0;
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    searches.Add(search);
+                    return search.Task;
+                })
+                .Add(x => x.ReturnedItemsCountChanged, async (int _) =>
+                {
+                    if (++countReports != 1)
+                        return;
+
+                    firstCountReported.TrySetResult(true);
+                    await releaseFirstCount.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().HaveCount(1));
+            searches[0].SetResult(["Apple", "Apple Cider", "Apple Pie"]);
+            await firstCountReported.Task.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            await comp.Find("input").InputAsync("Apple Pie");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().HaveCount(2));
+            searches[1].SetResult(["Apple Pie"]);
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple Pie"));
+
+            releaseFirstCount.SetResult(true);
+            await comp.InvokeAsync(() => releaseFirstCount.Task);
+
+            provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple Pie");
+        }
+
+        /// <summary>
         /// FullWidth adds the full-width class to the autocomplete.
         /// </summary>
         [Test]
