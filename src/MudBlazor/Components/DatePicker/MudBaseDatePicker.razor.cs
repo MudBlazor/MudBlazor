@@ -95,6 +95,11 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Whether a range has a first date and is waiting for its second.
+        /// </summary>
+        internal virtual bool IsRangeSelectionPending => false;
+
+        /// <summary>
         /// The day representing the first day of the week.
         /// </summary>
         /// <remarks>
@@ -942,9 +947,13 @@ namespace MudBlazor
 
         private async Task HandleDayButtonClickAsync(DateTime day, int tempId)
         {
-            // A day picked by keyboard gets no pointerover, so the range preview would measure from a stale or initial hover position.
-            await HandleMouseoverOnPickerCalendarDayButton(tempId);
             await OnDayClickedAsync(day);
+
+            // A day picked by keyboard gets no pointerover, so a range started that way would preview from a stale or initial hover position.
+            if (IsRangeSelectionPending)
+            {
+                await HandleMouseoverOnPickerCalendarDayButton(tempId);
+            }
         }
     }
 }

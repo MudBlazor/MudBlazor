@@ -1146,16 +1146,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Clicking a day sets the hover position, so a day picked by keyboard does not preview from a stale or initial position.
+        /// Clicking the first day sets the hover position, so a day picked by keyboard does not preview from a stale or initial position.
+        /// The second click completes the range and needs no preview.
         /// </summary>
         [Test]
-        public async Task DayClick_SetsSelectedDay()
+        public async Task DayClick_SetsSelectedDayWhenRangeStarts()
         {
             var comp = await OpenPicker();
+            var contentId = comp.Find(".mud-picker-calendar-content").Id;
 
             await comp.FindAll("button.mud-picker-calendar-day").Single(x => x.GetAttribute("style") == "--day-id: 15;").ClickAsync(new MouseEventArgs());
+            await comp.FindAll("button.mud-picker-calendar-day").Single(x => x.GetAttribute("style") == "--day-id: 20;").ClickAsync(new MouseEventArgs());
 
-            Context.JSInterop.Invocations["mudWindow.updateStyleProperty"].Single().Arguments.Should().Equal(comp.Find(".mud-picker-calendar-content").Id, "--selected-day", 15);
+            Context.JSInterop.Invocations["mudWindow.updateStyleProperty"].Single().Arguments.Should().Equal(contentId, "--selected-day", 15);
         }
 
         /// <summary>
