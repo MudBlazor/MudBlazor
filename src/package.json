@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "@happy-dom/global-registrator": "20.14.5",
-    "@types/bun": "1.4.2",
-    "@types/node": "26.6.4",
+    "@happy-dom/global-registrator": "21.0.1",
+    "@types/bun": "1.4.3",
+    "@types/node": "26.6.5",
     "eslint": "10.12.0",
     "sass": "1.105.1",
     "typescript": "7.0.2"

@@ -1535,8 +1535,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TableServerSideDataTest7>();
             var table = comp.FindComponent<MudTable<int>>();
-            table.Instance.Dispose();
-            await comp.WaitForAssertionAsync(() => comp.FindAll("td").Count.Should().Be(0));
+            await comp.InvokeAsync(table.Instance.Dispose);
+
+            // The cancelled load may resume after the dispose rather than inside it, so this runs once it has finished.
+            // Its result is discarded, so the table keeps its loading row instead of rendering it.
+            await comp.InvokeAsync(() => { });
+            comp.Instance.LoadCancelled.Should().BeTrue();
+            comp.FindAll("tbody tr.mud-table-row").Should().BeEmpty();
         }
 
         /// <summary>
@@ -1596,6 +1601,339 @@ namespace MudBlazor.UnitTests.Components
 
             // Make sure this second request DID cancel the first request's token
             await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
+        }
+
+        /// <summary>
+        /// A ServerData load that ignores its token and finishes after a newer load does not replace the newer load's rows or pager total (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TableServerData_OlderLoadFinishingLast_DoesNotReplaceNewerData()
+        {
+            var loads = new List<TaskCompletionSource<TableData<string>>>();
+            var comp = RenderServerDataTable((_, _) =>
+            {
+                var load = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                loads.Add(load);
+                return load.Task;
+            });
+            await comp.WaitForAssertionAsync(() => loads.Should().HaveCount(1));
+
+            var reload = comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+            await comp.WaitForAssertionAsync(() => loads.Should().HaveCount(2));
+
+            loads[1].SetResult(new TableData<string> { Items = ["Apple Pie"], TotalItems = 1 });
+            await reload.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            RowTexts(comp).Should().Equal("Apple Pie");
+
+            // The first render's load answers last, as a broad search on a backend that ignores the token would.
+            loads[0].SetResult(new TableData<string> { Items = ["Apple", "Apple Cider", "Apple Pie"], TotalItems = 3 });
+            await comp.InvokeAsync(() => loads[0].Task);
+
+            RowTexts(comp).Should().Equal("Apple Pie");
+            comp.Find(".mud-table-page-number-information").TextContent.Trim().Should().Be("1-1 of 1");
+            comp.Instance.GetFilteredItemsCount().Should().Be(1);
+            comp.Instance.Loading.Should().BeFalse();
+            loads.Should().HaveCount(2);
+        }
+
+        /// <summary>
+        /// A ServerData load that ignores its token and finishes after a newer load does not move the table off the newer load's page (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TableServerData_OlderLoadFinishingLast_DoesNotResetPage()
+        {
+            var requestedPages = new List<int>();
+            var slowLoad = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var comp = RenderServerDataTable((state, _) =>
+            {
+                requestedPages.Add(state.Page);
+                if (requestedPages.Count == 2)
+                    return slowLoad.Task;
+
+                return Task.FromResult(RecipePage(state));
+            });
+            await comp.WaitForAssertionAsync(() => RowTexts(comp).Should().HaveCount(10));
+
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(1));
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(2));
+            RowTexts(comp).First().Should().Be("Recipe 21");
+
+            // The superseded load reports fewer items than the newer page starts at, which resets the page when a current load does.
+            slowLoad.SetResult(new TableData<string> { Items = ["Recipe 11", "Recipe 12", "Recipe 13", "Recipe 14", "Recipe 15"], TotalItems = 15 });
+            await comp.InvokeAsync(() => slowLoad.Task);
+
+            comp.Instance.CurrentPage.Should().Be(2);
+            RowTexts(comp).First().Should().Be("Recipe 21");
+            comp.Find(".mud-table-page-number-information").TextContent.Trim().Should().Be("21-30 of 30");
+            comp.Instance.Loading.Should().BeFalse();
+            requestedPages.Should().Equal(0, 1, 2);
+        }
+
+        /// <summary>
+        /// A ServerData load that a newer load cancels ends quietly instead of throwing, including when its API wraps the cancellation in another exception (#13943).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        [CancelAfter(5000)]
+        public async Task TableServerData_CancelledLoad_DoesNotThrow(bool wrapsCancellation)
+        {
+            var loads = 0;
+            var comp = RenderServerDataTable((_, token) =>
+            {
+                if (++loads != 2)
+                    return Task.FromResult(new TableData<string> { Items = [loads == 1 ? "Apple" : "Apple Pie"], TotalItems = 1 });
+
+                return WaitForCancellation(token, wrapsCancellation);
+            });
+            await comp.WaitForAssertionAsync(() => loads.Should().Be(1));
+
+            var cancelled = comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+            await comp.WaitForAssertionAsync(() => loads.Should().Be(2));
+            await comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+
+            Func<Task> awaitCancelled = () => cancelled.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            await awaitCancelled.Should().NotThrowAsync();
+            RowTexts(comp).Should().Equal("Apple Pie");
+            comp.Find(".mud-table-page-number-information").TextContent.Trim().Should().Be("1-1 of 1");
+            comp.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The first render's ServerData load that a newer load cancels never reaches the renderer as an unhandled exception, and later page changes still load (#13943).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        [CancelAfter(5000)]
+        public async Task TableServerData_CancelledFirstLoad_DoesNotFaultFirstRender(bool wrapsCancellation)
+        {
+            var requestedPages = new List<int>();
+            var comp = RenderServerDataTable((state, token) =>
+            {
+                requestedPages.Add(state.Page);
+                if (requestedPages.Count == 1)
+                    return WaitForCancellation(token, wrapsCancellation);
+
+                return Task.FromResult(RecipePage(state));
+            });
+            await comp.WaitForAssertionAsync(() => requestedPages.Should().HaveCount(1));
+
+            await comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+
+            // The cancelled first load resumes after the reload, so this runs once it has finished.
+            await comp.InvokeAsync(() => { });
+            Context.Renderer.UnhandledException.IsCompleted.Should().BeFalse();
+            RowTexts(comp).First().Should().Be("Recipe 1");
+            comp.Instance.Loading.Should().BeFalse();
+
+            // Page changes load only once the table counts as rendered, which a superseded first load must not prevent.
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(1));
+            requestedPages.Should().Equal(0, 0, 1);
+            RowTexts(comp).First().Should().Be("Recipe 11");
+        }
+
+        /// <summary>
+        /// A superseded ServerData load that ends while the newer load is still running leaves the rows and the loading state to the newer load (#13943).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        [CancelAfter(5000)]
+        public async Task TableServerData_SupersededLoad_LeavesLoadingToNewerLoad(bool observesToken)
+        {
+            var stale = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var newer = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var loads = 0;
+            var comp = RenderServerDataTable((_, token) =>
+            {
+                if (++loads == 2)
+                    return newer.Task;
+
+                return observesToken ? WaitForCancellation(token, wrapsCancellation: false) : stale.Task;
+            });
+            await comp.WaitForAssertionAsync(() => loads.Should().Be(1));
+
+            var reload = comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+            await comp.WaitForAssertionAsync(() => loads.Should().Be(2));
+
+            // The first render's load ends while the newer load is still running.
+            stale.SetResult(new TableData<string> { Items = ["Apple", "Apple Cider", "Apple Pie"], TotalItems = 3 });
+            await comp.InvokeAsync(() => { });
+            RowTexts(comp).Should().BeEmpty();
+            comp.Instance.Loading.Should().BeTrue();
+
+            newer.SetResult(new TableData<string> { Items = ["Apple Pie"], TotalItems = 1 });
+            await reload.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            RowTexts(comp).Should().Equal("Apple Pie");
+            comp.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A ServerData load that fails while it is still the newest load reports the error to its caller, as before (#13943).
+        /// </summary>
+        [Test]
+        public async Task TableServerData_FailedCurrentLoad_StillThrows()
+        {
+            var loads = 0;
+            var comp = RenderServerDataTable((_, _) => ++loads == 1
+                ? Task.FromResult(new TableData<string> { Items = ["Apple"], TotalItems = 1 })
+                : Task.FromException<TableData<string>>(new InvalidOperationException("The backend failed.")));
+            await comp.WaitForAssertionAsync(() => loads.Should().Be(1));
+
+            Func<Task> reload = () => comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+
+            await reload.Should().ThrowAsync<InvalidOperationException>().WithMessage("The backend failed.");
+        }
+
+        /// <summary>
+        /// A load whose cancellation resumes a superseded load, which starts another load, still loses to that newer load when it finishes last (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TableServerData_LoadStartedDuringCancellation_DoesNotReplaceNewerData()
+        {
+            var requestedPages = new List<int>();
+            var gates = new List<TaskCompletionSource<TableData<string>>>();
+            var comp = RenderServerDataTable((state, token) =>
+            {
+                requestedPages.Add(state.Page);
+                if (requestedPages.Count == 1)
+                    return Task.FromResult(RecipePage(state));
+
+                if (requestedPages.Count == 2)
+                {
+                    // Without RunContinuationsAsynchronously, cancelling resumes this load inside the newer load's cancel, as Task.Delay(delay, token) does.
+                    var cancelledInline = new TaskCompletionSource<TableData<string>>();
+                    token.Register(() => cancelledInline.TrySetCanceled(token));
+                    return cancelledInline.Task;
+                }
+
+                var gate = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                gates.Add(gate);
+                return gate.Task;
+            });
+            await comp.WaitForAssertionAsync(() => RowTexts(comp).Should().HaveCount(10));
+
+            // The superseded reload's caller goes to the next page as soon as its reload ends.
+            var navigating = comp.InvokeAsync(async () =>
+            {
+                await comp.Instance.ReloadServerData();
+                comp.Instance.NavigateTo(1);
+            });
+            var reload = comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+            await navigating.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            // The page 1 load starts inside the page 0 reload's cancel, so it asks for data first.
+            requestedPages.Should().Equal(0, 0, 1, 0);
+
+            gates[0].SetResult(RecipePage(new TableState { Page = 1, PageSize = 10 }));
+            await comp.InvokeAsync(() => gates[0].Task);
+            RowTexts(comp).First().Should().Be("Recipe 11");
+
+            gates[1].SetResult(RecipePage(new TableState { Page = 0, PageSize = 10 }));
+            await reload.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            comp.Instance.CurrentPage.Should().Be(1);
+            RowTexts(comp).First().Should().Be("Recipe 11");
+            comp.Find(".mud-table-page-number-information").TextContent.Trim().Should().Be("11-20 of 30");
+            comp.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A ServerData load that finds its page out of range keeps the table loading, without the empty message, until the first page it resets to has loaded.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TableServerData_PageReset_StaysLoadingUntilFirstPageLoads()
+        {
+            var requestedPages = new List<int>();
+            var firstPage = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var comp = RenderServerDataTable((state, _) =>
+            {
+                requestedPages.Add(state.Page);
+                return requestedPages.Count switch
+                {
+                    // The data shrinks to 15 recipes, so page 2 no longer exists.
+                    3 => Task.FromResult(new TableData<string> { Items = [], TotalItems = 15 }),
+                    4 => firstPage.Task,
+                    _ => Task.FromResult(RecipePage(state)),
+                };
+            });
+            await comp.WaitForAssertionAsync(() => RowTexts(comp).Should().HaveCount(10));
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(2));
+            RowTexts(comp).First().Should().Be("Recipe 21");
+
+            await comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+
+            requestedPages.Should().Equal(0, 2, 2, 0);
+            comp.Instance.CurrentPage.Should().Be(0);
+            comp.Instance.Loading.Should().BeTrue();
+            comp.FindAll(".mud-table-loading-progress").Should().ContainSingle();
+            RowTexts(comp).Should().BeEmpty();
+            comp.Markup.Should().NotContain("No recipes found");
+
+            firstPage.SetResult(new TableData<string> { Items = RecipePage(new TableState { Page = 0, PageSize = 10 }).Items, TotalItems = 15 });
+            await comp.WaitForAssertionAsync(() => RowTexts(comp).Should().HaveCount(10));
+
+            RowTexts(comp).First().Should().Be("Recipe 1");
+            comp.Find(".mud-table-page-number-information").TextContent.Trim().Should().Be("1-10 of 15");
+            comp.Instance.Loading.Should().BeFalse();
+            comp.FindAll(".mud-table-loading-progress").Should().BeEmpty();
+            requestedPages.Should().Equal(0, 2, 2, 0);
+        }
+
+        /// <summary>
+        /// Renders a string table with a pager and an empty message whose rows come from <paramref name="serverData"/>.
+        /// </summary>
+        private IRenderedComponent<MudTable<string>> RenderServerDataTable(Func<TableState, CancellationToken, Task<TableData<string>>> serverData)
+        {
+            return Context.Render<MudTable<string>>(parameters => parameters
+                .Add(p => p.ServerData, serverData)
+                .Add(p => p.RowTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, nameof(MudTd.ChildContent), (RenderFragment)(b => b.AddContent(2, item)));
+                    builder.CloseComponent();
+                })
+                .Add(p => p.NoRecordsContent, builder => builder.AddContent(0, "No recipes found"))
+                .Add(p => p.PagerContent, builder =>
+                {
+                    builder.OpenComponent<MudTablePager>(0);
+                    builder.CloseComponent();
+                }));
+        }
+
+        /// <summary>
+        /// Returns the text of each rendered data row.
+        /// </summary>
+        private static List<string> RowTexts(IRenderedComponent<MudTable<string>> comp)
+            => comp.FindAll("tbody tr.mud-table-row").Select(row => row.TextContent.Trim()).ToList();
+
+        /// <summary>
+        /// Returns the requested page of 30 numbered recipes.
+        /// </summary>
+        private static TableData<string> RecipePage(TableState state)
+        {
+            var items = Enumerable.Range((state.Page * state.PageSize) + 1, state.PageSize).Select(n => $"Recipe {n}").ToArray();
+            return new TableData<string> { Items = items, TotalItems = 30 };
+        }
+
+        /// <summary>
+        /// Returns a load that waits until <paramref name="token"/> is cancelled, as an observing HttpClient call would.
+        /// </summary>
+        /// <param name="token">The token the table passed to ServerData.</param>
+        /// <param name="wrapsCancellation">Reports the cancellation as another exception type, as some API wrappers do.</param>
+        private static Task<TableData<string>> WaitForCancellation(CancellationToken token, bool wrapsCancellation)
+        {
+            var pending = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            token.Register(() =>
+            {
+                if (wrapsCancellation)
+                    pending.TrySetException(new InvalidOperationException("The request was cancelled."));
+                else
+                    pending.TrySetCanceled(token);
+            });
+            return pending.Task;
         }
 
         /// <summary>

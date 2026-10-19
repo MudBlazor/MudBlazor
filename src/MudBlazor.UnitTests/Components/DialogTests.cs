@@ -315,6 +315,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Closing a bound inline dialog outside an event handler re-renders the parent synchronously and must not throw or lose the result.
+        /// </summary>
+        [Test]
+        public async Task InlineDialog_CloseAsync_OutsideEventHandler()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var comp = Context.Render<InlineDialogIsVisibleStateTest>();
+            await comp.Find("button").ClickAsync();
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-dialog-container").Count.Should().Be(1));
+            var dialog = comp.FindComponent<MudDialog>();
+            var reference = await comp.InvokeAsync(() => dialog.Instance.ShowAsync());
+
+            await comp.InvokeAsync(() => dialog.Instance.CloseAsync(DialogResult.Ok(true)));
+
+            var result = await reference.Result;
+            result.Canceled.Should().BeFalse();
+            await provider.WaitForAssertionAsync(() => provider.Markup.Trim().Should().BeEmpty());
+        }
+
+        /// <summary>
         /// Based on bug report #3701 #3687
         /// Dialog inline should not be closed after any event inside
         /// </summary>
@@ -333,6 +353,27 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("span.mud-rating-item").FirstElementChild.Click();
             // check if is still opened
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(5));
+        }
+
+        /// <summary>
+        /// An inline dialog closed and reopened in one dispatcher turn stays open (#13917).
+        /// </summary>
+        [Test]
+        public async Task InlineDialogShouldStayOpenWhenReopenedImmediately()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var host = Context.Render<InlineDialogReopenTest>();
+            await host.Find("button").ClickAsync();
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-dialog-container").Should().ContainSingle());
+
+            await host.InvokeAsync(host.Instance.CloseAndReopen);
+
+            // The first dialog's close callback hops through the thread pool.
+            // Without the wait for the reopened content, the assertions below can run before it lands and miss the bug.
+            await provider.InvokeAsync(() => { });
+            await provider.WaitForAssertionAsync(() => provider.Find(".dialog-item").TextContent.Should().Be("Item 2"));
+            provider.FindAll("div.mud-dialog-container").Should().ContainSingle();
+            host.Instance.Visible.Should().BeTrue();
         }
 
         /// <summary>

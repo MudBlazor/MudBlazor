@@ -146,8 +146,31 @@ window.hasDefinedParentHeight = (element) => {
 window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElementSizeChanged', debounceMillis = 200) => {
     if (!element) return;
 
+    // Registration can arrive after navigation has already removed the element.
+    if (!element.isConnected) {
+        return { width: element.clientWidth, height: element.clientHeight };
+    }
+
     let lastNotifiedTime = 0;
     let scheduledCall = null;
+
+    const notify = (width, height, timestamp) => {
+        if (!element.isConnected) {
+            cleanup();
+            return;
+        }
+
+        dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp }).catch(error => {
+            // A chart removed while its callback was in flight has already been disposed, so the failure is expected.
+            if (!element.isConnected) {
+                cleanup();
+                return;
+            }
+
+            // A transport or callback failure does not mean a connected chart was disposed.
+            console.warn("[MudBlazor] Error invoking size change callback:", error);
+        });
+    };
 
     // Throttled notification function.
     const throttledNotify = (width, height) => {
@@ -156,14 +179,7 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
         if (timeSinceLast >= debounceMillis) {
             // Enough time has passed, notify immediately.
             lastNotifiedTime = timestamp;
-            try {
-                dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
-            }
-            catch (error) {
-                if (typeof window.logger === "function") {
-                    window.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
-                }
-            }
+            notify(width, height, timestamp);
         } else {
             // Otherwise, schedule a notification after the remaining delay.
             if (scheduledCall !== null) {
@@ -172,21 +188,14 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
             scheduledCall = setTimeout(() => {
                 lastNotifiedTime = Date.now();
                 scheduledCall = null;
-                try {
-                    dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp });
-                }
-                catch (error) {
-                    if (typeof window.logger === "function") {
-                        window.logger("[MudBlazor] Error in mudObserveElementSize:", { error });
-                    }
-                }
+                notify(width, height, timestamp);
             }, debounceMillis - timeSinceLast);
         }
     };
 
     // Create the ResizeObserver to notify on size changes.
     const resizeObserver = new ResizeObserver(entries => {
-        if (element.isConnected === false) { return; } // Element is no longer in the DOM.
+        if (!element.isConnected) { cleanup(); return; }
 
         // Use the last entry's contentRect (or element's client dimensions).
         let width = element.clientWidth;
@@ -204,30 +213,32 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
     });
     resizeObserver.observe(element);
 
-    // If the element has a parent, set up a MutationObserver to detect its removal.
-    let mutationObserver = null;
-    const parent = element.parentNode;
-    if (parent) {
-        mutationObserver = new MutationObserver(mutations => {
-            for (const mutation of mutations) {
-                for (const removedNode of mutation.removedNodes) {
-                    if (removedNode === element) {
-                        cleanup();
-                    }
-                }
-            }
-        });
-        mutationObserver.observe(parent, { childList: true });
+    // Watch the ancestor chain without collecting unrelated subtree mutations.
+    const mutationObserver = new MutationObserver(() => {
+        if (!element.isConnected) {
+            cleanup();
+        } else {
+            // Reparenting can change the chain without detaching the chart.
+            mutationObserver.disconnect();
+            observeAncestors();
+        }
+    });
+    function observeAncestors() {
+        let ancestor = element.parentNode;
+        while (ancestor) {
+            mutationObserver.observe(ancestor, { childList: true });
+            ancestor = ancestor.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? ancestor.host : ancestor.parentNode;
+        }
     }
+    observeAncestors();
 
     // Cleanup function disconnects both observers and clears any scheduled notifications.
     function cleanup() {
         resizeObserver.disconnect();
-        if (mutationObserver) {
-            mutationObserver.disconnect();
-        }
+        mutationObserver.disconnect();
         if (scheduledCall !== null) {
             clearTimeout(scheduledCall);
+            scheduledCall = null;
         }
     }
 

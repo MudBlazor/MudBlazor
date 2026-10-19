@@ -253,14 +253,16 @@ namespace MudBlazor
                 };
 #pragma warning restore CS0618 // Type or member is obsolete
 
-                _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
+                var reference = _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
 
                 await _visibleState.SetValueAsync(true);
 
                 // Do not await this!
-                _reference.Result.ContinueWith(t =>
+                reference.Result.ContinueWith(t =>
                 {
-                    return InvokeAsync(() => _visibleState.SetValueAsync(false));
+                    return InvokeAsync(() => ReferenceEquals(_reference, reference)
+                        ? _visibleState.SetValueAsync(false)
+                        : Task.CompletedTask);
                 }).CatchAndLog();
             }
             finally
@@ -276,14 +278,17 @@ namespace MudBlazor
         /// <param name="result">The optional data to include.</param>
         public async Task CloseAsync(DialogResult? result = null)
         {
-            if (!IsInline || _reference is null)
+            var reference = _reference;
+            if (!IsInline || reference is null)
             {
                 return;
             }
 
-            await _visibleState.SetValueAsync(false);
-            _reference.Close(result);
+            // Clear the reference before raising VisibleChanged.
+            // Outside an event handler the parent re-renders synchronously, and OnAfterRenderAsync would otherwise re-enter this method and close without the result.
             _reference = null;
+            await _visibleState.SetValueAsync(false);
+            reference.Close(result);
         }
 
         /// <inheritdoc/>

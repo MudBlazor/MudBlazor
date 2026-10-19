@@ -64,11 +64,8 @@ internal sealed class MudSelectContext<T>
     /// <returns><c>true</c> if the item is currently selected; otherwise <c>false</c>.</returns>
     public bool RegisterItem(MudSelectItem<T> item)
     {
-        // Add to the ordered list of visible items
-        if (!_items.Contains(item))
-        {
-            _items.Add(item);
-        }
+        // An item registers once per select and unregisters before moving to another, so checking for a duplicate would only make opening n options cost n².
+        _items.Add(item);
 
         // Add to value lookup for fast access by value
         _valueLookup[item.Value] = item;

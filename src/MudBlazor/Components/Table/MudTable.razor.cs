@@ -798,11 +798,17 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Data)]
         public Func<TableState, CancellationToken, Task<TableData<T>>>? ServerData { get; set; }
 
-        private void CancelToken()
+        private CancellationToken CancelToken()
         {
+            // Swap in a fresh source before cancelling so the next load never observes the cancelled one.
+            // Cancelling can resume a superseded load whose caller starts another load and replaces this source, so its token is read first.
+            var next = new CancellationTokenSource();
+            var token = next.Token;
+            var previous = _cancellationTokenSrc;
+            _cancellationTokenSrc = next;
             try
             {
-                _cancellationTokenSrc?.Cancel();
+                previous?.Cancel();
             }
             catch
             {
@@ -810,8 +816,10 @@ namespace MudBlazor
             }
             finally
             {
-                _cancellationTokenSrc = new CancellationTokenSource();
+                previous?.Dispose();
             }
+
+            return token;
         }
 
         internal override async Task InvokeServerLoadFunc()
@@ -834,14 +842,38 @@ namespace MudBlazor
             };
 
             // Cancel any prior request
-            CancelToken();
+            var token = CancelToken();
 
             // Get data via the ServerData function
-            _serverData = await ServerData(state, _cancellationTokenSrc!.Token);
+            TableData<T> serverData;
+            try
+            {
+                serverData = await ServerData(state, token);
+            }
+            catch (Exception) when (token.IsCancellationRequested)
+            {
+                // A newer load cancelled this one, and it owns the data and the loading state.
+                // The outcome no longer matters, including a cancellation that the caller's API wrapped in its own exception type.
+                return;
+            }
+
+            // Loads can finish out of order, so data from a load that a newer one replaced is stale (#13943).
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
+            _serverData = serverData;
 
             if (CurrentPage * RowsPerPage >= _serverData.TotalItems)
             {
                 SetCurrentPage(0);
+
+                // The reset started a load for the first page, so that load ends the loading state and updates the pager.
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
             }
 
             Loading = false;

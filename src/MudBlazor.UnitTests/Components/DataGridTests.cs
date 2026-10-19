@@ -1077,6 +1077,313 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
         }
 
+        /// <summary>
+        /// A ServerData load that ignores its token and finishes after a newer load does not replace the newer load's data (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridServerData_OlderLoadFinishingLast_DoesNotReplaceNewerData()
+        {
+            var loads = new List<TaskCompletionSource<GridData<string>>>();
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.ServerData, (_, _) =>
+                {
+                    var load = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    loads.Add(load);
+                    return load.Task;
+                }));
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().HaveCount(1));
+
+            var reload = dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().HaveCount(2));
+
+            loads[1].SetResult(new GridData<string> { Items = ["Apple Pie"], TotalItems = 1 });
+            await reload.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+
+            loads[0].SetResult(new GridData<string> { Items = ["Apple", "Apple Cider", "Apple Pie"], TotalItems = 3 });
+            await dataGrid.InvokeAsync(() => loads[0].Task);
+
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+            dataGrid.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A ServerData load that observes its token and is cancelled by a newer load ends quietly instead of throwing (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridServerData_CancelledLoad_DoesNotThrow()
+        {
+            var loads = 0;
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.ServerData, (_, token) =>
+                {
+                    if (++loads != 2)
+                        return Task.FromResult(new GridData<string> { Items = ["Apple Pie"], TotalItems = 1 });
+
+                    // The second load waits until a newer load cancels it, as an observing HttpClient call would.
+                    var pending = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    token.Register(() => pending.TrySetCanceled(token));
+                    return pending.Task;
+                }));
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().Be(1));
+
+            var cancelled = dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().Be(2));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+
+            Func<Task> awaitCancelled = () => cancelled.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            await awaitCancelled.Should().NotThrowAsync();
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+            dataGrid.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A ServerData load cancelled by a newer load ends quietly even when its data source reports the cancellation as its own exception type (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridServerData_CancelledLoadThrowingOtherException_DoesNotThrow()
+        {
+            var loads = 0;
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.ServerData, (_, token) =>
+                {
+                    if (++loads != 2)
+                        return Task.FromResult(new GridData<string> { Items = ["Apple Pie"], TotalItems = 1 });
+
+                    // An API wrapper that reports an aborted request as its own failure rather than as a cancellation.
+                    var pending = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    token.Register(() => pending.TrySetException(new InvalidOperationException("The request was aborted.")));
+                    return pending.Task;
+                }));
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().Be(1));
+
+            var cancelled = dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().Be(2));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+
+            Func<Task> awaitCancelled = () => cancelled.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            await awaitCancelled.Should().NotThrowAsync();
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+            dataGrid.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A load whose cancellation resumes a superseded load, which starts another load, still loses to that newer load when it finishes last (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridServerData_LoadStartedDuringCancellation_DoesNotReplaceNewerData()
+        {
+            var requestedPages = new List<int>();
+            var gates = new List<TaskCompletionSource<GridData<string>>>();
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.ServerData, (state, token) =>
+                {
+                    requestedPages.Add(state.Page);
+                    if (requestedPages.Count == 1)
+                        return Task.FromResult(RecipePage(state.Page));
+
+                    if (requestedPages.Count == 2)
+                    {
+                        // Without RunContinuationsAsynchronously, cancelling resumes this load inside the newer load's cancel, as Task.Delay(delay, token) does.
+                        var cancelledInline = new TaskCompletionSource<GridData<string>>();
+                        token.Register(() => cancelledInline.TrySetCanceled(token));
+                        return cancelledInline.Task;
+                    }
+
+                    var gate = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    gates.Add(gate);
+                    return gate.Task;
+                }));
+            await dataGrid.WaitForAssertionAsync(() => dataGrid.Instance.ServerItems.Should().HaveCount(10));
+
+            // The superseded reload's caller goes to the next page as soon as its reload ends.
+            var navigating = dataGrid.InvokeAsync(async () =>
+            {
+                await dataGrid.Instance.ReloadServerData();
+                dataGrid.Instance.NavigateTo(Page.Next);
+            });
+            var reload = dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+            await navigating.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            // The page 1 load starts inside the page 0 reload's cancel, so it asks for data first.
+            requestedPages.Should().Equal(0, 0, 1, 0);
+
+            gates[0].SetResult(RecipePage(1));
+            await dataGrid.InvokeAsync(() => gates[0].Task);
+            dataGrid.Instance.ServerItems.First().Should().Be("Recipe 11");
+
+            gates[1].SetResult(RecipePage(0));
+            await reload.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            dataGrid.Instance.CurrentPage.Should().Be(1);
+            dataGrid.Instance.ServerItems.First().Should().Be("Recipe 11");
+            dataGrid.Instance.Loading.Should().BeFalse();
+
+            static GridData<string> RecipePage(int page) => new()
+            {
+                Items = Enumerable.Range((page * 10) + 1, 10).Select(i => $"Recipe {i}").ToList(),
+                TotalItems = 30,
+            };
+        }
+
+        /// <summary>
+        /// Disposing the grid cancels a ServerData load that is still running.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridServerData_Dispose_CancelsPendingLoad()
+        {
+            var token = CancellationToken.None;
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.ServerData, (_, cancellationToken) =>
+                {
+                    token = cancellationToken;
+                    return new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously).Task;
+                }));
+            await dataGrid.WaitForAssertionAsync(() => token.CanBeCanceled.Should().BeTrue());
+
+            await dataGrid.InvokeAsync(dataGrid.Instance.Dispose);
+
+            token.IsCancellationRequested.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// A VirtualizeServerData load that runs before any rows render, ignores its token and finishes after a newer load does not replace the newer load's data (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridVirtualizeServerData_OlderLoadFinishingLast_DoesNotReplaceNewerData()
+        {
+            var loads = new List<TaskCompletionSource<GridData<string>>>();
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.VirtualizeServerData, (_, _) =>
+                {
+                    var load = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    loads.Add(load);
+                    return load.Task;
+                }));
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().HaveCount(1));
+
+            var reload = dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().HaveCount(2));
+
+            loads[1].SetResult(new GridData<string> { Items = ["Apple Pie"], TotalItems = 1 });
+            await reload.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+
+            loads[0].SetResult(new GridData<string> { Items = ["Apple", "Apple Cider", "Apple Pie"], TotalItems = 3 });
+            await dataGrid.InvokeAsync(() => loads[0].Task);
+
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+            dataGrid.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A VirtualizeServerData load that runs before any rows render and is cancelled by a newer load ends quietly instead of throwing (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridVirtualizeServerData_CancelledLoad_DoesNotThrow()
+        {
+            var loads = 0;
+            var firstLoad = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.VirtualizeServerData, (_, token) =>
+                {
+                    loads++;
+
+                    // Rendered rows would route later loads through MudVirtualize, so the first load stays pending.
+                    if (loads == 1)
+                        return firstLoad.Task;
+
+                    if (loads > 2)
+                        return Task.FromResult(new GridData<string> { Items = ["Apple Pie"], TotalItems = 1 });
+
+                    var pending = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    token.Register(() => pending.TrySetCanceled(token));
+                    return pending.Task;
+                }));
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().Be(1));
+
+            var cancelled = dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+            await dataGrid.WaitForAssertionAsync(() => loads.Should().Be(2));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+
+            Func<Task> awaitCancelled = () => cancelled.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            await awaitCancelled.Should().NotThrowAsync();
+            dataGrid.Instance.ServerItems.Should().Equal("Apple Pie");
+            dataGrid.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A ServerData load that finds its page out of range keeps the grid loading, without the empty message, until the first page it resets to has loaded.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridServerData_PageReset_StaysLoadingUntilFirstPageLoads()
+        {
+            var requestedPages = new List<int>();
+            var firstPage = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.ServerData, (state, _) =>
+                {
+                    requestedPages.Add(state.Page);
+                    return requestedPages.Count switch
+                    {
+                        // The data shrinks to 15 recipes, so page 2 no longer exists.
+                        3 => Task.FromResult(new GridData<string> { Items = [], TotalItems = 15 }),
+                        4 => firstPage.Task,
+                        _ => Task.FromResult(RecipePage(state.Page, 30)),
+                    };
+                })
+                .Add(x => x.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<string, string>>(0);
+                    builder.AddAttribute(1, nameof(PropertyColumn<string, string>.Property), (Expression<Func<string, string>>)(x => x));
+                    builder.CloseComponent();
+                })
+                .Add(x => x.NoRecordsContent, builder => builder.AddContent(0, "No recipes found"))
+                .Add(x => x.PagerContent, builder =>
+                {
+                    builder.OpenComponent<MudDataGridPager<string>>(0);
+                    builder.AddAttribute(1, nameof(MudDataGridPager<string>.PageSizeSelector), false);
+                    builder.CloseComponent();
+                }));
+            await dataGrid.WaitForAssertionAsync(() => RowTexts().Should().HaveCount(10));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Last));
+            RowTexts().First().Should().Be("Recipe 21");
+
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+
+            requestedPages.Should().Equal(0, 2, 2, 0);
+            dataGrid.Instance.CurrentPage.Should().Be(0);
+            dataGrid.Instance.Loading.Should().BeTrue();
+            dataGrid.FindAll(".mud-table-loading-progress").Should().ContainSingle();
+            RowTexts().Should().BeEmpty();
+            dataGrid.Markup.Should().NotContain("No recipes found");
+
+            firstPage.SetResult(RecipePage(0, 15));
+            await dataGrid.WaitForAssertionAsync(() => RowTexts().Should().HaveCount(10));
+
+            RowTexts().First().Should().Be("Recipe 1");
+            dataGrid.Find(".mud-table-pagination-caption").TextContent.Trim().Should().Be("1-10 of 15");
+            dataGrid.Instance.Loading.Should().BeFalse();
+            dataGrid.FindAll(".mud-table-loading-progress").Should().BeEmpty();
+            requestedPages.Should().Equal(0, 2, 2, 0);
+
+            IEnumerable<string> RowTexts() => dataGrid.FindAll("tbody tr.mud-table-row").Select(row => row.TextContent.Trim());
+
+            static GridData<string> RecipePage(int page, int totalItems) => new()
+            {
+                Items = Enumerable.Range((page * 10) + 1, Math.Min(10, totalItems - (page * 10))).Select(i => $"Recipe {i}").ToList(),
+                TotalItems = totalItems,
+            };
+        }
+
         [Test]
         public async Task DataGridPagination()
         {
@@ -2264,6 +2571,135 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Picking several values for the is-any-of operator in the filter panel shows the rows matching any of them, and clearing the selection removes the filter.
+        /// </summary>
+        [Test]
+        public async Task DataGridEnumIsAnyOf_FilterPanel_ShowsRowsMatchingAnyValue()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Status"),
+                Operator = FilterOperator.Enum.IsAnyOf
+            };
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+
+            var valueSelect = comp.FindComponents<MudSelect<Enum>>().Single(x => x.Instance.Class == "filter-input");
+            valueSelect.Instance.MultiSelection.Should().BeTrue();
+            await comp.InvokeAsync(() => valueSelect.Instance.SelectedValuesChanged.InvokeAsync(new HashSet<Enum> { Severity.Normal, Severity.Info }));
+
+            dataGrid.Instance.FilteredItems.Select(x => x.Name).Should().BeEquivalentTo("Sam", "Alicia");
+
+            await comp.InvokeAsync(() => valueSelect.Instance.SelectedValuesChanged.InvokeAsync(new HashSet<Enum>()));
+
+            filterDefinition.Value.Should().BeNull();
+            dataGrid.Instance.FilteredItems.Should().HaveCount(4);
+        }
+
+        /// <summary>
+        /// Switching the column filter menu between is-any-of and a single-value operator clears the value and swaps the value editor.
+        /// </summary>
+        [Test]
+        public async Task DataGridEnumIsAnyOf_FilterMenu_OperatorSwitchClearsValue()
+        {
+            var popoverProvider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudDataGrid<DataGridFiltersTest.Model>>(parameters => parameters
+                .Add(p => p.Items, [new DataGridFiltersTest.Model("Sam", 56, Severity.Normal, null, null, null, null)])
+                .Add(p => p.Filterable, true)
+                .Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu)
+                .Add(p => p.Columns, StatusPropertyColumn));
+
+            await comp.Find(".filter-button").ClickAsync();
+            var operatorSelect = popoverProvider.FindComponents<MudSelect<string>>().Single(x => x.Instance.Class == "filter-operator");
+            await comp.InvokeAsync(() => operatorSelect.Instance.ValueChanged.InvokeAsync(FilterOperator.Enum.IsAnyOf));
+            var valueSelect = popoverProvider.FindComponents<MudSelect<Enum>>().Single(x => x.Instance.Class == "filter-input");
+            valueSelect.Instance.MultiSelection.Should().BeTrue();
+            await comp.InvokeAsync(() => valueSelect.Instance.SelectedValuesChanged.InvokeAsync(new HashSet<Enum> { Severity.Normal }));
+
+            await comp.InvokeAsync(() => operatorSelect.Instance.ValueChanged.InvokeAsync(FilterOperator.Enum.Is));
+
+            var filterDefinition = comp.Instance.RenderedColumns.Single().FilterContext.FilterDefinition!;
+            filterDefinition.Value.Should().BeNull();
+            popoverProvider.FindComponents<MudSelect<Enum>>().Single(x => x.Instance.Class == "filter-input").Instance.MultiSelection.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The filter row applies an is-any-of selection, picking the same operator again keeps it, and switching back to a single-value operator clears it.
+        /// </summary>
+        [Test]
+        public async Task DataGridEnumIsAnyOf_FilterRow_FiltersAndClearsOnOperatorSwitch()
+        {
+            var popoverProvider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudDataGrid<DataGridFiltersTest.Model>>(parameters => parameters
+                .Add(p => p.Items,
+                [
+                    new DataGridFiltersTest.Model("Sam", 56, Severity.Normal, null, null, null, null),
+                    new DataGridFiltersTest.Model("Alicia", 54, Severity.Info, null, null, null, null),
+                    new DataGridFiltersTest.Model("John", 32, Severity.Warning, null, null, null, null)
+                ])
+                .Add(p => p.Filterable, true)
+                .Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterRow)
+                .Add(p => p.Columns, StatusPropertyColumn));
+
+            await comp.Find(".column-filter-menu button").ClickAsync();
+            await popoverProvider.FindAll(".mud-menu-item").Single(x => x.TextContent.Trim() == "is any of").ClickAsync();
+            var valueSelect = comp.FindComponents<MudSelect<Enum>>().Single();
+            valueSelect.Instance.MultiSelection.Should().BeTrue();
+            await comp.InvokeAsync(() => valueSelect.Instance.SelectedValuesChanged.InvokeAsync(new HashSet<Enum> { Severity.Normal, Severity.Info }));
+
+            comp.FindAll("tbody tr").Count.Should().Be(2);
+
+            await comp.Find(".column-filter-menu button").ClickAsync();
+            await popoverProvider.FindAll(".mud-menu-item").Single(x => x.TextContent.Trim() == "is any of").ClickAsync();
+
+            comp.FindAll("tbody tr").Count.Should().Be(2);
+
+            await comp.Find(".column-filter-menu button").ClickAsync();
+            await popoverProvider.FindAll(".mud-menu-item").Single(x => x.TextContent.Trim() == "is").ClickAsync();
+
+            comp.Instance.FilterDefinitions.Single().Value.Should().BeNull();
+            comp.FindComponents<MudSelect<Enum>>().Single().Instance.MultiSelection.Should().BeFalse();
+            comp.FindAll("tbody tr").Count.Should().Be(3);
+        }
+
+        private static readonly object[] _isAnyOfValuesSetInCode = [new List<Severity> { Severity.Info }, Severity.Info];
+
+        /// <summary>
+        /// An is-any-of value set in code, as a typed collection or a single enum, shows in the filter row and filters the rows, and clearing the selection removes the filter.
+        /// </summary>
+        [TestCaseSource(nameof(_isAnyOfValuesSetInCode))]
+        public async Task DataGridEnumIsAnyOf_FilterRow_ShowsValueSetInCode(object value)
+        {
+            var comp = Context.Render<MudDataGrid<DataGridFiltersTest.Model>>(parameters => parameters
+                .Add(p => p.Items,
+                [
+                    new DataGridFiltersTest.Model("Sam", 56, Severity.Normal, null, null, null, null),
+                    new DataGridFiltersTest.Model("Alicia", 54, Severity.Info, null, null, null, null),
+                    new DataGridFiltersTest.Model("John", 32, Severity.Warning, null, null, null, null)
+                ])
+                .Add(p => p.Filterable, true)
+                .Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterRow)
+                .Add(p => p.Columns, StatusPropertyColumn));
+            var statusCell = comp.FindComponent<FilterHeaderCell<DataGridFiltersTest.Model>>();
+            var definition = statusCell.Instance.Column.FilterContext.FilterDefinition!;
+            definition.Operator = FilterOperator.Enum.IsAnyOf;
+            definition.Value = value;
+
+            await comp.InvokeAsync(() => statusCell.Instance.ApplyFilterAsync(definition));
+
+            comp.FindAll("tbody tr").Count.Should().Be(1);
+            var valueSelect = comp.FindComponents<MudSelect<Enum>>().Single();
+            valueSelect.Instance.SelectedValues.Should().BeEquivalentTo(new Enum[] { Severity.Info });
+
+            await comp.InvokeAsync(() => valueSelect.Instance.SelectedValuesChanged.InvokeAsync(new HashSet<Enum>()));
+
+            definition.Value.Should().BeNull();
+            comp.FindAll("tbody tr").Count.Should().Be(3);
+        }
+
         [Test]
         public async Task DataGridFilterChangedSimpleApplyAndClear()
         {
@@ -3054,6 +3490,50 @@ namespace MudBlazor.UnitTests.Components
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
+
+            // FilterOperator.Enum.IsAnyOf
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsAnyOf,
+                Value = new List<Enum> { Severity.Normal, Severity.Info }
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Info, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Warning, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
+
+            // typed collection
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsAnyOf,
+                Value = new[] { Severity.Warning }
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Warning, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeFalse();
+
+            // empty collection
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsAnyOf,
+                Value = new List<Enum>()
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #region FilterOperator.Enum.Empty
 
@@ -4607,6 +5087,9 @@ namespace MudBlazor.UnitTests.Components
             // 2 rows in the header (original + loading row) and 3 rows in the body (unchanged)
             updatedHeaderRows.Count.Should().Be(2);
             updatedBodyRows.Count.Should().Be(3);
+
+            // The loading progress bar must have an accessible name
+            comp.Find(".mud-table-loading-progress").GetAttribute("aria-label").Should().Be("Loading…");
         }
 
         [Test]
@@ -4934,6 +5417,32 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().BeEmpty();
             await dataGrid.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowMenuIcon, true));
             dataGrid.FindAll(".mud-table-toolbar .mud-menu").Should().NotBeEmpty();
+
+            // The settings menu activator must have an accessible name
+            dataGrid.Find(".mud-table-toolbar .mud-menu button").GetAttribute("aria-label").Should().Be("Columns");
+        }
+
+        /// <summary>
+        /// ToolBarWrapContent makes both the ToolBarContent toolbar and the default ShowMenuIcon toolbar wrap their content (#7595).
+        /// </summary>
+        [Test]
+        public async Task DataGridToolBarWrapContent()
+        {
+            var comp = Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
+                .Add(p => p.Items, Array.Empty<TestModel1>())
+                .Add(p => p.ToolBarContent, "<span>Toolbar</span>")
+            );
+            comp.Find(".mud-table-toolbar").ClassList.Should().NotContain("mud-toolbar-wrap-content");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ToolBarWrapContent, true));
+            comp.Find(".mud-table-toolbar").ClassList.Should().Contain("mud-toolbar-wrap-content");
+
+            // The default toolbar shown for ShowMenuIcon without ToolBarContent wraps too
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.ToolBarContent, (RenderFragment)null)
+                .Add(p => p.ShowMenuIcon, true)
+            );
+            comp.Find(".mud-table-toolbar").ClassList.Should().Contain("mud-toolbar-wrap-content");
         }
 
         [Test]
@@ -6562,6 +7071,20 @@ namespace MudBlazor.UnitTests.Components
             newHeaderValues[4].InnerHtml.Should().Be("HiredOn");
         }
 
+        /// <summary>
+        /// Header column drag handles have an accessible name (#13979).
+        /// </summary>
+        [Test]
+        public void DataGridDragAndDrop_HeaderDragHandles_HaveAccessibleName()
+        {
+            var comp = Context.Render<DataGridDragAndDropTest_InsertMode>();
+
+            // Columns with DragAndDropEnabled="false" (Name, Hired) render no drag handle
+            var dragHandles = comp.FindAll("th button.drag-icon-options");
+            dragHandles.Should().HaveCount(3);
+            dragHandles.Should().AllSatisfy(handle => handle.GetAttribute("aria-label").Should().Be("Reorder column"));
+        }
+
         [Test]
         [TestCase(true)]
         [TestCase(false)]
@@ -7815,6 +8338,13 @@ namespace MudBlazor.UnitTests.Components
             builder.CloseComponent();
         };
 
+        private static RenderFragment StatusPropertyColumn => builder =>
+        {
+            builder.OpenComponent<PropertyColumn<DataGridFiltersTest.Model, Severity?>>(0);
+            builder.AddAttribute(1, nameof(PropertyColumn<DataGridFiltersTest.Model, Severity?>.Property), (Expression<Func<DataGridFiltersTest.Model, Severity?>>)(x => x.Status));
+            builder.CloseComponent();
+        };
+
         private static RenderFragment NamePropertyColumnWithTextCell => builder =>
         {
             builder.OpenComponent<PropertyColumn<TestDataItem, string>>(0);
@@ -8913,6 +9443,26 @@ namespace MudBlazor.UnitTests.Components
                     columnsPanel.ClassList.Should().NotContain("mud-data-grid-columns-panel-dense");
                     comp.FindAll(".mud-data-grid-columns-panel-dense").Should().BeEmpty();
                 }
+            });
+        }
+
+        /// <summary>
+        /// Columns panel drag handles have an accessible name (#13979).
+        /// </summary>
+        [Test]
+        public async Task DataGrid_ColumnsPanelDragHandles_HaveAccessibleName()
+        {
+            var comp = Context.Render<DataGridColumnsPanelTest>();
+
+            // Open the settings menu and show the columns panel
+            await comp.Find(".mud-table-toolbar .mud-menu button").ClickAsync();
+            await comp.Find(".mud-menu-item").ClickAsync();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var dragHandles = comp.FindAll(".mud-data-grid-columns-panel button.drag-icon-options");
+                dragHandles.Should().HaveCount(3);
+                dragHandles.Should().AllSatisfy(handle => handle.GetAttribute("aria-label").Should().Be("Reorder column"));
             });
         }
 

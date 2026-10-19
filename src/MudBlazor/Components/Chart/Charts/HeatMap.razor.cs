@@ -32,6 +32,9 @@ namespace MudBlazor.Charts
 
         private readonly List<HeatMapCell<T>> _heatMapCells = [];
 
+        // RebuildChart fills _heatMapCells row by row with this many columns, so a cell's index is row * _heatMapColumns + col.
+        private int _heatMapColumns;
+
         private const double BoundWidth = 800.0;
 
         private const double BoundHeight = 350.0;
@@ -86,7 +89,7 @@ namespace MudBlazor.Charts
         private string[] _colorPalette = ["#587934"];
 
         // The maximum number of cells in a series
-        private int SeriesLength => _series.Select(s => s.Data?.Values.Count ?? 0).DefaultIfEmpty(0).Max();
+        private int SeriesLength => _series.Select(s => s.Data?.Count ?? 0).DefaultIfEmpty(0).Max();
 
         // The number of rows visible
         private int RowCount => _series.Count > 0 ? _series.Count(s => s.Visible) : 0;
@@ -250,6 +253,7 @@ namespace MudBlazor.Charts
             var rows = _series.Count;
             // cols should be the max number of data[] in all series
             var cols = SeriesLength;
+            _heatMapColumns = cols;
 
             for (var row = 0; row < rows; row++)
             {
@@ -384,6 +388,13 @@ namespace MudBlazor.Charts
             }
         }
 
+        private HeatMapCell<T>? GetCell(int row, int col)
+        {
+            // Series changed in place since the last RebuildChart can reach past the cells it laid out.
+            var index = (row * _heatMapColumns) + col;
+            return col < _heatMapColumns && index < _heatMapCells.Count ? _heatMapCells[index] : null;
+        }
+
         private T? GetDataValue(int row, int col)
         {
             // need to ensure row index exists in case there is no data for a row in a series
@@ -393,7 +404,7 @@ namespace MudBlazor.Charts
             }
 
             // need to ensure column index exists in case there is no data for a column in a series
-            if (col < 0 || _series[row].Data == null || col >= _series[row].Data.Values.Count)
+            if (col < 0 || _series[row].Data == null || col >= _series[row].Data.Count)
             {
                 return null;
             }
