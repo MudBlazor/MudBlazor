@@ -551,6 +551,16 @@
                                 <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
                                                  Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture"/>
                             }
+                            else if (fieldType.IsEnum && filterDefinition.Operator == FilterOperator.Enum.IsAnyOf)
+                            {
+                                <MudSelect T="Enum" MultiSelection="true" SelectedValues="@filter._valueEnums" SelectedValuesChanged="@filter.EnumValuesChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense"
+                                           Class="filter-input">
+                                    @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
+                                    {
+                                        <MudSelectItem T="Enum" Value="@item">@Localizer[item]</MudSelectItem>
+                                    }
+                                </MudSelect>
+                            }
                             else if (fieldType.IsEnum)
                             {
                                 <MudSelect T="Enum" Value="@filter._valueEnum" ValueChanged="@filter.EnumValueChanged" FullWidth="true" Label="@Localizer[LanguageResource.MudDataGrid_Value]" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense"
@@ -599,7 +609,7 @@
             {
                 <MudGrid Spacing="0">
                     <MudItem xs="12">
-                        <MudSelect @bind-Value="filterDefinition.Operator" FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                        <MudSelect T="string" Value="@filterDefinition.Operator" ValueChanged="@filter.SetOperator" FullWidth="true" Dense="true" Margin="@Margin.Dense"
                                    Class="filter-operator">
                             @foreach (var o in column.GetFilterOperators(fieldType))
                             {
@@ -617,6 +627,16 @@
                         {
                             <MudNumericField T="double?" Value="@filter._valueNumber" ValueChanged="@filter.NumberValueChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense"
                                              Immediate="true" Class="filter-input" Culture="@filter.FilterColumn?.Culture" AutoFocus="true" OnKeyDown="@filter.KeyDown"/>
+                        }
+                        else if (fieldType.IsEnum && filterDefinition.Operator == FilterOperator.Enum.IsAnyOf)
+                        {
+                            <MudSelect T="Enum" MultiSelection="true" SelectedValues="@filter._valueEnums" SelectedValuesChanged="@filter.EnumValuesChanged" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Dense="true" Margin="@Margin.Dense"
+                                       Class="filter-input">
+                                @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
+                                {
+                                    <MudSelectItem T="Enum" Value="@item">@Localizer[item]</MudSelectItem>
+                                }
+                            </MudSelect>
                         }
                         else if (fieldType.IsEnum)
                         {

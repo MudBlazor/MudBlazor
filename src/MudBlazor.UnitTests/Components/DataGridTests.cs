@@ -2136,6 +2136,90 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Picking several values for the is-any-of operator in the filter panel shows the rows matching any of them.
+        /// </summary>
+        [Test]
+        public async Task DataGridEnumIsAnyOf_FilterPanel_ShowsRowsMatchingAnyValue()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+            var filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = dataGrid.Instance.GetColumnByPropertyName("Status"),
+                Operator = FilterOperator.Enum.IsAnyOf
+            };
+            await comp.InvokeAsync(() => dataGrid.Instance.FilterDefinitions.Add(filterDefinition));
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+
+            var valueSelect = comp.FindComponents<MudSelect<Enum>>().Single(x => x.Instance.Class == "filter-input");
+            valueSelect.Instance.MultiSelection.Should().BeTrue();
+            await comp.InvokeAsync(() => valueSelect.Instance.SelectedValuesChanged.InvokeAsync(new HashSet<Enum> { Severity.Normal, Severity.Info }));
+
+            dataGrid.Instance.FilteredItems.Select(x => x.Name).Should().BeEquivalentTo("Sam", "Alicia");
+        }
+
+        /// <summary>
+        /// Switching the column filter menu between is-any-of and a single-value operator clears the value and swaps the value editor.
+        /// </summary>
+        [Test]
+        public async Task DataGridEnumIsAnyOf_FilterMenu_OperatorSwitchClearsValue()
+        {
+            var popoverProvider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudDataGrid<DataGridFiltersTest.Model>>(parameters => parameters
+                .Add(p => p.Items, [new DataGridFiltersTest.Model("Sam", 56, Severity.Normal, null, null, null, null)])
+                .Add(p => p.Filterable, true)
+                .Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterMenu)
+                .Add(p => p.Columns, StatusPropertyColumn));
+
+            await comp.Find(".filter-button").ClickAsync();
+            var operatorSelect = popoverProvider.FindComponents<MudSelect<string>>().Single(x => x.Instance.Class == "filter-operator");
+            await comp.InvokeAsync(() => operatorSelect.Instance.ValueChanged.InvokeAsync(FilterOperator.Enum.IsAnyOf));
+            var valueSelect = popoverProvider.FindComponents<MudSelect<Enum>>().Single(x => x.Instance.Class == "filter-input");
+            valueSelect.Instance.MultiSelection.Should().BeTrue();
+            await comp.InvokeAsync(() => valueSelect.Instance.SelectedValuesChanged.InvokeAsync(new HashSet<Enum> { Severity.Normal }));
+
+            await comp.InvokeAsync(() => operatorSelect.Instance.ValueChanged.InvokeAsync(FilterOperator.Enum.Is));
+
+            var filterDefinition = comp.Instance.RenderedColumns.Single().FilterContext.FilterDefinition!;
+            filterDefinition.Value.Should().BeNull();
+            popoverProvider.FindComponents<MudSelect<Enum>>().Single(x => x.Instance.Class == "filter-input").Instance.MultiSelection.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The filter row applies an is-any-of selection, and switching back to a single-value operator clears it.
+        /// </summary>
+        [Test]
+        public async Task DataGridEnumIsAnyOf_FilterRow_FiltersAndClearsOnOperatorSwitch()
+        {
+            var popoverProvider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudDataGrid<DataGridFiltersTest.Model>>(parameters => parameters
+                .Add(p => p.Items,
+                [
+                    new DataGridFiltersTest.Model("Sam", 56, Severity.Normal, null, null, null, null),
+                    new DataGridFiltersTest.Model("Alicia", 54, Severity.Info, null, null, null, null),
+                    new DataGridFiltersTest.Model("John", 32, Severity.Warning, null, null, null, null)
+                ])
+                .Add(p => p.Filterable, true)
+                .Add(p => p.FilterMode, DataGridFilterMode.ColumnFilterRow)
+                .Add(p => p.Columns, StatusPropertyColumn));
+
+            await comp.Find(".column-filter-menu button").ClickAsync();
+            await popoverProvider.FindAll(".mud-menu-item").Single(x => x.TextContent.Trim() == "is any of").ClickAsync();
+            var valueSelect = comp.FindComponents<MudSelect<Enum>>().Single();
+            valueSelect.Instance.MultiSelection.Should().BeTrue();
+            await comp.InvokeAsync(() => valueSelect.Instance.SelectedValuesChanged.InvokeAsync(new HashSet<Enum> { Severity.Normal, Severity.Info }));
+
+            comp.FindAll("tbody tr").Count.Should().Be(2);
+
+            await comp.Find(".column-filter-menu button").ClickAsync();
+            await popoverProvider.FindAll(".mud-menu-item").Single(x => x.TextContent.Trim() == "is").ClickAsync();
+
+            comp.Instance.FilterDefinitions.Single().Value.Should().BeNull();
+            comp.FindComponents<MudSelect<Enum>>().Single().Instance.MultiSelection.Should().BeFalse();
+            comp.FindAll("tbody tr").Count.Should().Be(3);
+        }
+
         [Test]
         public async Task DataGridFilterChangedSimpleApplyAndClear()
         {
@@ -2923,6 +3007,53 @@ namespace MudBlazor.UnitTests.Components
             });
             func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
+
+            #endregion
+
+            #region FilterOperator.Enum.IsAnyOf
+
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsAnyOf,
+                Value = new List<Enum> { Severity.Normal, Severity.Info }
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Info, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Normal, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Warning, null, null, null, null)).Should().BeFalse();
+            func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeFalse();
+
+            // typed collection
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsAnyOf,
+                Value = new[] { Severity.Warning }
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Warning, null, null, null, null)).Should().BeTrue();
+            func.Invoke(new("Joe", 45, Severity.Info, null, null, null, null)).Should().BeFalse();
+
+            // empty collection
+            filterDefinition = new FilterDefinition<DataGridFiltersTest.Model>
+            {
+                Column = statusColumn,
+                Operator = FilterOperator.Enum.IsAnyOf,
+                Value = new List<Enum>()
+            };
+            func = filterDefinition.GenerateFilterFunction(new FilterOptions
+            {
+                FilterCaseSensitivity = dataGrid.Instance.FilterCaseSensitivity
+            });
+            func.Invoke(new("Sam", 456, Severity.Normal, null, null, null, null)).Should().BeTrue();
             func.Invoke(new("Joe", 45, null, null, null, null, null)).Should().BeTrue();
 
             #endregion
@@ -7727,6 +7858,13 @@ namespace MudBlazor.UnitTests.Components
         {
             builder.OpenComponent<PropertyColumn<TestDataItem, string>>(0);
             builder.AddAttribute(1, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
+            builder.CloseComponent();
+        };
+
+        private static RenderFragment StatusPropertyColumn => builder =>
+        {
+            builder.OpenComponent<PropertyColumn<DataGridFiltersTest.Model, Severity?>>(0);
+            builder.AddAttribute(1, nameof(PropertyColumn<DataGridFiltersTest.Model, Severity?>.Property), (Expression<Func<DataGridFiltersTest.Model, Severity?>>)(x => x.Status));
             builder.CloseComponent();
         };
 
