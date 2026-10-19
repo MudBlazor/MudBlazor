@@ -392,6 +392,8 @@ namespace MudBlazor
 
         internal override void OnDateLimitsChanged() => RecalculateValidDays();
 
+        internal override bool IsRangeSelectionPending => _firstDate is not null && _secondDate is null;
+
         private DateRange? ParseDateRangeValue(string? value)
         {
             return DateRange.TryParse(value, GetConverter(), out var dateRange) ? dateRange : null;
