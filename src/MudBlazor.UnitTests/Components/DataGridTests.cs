@@ -1043,6 +1043,66 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A load whose cancellation resumes a superseded load, which starts another load, still loses to that newer load when it finishes last (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridServerData_LoadStartedDuringCancellation_DoesNotReplaceNewerData()
+        {
+            var requestedPages = new List<int>();
+            var gates = new List<TaskCompletionSource<GridData<string>>>();
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.ServerData, (state, token) =>
+                {
+                    requestedPages.Add(state.Page);
+                    if (requestedPages.Count == 1)
+                        return Task.FromResult(RecipePage(state.Page));
+
+                    if (requestedPages.Count == 2)
+                    {
+                        // Without RunContinuationsAsynchronously, cancelling resumes this load inside the newer load's cancel, as Task.Delay(delay, token) does.
+                        var cancelledInline = new TaskCompletionSource<GridData<string>>();
+                        token.Register(() => cancelledInline.TrySetCanceled(token));
+                        return cancelledInline.Task;
+                    }
+
+                    var gate = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    gates.Add(gate);
+                    return gate.Task;
+                }));
+            await dataGrid.WaitForAssertionAsync(() => dataGrid.Instance.ServerItems.Should().HaveCount(10));
+
+            // The superseded reload's caller goes to the next page as soon as its reload ends.
+            var navigating = dataGrid.InvokeAsync(async () =>
+            {
+                await dataGrid.Instance.ReloadServerData();
+                dataGrid.Instance.NavigateTo(Page.Next);
+            });
+            var reload = dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+            await navigating.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            // The page 1 load starts inside the page 0 reload's cancel, so it asks for data first.
+            requestedPages.Should().Equal(0, 0, 1, 0);
+
+            gates[0].SetResult(RecipePage(1));
+            await dataGrid.InvokeAsync(() => gates[0].Task);
+            dataGrid.Instance.ServerItems.First().Should().Be("Recipe 11");
+
+            gates[1].SetResult(RecipePage(0));
+            await reload.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            dataGrid.Instance.CurrentPage.Should().Be(1);
+            dataGrid.Instance.ServerItems.First().Should().Be("Recipe 11");
+            dataGrid.Instance.Loading.Should().BeFalse();
+
+            static GridData<string> RecipePage(int page) => new()
+            {
+                Items = Enumerable.Range((page * 10) + 1, 10).Select(i => $"Recipe {i}").ToList(),
+                TotalItems = 30,
+            };
+        }
+
+        /// <summary>
         /// A ServerData load that finds its page out of range keeps the grid loading, without the empty message, until the first page it resets to has loaded.
         /// </summary>
         [Test]
