@@ -261,6 +261,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task Tooltip_On_Focus()
         {
+            Context.JSInterop.Setup<bool>("mudElementRef.isFocusVisible").SetResult(true);
             var comp = Context.Render<TooltipPlacementPropertyTest>();
 
             var button = comp.Find("button");
@@ -269,6 +270,99 @@ namespace MudBlazor.UnitTests.Components
             var popoverContentNode = comp.Find("#my-tooltip-content").ParentElement;
 
             popoverContentNode.Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// Focus that is not keyboard-visible, such as a tab regaining focus or a dialog restoring it after a pointer action, does not open the tooltip (#13553).
+        /// </summary>
+        [Test]
+        public async Task ShowOnFocus_ShouldNotOpen_WhenFocusIsNotFocusVisible()
+        {
+            Context.JSInterop.Setup<bool>("mudElementRef.isFocusVisible").SetResult(false);
+            var comp = Context.Render<TooltipWithTextTest>(p => p.Add(x => x.TooltipTextContent, "tooltip text"));
+            var tooltip = comp.FindComponent<MudTooltip>().Instance;
+
+            await comp.Find(".mud-tooltip-root").FocusInAsync(new FocusEventArgs());
+
+            tooltip.GetState(x => x.Visible).Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Keyboard-visible focus opens the tooltip after a single focus-visible check.
+        /// </summary>
+        [Test]
+        public async Task ShowOnFocus_ShouldOpen_WhenFocusIsFocusVisible()
+        {
+            Context.JSInterop.Setup<bool>("mudElementRef.isFocusVisible").SetResult(true);
+            var comp = Context.Render<TooltipWithTextTest>(p => p.Add(x => x.TooltipTextContent, "tooltip text"));
+            var tooltip = comp.FindComponent<MudTooltip>().Instance;
+
+            await comp.Find(".mud-tooltip-root").FocusInAsync(new FocusEventArgs());
+
+            tooltip.GetState(x => x.Visible).Should().BeTrue();
+            Context.JSInterop.VerifyInvoke("mudElementRef.isFocusVisible", 1);
+        }
+
+        /// <summary>
+        /// Focus leaving before the focus-visible check completes keeps the tooltip closed.
+        /// </summary>
+        [Test]
+        [CancelAfter(10000)]
+        public async Task ShowOnFocus_ShouldNotReopen_WhenFocusLeftBeforeCheckCompleted()
+        {
+            var focusVisible = Context.JSInterop.Setup<bool>("mudElementRef.isFocusVisible");
+            var comp = Context.Render<TooltipWithTextTest>(p => p.Add(x => x.TooltipTextContent, "tooltip text"));
+            var tooltip = comp.FindComponent<MudTooltip>().Instance;
+
+            var focusIn = comp.Find(".mud-tooltip-root").FocusInAsync(new FocusEventArgs());
+            await comp.Find(".mud-tooltip-root").FocusOutAsync(new FocusEventArgs());
+            focusVisible.SetResult(true);
+            await focusIn.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            tooltip.GetState(x => x.Visible).Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Focus skips the focus-visible check when the tooltip is already visible or ShowOnFocus is disabled.
+        /// </summary>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task ShouldNotInvokeInterop_WhenAlreadyVisibleOrShowOnFocusFalse(bool alreadyVisible)
+        {
+            var comp = Context.Render<MudTooltip>(p => p
+                .Add(x => x.Text, "tooltip text")
+                .Add(x => x.ShowOnFocus, alreadyVisible)
+                .AddChildContent("<button>Button</button>"));
+            var root = comp.Find(".mud-tooltip-root");
+
+            if (alreadyVisible)
+            {
+                await root.PointerEnterAsync(new PointerEventArgs());
+            }
+            await comp.Find(".mud-tooltip-root").FocusInAsync(new FocusEventArgs());
+
+            comp.Instance.GetState(x => x.Visible).Should().Be(alreadyVisible);
+            Context.JSInterop.VerifyNotInvoke("mudElementRef.isFocusVisible");
+        }
+
+        /// <summary>
+        /// With ShowOnClick, the focus a pointer press gives the content does not open the tooltip ahead of pointer up, so the first click opens it.
+        /// </summary>
+        [Test]
+        public async Task ShowOnClick_ShouldOpen_WhenPointerFocusPrecedesPointerUp()
+        {
+            Context.JSInterop.Setup<bool>("mudElementRef.isFocusVisible").SetResult(false);
+            var comp = Context.Render<MudTooltip>(p => p
+                .Add(x => x.Text, "tooltip text")
+                .Add(x => x.ShowOnHover, false)
+                .Add(x => x.ShowOnClick, true)
+                .AddChildContent("<button>Button</button>"));
+
+            await comp.Find(".mud-tooltip-root").FocusInAsync(new FocusEventArgs());
+            await comp.Find(".mud-tooltip-root").PointerUpAsync(new PointerEventArgs());
+
+            comp.Instance.GetState(x => x.Visible).Should().BeTrue();
         }
 
         [Test]
