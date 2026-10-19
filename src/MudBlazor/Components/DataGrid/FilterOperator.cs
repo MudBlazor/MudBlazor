@@ -358,7 +358,7 @@ namespace MudBlazor
         }
 
         // IsAnyOf holds a collection of values while every other operator holds one, so a value kept across that boundary has the wrong shape.
-        internal static bool ChangesValueShape(string? from, string? to) => (from == Enum.IsAnyOf) != (to == Enum.IsAnyOf);
+        internal static bool ChangesValueShape(string? from, string? to) => from != to && (from == Enum.IsAnyOf || to == Enum.IsAnyOf);
 
         internal static string GetTranslationKeyByOperatorName(string operatorName) => operatorName switch
         {
