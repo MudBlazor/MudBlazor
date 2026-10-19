@@ -370,6 +370,47 @@ namespace MudBlazor.UnitTests.Components
             gradientRects.Should().NotBeEmpty();
         }
 
+        /// <summary>
+        /// Verifies that each heat map cell shows its own value and its neighbors' colors when series have different lengths.
+        /// </summary>
+        [Test]
+        public void HeatMap_ShouldMatchCellsToValuesWithJaggedSeries()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2, 3]) },
+                new() { Name = "Series 2", Data = new([4]) },
+                new() { Name = "Series 3", Data = new([5, 6]) }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new HeatMapChartOptions { ValueFormatString = "F0" })
+            );
+
+            comp.FindAll(".mud-chart-cell")
+                .Select(cell => cell.QuerySelector("text")?.TextContent?.Trim())
+                .Should().Equal("1", "2", "3", "4", "5", "6");
+
+            var gradientComp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new HeatMapChartOptions { EnableSmoothGradient = true })
+            );
+
+            string StopColor(string gradientId, int stop) =>
+                gradientComp.Find($"linearGradient#{gradientId}").QuerySelectorAll("stop")[stop].GetAttribute("style");
+
+            // Series 2 has no second value, so its right neighbor is the missing-data color.
+            StopColor("gradient-right-1-0", 0).Should().Be("stop-color:#fff");
+            // Series 2's own cell has a value, so it gets a palette color.
+            StopColor("gradient-right-1-0", 1).Should().NotBe("stop-color:#fff");
+            // Neighboring cells in series 3 point at each other's colors.
+            StopColor("gradient-left-2-1", 0).Should().Be(StopColor("gradient-right-2-0", 1));
+            StopColor("gradient-left-2-1", 1).Should().Be(StopColor("gradient-right-2-0", 0));
+        }
+
         [Test]
         [TestCase(XAxisLabelPosition.Top)]
         [TestCase(XAxisLabelPosition.Bottom)]
