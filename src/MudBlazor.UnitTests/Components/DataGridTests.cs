@@ -1042,6 +1042,71 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.Loading.Should().BeFalse();
         }
 
+        /// <summary>
+        /// A ServerData load that finds its page out of range keeps the grid loading, without the empty message, until the first page it resets to has loaded.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task DataGridServerData_PageReset_StaysLoadingUntilFirstPageLoads()
+        {
+            var requestedPages = new List<int>();
+            var firstPage = new TaskCompletionSource<GridData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var dataGrid = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.ServerData, (state, _) =>
+                {
+                    requestedPages.Add(state.Page);
+                    return requestedPages.Count switch
+                    {
+                        // The data shrinks to 15 recipes, so page 2 no longer exists.
+                        3 => Task.FromResult(new GridData<string> { Items = [], TotalItems = 15 }),
+                        4 => firstPage.Task,
+                        _ => Task.FromResult(RecipePage(state.Page, 30)),
+                    };
+                })
+                .Add(x => x.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<string, string>>(0);
+                    builder.AddAttribute(1, nameof(PropertyColumn<string, string>.Property), (Expression<Func<string, string>>)(x => x));
+                    builder.CloseComponent();
+                })
+                .Add(x => x.NoRecordsContent, builder => builder.AddContent(0, "No recipes found"))
+                .Add(x => x.PagerContent, builder =>
+                {
+                    builder.OpenComponent<MudDataGridPager<string>>(0);
+                    builder.AddAttribute(1, nameof(MudDataGridPager<string>.PageSizeSelector), false);
+                    builder.CloseComponent();
+                }));
+            await dataGrid.WaitForAssertionAsync(() => RowTexts().Should().HaveCount(10));
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.Last));
+            RowTexts().First().Should().Be("Recipe 21");
+
+            await dataGrid.InvokeAsync(() => dataGrid.Instance.ReloadServerData());
+
+            requestedPages.Should().Equal(0, 2, 2, 0);
+            dataGrid.Instance.CurrentPage.Should().Be(0);
+            dataGrid.Instance.Loading.Should().BeTrue();
+            dataGrid.FindAll(".mud-table-loading-progress").Should().ContainSingle();
+            RowTexts().Should().BeEmpty();
+            dataGrid.Markup.Should().NotContain("No recipes found");
+
+            firstPage.SetResult(RecipePage(0, 15));
+            await dataGrid.WaitForAssertionAsync(() => RowTexts().Should().HaveCount(10));
+
+            RowTexts().First().Should().Be("Recipe 1");
+            dataGrid.Find(".mud-table-pagination-caption").TextContent.Trim().Should().Be("1-10 of 15");
+            dataGrid.Instance.Loading.Should().BeFalse();
+            dataGrid.FindAll(".mud-table-loading-progress").Should().BeEmpty();
+            requestedPages.Should().Equal(0, 2, 2, 0);
+
+            IEnumerable<string> RowTexts() => dataGrid.FindAll("tbody tr.mud-table-row").Select(row => row.TextContent.Trim());
+
+            static GridData<string> RecipePage(int page, int totalItems) => new()
+            {
+                Items = Enumerable.Range((page * 10) + 1, Math.Min(10, totalItems - (page * 10))).Select(i => $"Recipe {i}").ToList(),
+                TotalItems = totalItems,
+            };
+        }
+
         [Test]
         public async Task DataGridPagination()
         {
