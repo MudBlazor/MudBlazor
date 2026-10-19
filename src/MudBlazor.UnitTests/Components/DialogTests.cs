@@ -336,6 +336,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// An inline dialog closed and reopened in one dispatcher turn stays open (#13917).
+        /// </summary>
+        [Test]
+        public async Task InlineDialogShouldStayOpenWhenReopenedImmediately()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var host = Context.Render<InlineDialogReopenTest>();
+            await host.Find("button").ClickAsync();
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-dialog-container").Should().ContainSingle());
+
+            await host.InvokeAsync(host.Instance.CloseAndReopen);
+
+            // The first dialog's close callback hops through the thread pool.
+            // Without the wait for the reopened content, the assertions below can run before it lands and miss the bug.
+            await provider.InvokeAsync(() => { });
+            await provider.WaitForAssertionAsync(() => provider.Find(".dialog-item").TextContent.Should().Be("Item 2"));
+            provider.FindAll("div.mud-dialog-container").Should().ContainSingle();
+            host.Instance.Visible.Should().BeTrue();
+        }
+
+        /// <summary>
         /// Based on bug report by Porkopek:
         /// Updating values that are referenced in TitleContent render fragment won't result in an update of the dialog title
         /// when they change. This is solved by allowing the user to call ForceRender() on DialogInstance
