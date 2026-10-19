@@ -1790,6 +1790,54 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A debounce still pending when a selection or clear starts does not search or reopen the menu while ValueChanged runs.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Autocomplete_SelectOrClear_CancelsPendingDebounce(bool clear)
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searches = new List<TaskCompletionSource<IEnumerable<string>>>();
+            var valueChanged = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.Value, "Banana")
+                .Add(x => x.ValueChanged, (string _) => valueChanged.Task)
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    searches.Add(search);
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("Ap");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().ContainSingle());
+            searches[0].SetResult(["Apple", "Apricot"]);
+            await comp.WaitForAssertionAsync(() => comp.Instance.Open.Should().BeTrue());
+
+            // Typing arms the debounce again, and the key lands before it fires.
+            await comp.Find("input").InputAsync("Apr");
+            var keyTask = clear
+                ? comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Backspace", CtrlKey = true, ShiftKey = true })
+                : comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            valueChanged.SetResult();
+            await keyTask;
+
+            foreach (var search in searches.Skip(1))
+            {
+                search.SetResult(["Apricot"]);
+            }
+            await comp.InvokeAsync(() => { });
+
+            comp.Instance.Open.Should().BeFalse();
+            provider.FindAll("div.mud-popover-open").Should().BeEmpty();
+            searches.Should().ContainSingle();
+        }
+
+        /// <summary>
         /// FullWidth adds the full-width class to the autocomplete.
         /// </summary>
         [Test]
