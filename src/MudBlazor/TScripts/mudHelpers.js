@@ -161,10 +161,13 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
         }
 
         dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp }).catch(error => {
-            // A transport or callback failure does not mean a connected chart was disposed.
+            // A chart removed while its callback was in flight has already been disposed, so the failure is expected.
             if (!element.isConnected) {
                 cleanup();
+                return;
             }
+
+            // A transport or callback failure does not mean a connected chart was disposed.
             console.warn("[MudBlazor] Error invoking size change callback:", error);
         });
     };
