@@ -336,21 +336,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Reopening an inline dialog before its previous close callback runs keeps the new dialog open.
+        /// An inline dialog closed and reopened in one dispatcher turn stays open (#13917).
         /// </summary>
         [Test]
         public async Task InlineDialogShouldStayOpenWhenReopenedImmediately()
         {
             var provider = Context.Render<MudDialogProvider>();
-            var dialog = Context.Render<TestInlineDialog>();
+            var host = Context.Render<InlineDialogReopenTest>();
+            await host.Find("button").ClickAsync();
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-dialog-container").Should().ContainSingle());
 
-            await dialog.Find("button").ClickAsync();
-            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-dialog-container").Should().HaveCount(1));
+            await host.InvokeAsync(host.Instance.CloseAndReopen);
 
-            await dialog.InvokeAsync(dialog.Instance.CloseAndReopen);
+            // The first dialog's close callback hops through the thread pool.
+            // Without the wait for the reopened content, the assertions below can run before it lands and miss the bug.
             await provider.InvokeAsync(() => { });
-
-            provider.FindAll("div.mud-dialog-container").Should().HaveCount(1);
+            await provider.WaitForAssertionAsync(() => provider.Find(".dialog-item").TextContent.Should().Be("Item 2"));
+            provider.FindAll("div.mud-dialog-container").Should().ContainSingle();
+            host.Instance.Visible.Should().BeTrue();
         }
 
         /// <summary>
