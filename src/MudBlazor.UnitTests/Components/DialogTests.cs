@@ -315,6 +315,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Closing a bound inline dialog outside an event handler re-renders the parent synchronously and must not throw or lose the result.
+        /// </summary>
+        [Test]
+        public async Task InlineDialog_CloseAsync_OutsideEventHandler()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var comp = Context.Render<InlineDialogIsVisibleStateTest>();
+            await comp.Find("button").ClickAsync();
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-dialog-container").Count.Should().Be(1));
+            var dialog = comp.FindComponent<MudDialog>();
+            var reference = await comp.InvokeAsync(() => dialog.Instance.ShowAsync());
+
+            await comp.InvokeAsync(() => dialog.Instance.CloseAsync(DialogResult.Ok(true)));
+
+            var result = await reference.Result;
+            result.Canceled.Should().BeFalse();
+            await provider.WaitForAssertionAsync(() => provider.Markup.Trim().Should().BeEmpty());
+        }
+
+        /// <summary>
         /// Based on bug report #3701 #3687
         /// Dialog inline should not be closed after any event inside
         /// </summary>

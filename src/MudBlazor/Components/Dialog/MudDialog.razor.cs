@@ -278,14 +278,17 @@ namespace MudBlazor
         /// <param name="result">The optional data to include.</param>
         public async Task CloseAsync(DialogResult? result = null)
         {
-            if (!IsInline || _reference is null)
+            var reference = _reference;
+            if (!IsInline || reference is null)
             {
                 return;
             }
 
-            await _visibleState.SetValueAsync(false);
-            _reference.Close(result);
+            // Clear the reference before raising VisibleChanged.
+            // Outside an event handler the parent re-renders synchronously, and OnAfterRenderAsync would otherwise re-enter this method and close without the result.
             _reference = null;
+            await _visibleState.SetValueAsync(false);
+            reference.Close(result);
         }
 
         /// <inheritdoc/>
