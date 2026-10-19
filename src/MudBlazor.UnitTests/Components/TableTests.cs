@@ -1870,7 +1870,7 @@ namespace MudBlazor.UnitTests.Components
         /// </summary>
         private static TableData<string> RecipePage(TableState state)
         {
-            var items = Enumerable.Range(state.Page * state.PageSize + 1, state.PageSize).Select(n => $"Recipe {n}").ToArray();
+            var items = Enumerable.Range((state.Page * state.PageSize) + 1, state.PageSize).Select(n => $"Recipe {n}").ToArray();
             return new TableData<string> { Items = items, TotalItems = 30 };
         }
 
