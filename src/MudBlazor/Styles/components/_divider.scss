@@ -94,3 +94,7 @@ $divider-middle-margin: 16px;
     padding: 0.75rem 0;
   }
 }
+
+.mud-divider-with-content-text:empty {
+  display: none;
+}
