@@ -1834,10 +1834,9 @@ namespace MudBlazor
                     };
 
                     // Cancel any prior request
-                    CancelServerDataToken();
+                    var token = CancelServerDataToken();
 
-                    Debug.Assert(_serverDataCancellationTokenSource is not null);
-                    _serverData = await VirtualizeServerData(state, _serverDataCancellationTokenSource.Token);
+                    _serverData = await VirtualizeServerData(state, token);
                     _currentRenderFilteredItemsCache = null;
 
                     Loading = false;
@@ -1858,11 +1857,9 @@ namespace MudBlazor
                 };
 
                 // Cancel any prior request
-                CancelServerDataToken();
+                var token = CancelServerDataToken();
 
                 Debug.Assert(ServerData is not null);
-                Debug.Assert(_serverDataCancellationTokenSource is not null);
-                var token = _serverDataCancellationTokenSource.Token;
                 GridData<T> serverData;
                 try
                 {
@@ -1952,18 +1949,28 @@ namespace MudBlazor
             }
         }
 
-        internal void CancelServerDataToken()
+        internal CancellationToken CancelServerDataToken()
         {
+            // Swap in a fresh source before cancelling so the next load never observes the cancelled one.
+            // Cancelling can resume a superseded load whose caller starts another load and replaces this source, so its token is read first.
+            var next = new CancellationTokenSource();
+            var token = next.Token;
+            var previous = _serverDataCancellationTokenSource;
+            _serverDataCancellationTokenSource = next;
             try
             {
-                _serverDataCancellationTokenSource?.Cancel();
-                _serverDataCancellationTokenSource?.Dispose();
+                previous?.Cancel();
             }
-            catch { /*ignored*/ }
+            catch
+            {
+                /*ignored*/
+            }
             finally
             {
-                _serverDataCancellationTokenSource = new CancellationTokenSource();
+                previous?.Dispose();
             }
+
+            return token;
         }
 
         internal void RemoveColumn(Column<T> column)
