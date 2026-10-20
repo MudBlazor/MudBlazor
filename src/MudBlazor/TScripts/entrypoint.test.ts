@@ -1,4 +1,4 @@
-import { test, expect, describe } from "bun:test";
+import { test, expect, describe, afterEach } from "bun:test";
 import "./entrypoint";
 
 test("window is defined", () => {
@@ -74,5 +74,22 @@ describe("legacy script globals", () => {
         let globalValue = (window as unknown as Record<string, unknown>)[name];
         expect(globalValue).not.toBeNull();
         expect(typeof globalValue).toBe(type);
+    });
+});
+
+describe("popover body zoom", () => {
+    afterEach(() => {
+        document.body.style.zoom = "";
+    });
+
+    test.each([
+        ["normal", 1],
+        ["1.25", 1.25],
+        ["80%", 0.8],
+    ])("converts body zoom %s to a scale factor", (zoom, expected) => {
+        document.body.style.zoom = zoom;
+
+        const helper = (window as unknown as { mudpopoverHelper: { getBodyZoom: () => number } }).mudpopoverHelper;
+        expect(helper.getBodyZoom()).toBe(expected);
     });
 });
