@@ -524,8 +524,11 @@ namespace MudBlazor
                 // Fetch raw paths from your updated mudInput.js method
                 var paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudInput.getFolderPaths", inputId);
 
-                // Fetch the files natively read in this batch
-                var nativeFiles = args.GetMultipleFiles(MaximumFileCount);
+                // Fix: Safely guard against throwing an exception if the file count exceeds the limit
+                var nativeFiles = args.FileCount > MaximumFileCount
+                    ? Array.Empty<IBrowserFile>() 
+                    : args.GetMultipleFiles(MaximumFileCount);
+
                 var list = new List<MudFilesWithFolderPath>();
 
                 for (int i = 0; i < nativeFiles.Count; i++)
