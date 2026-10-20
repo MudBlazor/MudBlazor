@@ -306,12 +306,12 @@ window.mudpopoverHelper = {
 
                 // bounding rect for flipping
                 boundingRect = {
-                    left: (positionleft - scrollLeft) * bodyZoom,
-                    top: (positiontop - scrollTop) * bodyZoom,
-                    right: positionleft * bodyZoom + 1,
-                    bottom: positiontop * bodyZoom + 1,
-                    width: bodyZoom,
-                    height: bodyZoom
+                    left: positionleft - scrollLeft,
+                    top: positiontop - scrollTop,
+                    right: positionleft + 1,
+                    bottom: positiontop + 1,
+                    width: 1,
+                    height: 1
                 };
             }
 
@@ -623,12 +623,14 @@ window.mudpopoverHelper = {
             if (isPositionFixed) {
                 popoverContentNode.style['position'] = 'fixed';
             }
-            left = (left + offsetX) / bodyZoom;
-            top = (top + offsetY) / bodyZoom;
+            let scrollX = 0;
+            let scrollY = 0;
             if (!isPositionFixed && !classList.contains('mud-popover-fixed')) {
-                left += window.scrollX;
-                top += window.scrollY;
+                scrollX = window.scrollX;
+                scrollY = window.scrollY;
             }
+            left = (left + offsetX + scrollX) / bodyZoom;
+            top = (top + offsetY + scrollY) / bodyZoom;
             offsetX = 0;
             offsetY = 0;
 

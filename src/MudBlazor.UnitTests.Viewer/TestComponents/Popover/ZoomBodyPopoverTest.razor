@@ -8,7 +8,8 @@
     .zoom-popover-wrapper {
         display: flex;
         justify-content: center;
-        margin-top: 200px;
+        margin-top: 700px;
+        margin-bottom: 700px;
     }
 
     .zoom-popover-select {
@@ -19,7 +20,7 @@
 <MudStack Spacing="2">
     <MudText Typo="Typo.h6">Popover with body zoom</MudText>
     <MudText Typo="Typo.body2">
-        Open the select and verify that the dropdown remains aligned with the field when the body uses zoom: 0.6.
+        Scroll to the select, open it, and verify that the dropdown remains aligned with the field when the body uses zoom: 0.6.
     </MudText>
 </MudStack>
 
@@ -65,7 +66,7 @@
 </div>
 
 @code {
-    public static string __description__ = "MudSelect dropdown should stay aligned with its field when body zoom is set to 0.6.";
+    public static string __description__ = "After scrolling, the MudSelect dropdown should stay aligned with its field when body zoom is set to 0.6.";
 
     private string? _value;
 }
