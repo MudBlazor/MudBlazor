@@ -64,16 +64,19 @@ describe("popover body zoom", () => {
         expect(helper.getBodyZoom()).toBe(expected);
     });
 
-    test("converts viewport position and scroll into body CSS pixels", () => {
-        document.body.style.zoom = "0.6";
+    test.each([
+        ["0.6", "666.666667px", "2000px"],
+        ["1.5", "266.666667px", "800px"],
+    ])("converts viewport position and scroll into body CSS pixels at zoom %s", (zoom, expectedLeft, expectedTop) => {
+        document.body.style.zoom = zoom;
         Object.defineProperty(window, "scrollX", { configurable: true, value: 300 });
         Object.defineProperty(window, "scrollY", { configurable: true, value: 1000 });
         const { popoverNode, content } = createPopover();
 
         helper.placePopover(popoverNode);
 
-        expect(content.style.left).toBe("666.666667px");
-        expect(content.style.top).toBe("2000px");
+        expect(content.style.left).toBe(expectedLeft);
+        expect(content.style.top).toBe(expectedTop);
     });
 
     test("converts relative and adaptive widths into body CSS pixels", () => {
@@ -88,19 +91,22 @@ describe("popover body zoom", () => {
         expect(adaptive.content.style.minWidth).toBe("600px");
     });
 
-    test("converts clamped max-height into body CSS pixels", () => {
-        document.body.style.zoom = "0.5";
+    test.each([
+        ["0.5", 1400, "1088px"],
+        ["1.5", 700, "362.6666666666667px"],
+    ])("converts clamped max-height into body CSS pixels at zoom %s", (zoom, height, expectedMaxHeight) => {
+        document.body.style.zoom = zoom;
         const { popoverNode, content } = createPopover("mud-popover-open mud-popover-top-left mud-popover-anchor-top-left mud-popover-overflow-flip-always");
         const list = document.createElement("div");
         list.className = "mud-list";
         content.appendChild(list);
-        Object.defineProperty(content, "offsetHeight", { configurable: true, value: 700 });
-        Object.defineProperty(list, "offsetHeight", { configurable: true, value: 700 });
+        Object.defineProperty(content, "offsetHeight", { configurable: true, value: height });
+        Object.defineProperty(list, "offsetHeight", { configurable: true, value: height });
 
         helper.placePopover(popoverNode);
 
-        expect(content.style.maxHeight).toBe("1088px");
-        expect(list.style.maxHeight).toBe("1088px");
+        expect(content.style.maxHeight).toBe(expectedMaxHeight);
+        expect(list.style.maxHeight).toBe(expectedMaxHeight);
     });
 
     test("keeps position-override coordinates in viewport space", () => {

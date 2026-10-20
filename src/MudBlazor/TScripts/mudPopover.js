@@ -308,8 +308,8 @@ window.mudpopoverHelper = {
                 boundingRect = {
                     left: positionleft - scrollLeft,
                     top: positiontop - scrollTop,
-                    right: positionleft + 1,
-                    bottom: positiontop + 1,
+                    right: positionleft - scrollLeft + 1,
+                    bottom: positiontop - scrollTop + 1,
                     width: 1,
                     height: 1
                 };
@@ -367,8 +367,8 @@ window.mudpopoverHelper = {
 
                 // flip routine off transform origin, sets selector to an axis to flip on if needed
                 if (!selector) {
-                    const popoverHeight = popoverContentNode.offsetHeight;
-                    const popoverWidth = popoverContentNode.offsetWidth;
+                    const popoverHeight = popoverContentNode.offsetHeight * bodyZoom;
+                    const popoverWidth = popoverContentNode.offsetWidth * bodyZoom;
                     // For mud-popover-top-left
 
                     if (classList.contains('mud-popover-top-left')) {
@@ -603,8 +603,8 @@ window.mudpopoverHelper = {
                         let shouldClamp = false;
 
                         if (isFlippedUpward) {
-                            availableHeight = anchorY - overflowPadding - popoverNode.offsetHeight;
-                            shouldClamp = availableHeight < popoverContentNode.offsetHeight;
+                            availableHeight = anchorY - overflowPadding - (popoverNode.offsetHeight * bodyZoom);
+                            shouldClamp = availableHeight < (popoverContentNode.offsetHeight * bodyZoom);
                             if (shouldClamp) {
                                 top = overflowPadding;
                                 offsetY = 0;
@@ -613,7 +613,7 @@ window.mudpopoverHelper = {
                             // Measure the space above the anchor, so an anchor near the viewport bottom doesn't shrink the list (#13998).
                             // Without room for the minimum height it falls through, rather than pushing a short list above the viewport.
                             availableHeight = anchorY - minTop;
-                            shouldClamp = popoverContentNode.offsetHeight > availableHeight;
+                            shouldClamp = (popoverContentNode.offsetHeight * bodyZoom) > availableHeight;
                             if (shouldClamp) {
                                 top = minTop;
                                 offsetY = 0;
@@ -622,7 +622,7 @@ window.mudpopoverHelper = {
                             // Space from popover top down to bottom of screen
                             const popoverTopEdge = top + offsetY;
                             availableHeight = window.innerHeight - popoverTopEdge - overflowPadding;
-                            shouldClamp = popoverContentNode.offsetHeight > availableHeight;
+                            shouldClamp = (popoverContentNode.offsetHeight * bodyZoom) > availableHeight;
                         }
 
                         if (shouldClamp) {
