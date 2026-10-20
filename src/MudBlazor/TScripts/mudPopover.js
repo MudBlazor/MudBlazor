@@ -31,6 +31,20 @@ window.mudpopoverHelper = {
     baseTooltipZIndex: Number.parseInt(getComputedStyle(document.documentElement)
         .getPropertyValue('--mud-zindex-tooltip')) || 1600,
 
+    getBodyZoom: function () {
+        const zoom = window.getComputedStyle(document.body).zoom;
+        if (!zoom || zoom === 'normal') {
+            return 1;
+        }
+
+        const value = Number.parseFloat(zoom);
+        if (!Number.isFinite(value) || value <= 0) {
+            return 1;
+        }
+
+        return zoom.endsWith('%') ? value / 100 : value;
+    },
+
     // static set of replacement values
     flipClassReplacements: {
         'top': {
@@ -280,6 +294,7 @@ window.mudpopoverHelper = {
             const isFlipAlways = classList.contains('mud-popover-overflow-flip-always');
             const zIndexAuto = popoverNodeStyle.getPropertyValue('z-index') === 'auto';
             const classListArray = Array.from(classList);
+            const bodyZoom = window.mudpopoverHelper.getBodyZoom();
 
             if (isPositionOverride) {
                 const attrY = popoverContentNode.getAttribute('data-pc-y');
@@ -291,12 +306,12 @@ window.mudpopoverHelper = {
 
                 // bounding rect for flipping
                 boundingRect = {
-                    left: positionleft - scrollLeft,
-                    top: positiontop - scrollTop,
-                    right: positionleft + 1,
-                    bottom: positiontop + 1,
-                    width: 1,
-                    height: 1
+                    left: (positionleft - scrollLeft) * bodyZoom,
+                    top: (positiontop - scrollTop) * bodyZoom,
+                    right: positionleft * bodyZoom + 1,
+                    bottom: positiontop * bodyZoom + 1,
+                    width: bodyZoom,
+                    height: bodyZoom
                 };
             }
 
@@ -313,10 +328,10 @@ window.mudpopoverHelper = {
             popoverContentNode.style['max-width'] = 'none';
             popoverContentNode.style['min-width'] = 'none';
             if (isRelativeWidth) {
-                popoverContentNode.style['max-width'] = (boundingRect.width) + 'px';
+                popoverContentNode.style['max-width'] = (boundingRect.width / bodyZoom) + 'px';
             }
             else if (isAdaptiveWidth) {
-                popoverContentNode.style['min-width'] = (boundingRect.width) + 'px';
+                popoverContentNode.style['min-width'] = (boundingRect.width / bodyZoom) + 'px';
             }
 
             // flipping logic
@@ -612,8 +627,8 @@ window.mudpopoverHelper = {
 
                         if (shouldClamp) {
                             const newMaxHeight = Math.max(availableHeight, minVisibleHeight);
-                            popoverContentNode.style.maxHeight = `${newMaxHeight}px`;
-                            listChild.style.maxHeight = `${newMaxHeight}px`;
+                            popoverContentNode.style.maxHeight = `${newMaxHeight / bodyZoom}px`;
+                            listChild.style.maxHeight = `${newMaxHeight / bodyZoom}px`;
                             popoverContentNode.mudHeight = "setmaxheight";
                             if (popoverContentNode.mudScrollTop) {
                                 listChild.scrollTop = popoverContentNode.mudScrollTop;
@@ -627,10 +642,14 @@ window.mudpopoverHelper = {
             if (isPositionFixed) {
                 popoverContentNode.style['position'] = 'fixed';
             }
-            else if (!classList.contains('mud-popover-fixed')) {
-                offsetX += window.scrollX;
-                offsetY += window.scrollY;
+            left = (left + offsetX) / bodyZoom;
+            top = (top + offsetY) / bodyZoom;
+            if (!isPositionFixed && !classList.contains('mud-popover-fixed')) {
+                left += window.scrollX;
+                top += window.scrollY;
             }
+            offsetX = 0;
+            offsetY = 0;
 
             popoverContentNode.style['left'] = (left + offsetX) + 'px';
             popoverContentNode.style['top'] = (top + offsetY) + 'px';
