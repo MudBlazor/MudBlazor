@@ -1030,5 +1030,18 @@ namespace MudBlazor.UnitTests.Components
             }, TimeSpan.FromSeconds(2));
         }
 
+        [Test]
+        public void MudFileUpload_FolderWithSingleFileGeneric_ShouldNotRenderAttributes()
+        {
+            // Render with single-file T="IBrowserFile" but Folder="true"
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.Disabled, false));
+
+            // Assert: Verify that the browser attributes are completely stripped to block selection
+            var inputFile = comp.Find("input[type=file]");
+            inputFile.HasAttribute("webkitdirectory").Should().BeFalse();
+            inputFile.HasAttribute("multiple").Should().BeFalse();
+        }
     }
 }

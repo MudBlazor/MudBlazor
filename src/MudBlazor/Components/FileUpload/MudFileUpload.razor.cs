@@ -507,41 +507,32 @@ namespace MudBlazor
             if (GetDisabledState())
                 return;
 
-            // 1. Instantly capture the active input index before state shifts
             int currentInputIndex = _numberOfActiveFileInputs;
             if (currentInputIndex < 1)
             {
                 currentInputIndex = 1;
             }
 
-            // Clear past validation states and register the strict folder/generic limit violation
-            bool isSingleFileMode = typeof(T) == typeof(IBrowserFile);
-            if (Folder && isSingleFileMode && args.FileCount > 1)
+            // Fix: Defensive validation - check file limits before calling GetMultipleFiles
+            if (args.FileCount > MaximumFileCount)
             {
-                ValidationErrors.Clear();
-                // Natively inject the literal text to satisfy the validation bounds checking instantly
-                ValidationErrors.Add("The file selection exceeds the maximum allowed count of 1.");
-
-                // Triggers MudBlazor's visual error updates
-                FieldChanged(null);
-                await BeginValidateAsync();
+                // Utilize MudBlazor's localized error channel safely using the correct key name
+                var errorMessage = Localizer[Resources.LanguageResource.MudFileUpload_MaximumFileCountExceeded, args.FileCount, MaximumFileCount];
+                _validationErrors.Add(errorMessage);
+                await NotifyValueChangedAsync(default);
                 return;
             }
 
             IReadOnlyList<MudFilesWithFolderPath> combinedList = new List<MudFilesWithFolderPath>();
 
-            // 2. Fetch the path metadata right away if folder mode is active
-            if (Folder)
+            if (Folder && typeof(T) != typeof(IBrowserFile))
             {
                 var inputId = GetInputId(currentInputIndex);
                 var paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudInput.getFolderPaths", inputId);
 
-                // Defensive validation fix: Fallback safely if count exceeds limit
-                var nativeFiles = args.FileCount > MaximumFileCount
-                    ? Array.Empty<IBrowserFile>()
-                    : args.GetMultipleFiles(MaximumFileCount);
-
+                var nativeFiles = args.GetMultipleFiles(MaximumFileCount);
                 var list = new List<MudFilesWithFolderPath>();
+
                 for (int i = 0; i < nativeFiles.Count; i++)
                 {
                     string path = (paths != null && i < paths.Count) ? paths[i] : string.Empty;
@@ -551,19 +542,15 @@ namespace MudBlazor
                 combinedList = list;
             }
 
-            // 3. Increment file inputs slot counter to preserve loop integrity
             _numberOfActiveFileInputs++;
-
-            // 4. Execute native core file processing safely
             await ProcessFileChangeAsync(args);
 
-            // 5. Fire our single unified callback if the collection has folder files
-            if (Folder && combinedList.Count > 0 && FilesWithFolderPathsChanged.HasDelegate)
+            // Fire callback only if files passed the internal process validation layers cleanly
+            if (Folder && combinedList.Count > 0 && FilesWithFolderPathsChanged.HasDelegate && !HasErrors)
             {
                 await FilesWithFolderPathsChanged.InvokeAsync(combinedList);
             }
         }
-
 
         private async Task ProcessFileChangeAsync(InputFileChangeEventArgs args)
         {
