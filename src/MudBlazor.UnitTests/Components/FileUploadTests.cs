@@ -930,14 +930,6 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFileUpload_FolderPathsChanged_JSInterop_Test()
         {
-            // Fix 1: Pass an expression to Setup to catch any string input ID argument
-            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
-                "mudInput.getFolderPaths",
-                checkedArguments => true
-            );
-            jsMock.SetResult(new List<string> { "folder/file1.txt", "folder/file2.txt" });
-
-            // Fix 2: Remove the '?' to fix the nullable annotations context error
             IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
 
             var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
@@ -945,26 +937,39 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Disabled, false)
                 .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
 
-            // 2. Act: Target the child component element and dispatch the files
-            var inputFileComponent = comp.FindComponent<InputFile>();
+            // Fix: Invoke the non-public GetInputId method via reflection to get the exact expected element ID
+            var method = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
+                .GetMethod("GetInputId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
+            var expectedInputId = method?.Invoke(comp.Instance, new object[] { 1 }) as string ?? "mud-file-input-1";
+
+            // Enforce strict argument verification matching the expected active input element ID
+            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
+                "mudInput.getFolderPaths",
+                invocation => invocation.Arguments.Count > 0 && (invocation.Arguments[0] as string) == expectedInputId
+            );
+            jsMock.SetResult(new List<string> { "folder/file1.txt", "folder/file2.txt" });
+
+            // 2. Act: Trigger upload batch
+            var inputFileComponent = comp.FindComponent<InputFile>();
             var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
             var file2 = InputFileContent.CreateFromText("file2 content", "file2.txt");
 
             inputFileComponent.UploadFiles(file1, file2);
 
-            // 3. Assert: Allow the async render pipeline to catch up with WaitForAssertion
+            // 3. Assert: Verify the exact mock was triggered with the exact inputId parameter
             comp.WaitForAssertion(() =>
             {
                 jsMock.VerifyInvoke("mudInput.getFolderPaths");
 
                 uploadedItems.Should().NotBeNull();
                 uploadedItems.Count.Should().Be(2);
-
                 uploadedItems.ElementAt(0).RelativePath.Should().Be("folder/file1.txt");
                 uploadedItems.ElementAt(0).File.Name.Should().Be("file1.txt");
             }, TimeSpan.FromSeconds(2));
         }
+
+
 
         [Test]
         public void MudFileUpload_FolderPathsChanged_EmptyFileInputs_Fallback_Test()

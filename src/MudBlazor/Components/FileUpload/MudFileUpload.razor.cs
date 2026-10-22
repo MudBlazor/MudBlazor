@@ -504,16 +504,20 @@ namespace MudBlazor
 
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
-            // 1. Always increment at the start to ensure input rotation for all uploads (even rejected ones)
-            _numberOfActiveFileInputs++;
-
             if (GetDisabledState())
                 return;
 
-            // 2. Capture the index of the input element that raised this change event
+            // 1. Instantly capture the active input index before the increment shifts it
             int currentInputIndex = _numberOfActiveFileInputs;
+            if (currentInputIndex < 1)
+            {
+                currentInputIndex = 1;
+            }
 
-            // 3. Centralized validation: If file count exceeds the limit, let ProcessFileChangeAsync handle errors
+            // 2. Increment immediately to maintain core input rotation on all selections
+            _numberOfActiveFileInputs++;
+
+            // 3. Centralized validation check
             if (args.FileCount > MaximumFileCount)
             {
                 await ProcessFileChangeAsync(args);
@@ -522,7 +526,7 @@ namespace MudBlazor
 
             IReadOnlyList<MudFilesWithFolderPath> combinedList = new List<MudFilesWithFolderPath>();
 
-            // 4. Perform folder mapping safely only after passing the centralized count check
+            // 4. Map paths using the accurately preserved currentInputIndex
             if (Folder && typeof(T) != typeof(IBrowserFile))
             {
                 var inputId = GetInputId(currentInputIndex);
@@ -542,7 +546,6 @@ namespace MudBlazor
 
             await ProcessFileChangeAsync(args);
 
-            // 5. Fire the single unified callback if valid folder files exist
             if (Folder && combinedList.Count > 0 && FilesWithFolderPathsChanged.HasDelegate && !HasErrors)
             {
                 await FilesWithFolderPathsChanged.InvokeAsync(combinedList);
