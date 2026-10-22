@@ -43,6 +43,7 @@ Reproductions:
 ### Project Maintainers
 - A "maintainer" is anyone on this list, whatever their association shows: Anu6is, danielchalmers, digitaldirk, Flaflo, Garderoben, HClausing, henon, iamtechnyx, igotinfected, ingkor, JonBunator, jperson2000, just-the-benno, lindespang, mckaragoz, meenzen, mikes-gh, ralvarezing, ScarletKuro, tjscience, tungi52, vernou, versile2, xC0dex. Anyone else with an association of "COLLABORATOR", "MEMBER", or "OWNER" is a maintainer too.
 - Check every author, commenter, reviewer and assignee against that list before deciding whether a maintainer created a thread, is assigned to it, or is involved. Many maintainers keep their organization membership private, so their association shows "CONTRIBUTOR"; the list wins.
+- Begin every summary with the thread author's login and whether it appears in the list above, in the form `Author: <login> (on the maintainer list: yes/no).` Settle that by looking the login up in the list, not by reading the association.
 
 ## 3. Labeling Policy
 
@@ -226,6 +227,7 @@ When NOT to edit:
 ### General Inactivity Rules
 - Skip closed threads and threads assigned to or created by maintainers or bots, checking the author and assignees against the Project Maintainers list rather than their association: never mark them `stale` or close them under this section, however long they've been inactive. A maintainer commenting on a thread, or changing its labels, does not exempt it.
 - When an open thread assigned to or created by a maintainer has a `stale` label that a bot added, removing it is required, including on draft pull requests. This authorizes the removal without a new timeline event.
+- When an open thread has a `stale` label that a bot added, no qualifying activity has happened since, and the thread meets none of the stale conditions below for the kind of thread it is, as though it had no `stale` label, removing it is required. This authorizes the removal without a new timeline event. A thread that still meets a condition keeps its label.
 - Activity means any timeline event, including comments, commits, and reviews, EXCEPT:
   - Any action by a bot.
   - Labeled, unlabeled, renamed, reviewer-removed, and assignee-removed events, and project board changes, whoever made them, maintainers included. For example, a maintainer removing `good first issue` is neither activity nor a reason to skip the thread.
