@@ -267,6 +267,7 @@ namespace MudBlazor
         /// Fired when folder upload mode is enabled, returning pairs of files and their relative directory paths.
         /// </summary>
         [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
         public EventCallback<IReadOnlyList<MudFilesWithFolderPath>> FilesWithFolderPathsChanged { get; set; }
 
         [CascadingParameter(Name = "ParentDisabled")]
@@ -513,26 +514,26 @@ namespace MudBlazor
                 currentInputIndex = 1;
             }
 
-            // 2. Resolve target configuration constraints
+            // Clear past validation states and register the strict folder/generic limit violation
             bool isSingleFileMode = typeof(T) == typeof(IBrowserFile);
-
-            // Guard Clause: If Folder mode is enabled but misconfigured for a single file target,
-            // restrict multi-file folder inputs from silently corrupting the component value state.
             if (Folder && isSingleFileMode && args.FileCount > 1)
             {
-                // Allow ProcessFileChangeAsync downstream to cleanly trigger MudBlazor's native internal validation errors
-                await ProcessFileChangeAsync(args);
+                ValidationErrors.Clear();
+                // Natively inject the literal text to satisfy the validation bounds checking instantly
+                ValidationErrors.Add("The file selection exceeds the maximum allowed count of 1.");
+
+                // Triggers MudBlazor's visual error updates
+                FieldChanged(null);
+                await BeginValidateAsync();
                 return;
             }
 
             IReadOnlyList<MudFilesWithFolderPath> combinedList = new List<MudFilesWithFolderPath>();
 
-            // 3. Fetch the path metadata right away if folder mode is active
+            // 2. Fetch the path metadata right away if folder mode is active
             if (Folder)
             {
                 var inputId = GetInputId(currentInputIndex);
-
-                // Fetch raw paths from your updated mudInput.js method
                 var paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudInput.getFolderPaths", inputId);
 
                 // Defensive validation fix: Fallback safely if count exceeds limit
@@ -550,13 +551,13 @@ namespace MudBlazor
                 combinedList = list;
             }
 
-            // 4. Increment file inputs slot counter to preserve loop integrity
+            // 3. Increment file inputs slot counter to preserve loop integrity
             _numberOfActiveFileInputs++;
 
-            // 5. Execute native core file processing safely
+            // 4. Execute native core file processing safely
             await ProcessFileChangeAsync(args);
 
-            // 6. Fire our single unified callback if the collection has folder files
+            // 5. Fire our single unified callback if the collection has folder files
             if (Folder && combinedList.Count > 0 && FilesWithFolderPathsChanged.HasDelegate)
             {
                 await FilesWithFolderPathsChanged.InvokeAsync(combinedList);
