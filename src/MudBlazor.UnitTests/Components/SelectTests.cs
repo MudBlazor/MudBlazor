@@ -12,6 +12,9 @@ using MudBlazor.UnitTests.TestData;
 using NUnit.Framework;
 using static MudBlazor.UnitTests.TestComponents.Select.SelectWithEnumTest;
 
+// Tests cover the obsolete Text/TextChanged (removed in v10, #12556) which is still supported in v9.
+#pragma warning disable CS0618
+
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]

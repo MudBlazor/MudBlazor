@@ -1,11 +1,11 @@
 ﻿<MudPaper Width="300px" Elevation="0">
     <MudTreeView T="string" Hover SelectionMode="@SelectionMode.ToggleSelection" Color="Color.Tertiary">
-        <MudTreeViewItem Class="item-config" Text="config" @bind-Expanded="_configExpanded" Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
-            <MudTreeViewItem Class="item-launch" Text="launch.json" @bind-Selected="_launchSelected" Icon="@Icons.Custom.FileFormats.FileCode" />
-            <MudTreeViewItem Class="item-tasks" Text="tasks.json" @bind-Selected="_tasksSelected" Icon="@Icons.Custom.FileFormats.FileCode" />
+        <MudTreeViewItem Class="item-config" Value='"config"' @bind-Expanded="_configExpanded" Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
+            <MudTreeViewItem Class="item-launch" Value='"launch.json"' @bind-Selected="_launchSelected" Icon="@Icons.Custom.FileFormats.FileCode" />
+            <MudTreeViewItem Class="item-tasks" Value='"tasks.json"' @bind-Selected="_tasksSelected" Icon="@Icons.Custom.FileFormats.FileCode" />
         </MudTreeViewItem>
-        <MudTreeViewItem Class="item-images" Text="images" @bind-Expanded="_imagesExpanded" Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
-            <MudTreeViewItem Class="item-logo" Text="logo.png" @bind-Selected="_logoSelected" Icon="@Icons.Custom.FileFormats.FileImage" />
+        <MudTreeViewItem Class="item-images" Value='"images"' @bind-Expanded="_imagesExpanded" Icon="@Icons.Custom.Uncategorized.Folder" IconExpanded="@Icons.Custom.Uncategorized.FolderOpen">
+            <MudTreeViewItem Class="item-logo" Value='"logo.png"' @bind-Selected="_logoSelected" Icon="@Icons.Custom.FileFormats.FileImage" />
         </MudTreeViewItem>
     </MudTreeView>
 </MudPaper>

@@ -283,7 +283,7 @@ namespace MudBlazor.UnitTests.Components
         public void Chip_UserAttributes_OverrideComputedClassAndStyle()
         {
             var comp = Context.Render<MudChip<string>>(parameters => parameters
-                .Add(x => x.Text, "Chip")
+                .Add(x => x.Value, "Chip")
                 .Add(x => x.Style, "color:blue")
                 .Add(x => x.UserAttributes, new Dictionary<string, object>
                 {
@@ -304,7 +304,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var clicked = false;
             var comp = Context.Render<MudChip<string>>(parameters => parameters
-                .Add(x => x.Text, "Chip")
+                .Add(x => x.Value, "Chip")
                 .Add(x => x.Disabled, true)
                 .Add(x => x.OnClick, () => clicked = true));
 

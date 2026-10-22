@@ -25,7 +25,7 @@ namespace MudBlazor
         private TimeProvider TimeProvider { get; set; } = null!;
 
         /// <summary>
-        /// The number of milliseconds to wait before updating the <see cref="MudBaseInput{T}.Text"/> value.
+        /// The number of milliseconds to wait before updating the input's <see cref="MudBaseInput{T}.Value"/>.
         /// </summary>
         [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
@@ -35,7 +35,7 @@ namespace MudBlazor
         /// Occurs when the <see cref="DebounceInterval"/> has elapsed.
         /// </summary>
         /// <remarks>
-        /// The value in <see cref="MudBaseInput{T}.Text"/> is included in this event.
+        /// The input's text is included in this event.
         /// </remarks>
         [Parameter]
         public EventCallback<string> OnDebounceIntervalElapsed { get; set; }

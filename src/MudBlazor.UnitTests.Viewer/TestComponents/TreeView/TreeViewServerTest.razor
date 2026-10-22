@@ -1,7 +1,6 @@
 ﻿<MudTreeView ExpandOnClick="true" ServerData="LoadServerData" Items="_treeItems" Width="350px">
     <ItemTemplate>
-        <MudTreeViewItem 
-            Text="@context.Text"
+        <MudTreeViewItem
             Value="@context.Value"
             @bind-Items="context.Children"
             Icon="@context.Icon"
