@@ -3,11 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -20,6 +23,7 @@ namespace MudBlazor
         internal string? _valueString;
         internal double? _valueNumber;
         internal Enum? _valueEnum;
+        internal IReadOnlyCollection<Enum?>? _valueEnums;
         internal bool? _valueBool;
         internal DateTime? _valueDateOnlyForPicker;
         internal DateTime? _valueDateTimeForPicker;
@@ -36,6 +40,7 @@ namespace MudBlazor
         internal EventCallback<string> StringValueChanged => EventCallback.Factory.Create<string>(this, StringValueChangedAsync);
         internal EventCallback<double?> NumberValueChanged => EventCallback.Factory.Create<double?>(this, NumberValueChangedAsync);
         internal EventCallback<Enum> EnumValueChanged => EventCallback.Factory.Create<Enum>(this, EnumValueChangedAsync);
+        internal EventCallback<IReadOnlyCollection<Enum?>?> EnumValuesChanged => EventCallback.Factory.Create<IReadOnlyCollection<Enum?>?>(this, EnumValuesChangedAsync);
         internal EventCallback<bool?> BoolValueChanged => EventCallback.Factory.Create<bool?>(this, BoolValueChangedAsync);
         internal EventCallback<DateTime?> DateValueChanged => EventCallback.Factory.Create<DateTime?>(this, DateValueChangedAsync);
         internal EventCallback<TimeSpan?> TimeValueChanged => EventCallback.Factory.Create<TimeSpan?>(this, TimeValueChangedAsync);
@@ -57,6 +62,8 @@ namespace MudBlazor
                 _valueString = _filterDefinition.Value?.ToString();
             else if (fieldType.IsNumber)
                 _valueNumber = _filterDefinition.Value == null ? null : Convert.ToDouble(_filterDefinition.Value);
+            else if (fieldType.IsEnum && _filterDefinition.Operator == FilterOperator.Enum.IsAnyOf)
+                _valueEnums = ToEnumValues(_filterDefinition.Value);
             else if (fieldType.IsEnum)
                 _valueEnum = (Enum?)_filterDefinition.Value;
             else if (fieldType.IsBoolean)
@@ -96,8 +103,18 @@ namespace MudBlazor
 
         internal Task OperatorChangedAsync(string? value)
         {
-            _filterDefinition.Operator = value;
+            SetOperator(value);
             return ApplyChangesAsync();
+        }
+
+        internal void SetOperator(string? value)
+        {
+            if (FilterOperator.ChangesValueShape(_filterDefinition.Operator, value))
+            {
+                _filterDefinition.Value = null;
+            }
+
+            _filterDefinition.Operator = value;
         }
 
         internal Task StringValueChangedAsync(string value)
@@ -120,6 +137,24 @@ namespace MudBlazor
             _filterDefinition.Value = _valueEnum;
             return ApplyChangesAsync();
         }
+
+        internal Task EnumValuesChangedAsync(IReadOnlyCollection<Enum?>? values)
+        {
+            // An empty selection is stored as null so the column does not show as filtered.
+            _valueEnums = values;
+            _filterDefinition.Value = values is { Count: > 0 } ? values : null;
+            return ApplyChangesAsync();
+        }
+
+        // The select hands back its own collection, which is reused as is so its SelectedValues parameter keeps the same instance across renders.
+        // Other collections, such as a List<TEnum> set in code, are copied into the shape the select expects.
+        internal static IReadOnlyCollection<Enum?>? ToEnumValues(object? value) => value switch
+        {
+            IReadOnlyCollection<Enum?> values => values,
+            IEnumerable values => values.Cast<Enum?>().ToArray(),
+            Enum single => [single],
+            _ => null
+        };
 
         internal Task BoolValueChangedAsync(bool? value)
         {
@@ -192,20 +227,29 @@ namespace MudBlazor
         }
 
         // The column filter menu's keyboard shortcuts: Enter applies the filter and Escape clears it.
-        // Both paths refresh the grid themselves, so nothing here relies on an automatic render.
-        private Task KeyDownAsync(KeyboardEventArgs args)
+        // Both paths refresh the grid themselves, but they close the menu only after an await when the grid loads server data or FilterChanged is asynchronous.
+        // This receiver renders nothing, so the header cell that owns the menu is rendered once they finish.
+        private async Task KeyDownAsync(KeyboardEventArgs args)
         {
-            if (_column is null)
+            var headerCell = _column?.FilterContext.HeaderCell;
+            if (headerCell is null)
             {
-                return Task.CompletedTask;
+                return;
             }
 
-            return args.Key switch
+            switch (args.Key)
             {
-                "Enter" => _column.FilterContext.HeaderCell?.ApplyFilterAsync() ?? Task.CompletedTask,
-                "Escape" => _column.FilterContext.HeaderCell?.ClearFilterAsync() ?? Task.CompletedTask,
-                _ => Task.CompletedTask
-            };
+                case "Enter":
+                    await headerCell.ApplyFilterAsync();
+                    break;
+                case "Escape":
+                    await headerCell.ClearFilterAsync();
+                    break;
+                default:
+                    return;
+            }
+
+            ((IMudStateHasChanged)headerCell).StateHasChanged();
         }
 
         // Regroups the data after a filter edit and, in Simple mode, raises FilterChanged.

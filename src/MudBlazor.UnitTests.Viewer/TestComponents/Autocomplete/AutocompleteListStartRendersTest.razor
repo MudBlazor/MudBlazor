@@ -32,7 +32,7 @@
     private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5, token);
+        await Task.Yield();
         return _states.Where(x => x.Contains("some string", StringComparison.InvariantCultureIgnoreCase));
     }
 }

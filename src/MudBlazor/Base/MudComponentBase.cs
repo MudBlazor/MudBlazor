@@ -15,7 +15,10 @@ namespace MudBlazor
     public abstract class MudComponentBase : ComponentBaseWithState, IMudStateHasChanged
     {
         private ILogger? _logger;
-        private readonly string _id = Identifier.Create("mudinput");
+        private string? _generatedId;
+
+        // Only inputs ever read this, so generating it per component instance would be wasted on most of the library.
+        private string Id => _generatedId ??= Identifier.Create("mudinput");
 
         [Inject]
         private ILoggerFactory LoggerFactory { get; set; } = null!;
@@ -79,8 +82,8 @@ namespace MudBlazor
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
         public string FieldId => UserAttributes.TryGetValue("id", out var id) && id is not null
-            ? id.ToString() ?? _id
-            : _id;
+            ? id.ToString() ?? Id
+            : Id;
 
         /// <summary>
         /// Resolves the element ID to use for JavaScript interop, honoring a consumer-supplied <c>id</c>.

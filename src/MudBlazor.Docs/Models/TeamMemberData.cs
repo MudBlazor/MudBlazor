@@ -57,7 +57,7 @@ namespace MudBlazor.Docs.Models
             {
                 Name = "Riley Nielsen",
                 From = "Minnesota, United States",
-                GitHub = "Mr-Technician",
+                GitHub = "iamtechnyx",
                 LinkedIn = "https://www.linkedin.com/in/riley-nielsen-a57399223/",
                 Bio = null,
                 Team = Team.Core

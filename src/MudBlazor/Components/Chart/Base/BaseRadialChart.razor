@@ -23,7 +23,7 @@
                   class="mud-chart-serie"
                   fill-opacity="@ChartOptions.FillOpacity.ToStr()"
                   stroke="@GetColor(item.Index)"
-                  stroke-width="@(ChartOptions is IHasDataPointOptions dataPoint ? dataPoint.StrokeWidth : 0)"
+                  stroke-width="@(ChartOptions is IHasDataPointOptions dataPoint ? dataPoint.StrokeWidth.ToStr() : "0")"
                   fill="@GetColor(item.Index)"
                   d="@item.Data"
                   pointer-events="@(ChartOptions is IHasDataPointOptions ? "none" : "all")"

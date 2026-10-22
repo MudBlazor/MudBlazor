@@ -5,7 +5,22 @@
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
 <ul @attributes="UserAttributes" class="@Classname" style="@Stylename">
-    <CascadingValue Value="@MudTreeRoot" IsFixed="true">
+    @* Nested trees and their items already receive the root from the root tree's cascade. *@
+    @if (MudTreeRoot == this)
+    {
+        <CascadingValue Value="@MudTreeRoot" IsFixed="true">
+            @RenderItems
+        </CascadingValue>
+    }
+    else
+    {
+        @RenderItems
+    }
+</ul>
+
+@code {
+    private void RenderItems(RenderTreeBuilder __builder)
+    {
         <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="default(ITreeItemData<T>)" IsFixed="true">
             @* A tree rendered inside a virtualized row must not inherit that row's context, or its items would render as virtualized rows of the outer tree. *@
             <CascadingValue Name="@MudTreeViewCascadingValues.ItemContext" Value="default(TreeViewItemContext<T>)" IsFixed="true">
@@ -35,5 +50,5 @@
                 }
             </CascadingValue>
         </CascadingValue>
-    </CascadingValue>
-</ul>
+    }
+}

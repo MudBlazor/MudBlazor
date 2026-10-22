@@ -47,7 +47,7 @@
                 builder.AddAttribute(seq++, "d", gridLine.Data);
                 builder.AddAttribute(seq++, "fill", "none");
                 builder.AddAttribute(seq++, "stroke", ChartOptions.GridLineColor);
-                builder.AddAttribute(seq++, "stroke-width", ChartOptions.GridLineWidth);
+                builder.AddAttribute(seq++, "stroke-width", ToS(ChartOptions.GridLineWidth));
                 builder.CloseElement();
             }
             builder.CloseElement(); // </g>
@@ -63,7 +63,7 @@
             builder.AddAttribute(seq++, "d", axisLine.Data);
             builder.AddAttribute(seq++, "fill", "none");
             builder.AddAttribute(seq++, "stroke", ChartOptions?.AxisLineColor);
-            builder.AddAttribute(seq++, "stroke-width", ChartOptions?.AxisLineWidth);
+            builder.AddAttribute(seq++, "stroke-width", ChartOptions is null ? null : ToS(ChartOptions.AxisLineWidth));
             builder.CloseElement();
         }
         builder.CloseElement(); // </g>
@@ -133,7 +133,7 @@
             builder.AddAttribute(seq++, "class", "mud-chart-series-point");
             builder.AddAttribute(seq++, "cx", ToS(point.LabelX));
             builder.AddAttribute(seq++, "cy", ToS(point.LabelY));
-            builder.AddAttribute(seq++, "r", ChartOptions.DataPointRadius);
+            builder.AddAttribute(seq++, "r", ToS(ChartOptions.DataPointRadius));
             builder.AddAttribute(seq++, "fill", color);
             builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnSegmentMouseOver(e, point)));
             builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnSegmentMouseOut));

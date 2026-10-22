@@ -428,17 +428,19 @@ namespace MudBlazor
             }
 
             await base.OnAfterRenderAsync(firstRender);
+        }
 
-            if (!firstRender)
-            {
-                return;
-            }
-
+        protected override async Task OnInitializedAsync()
+        {
             // Numeric fields default to an invariant text representation unless Culture, Pattern, or Format is supplied explicitly.
-            if (!UsesManagedFormatting)
+            // Switch before the base input converts the initial value, so the first render already shows invariant text.
+            // Switching after the first render left culture-formatted text that the next blur re-parsed invariantly, turning "1,5" into 15.
+            if (!UsesManagedFormatting && !ReferenceEquals(GetCulture(), CultureInfo.InvariantCulture))
             {
                 await SetCultureAsync(CultureInfo.InvariantCulture);
             }
+
+            await base.OnInitializedAsync();
         }
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();

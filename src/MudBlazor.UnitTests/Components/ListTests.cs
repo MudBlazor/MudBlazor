@@ -29,6 +29,65 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A row with an Href renders an anchor carrying its link attributes.
+        /// </summary>
+        [Test]
+        public void ListItemWithHref_RendersAnchorWithLinkAttributes()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Docs")
+                    .Add(x => x.Href, "/docs")
+                    .Add(x => x.Target, "_blank")));
+
+            var anchor = comp.Find("a.mud-list-item");
+            anchor.GetAttribute("href").Should().Be("/docs");
+            anchor.GetAttribute("target").Should().Be("_blank");
+        }
+
+        /// <summary>
+        /// A class or style supplied through UserAttributes still wins over the computed ones, on a div row.
+        /// </summary>
+        [Test]
+        public void ListItem_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Espresso")
+                    .Add(x => x.UserAttributes, new Dictionary<string, object?>
+                    {
+                        ["class"] = "user-class",
+                        ["style"] = "color:red",
+                    })));
+
+            var row = comp.FindComponent<MudListItem<string>>().Find("div");
+            row.GetAttribute("class").Should().Be("user-class");
+            row.GetAttribute("style").Should().Be("color:red");
+        }
+
+        /// <summary>
+        /// The same precedence holds on the anchor row.
+        /// </summary>
+        [Test]
+        public void ListItemWithHref_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Docs")
+                    .Add(x => x.Href, "/docs")
+                    .Add(x => x.UserAttributes, new Dictionary<string, object?>
+                    {
+                        ["class"] = "user-class",
+                        ["style"] = "color:red",
+                    })));
+
+            var row = comp.FindComponent<MudListItem<string>>().Find("a");
+            row.GetAttribute("class").Should().Be("user-class");
+            row.GetAttribute("style").Should().Be("color:red");
+            row.GetAttribute("href").Should().Be("/docs");
+        }
+
+        /// <summary>
         /// Items skip their key interceptor when keyboard handling is delegated to a parent component.
         /// </summary>
         [Test]
@@ -65,6 +124,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("Sparkling Water");
             comp.Markup.Should().Contain("Latte");
             comp.Find(".mud-list-item-secondary-text").TextContent.Should().Contain("with oat milk");
+        }
+
+        /// <summary>
+        /// Item text uses body1 typography, or body2 in a dense list, and secondary text uses subtitle2.
+        /// </summary>
+        [Test]
+        [TestCase(false, "mud-typography mud-typography-body1")]
+        [TestCase(true, "mud-typography mud-typography-body2")]
+        public void ListItem_TextTypography_FollowsDense(bool dense, string expectedClass)
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .Add(x => x.Dense, dense)
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Latte")
+                    .Add(x => x.SecondaryText, "with oat milk")));
+
+            comp.Find("div.mud-list-item-text p:not(.mud-list-item-secondary-text)").ClassName.Should().Be(expectedClass);
+            comp.Find("p.mud-list-item-secondary-text").ClassName.Should().Be("mud-typography mud-typography-subtitle2 mud-list-item-secondary-text");
         }
 
         [Test]
@@ -227,6 +304,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 drinks + 2 nested group headers
             comp.FindAll("div.mud-list-item-dense").Count.Should().Be(expectedDenseClassCount);
+            comp.FindAll("div.mud-list-item-text p.mud-typography-body2").Count.Should().Be(expectedDenseClassCount);
         }
 
         [Test]

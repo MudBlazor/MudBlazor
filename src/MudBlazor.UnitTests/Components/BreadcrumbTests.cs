@@ -346,6 +346,37 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Changing the separator after the first render updates every separator in the trail.
+        /// </summary>
+        [Test]
+        public async Task MudBreadcrumbs_SeparatorChanged_ShouldUpdateSeparators()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, new List<BreadcrumbItem> { new("Link 1", "link1"), new("Link 2", "link2"), new("Link 3", "link3") })
+                .Add(x => x.Separator, "/"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Separator, ">"));
+
+            comp.FindAll("li.mud-breadcrumb-separator").Select(x => x.TextContent.Trim()).Should().Equal(">", ">");
+        }
+
+        /// <summary>
+        /// Replacing the separator template after the first render updates every separator in the trail.
+        /// </summary>
+        [Test]
+        public async Task MudBreadcrumbs_SeparatorTemplateChanged_ShouldUpdateSeparators()
+        {
+            RenderFragment Template(string text) => builder => builder.AddContent(0, text);
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, new List<BreadcrumbItem> { new("Link 1", "link1"), new("Link 2", "link2") })
+                .Add(x => x.SeparatorTemplate, Template("first")));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SeparatorTemplate, Template("second")));
+
+            comp.Find("li.mud-breadcrumb-separator").TextContent.Trim().Should().Be("second");
+        }
+
+        /// <summary>
         /// A link rendered outside a breadcrumb trail has no current page to report.
         /// </summary>
         [Test]

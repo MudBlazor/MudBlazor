@@ -6,8 +6,12 @@
 
 // If a host loses `.mud-ripple` while its ripple span is still animating (e.g. an item disabled on click), keep clipping the span so it can't overflow (#13283).
 :not(.mud-ripple):has(> .mud-ripple-effect) {
-  position: relative;
   overflow: hidden;
+}
+
+// Keep the positioning fallback at zero specificity so components retain their own position (#13895).
+:where(:not(.mud-ripple):has(> .mud-ripple-effect)) {
+  position: relative;
 }
 
 // Individual ripple effect element (created dynamically by JS)

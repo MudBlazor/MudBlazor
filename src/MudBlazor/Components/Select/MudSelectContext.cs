@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics.CodeAnalysis;
-using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
@@ -65,11 +64,8 @@ internal sealed class MudSelectContext<T>
     /// <returns><c>true</c> if the item is currently selected; otherwise <c>false</c>.</returns>
     public bool RegisterItem(MudSelectItem<T> item)
     {
-        // Add to the ordered list of visible items
-        if (!_items.Contains(item))
-        {
-            _items.Add(item);
-        }
+        // An item registers once per select and unregisters before moving to another, so checking for a duplicate would only make opening n options cost n².
+        _items.Add(item);
 
         // Add to value lookup for fast access by value
         _valueLookup[item.Value] = item;
@@ -77,11 +73,29 @@ internal sealed class MudSelectContext<T>
         // Note: Do NOT add to _shadowLookup here - that's only for shadow items
         // Shadow items are registered separately via RegisterShadowItem
 
-        // Check if this item's value is currently selected
-        return _select.MultiSelection switch
+        return IsItemSelected(item);
+    }
+
+    /// <summary>
+    /// Check if this item's value is currently selected using the select comparer if specified
+    /// </summary>
+    /// <param name="item">The item to check</param>
+    /// <returns></returns>
+    public bool IsItemSelected(MudSelectItem<T> item)
+    {
+        var comparer = _select.Comparer ?? EqualityComparer<T?>.Default;
+        if (!_select.MultiSelection)
         {
-            true => _select.GetSelectedValues()?.Contains(item.Value) == true,
-            false => _select.ReadValue?.Equals(item.Value) == true
+            return comparer.Equals(_select.ReadValue, item.Value);
+        }
+
+        return _select.GetSelectedValues() switch
+        {
+            null => false,
+            // MudSelect keeps its selection in a HashSet built with the select's comparer, so its O(1) lookup gives the same answer.
+            HashSet<T?> set when set.Comparer.Equals(comparer) => set.Contains(item.Value),
+            // A caller-supplied collection can be a list or use a different comparer.
+            var values => values.Contains(item.Value, comparer),
         };
     }
 
