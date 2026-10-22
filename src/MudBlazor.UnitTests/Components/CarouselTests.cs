@@ -1,5 +1,6 @@
 ﻿using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Time.Testing;
 using MudBlazor.UnitTests.TestComponents.Carousel;
@@ -127,6 +128,56 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.fake-class-item1").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item2").Count.Should().Be(1);
             comp.FindAll("div.fake-class-item3").Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Default navigation controls follow the natural document tab order (#13975).
+        /// </summary>
+        [Test]
+        public async Task Carousel_DefaultControls_UseNaturalTabOrder()
+        {
+            var comp = Context.Render<MudCarousel<object>>(parameters => parameters
+                .Add(p => p.AutoCycle, false));
+
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+
+            foreach (var button in comp.FindAll("button.mud-icon-button"))
+            {
+                button.HasAttribute("tabindex").Should().BeFalse();
+            }
+        }
+
+        /// <summary>
+        /// Custom navigation controls use native button semantics (#13975).
+        /// </summary>
+        [Test]
+        public async Task Carousel_CustomControls_ExposeButtonSemantics()
+        {
+            RenderFragment previousTemplate = builder => builder.AddContent(0, "Previous");
+            RenderFragment nextTemplate = builder => builder.AddContent(0, "Next");
+            RenderFragment<bool> bulletTemplate = isSelected => builder => builder.AddContent(0, isSelected ? "Selected" : "Not selected");
+            var comp = Context.Render<MudCarousel<object>>(parameters => parameters
+                .Add(p => p.AutoCycle, false)
+                .Add(p => p.NavigationButtonsClass, "custom-navigation")
+                .Add(p => p.BulletsClass, "custom-bullet")
+                .Add(p => p.PreviousButtonTemplate, previousTemplate)
+                .Add(p => p.NextButtonTemplate, nextTemplate)
+                .Add(p => p.BulletTemplate, bulletTemplate));
+
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+
+            var controls = comp.FindAll(".custom-navigation, .custom-bullet");
+            controls.Should().HaveCount(4);
+            foreach (var control in controls)
+            {
+                control.TagName.Should().Be("BUTTON");
+                control.GetAttribute("type").Should().Be("button");
+                control.HasAttribute("tabindex").Should().BeFalse();
+                control.GetAttribute("aria-label").Should().NotBeNullOrEmpty();
+                control.ClassList.Should().Contain("mud-carousel-custom-button");
+            }
         }
 
         /// <summary>
