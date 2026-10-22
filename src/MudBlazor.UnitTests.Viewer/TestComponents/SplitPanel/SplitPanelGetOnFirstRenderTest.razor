@@ -1,0 +1,18 @@
+﻿@attribute [ViewerHidden]
+
+<MudSplitPanel @ref="_panel">
+    <FirstPanel>First Panel</FirstPanel>
+    <SecondPanel>Second Panel</SecondPanel>
+</MudSplitPanel>
+
+@code {
+    private MudSplitPanel _panel = null!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _panel.GetDividerPositionAsync();
+        }
+    }
+}
