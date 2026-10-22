@@ -17,6 +17,7 @@ namespace MudBlazor
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
         internal readonly ParameterState<bool> _expandedState;
+        private readonly string _contentId = Identifier.Create("expansion-panel-content");
 
         [CascadingParameter]
         private MudExpansionPanels? Parent { get; set; }
