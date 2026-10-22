@@ -513,5 +513,60 @@ namespace MudBlazor.UnitTests.Components
             IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
             AlertText().InnerHtml.Should().Be("20");
         }
+
+        /// <summary>
+        /// The range input is named by the visible label rendered from <c>ChildContent</c> (#13973).
+        /// </summary>
+        [Test]
+        public void ChildContent_LabelsInput()
+        {
+            var comp = Context.Render<MudSlider<double>>(x => x.AddChildContent("Volume"));
+
+            var label = comp.Find(".mud-slider > .mud-typography");
+            var input = comp.Find("input.mud-slider-input");
+
+            label.Id.Should().NotBeNullOrWhiteSpace();
+            input.GetAttribute("aria-labelledby").Should().Be(label.Id);
+        }
+
+        /// <summary>
+        /// Without <c>ChildContent</c> the range input does not reference a label.
+        /// </summary>
+        [Test]
+        public void NoChildContent_NoAriaLabelledBy()
+        {
+            var comp = Context.Render<MudSlider<double>>();
+
+            comp.Find("input.mud-slider-input").HasAttribute("aria-labelledby").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A caller-provided <c>aria-label</c> names the input instead of the visible label.
+        /// </summary>
+        [Test]
+        public void AriaLabel_TakesPrecedenceOverChildContent()
+        {
+            var comp = Context.Render<MudSlider<double>>(x => x
+                .AddChildContent("Volume")
+                .AddUnmatched("aria-label", "Master volume"));
+
+            var input = comp.Find("input.mud-slider-input");
+
+            input.GetAttribute("aria-label").Should().Be("Master volume");
+            input.HasAttribute("aria-labelledby").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A caller-provided <c>aria-labelledby</c> is kept instead of the generated label reference.
+        /// </summary>
+        [Test]
+        public void AriaLabelledBy_TakesPrecedenceOverChildContent()
+        {
+            var comp = Context.Render<MudSlider<double>>(x => x
+                .AddChildContent("Volume")
+                .AddUnmatched("aria-labelledby", "external-label"));
+
+            comp.Find("input.mud-slider-input").GetAttribute("aria-labelledby").Should().Be("external-label");
+        }
     }
 }
