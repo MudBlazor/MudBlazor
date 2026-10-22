@@ -1,0 +1,23 @@
+﻿<MudDialog Class="test-class" Style="@DynamicStyleValue" ContentClass="content-class">
+    <TitleContent>
+        <MudText Class="dynamic-title">Test title</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText>Test dialog with dynamic style update</MudText>
+        <MudButton Class="content-btn" OnClick="OnClickHandler">Btn 2</MudButton>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance MudDialog { get; set; } = null!;
+
+    private string? DynamicStyleValue { get; set; } = "display: flex !important";
+
+    private void OnClickHandler()
+    {
+        DynamicStyleValue = "display: block !important";
+        StateHasChanged();
+    }
+
+}
