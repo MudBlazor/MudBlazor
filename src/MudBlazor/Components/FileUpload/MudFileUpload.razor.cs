@@ -504,27 +504,25 @@ namespace MudBlazor
 
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
+            // 1. Always increment at the start to ensure input rotation for all uploads (even rejected ones)
+            _numberOfActiveFileInputs++;
+
             if (GetDisabledState())
                 return;
 
+            // 2. Capture the index of the input element that raised this change event
             int currentInputIndex = _numberOfActiveFileInputs;
-            if (currentInputIndex < 1)
-            {
-                currentInputIndex = 1;
-            }
 
-            // Fix: Defensive validation - check file limits before calling GetMultipleFiles
+            // 3. Centralized validation: If file count exceeds the limit, let ProcessFileChangeAsync handle errors
             if (args.FileCount > MaximumFileCount)
             {
-                // Utilize MudBlazor's localized error channel safely using the correct key name
-                var errorMessage = Localizer[Resources.LanguageResource.MudFileUpload_MaximumFileCountExceeded, args.FileCount, MaximumFileCount];
-                _validationErrors.Add(errorMessage);
-                await NotifyValueChangedAsync(default);
+                await ProcessFileChangeAsync(args);
                 return;
             }
 
             IReadOnlyList<MudFilesWithFolderPath> combinedList = new List<MudFilesWithFolderPath>();
 
+            // 4. Perform folder mapping safely only after passing the centralized count check
             if (Folder && typeof(T) != typeof(IBrowserFile))
             {
                 var inputId = GetInputId(currentInputIndex);
@@ -542,10 +540,9 @@ namespace MudBlazor
                 combinedList = list;
             }
 
-            _numberOfActiveFileInputs++;
             await ProcessFileChangeAsync(args);
 
-            // Fire callback only if files passed the internal process validation layers cleanly
+            // 5. Fire the single unified callback if valid folder files exist
             if (Folder && combinedList.Count > 0 && FilesWithFolderPathsChanged.HasDelegate && !HasErrors)
             {
                 await FilesWithFolderPathsChanged.InvokeAsync(combinedList);

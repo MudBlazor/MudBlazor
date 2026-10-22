@@ -1043,5 +1043,30 @@ namespace MudBlazor.UnitTests.Components
             inputFile.HasAttribute("webkitdirectory").Should().BeFalse();
             inputFile.HasAttribute("multiple").Should().BeFalse();
         }
+
+        [Test]
+        public void MudFileUpload_OversizedSelection_ShouldRotateToNewInput()
+        {
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.MaximumFileCount, 1) // Limit to 1 file max
+                .Add(p => p.Disabled, false));
+
+            // Fetch the initial state of the active file inputs counter using reflection
+            var field = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
+                .GetField("_numberOfActiveFileInputs", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            int initialCount = (int)field.GetValue(comp.Instance);
+
+            // Act: Upload 2 files (exceeding MaximumFileCount)
+            var inputFileComponent = comp.FindComponent<InputFile>();
+            var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
+            var file2 = InputFileContent.CreateFromText("file2 content", "file2.txt");
+
+            inputFileComponent.UploadFiles(file1, file2);
+
+            // Assert: Verify that the input element count incremented to force a clean rotation slot
+            int postUploadCount = (int)field.GetValue(comp.Instance);
+            postUploadCount.Should().Be(initialCount + 1);
+        }
     }
 }
