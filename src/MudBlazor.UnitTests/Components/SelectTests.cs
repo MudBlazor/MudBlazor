@@ -1383,6 +1383,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Enter closes the open list when arrow navigation has already committed the highlighted option, without a parent re-render (#14079).
+        /// </summary>
+        [Test]
+        public async Task Select_Enter_ClosesWhenHighlightedOptionIsAlreadyValue()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var provider = Context.Render<MudPopoverProvider>();
+            var select = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.Value, "Urgent")
+                .Add(x => x.ChildContent, builder =>
+                {
+                    foreach (var value in new[] { "Low", "Normal", "Urgent" })
+                    {
+                        builder.OpenComponent<MudSelectItem<string>>(0);
+                        builder.AddComponentParameter(1, nameof(MudSelectItem<string>.Value), value);
+                        builder.CloseComponent();
+                    }
+                }));
+
+            await PressAsync(select, keys, "Enter");
+            await provider.WaitForAssertionAsync(() => provider.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await PressAsync(select, keys, "ArrowUp");
+            await select.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Normal"));
+
+            await PressAsync(select, keys, "Enter");
+
+            await provider.WaitForAssertionAsync(() => provider.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            select.Find("[aria-expanded]").GetAttribute("aria-expanded").Should().Be("false");
+            select.Instance.ReadValue.Should().Be("Normal");
+        }
+
+        /// <summary>
         /// Ctrl+A toggles every option of a multi-select, in either letter case.
         /// </summary>
         [Test]
