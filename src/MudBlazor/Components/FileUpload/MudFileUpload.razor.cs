@@ -513,10 +513,21 @@ namespace MudBlazor
                 currentInputIndex = 1;
             }
 
-            // Fix 3: Initialize to an empty list instead of null to prevent all nullable warnings
+            // 2. Resolve target configuration constraints
+            bool isSingleFileMode = typeof(T) == typeof(IBrowserFile);
+
+            // Guard Clause: If Folder mode is enabled but misconfigured for a single file target,
+            // restrict multi-file folder inputs from silently corrupting the component value state.
+            if (Folder && isSingleFileMode && args.FileCount > 1)
+            {
+                // Allow ProcessFileChangeAsync downstream to cleanly trigger MudBlazor's native internal validation errors
+                await ProcessFileChangeAsync(args);
+                return;
+            }
+
             IReadOnlyList<MudFilesWithFolderPath> combinedList = new List<MudFilesWithFolderPath>();
 
-            // 2. Fetch the path metadata right away if folder mode is active
+            // 3. Fetch the path metadata right away if folder mode is active
             if (Folder)
             {
                 var inputId = GetInputId(currentInputIndex);
@@ -524,13 +535,12 @@ namespace MudBlazor
                 // Fetch raw paths from your updated mudInput.js method
                 var paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudInput.getFolderPaths", inputId);
 
-                // Fix: Safely guard against throwing an exception if the file count exceeds the limit
+                // Defensive validation fix: Fallback safely if count exceeds limit
                 var nativeFiles = args.FileCount > MaximumFileCount
-                    ? Array.Empty<IBrowserFile>() 
+                    ? Array.Empty<IBrowserFile>()
                     : args.GetMultipleFiles(MaximumFileCount);
 
                 var list = new List<MudFilesWithFolderPath>();
-
                 for (int i = 0; i < nativeFiles.Count; i++)
                 {
                     string path = (paths != null && i < paths.Count) ? paths[i] : string.Empty;
@@ -540,13 +550,13 @@ namespace MudBlazor
                 combinedList = list;
             }
 
-            // 3. Increment file inputs slot counter to preserve loop integrity
+            // 4. Increment file inputs slot counter to preserve loop integrity
             _numberOfActiveFileInputs++;
 
-            // 4. Execute native core file processing safely
+            // 5. Execute native core file processing safely
             await ProcessFileChangeAsync(args);
 
-            // 5. Fire our single unified callback if the collection has folder files
+            // 6. Fire our single unified callback if the collection has folder files
             if (Folder && combinedList.Count > 0 && FilesWithFolderPathsChanged.HasDelegate)
             {
                 await FilesWithFolderPathsChanged.InvokeAsync(combinedList);

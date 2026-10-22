@@ -1003,5 +1003,32 @@ namespace MudBlazor.UnitTests.Components
                 uploadedItems.Should().NotBeNull();
             }, TimeSpan.FromSeconds(2));
         }
+
+        [Test]
+        public void MudFileUpload_FolderWithSingleFileGeneric_ShouldGuardMismatchedSelection()
+        {
+            IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
+
+            // Render with T="IBrowserFile" instead of a collection array
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.Disabled, false)
+                .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
+
+            var inputFileComponent = comp.FindComponent<InputFile>();
+
+            // Simulate uploading a multi-file folder structure into a single file bound generic target
+            var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
+            var file2 = InputFileContent.CreateFromText("file2 content", "file2.txt");
+
+            inputFileComponent.UploadFiles(file1, file2);
+
+            // Assert: The callback must remain null because multi-file selections are restricted in single-file mode
+            comp.WaitForAssertion(() =>
+            {
+                uploadedItems.Should().BeNull();
+            }, TimeSpan.FromSeconds(2));
+        }
+
     }
 }
