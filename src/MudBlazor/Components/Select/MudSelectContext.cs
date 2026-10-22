@@ -48,6 +48,16 @@ internal sealed class MudSelectContext<T>
     public bool MultiSelection => _select.MultiSelection;
 
     /// <summary>
+    /// Gets the icon for selected items when multi-selection is enabled.
+    /// </summary>
+    public string CheckedIcon => _select.CheckedIcon;
+
+    /// <summary>
+    /// Gets the icon for unselected items when multi-selection is enabled.
+    /// </summary>
+    public string UncheckedIcon => _select.UncheckedIcon;
+
+    /// <summary>
     /// Gets the current selected values.
     /// </summary>
     public IReadOnlyCollection<T?> SelectedValues => _select.GetSelectedValues() ?? Array.Empty<T?>();
