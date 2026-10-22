@@ -911,5 +911,167 @@ namespace MudBlazor.UnitTests.Components
             input.GetAttribute("aria-describedby").Should().Be("upload-error");
             comp.Find("#upload-error").TextContent.Trim().Should().Be("File required");
         }
+
+        [Test]
+        public void MudFileUpload_FolderAttribute_Test()
+        {
+            // 1. Arrange & Render component with Folder mode enabled using the updated syntax
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.Folder, true));
+
+            // 2. Act: Find the target HTML file input element
+            var input = comp.Find("input[type=file]");
+
+            // 3. Assert: Ensure both key HTML attributes are successfully injected 
+            input.HasAttribute("webkitdirectory").Should().BeTrue();
+            input.HasAttribute("multiple").Should().BeTrue();
+        }
+
+        [Test]
+        public void MudFileUpload_FolderPathsChanged_JSInterop_Test()
+        {
+            IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
+
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.Disabled, false)
+                .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
+
+            // Fix: Invoke the non-public GetInputId method via reflection to get the exact expected element ID
+            var method = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
+                .GetMethod("GetInputId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            var expectedInputId = method?.Invoke(comp.Instance, new object[] { 1 }) as string ?? "mud-file-input-1";
+
+            // Enforce strict argument verification matching the expected active input element ID
+            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
+                "mudInput.getFolderPaths",
+                invocation => invocation.Arguments.Count > 0 && (invocation.Arguments[0] as string) == expectedInputId
+            );
+            jsMock.SetResult(new List<string> { "folder/file1.txt", "folder/file2.txt" });
+
+            // 2. Act: Trigger upload batch
+            var inputFileComponent = comp.FindComponent<InputFile>();
+            var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
+            var file2 = InputFileContent.CreateFromText("file2 content", "file2.txt");
+
+            inputFileComponent.UploadFiles(file1, file2);
+
+            // 3. Assert: Verify the exact mock was triggered with the exact inputId parameter
+            comp.WaitForAssertion(() =>
+            {
+                jsMock.VerifyInvoke("mudInput.getFolderPaths");
+
+                uploadedItems.Should().NotBeNull();
+                uploadedItems.Count.Should().Be(2);
+                uploadedItems.ElementAt(0).RelativePath.Should().Be("folder/file1.txt");
+                uploadedItems.ElementAt(0).File.Name.Should().Be("file1.txt");
+            }, TimeSpan.FromSeconds(2));
+        }
+
+
+
+        [Test]
+        public void MudFileUpload_FolderPathsChanged_EmptyFileInputs_Fallback_Test()
+        {
+            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
+                "mudInput.getFolderPaths",
+                checkedArguments => true
+            );
+            jsMock.SetResult(new List<string> { "folder/file1.txt" });
+
+            IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
+
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.Disabled, false)
+                .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
+
+            // Force _numberOfActiveFileInputs to 0 using reflection to test the < 1 guard condition
+            var field = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
+                .GetField("_numberOfActiveFileInputs", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            if (field != null)
+            {
+                field.SetValue(comp.Instance, 0);
+            }
+
+            // Act: Trigger the upload
+            var inputFileComponent = comp.FindComponent<InputFile>();
+            var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
+            inputFileComponent.UploadFiles(file1);
+
+            // Assert: Check that it ran through without crashing and invoked the JS
+            comp.WaitForAssertion(() =>
+            {
+                jsMock.VerifyInvoke("mudInput.getFolderPaths");
+                uploadedItems.Should().NotBeNull();
+            }, TimeSpan.FromSeconds(2));
+        }
+
+        [Test]
+        public void MudFileUpload_FolderWithSingleFileGeneric_ShouldGuardMismatchedSelection()
+        {
+            IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
+
+            // Render with T="IBrowserFile" instead of a collection array
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.Disabled, false)
+                .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
+
+            var inputFileComponent = comp.FindComponent<InputFile>();
+
+            // Simulate uploading a multi-file folder structure into a single file bound generic target
+            var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
+            var file2 = InputFileContent.CreateFromText("file2 content", "file2.txt");
+
+            inputFileComponent.UploadFiles(file1, file2);
+
+            // Assert: The callback must remain null because multi-file selections are restricted in single-file mode
+            comp.WaitForAssertion(() =>
+            {
+                uploadedItems.Should().BeNull();
+            }, TimeSpan.FromSeconds(2));
+        }
+
+        [Test]
+        public void MudFileUpload_FolderWithSingleFileGeneric_ShouldNotRenderAttributes()
+        {
+            // Render with single-file T="IBrowserFile" but Folder="true"
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.Disabled, false));
+
+            // Assert: Verify that the browser attributes are completely stripped to block selection
+            var inputFile = comp.Find("input[type=file]");
+            inputFile.HasAttribute("webkitdirectory").Should().BeFalse();
+            inputFile.HasAttribute("multiple").Should().BeFalse();
+        }
+
+        [Test]
+        public void MudFileUpload_OversizedSelection_ShouldRotateToNewInput()
+        {
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.MaximumFileCount, 1) // Limit to 1 file max
+                .Add(p => p.Disabled, false));
+
+            // Fetch the initial state of the active file inputs counter using reflection
+            var field = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
+                .GetField("_numberOfActiveFileInputs", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            int initialCount = (int)field.GetValue(comp.Instance);
+
+            // Act: Upload 2 files (exceeding MaximumFileCount)
+            var inputFileComponent = comp.FindComponent<InputFile>();
+            var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
+            var file2 = InputFileContent.CreateFromText("file2 content", "file2.txt");
+
+            inputFileComponent.UploadFiles(file1, file2);
+
+            // Assert: Verify that the input element count incremented to force a clean rotation slot
+            int postUploadCount = (int)field.GetValue(comp.Instance);
+            postUploadCount.Should().Be(initialCount + 1);
+        }
     }
 }
