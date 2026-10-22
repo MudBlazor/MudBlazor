@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Extensions;
@@ -84,6 +85,7 @@ namespace MudBlazor
                 .AddStyle($"width", Width, !string.IsNullOrWhiteSpace(Width))
                 .AddStyle($"height", Height, !string.IsNullOrWhiteSpace(Height))
                 .AddStyle($"max-height", MaxHeight, !string.IsNullOrWhiteSpace(MaxHeight))
+                .AddStyle("--mud-treeview-item-height", $"{GetEffectiveItemSize().ToString(CultureInfo.InvariantCulture)}px", IsVirtualized)
                 .AddStyle(Style)
                 .Build();
 
@@ -198,6 +200,8 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.  Only works when <see cref="Height"/> or <see cref="MaxHeight"/> is set, and <see cref="Items"/> and <see cref="ItemTemplate"/> are used.  This feature can improve performance for large data sets.
         /// The item template must bind <see cref="MudTreeViewItem{T}.Expanded"/> and <see cref="MudTreeViewItem{T}.Selected"/> to the backing item, and child items must come from <see cref="TreeItemData{T}.Children"/>.
+        /// Expansion permissions come from <see cref="ITreeItemData{T}.Expandable"/>. Bind <see cref="MudTreeViewItem{T}.CanExpand"/> to it when customizing expansion permissions.
+        /// All virtualized rows have the same fixed height, controlled by <see cref="ItemSize"/>. Labels are truncated, and custom content must fit within the configured height for accurate scrolling.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -218,6 +222,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>, which uses <c>40</c>, or <c>26</c> when <see cref="Dense"/> is <c>true</c>.
+        /// Sets both the rendered row height and the virtualizer's item size. Custom content must fit within this height; increase it for taller content.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -714,7 +719,15 @@ namespace MudBlazor
             }
         }
 
-        private float GetEffectiveItemSize() => ItemSize > 0 ? ItemSize : Dense ? DefaultDenseItemSize : DefaultItemSize;
+        private float GetEffectiveItemSize()
+        {
+            if (ItemSize > 0)
+            {
+                return ItemSize;
+            }
+
+            return Dense ? DefaultDenseItemSize : DefaultItemSize;
+        }
 
         internal TreeViewServerLoadEntry GetServerLoadEntry(ITreeItemData<T> item) => _serverLoadState.GetEntry(item);
 
@@ -894,7 +907,7 @@ namespace MudBlazor
             }
             else
             {
-                isValid = value != null && GetSelectableValues().Contains(value);
+                isValid = value is not null && GetSelectableValues().Contains(value);
             }
 
             // note: if there is no item that corresponds to the value, the value is reset to default!
@@ -1080,8 +1093,20 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
-            _isDisposed = true;
+            Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this tree.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _isDisposed = true;
+            }
         }
     }
 }

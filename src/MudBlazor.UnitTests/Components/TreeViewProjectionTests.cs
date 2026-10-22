@@ -339,7 +339,7 @@ public class TreeViewProjectionTests
 
         root.Expanded.Should().BeTrue();
         fixedParent.Expanded.Should().BeFalse();
-        child.Expanded.Should().BeTrue();
+        child.Expanded.Should().BeFalse("bulk expansion must stop at a branch that does not allow expansion");
         TreeViewHierarchy<string>.ExpandAll([root]).Should().BeFalse();
 
         TreeViewHierarchy<string>.CollapseAll([root]).Should().BeTrue();

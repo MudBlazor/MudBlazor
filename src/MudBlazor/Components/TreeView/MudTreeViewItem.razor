@@ -18,7 +18,7 @@
             {
                 @if (HasChildren())
                 {
-                    <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="@GetServerDataLoading()" Expanded="GetExpanded()" ExpandedChanged="OnItemExpanded" Visible="@(IsVirtualizedItem || AreChildrenVisible())" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+                    <MudTreeViewItemToggleButton Disabled="@(GetDisabled() || (IsVirtualizedItem && !GetCanExpand() && !GetExpanded()))" Loading="@GetServerDataLoading()" Expanded="GetExpanded()" ExpandedChanged="OnItemExpanded" Visible="@(IsVirtualizedItem || AreChildrenVisible())" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
                 }
                 else
                 {

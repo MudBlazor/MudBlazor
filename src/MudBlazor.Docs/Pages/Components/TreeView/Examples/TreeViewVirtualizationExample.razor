@@ -4,7 +4,7 @@
     <MudTreeView Items="@TreeItems" Virtualize="true" Height="300px" Hover>
         <ItemTemplate>
             <MudTreeViewItem @bind-Expanded="@context.Expanded" @bind-Selected="@context.Selected" Visible="@context.Visible"
-                             Items="@context.Children" Value="@context.Value" Icon="@context.Icon" Text="@context.Text" />
+                             Items="@context.Children" Value="@context.Value" Icon="@context.Icon" Text="@context.Text" CanExpand="@context.Expandable" />
         </ItemTemplate>
     </MudTreeView>
 </MudPaper>

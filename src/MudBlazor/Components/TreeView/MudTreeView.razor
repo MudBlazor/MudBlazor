@@ -12,7 +12,7 @@
                 @if (IsVirtualized)
                 {
                     @* Blazor's Virtualize is used directly because MudVirtualize invokes the item template from a wrapping fragment, which puts every row into its own render region where its key can never match the same row after a scroll. *@
-                    <Virtualize TItem="TreeViewItemContext<T>" Items="@GetRows()" SpacerElement="li" OverscanCount="@OverscanCount" ItemSize="@GetEffectiveItemSize()" Context="row" @attributes="@_virtualizeAttributes">
+                    <Virtualize @key="GetEffectiveItemSize()" TItem="TreeViewItemContext<T>" Items="@GetRows()" SpacerElement="li" OverscanCount="@OverscanCount" ItemSize="@GetEffectiveItemSize()" Context="row" @attributes="@_virtualizeAttributes">
                         <CascadingValue @key="row.RowKey" Name="@MudTreeViewCascadingValues.ItemData" Value="row.Item">
                             <CascadingValue Name="@MudTreeViewCascadingValues.ItemContext" Value="row">
                                 @ItemTemplate(row.Item)

@@ -196,6 +196,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>. A value of <c>false</c> is typically used for lazy-loaded items via <see cref="MudTreeView{T}.ServerData" />.
+        /// In virtualized trees, bind this parameter to the backing item's <see cref="ITreeItemData{T}.Expandable"/> so off-screen items use the same permission.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -393,12 +394,12 @@ namespace MudBlazor
             {
                 // Loading is refused for backing items which are not expandable, so no expand button is offered for them either.
                 return CurrentItemContext!.HasVisibleChildren
-                    || (MudTreeRoot?.ServerData != null && CanExpand && CurrentItemData?.Expandable != false && !GetServerDataLoaded() && GetItems().Count == 0);
+                    || (MudTreeRoot?.ServerData != null && GetCanExpand() && !GetServerDataLoaded() && GetItems().Count == 0);
             }
 
             return ChildContent != null
                 || (MudTreeRoot != null && GetItems().Count != 0)
-                || (MudTreeRoot?.ServerData != null && CanExpand && !GetServerDataLoaded() && GetItems().Count == 0);
+                || (MudTreeRoot?.ServerData != null && GetCanExpand() && !GetServerDataLoaded() && GetItems().Count == 0);
         }
 
         private bool AreChildrenVisible() => _itemsState.Value is null || _itemsState.Value.Any(i => i.Visible);
@@ -431,6 +432,8 @@ namespace MudBlazor
         private string? GetText() => string.IsNullOrEmpty(Text) ? _converter.Convert(Value) : Text;
 
         private bool GetDisabled() => Disabled || MudTreeRoot?.Disabled == true;
+
+        private bool GetCanExpand() => CanExpand && (!IsVirtualizedItem || CurrentItemData?.Expandable != false);
 
         /// <summary>
         /// Returns the server-load state of this item.
@@ -531,7 +534,7 @@ namespace MudBlazor
         /// </summary>
         public async Task ExpandAllAsync()
         {
-            if (!CanExpand)
+            if (!GetCanExpand())
             {
                 return;
             }
@@ -587,6 +590,11 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+
+            if (IsVirtualizedItem && !CanExpand && CurrentItemData is { Expandable: true })
+            {
+                throw new InvalidOperationException("Virtualized expansion requires the backing item's Expandable to be false when CanExpand is false. Bind CanExpand to the backing item's Expandable so off-screen items use the same permission.");
+            }
 
             if (Text == null && Value == null && MudTreeRoot?.ServerData != null)
                 throw new InvalidOperationException(
@@ -710,6 +718,11 @@ namespace MudBlazor
 
         private async Task SetExpandedAsync(bool expanded)
         {
+            if (IsVirtualizedItem && expanded && !GetCanExpand())
+            {
+                return;
+            }
+
             if (IsVirtualizedItem && CurrentItemData is not null)
             {
                 CurrentItemData.Expanded = expanded;
@@ -741,14 +754,12 @@ namespace MudBlazor
             // Only clear the backing children when a load will actually run to replace them.
             // The children count is deliberately not part of this check, because clearing them is
             // what lets TryInvokeServerLoadFunc past its own "already has children" guard.
-            var willLoad = MudTreeRoot?.ServerData is not null
-                && CanExpand
-                && !(IsVirtualizedItem && CurrentItemData is { Expandable: false });
-
-            if (willLoad && CurrentItemData is not null)
+            if (MudTreeRoot is { ServerData: not null } treeRoot
+                && GetCanExpand()
+                && CurrentItemData is not null)
             {
                 CurrentItemData.Children = Array.Empty<ITreeItemData<T>>();
-                MudTreeRoot?.RefreshProjection();
+                treeRoot.RefreshProjection();
             }
 
             await TryInvokeServerLoadFunc(version);
@@ -804,8 +815,7 @@ namespace MudBlazor
             var treeRoot = MudTreeRoot;
             var dataItem = CurrentItemData;
             if (treeRoot?.ServerData is null
-                || !CanExpand
-                || (IsVirtualizedItem && dataItem is { Expandable: false })
+                || !GetCanExpand()
                 || GetItems().Count != 0)
             {
                 return;
@@ -911,7 +921,7 @@ namespace MudBlazor
                 childSelectedBecameTrue = childSelectedBecameTrue || becameTrue;
                 changed = changed || childChanged;
             }
-            if (GetAutoExpand() && CanExpand && childSelectedBecameTrue && !_expandedState)
+            if (GetAutoExpand() && GetCanExpand() && childSelectedBecameTrue && !_expandedState)
             {
                 await _expandedState.SetValueAsync(true);
                 changed = true;

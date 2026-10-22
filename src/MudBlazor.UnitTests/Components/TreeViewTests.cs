@@ -895,6 +895,245 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies that the virtualizer and rendered rows receive the same fixed height, including after runtime changes.
+        /// </summary>
+        [TestCase(false, 0f, 40f)]
+        [TestCase(true, 0f, 26f)]
+        [TestCase(false, 64.5f, 64.5f)]
+        public async Task TreeViewVirtualize_RowHeightMatchesItemSize(bool dense, float itemSize, float expectedSize)
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.Dense, dense)
+                .Add(x => x.ItemSize, itemSize));
+
+            var expectedHeight = expectedSize.ToString(System.Globalization.CultureInfo.InvariantCulture) + "px";
+            var initialVirtualizer = comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance;
+            comp.Find("ul.mud-treeview").GetAttribute("style").Should().Contain($"--mud-treeview-item-height:{expectedHeight}");
+            comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance.ItemSize
+                .Should().Be(expectedSize);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ItemSize, 72f)));
+
+            comp.Find("ul.mud-treeview").GetAttribute("style").Should().Contain("--mud-treeview-item-height:72px");
+            comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance.ItemSize.Should().Be(72f);
+            comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance.Should().NotBeSameAs(initialVirtualizer);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Virtualize, false)));
+
+            comp.Find("ul.mud-treeview").GetAttribute("style").Should().NotContain("--mud-treeview-item-height");
+        }
+
+        /// <summary>
+        /// Verifies that changing density resets the virtualizer's measurements to match the new default row height.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_DensityChangesResetMeasuredRowSize()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>();
+            var initialVirtualizer = comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance;
+            initialVirtualizer.ItemSize.Should().Be(40f);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Dense, true)));
+
+            comp.Find("ul.mud-treeview").GetAttribute("style").Should().Contain("--mud-treeview-item-height:26px");
+            comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance.ItemSize.Should().Be(26f);
+            comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance.Should().NotBeSameAs(initialVirtualizer);
+        }
+
+        /// <summary>
+        /// Verifies that taller custom content uses a sufficient fixed row height even when dense styling is enabled.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_CustomContentUsesConfiguredRowHeight()
+        {
+            Context.JSInterop.SetupVoid("Blazor._internal.Virtualize.init", _ => true).SetVoidResult();
+            var comp = Context.Render<TreeViewLargeDataTest>(parameters => parameters.Add(x => x.ItemCount, 100));
+
+            await comp.Find("input[data-option=custom]").ChangeAsync(true);
+            await comp.Find("input[data-option=dense]").ChangeAsync(true);
+            await ScrollVirtualizerAsync<int>(comp, 0f, 400f);
+
+            comp.Find("ul.mud-treeview").GetAttribute("style").Should().Contain("--mud-treeview-item-height:80px");
+            comp.FindComponent<Virtualize<TreeViewItemContext<int>>>().Instance.ItemSize.Should().Be(80f);
+            comp.Find("ul.mud-treeview").TextContent.Should().Contain("Third line");
+        }
+
+        /// <summary>
+        /// Verifies that binding expansion permissions gives both render modes the same behavior, including off-screen branches.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_DataItems_ExpansionHonorsBackingPermissions(bool virtualize)
+        {
+            var child = new TreeItemData<string>
+            {
+                Value = "Child",
+                Children = [new TreeItemData<string> { Value = "Leaf" }]
+            };
+            var blocked = new TreeItemData<string> { Value = "Blocked", Expandable = false, Children = [child] };
+            var items = Enumerable.Range(0, 50)
+                .Select(index => (ITreeItemData<string>)new TreeItemData<string> { Value = $"Root {index}" })
+                .Append(blocked).ToArray();
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.Virtualize, virtualize)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.ExpandedChanged), EventCallback.Factory.Create<bool>(this, expanded => item.Expanded = expanded));
+                    builder.AddAttribute(5, nameof(MudTreeViewItem<string>.CanExpand), item.Expandable);
+                    builder.CloseComponent();
+                }));
+
+            await comp.InvokeAsync(comp.Instance.ExpandAllAsync);
+
+            blocked.Expanded.Should().BeFalse();
+            child.Expanded.Should().BeFalse();
+
+            if (virtualize)
+            {
+                await ScrollVirtualizerAsync(comp, 48 * 40f, 200f);
+            }
+
+            var blockedItem = comp.FindComponents<MudTreeViewItem<string>>().Single(item => item.Instance.Value == "Blocked");
+            await comp.InvokeAsync(blockedItem.Instance.ExpandAllAsync);
+            if (virtualize)
+            {
+                await blockedItem.Find("button.mud-treeview-item-expand-button").ClickAsync();
+            }
+
+            blocked.Expanded.Should().BeFalse();
+            child.Expanded.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Verifies that non-virtualized data trees continue to use the template's expansion permission independently of backing data.
+        /// </summary>
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        public async Task TreeView_StandardDataItems_PreservesTemplateExpansionPermission(bool expandable, bool canExpand)
+        {
+            var root = new TreeItemData<string>
+            {
+                Value = "Root",
+                Expandable = expandable,
+                Children = [new TreeItemData<string> { Value = "Child" }]
+            };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [root])
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.ExpandedChanged), EventCallback.Factory.Create<bool>(this, expanded => item.Expanded = expanded));
+                    builder.AddAttribute(5, nameof(MudTreeViewItem<string>.CanExpand), canExpand);
+                    builder.CloseComponent();
+                }));
+
+            await comp.InvokeAsync(comp.Instance.ExpandAllAsync);
+
+            root.Expanded.Should().Be(canExpand);
+        }
+
+        /// <summary>
+        /// Verifies that a virtualized item with revoked expansion permission can still be collapsed.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_BlockedExpandedItemCanCollapse()
+        {
+            var root = new TreeItemData<string>
+            {
+                Value = "Root",
+                Expandable = false,
+                Expanded = true,
+                Children = [new TreeItemData<string> { Value = "Child" }]
+            };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [root])
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.CanExpand), item.Expandable);
+                    builder.CloseComponent();
+                }));
+
+            FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.HasAttribute("disabled").Should().BeFalse();
+
+            await FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            root.Expanded.Should().BeFalse();
+            GetVirtualizedValues(comp).Should().Equal("Root");
+            FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.HasAttribute("disabled").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Verifies that virtualized templates cannot silently override the permission used for off-screen items.
+        /// </summary>
+        [Test]
+        public void TreeViewVirtualize_ConflictingTemplatePermissionIsRejected()
+        {
+            var render = () => Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [new TreeItemData<string> { Value = "Root" }])
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.CanExpand), false);
+                    builder.CloseComponent();
+                }));
+
+            render.Should().Throw<InvalidOperationException>().WithMessage("*Expandable*CanExpand*");
+        }
+
+        /// <summary>
+        /// Verifies that large loaded trees keep rendering bounded while scrolling, selecting and changing expansion.
+        /// </summary>
+        [TestCase(10_000)]
+        [TestCase(100_000)]
+        public async Task TreeViewVirtualize_LargeTreeKeepsRenderedRowsBounded(int itemCount)
+        {
+            Context.JSInterop.SetupVoid("Blazor._internal.Virtualize.init", _ => true).SetVoidResult();
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var comp = Context.Render<TreeViewLargeDataTest>(parameters => parameters.Add(x => x.ItemCount, itemCount));
+            var virtualizer = comp.FindComponent<Virtualize<TreeViewItemContext<int>>>();
+            await ScrollVirtualizerAsync<int>(comp, 0f, 400f);
+            virtualizer.Instance.Items.Should().HaveCount(itemCount);
+            comp.FindAll("li.mud-treeview-item").Should().NotBeEmpty();
+            comp.FindAll("li.mud-treeview-item").Count.Should().BeLessThan(40);
+            var initialMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
+
+            stopwatch.Restart();
+            await ScrollVirtualizerAsync<int>(comp, (itemCount - 20) * 40f, 400f);
+            comp.FindComponents<MudTreeViewItem<int>>().Should().Contain(item => item.Instance.Value >= itemCount - 30);
+            comp.FindAll("li.mud-treeview-item").Count.Should().BeLessThan(40);
+            await comp.FindAll(".mud-treeview-item-content").Last().ClickAsync();
+            comp.Find("output").GetAttribute("data-selected-value").Should().NotBe("-1");
+            var scrollAndSelectMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
+
+            await comp.InvokeAsync(comp.Instance.CollapseAllAsync);
+            virtualizer.Instance.Items.Should().HaveCount(100);
+            await comp.InvokeAsync(comp.Instance.Rerender);
+            await comp.InvokeAsync(comp.Instance.ExpandAllAsync);
+            virtualizer.Instance.Items.Should().HaveCount(itemCount);
+            comp.FindAll("li.mud-treeview-item").Count.Should().BeLessThan(40);
+
+            NUnit.Framework.TestContext.WriteLine($"{itemCount:N0} nodes: initial render {initialMilliseconds:F1} ms; simulated scroll and selection {scrollAndSelectMilliseconds:F1} ms");
+        }
+
+        /// <summary>
         /// Verifies that switching from standard to virtual rendering reads expansion, visibility, and selection from backing data.
         /// </summary>
         [Test]
@@ -2955,13 +3194,21 @@ namespace MudBlazor.UnitTests.Components
         /// Simulates the browser reporting the virtualizer's scroll position as the space above the viewport and the viewport height, in pixels.
         /// </summary>
         private static Task ScrollVirtualizerAsync(IRenderedComponent<IComponent> component, float spacerSize, float containerSize)
+            => ScrollVirtualizerAsync<string>(component, spacerSize, containerSize);
+
+        /// <summary>
+        /// Simulates the viewport position for a virtualized tree with the specified value type.
+        /// </summary>
+        private static Task ScrollVirtualizerAsync<T>(IRenderedComponent<IComponent> component, float spacerSize, float containerSize)
         {
-            var virtualize = component.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance;
+            var virtualize = component.FindComponent<Virtualize<TreeViewItemContext<T>>>().Instance;
+            var renderedItemCount = component.FindComponents<MudTreeViewItem<T>>().Count(item => item.Instance.CurrentItemContext is not null);
+            var spacerSeparation = renderedItemCount * virtualize.ItemSize;
             var method = virtualize.GetType()
                 .GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
                 .Single(candidate => candidate.Name.EndsWith("OnBeforeSpacerVisible", StringComparison.Ordinal));
 
-            return component.InvokeAsync(() => method.Invoke(virtualize, [spacerSize, spacerSize, containerSize]));
+            return component.InvokeAsync(() => method.Invoke(virtualize, [spacerSize, spacerSeparation, containerSize]));
         }
 
         /// <summary>

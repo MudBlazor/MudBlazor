@@ -352,16 +352,18 @@ internal sealed class TreeViewProjection<T>
             var node = visibleNodes[index];
             rowOrdinals.TryGetValue(node.Item, out var ordinal);
             rowOrdinals[node.Item] = ordinal + 1;
-            var row = new TreeViewItemContext<T>(
-                node.Item,
-                depth,
-                index + 1,
-                visibleNodes.Count,
-                node.Children.Any(child => child.Item.Visible),
-                node.HasSelectableValues,
-                node.IsSelected,
-                node.CheckState,
-                new TreeViewRowKey<T>(node.Item, ordinal));
+            var row = new TreeViewItemContext<T>
+            {
+                Item = node.Item,
+                Depth = depth,
+                PositionInSet = index + 1,
+                SetSize = visibleNodes.Count,
+                HasVisibleChildren = node.Children.Any(child => child.Item.Visible),
+                HasSelectableValues = node.HasSelectableValues,
+                IsSelected = node.IsSelected,
+                CheckState = node.CheckState,
+                RowKey = new TreeViewRowKey<T>(node.Item, ordinal)
+            };
             rows.Add(row);
             _rowNodes.Add(row, node);
             _rowsByKey.Add(row.RowKey, row);

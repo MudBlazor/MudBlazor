@@ -15,42 +15,42 @@ internal sealed class TreeViewItemContext<T>
     /// <summary>
     /// The tree item being displayed.
     /// </summary>
-    public ITreeItemData<T> Item { get; }
+    public required ITreeItemData<T> Item { get; init; }
 
     /// <summary>
     /// The zero-based depth of this row in the tree.
     /// </summary>
-    public int Depth { get; }
+    public required int Depth { get; init; }
 
     /// <summary>
     /// The one-based position of this row among its visible siblings.
     /// </summary>
-    public int PositionInSet { get; }
+    public required int PositionInSet { get; init; }
 
     /// <summary>
     /// The number of visible rows in this row's sibling set.
     /// </summary>
-    public int SetSize { get; }
+    public required int SetSize { get; init; }
 
     /// <summary>
     /// Whether this row has any visible direct children.
     /// </summary>
-    public bool HasVisibleChildren { get; }
+    public required bool HasVisibleChildren { get; init; }
 
     /// <summary>
     /// Whether this row or any of its descendants has a selectable value.
     /// </summary>
-    public bool HasSelectableValues { get; }
+    public required bool HasSelectableValues { get; init; }
 
     /// <summary>
     /// Whether this row's own selectable value is selected.
     /// </summary>
-    public bool IsSelected { get; }
+    public required bool IsSelected { get; init; }
 
     /// <summary>
     /// The checkbox state derived from this row and all of its descendants.
     /// </summary>
-    public bool? CheckState { get; }
+    public required bool? CheckState { get; init; }
 
     /// <summary>
     /// The key which identifies the rendered row across renders.
@@ -58,29 +58,7 @@ internal sealed class TreeViewItemContext<T>
     /// <remarks>
     /// Rows are keyed by backing item reference so that a row component always stays bound to the same item.
     /// </remarks>
-    public TreeViewRowKey<T> RowKey { get; }
-
-    public TreeViewItemContext(
-        ITreeItemData<T> item,
-        int depth,
-        int positionInSet,
-        int setSize,
-        bool hasVisibleChildren,
-        bool hasSelectableValues,
-        bool isSelected,
-        bool? checkState,
-        TreeViewRowKey<T> rowKey)
-    {
-        Item = item;
-        Depth = depth;
-        PositionInSet = positionInSet;
-        SetSize = setSize;
-        HasVisibleChildren = hasVisibleChildren;
-        HasSelectableValues = hasSelectableValues;
-        IsSelected = isSelected;
-        CheckState = checkState;
-        RowKey = rowKey;
-    }
+    public required TreeViewRowKey<T> RowKey { get; init; }
 }
 
 /// <summary>

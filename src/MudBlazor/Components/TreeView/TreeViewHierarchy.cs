@@ -40,7 +40,7 @@ internal static class TreeViewHierarchy<T>
                 item.Expanded = true;
                 changed = true;
             }
-        });
+        }, static item => item.Expandable);
 
         return changed;
     }
@@ -176,12 +176,12 @@ internal static class TreeViewHierarchy<T>
         }
     }
 
-    private static void Visit(IReadOnlyCollection<ITreeItemData<T>>? items, Action<ITreeItemData<T>> visit)
+    private static void Visit(IReadOnlyCollection<ITreeItemData<T>>? items, Action<ITreeItemData<T>> visit, Func<ITreeItemData<T>, bool>? traverseChildren = null)
     {
         var visited = new HashSet<ITreeItemData<T>>(ReferenceEqualityComparer.Instance);
-        VisitItems(items ?? [], visit, visited);
+        VisitItems(items ?? [], visit, visited, traverseChildren);
 
-        static void VisitItems(IReadOnlyCollection<ITreeItemData<T>> items, Action<ITreeItemData<T>> visit, HashSet<ITreeItemData<T>> visited)
+        static void VisitItems(IReadOnlyCollection<ITreeItemData<T>> items, Action<ITreeItemData<T>> visit, HashSet<ITreeItemData<T>> visited, Func<ITreeItemData<T>, bool>? traverseChildren)
         {
             foreach (var item in items)
             {
@@ -191,9 +191,9 @@ internal static class TreeViewHierarchy<T>
                 }
 
                 visit(item);
-                if (item.HasChildren)
+                if (item.HasChildren && (traverseChildren?.Invoke(item) ?? true))
                 {
-                    VisitItems(item.Children, visit, visited);
+                    VisitItems(item.Children, visit, visited, traverseChildren);
                 }
             }
         }
