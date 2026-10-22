@@ -882,6 +882,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Multi-select options use the select's CheckedIcon and UncheckedIcon (#14035).
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_Options_UseCustomCheckboxIcons()
+        {
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.SelectedValues, ["Latte"])
+                .Add(x => x.CheckedIcon, Icons.Material.Rounded.CheckBox)
+                .Add(x => x.UncheckedIcon, Icons.Material.Rounded.CheckBoxOutlineBlank)
+                .Add(x => x.ChildContent, builder =>
+                {
+                    foreach (var item in new[] { "Espresso", "Latte" })
+                    {
+                        builder.OpenComponent<MudSelectItem<string>>(0);
+                        builder.AddComponentParameter(1, nameof(MudSelectItem<string>.Value), item);
+                        builder.CloseComponent();
+                    }
+                }));
+
+            await comp.InvokeAsync(() => comp.Instance.OpenMenu());
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Should().HaveCount(2));
+
+            var options = provider.FindAll("div.mud-list-item");
+            Icons.Material.Rounded.CheckBoxOutlineBlank.Should().Contain(IconPath(options[0]));
+            Icons.Material.Rounded.CheckBox.Should().Contain(IconPath(options[1]));
+
+            static string IconPath(IElement option) => $"d=\"{option.QuerySelectorAll("path").Last().GetAttribute("d")}\"";
+        }
+
+        /// <summary>
         /// Select all skips disabled options, and clicking it again clears the selection.
         /// </summary>
         [Test]
