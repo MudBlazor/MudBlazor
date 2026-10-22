@@ -2,6 +2,7 @@
 @inherits MudComponentBase
 @typeparam T
 @attribute [CascadingTypeParameter(nameof(T))]
+@using Microsoft.AspNetCore.Components.Web.Virtualization
 
 <ul @attributes="UserAttributes" class="@Classname" style="@Stylename">
     @* Nested trees and their items already receive the root from the root tree's cascade. *@
@@ -20,22 +21,34 @@
 @code {
     private void RenderItems(RenderTreeBuilder __builder)
     {
-        @if (ItemTemplate != null && Items != null)
-        {
-            @foreach (var item in Items)
-            {
-                // The data node lets ItemTemplate-created items keep their server-loading state on the tree root instead of the component instance.
-                <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="item" IsFixed="true">
-                    @ItemTemplate(item)
-                </CascadingValue>
-            }
-        }
-        else if (ChildContent != null)
-        {
-            // Hand-written children must not inherit the data node of an enclosing ItemTemplate item.
-            <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="default(ITreeItemData<T>)" IsFixed="true">
-                @ChildContent
+        <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="default(ITreeItemData<T>)" IsFixed="true">
+            @* A tree rendered inside a virtualized row must not inherit that row's context, or its items would render as virtualized rows of the outer tree. *@
+            <CascadingValue Name="@MudTreeViewCascadingValues.ItemContext" Value="default(TreeViewItemContext<T>)" IsFixed="true">
+                @if (IsVirtualized)
+                {
+                    @* Blazor's Virtualize is used directly because MudVirtualize invokes the item template from a wrapping fragment, which puts every row into its own render region where its key can never match the same row after a scroll. *@
+                    <Virtualize @key="GetEffectiveItemSize()" TItem="TreeViewItemContext<T>" Items="@GetRows()" SpacerElement="li" OverscanCount="@OverscanCount" ItemSize="@GetEffectiveItemSize()" Context="row" @attributes="@_virtualizeAttributes">
+                        <CascadingValue @key="row.RowKey" Name="@MudTreeViewCascadingValues.ItemData" Value="row.Item">
+                            <CascadingValue Name="@MudTreeViewCascadingValues.ItemContext" Value="row">
+                                @ItemTemplate(row.Item)
+                            </CascadingValue>
+                        </CascadingValue>
+                    </Virtualize>
+                }
+                else if (ItemTemplate != null && Items != null)
+                {
+                    @foreach (var item in Items)
+                    {
+                        <CascadingValue Name="@MudTreeViewCascadingValues.ItemData" Value="item" IsFixed="true">
+                            @ItemTemplate(item)
+                        </CascadingValue>
+                    }
+                }
+                else if (ChildContent != null)
+                {
+                    @ChildContent
+                }
             </CascadingValue>
-        }
+        </CascadingValue>
     }
 }

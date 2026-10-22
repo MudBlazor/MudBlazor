@@ -1,0 +1,84 @@
+﻿<div class="large-tree-controls">
+    <button data-action="load-10k" @onclick="() => LoadItems(10_000)">10,000 items</button>
+    <button data-action="load-100k" @onclick="() => LoadItems(100_000)">100,000 items</button>
+    <button data-action="refresh" @onclick="Rerender">Refresh parent</button>
+    <button data-action="expand" @onclick="ExpandAllAsync">Expand all</button>
+    <button data-action="collapse" @onclick="CollapseAllAsync">Collapse all</button>
+    <label><input type="checkbox" data-option="dense" @bind="_dense" /> Dense</label>
+    <label><input type="checkbox" data-option="custom" @bind="_customContent" @bind:after="AdjustCustomItemSize" /> Tall custom content (80px rows)</label>
+    <label>Row height <input type="number" data-option="size" @bind="_itemSize" /></label>
+</div>
+<output data-item-count="@_itemCount" data-selected-value="@_selectedValue">@_itemCount loaded items; selected @_selectedValue</output>
+<MudTreeView T="int" @ref="Tree" Items="_items" Virtualize="true" Height="400px" Width="260px"
+             Dense="_dense" ItemSize="_itemSize" @bind-SelectedValue="_selectedValue">
+    <ItemTemplate>
+        <MudTreeViewItem Value="context.Value" Text="context.Text" Items="context.Children"
+                         @bind-Expanded="context.Expanded" @bind-Selected="context.Selected" CanExpand="context.Expandable">
+            <BodyContent Context="row">
+                @if (_customContent && context.Value % 7 == 0)
+                {
+                    <div>Custom row @context.Value<br />Second line<br />Third line</div>
+                }
+                else
+                {
+                    <MudText Class="mud-treeview-item-label">@context.Text</MudText>
+                }
+            </BodyContent>
+        </MudTreeViewItem>
+    </ItemTemplate>
+</MudTreeView>
+
+@code {
+    private IReadOnlyCollection<ITreeItemData<int>> _items = [];
+    private int _itemCount;
+    private int _selectedValue = -1;
+    private bool _dense;
+    private bool _customContent;
+    private float _itemSize;
+
+    [Parameter]
+    public int ItemCount { get; set; } = 10_000;
+
+    public MudTreeView<int> Tree { get; private set; } = null!;
+
+    protected override void OnInitialized() => LoadItems(ItemCount);
+
+    public void Rerender() => StateHasChanged();
+
+    public Task ExpandAllAsync() => Tree.ExpandAllAsync();
+
+    public Task CollapseAllAsync() => Tree.CollapseAllAsync();
+
+    private void AdjustCustomItemSize() => _itemSize = _customContent ? 80f : 0f;
+
+    private void LoadItems(int count)
+    {
+        _itemCount = count;
+        _selectedValue = -1;
+        var items = new List<ITreeItemData<int>>(100);
+        var nextValue = 0;
+        for (var folder = 0; folder < 100; folder++)
+        {
+            var value = nextValue++;
+            var children = new List<ITreeItemData<int>>(count / 100 - 1);
+            for (var child = 1; child < count / 100; child++)
+            {
+                children.Add(new TreeItemData<int>
+                {
+                    Value = nextValue,
+                    Text = $"Report {nextValue++}: a long document name that must not change the height of a virtualized row"
+                });
+            }
+
+            items.Add(new TreeItemData<int>
+            {
+                Value = value,
+                Text = $"Folder {folder}",
+                Expanded = true,
+                Children = children
+            });
+        }
+
+        _items = items;
+    }
+}
