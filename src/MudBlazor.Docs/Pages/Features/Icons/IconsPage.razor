@@ -2,11 +2,12 @@
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
 <DocsPage>
-    <DocsPageHeader Title="MudBlazor Icons" SubTitle="Over 1800 Material Design icons and a few custom ones." />
+    <DocsPageHeader Title="MudBlazor Icons" SubTitle="NEW: Over 7000 new icons by pictogrammers.com; Over 1800 Material Design icons and a few custom ones." />
     <DocsPageContent>
 
         <DocsPageSection>
             <SectionHeader Title="Icons" />
+            <MudAlert Severity="Severity.Info" Variant="Variant.Filled">There are more than 7000 NEW Icon's available. Just switch to the pictogrammers Icon's tab.</MudAlert>
             <MudGrid Class="my-4">
                 <MudItem xs="12" sm="8" md="10">
                     <MudTextField Immediate="true" DebounceInterval="1000" @bind-Value="SearchText" Variant="Variant.Outlined" Placeholder="Search icons..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" />
@@ -15,6 +16,7 @@
                     <MudSelect T="IconOrigin" Value="SelectedIconOrigin" ValueChanged="OnSelectedValue" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
                         <MudSelectItem Value="IconOrigin.Custom">Custom Icons</MudSelectItem>
                         <MudSelectItem Value="IconOrigin.Material">Material Icons</MudSelectItem>
+                        <MudSelectItem Value="IconOrigin.PictogrammersMaterial">Pictogrammers Material Icons (over 7000 Icon's)</MudSelectItem>
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="12" Class="relative">
@@ -36,6 +38,10 @@
                             <MudChip Text="FileFormats" OnClick="@(() => ChangeIconCategory(IconType.FileFormats))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                             <MudChip Text="Uncategorized" OnClick="@(() => ChangeIconCategory(IconType.Uncategorized))" Variant="Variant.Outlined" Color="Color.Default" SelectedColor="Color.Primary" />
                         </MudChipSet>
+                    }
+                    else if (SelectedIconOrigin == IconOrigin.PictogrammersMaterial)
+                    {
+                        <MudAlert Severity="Severity.Info">Please use the <MudLink Href="https://pictogrammers.com/library/mdi/" Typo="Typo.subtitle1">Pictogrammers.com</MudLink> website to search for icons in greater detail and by category. </MudAlert>
                     }
                 </MudItem>
             </MudGrid>
