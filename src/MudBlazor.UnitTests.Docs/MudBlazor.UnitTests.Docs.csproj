@@ -62,7 +62,7 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.MTP" Version="10.1.0" />
-    <PackageReference Include="JunitXml.TestLogger" Version="8.0.0" />
+    <PackageReference Include="JunitXml.TestLogger" Version="8.1.0" />
     <PackageReference Include="AwesomeAssertions" Version="9.6.0" />
     <PackageReference Include="FluentValidation" Version="12.2.0" />
     <PackageReference Include="Microsoft.Testing.Extensions.HangDump" Version="2.5.1" />
