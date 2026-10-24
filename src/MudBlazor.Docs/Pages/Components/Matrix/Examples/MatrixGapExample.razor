@@ -1,0 +1,37 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSlider @bind-Value="_columnGap" Min="0" Max="20" Color="Color.Primary" Class="mb-6">Column Gap: @_columnGap</MudSlider>
+<MudSlider @bind-Value="_rowGap" Min="0" Max="20" Color="Color.Secondary" Class="mb-6">Row Gap: @_rowGap</MudSlider>
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(Units.Fr(), Units.Fr(2), Units.Fr())"
+           ExplicitRows="ExplicitMatrix.Pattern(3, Units.Fr())"
+           RowGap="_rowGap"
+           ColumnGap="_columnGap"
+           Style="height: 500px;">
+
+    <MudMatrixItem ColumnSpan="1" RowSpan="2">
+        <MudPaper Outlined="true" Class="mud-width-full mud-height-full"/>
+    </MudMatrixItem>
+
+    <MudMatrixItem ColumnSpan="1" RowSpan="1">
+        <MudPaper Outlined="true" Class="mud-width-full mud-height-full" />
+    </MudMatrixItem>
+
+    <MudMatrixItem ColumnSpan="1" RowSpan="1">
+        <MudPaper Outlined="true" Class="mud-width-full mud-height-full" />
+    </MudMatrixItem>
+
+    <MudMatrixItem ColumnSpan="2" RowSpan="1">
+        <MudPaper Outlined="true" Class="mud-width-full mud-height-full" />
+    </MudMatrixItem>
+
+    <MudMatrixItem ColumnSpan="3" RowSpan="1">
+        <MudPaper Outlined="true" Class="mud-width-full mud-height-full" />
+    </MudMatrixItem>
+
+</MudMatrix>
+
+@code {
+    int _columnGap = 6;
+    int _rowGap = 6;
+}
