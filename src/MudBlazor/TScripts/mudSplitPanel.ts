@@ -2,20 +2,45 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+type PointerLikeEvent = MouseEvent | TouchEvent;
+
+function clientPosition(e: PointerLikeEvent) {
+    const touch = (e as TouchEvent).touches ? (e as TouchEvent).touches[0]! : e as MouseEvent;
+    return { clientX: touch.clientX, clientY: touch.clientY };
+}
+
 // noinspection JSUnusedGlobalSymbols
 /**
  * SplitPanel resize behavior for the MudSplitPanel component.
  * Owns pointer/keyboard interaction and ARIA value updates for smooth resizing.
  */
-class MudSplitPanel {
+export default class MudSplitPanel {
+    // The constructor can return early for an invalid container, so these are declared without emitting fields.
+    declare container: HTMLElement | null;
+    declare firstPanel: HTMLElement;
+    declare divider: HTMLElement;
+    declare secondPanel: HTMLElement;
+    declare isDragging: boolean;
+    declare dividerHasMoved: boolean;
+    declare startPos: number;
+    declare startFirstSize: number;
+    declare lastTap: number;
+    declare lastDragEndDate: number;
+    declare firstPanelInitialSize: number | null;
+    declare keyboardStep: number;
+    declare horizontal: boolean;
+    declare minPanelSize: number;
+    declare panelGap: number;
+    declare resetOnDoubleClick: boolean;
+
     /**
      * Creates and stores a split panel runtime instance for a container ID.
      */
-    static build(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap) {
+    static build(containerId: string, horizontal: boolean, resetOnDoubleClick: boolean, minPanelSize: number, firstPanelInitialSize: number | null, panelGap: number) {
         window.splitPanels[containerId] = new MudSplitPanel(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap);
     }
 
-    constructor(containerId, horizontal, resetOnDoubleClick, minPanelSize, firstPanelInitialSize, panelGap) {
+    constructor(containerId: string, horizontal: boolean, resetOnDoubleClick: boolean, minPanelSize: number, firstPanelInitialSize: number | null, panelGap: number) {
         this.container = document.getElementById(containerId);
         if (!this.container) {
             console.warn(`MudSplitPanel: Container with id '${containerId}' not found.`);
@@ -28,9 +53,9 @@ class MudSplitPanel {
             return;
         }
 
-        this.firstPanel = children[0];
-        this.divider = children[1];
-        this.secondPanel = children[2];
+        this.firstPanel = children[0] as HTMLElement;
+        this.divider = children[1] as HTMLElement;
+        this.secondPanel = children[2] as HTMLElement;
 
         this.isDragging = false;
         this.dividerHasMoved = false;
@@ -68,22 +93,23 @@ class MudSplitPanel {
         this.divider.removeEventListener("keydown", this._onKeyDown);
         this._onMouseUp();
 
-        delete window.splitPanels[this.container.id];
+        delete window.splitPanels[this.container!.id];
     }
 
     // noinspection JSUnusedGlobalSymbols
     /**
      * Updates runtime options and recalculates panel sizes when needed.
      */
-    update(horizontal, resetOnDoubleClick, minPanelSize, panelGap, forceRecalculateSize = false) {
+    update(horizontal: boolean, resetOnDoubleClick: boolean, minPanelSize: number, panelGap: number, forceRecalculateSize = false) {
         const shouldRecalculateSize = horizontal !== this.horizontal || forceRecalculateSize;
         this.horizontal = horizontal;
         this.minPanelSize = minPanelSize;
         this.panelGap = panelGap;
         this.resetOnDoubleClick = resetOnDoubleClick;
 
-        this.divider.style.minWidth = this.horizontal ? null : `${panelGap}px`;
-        this.divider.style.minHeight = this.horizontal ? `${panelGap}px` : null;
+        // Browsers treat the null the script used to assign as an empty string, which clears the property.
+        this.divider.style.minWidth = this.horizontal ? '' : `${panelGap}px`;
+        this.divider.style.minHeight = this.horizontal ? `${panelGap}px` : '';
 
         const containerSize = this._getContainerSize();
         this.divider.ariaValueMin = (this.minPanelSize / containerSize * 100).toFixed(2).toString();
@@ -97,7 +123,7 @@ class MudSplitPanel {
     /**
      * Resets both panel sizes using either the provided size or initial configuration.
      */
-    resetSizes(firstPanelSize = null) {
+    resetSizes(firstPanelSize: number | null = null) {
         this.firstPanel.style.width = "100%";
         this.secondPanel.style.width = "100%";
         this.firstPanel.style.height = "100%";
@@ -121,21 +147,20 @@ class MudSplitPanel {
     /**
      * Sets the divider offset in pixels.
      */
-    setDividerPosition(offset) {
+    setDividerPosition(offset: number) {
         this.resetSizes(offset);
     }
 
     _getContainerSize() {
-        return this.horizontal ? this.container.offsetHeight : this.container.offsetWidth;
+        return this.horizontal ? this.container!.offsetHeight : this.container!.offsetWidth;
     }
 
-    _onMouseDown(e) {
+    _onMouseDown(e: PointerLikeEvent) {
         e.preventDefault();
         this.isDragging = true;
         this.dividerHasMoved = false;
 
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const { clientX, clientY } = clientPosition(e);
 
         if (this.horizontal) {
             this.startPos = clientY;
@@ -154,11 +179,10 @@ class MudSplitPanel {
         document.addEventListener("touchend", this._onMouseUp);
     }
 
-    _onMouseMove(e) {
+    _onMouseMove(e: PointerLikeEvent) {
         if (!this.isDragging) return;
 
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const { clientX, clientY } = clientPosition(e);
         const delta = this.horizontal ? clientY - this.startPos : clientX - this.startPos;
         const newFirstSize = this.startFirstSize + delta;
 
@@ -172,7 +196,7 @@ class MudSplitPanel {
         }
     }
 
-    _setPanelSizes(newFirstSize, containerSize) {
+    _setPanelSizes(newFirstSize: number, containerSize: number) {
         const newSecondSize = containerSize - newFirstSize - this.panelGap;
 
         this.firstPanel.style.height = this.horizontal ? `${newFirstSize}px` : "100%";
@@ -206,8 +230,8 @@ class MudSplitPanel {
         if (Date.now() - this.lastDragEndDate < 100) return;
 
         const containerSize = this.horizontal
-            ? this.container.offsetHeight
-            : this.container.offsetWidth;
+            ? this.container!.offsetHeight
+            : this.container!.offsetWidth;
 
         let firstPanelSize = this.firstPanelInitialSize;
         if (!firstPanelSize) {
@@ -225,7 +249,7 @@ class MudSplitPanel {
         this.lastTap = now;
     }
 
-    _onKeyDown(e) {
+    _onKeyDown(e: KeyboardEvent) {
         const key = e.key;
         let delta = 0;
         const containerSize = this._getContainerSize();
@@ -269,42 +293,37 @@ class MudSplitPanel {
     }
 }
 
-if (!window.mudSplitPanel) {
-    window.mudSplitPanel = MudSplitPanel;
-    window.splitPanels = {};
-}
-
 /**
  * Updates split panel options for an existing container ID.
  */
-window.mudSplitPanel_update = function (id, horizontal, resetOnDoubleClick, minPanelSize, panelGap) {
-    window.splitPanels[id].update(horizontal, resetOnDoubleClick, minPanelSize, panelGap);
+export const mudSplitPanel_update = function (id: string, horizontal: boolean, resetOnDoubleClick: boolean, minPanelSize: number, panelGap: number) {
+    window.splitPanels[id]!.update(horizontal, resetOnDoubleClick, minPanelSize, panelGap);
 };
 
 /**
  * Resets the divider position to the configured initial value.
  */
-window.mudSplitPanel_resetDividerPosition = function (id) {
-    window.splitPanels[id].resetSizes();
+export const mudSplitPanel_resetDividerPosition = function (id: string) {
+    window.splitPanels[id]!.resetSizes();
 };
 
 /**
  * Returns the divider position for a split panel container ID.
  */
-window.mudSplitPanel_getDividerPosition = function (id) {
-    return window.splitPanels[id].getDividerPosition();
+export const mudSplitPanel_getDividerPosition = function (id: string) {
+    return window.splitPanels[id]!.getDividerPosition();
 };
 
 /**
  * Sets the divider position for a split panel container ID.
  */
-window.mudSplitPanel_setDividerPosition = function (id, offset) {
-    window.splitPanels[id].setDividerPosition(offset);
+export const mudSplitPanel_setDividerPosition = function (id: string, offset: number) {
+    window.splitPanels[id]!.setDividerPosition(offset);
 };
 
 /**
  * Disposes the split panel runtime instance for a container ID.
  */
-window.mudSplitPanel_destroy = function (id) {
-    window.splitPanels[id].destroy();
+export const mudSplitPanel_destroy = function (id: string) {
+    window.splitPanels[id]!.destroy();
 };

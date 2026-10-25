@@ -4,7 +4,6 @@ import "./mudAAAlicense";
 // Legacy side effect imports
 import "./mudKeyInterceptor";
 import "./mudPopover";
-import "./mudSplitPanel";
 
 // Code ported to TypeScript
 import MudDragAndDrop from "./mudDragAndDrop";
@@ -24,6 +23,13 @@ import MudResizeObserverFactory from "./mudResizeObserver";
 import MudScrollListener from "./mudScrollListener";
 import MudScrollManager from "./mudScrollManager";
 import MudScrollSpy from "./mudScrollSpy";
+import MudSplitPanel, {
+    mudSplitPanel_destroy,
+    mudSplitPanel_getDividerPosition,
+    mudSplitPanel_resetDividerPosition,
+    mudSplitPanel_setDividerPosition,
+    mudSplitPanel_update,
+} from "./mudSplitPanel";
 import MudTableCell from "./mudTableCell";
 import MudThemeProvider from "./mudThemeProvider";
 import MudTimePicker from "./mudTimePicker";
@@ -51,11 +57,18 @@ declare global {
         mudScrollListener: MudScrollListener;
         mudScrollManager: MudScrollManager;
         mudScrollSpy: MudScrollSpy;
+        mudSplitPanel: typeof MudSplitPanel;
+        mudSplitPanel_destroy: typeof mudSplitPanel_destroy;
+        mudSplitPanel_getDividerPosition: typeof mudSplitPanel_getDividerPosition;
+        mudSplitPanel_resetDividerPosition: typeof mudSplitPanel_resetDividerPosition;
+        mudSplitPanel_setDividerPosition: typeof mudSplitPanel_setDividerPosition;
+        mudSplitPanel_update: typeof mudSplitPanel_update;
         mudTableCell: MudTableCell;
         mudThemeProvider: MudThemeProvider;
         mudTimePicker: MudTimePicker;
         mudWindow: MudWindow;
         serializeParameter: typeof serializeParameter;
+        splitPanels: Record<string, MudSplitPanel>;
     }
 }
 
@@ -86,6 +99,16 @@ if (!window.mudScrollListener) {
 }
 window.mudScrollManager = new MudScrollManager();
 window.mudScrollSpy = new MudScrollSpy();
+// The registry is shared state, so a second copy of the script keeps using the existing one.
+if (!window.mudSplitPanel) {
+    window.mudSplitPanel = MudSplitPanel;
+    window.splitPanels = {};
+}
+window.mudSplitPanel_destroy = mudSplitPanel_destroy;
+window.mudSplitPanel_getDividerPosition = mudSplitPanel_getDividerPosition;
+window.mudSplitPanel_resetDividerPosition = mudSplitPanel_resetDividerPosition;
+window.mudSplitPanel_setDividerPosition = mudSplitPanel_setDividerPosition;
+window.mudSplitPanel_update = mudSplitPanel_update;
 window.mudTableCell = new MudTableCell();
 window.mudThemeProvider = new MudThemeProvider();
 window.mudTimePicker = new MudTimePicker();
