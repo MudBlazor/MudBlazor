@@ -63,7 +63,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["mudTableCell", "object"],
     // mudThemeProvider.ts
     ["mudThemeProvider", "object"],
-    // mudTimePicker.js
+    // mudTimePicker.ts
     ["mudTimePicker", "object"],
     // MudWindow.ts
     ["mudWindow", "object"],

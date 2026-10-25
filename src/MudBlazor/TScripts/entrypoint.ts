@@ -18,7 +18,6 @@ import "./mudScrollListener";
 import "./mudScrollManager";
 import "./mudScrollSpy";
 import "./mudSplitPanel";
-import "./mudTimePicker";
 
 // Code ported to TypeScript
 import MudExitPrompt from "./mudExitPrompt";
@@ -27,6 +26,7 @@ import MudInput from "./mudInput";
 import MudPointerCapture from "./mudPointerCapture";
 import MudTableCell from "./mudTableCell";
 import MudThemeProvider from "./mudThemeProvider";
+import MudTimePicker from "./mudTimePicker";
 import MudWindow from "./MudWindow";
 
 declare global {
@@ -37,6 +37,7 @@ declare global {
         mudPointerCapture: MudPointerCapture;
         mudTableCell: MudTableCell;
         mudThemeProvider: MudThemeProvider;
+        mudTimePicker: MudTimePicker;
         mudWindow: MudWindow;
     }
 }
@@ -50,4 +51,5 @@ window.mudInput = new MudInput();
 window.mudPointerCapture = new MudPointerCapture();
 window.mudTableCell = new MudTableCell();
 window.mudThemeProvider = new MudThemeProvider();
+window.mudTimePicker = new MudTimePicker();
 window.mudWindow = new MudWindow();
