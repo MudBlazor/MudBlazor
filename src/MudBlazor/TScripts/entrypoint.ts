@@ -3,7 +3,6 @@ import "./mudAAAlicense";
 
 // Legacy side effect imports
 import "./mudElementReference";
-import "./mudHelpers";
 import "./mudJsEvent";
 import "./mudKeyInterceptor";
 import "./mudPopover";
@@ -13,6 +12,7 @@ import "./mudSplitPanel";
 import MudDragAndDrop from "./mudDragAndDrop";
 import MudExitPrompt from "./mudExitPrompt";
 import MudFileUpload from "./mudFileUpload";
+import { getTabbableElements, hasDefinedParentHeight, mudGetSvgBBox, mudObserveElementSize, serializeParameter } from "./mudHelpers";
 import MudHotkeyListener from "./mudHotkeyListener";
 import MudInput from "./mudInput";
 import MudInputSizing from "./mudInputSizing";
@@ -31,12 +31,16 @@ import MudWindow from "./MudWindow";
 
 declare global {
     interface Window {
+        getTabbableElements: typeof getTabbableElements;
+        hasDefinedParentHeight: typeof hasDefinedParentHeight;
         mudDragAndDrop: MudDragAndDrop;
         mudExitPrompt: MudExitPrompt;
         mudFileUpload: MudFileUpload;
+        mudGetSvgBBox: typeof mudGetSvgBBox;
         mudHotkeyListener: MudHotkeyListener;
         mudInput: MudInput;
         mudInputSizing: MudInputSizing;
+        mudObserveElementSize: typeof mudObserveElementSize;
         mudPointerCapture: MudPointerCapture;
         mudPointerEventsNone: MudPointerEventsNone;
         mudResizeListener: MudResizeListener;
@@ -49,20 +53,25 @@ declare global {
         mudThemeProvider: MudThemeProvider;
         mudTimePicker: MudTimePicker;
         mudWindow: MudWindow;
+        serializeParameter: typeof serializeParameter;
     }
 }
 
+window.getTabbableElements = getTabbableElements;
+window.hasDefinedParentHeight = hasDefinedParentHeight;
 window.mudDragAndDrop = new MudDragAndDrop();
 // Guard against a second copy of the script replacing the instance that owns the registered prompts.
 if (!window.mudExitPrompt) {
     window.mudExitPrompt = new MudExitPrompt();
 }
 window.mudFileUpload = new MudFileUpload();
+window.mudGetSvgBBox = mudGetSvgBBox;
 if (!window.mudHotkeyListener) {
     window.mudHotkeyListener = new MudHotkeyListener();
 }
 window.mudInput = new MudInput();
 window.mudInputSizing = new MudInputSizing();
+window.mudObserveElementSize = mudObserveElementSize;
 window.mudPointerCapture = new MudPointerCapture();
 window.mudPointerEventsNone = new MudPointerEventsNone();
 window.mudResizeListener = new MudResizeListener();
@@ -77,5 +86,6 @@ window.mudTableCell = new MudTableCell();
 window.mudThemeProvider = new MudThemeProvider();
 window.mudTimePicker = new MudTimePicker();
 window.mudWindow = new MudWindow();
+window.serializeParameter = serializeParameter;
 
 registerRippleHandlers();

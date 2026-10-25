@@ -17,7 +17,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["mudExitPrompt", "object"],
     // mudFileUpload.ts
     ["mudFileUpload", "object"],
-    // mudHelpers.js
+    // mudHelpers.ts
     ["getTabbableElements", "function"],
     ["serializeParameter", "function"],
     ["mudGetSvgBBox", "function"],

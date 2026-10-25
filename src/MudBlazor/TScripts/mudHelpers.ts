@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+import type { DotNet } from "@microsoft/dotnet-js-interop";
+
 /**
  * Cross-cutting DOM helpers shared by interop modules and chart sizing flows.
  * Exposes small global utilities consumed by other TScripts and component interop calls.
@@ -10,8 +12,8 @@
 /**
  * Returns tabbable descendants used by focus-management helpers.
  */
-window.getTabbableElements = (element) => {
-    return element.querySelectorAll(
+export function getTabbableElements(element: ParentNode) {
+    return element.querySelectorAll<HTMLElement>(
         "a[href]:not([tabindex='-1'])," +
         "area[href]:not([tabindex='-1'])," +
         "button:not([disabled]):not([tabindex='-1'])," +
@@ -23,14 +25,15 @@ window.getTabbableElements = (element) => {
         "[tabindex]:not([tabindex='-1'])," +
         "[contentEditable=true]:not([tabindex='-1'])"
     );
-};
+}
 
 /**
  * Serializes complex browser objects into interop-safe plain data.
  */
 // Legacy serializer kept on `window` for JS interop payload normalization in browser-only call paths.
 // Source inspiration: https://github.com/RemiBou/BrowserInterop
-function serializeParameter(data, spec) {
+// It walks arbitrary browser objects and specs, so the data is untyped by design.
+export function serializeParameter(data: any, spec?: any): any {
     if (data === undefined ||
         data === null) {
         return null;
@@ -41,7 +44,7 @@ function serializeParameter(data, spec) {
         return data;
     }
 
-    const res = (Array.isArray(data)) ? [] : {};
+    const res: any = (Array.isArray(data)) ? [] : {};
     if (!spec) {
         spec = "*";
     }
@@ -94,12 +97,10 @@ function serializeParameter(data, spec) {
     return res;
 }
 
-window.serializeParameter = serializeParameter;
-
 /**
  * Returns the SVG bounding box in a plain object for .NET interop.
  */
-window.mudGetSvgBBox = (svgElement) => {
+export function mudGetSvgBBox(svgElement: SVGGraphicsElement | null | undefined) {
     if (svgElement == null) return null;
 
     const bbox = svgElement.getBBox();
@@ -109,13 +110,13 @@ window.mudGetSvgBBox = (svgElement) => {
         width: bbox.width,
         height: bbox.height
     };
-};
+}
 
 /**
  * Returns whether or not the element has a parent with a defined height,
  * either via explicit height or constrained layout context.
  */
-window.hasDefinedParentHeight = (element) => {
+export function hasDefinedParentHeight(element: Element | null | undefined) {
     const parent = element?.parentElement;
 
     if (!parent) return false;
@@ -137,13 +138,13 @@ window.hasDefinedParentHeight = (element) => {
         style.maxHeight !== 'none';
 
     return hasExplicitHeight || (hasConstrainedHeight && isFlexOrGrid);
-};
+}
 
 /**
  * Observes element size changes and forwards throttled updates to a .NET callback.
  * Automatically stops observing when the element is removed from the DOM.
  */
-window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElementSizeChanged', debounceMillis = 200) => {
+export function mudObserveElementSize(dotNetReference: DotNet.DotNetObject, element: Element | null | undefined, functionName = 'OnElementSizeChanged', debounceMillis = 200) {
     if (!element) return;
 
     // Registration can arrive after navigation has already removed the element.
@@ -152,9 +153,9 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
     }
 
     let lastNotifiedTime = 0;
-    let scheduledCall = null;
+    let scheduledCall: ReturnType<typeof setTimeout> | null = null;
 
-    const notify = (width, height, timestamp) => {
+    const notify = (width: number, height: number, timestamp: number) => {
         if (!element.isConnected) {
             cleanup();
             return;
@@ -173,7 +174,7 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
     };
 
     // Throttled notification function.
-    const throttledNotify = (width, height) => {
+    const throttledNotify = (width: number, height: number) => {
         const timestamp = Date.now();
         const timeSinceLast = timestamp - lastNotifiedTime;
         if (timeSinceLast >= debounceMillis) {
@@ -224,10 +225,10 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
         }
     });
     function observeAncestors() {
-        let ancestor = element.parentNode;
+        let ancestor = element!.parentNode;
         while (ancestor) {
             mutationObserver.observe(ancestor, { childList: true });
-            ancestor = ancestor.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? ancestor.host : ancestor.parentNode;
+            ancestor = ancestor.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? (ancestor as ShadowRoot).host : ancestor.parentNode;
         }
     }
     observeAncestors();
@@ -247,4 +248,4 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
         width: element.clientWidth,
         height: element.clientHeight
     };
-};
+}
