@@ -25,7 +25,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["mudObserveElementSize", "function"],
     // mudHotkeyListener.js
     ["mudHotkeyListener", "object"],
-    // mudInput.js
+    // mudInput.ts
     ["mudInput", "object"],
     // mudInputSizing.js
     ["mudInputSizing", "object"],

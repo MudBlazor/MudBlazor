@@ -2,17 +2,18 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// noinspection JSUnusedGlobalSymbols
+type TextInputElement = HTMLInputElement | HTMLTextAreaElement;
+
 /**
  * Text input interop for caret APIs, insertion helpers, and value reset.
  * Keeps updates caret-safe while still dispatching native `input` events.
  */
-class MudInput {
+export default class MudInput {
     /**
      * Clears the value of an input element by ID.
      */
-    resetValue(id) {
-        const input = document.getElementById(id);
+    resetValue(id: string) {
+        const input = document.getElementById(id) as TextInputElement | null;
         if (input) {
             input.value = '';
         }
@@ -21,16 +22,16 @@ class MudInput {
     /**
      * Returns the current caret start position.
      */
-    getCaretPosition(element) {
+    getCaretPosition(element: TextInputElement) {
         return element.selectionStart;
     }
 
     /**
      * Inserts text at the current selection/caret position.
      */
-    insertAtCurrentCaretPosition(element, text) {
-        const start = element.selectionStart !== null && element.selectionStart !== undefined ? element.selectionStart : 0;
-        const end = element.selectionEnd !== null && element.selectionEnd !== undefined ? element.selectionEnd : start;
+    insertAtCurrentCaretPosition(element: TextInputElement, text: string) {
+        const start = element.selectionStart ?? 0;
+        const end = element.selectionEnd ?? start;
 
         this._insertText(element, text, start, end);
     }
@@ -38,14 +39,14 @@ class MudInput {
     /**
      * Inserts text at a specific character position.
      */
-    insertAtPosition(element, text, position) {
-        const value = element.value !== null && element.value !== undefined ? element.value : '';
+    insertAtPosition(element: TextInputElement, text: string, position: number) {
+        const value = element.value ?? '';
         const insertPos = this._clampPosition(position, value.length);
 
         this._insertText(element, text, insertPos, insertPos);
     }
 
-    _insertText(element, text, start, end) {
+    _insertText(element: TextInputElement, text: string, start: number, end: number) {
         element.focus();
         element.setSelectionRange(start, end);
 
@@ -53,7 +54,7 @@ class MudInput {
         // noinspection JSDeprecatedSymbols
         if (!document.execCommand('insertText', false, text)) {
             // Fallback for browsers that don't support execCommand
-            const value = element.value !== null && element.value !== undefined ? element.value : '';
+            const value = element.value ?? '';
             element.value = value.substring(0, start) + text + value.substring(end);
 
             const newCaretPos = start + text.length;
@@ -64,12 +65,11 @@ class MudInput {
         element.dispatchEvent(new Event('input', {bubbles: true}));
     }
 
-    _clampPosition(position, max) {
+    _clampPosition(position: number, max: number) {
+        // The value arrives through JS interop, so guard against non-numeric input despite the declared type.
         const pos = Number(position);
         return Number.isNaN(pos)
             ? max
             : Math.max(0, Math.min(pos, max));
     }
 }
-
-window.mudInput = new MudInput();

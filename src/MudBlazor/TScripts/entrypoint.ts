@@ -7,7 +7,6 @@ import "./mudElementReference";
 import "./mudExitPrompt";
 import "./mudHelpers";
 import "./mudHotkeyListener";
-import "./mudInput";
 import "./mudInputSizing";
 import "./mudJsEvent";
 import "./mudKeyInterceptor";
@@ -24,6 +23,7 @@ import "./mudTimePicker";
 
 // Code ported to TypeScript
 import MudFileUpload from "./mudFileUpload";
+import MudInput from "./mudInput";
 import MudPointerCapture from "./mudPointerCapture";
 import MudTableCell from "./mudTableCell";
 import MudThemeProvider from "./mudThemeProvider";
@@ -32,6 +32,7 @@ import MudWindow from "./MudWindow";
 declare global {
     interface Window {
         mudFileUpload: MudFileUpload;
+        mudInput: MudInput;
         mudPointerCapture: MudPointerCapture;
         mudTableCell: MudTableCell;
         mudThemeProvider: MudThemeProvider;
@@ -40,6 +41,7 @@ declare global {
 }
 
 window.mudFileUpload = new MudFileUpload();
+window.mudInput = new MudInput();
 window.mudPointerCapture = new MudPointerCapture();
 window.mudTableCell = new MudTableCell();
 window.mudThemeProvider = new MudThemeProvider();
