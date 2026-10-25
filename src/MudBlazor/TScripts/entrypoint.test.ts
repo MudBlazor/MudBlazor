@@ -11,7 +11,7 @@ test("window is defined", () => {
 const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     // mudDragAndDrop.ts
     ["mudDragAndDrop", "object"],
-    // mudElementReference.js
+    // mudElementReference.ts
     ["mudElementRef", "object"],
     // mudExitPrompt.ts
     ["mudExitPrompt", "object"],

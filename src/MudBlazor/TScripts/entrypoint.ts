@@ -2,13 +2,13 @@
 import "./mudAAAlicense";
 
 // Legacy side effect imports
-import "./mudElementReference";
 import "./mudKeyInterceptor";
 import "./mudPopover";
 import "./mudSplitPanel";
 
 // Code ported to TypeScript
 import MudDragAndDrop from "./mudDragAndDrop";
+import MudElementReference from "./mudElementReference";
 import MudExitPrompt from "./mudExitPrompt";
 import MudFileUpload from "./mudFileUpload";
 import { getTabbableElements, hasDefinedParentHeight, mudGetSvgBBox, mudObserveElementSize, serializeParameter } from "./mudHelpers";
@@ -34,6 +34,7 @@ declare global {
         getTabbableElements: typeof getTabbableElements;
         hasDefinedParentHeight: typeof hasDefinedParentHeight;
         mudDragAndDrop: MudDragAndDrop;
+        mudElementRef: MudElementReference;
         mudExitPrompt: MudExitPrompt;
         mudFileUpload: MudFileUpload;
         mudGetSvgBBox: typeof mudGetSvgBBox;
@@ -61,6 +62,7 @@ declare global {
 window.getTabbableElements = getTabbableElements;
 window.hasDefinedParentHeight = hasDefinedParentHeight;
 window.mudDragAndDrop = new MudDragAndDrop();
+window.mudElementRef = new MudElementReference();
 // Guard against a second copy of the script replacing the instance that owns the registered prompts.
 if (!window.mudExitPrompt) {
     window.mudExitPrompt = new MudExitPrompt();
