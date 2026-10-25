@@ -23,7 +23,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["mudGetSvgBBox", "function"],
     ["hasDefinedParentHeight", "function"],
     ["mudObserveElementSize", "function"],
-    // mudHotkeyListener.js
+    // mudHotkeyListener.ts
     ["mudHotkeyListener", "object"],
     // mudInput.ts
     ["mudInput", "object"],

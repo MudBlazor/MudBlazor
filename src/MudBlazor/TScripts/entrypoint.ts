@@ -4,7 +4,6 @@ import "./mudAAAlicense";
 // Legacy side effect imports
 import "./mudElementReference";
 import "./mudHelpers";
-import "./mudHotkeyListener";
 import "./mudInputSizing";
 import "./mudJsEvent";
 import "./mudKeyInterceptor";
@@ -20,6 +19,7 @@ import "./mudSplitPanel";
 import MudDragAndDrop from "./mudDragAndDrop";
 import MudExitPrompt from "./mudExitPrompt";
 import MudFileUpload from "./mudFileUpload";
+import MudHotkeyListener from "./mudHotkeyListener";
 import MudInput from "./mudInput";
 import MudPointerCapture from "./mudPointerCapture";
 import MudScrollListener from "./mudScrollListener";
@@ -34,6 +34,7 @@ declare global {
         mudDragAndDrop: MudDragAndDrop;
         mudExitPrompt: MudExitPrompt;
         mudFileUpload: MudFileUpload;
+        mudHotkeyListener: MudHotkeyListener;
         mudInput: MudInput;
         mudPointerCapture: MudPointerCapture;
         mudScrollListener: MudScrollListener;
@@ -51,6 +52,9 @@ if (!window.mudExitPrompt) {
     window.mudExitPrompt = new MudExitPrompt();
 }
 window.mudFileUpload = new MudFileUpload();
+if (!window.mudHotkeyListener) {
+    window.mudHotkeyListener = new MudHotkeyListener();
+}
 window.mudInput = new MudInput();
 window.mudPointerCapture = new MudPointerCapture();
 if (!window.mudScrollListener) {
