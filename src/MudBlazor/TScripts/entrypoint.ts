@@ -13,7 +13,6 @@ import "./mudPopover";
 import "./mudResizeListener";
 import "./mudResizeObserver";
 import "./mudRipple";
-import "./mudScrollListener";
 import "./mudScrollManager";
 import "./mudScrollSpy";
 import "./mudSplitPanel";
@@ -24,6 +23,7 @@ import MudExitPrompt from "./mudExitPrompt";
 import MudFileUpload from "./mudFileUpload";
 import MudInput from "./mudInput";
 import MudPointerCapture from "./mudPointerCapture";
+import MudScrollListener from "./mudScrollListener";
 import MudTableCell from "./mudTableCell";
 import MudThemeProvider from "./mudThemeProvider";
 import MudTimePicker from "./mudTimePicker";
@@ -36,6 +36,7 @@ declare global {
         mudFileUpload: MudFileUpload;
         mudInput: MudInput;
         mudPointerCapture: MudPointerCapture;
+        mudScrollListener: MudScrollListener;
         mudTableCell: MudTableCell;
         mudThemeProvider: MudThemeProvider;
         mudTimePicker: MudTimePicker;
@@ -51,6 +52,9 @@ if (!window.mudExitPrompt) {
 window.mudFileUpload = new MudFileUpload();
 window.mudInput = new MudInput();
 window.mudPointerCapture = new MudPointerCapture();
+if (!window.mudScrollListener) {
+    window.mudScrollListener = new MudScrollListener();
+}
 window.mudTableCell = new MudTableCell();
 window.mudThemeProvider = new MudThemeProvider();
 window.mudTimePicker = new MudTimePicker();
