@@ -74,6 +74,7 @@ export default class MudInputSizing {
      */
     init(elem: SizingElement, maxLines: number) {
         // The element callbacks outlive this call, so they keep a reference to the sizing helpers.
+        // oxlint-disable-next-line typescript/no-this-alias
         const sizing = this;
         let maxLinesValue = 0;
 

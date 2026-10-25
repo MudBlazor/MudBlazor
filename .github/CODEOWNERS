@@ -5,7 +5,7 @@
 
 # Build Infrastructure
 /src/bun.lock @meenzen
-/src/eslint.config.ts @meenzen
+/src/.oxlintrc.json @meenzen
 /src/package.json @meenzen
 /src/tsconfig.json @meenzen
 /src/MudBlazor/build.mts @meenzen

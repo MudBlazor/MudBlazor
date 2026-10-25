@@ -264,6 +264,7 @@ export default class MudElementReference {
         if (!element) return;
 
         // The handler outlives this call, so it keeps a reference to the instance for its cleanup.
+        // oxlint-disable-next-line typescript/no-this-alias
         const elementRef = this;
         element._mudBlurHandler = function (e) {
             const relatedTarget = e.relatedTarget as Node | null;

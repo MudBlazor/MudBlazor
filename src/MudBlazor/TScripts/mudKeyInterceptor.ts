@@ -168,7 +168,9 @@ export class MudKeyInterceptor {
     updatekey(updatedOption: KeyOptions) {
         // A null key throws here, as it did in JavaScript.
         const option = this._keyOptions[updatedOption.key!.toLowerCase()];
-        option || this.logger('[MudBlazor | KeyInterceptor] updating option failed: key not registered');
+        if (!option) {
+            this.logger('[MudBlazor | KeyInterceptor] updating option failed: key not registered');
+        }
         this.setKeyOption(updatedOption);
         this.logger('[MudBlazor | KeyInterceptor] updated option ', { option, updatedOption });
     }

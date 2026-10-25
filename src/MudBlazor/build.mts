@@ -8,7 +8,7 @@
  *
  * Parameters:
  *   watch: Watch for changes and rebuild on change.
- *   fix: Apply ESLint fixes.
+ *   fix: Apply oxlint fixes.
  */
 
 /// <reference types="bun" />
@@ -17,7 +17,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as sass from "sass";
-import { ESLint } from "eslint";
 
 const bunExecutable = process.execPath;
 const scriptFilename = fileURLToPath(import.meta.url);
@@ -28,6 +27,7 @@ const jsOutputFile = path.join(scriptDirectory, "wwwroot/MudBlazor.min.js");
 const scssInput = path.join(scriptDirectory, "Styles/MudBlazor.scss");
 const scssInputDir = path.dirname(scssInput);
 const scssOutput = path.join(scriptDirectory, "wwwroot/MudBlazor.min.css");
+const lintConfig = path.join(scriptDirectory, "../.oxlintrc.json");
 
 type TimingEntry = {
     step: string;
@@ -137,39 +137,28 @@ async function test() {
     timer.stop();
 }
 
-async function eslint() {
+async function lint() {
     console.log("Linting Scripts");
-    const timer = startTimer("eslint");
+    const timer = startTimer("oxlint");
 
     const fix = process.argv.includes("fix");
-    // Every script is TypeScript now, so the .js pattern matches nothing until ESLint supports TypeScript 7 (see the todo below).
-    const eslint = new ESLint({ fix: fix, errorOnUnmatchedPattern: false });
-    const results = await eslint.lintFiles([
-        // todo: add this once eslint supports TypeScript 7
-        //path.join(jsDirectory, "**/*.ts")
-        //scriptFilename,
-        path.join(jsDirectory, "**/*.js"),
-    ]);
+    const proc = Bun.spawn({
+        cmd: [
+            bunExecutable, "run", "oxlint",
+            "--config", lintConfig,
+            "--deny-warnings",
+            ...(fix ? ["--fix"] : []),
+            jsDirectory, scriptFilename, path.join(scriptDirectory, "test-setup.ts"),
+        ],
+        cwd: scriptDirectory,
+        stdout: "inherit",
+        stderr: "inherit",
+    });
 
-    if (fix) {
-        await ESLint.outputFixes(results);
-    }
-
-    const formatter = await eslint.loadFormatter("stylish");
-    const resultText = await formatter.format(results);
-
-    if (resultText.trim().length > 0) {
-        console.log(resultText);
-    }
-
-    const totalErrors = results.reduce((sum, r) => sum + (r.errorCount || 0), 0);
-    const totalWarnings = results.reduce(
-        (sum, r) => sum + (r.warningCount || 0),
-        0,
-    );
-
-    if (totalErrors > 0 || totalWarnings > 0) {
-        process.exit(1);
+    // See typecheck for why the awaited exit code is used instead of proc.exitCode.
+    const exitCode = await proc.exited;
+    if (exitCode !== 0) {
+        process.exit(exitCode);
     }
 
     timer.stop();
@@ -194,7 +183,7 @@ function buildSCSS() {
 }
 
 async function buildAll() {
-    await eslint();
+    await lint();
     await typecheck();
     await test();
     await buildJS();
@@ -218,7 +207,7 @@ if (process.argv.includes("watch")) {
         async (eventType, filename) => {
             console.log(`JS file changed: ${eventType} ${filename}`);
             try {
-                await eslint();
+                await lint();
                 await typecheck();
                 await test();
                 await buildJS();

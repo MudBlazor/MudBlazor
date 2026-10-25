@@ -74,7 +74,7 @@ Run restore only when restore inputs changed (`*.csproj`, `src/Directory.Build.*
 
 If `.config/dotnet-tools.json` changes, run `dotnet tool restore --tool-manifest .config/dotnet-tools.json`.
 
-If `src/package.json`, `src/bun.lock`, `src/eslint.config.ts`, `src/Directory.Build.props`, any `tsconfig.json`, `src/MudBlazor/bunfig.toml`, `src/MudBlazor/test-setup.ts`, or a project's build script (`build.mjs` or `build.mts`) changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
+If `src/package.json`, `src/bun.lock`, `src/.oxlintrc.json`, `src/Directory.Build.props`, any `tsconfig.json`, `src/MudBlazor/bunfig.toml`, `src/MudBlazor/test-setup.ts`, or a project's build script (`build.mjs` or `build.mts`) changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
 
 ### Default local loop for C# or Razor component changes
 

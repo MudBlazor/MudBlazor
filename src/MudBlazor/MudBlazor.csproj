@@ -110,7 +110,7 @@
     <BuildScriptInputs Include="bunfig.toml" />
     <BuildScriptInputs Include="test-setup.ts" />
     <BuildScriptInputs Include="tsconfig.json" />
-    <BuildScriptInputs Include="../eslint.config.ts" />
+    <BuildScriptInputs Include="../.oxlintrc.json" />
     <BuildScriptInputs Include="../tsconfig.json" />
     <WebAssetInputs Include="@(JsAssetInputs);@(TsAssetInputs);@(ScssAssetInputs);@(BuildScriptInputs);@(BunToolchainInputs)" />
     <UpToDateCheckInput Include="@(WebAssetInputs)" />
