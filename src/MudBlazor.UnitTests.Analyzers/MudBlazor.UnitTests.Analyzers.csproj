@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="coverlet.MTP" Version="10.1.0" />
-    <PackageReference Include="JunitXml.TestLogger" Version="8.0.0" />
+    <PackageReference Include="JunitXml.TestLogger" Version="8.1.0" />
     <PackageReference Include="AwesomeAssertions" Version="9.6.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="5.9.0">
       <PrivateAssets>all</PrivateAssets>
