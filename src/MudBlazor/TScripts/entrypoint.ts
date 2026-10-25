@@ -8,7 +8,6 @@ import "./mudJsEvent";
 import "./mudKeyInterceptor";
 import "./mudPointerEventsNone";
 import "./mudPopover";
-import "./mudResizeListener";
 import "./mudSplitPanel";
 
 // Code ported to TypeScript
@@ -20,6 +19,7 @@ import MudInput from "./mudInput";
 import MudInputSizing from "./mudInputSizing";
 import MudPointerCapture from "./mudPointerCapture";
 import { registerRippleHandlers } from "./mudRipple";
+import { MudResizeListener, MudResizeListenerFactory } from "./mudResizeListener";
 import MudResizeObserverFactory from "./mudResizeObserver";
 import MudScrollListener from "./mudScrollListener";
 import MudScrollManager from "./mudScrollManager";
@@ -38,6 +38,8 @@ declare global {
         mudInput: MudInput;
         mudInputSizing: MudInputSizing;
         mudPointerCapture: MudPointerCapture;
+        mudResizeListener: MudResizeListener;
+        mudResizeListenerFactory: MudResizeListenerFactory;
         mudResizeObserver: MudResizeObserverFactory;
         mudScrollListener: MudScrollListener;
         mudScrollManager: MudScrollManager;
@@ -61,6 +63,8 @@ if (!window.mudHotkeyListener) {
 window.mudInput = new MudInput();
 window.mudInputSizing = new MudInputSizing();
 window.mudPointerCapture = new MudPointerCapture();
+window.mudResizeListener = new MudResizeListener();
+window.mudResizeListenerFactory = new MudResizeListenerFactory();
 window.mudResizeObserver = new MudResizeObserverFactory();
 if (!window.mudScrollListener) {
     window.mudScrollListener = new MudScrollListener();

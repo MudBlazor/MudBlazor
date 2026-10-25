@@ -2,17 +2,33 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+import type { DotNet } from "@microsoft/dotnet-js-interop";
+
+/**
+ * Mirrors the .NET ResizeOptions.
+ */
+export type ResizeOptions = {
+    reportRate: number;
+    enableLogging: boolean;
+    suppressInitEvent: boolean;
+    notifyOnBreakpointOnly: boolean;
+    breakpointDefinitions: Record<string, number> | null;
+};
+
 /**
  * Viewport resize listener used by responsive services and components.
  * Supports throttled callbacks and breakpoint-aware notifications.
  */
-class MudResizeListener {
-    constructor(id) {
-        this.logger = function () { };
-        this.options = {};
-        this.throttleResizeHandlerId = -1;
-        this.dotnet = undefined;
-        this.breakpoint = -1;
+export class MudResizeListener {
+    logger: (...data: unknown[]) => void = function () { };
+    options = {} as ResizeOptions;
+    throttleResizeHandlerId = -1;
+    dotnet: DotNet.DotNetObject | undefined = undefined;
+    breakpoint = -1;
+    id: string | undefined;
+    handleResize: () => void;
+
+    constructor(id?: string) {
         this.id = id;
         this.handleResize = this.throttleResizeHandler.bind(this);
     }
@@ -20,7 +36,7 @@ class MudResizeListener {
     /**
      * Starts listening for window resize events with the provided options.
      */
-    listenForResize(dotnetRef, options) {
+    listenForResize(dotnetRef: DotNet.DotNetObject, options: ResizeOptions) {
         if (this.dotnet) {
             this.options = options;
             return;
@@ -62,7 +78,7 @@ class MudResizeListener {
 
         try {
             if (this.id) {
-                this.dotnet.invokeMethodAsync('RaiseOnResized',
+                this.dotnet!.invokeMethodAsync('RaiseOnResized',
                     {
                         height: window.innerHeight,
                         width: window.innerWidth
@@ -71,7 +87,7 @@ class MudResizeListener {
                     this.id);
             }
             else {
-                this.dotnet.invokeMethodAsync('RaiseOnResized',
+                this.dotnet!.invokeMethodAsync('RaiseOnResized',
                     {
                         height: window.innerHeight,
                         width: window.innerWidth
@@ -95,7 +111,7 @@ class MudResizeListener {
     /**
      * Evaluates a media query and returns whether it currently matches.
      */
-    matchMedia(query) {
+    matchMedia(query: string) {
         const m = window.matchMedia(query).matches;
         return m;
     }
@@ -113,30 +129,36 @@ class MudResizeListener {
     /**
      * Maps viewport width to MudBlazor breakpoint index.
      */
-    getBreakpoint(width) {
-        if (width >= this.options.breakpointDefinitions["Xxl"])
+    getBreakpoint(width: number) {
+        // Null definitions throw here, as they did in JavaScript.
+        // A missing definition compares as false, like the undefined lookups did in JavaScript.
+        const definitions = this.options.breakpointDefinitions!;
+        if (width >= definitions["Xxl"]!)
             return 5;
-        else if (width >= this.options.breakpointDefinitions["Xl"])
+        else if (width >= definitions["Xl"]!)
             return 4;
-        else if (width >= this.options.breakpointDefinitions["Lg"])
+        else if (width >= definitions["Lg"]!)
             return 3;
-        else if (width >= this.options.breakpointDefinitions["Md"])
+        else if (width >= definitions["Md"]!)
             return 2;
-        else if (width >= this.options.breakpointDefinitions["Sm"])
+        else if (width >= definitions["Sm"]!)
             return 1;
         else //Xs
             return 0;
     }
-};
+}
 
-window.mudResizeListener = new MudResizeListener();
-window.mudResizeListenerFactory = {
-    mapping: {},
+/**
+ * Keeps one resize listener per .NET listener ID.
+ */
+export class MudResizeListenerFactory {
+    mapping: Record<string, MudResizeListener> = {};
+
     /**
      * Creates a resize listener for the provided ID when one does not already exist.
      */
-    listenForResize: (dotnetRef, options, id) => {
-        const map = window.mudResizeListenerFactory.mapping;
+    listenForResize(dotnetRef: DotNet.DotNetObject, options: ResizeOptions, id: string) {
+        const map = this.mapping;
         if (map[id]) {
             return;
         }
@@ -144,13 +166,13 @@ window.mudResizeListenerFactory = {
         const listener = new MudResizeListener(id);
         listener.listenForResize(dotnetRef, options);
         map[id] = listener;
-    },
+    }
 
     /**
      * Cancels and removes a resize listener by ID.
      */
-    cancelListener: (id) => {
-        const map = window.mudResizeListenerFactory.mapping;
+    cancelListener(id: string) {
+        const map = this.mapping;
 
         if (!map[id]) {
             return;
@@ -159,24 +181,24 @@ window.mudResizeListenerFactory = {
         const listener = map[id];
         listener.cancelListener();
         delete map[id];
-    },
+    }
 
     /**
      * Cancels and removes multiple listeners.
      */
-    cancelListeners: (ids) => {
+    cancelListeners(ids: string[]) {
         for (let i = 0; i < ids.length; i++) {
-            window.mudResizeListenerFactory.cancelListener(ids[i]);
+            this.cancelListener(ids[i]!);
         }
-    },
+    }
 
     /**
      * Cancels and removes all listeners managed by the factory.
      */
     dispose() {
-        const map = window.mudResizeListenerFactory.mapping;
+        const map = this.mapping;
         for (const id in map) {
-            window.mudResizeListenerFactory.cancelListener(id);
+            this.cancelListener(id);
         }
     }
-};
+}

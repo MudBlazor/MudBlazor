@@ -40,7 +40,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     // mudPopover.js
     ["mudpopoverHelper", "object"],
     ["mudPopover", "object"],
-    // mudResizeListener.js
+    // mudResizeListener.ts
     ["mudResizeListener", "object"],
     ["mudResizeListenerFactory", "object"],
     // mudResizeObserver.ts
