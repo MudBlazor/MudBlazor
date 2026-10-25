@@ -2,24 +2,33 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+import type { DotNet } from "@microsoft/dotnet-js-interop";
+
+/**
+ * Mirrors the .NET PointerEventsNoneOptions.
+ */
+export type PointerEventsNoneOptions = {
+    enableLogging: boolean;
+    subscribeDown: boolean;
+    subscribeUp: boolean;
+};
+
 /**
  * Recovers pointer hits for elements intentionally styled with `pointer-events: none`.
  * Temporarily enables pointer events to perform hit-testing and report matches to .NET.
  */
-class MudPointerEventsNone {
-    constructor() {
-        this.dotnet = null;
-        this.logger = () => { };
-        this.pointerDownHandlerRef = null;
-        this.pointerUpHandlerRef = null;
-        this.pointerDownMap = new Map();
-        this.pointerUpMap = new Map();
-    }
+export default class MudPointerEventsNone {
+    dotnet: DotNet.DotNetObject | null = null;
+    logger: (...data: unknown[]) => void = () => { };
+    pointerDownHandlerRef: ((event: PointerEvent) => void) | null = null;
+    pointerUpHandlerRef: ((event: PointerEvent) => void) | null = null;
+    pointerDownMap = new Map<string, PointerEventsNoneOptions>();
+    pointerUpMap = new Map<string, PointerEventsNoneOptions>();
 
     /**
      * Starts global pointer listeners for an element configured with pointer-events-none behavior.
      */
-    listenForPointerEvents(dotNetReference, elementId, options) {
+    listenForPointerEvents(dotNetReference: DotNet.DotNetObject | null, elementId: string | null, options: PointerEventsNoneOptions | null) {
         if (!options) {
             this.logger("options object is required but was not provided");
             return;
@@ -78,24 +87,24 @@ class MudPointerEventsNone {
     /**
      * Handles global pointerdown and routes matching IDs to .NET.
      */
-    pointerDownHandler(event) {
+    pointerDownHandler(event: PointerEvent) {
         this._handlePointerEvent(event, this.pointerDownMap, "RaiseOnPointerDown");
     }
 
     /**
      * Handles global pointerup and routes matching IDs to .NET.
      */
-    pointerUpHandler(event) {
+    pointerUpHandler(event: PointerEvent) {
         this._handlePointerEvent(event, this.pointerUpMap, "RaiseOnPointerUp");
     }
 
-    _handlePointerEvent(event, map, raiseMethod) {
+    _handlePointerEvent(event: PointerEvent, map: Map<string, PointerEventsNoneOptions>, raiseMethod: string) {
         if (map.size === 0) {
             this.logger("No elements registered for", raiseMethod);
             return;
         }
 
-        const elements = [];
+        const elements: HTMLElement[] = [];
         for (const id of map.keys()) {
             const element = document.getElementById(id);
             if (element) {
@@ -119,7 +128,7 @@ class MudPointerEventsNone {
         // Reset the pointer events to none
         elements.forEach(x => x.style.pointerEvents = "none");
 
-        const matchingIds = [];
+        const matchingIds: string[] = [];
 
         // Start checking the topmost element and work our way down
         for (const element of elementsFromPoint) {
@@ -129,7 +138,7 @@ class MudPointerEventsNone {
                 break;
             }
 
-            if (this._shouldIgnorePointerEvent(element, event.target)) {
+            if (this._shouldIgnorePointerEvent(element as HTMLElement, event.target)) {
                 this.logger("Ignoring pointer event for element", element.id);
                 continue;
             }
@@ -143,11 +152,11 @@ class MudPointerEventsNone {
         }
 
         this.logger("Raising", raiseMethod, "for matching element(s):", matchingIds);
-        this.dotnet.invokeMethodAsync(raiseMethod, matchingIds);
+        this.dotnet!.invokeMethodAsync(raiseMethod, matchingIds);
     }
 
-    _shouldIgnorePointerEvent(element, target) {
-        const ignoreElementId = element.dataset.modelessIgnoreElementId;
+    _shouldIgnorePointerEvent(element: HTMLElement, target: EventTarget | null) {
+        const ignoreElementId = element.dataset["modelessIgnoreElementId"];
         if (!ignoreElementId || !(target instanceof Element)) {
             return false;
         }
@@ -159,7 +168,7 @@ class MudPointerEventsNone {
     /**
      * Stops pointer listener participation for a specific element ID.
      */
-    cancelListener(elementId) {
+    cancelListener(elementId: string | null) {
         if (!elementId) {
             this.logger("cancelListener called with invalid elementId");
             return;
@@ -224,5 +233,3 @@ class MudPointerEventsNone {
         this.dotnet = null;
     }
 }
-
-window.mudPointerEventsNone = new MudPointerEventsNone();

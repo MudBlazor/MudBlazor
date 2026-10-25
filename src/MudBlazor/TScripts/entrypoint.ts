@@ -6,7 +6,6 @@ import "./mudElementReference";
 import "./mudHelpers";
 import "./mudJsEvent";
 import "./mudKeyInterceptor";
-import "./mudPointerEventsNone";
 import "./mudPopover";
 import "./mudSplitPanel";
 
@@ -20,6 +19,7 @@ import MudInputSizing from "./mudInputSizing";
 import MudPointerCapture from "./mudPointerCapture";
 import { registerRippleHandlers } from "./mudRipple";
 import { MudResizeListener, MudResizeListenerFactory } from "./mudResizeListener";
+import MudPointerEventsNone from "./mudPointerEventsNone";
 import MudResizeObserverFactory from "./mudResizeObserver";
 import MudScrollListener from "./mudScrollListener";
 import MudScrollManager from "./mudScrollManager";
@@ -38,6 +38,7 @@ declare global {
         mudInput: MudInput;
         mudInputSizing: MudInputSizing;
         mudPointerCapture: MudPointerCapture;
+        mudPointerEventsNone: MudPointerEventsNone;
         mudResizeListener: MudResizeListener;
         mudResizeListenerFactory: MudResizeListenerFactory;
         mudResizeObserver: MudResizeObserverFactory;
@@ -63,6 +64,7 @@ if (!window.mudHotkeyListener) {
 window.mudInput = new MudInput();
 window.mudInputSizing = new MudInputSizing();
 window.mudPointerCapture = new MudPointerCapture();
+window.mudPointerEventsNone = new MudPointerEventsNone();
 window.mudResizeListener = new MudResizeListener();
 window.mudResizeListenerFactory = new MudResizeListenerFactory();
 window.mudResizeObserver = new MudResizeObserverFactory();
