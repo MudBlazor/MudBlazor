@@ -2,19 +2,63 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+import type { DotNet } from "@microsoft/dotnet-js-interop";
+
+/**
+ * Mirrors the .NET KeyOptions, plus the regex the interceptor derives from a "/pattern/" key.
+ */
+export type KeyOptions = {
+    key: string | null;
+    subscribeDown?: boolean;
+    subscribeUp?: boolean;
+    preventDown?: string;
+    preventUp?: string;
+    stopDown?: string;
+    stopUp?: string;
+    ignoreDownRepeats?: boolean;
+    regex?: RegExp;
+};
+
+/**
+ * Mirrors the .NET KeyInterceptorOptions.
+ */
+export type KeyInterceptorOptions = {
+    targetClass?: string | null;
+    enableLogging?: boolean;
+    keys: (KeyOptions | null)[];
+};
+
+/**
+ * The keyboard event payload .NET deserializes into its KeyboardEventArgs.
+ */
+type KeyboardEventPayload = {
+    Key: string;
+    Code: string;
+    Location: number;
+    Repeat: boolean;
+    CtrlKey: boolean;
+    ShiftKey: boolean;
+    AltKey: boolean;
+    MetaKey: boolean;
+    Type?: string;
+};
+
+// The owning instance is stashed on the element, because the delegated handlers run with `this` bound to it.
+type InterceptorElement = HTMLElement & { mudKeyInterceptor?: MudKeyInterceptor };
+
 /**
  * Factory that resolves elements and manages MudKeyInterceptor instances.
  * Exposes connect/update/disconnect entry points for .NET interop.
  */
-class MudKeyInterceptorFactory {
+export default class MudKeyInterceptorFactory {
     /**
      * Creates (or reuses) a key interceptor for an element and attaches handlers.
      */
-    connect(dotNetRef, elementId, options) {
+    connect(dotNetRef: DotNet.DotNetObject, elementId: string, options: KeyInterceptorOptions) {
         //console.log('[MudBlazor | MudKeyInterceptorFactory] connect ', { dotNetRef, element, options });
         if (!elementId)
             throw "elementId: expected element id!";
-        const element = document.getElementById(elementId);
+        const element = document.getElementById(elementId) as InterceptorElement | null;
         if (!element)
             throw "no element found for id: " + elementId;
         if (!element.mudKeyInterceptor)
@@ -25,8 +69,8 @@ class MudKeyInterceptorFactory {
     /**
      * Updates the key option for an existing interceptor registration.
      */
-    updatekey(elementId, option) {
-        const element = document.getElementById(elementId);
+    updatekey(elementId: string, option: KeyOptions) {
+        const element = document.getElementById(elementId) as InterceptorElement | null;
         if (!element?.mudKeyInterceptor)
             return;
         element.mudKeyInterceptor.updatekey(option);
@@ -35,21 +79,30 @@ class MudKeyInterceptorFactory {
     /**
      * Detaches a key interceptor from an element.
      */
-    disconnect(elementId) {
-        const element = document.getElementById(elementId);
+    disconnect(elementId: string) {
+        const element = document.getElementById(elementId) as InterceptorElement | null;
         if (!element?.mudKeyInterceptor)
             return;
         element.mudKeyInterceptor.disconnect();
     }
 }
-window.mudKeyInterceptor = new MudKeyInterceptorFactory();
 
 /**
  * Applies key options and raises keyboard callbacks to .NET.
  * Handles preventDefault/stopPropagation in JS before component handlers run.
  */
-class MudKeyInterceptor {
-    constructor(dotNetRef, options) {
+export class MudKeyInterceptor {
+    _dotNetRef: DotNet.DotNetObject;
+    _options: KeyInterceptorOptions;
+    logger: (...data: unknown[]) => void;
+    // Assigned on connect, so they are declared without emitting a field.
+    declare _isConnected: boolean;
+    declare _element: InterceptorElement | null;
+    declare _keyOptions: Record<string, KeyOptions>;
+    declare _regexOptions: KeyOptions[];
+    declare _delegatedHandlersAttached: boolean;
+
+    constructor(dotNetRef: DotNet.DotNetObject, options: KeyInterceptorOptions) {
         this._dotNetRef = dotNetRef;
         this._options = options;
         this.logger = options.enableLogging ? console.log : () => { };
@@ -59,7 +112,7 @@ class MudKeyInterceptor {
     /**
      * Starts key interception on the target element (or matching child elements).
      */
-    connect(element) {
+    connect(element: InterceptorElement) {
         if (!this._options)
             return;
         if (!this._options.keys)
@@ -90,15 +143,17 @@ class MudKeyInterceptor {
     /**
      * Normalizes and stores one key option definition.
      */
-    setKeyOption(keyOption) {
-        if (keyOption.key.length > 2 && keyOption.key.startsWith('/') && keyOption.key.endsWith('/')) {
+    setKeyOption(keyOption: KeyOptions) {
+        // connect skips options without a key, and updatekey throws on a null key before calling this.
+        const key = keyOption.key!;
+        if (key.length > 2 && key.startsWith('/') && key.endsWith('/')) {
             // JS regex key options such as "/[a-z]/" or "/a|b/" but NOT "/[a-z]/g" or "/[a-z]/i"
-            keyOption.regex = new RegExp(keyOption.key.substring(1, keyOption.key.length - 1)); // strip the / from start and end
+            keyOption.regex = new RegExp(key.substring(1, key.length - 1)); // strip the / from start and end
             this._regexOptions.push(keyOption);
         }
         else
             // Normalize direct lookups to lowercase once so event handlers can stay allocation-light.
-            this._keyOptions[keyOption.key.toLowerCase()] = keyOption;
+            this._keyOptions[key.toLowerCase()] = keyOption;
         // remove whitespace and enforce lowercase
         const whitespace = /\s/g;
         keyOption.preventDown = (keyOption.preventDown || "none").replace(whitespace, "").toLowerCase();
@@ -110,8 +165,9 @@ class MudKeyInterceptor {
     /**
      * Updates an existing key option definition.
      */
-    updatekey(updatedOption) {
-        const option = this._keyOptions[updatedOption.key.toLowerCase()];
+    updatekey(updatedOption: KeyOptions) {
+        // A null key throws here, as it did in JavaScript.
+        const option = this._keyOptions[updatedOption.key!.toLowerCase()];
         option || this.logger('[MudBlazor | KeyInterceptor] updating option failed: key not registered');
         this.setKeyOption(updatedOption);
         this.logger('[MudBlazor | KeyInterceptor] updated option ', { option, updatedOption });
@@ -124,7 +180,7 @@ class MudKeyInterceptor {
         if (!this._isConnected)
             return;
         this.logger('[MudBlazor | KeyInterceptor] disconnect delegated event handlers');
-        this.detachHandlers(this._element);
+        this.detachHandlers(this._element!);
         this._isConnected = false;
         this._element = null;
     }
@@ -132,7 +188,7 @@ class MudKeyInterceptor {
     /**
      * Attaches keydown/keyup handlers to a target element.
      */
-    attachHandlers(element) {
+    attachHandlers(element: InterceptorElement) {
         this.logger('[MudBlazor | KeyInterceptor] attaching delegated handlers ', { element });
         if (this._delegatedHandlersAttached)
             return;
@@ -145,7 +201,7 @@ class MudKeyInterceptor {
     /**
      * Detaches keydown/keyup handlers from a target element.
      */
-    detachHandlers(element) {
+    detachHandlers(element: InterceptorElement) {
         this.logger('[MudBlazor | KeyInterceptor] detaching delegated handlers ', { element });
         if (!this._delegatedHandlersAttached)
             return;
@@ -159,7 +215,7 @@ class MudKeyInterceptor {
     /**
      * Determines whether a delegated event should be handled by this interceptor.
      */
-    shouldHandleEvent(args) {
+    shouldHandleEvent(this: InterceptorElement, args: KeyboardEvent) {
         const self = this.mudKeyInterceptor; // func is invoked with this == element that owns delegated handlers
         if (!self?._isConnected || !self._element)
             return false;
@@ -167,9 +223,9 @@ class MudKeyInterceptor {
         if (!targetClass)
             return true;
 
-        let current = args.target;
+        let current = args.target as Element | null;
         if (current?.nodeType !== Node.ELEMENT_NODE)
-            current = current?.parentElement;
+            current = (current as Node | null)?.parentElement ?? null;
         while (current && current !== self._element) {
             if (current.classList?.contains(targetClass))
                 return true;
@@ -181,7 +237,7 @@ class MudKeyInterceptor {
     /**
      * Checks whether current modifier state matches an option expression.
      */
-    matchesKeyCombination(option, args) {
+    matchesKeyCombination(option: string | undefined, args: KeyboardEvent) {
         if (!option || option === "none")
             return false;
         if (option === "any")
@@ -204,8 +260,8 @@ class MudKeyInterceptor {
     /**
      * Processes keydown behavior and invokes .NET when configured.
      */
-    onKeyDown(args) {
-        const self = this.mudKeyInterceptor; // func is invoked with this == child
+    onKeyDown(this: InterceptorElement, args: KeyboardEvent) {
+        const self = this.mudKeyInterceptor!; // func is invoked with this == child
         if (!self.shouldHandleEvent.call(this, args))
             return;
         if (!args.key) {
@@ -217,7 +273,7 @@ class MudKeyInterceptor {
         self.logger('[MudBlazor | KeyInterceptor] down "' + key + '"', args);
         let invoke = false;
         if (self._keyOptions.hasOwnProperty(key)) {
-            const keyOptions = self._keyOptions[key];
+            const keyOptions = self._keyOptions[key]!;
             self.logger('[MudBlazor | KeyInterceptor] options for "' + key + '"', keyOptions);
             self.processKeyDown(args, keyOptions);
             if (self.shouldInvokeKeyDown(args, keyOptions))
@@ -225,7 +281,7 @@ class MudKeyInterceptor {
         }
         for (const keyOptions of self._regexOptions) {
             // Regex options allow wildcard key rules without precomputing every key in JS.
-            if (keyOptions.regex.test(key)) {
+            if (keyOptions.regex!.test(key)) {
                 self.logger('[MudBlazor | KeyInterceptor] regex options for "' + key + '"', keyOptions);
                 self.processKeyDown(args, keyOptions);
                 if (self.shouldInvokeKeyDown(args, keyOptions))
@@ -235,14 +291,14 @@ class MudKeyInterceptor {
         if (invoke) {
             const eventArgs = self.toKeyboardEventArgs(args);
             eventArgs.Type = "keydown";
-            self._dotNetRef.invokeMethodAsync('OnKeyDown', self._element.id, eventArgs);
+            self._dotNetRef.invokeMethodAsync('OnKeyDown', self._element!.id, eventArgs);
         }
     }
 
     /**
      * Applies preventDefault/stopPropagation rules for keydown.
      */
-    processKeyDown(args, keyOptions) {
+    processKeyDown(args: KeyboardEvent, keyOptions: KeyOptions) {
         if (this.matchesKeyCombination(keyOptions.preventDown, args))
             args.preventDefault();
         if (this.matchesKeyCombination(keyOptions.stopDown, args))
@@ -252,15 +308,15 @@ class MudKeyInterceptor {
     /**
      * Returns whether keydown should be forwarded to .NET.
      */
-    shouldInvokeKeyDown(args, keyOptions) {
+    shouldInvokeKeyDown(args: KeyboardEvent, keyOptions: KeyOptions) {
         return keyOptions.subscribeDown && (!keyOptions.ignoreDownRepeats || !args.repeat);
     }
 
     /**
      * Processes keyup behavior and invokes .NET when configured.
      */
-    onKeyUp(args) {
-        const self = this.mudKeyInterceptor; // func is invoked with this == child
+    onKeyUp(this: InterceptorElement, args: KeyboardEvent) {
+        const self = this.mudKeyInterceptor!; // func is invoked with this == child
         if (!self.shouldHandleEvent.call(this, args))
             return;
         if (!args.key) {
@@ -272,13 +328,13 @@ class MudKeyInterceptor {
         self.logger('[MudBlazor | KeyInterceptor] up "' + key + '"', args);
         let invoke = false;
         if (self._keyOptions.hasOwnProperty(key)) {
-            const keyOptions = self._keyOptions[key];
+            const keyOptions = self._keyOptions[key]!;
             self.processKeyUp(args, keyOptions);
             if (keyOptions.subscribeUp)
                 invoke = true;
         }
         for (const keyOptions of self._regexOptions) {
-            if (keyOptions.regex.test(key)) {
+            if (keyOptions.regex!.test(key)) {
                 self.processKeyUp(args, keyOptions);
                 if (keyOptions.subscribeUp)
                     invoke = true;
@@ -287,14 +343,14 @@ class MudKeyInterceptor {
         if (invoke) {
             const eventArgs = self.toKeyboardEventArgs(args);
             eventArgs.Type = "keyup";
-            self._dotNetRef.invokeMethodAsync('OnKeyUp', self._element.id, eventArgs);
+            self._dotNetRef.invokeMethodAsync('OnKeyUp', self._element!.id, eventArgs);
         }
     }
 
     /**
      * Applies preventDefault/stopPropagation rules for keyup.
      */
-    processKeyUp(args, keyOptions) {
+    processKeyUp(args: KeyboardEvent, keyOptions: KeyOptions) {
         if (this.matchesKeyCombination(keyOptions.preventUp, args))
             args.preventDefault();
         if (this.matchesKeyCombination(keyOptions.stopUp, args))
@@ -304,7 +360,7 @@ class MudKeyInterceptor {
     /**
      * Converts a DOM keyboard event to the .NET keyboard event payload shape.
      */
-    toKeyboardEventArgs(args) {
+    toKeyboardEventArgs(args: KeyboardEvent): KeyboardEventPayload {
         return {
             Key: args.key,
             Code: args.code,

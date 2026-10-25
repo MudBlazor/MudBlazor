@@ -2,7 +2,6 @@
 import "./mudAAAlicense";
 
 // Legacy side effect imports
-import "./mudKeyInterceptor";
 import "./mudPopover";
 
 // Code ported to TypeScript
@@ -15,6 +14,7 @@ import MudHotkeyListener from "./mudHotkeyListener";
 import MudInput from "./mudInput";
 import MudInputSizing from "./mudInputSizing";
 import MudJsEventFactory from "./mudJsEvent";
+import MudKeyInterceptorFactory from "./mudKeyInterceptor";
 import MudPointerCapture from "./mudPointerCapture";
 import { registerRippleHandlers } from "./mudRipple";
 import { MudResizeListener, MudResizeListenerFactory } from "./mudResizeListener";
@@ -49,6 +49,7 @@ declare global {
         mudInputSizing: MudInputSizing;
         mudObserveElementSize: typeof mudObserveElementSize;
         mudJsEvent: MudJsEventFactory;
+        mudKeyInterceptor: MudKeyInterceptorFactory;
         mudPointerCapture: MudPointerCapture;
         mudPointerEventsNone: MudPointerEventsNone;
         mudResizeListener: MudResizeListener;
@@ -88,6 +89,7 @@ if (!window.mudHotkeyListener) {
 window.mudInput = new MudInput();
 window.mudInputSizing = new MudInputSizing();
 window.mudJsEvent = new MudJsEventFactory();
+window.mudKeyInterceptor = new MudKeyInterceptorFactory();
 window.mudObserveElementSize = mudObserveElementSize;
 window.mudPointerCapture = new MudPointerCapture();
 window.mudPointerEventsNone = new MudPointerEventsNone();
