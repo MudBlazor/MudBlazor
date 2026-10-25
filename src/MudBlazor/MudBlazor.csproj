@@ -103,7 +103,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <JsAssetInputs Include="TScripts/**/*.js" />
+    <!-- No scripts are JavaScript any more; this input reruns build.mts when one is added, so its check rejects it. -->
+    <JsAssetInputs Include="TScripts/**/*.js;TScripts/**/*.cjs;TScripts/**/*.mjs;TScripts/**/*.jsx" />
     <TsAssetInputs Include="TScripts/**/*.ts" />
     <ScssAssetInputs Include="Styles/**/*.scss" />
     <BuildScriptInputs Include="build.mts" />

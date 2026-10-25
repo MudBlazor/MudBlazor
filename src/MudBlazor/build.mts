@@ -137,6 +137,20 @@ async function test() {
     timer.stop();
 }
 
+// Scripts are TypeScript only, so tsc type-checks everything that ends up in the bundle.
+// tsc never sees a JavaScript file that nothing imports, so this check covers those too.
+function rejectJavaScript() {
+    const javaScriptFiles = fs.readdirSync(jsDirectory, { recursive: true, encoding: "utf8" })
+        .filter(file => /\.[cm]?jsx?$/.test(file));
+    if (javaScriptFiles.length > 0) {
+        console.error(
+            `JavaScript files are not allowed in ${jsDirectory}, write them in TypeScript instead:\n`
+            + javaScriptFiles.map(file => `  ${file}`).join("\n"),
+        );
+        process.exit(1);
+    }
+}
+
 async function lint() {
     console.log("Linting Scripts");
     const timer = startTimer("oxlint");
@@ -183,6 +197,7 @@ function buildSCSS() {
 }
 
 async function buildAll() {
+    rejectJavaScript();
     await lint();
     await typecheck();
     await test();
@@ -207,6 +222,7 @@ if (process.argv.includes("watch")) {
         async (eventType, filename) => {
             console.log(`JS file changed: ${eventType} ${filename}`);
             try {
+                rejectJavaScript();
                 await lint();
                 await typecheck();
                 await test();
