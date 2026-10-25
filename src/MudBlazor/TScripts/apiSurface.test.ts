@@ -35,9 +35,41 @@ function memberNames(value: object) {
     return [...names].sort();
 }
 
+// Every function has these own properties, so they say nothing about the API.
+const intrinsicFunctionProperties = new Set(["length", "name", "prototype", "arguments", "caller"]);
+
+/**
+ * Describes a function by its arity, plus its static and prototype members when it has any.
+ * A class global is called through its statics (e.g. "mudSplitPanel.build"), so those are part of the surface.
+ */
+function describeFunction(fn: Function, seen: Set<unknown>): Surface {
+    const signature = `function(${fn.length})`;
+    const statics = Object.getOwnPropertyNames(fn).filter(name => !intrinsicFunctionProperties.has(name)).sort();
+    const prototype = fn.prototype as object | undefined;
+    const prototypeMembers = prototype ? Object.getOwnPropertyNames(prototype).filter(name => name !== "constructor").sort() : [];
+    if (statics.length === 0 && prototypeMembers.length === 0) {
+        return signature;
+    }
+
+    const surface: Record<string, Surface> = { "(call)": signature };
+    for (const name of statics) {
+        surface[`static ${name}`] = describeProperty(fn, name, seen);
+    }
+    for (const name of prototypeMembers) {
+        surface[`prototype.${name}`] = describeProperty(prototype!, name, seen);
+    }
+    return surface;
+}
+
+// Reads through the descriptor so accessors on a prototype are not invoked without an instance.
+function describeProperty(owner: object, name: string, seen: Set<unknown>): Surface {
+    const descriptor = Object.getOwnPropertyDescriptor(owner, name)!;
+    return "value" in descriptor ? describeSurface(descriptor.value, seen) : "accessor";
+}
+
 function describeSurface(value: unknown, seen: Set<unknown>): Surface {
     if (typeof value === "function") {
-        return `function(${value.length})`;
+        return describeFunction(value, seen);
     }
     if (value === null || typeof value !== "object") {
         return value === null ? "null" : typeof value;
