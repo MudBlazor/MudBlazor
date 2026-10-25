@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@happy-dom/global-registrator": "21.0.4",
+    "@microsoft/dotnet-js-interop": "10.0.11",
     "@types/bun": "1.4.3",
     "@types/node": "26.6.5",
     "eslint": "10.13.0",

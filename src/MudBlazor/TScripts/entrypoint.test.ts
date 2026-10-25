@@ -61,7 +61,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["mudSplitPanel_destroy", "function"],
     // mudTableCell.js
     ["mudTableCell", "object"],
-    // mudThemeProvider.js
+    // mudThemeProvider.ts
     ["mudThemeProvider", "object"],
     // mudTimePicker.js
     ["mudTimePicker", "object"],
