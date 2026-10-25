@@ -1,5 +1,7 @@
-// Legacy side effect imports
+// Must stay the first import so the license banner leads the bundle.
 import "./mudAAAlicense";
+
+// Legacy side effect imports
 import "./mudDragAndDrop";
 import "./mudElementReference";
 import "./mudExitPrompt";
