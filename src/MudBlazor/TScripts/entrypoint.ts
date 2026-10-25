@@ -20,12 +20,12 @@ import "./mudScrollListener";
 import "./mudScrollManager";
 import "./mudScrollSpy";
 import "./mudSplitPanel";
-import "./mudTableCell";
 import "./mudTimePicker";
 
 // Code ported to TypeScript
 import MudFileUpload from "./mudFileUpload";
 import MudPointerCapture from "./mudPointerCapture";
+import MudTableCell from "./mudTableCell";
 import MudThemeProvider from "./mudThemeProvider";
 import MudWindow from "./MudWindow";
 
@@ -33,6 +33,7 @@ declare global {
     interface Window {
         mudFileUpload: MudFileUpload;
         mudPointerCapture: MudPointerCapture;
+        mudTableCell: MudTableCell;
         mudThemeProvider: MudThemeProvider;
         mudWindow: MudWindow;
     }
@@ -40,5 +41,6 @@ declare global {
 
 window.mudFileUpload = new MudFileUpload();
 window.mudPointerCapture = new MudPointerCapture();
+window.mudTableCell = new MudTableCell();
 window.mudThemeProvider = new MudThemeProvider();
 window.mudWindow = new MudWindow();

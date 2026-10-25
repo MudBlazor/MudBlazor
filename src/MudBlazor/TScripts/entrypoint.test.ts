@@ -59,7 +59,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["mudSplitPanel_getDividerPosition", "function"],
     ["mudSplitPanel_setDividerPosition", "function"],
     ["mudSplitPanel_destroy", "function"],
-    // mudTableCell.js
+    // mudTableCell.ts
     ["mudTableCell", "object"],
     // mudThemeProvider.ts
     ["mudThemeProvider", "object"],
