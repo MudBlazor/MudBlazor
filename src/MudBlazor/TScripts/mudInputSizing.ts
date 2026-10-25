@@ -2,15 +2,26 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+type ScrollState = { node: HTMLElement; scrollTop: number; previousScrollBehavior: string };
+
+// The sizing callbacks live on the element so later interop calls can find them from the same .NET element reference.
+type SizingElement = HTMLTextAreaElement & {
+    updateParameters?: (newMaxLines: number) => void;
+    // Registered directly as an event listener, so the event arrives as didReflow.
+    adjustSizingHeight?: (didReflow?: boolean | Event) => void;
+    restoreToInitialState?: () => void;
+    _mudInputSizingPreviousTextAlign?: string;
+};
+
 /**
  * Auto-grow textarea sizing logic for the MudInput component.
  * Uses live layout metrics and restores ancestor scroll positions during reflow.
  */
-window.mudInputSizing = {
+export default class MudInputSizing {
     /**
      * Computes sizing metrics from the textarea's current computed styles.
      */
-    computeMetrics: (elem) => {
+    computeMetrics(elem: Element) {
         const compStyle = getComputedStyle(elem);
         const lineHeightValue = Number.parseFloat(compStyle.getPropertyValue('line-height'));
         const fontSize = Number.parseFloat(compStyle.getPropertyValue('font-size'));
@@ -24,40 +35,46 @@ window.mudInputSizing = {
             lineHeight,
             verticalPadding: paddingTop + paddingBottom
         };
-    },
+    }
+
     /**
      * Captures ancestor scroll state so resize reflow can restore it.
      */
-    captureScrollStates: (elem) => {
-        const scrollStates = [];
-        let curElem = elem;
+    captureScrollStates(elem: Element) {
+        const scrollStates: ScrollState[] = [];
+        let curElem: Node | null = elem;
         while (curElem?.parentNode instanceof Element) {
-            if (curElem.parentNode.scrollTop) {
+            const parent = curElem.parentNode as HTMLElement;
+            if (parent.scrollTop) {
                 scrollStates.push({
-                    node: curElem.parentNode,
-                    scrollTop: curElem.parentNode.scrollTop,
-                    previousScrollBehavior: curElem.parentNode.style.scrollBehavior
+                    node: parent,
+                    scrollTop: parent.scrollTop,
+                    previousScrollBehavior: parent.style.scrollBehavior
                 });
             }
-            curElem = curElem.parentNode;
+            curElem = parent;
         }
 
         return scrollStates;
-    },
+    }
+
     /**
      * Restores ancestor scroll state captured before reflow.
      */
-    restoreScrollStates: (scrollStates) => {
+    restoreScrollStates(scrollStates: ScrollState[]) {
         scrollStates.forEach(({ node, scrollTop, previousScrollBehavior }) => {
             node.style.scrollBehavior = 'auto';
             node.scrollTop = scrollTop;
             node.style.scrollBehavior = previousScrollBehavior;
         });
-    },
+    }
+
     /**
      * Initializes auto-sizing behavior for a textarea element.
      */
-    init: (elem, maxLines) => {
+    init(elem: SizingElement, maxLines: number) {
+        // The element callbacks outlive this call, so they keep a reference to the sizing helpers.
+        const sizing = this;
         let maxLinesValue = 0;
 
         // Update parameters that affect the functionality and visuals of the sizing input.
@@ -68,10 +85,10 @@ window.mudInputSizing = {
         // Capture min and max height in closure to trigger height adjustment on element in the input.
         elem.adjustSizingHeight = function (didReflow = false) {
             // Save scroll positions https://github.com/MudBlazor/MudBlazor/issues/8152.
-            const scrollStates = window.mudInputSizing.captureScrollStates(elem);
+            const scrollStates = sizing.captureScrollStates(elem);
 
             // Auto mode - grow/shrink based on content
-            elem.style.height = 0;
+            elem.style.height = '0';
 
             if (didReflow) {
                 const previousTextAlign = elem._mudInputSizingPreviousTextAlign;
@@ -80,7 +97,7 @@ window.mudInputSizing = {
             }
 
             // Styles can change at runtime (variant/margin/typography/classes), so always recalculate metrics.
-            const metrics = window.mudInputSizing.computeMetrics(elem);
+            const metrics = sizing.computeMetrics(elem);
 
             // Some browsers can report a too-small scrollHeight for disabled empty textareas.
             // Keep a reliable baseline that includes both paddings (see issue #11630).
@@ -103,21 +120,22 @@ window.mudInputSizing = {
             elem.style.height = newHeight + "px";
 
             // Restore scroll positions.
-            window.mudInputSizing.restoreScrollStates(scrollStates);
+            sizing.restoreScrollStates(scrollStates);
 
             // Force another adjustment after the scrollbar is hidden to avoid an empty line https://github.com/MudBlazor/MudBlazor/pull/8385.
             if (!didReflow && initialOverflowY !== elem.style.overflowY && elem.style.overflowY === 'hidden') {
                 elem._mudInputSizingPreviousTextAlign = elem.style.textAlign;
                 elem.style.textAlign = 'end'; // Change to something other than the default.
-                elem.adjustSizingHeight(true);
+                elem.adjustSizingHeight!(true);
             }
         };
 
         // Terminate sizing and restore the input element back to its original state.
         elem.restoreToInitialState = function () {
-            elem.removeEventListener('input', elem.adjustSizingHeight);
-            elem.style.overflowY = null;
-            elem.style.height = null;
+            elem.removeEventListener('input', elem.adjustSizingHeight!);
+            // Browsers treat the null the script used to assign as an empty string, which clears the property.
+            elem.style.overflowY = '';
+            elem.style.height = '';
         };
 
         // Adjust height when input happens.
@@ -129,37 +147,42 @@ window.mudInputSizing = {
         // Initial parameters and height adjustment.
         elem.updateParameters(maxLines);
         elem.adjustSizingHeight();
-    },
+    }
+
     /**
      * Recalculates the current textarea height.
      */
-    adjustHeight: (elem) => {
+    adjustHeight(elem: SizingElement) {
         if (typeof elem.adjustSizingHeight === 'function') {
             elem.adjustSizingHeight();
         }
-    },
+    }
+
     /**
      * Updates auto-sizing parameters and reapplies sizing.
      */
-    updateParams: (elem, maxLines) => {
+    updateParams(elem: SizingElement, maxLines: number) {
         if (typeof elem.updateParameters === 'function') {
             elem.updateParameters(maxLines);
         }
         if (typeof elem.adjustSizingHeight === 'function') {
             elem.adjustSizingHeight();
         }
-    },
+    }
+
     /**
      * Removes auto-sizing listeners and restores the element's original sizing state.
      */
-    destroy: (elem) => {
+    destroy(elem: SizingElement | null | undefined) {
         if (elem == null) {
             return;
         }
 
-        window.removeEventListener('resize', elem.adjustSizingHeight);
+        if (elem.adjustSizingHeight) {
+            window.removeEventListener('resize', elem.adjustSizingHeight);
+        }
         if (typeof elem.restoreToInitialState === 'function') {
             elem.restoreToInitialState();
         }
     }
-};
+}
