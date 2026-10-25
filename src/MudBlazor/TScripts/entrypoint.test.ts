@@ -37,7 +37,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["mudPointerEventsNone", "object"],
     // mudPointerCapture.ts
     ["mudPointerCapture", "object"],
-    // mudPopover.js
+    // mudPopover.ts
     ["mudpopoverHelper", "object"],
     ["mudPopover", "object"],
     // mudResizeListener.ts

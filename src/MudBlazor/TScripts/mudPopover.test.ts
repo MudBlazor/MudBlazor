@@ -1,11 +1,13 @@
-import { afterAll, afterEach, beforeAll, describe, expect, test } from "bun:test";
-import "./mudPopover";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, jest, mock, spyOn, test } from "bun:test";
+import MudPopover, { mudpopoverHelper as helper } from "./mudPopover";
 
 type Rect = { x: number; y: number; width: number; height: number };
 type Placement = { maxHeight: string; top: string };
 
-const { mudpopoverHelper, happyDOM } = window as unknown as {
-    mudpopoverHelper: { placePopover(popoverNode: HTMLElement): void };
+// The helper reaches its own members through the global, as entrypoint.ts installs it.
+window.mudpopoverHelper = helper;
+const mudpopoverHelper = helper;
+const { happyDOM } = window as unknown as {
     happyDOM: { setViewport(viewport: { width: number; height: number }): void };
 };
 const originalViewport = { width: window.innerWidth, height: window.innerHeight };
@@ -112,5 +114,332 @@ describe("mudpopoverHelper.placePopover list height clamp", () => {
     test("downward list that overflows clamps to the space below and stays stable", () => {
         const popoverNode = renderPopover("mud-popover-top-left mud-popover-anchor-bottom-left", { x: 100, y: 64, width: 200, height: 36 }, 1440);
         expect(placeRepeatedly(popoverNode)).toEqual(Array(4).fill({ maxHeight: "596px", top: "100px" }));
+    });
+});
+
+describe("mudpopoverHelper positioning math", () => {
+    const anchor = { left: 100, top: 50, right: 300, bottom: 90, width: 200, height: 40 };
+    const self = { left: 0, top: 0, right: 120, bottom: 80, width: 120, height: 80 };
+
+    test.each([
+        ["mud-popover-top-left mud-popover-anchor-bottom-left", { left: 100, top: 90, offsetX: 0, offsetY: 0 }],
+        ["mud-popover-top-center mud-popover-anchor-bottom-center", { left: 200, top: 90, offsetX: -60, offsetY: 0 }],
+        ["mud-popover-bottom-right mud-popover-anchor-top-right", { left: 300, top: 50, offsetX: -120, offsetY: -80 }],
+        ["mud-popover-center-center mud-popover-anchor-center-center", { left: 200, top: 70, offsetX: -60, offsetY: -40 }],
+    ])("calculatePopoverPosition for %s", (classes, expected) => {
+        expect(mudpopoverHelper.calculatePopoverPosition(classes.split(" "), anchor, self)).toMatchObject(expected);
+    });
+
+    test("a position override keeps the anchor's top-left corner", () => {
+        const classes = ["mud-popover-position-override", "mud-popover-top-left", "mud-popover-anchor-bottom-right"];
+
+        expect(mudpopoverHelper.calculatePopoverPosition(classes, anchor, self)).toMatchObject({ left: 100, top: 50 });
+    });
+
+    test("getPositionForFlippedPopver positions with the flipped origins", () => {
+        const classes = ["mud-popover", "mud-popover-top-left", "mud-popover-anchor-bottom-left"];
+
+        // Flipping "top" turns a downward popover below the anchor into an upward one above it.
+        expect(mudpopoverHelper.getPositionForFlippedPopver(classes, "top", anchor, self)).toMatchObject({ left: 100, top: 50, offsetX: 0, offsetY: -80 });
+    });
+
+    test("getEffectiveZIndex returns the highest z-index of positioned ancestors", () => {
+        document.body.innerHTML = `
+            <div style="position: relative; z-index: 30">
+                <div style="position: static; z-index: 900">
+                    <div style="position: absolute; z-index: 5"><span id="leaf"></span></div>
+                </div>
+            </div>`;
+
+        // The middle element is static, so its z-index does not count.
+        // happy-dom does not compute the default position, so the markup states it.
+        expect(mudpopoverHelper.getEffectiveZIndex(document.getElementById("leaf"))).toBe(30);
+        document.body.replaceChildren();
+    });
+});
+
+describe("MudPopover lifecycle", () => {
+    let popover: MudPopover;
+    let frames: FrameRequestCallback[];
+    let now: number;
+    let placePopover: ReturnType<typeof spyOn<typeof mudpopoverHelper, "placePopover">>;
+
+    // A provider with one popover whose anchor lives outside of it, as MudPopoverProvider renders them.
+    function renderProvider(open = false, transition = "") {
+        document.body.innerHTML = `
+            <div class="mud-popover-provider">
+                <div id="popovercontent-menu" class="mud-popover ${open ? "mud-popover-open" : ""}" style="${transition}">
+                    <div class="mud-menu"><div id="popover-child"></div></div>
+                </div>
+                <div id="popovercontent-child" class="mud-popover"></div>
+                <div class="mud-overlay"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-menu"></div></div>`;
+        return {
+            content: document.getElementById("popovercontent-menu")!,
+            childContent: document.getElementById("popovercontent-child")!,
+        };
+    }
+
+    function classMutation(target: Element) {
+        return { type: "attributes", attributeName: "class", target } as unknown as MutationRecord;
+    }
+
+    // Open popovers keep requesting frames until their tracking window ends, so each frame advances the fake clock.
+    function runFrames() {
+        while (frames.length > 0) {
+            now += 16;
+            frames.shift()!(now);
+        }
+    }
+
+    beforeEach(() => {
+        popover = new MudPopover();
+        window.mudPopover = popover;
+        frames = [];
+        now = 0;
+        spyOn(performance, "now").mockImplementation(() => now);
+        spyOn(window, "requestAnimationFrame").mockImplementation(callback => frames.push(callback));
+        spyOn(window, "cancelAnimationFrame").mockImplementation(() => { });
+        placePopover = spyOn(mudpopoverHelper, "placePopover").mockImplementation(() => { });
+        mudpopoverHelper.mainContainerClass = "mud-popover-provider";
+    });
+
+    afterEach(() => {
+        popover.dispose();
+        document.body.replaceChildren();
+        mock.restore();
+        jest.useRealTimers();
+    });
+
+    test("connect tracks a closed popover without placing it", () => {
+        renderProvider();
+
+        popover.connect("menu");
+        runFrames();
+
+        expect(popover.getAllObservedContainers()).toEqual(["menu"]);
+        expect(popover.map["menu"]?.isOpened).toBe(false);
+        expect(placePopover).not.toHaveBeenCalled();
+    });
+
+    test("connecting an already open popover places it on the next frame", () => {
+        renderProvider(true);
+
+        popover.connect("menu");
+        expect(placePopover).not.toHaveBeenCalled();
+        runFrames();
+
+        expect(placePopover.mock.calls[0]?.[0]).toBe(document.getElementById("popover-menu"));
+    });
+
+    test("connect ignores ids without rendered popover elements", () => {
+        renderProvider();
+
+        popover.connect("missing");
+
+        expect(popover.getAllObservedContainers()).toEqual([]);
+    });
+
+    test("opening through a class change marks the popover open and places it", () => {
+        const { content } = renderProvider();
+        popover.connect("menu");
+
+        content.classList.add("mud-popover-open");
+        popover.callbackPopover(classMutation(content));
+        runFrames();
+
+        expect(popover.map["menu"]?.isOpened).toBe(true);
+        expect(placePopover).toHaveBeenCalled();
+    });
+
+    test("closing without a transition clears the position and flip state right away", () => {
+        const { content } = renderProvider(true);
+        popover.connect("menu");
+        content.style.left = "10px";
+        content.style.top = "20px";
+        content.setAttribute("data-mudpopover-flip", "top");
+
+        content.classList.remove("mud-popover-open");
+        popover.callbackPopover(classMutation(content));
+
+        expect(popover.map["menu"]?.isOpened).toBe(false);
+        expect([content.style.left, content.style.top]).toEqual(["", ""]);
+        expect(content.hasAttribute("data-mudpopover-flip")).toBe(false);
+    });
+
+    test("closing with a transition keeps the position until the fade-out ends", () => {
+        jest.useFakeTimers();
+        const { content } = renderProvider(true, "transition-duration: 250ms");
+        popover.connect("menu");
+        content.style.left = "10px";
+
+        content.classList.remove("mud-popover-open");
+        popover.callbackPopover(classMutation(content));
+        jest.advanceTimersByTime(249);
+        expect(content.style.left).toBe("10px");
+
+        jest.advanceTimersByTime(1);
+        expect(content.style.left).toBe("");
+    });
+
+    test("reopening during the fade-out keeps the position", () => {
+        jest.useFakeTimers();
+        const { content } = renderProvider(true, "transition-duration: 250ms");
+        popover.connect("menu");
+        content.style.left = "10px";
+
+        content.classList.remove("mud-popover-open");
+        popover.callbackPopover(classMutation(content));
+        content.classList.add("mud-popover-open");
+        popover.callbackPopover(classMutation(content));
+        jest.advanceTimersByTime(250);
+
+        expect(content.style.left).toBe("10px");
+    });
+
+    test("updates requested within one frame are coalesced into one placement", () => {
+        renderProvider(true);
+        popover.connect("menu");
+        runFrames();
+        placePopover.mockClear();
+        // Let the open-time tracking window expire, so only the explicit requests remain.
+        popover.map["menu"]!.trackUntil = 0;
+
+        popover.schedulePopoverUpdate("menu");
+        popover.scheduleUpdateAll();
+        popover.scheduleUpdateByClassSelector("mud-popover");
+
+        expect(frames).toHaveLength(1);
+        runFrames();
+        expect(placePopover).toHaveBeenCalledTimes(1);
+    });
+
+    test("closed popovers are not repositioned", () => {
+        renderProvider();
+        popover.connect("menu");
+
+        popover.schedulePopoverUpdate("menu");
+        popover.scheduleUpdateAll();
+        runFrames();
+
+        expect(placePopover).not.toHaveBeenCalled();
+    });
+
+    test("repositioning a popover also repositions open popovers anchored inside it", () => {
+        const { childContent } = renderProvider(true);
+        childContent.classList.add("mud-popover-open");
+        popover.connect("menu");
+        popover.connect("child");
+        runFrames();
+        placePopover.mockClear();
+
+        popover.repositionPopover("menu");
+
+        expect(placePopover.mock.calls.map(call => (call[0] as HTMLElement).id)).toEqual(["popover-menu", "popover-child"]);
+    });
+
+    test("handleScroll repositions one popover by node, or fixed and always-flipping popovers on window scroll", () => {
+        const { content } = renderProvider(true);
+        popover.connect("menu");
+        runFrames();
+        const scheduleById = spyOn(popover, "schedulePopoverUpdate");
+        const scheduleByClass = spyOn(popover, "scheduleUpdateByClassSelector");
+
+        mudpopoverHelper.handleScroll(document.getElementById("popover-menu"));
+        mudpopoverHelper.handleScroll(content);
+        mudpopoverHelper.handleScroll();
+
+        expect(scheduleById.mock.calls).toEqual([["menu"]]);
+        expect(scheduleByClass.mock.calls.map(call => call[0])).toEqual(["mud-popover-fixed", "mud-popover-overflow-flip-always"]);
+    });
+
+    test("a data-ticks change repositions an open popover", () => {
+        const { content } = renderProvider(true);
+        popover.connect("menu");
+        runFrames();
+        placePopover.mockClear();
+        popover.map["menu"]!.trackUntil = 0;
+
+        content.setAttribute("data-ticks", "3");
+        popover.callbackPopover({ type: "attributes", attributeName: "data-ticks", target: content } as unknown as MutationRecord);
+        runFrames();
+
+        expect(placePopover).toHaveBeenCalledTimes(1);
+    });
+
+    test("disconnect forgets the popover and its pending update", () => {
+        renderProvider(true);
+        popover.connect("menu");
+
+        popover.disconnect("menu");
+        popover.disconnect("menu");
+        runFrames();
+
+        expect(popover.getAllObservedContainers()).toEqual([]);
+        expect(placePopover).not.toHaveBeenCalled();
+    });
+
+    test("initialize configures the helper and dispose removes the window listeners", () => {
+        renderProvider();
+        const addEventListener = spyOn(window, "addEventListener");
+        const removeEventListener = spyOn(window, "removeEventListener");
+
+        popover.initialize("mud-popover-provider", 8, 16);
+        expect(mudpopoverHelper.flipMargin).toBe(8);
+        expect(mudpopoverHelper.overflowPadding).toBe(16);
+        expect(addEventListener.mock.calls.map(call => call[0])).toEqual(["resize", "scroll"]);
+
+        popover.dispose();
+        expect(removeEventListener.mock.calls.map(call => call[0])).toEqual(["resize", "scroll"]);
+        mudpopoverHelper.flipMargin = 0;
+        mudpopoverHelper.overflowPadding = 24;
+    });
+
+    test("initialize reports a missing provider", () => {
+        const error = spyOn(console, "error").mockImplementation(() => { });
+
+        popover.initialize("mud-popover-provider", 0, 24);
+
+        expect(error).toHaveBeenCalledWith("No Popover Container found with class mud-popover-provider");
+    });
+
+    test("countProviders counts the provider containers", () => {
+        renderProvider();
+        expect(mudpopoverHelper.countProviders()).toBe(1);
+
+        document.body.insertAdjacentHTML("beforeend", `<div class="mud-popover-provider"></div>`);
+        expect(mudpopoverHelper.countProviders()).toBe(2);
+    });
+
+    test("the overlay follows the z-index of the most recently opened popover", () => {
+        const { content, childContent } = renderProvider(true);
+        childContent.classList.add("mud-popover-open");
+        content.setAttribute("data-ticks", "1");
+        content.style.zIndex = "1300";
+        childContent.setAttribute("data-ticks", "2");
+        childContent.style.zIndex = "1400";
+
+        mudpopoverHelper.popoverOverlayUpdates();
+
+        expect(document.querySelector<HTMLElement>(".mud-overlay")!.style.zIndex).toBe("1400");
+    });
+
+    test("a nested popover is stacked one above its parent popover", () => {
+        const { content, childContent } = renderProvider(true);
+        content.style.zIndex = "1300";
+
+        mudpopoverHelper.updatePopoverZIndex(childContent, document.getElementById("popover-child")!.parentElement!);
+
+        expect(childContent.style.zIndex).toBe("1301");
+    });
+
+    test("parseTime and getTransitionTimes read CSS timings in milliseconds", () => {
+        expect([popover.parseTime("250ms"), popover.parseTime(" 0.3s"), popover.parseTime("auto"), popover.parseTime(undefined)]).toEqual([250, 300, 0, 0]);
+
+        document.body.innerHTML = `<div style="transition-duration: 0.2s; transition-delay: 50ms"><div id="popover-timed"></div></div>`;
+        expect(popover.getTransitionTimes("timed")).toBe(250);
+        expect(popover.getTrackingDuration("timed")).toBe(282);
+        expect(popover.getTrackingDuration("missing")).toBe(120);
     });
 });

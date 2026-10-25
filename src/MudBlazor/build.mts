@@ -142,7 +142,8 @@ async function eslint() {
     const timer = startTimer("eslint");
 
     const fix = process.argv.includes("fix");
-    const eslint = new ESLint({ fix: fix });
+    // Every script is TypeScript now, so the .js pattern matches nothing until ESLint supports TypeScript 7 (see the todo below).
+    const eslint = new ESLint({ fix: fix, errorOnUnmatchedPattern: false });
     const results = await eslint.lintFiles([
         // todo: add this once eslint supports TypeScript 7
         //path.join(jsDirectory, "**/*.ts")

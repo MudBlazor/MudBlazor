@@ -1,10 +1,6 @@
 // Must stay the first import so the license banner leads the bundle.
 import "./mudAAAlicense";
 
-// Legacy side effect imports
-import "./mudPopover";
-
-// Code ported to TypeScript
 import MudDragAndDrop from "./mudDragAndDrop";
 import MudElementReference from "./mudElementReference";
 import MudExitPrompt from "./mudExitPrompt";
@@ -17,6 +13,7 @@ import MudJsEventFactory from "./mudJsEvent";
 import MudKeyInterceptorFactory from "./mudKeyInterceptor";
 import MudPointerCapture from "./mudPointerCapture";
 import { registerRippleHandlers } from "./mudRipple";
+import MudPopover, { mudpopoverHelper } from "./mudPopover";
 import { MudResizeListener, MudResizeListenerFactory } from "./mudResizeListener";
 import MudPointerEventsNone from "./mudPointerEventsNone";
 import MudResizeObserverFactory from "./mudResizeObserver";
@@ -52,6 +49,8 @@ declare global {
         mudKeyInterceptor: MudKeyInterceptorFactory;
         mudPointerCapture: MudPointerCapture;
         mudPointerEventsNone: MudPointerEventsNone;
+        mudPopover: MudPopover;
+        mudpopoverHelper: typeof mudpopoverHelper;
         mudResizeListener: MudResizeListener;
         mudResizeListenerFactory: MudResizeListenerFactory;
         mudResizeObserver: MudResizeObserverFactory;
@@ -93,6 +92,8 @@ window.mudKeyInterceptor = new MudKeyInterceptorFactory();
 window.mudObserveElementSize = mudObserveElementSize;
 window.mudPointerCapture = new MudPointerCapture();
 window.mudPointerEventsNone = new MudPointerEventsNone();
+window.mudPopover = new MudPopover();
+window.mudpopoverHelper = mudpopoverHelper;
 window.mudResizeListener = new MudResizeListener();
 window.mudResizeListenerFactory = new MudResizeListenerFactory();
 window.mudResizeObserver = new MudResizeObserverFactory();

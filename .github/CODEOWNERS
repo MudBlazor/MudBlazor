@@ -45,5 +45,5 @@
 /src/MudBlazor/TScripts/entrypoint.ts @meenzen
 /src/MudBlazor/TScripts/entrypoint.test.ts @meenzen
 /src/MudBlazor/TScripts/mudInputSizing.ts @danielchalmers
-/src/MudBlazor/TScripts/mudPopover.js @versile2
+/src/MudBlazor/TScripts/mudPopover.ts @versile2
 /src/MudBlazor/TScripts/mudThemeProvider.ts @meenzen
