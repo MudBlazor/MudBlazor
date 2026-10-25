@@ -6,26 +6,25 @@
  * Scroll utility interop surface used by the ScrollManager service.
  * Centralizes DOM/container edge cases such as lock nesting and container fallbacks.
  */
-class MudScrollManager {
-    constructor() {
-        this._lockCount = 0; // internal tracking for the # of overlay locks
-    }
+export default class MudScrollManager {
+    _lockCount = 0; // internal tracking for the # of overlay locks
 
     /**
      * Scrolls the year list to center a selected year.
      */
-    scrollToYear(elementId) {
+    scrollToYear(elementId: string) {
         const element = document.getElementById(elementId);
 
         if (element) {
-            element.parentNode.scrollTop = element.offsetTop - element.parentNode.offsetTop - element.scrollHeight * 3;
+            const parent = element.parentNode as HTMLElement;
+            parent.scrollTop = element.offsetTop - parent.offsetTop - element.scrollHeight * 3;
         }
     }
 
     /**
      * Scrolls a list container so the target item is aligned to the top.
      */
-    scrollToListItem(elementId) {
+    scrollToListItem(elementId: string) {
         const element = document.getElementById(elementId);
         if (element) {
             const parent = element.parentElement;
@@ -38,16 +37,18 @@ class MudScrollManager {
     /**
      * Scrolls the selected container, or the root document element when not found.
      */
-    scrollTo(selector, left, top, behavior) {
-        const element = document.querySelector(selector) || document.documentElement;
+    scrollTo(selector: string | null, left: number, top: number, behavior: ScrollBehavior) {
+        // querySelector turns a null selector into "null", which matches nothing, so the document element is used.
+        const element = document.querySelector(selector as string) || document.documentElement;
         element.scrollTo({ left, top, behavior });
     }
 
     /**
      * Scrolls the target element into view with centered vertical alignment.
      */
-    scrollIntoView(selector, behavior) {
-        const element = document.querySelector(selector) || document.documentElement;
+    scrollIntoView(selector: string | null, behavior: ScrollBehavior) {
+        // querySelector turns a null selector into "null", which matches nothing, so the document element is used.
+        const element = document.querySelector(selector as string) || document.documentElement;
         if (element)
             element.scrollIntoView({ behavior, block: 'center', inline: 'start' });
     }
@@ -55,7 +56,7 @@ class MudScrollManager {
     /**
      * Scrolls a container (or page) to its bottom edge.
      */
-    scrollToBottom(selector, behavior) {
+    scrollToBottom(selector: string, behavior: ScrollBehavior) {
         const element = document.querySelector(selector);
         if (element) {
             element.scrollTo({
@@ -73,7 +74,7 @@ class MudScrollManager {
     /**
      * Adds a scroll-lock class with lock counting to support nested overlays.
      */
-    lockScroll(selector, lockclass) {
+    lockScroll(selector: string, lockclass: string) {
         if (this._lockCount === 0) {
             const element = document.querySelector(selector) || document.body;
 
@@ -89,7 +90,7 @@ class MudScrollManager {
     /**
      * Removes one scroll lock and unlocks when the lock count reaches zero.
      */
-    unlockScroll(selector, lockclass) {
+    unlockScroll(selector: string, lockclass: string) {
         this._lockCount = Math.max(0, this._lockCount - 1); // subtract 1 or stop at 0
         if (this._lockCount === 0) {
             const element = document.querySelector(selector) || document.body;
@@ -101,7 +102,7 @@ class MudScrollManager {
     /**
      * Jumps near a virtualized item and then refines position once the target renders.
      */
-    scrollToVirtualizedItem(containerId, itemIndex, itemHeight, targetItemId, behaviorString) {
+    scrollToVirtualizedItem(containerId: string, itemIndex: number, itemHeight: number, targetItemId: string, behaviorString: string) {
         const container = document.getElementById(containerId);
         if (!container) {
             console.warn(`ScrollManager.scrollToVirtualizedItem: Container with id '${containerId}' not found.`);
@@ -117,7 +118,7 @@ class MudScrollManager {
             if (actualContainer === window) {
                 actualContainer.scrollTo(0, itemIndex * itemHeight);
             } else {
-                actualContainer.scrollTop = itemIndex * itemHeight;
+                (actualContainer as HTMLElement).scrollTop = itemIndex * itemHeight;
             }
 
             requestAnimationFrame(() => {
@@ -129,5 +130,4 @@ class MudScrollManager {
             });
         });
     }
-};
-window.mudScrollManager = new MudScrollManager();
+}

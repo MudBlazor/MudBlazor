@@ -47,7 +47,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["mudResizeObserver", "object"],
     // mudScrollListener.ts
     ["mudScrollListener", "object"],
-    // mudScrollManager.js
+    // mudScrollManager.ts
     ["mudScrollManager", "object"],
     // mudScrollSpy.ts
     ["mudScrollSpy", "object"],

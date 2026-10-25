@@ -12,7 +12,6 @@ import "./mudPopover";
 import "./mudResizeListener";
 import "./mudResizeObserver";
 import "./mudRipple";
-import "./mudScrollManager";
 import "./mudSplitPanel";
 
 // Code ported to TypeScript
@@ -23,6 +22,7 @@ import MudHotkeyListener from "./mudHotkeyListener";
 import MudInput from "./mudInput";
 import MudPointerCapture from "./mudPointerCapture";
 import MudScrollListener from "./mudScrollListener";
+import MudScrollManager from "./mudScrollManager";
 import MudScrollSpy from "./mudScrollSpy";
 import MudTableCell from "./mudTableCell";
 import MudThemeProvider from "./mudThemeProvider";
@@ -38,6 +38,7 @@ declare global {
         mudInput: MudInput;
         mudPointerCapture: MudPointerCapture;
         mudScrollListener: MudScrollListener;
+        mudScrollManager: MudScrollManager;
         mudScrollSpy: MudScrollSpy;
         mudTableCell: MudTableCell;
         mudThemeProvider: MudThemeProvider;
@@ -60,6 +61,7 @@ window.mudPointerCapture = new MudPointerCapture();
 if (!window.mudScrollListener) {
     window.mudScrollListener = new MudScrollListener();
 }
+window.mudScrollManager = new MudScrollManager();
 window.mudScrollSpy = new MudScrollSpy();
 window.mudTableCell = new MudTableCell();
 window.mudThemeProvider = new MudThemeProvider();
