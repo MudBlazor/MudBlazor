@@ -3,7 +3,6 @@ import "./mudAAAlicense";
 
 // Legacy side effect imports
 import "./mudElementReference";
-import "./mudJsEvent";
 import "./mudKeyInterceptor";
 import "./mudPopover";
 import "./mudSplitPanel";
@@ -16,6 +15,7 @@ import { getTabbableElements, hasDefinedParentHeight, mudGetSvgBBox, mudObserveE
 import MudHotkeyListener from "./mudHotkeyListener";
 import MudInput from "./mudInput";
 import MudInputSizing from "./mudInputSizing";
+import MudJsEventFactory from "./mudJsEvent";
 import MudPointerCapture from "./mudPointerCapture";
 import { registerRippleHandlers } from "./mudRipple";
 import { MudResizeListener, MudResizeListenerFactory } from "./mudResizeListener";
@@ -41,6 +41,7 @@ declare global {
         mudInput: MudInput;
         mudInputSizing: MudInputSizing;
         mudObserveElementSize: typeof mudObserveElementSize;
+        mudJsEvent: MudJsEventFactory;
         mudPointerCapture: MudPointerCapture;
         mudPointerEventsNone: MudPointerEventsNone;
         mudResizeListener: MudResizeListener;
@@ -71,6 +72,7 @@ if (!window.mudHotkeyListener) {
 }
 window.mudInput = new MudInput();
 window.mudInputSizing = new MudInputSizing();
+window.mudJsEvent = new MudJsEventFactory();
 window.mudObserveElementSize = mudObserveElementSize;
 window.mudPointerCapture = new MudPointerCapture();
 window.mudPointerEventsNone = new MudPointerEventsNone();
