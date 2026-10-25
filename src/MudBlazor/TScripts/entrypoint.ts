@@ -5,7 +5,6 @@ import "./mudAAAlicense";
 import "./mudDragAndDrop";
 import "./mudElementReference";
 import "./mudExitPrompt";
-import "./mudFileUpload";
 import "./mudHelpers";
 import "./mudHotkeyListener";
 import "./mudInput";
@@ -26,15 +25,18 @@ import "./mudThemeProvider";
 import "./mudTimePicker";
 
 // Code ported to TypeScript
+import MudFileUpload from "./mudFileUpload";
 import MudPointerCapture from "./mudPointerCapture";
 import MudWindow from "./MudWindow";
 
 declare global {
     interface Window {
+        mudFileUpload: MudFileUpload;
         mudPointerCapture: MudPointerCapture;
         mudWindow: MudWindow;
     }
 }
 
+window.mudFileUpload = new MudFileUpload();
 window.mudPointerCapture = new MudPointerCapture();
 window.mudWindow = new MudWindow();

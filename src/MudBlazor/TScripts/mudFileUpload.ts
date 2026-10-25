@@ -2,17 +2,16 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Programmatic file picker trigger for the file upload component.
  * Prefers `showPicker()` and falls back to `click()` for broader browser support.
  */
-class MudFileUpload {
+export default class MudFileUpload {
     /**
      * Opens the file picker for the target input element.
      */
-    openFilePicker (id) {
-        const element = document.getElementById(id);
+    openFilePicker(id: string) {
+        const element = document.getElementById(id) as HTMLInputElement | null;
 
         if (!element) {
             return;
@@ -27,5 +26,3 @@ class MudFileUpload {
         }
     }
 }
-
-window.mudFileUpload = new MudFileUpload();
