@@ -2,23 +2,21 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-"use strict";
-
-// noinspection JSUnusedGlobalSymbols
 /**
  * Navigation/exit prompt interop for the MudExitPrompt component.
  * Keeps browser unload protection in JS where `beforeunload` is handled natively.
  */
-class MudExitPrompt {
+export default class MudExitPrompt {
+    _prompts = new Map<string, string>();
+
     constructor() {
-        this._prompts = new Map();
         this._handleBeforeUnload = this._handleBeforeUnload.bind(this);
     }
 
     /**
      * Enables exit prompting and sets the current confirmation text.
      */
-    enable(id, text) {
+    enable(id: string, text: string) {
         const hasActivePrompts = this._prompts.size > 0;
         this._prompts.set(id, text);
         if (!hasActivePrompts) {
@@ -29,7 +27,7 @@ class MudExitPrompt {
     /**
      * Disables exit prompting and removes unload protection listeners.
      */
-    disable(id) {
+    disable(id: string) {
         if (!this._prompts.has(id)) {
             this._throwPromptNotFound(id);
         }
@@ -43,7 +41,7 @@ class MudExitPrompt {
     /**
      * Updates the confirmation text shown for protected navigation.
      */
-    setText(id, text) {
+    setText(id: string, text: string) {
         if (!this._prompts.has(id)) {
             this._throwPromptNotFound(id);
         }
@@ -54,7 +52,7 @@ class MudExitPrompt {
     /**
      * Handles in-app navigation checks and returns whether navigation may continue.
      */
-    handleBeforeNavigation(id) {
+    handleBeforeNavigation(id: string) {
         if (!this._prompts.has(id)) {
             this._throwPromptNotFound(id);
         }
@@ -62,11 +60,11 @@ class MudExitPrompt {
         return window.confirm(this._prompts.get(id));
     }
 
-    _throwPromptNotFound(id) {
+    _throwPromptNotFound(id: string): never {
         throw new Error(`[MudBlazor] MudExitPrompt: Prompt with id '${id}' is not registered.`);
     }
 
-    _handleBeforeUnload(e) {
+    _handleBeforeUnload(e: BeforeUnloadEvent) {
         if (this._prompts.size > 0) {
             // Browsers only show a native confirmation when preventDefault/returnValue is set.
             e.preventDefault();
@@ -74,8 +72,4 @@ class MudExitPrompt {
             return '';
         }
     }
-}
-
-if (!window.mudExitPrompt) {
-    window.mudExitPrompt = new MudExitPrompt();
 }

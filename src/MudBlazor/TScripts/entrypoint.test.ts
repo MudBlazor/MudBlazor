@@ -13,7 +13,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["mudDragAndDrop", "object"],
     // mudElementReference.js
     ["mudElementRef", "object"],
-    // mudExitPrompt.js
+    // mudExitPrompt.ts
     ["mudExitPrompt", "object"],
     // mudFileUpload.ts
     ["mudFileUpload", "object"],

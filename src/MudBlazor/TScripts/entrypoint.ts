@@ -4,7 +4,6 @@ import "./mudAAAlicense";
 // Legacy side effect imports
 import "./mudDragAndDrop";
 import "./mudElementReference";
-import "./mudExitPrompt";
 import "./mudHelpers";
 import "./mudHotkeyListener";
 import "./mudInputSizing";
@@ -22,6 +21,7 @@ import "./mudSplitPanel";
 import "./mudTimePicker";
 
 // Code ported to TypeScript
+import MudExitPrompt from "./mudExitPrompt";
 import MudFileUpload from "./mudFileUpload";
 import MudInput from "./mudInput";
 import MudPointerCapture from "./mudPointerCapture";
@@ -31,6 +31,7 @@ import MudWindow from "./MudWindow";
 
 declare global {
     interface Window {
+        mudExitPrompt: MudExitPrompt;
         mudFileUpload: MudFileUpload;
         mudInput: MudInput;
         mudPointerCapture: MudPointerCapture;
@@ -40,6 +41,10 @@ declare global {
     }
 }
 
+// Guard against a second copy of the script replacing the instance that owns the registered prompts.
+if (!window.mudExitPrompt) {
+    window.mudExitPrompt = new MudExitPrompt();
+}
 window.mudFileUpload = new MudFileUpload();
 window.mudInput = new MudInput();
 window.mudPointerCapture = new MudPointerCapture();
