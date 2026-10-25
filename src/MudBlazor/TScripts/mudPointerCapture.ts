@@ -6,21 +6,22 @@
  * Pointer capture helper used during DataGrid header resize interactions.
  * Centralizes feature checks for browsers with partial Pointer Events support.
  */
-window.mudPointerCapture = {
+export default class MudPointerCapture {
     /**
      * Captures pointer events to the given element for the active pointer ID.
      */
-    capture: function (element, pointerId) {
+    capture(element: Element | null, pointerId: number) {
         if (element && typeof element.setPointerCapture === 'function') {
             element.setPointerCapture(pointerId);
         }
-    },
+    }
+
     /**
      * Releases pointer capture for the given element and pointer ID.
      */
-    release: function (element, pointerId) {
+    release(element: Element | null, pointerId: number) {
         if (element && typeof element.releasePointerCapture === 'function') {
             element.releasePointerCapture(pointerId);
         }
     }
-};
+}

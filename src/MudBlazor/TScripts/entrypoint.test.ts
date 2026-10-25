@@ -35,7 +35,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["mudKeyInterceptor", "object"],
     // mudPointerEventsNone.js
     ["mudPointerEventsNone", "object"],
-    // mudPointerCapture.js
+    // mudPointerCapture.ts
     ["mudPointerCapture", "object"],
     // mudPopover.js
     ["mudpopoverHelper", "object"],

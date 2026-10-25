@@ -13,7 +13,6 @@ import "./mudInputSizing";
 import "./mudJsEvent";
 import "./mudKeyInterceptor";
 import "./mudPointerEventsNone";
-import "./mudPointerCapture";
 import "./mudPopover";
 import "./mudResizeListener";
 import "./mudResizeObserver";
@@ -27,12 +26,15 @@ import "./mudThemeProvider";
 import "./mudTimePicker";
 
 // Code ported to TypeScript
+import MudPointerCapture from "./mudPointerCapture";
 import MudWindow from "./MudWindow";
 
 declare global {
     interface Window {
+        mudPointerCapture: MudPointerCapture;
         mudWindow: MudWindow;
     }
 }
 
+window.mudPointerCapture = new MudPointerCapture();
 window.mudWindow = new MudWindow();
