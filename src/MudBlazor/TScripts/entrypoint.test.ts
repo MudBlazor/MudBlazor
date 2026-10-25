@@ -49,7 +49,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["mudScrollListener", "object"],
     // mudScrollManager.js
     ["mudScrollManager", "object"],
-    // mudScrollSpy.js
+    // mudScrollSpy.ts
     ["mudScrollSpy", "object"],
     // mudSplitPanel.js
     ["mudSplitPanel", "function"],

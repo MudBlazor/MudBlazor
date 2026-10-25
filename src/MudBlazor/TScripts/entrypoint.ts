@@ -14,7 +14,6 @@ import "./mudResizeListener";
 import "./mudResizeObserver";
 import "./mudRipple";
 import "./mudScrollManager";
-import "./mudScrollSpy";
 import "./mudSplitPanel";
 
 // Code ported to TypeScript
@@ -24,6 +23,7 @@ import MudFileUpload from "./mudFileUpload";
 import MudInput from "./mudInput";
 import MudPointerCapture from "./mudPointerCapture";
 import MudScrollListener from "./mudScrollListener";
+import MudScrollSpy from "./mudScrollSpy";
 import MudTableCell from "./mudTableCell";
 import MudThemeProvider from "./mudThemeProvider";
 import MudTimePicker from "./mudTimePicker";
@@ -37,6 +37,7 @@ declare global {
         mudInput: MudInput;
         mudPointerCapture: MudPointerCapture;
         mudScrollListener: MudScrollListener;
+        mudScrollSpy: MudScrollSpy;
         mudTableCell: MudTableCell;
         mudThemeProvider: MudThemeProvider;
         mudTimePicker: MudTimePicker;
@@ -55,6 +56,7 @@ window.mudPointerCapture = new MudPointerCapture();
 if (!window.mudScrollListener) {
     window.mudScrollListener = new MudScrollListener();
 }
+window.mudScrollSpy = new MudScrollSpy();
 window.mudTableCell = new MudTableCell();
 window.mudThemeProvider = new MudThemeProvider();
 window.mudTimePicker = new MudTimePicker();
