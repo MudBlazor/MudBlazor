@@ -11,7 +11,6 @@ import "./mudPointerEventsNone";
 import "./mudPopover";
 import "./mudResizeListener";
 import "./mudResizeObserver";
-import "./mudRipple";
 import "./mudSplitPanel";
 
 // Code ported to TypeScript
@@ -21,6 +20,7 @@ import MudFileUpload from "./mudFileUpload";
 import MudHotkeyListener from "./mudHotkeyListener";
 import MudInput from "./mudInput";
 import MudPointerCapture from "./mudPointerCapture";
+import { registerRippleHandlers } from "./mudRipple";
 import MudScrollListener from "./mudScrollListener";
 import MudScrollManager from "./mudScrollManager";
 import MudScrollSpy from "./mudScrollSpy";
@@ -67,3 +67,5 @@ window.mudTableCell = new MudTableCell();
 window.mudThemeProvider = new MudThemeProvider();
 window.mudTimePicker = new MudTimePicker();
 window.mudWindow = new MudWindow();
+
+registerRippleHandlers();

@@ -76,3 +76,14 @@ describe("legacy script globals", () => {
         expect(typeof globalValue).toBe(type);
     });
 });
+
+// Scripts without a window global register document listeners from entrypoint.ts instead.
+test("ripple handlers are registered", () => {
+    document.body.innerHTML = `<button class="mud-ripple"></button>`;
+    const button = document.querySelector("button")!;
+
+    button.dispatchEvent(new PointerEvent("pointerdown", { button: 0, pointerId: 1, bubbles: true }));
+
+    expect(button.querySelector(".mud-ripple-effect")).not.toBeNull();
+    document.body.replaceChildren();
+});
