@@ -103,10 +103,11 @@ async function typecheck() {
 
 async function test() {
     console.log("Running Tests");
+    // --isolate gives each test file a fresh global object, which apiSurface.test.ts relies on to see exactly what entrypoint.ts adds to window.
     const timer = startTimer("tests");
 
     const proc = Bun.spawn({
-        cmd: [bunExecutable, "test"],
+        cmd: [bunExecutable, "test", "--isolate"],
         cwd: scriptDirectory,
         stdout: "ignore",
         stderr: "ignore",
@@ -116,7 +117,7 @@ async function test() {
     if (exitCode !== 0) {
         // The bun test runner is very verbose, so we re-run it with stdout/stderr attached to the console to show the errors.
         const retryProc = Bun.spawn({
-            cmd: [bunExecutable, "test"],
+            cmd: [bunExecutable, "test", "--isolate"],
             cwd: scriptDirectory,
             stdout: "inherit",
             stderr: "inherit",
