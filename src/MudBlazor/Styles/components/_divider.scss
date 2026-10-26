@@ -51,15 +51,6 @@ $divider-middle-margin: 16px;
   flex-direction: row;
   align-items: center;
 
-  // The wrapper contains the inset/middle margin: this is subtracted from the width to ensure it does not extend beyond the parent element
-  &.mud-divider-inset:not(.mud-divider-with-content-vertical) {
-    width: calc(100% - #{$divider-inset-margin});
-  }
-
-  &.mud-divider-middle:not(.mud-divider-with-content-vertical) {
-    width: calc(100% - #{$divider-middle-margin * 2});
-  }
-
   &.mud-divider-with-content-vertical {
     flex-direction: column;
     width: auto;
@@ -95,6 +86,7 @@ $divider-middle-margin: 16px;
 
   .mud-divider-with-content-vertical > & {
     padding: 4px 0;
+    white-space: nowrap;
   }
 }
 
