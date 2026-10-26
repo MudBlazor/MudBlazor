@@ -502,20 +502,15 @@ namespace MudBlazor
 
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
-            // Fix 1: Ensure input container counter rotation increments first to match dev branch rules
+            // Ensure input container counter rotation increments first to match dev branch rules
             int currentInputIndex = _numberOfActiveFileInputs;
-            if (currentInputIndex < 1)
-            {
-                currentInputIndex = 1;
-            }
-
             _numberOfActiveFileInputs++;
 
-            // Fix 2: Move the disabled state check right after the structural counter iteration
+            // Move the disabled state check right after the structural counter iteration
             if (GetDisabledState())
                 return;
 
-            // Fix 3: Handle oversized selections natively first and emit an empty callback array to reset the consumer view
+            // Handle oversized selections natively first and emit an empty callback array to reset the consumer view
             if (args.FileCount > MaximumFileCount)
             {
                 await ProcessFileChangeAsync(args);
@@ -539,7 +534,7 @@ namespace MudBlazor
                 }
                 catch (Exception ex)
                 {
-                    // Fix 4: Log via the project's internal runtime tracer instead of using a bare catch wrapper
+                    // Log via the project's internal runtime tracer instead of using a bare catch wrapper
                     Logger.LogWarning(ex, "Failed to retrieve folder path structural metadata arrays natively.");
                 }
 
@@ -557,7 +552,7 @@ namespace MudBlazor
 
             await ProcessFileChangeAsync(args);
 
-            // Fix 5: Filter against successfully accepted items, firing an empty fallback array if everything got rejected
+            // Filter against successfully accepted items, firing an empty fallback array if everything got rejected
             if (Folder && FilesWithFolderPathsChanged.HasDelegate)
             {
                 object? currentFilesValue = _filesState.Value;

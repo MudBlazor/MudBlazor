@@ -937,7 +937,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Disabled, false)
                 .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
 
-            // Fix: Invoke the non-public GetInputId method via reflection to get the exact expected element ID
+            // Invoke the non-public GetInputId method via reflection to get the exact expected element ID
             var method = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
                 .GetMethod("GetInputId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
