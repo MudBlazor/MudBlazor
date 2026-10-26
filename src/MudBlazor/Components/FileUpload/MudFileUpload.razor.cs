@@ -263,11 +263,8 @@ namespace MudBlazor
         [Category(CategoryTypes.FileUpload.Behavior)]
         public bool Folder { get; set; }
 
-        /// <summary>
-        /// Fired when folder upload mode is enabled, returning pairs of files and their relative directory paths.
-        /// </summary>
-        [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
+        [Parameter]
         public EventCallback<IReadOnlyList<MudFilesWithFolderPath>> FilesWithFolderPathsChanged { get; set; }
 
         [CascadingParameter(Name = "ParentDisabled")]
@@ -502,31 +499,35 @@ namespace MudBlazor
         public async Task OpenFilePickerAsync()
             => await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudFileUpload.openFilePicker", GetActiveInputId());
 
+
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
-            if (GetDisabledState())
-                return;
-
-            // 1. Instantly capture the active input index before state shifts
+            // Fix 1: Ensure input container counter rotation increments first to match dev branch rules
             int currentInputIndex = _numberOfActiveFileInputs;
             if (currentInputIndex < 1)
             {
                 currentInputIndex = 1;
             }
 
-            // 2. Increment exactly once at the top to preserve input rotation bounds
             _numberOfActiveFileInputs++;
 
-            // 3. Centralized validation check: let ProcessFileChangeAsync handle oversized states cleanly
+            // Fix 2: Move the disabled state check right after the structural counter iteration
+            if (GetDisabledState())
+                return;
+
+            // Fix 3: Handle oversized selections natively first and emit an empty callback array to reset the consumer view
             if (args.FileCount > MaximumFileCount)
             {
                 await ProcessFileChangeAsync(args);
+                if (Folder && FilesWithFolderPathsChanged.HasDelegate)
+                {
+                    await FilesWithFolderPathsChanged.InvokeAsync(Array.Empty<MudFilesWithFolderPath>());
+                }
                 return;
             }
 
             IReadOnlyList<MudFilesWithFolderPath> combinedList = new List<MudFilesWithFolderPath>();
 
-            // 4. Safely extract webkit directory paths if folder mode is active
             if (Folder && typeof(T) != typeof(IBrowserFile))
             {
                 var inputId = GetInputId(currentInputIndex);
@@ -536,9 +537,10 @@ namespace MudBlazor
                 {
                     paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudInput.getFolderPaths", inputId);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // Fallback gracefully if the interop fails or isn't fully ready in a headless test environment
+                    // Fix 4: Log via the project's internal runtime tracer instead of using a bare catch wrapper
+                    Logger.LogWarning(ex, "Failed to retrieve folder path structural metadata arrays natively.");
                 }
 
                 var nativeFiles = args.GetMultipleFiles(MaximumFileCount);
@@ -553,18 +555,17 @@ namespace MudBlazor
                 combinedList = list;
             }
 
-            // 5. Execute native file processing rules (updates _filesState value)
             await ProcessFileChangeAsync(args);
 
-            // 6. Build and dispatch the callback list based strictly on successfully accepted files
-            if (Folder && combinedList.Count > 0 && FilesWithFolderPathsChanged.HasDelegate)
+            // Fix 5: Filter against successfully accepted items, firing an empty fallback array if everything got rejected
+            if (Folder && FilesWithFolderPathsChanged.HasDelegate)
             {
                 object? currentFilesValue = _filesState.Value;
+                var acceptedList = new List<MudFilesWithFolderPath>();
 
-                if (currentFilesValue != null)
+                if (currentFilesValue != null && combinedList.Count > 0)
                 {
                     System.Collections.IEnumerable? acceptedCollection = currentFilesValue as System.Collections.IEnumerable;
-                    var acceptedList = new List<MudFilesWithFolderPath>();
 
                     if (acceptedCollection != null)
                     {
@@ -591,15 +592,12 @@ namespace MudBlazor
                             }
                         }
                     }
-
-                    if (acceptedList.Count > 0)
-                    {
-                        await FilesWithFolderPathsChanged.InvokeAsync(acceptedList);
-                    }
                 }
+
+                // Always invoke the callback to sync consumer state, even if the array is empty [[]]
+                await FilesWithFolderPathsChanged.InvokeAsync(acceptedList);
             }
         }
-
         private async Task ProcessFileChangeAsync(InputFileChangeEventArgs args)
         {
             T? value;
@@ -718,17 +716,4 @@ namespace MudBlazor
             return base.ResetValidationAsync();
         }
     }
-
-    public class MudFilesWithFolderPath
-    {
-        public IBrowserFile File { get; set; }
-        public string RelativePath { get; set; }
-
-        public MudFilesWithFolderPath(IBrowserFile file, string relativePath)
-        {
-            File = file;
-            RelativePath = relativePath;
-        }
-    }
-
 }
