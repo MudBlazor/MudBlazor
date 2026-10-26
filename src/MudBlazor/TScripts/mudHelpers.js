@@ -161,8 +161,7 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
             return;
         }
 
-        // The chart ignores a size whose timestamp is not later than that of the last size it took.
-        // Two resizes within one millisecond share a timestamp, so each size is stamped at least one millisecond after the last one.
+        // Two resizes within one millisecond share a timestamp, and the chart ignores a size that is not newer than the last one.
         timestamp = Math.max(timestamp, lastTimestamp + 1);
         lastTimestamp = timestamp;
 
