@@ -575,6 +575,9 @@ namespace MudBlazor
 
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
+        // The value is chosen from the picker UI unless the input is editable, so suppress the on-screen keyboard on touch devices.
+        private protected InputMode GetInputMode() => Editable ? InputMode.text : InputMode.none;
+
         protected virtual async Task SetTextAsync(string? value, bool callback)
         {
             if (_text != value)
