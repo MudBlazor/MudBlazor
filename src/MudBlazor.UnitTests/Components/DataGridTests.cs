@@ -4912,6 +4912,44 @@ namespace MudBlazor.UnitTests.Components
             button.GetAttribute("aria-label").Should().Be("Collapse group");
         }
 
+        /// <summary>
+        /// Verifies that HierarchyColumn applies Class to its header and the cell class and style parameters to its body cells (#7529).
+        /// </summary>
+        [Test]
+        public void DataGrid_HierarchyColumn_AppliesClassAndCellStyles()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "First" },
+                new() { Id = 2, Name = "Second" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<HierarchyColumn<TestDataItem>>(0);
+                    builder.AddAttribute(1, nameof(HierarchyColumn<TestDataItem>.Class), "hierarchy-class");
+                    builder.AddAttribute(2, nameof(HierarchyColumn<TestDataItem>.CellClass), "hierarchy-cell");
+                    builder.AddAttribute(3, nameof(HierarchyColumn<TestDataItem>.CellClassFunc), (Func<TestDataItem, string>)(x => $"cell-{x.Id}"));
+                    builder.AddAttribute(4, nameof(HierarchyColumn<TestDataItem>.CellStyle), "width:56px");
+                    builder.AddAttribute(5, nameof(HierarchyColumn<TestDataItem>.CellStyleFunc), (Func<TestDataItem, string>)(x => $"--row-id:{x.Id}"));
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<TestDataItem, string>>(6);
+                    builder.AddAttribute(7, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                }));
+
+            comp.Find("thead th").ClassList.Should().Contain("hierarchy-class");
+
+            var hierarchyCells = comp.FindAll("tbody tr td:first-child");
+            hierarchyCells.Should().HaveCount(2);
+            hierarchyCells[0].ClassList.Should().Contain(["hierarchy-cell", "cell-1"]);
+            hierarchyCells[1].ClassList.Should().Contain(["hierarchy-cell", "cell-2"]);
+            hierarchyCells[0].GetAttribute("style").Should().Contain("width:56px").And.Contain("--row-id:1");
+            hierarchyCells[1].GetAttribute("style").Should().Contain("width:56px").And.Contain("--row-id:2");
+        }
+
         [Test]
         public void DataGridChildRowContent()
         {
