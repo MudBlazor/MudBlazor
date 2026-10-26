@@ -152,6 +152,7 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
     }
 
     let lastNotifiedTime = 0;
+    let lastTimestamp = 0;
     let scheduledCall = null;
 
     const notify = (width, height, timestamp) => {
@@ -159,6 +160,11 @@ window.mudObserveElementSize = (dotNetReference, element, functionName = 'OnElem
             cleanup();
             return;
         }
+
+        // The chart ignores a size whose timestamp is not later than that of the last size it took.
+        // Two resizes within one millisecond share a timestamp, so each size is stamped at least one millisecond after the last one.
+        timestamp = Math.max(timestamp, lastTimestamp + 1);
+        lastTimestamp = timestamp;
 
         dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp }).catch(error => {
             // A chart removed while its callback was in flight has already been disposed, so the failure is expected.
