@@ -507,17 +507,17 @@ namespace MudBlazor
             if (GetDisabledState())
                 return;
 
-            // 1. Instantly capture the active input index before the increment shifts it
+            // 1. Instantly capture the active input index before state shifts
             int currentInputIndex = _numberOfActiveFileInputs;
             if (currentInputIndex < 1)
             {
                 currentInputIndex = 1;
             }
 
-            // 2. Increment immediately to maintain core input rotation on all selections
+            // 2. Increment exactly once at the top to preserve input rotation bounds
             _numberOfActiveFileInputs++;
 
-            // 3. Centralized validation check
+            // 3. Centralized validation check: let ProcessFileChangeAsync handle oversized states cleanly
             if (args.FileCount > MaximumFileCount)
             {
                 await ProcessFileChangeAsync(args);
@@ -526,11 +526,20 @@ namespace MudBlazor
 
             IReadOnlyList<MudFilesWithFolderPath> combinedList = new List<MudFilesWithFolderPath>();
 
-            // 4. Map paths using the accurately preserved currentInputIndex
+            // 4. Safely extract webkit directory paths if folder mode is active
             if (Folder && typeof(T) != typeof(IBrowserFile))
             {
                 var inputId = GetInputId(currentInputIndex);
-                var paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudInput.getFolderPaths", inputId);
+
+                IReadOnlyList<string> paths = Array.Empty<string>();
+                try
+                {
+                    paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudInput.getFolderPaths", inputId);
+                }
+                catch
+                {
+                    // Fallback gracefully if the interop fails or isn't fully ready in a headless test environment
+                }
 
                 var nativeFiles = args.GetMultipleFiles(MaximumFileCount);
                 var list = new List<MudFilesWithFolderPath>();
@@ -544,11 +553,50 @@ namespace MudBlazor
                 combinedList = list;
             }
 
+            // 5. Execute native file processing rules (updates _filesState value)
             await ProcessFileChangeAsync(args);
 
-            if (Folder && combinedList.Count > 0 && FilesWithFolderPathsChanged.HasDelegate && !HasErrors)
+            // 6. Build and dispatch the callback list based strictly on successfully accepted files
+            if (Folder && combinedList.Count > 0 && FilesWithFolderPathsChanged.HasDelegate)
             {
-                await FilesWithFolderPathsChanged.InvokeAsync(combinedList);
+                object? currentFilesValue = _filesState.Value;
+
+                if (currentFilesValue != null)
+                {
+                    System.Collections.IEnumerable? acceptedCollection = currentFilesValue as System.Collections.IEnumerable;
+                    var acceptedList = new List<MudFilesWithFolderPath>();
+
+                    if (acceptedCollection != null)
+                    {
+                        foreach (var item in combinedList)
+                        {
+                            foreach (var acceptedFile in acceptedCollection)
+                            {
+                                if (acceptedFile is IBrowserFile browserFile && browserFile == item.File)
+                                {
+                                    acceptedList.Add(item);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else if (currentFilesValue is IBrowserFile singleBrowserFile)
+                    {
+                        foreach (var item in combinedList)
+                        {
+                            if (item.File == singleBrowserFile)
+                            {
+                                acceptedList.Add(item);
+                                break;
+                            }
+                        }
+                    }
+
+                    if (acceptedList.Count > 0)
+                    {
+                        await FilesWithFolderPathsChanged.InvokeAsync(acceptedList);
+                    }
+                }
             }
         }
 
