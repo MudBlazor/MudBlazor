@@ -138,6 +138,42 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     public RenderFragment<CellContext<T>>? CellTemplate { get; set; }
 
     /// <summary>
+    /// The CSS classes applied to this column's value cells.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
+    /// </remarks>
+    [Parameter]
+    public string? CellClass { get; set; }
+
+    /// <summary>
+    /// The function which calculates CSS classes for this column's value cells.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
+    /// </remarks>
+    [Parameter]
+    public Func<T, string>? CellClassFunc { get; set; }
+
+    /// <summary>
+    /// The CSS styles applied to this column's value cells.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    public string? CellStyle { get; set; }
+
+    /// <summary>
+    /// The function which calculates CSS styles for this column's value cells.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    public Func<T, string>? CellStyleFunc { get; set; }
+
+    /// <summary>
     /// The function which determines whether the row should be initially expanded.
     /// </summary>
     /// <remarks>
