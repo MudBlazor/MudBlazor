@@ -64,7 +64,7 @@ jobs:
             MudBot's earlier findings on this pull request are in earlier-findings.md. Report only problems they don't already cover.
             Set approve to true only if nothing needs fixing, including earlier findings the diff still has.
         run: |
-          npx --yes @anthropic-ai/claude-code@2.1.301 -p "$PROMPT" --model claude-opus-5-5 --restricted --tools "Read,Grep,Glob" \
+          npx --yes @anthropic-ai/claude-code@2.1.309 -p "$PROMPT" --model claude-opus-5-5 --restricted --tools "Read,Grep,Glob" \
             --max-turns 40 --max-budget-usd 3 --output-format json --json-schema "$SCHEMA" < /dev/null > "$RUNNER_TEMP/result.json"
           echo "review=$(jq -ce .structured_output "$RUNNER_TEMP/result.json")" >> "$GITHUB_OUTPUT"
 
