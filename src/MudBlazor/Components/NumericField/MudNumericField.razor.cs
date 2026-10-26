@@ -5,6 +5,8 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Numerics;
+using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
@@ -22,9 +24,6 @@ namespace MudBlazor
         private T? _step;
         private T? _max;
         private T? _min;
-        private readonly T? _minDefault;
-        private readonly T? _maxDefault;
-        private readonly T? _stepDefault;
         private bool _maxHasValue = false;
         private bool _minHasValue = false;
         private bool _stepHasValue = false;
@@ -35,96 +34,86 @@ namespace MudBlazor
 
         private readonly Comparer<T> _comparer = Comparer<T>.Default;
 
+        // Nullable<TNumber> does not implement the generic math interfaces, so T cannot be constrained to them without dropping nullable support.
+        private static readonly NumberTraits _number = ResolveNumberTraits();
+
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         public MudNumericField()
         {
             Validation = new Func<T, Task<bool>>(ValidateInput);
-            #region parameters default depending on T
+            if (_number.AllowsFractions)
+                InputMode = InputMode.@decimal;
+        }
 
-            //sbyte
-            if (typeof(T) == typeof(sbyte) || typeof(T) == typeof(sbyte?))
+        private sealed record NumberTraits(T? MinValue, T? MaxValue, T? One, bool AllowsFractions, Func<T?, T?, bool, T?>? Offset);
+
+        [UnconditionalSuppressMessage(
+            "Trimming",
+            "IL2090", // Missing DynamicallyAccessedMemberTypes.Interfaces
+            Justification = "Not 200% safe without annotation, but considering if type is supplied by the user, it should work. Suppressed for backward compatibility.")]
+        private static NumberTraits ResolveNumberTraits()
+        {
+            var type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+            var interfaces = type.GetInterfaces();
+            if (!Implements(typeof(IMinMaxValue<>)) || !Implements(typeof(INumberBase<>)))
+                return new NumberTraits(default, default, default, false, null);
+
+            return (NumberTraits)typeof(MudNumericField<T>)
+                .GetMethod(nameof(GetNumberTraits), BindingFlags.NonPublic | BindingFlags.Static)!
+                .MakeGenericMethod(type)
+                .Invoke(null, null)!;
+
+            bool Implements(Type definition) => interfaces.Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == definition && x.GenericTypeArguments[0] == type);
+        }
+
+        private static NumberTraits GetNumberTraits<TNumber>() where TNumber : IMinMaxValue<TNumber>, INumberBase<TNumber>
+            => new((T?)(object)TNumber.MinValue, (T?)(object)TNumber.MaxValue, (T?)(object)TNumber.One, AllowsFractions<TNumber>(), Offset<TNumber>);
+
+        // A type that can represent one half accepts fractional input.
+        private static bool AllowsFractions<TNumber>() where TNumber : INumberBase<TNumber>
+            => !TNumber.IsInteger(TNumber.One / (TNumber.One + TNumber.One));
+
+        private static T? Offset<TNumber>(T? value, T? step, bool increment) where TNumber : INumberBase<TNumber>
+        {
+            var current = value is null ? TNumber.Zero : (TNumber)(object)value;
+            var delta = (TNumber)(object)step!;
+
+            // Binary floating point steps in decimal to avoid IEEE 754 precision errors (e.g. 0.1 + 0.2 -> 0.30000000000000004).
+            // Values that don't convert to decimal losslessly (out of range, more significant digits than the conversion keeps, or below decimal's epsilon) use native arithmetic below.
+            if (TNumber.Radix == 2 && AllowsFractions<TNumber>() && TryToDecimal(current, out var currentDecimal) && TryToDecimal(delta, out var deltaDecimal))
             {
-                _minDefault = (T)(object)sbyte.MinValue;
-                _maxDefault = (T)(object)sbyte.MaxValue;
-                _stepDefault = (T)(object)(sbyte)1;
-            }
-            // byte
-            else if (typeof(T) == typeof(byte) || typeof(T) == typeof(byte?))
-            {
-                _minDefault = (T)(object)byte.MinValue;
-                _maxDefault = (T)(object)byte.MaxValue;
-                _stepDefault = (T)(object)(byte)1;
-            }
-            // short
-            else if (typeof(T) == typeof(short) || typeof(T) == typeof(short?))
-            {
-                _minDefault = (T)(object)short.MinValue;
-                _maxDefault = (T)(object)short.MaxValue;
-                _stepDefault = (T)(object)(short)1;
-            }
-            // ushort
-            else if (typeof(T) == typeof(ushort) || typeof(T) == typeof(ushort?))
-            {
-                _minDefault = (T)(object)ushort.MinValue;
-                _maxDefault = (T)(object)ushort.MaxValue;
-                _stepDefault = (T)(object)(ushort)1;
-            }
-            // int
-            else if (typeof(T) == typeof(int) || typeof(T) == typeof(int?))
-            {
-                _minDefault = (T)(object)int.MinValue;
-                _maxDefault = (T)(object)int.MaxValue;
-                _stepDefault = (T)(object)1;
-            }
-            // uint
-            else if (typeof(T) == typeof(uint) || typeof(T) == typeof(uint?))
-            {
-                _minDefault = (T)(object)uint.MinValue;
-                _maxDefault = (T)(object)uint.MaxValue;
-                _stepDefault = (T)(object)1u;
-            }
-            // long
-            else if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
-            {
-                _minDefault = (T)(object)long.MinValue;
-                _maxDefault = (T)(object)long.MaxValue;
-                _stepDefault = (T)(object)1L;
-            }
-            // ulong
-            else if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
-            {
-                _minDefault = (T)(object)ulong.MinValue;
-                _maxDefault = (T)(object)ulong.MaxValue;
-                _stepDefault = (T)(object)1ul;
-            }
-            // float
-            else if (typeof(T) == typeof(float) || typeof(T) == typeof(float?))
-            {
-                _minDefault = (T)(object)float.MinValue;
-                _maxDefault = (T)(object)float.MaxValue;
-                _stepDefault = (T)(object)1.0f;
-                InputMode = InputMode.@decimal;
-            }
-            // double
-            else if (typeof(T) == typeof(double) || typeof(T) == typeof(double?))
-            {
-                _minDefault = (T)(object)double.MinValue;
-                _maxDefault = (T)(object)double.MaxValue;
-                _stepDefault = (T)(object)1.0;
-                InputMode = InputMode.@decimal;
-            }
-            // decimal
-            else if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
-            {
-                _minDefault = (T)(object)decimal.MinValue;
-                _maxDefault = (T)(object)decimal.MaxValue;
-                _stepDefault = (T)(object)1M;
-                InputMode = InputMode.@decimal;
+                try
+                {
+                    var next = increment ? currentDecimal + deltaDecimal : currentDecimal - deltaDecimal;
+                    // Decimal preserves zero's sign, so canonicalize it before converting back.
+                    return (T?)(object)TNumber.CreateChecked(next == decimal.Zero ? decimal.Zero : next);
+                }
+                catch (OverflowException)
+                {
+                    // The sum exceeds decimal's range even though both operands fit.
+                }
             }
 
-            #endregion parameters default depending on T
+            // Integer overflow throws, which Change turns into Max or Min.
+            return (T?)(object)(increment ? checked(current + delta) : checked(current - delta));
+
+            static bool TryToDecimal(TNumber number, out decimal result)
+            {
+                try
+                {
+                    // Convert from the value's own type: a float widened to double first would re-expose the binary noise the decimal step is meant to remove (float 0.01 stepping would show 0.16000001).
+                    result = decimal.CreateChecked(number);
+                    // Reject lossy conversions: a value that comes back from decimal even slightly lower than it went in would trip the overflow clamp in Change and jump to Max.
+                    return TNumber.CreateChecked(result) == number;
+                }
+                catch (OverflowException)
+                {
+                    result = default;
+                    return false;
+                }
+            }
         }
 
         protected string Classname =>
@@ -294,7 +283,7 @@ namespace MudBlazor
         {
             try
             {
-                var nextValue = GetNextValue(factor) ?? Num.To<T>(0);
+                var nextValue = _number.Offset is null ? default : _number.Offset(ReadValue, Step, factor > 0);
 
                 // validate that the data type is a value type before we compare them
                 if (typeof(T).IsValueType && ReadValue is not null)
@@ -312,59 +301,6 @@ namespace MudBlazor
             {
                 // if next value overflows the primitive type, lets set it to Min or Max depending on if factor is positive or negative
                 await SetValueAndUpdateTextAsync(factor > 0 ? Max : Min, true);
-            }
-        }
-
-        private T? GetNextValue(double factor)
-        {
-            if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
-                return (T)(object)Convert.ToDecimal(FromDecimal(ReadValue) + (FromDecimal(Step) * (decimal)factor));
-            if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
-                return (T)(object)Convert.ToInt64(FromInt64(ReadValue) + (FromInt64(Step) * factor));
-            if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
-                return (T)(object)Convert.ToUInt64(FromUInt64(ReadValue) + (FromUInt64(Step) * factor));
-            // double/float do their arithmetic in decimal to avoid IEEE 754 precision errors (e.g. 0.1 + 0.2 -> 0.30000000000000004).
-            // Values that don't convert to decimal losslessly (out of range, more significant digits than the conversion keeps, or below decimal's epsilon) fall through to the double arithmetic below.
-            if ((typeof(T) == typeof(double) || typeof(T) == typeof(double?) || typeof(T) == typeof(float) || typeof(T) == typeof(float?))
-                && TryToDecimal(ReadValue, out var currentDecimal) && TryToDecimal(Step, out var stepDecimal))
-            {
-                try
-                {
-                    var nextDecimal = currentDecimal + (stepDecimal * (decimal)factor);
-                    // Decimal preserves zero's sign, so canonicalize it before converting back to float or double.
-                    if (nextDecimal == decimal.Zero)
-                        nextDecimal = decimal.Zero;
-                    return Num.To<T>((double)nextDecimal);
-                }
-                catch (OverflowException)
-                {
-                    // The sum exceeds decimal's range even though both operands fit; fall through to the double arithmetic below.
-                }
-            }
-            return Num.To<T>(Num.From(ReadValue) + (Num.From(Step) * factor));
-
-            static bool TryToDecimal(T? value, out decimal result)
-            {
-                result = default;
-                if (Num.From(value) is not { } d || d < (double)decimal.MinValue || d > (double)decimal.MaxValue)
-                    return false;
-                try
-                {
-                    // Convert from the value's own type: a float widened to double first would re-expose the binary noise the decimal step is meant to remove (float 0.01 stepping would show 0.16000001).
-                    if (value is float f)
-                    {
-                        result = (decimal)f;
-                        // Reject lossy conversions: a value that comes back from decimal even slightly lower than it went in would trip the overflow clamp in Change and jump to Max.
-                        return (float)result == f;
-                    }
-                    result = (decimal)d;
-                    return (double)result == d;
-                }
-                catch (OverflowException)
-                {
-                    // The doubles nearest decimal.MinValue/MaxValue pass the range check but round outside decimal's range.
-                    return false;
-                }
             }
         }
 
@@ -473,7 +409,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Validation)]
         public T? Min
         {
-            get => _minHasValue ? _min : _minDefault;
+            get => _minHasValue ? _min : _number.MinValue;
             set
             {
                 _minHasValue = value != null;
@@ -491,7 +427,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Validation)]
         public T? Max
         {
-            get => _maxHasValue ? _max : _maxDefault;
+            get => _maxHasValue ? _max : _number.MaxValue;
             set
             {
                 _maxHasValue = value != null;
@@ -510,7 +446,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public T? Step
         {
-            get => _stepHasValue ? _step : _stepDefault;
+            get => _stepHasValue ? _step : _number.One;
             set
             {
                 _stepHasValue = value != null;
@@ -585,12 +521,6 @@ namespace MudBlazor
                 return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
             return null;
         }
-
-        private static decimal FromDecimal(T? v) => Convert.ToDecimal((decimal?)(object?)v);
-
-        private static long FromInt64(T? v) => Convert.ToInt64((long?)(object?)v);
-
-        private static ulong FromUInt64(T? v) => Convert.ToUInt64((ulong?)(object?)v);
 
         private static bool TryFormatAriaValue(T? value, [NotNullWhen(true)] out string? ariaValue)
         {
