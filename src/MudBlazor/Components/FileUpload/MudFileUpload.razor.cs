@@ -265,7 +265,7 @@ namespace MudBlazor
 
         [Category(CategoryTypes.FileUpload.Behavior)]
         [Parameter]
-        public EventCallback<IReadOnlyList<MudFileWithFolderPath>> FilesWithFolderPathsChanged { get; set; }
+        public EventCallback<IReadOnlyList<MudFileWithFolderPath>> OnFolderFilesChanged { get; set; }
 
         [CascadingParameter(Name = "ParentDisabled")]
         private bool ParentDisabled { get; set; }
@@ -514,9 +514,9 @@ namespace MudBlazor
             if (args.FileCount > MaximumFileCount)
             {
                 await ProcessFileChangeAsync(args);
-                if (Folder && FilesWithFolderPathsChanged.HasDelegate)
+                if (Folder && OnFolderFilesChanged.HasDelegate)
                 {
-                    await FilesWithFolderPathsChanged.InvokeAsync(Array.Empty<MudFileWithFolderPath>());
+                    await OnFolderFilesChanged.InvokeAsync(Array.Empty<MudFileWithFolderPath>());
                 }
                 return;
             }
@@ -553,7 +553,7 @@ namespace MudBlazor
             await ProcessFileChangeAsync(args);
 
             // Filter against successfully accepted items, firing an empty fallback array if everything got rejected
-            if (Folder && FilesWithFolderPathsChanged.HasDelegate)
+            if (Folder && OnFolderFilesChanged.HasDelegate)
             {
                 object? currentFilesValue = _filesState.Value;
                 var acceptedList = new List<MudFileWithFolderPath>();
@@ -590,7 +590,7 @@ namespace MudBlazor
                 }
 
                 // Always invoke the callback to sync consumer state, even if the array is empty [[]]
-                await FilesWithFolderPathsChanged.InvokeAsync(acceptedList);
+                await OnFolderFilesChanged.InvokeAsync(acceptedList);
             }
         }
         private async Task ProcessFileChangeAsync(InputFileChangeEventArgs args)

@@ -935,7 +935,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
                 .Add(p => p.Folder, true)
                 .Add(p => p.Disabled, false)
-                .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
+                .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
 
             // Invoke the non-public GetInputId method via reflection to get the exact expected element ID
             var method = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
@@ -985,7 +985,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
                 .Add(p => p.Folder, true)
                 .Add(p => p.Disabled, false)
-                .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
+                .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
 
             // Force _numberOfActiveFileInputs to 0 using reflection to test the < 1 guard condition
             var field = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
@@ -1017,7 +1017,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(p => p.Folder, true)
                 .Add(p => p.Disabled, false)
-                .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
+                .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
 
             var inputFileComponent = comp.FindComponent<InputFile>();
 
@@ -1086,7 +1086,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Folder, true)
                 .Add(p => p.Disabled, false)
                 .Add(p => p.MaximumFileCount, 1) // Limit configuration to a max of 1 item
-                .Add(p => p.FilesWithFolderPathsChanged, args => uploadedItems = args));
+                .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
 
             var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>("mudInput.getFolderPaths", invocation => true);
             jsMock.SetResult(new List<string> { "folder/file1.txt", "folder/file2.txt" });
