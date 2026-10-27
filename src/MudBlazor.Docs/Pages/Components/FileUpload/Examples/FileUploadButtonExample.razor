@@ -129,9 +129,9 @@
         }
     }
 
-    private List<MudFilesWithFolderPath> _folderItems = new List<MudFilesWithFolderPath>();
+    private List<MudFileWithFolderPath> _folderItems = new List<MudFileWithFolderPath>();
 
-    private void HandleFolderUpload(IReadOnlyList<MudFilesWithFolderPath> args)
+    private void HandleFolderUpload(IReadOnlyList<MudFileWithFolderPath> args)
     {
         _folderItems.Clear();
         foreach (var item in args)

@@ -930,7 +930,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFileUpload_FolderPathsChanged_JSInterop_Test()
         {
-            IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
+            IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
 
             var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
                 .Add(p => p.Folder, true)
@@ -980,7 +980,7 @@ namespace MudBlazor.UnitTests.Components
             );
             jsMock.SetResult(new List<string> { "folder/file1.txt" });
 
-            IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
+            IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
 
             var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
                 .Add(p => p.Folder, true)
@@ -1012,7 +1012,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFileUpload_FolderWithSingleFileGeneric_ShouldGuardMismatchedSelection()
         {
-            IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
+            IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
 
             var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(p => p.Folder, true)
@@ -1080,7 +1080,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void MudFileUpload_FolderPathsChanged_ValidationFailure_ShouldEmitEmptyCollection()
         {
-            IReadOnlyList<MudFilesWithFolderPath> uploadedItems = null;
+            IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
 
             var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
                 .Add(p => p.Folder, true)

@@ -265,7 +265,7 @@ namespace MudBlazor
 
         [Category(CategoryTypes.FileUpload.Behavior)]
         [Parameter]
-        public EventCallback<IReadOnlyList<MudFilesWithFolderPath>> FilesWithFolderPathsChanged { get; set; }
+        public EventCallback<IReadOnlyList<MudFileWithFolderPath>> FilesWithFolderPathsChanged { get; set; }
 
         [CascadingParameter(Name = "ParentDisabled")]
         private bool ParentDisabled { get; set; }
@@ -516,12 +516,12 @@ namespace MudBlazor
                 await ProcessFileChangeAsync(args);
                 if (Folder && FilesWithFolderPathsChanged.HasDelegate)
                 {
-                    await FilesWithFolderPathsChanged.InvokeAsync(Array.Empty<MudFilesWithFolderPath>());
+                    await FilesWithFolderPathsChanged.InvokeAsync(Array.Empty<MudFileWithFolderPath>());
                 }
                 return;
             }
 
-            IReadOnlyList<MudFilesWithFolderPath> combinedList = new List<MudFilesWithFolderPath>();
+            IReadOnlyList<MudFileWithFolderPath> combinedList = new List<MudFileWithFolderPath>();
 
             if (Folder && typeof(T) != typeof(IBrowserFile))
             {
@@ -539,12 +539,12 @@ namespace MudBlazor
                 }
 
                 var nativeFiles = args.GetMultipleFiles(MaximumFileCount);
-                var list = new List<MudFilesWithFolderPath>();
+                var list = new List<MudFileWithFolderPath>();
 
                 for (int i = 0; i < nativeFiles.Count; i++)
                 {
                     string path = (paths != null && i < paths.Count) ? paths[i] : string.Empty;
-                    list.Add(new MudFilesWithFolderPath(nativeFiles[i], path));
+                    list.Add(new MudFileWithFolderPath(nativeFiles[i], path));
                 }
 
                 combinedList = list;
@@ -556,7 +556,7 @@ namespace MudBlazor
             if (Folder && FilesWithFolderPathsChanged.HasDelegate)
             {
                 object? currentFilesValue = _filesState.Value;
-                var acceptedList = new List<MudFilesWithFolderPath>();
+                var acceptedList = new List<MudFileWithFolderPath>();
 
                 if (currentFilesValue != null && combinedList.Count > 0)
                 {

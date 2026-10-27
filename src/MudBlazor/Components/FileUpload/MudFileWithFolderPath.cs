@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.Forms;
 /// <summary>
 /// Represents a validated file payload paired with its browser-reported relative directory path structure.
 /// </summary>
-public class MudFilesWithFolderPath
+public class MudFileWithFolderPath
 {
     /// <summary>
     /// Gets the native browser file information metadata.
@@ -18,11 +18,11 @@ public class MudFilesWithFolderPath
     public string RelativePath { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MudFilesWithFolderPath"/> class.
+    /// Initializes a new instance of the <see cref="MudFileWithFolderPath"/> class.
     /// </summary>
     /// <param name="file">The uploaded file instance mapping target.</param>
     /// <param name="relativePath">The webkit relative directory string metadata path structural array.</param>
-    public MudFilesWithFolderPath(IBrowserFile file, string relativePath)
+    public MudFileWithFolderPath(IBrowserFile file, string relativePath)
     {
         File = file;
         RelativePath = relativePath;
