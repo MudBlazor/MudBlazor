@@ -1104,5 +1104,97 @@ namespace MudBlazor.UnitTests.Components
                 uploadedItems.Count.Should().Be(0);
             }, TimeSpan.FromSeconds(2));
         }
+
+        /// <summary>
+        /// Verifies that the component immediately returns early when disabled.
+        /// </summary>
+        [Test]
+        public void MudFileUpload_DisabledState_ShouldReturnEarly()
+        {
+            IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
+
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.Disabled, true) // Force the disabled state
+                .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
+
+            var inputFileComponent = comp.FindComponent<InputFile>();
+            var file1 = InputFileContent.CreateFromText("content", "file1.txt");
+            inputFileComponent.UploadFiles(file1);
+
+            comp.WaitForAssertion(() =>
+            {
+                uploadedItems.Should().BeNull();
+            }, TimeSpan.FromSeconds(2));
+        }
+
+        /// <summary>
+        /// Verifies that JS interop execution failures are safely caught and trace logged without runtime crashes.
+        /// </summary>
+        [Test]
+        public void MudFileUpload_FolderPathsChanged_JSInteropFailure_ShouldCatchAndLog()
+        {
+            IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
+
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.Disabled, false)
+                .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
+
+            // Force the JavaScript mock layer to explicitly throw a runtime exception
+            Context.JSInterop
+                .Setup<IReadOnlyList<string>>("mudInput.getFolderPaths", _ => true)
+                .SetException(new InvalidOperationException("Simulated DOM interop failure"));
+
+            var inputFileComponent = comp.FindComponent<InputFile>();
+            var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
+            inputFileComponent.UploadFiles(file1);
+
+            // Assert: Confirm code flows through the catch block safely and still delivers the file item with string.Empty path
+            comp.WaitForAssertion(() =>
+            {
+                uploadedItems.Should().NotBeNull();
+                uploadedItems.Count.Should().Be(1);
+                uploadedItems.ElementAt(0).RelativePath.Should().Be(string.Empty);
+            }, TimeSpan.FromSeconds(2));
+        }
+
+        /// <summary>
+        /// Verifies folder extraction flows skip JS interop when the generic type target parameter is a single browser file constraint.
+        /// </summary>
+        [Test]
+        public void MudFileUpload_SingleBrowserFileGenericType_ShouldProcessCorrectly()
+        {
+            IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
+
+            // Render using single file parameter constraint assignment (T = IBrowserFile)
+            var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
+                .Add(p => p.Folder, true)
+                .Add(p => p.Disabled, false)
+                .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
+
+            var method = typeof(MudFileUpload<IBrowserFile>)
+                .GetMethod("GetInputId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var expectedInputId = method?.Invoke(comp.Instance, new object[] { 1 }) as string ?? "mud-file-input-1";
+
+            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
+                "mudInput.getFolderPaths",
+                invocation => invocation.Arguments.Any(arg => arg is string str && str == expectedInputId)
+            );
+            jsMock.SetResult(new List<string> { "folder/file1.txt" });
+
+            var inputFileComponent = comp.FindComponent<InputFile>();
+            var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
+            inputFileComponent.UploadFiles(file1);
+
+            // Assert: Verify the JS interop is completely skipped and an empty collection clears the state
+            comp.WaitForAssertion(() =>
+            {
+                Context.JSInterop.Invocations.Any(i => i.Identifier == "mudInput.getFolderPaths").Should().BeFalse();
+                uploadedItems.Should().NotBeNull();
+                uploadedItems.Count.Should().Be(0);
+            }, TimeSpan.FromSeconds(2));
+        }
+
     }
 }
