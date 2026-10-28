@@ -17,6 +17,7 @@ namespace MudBlazor
         protected string Classnames =>
             new CssBuilder("mud-timeline-item")
                 .AddClass($"mud-timeline-item-{TimelineAlign.ToStringFast(true)}")
+                .AddClass("mud-timeline-item-has-opposite", ItemOpposite is not null)
                 .AddClass(Class)
                 .Build();
 
@@ -136,6 +137,9 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
+        /// Shown for every timeline position.
+        /// In alternate mode the side changes per item.
+        /// For start, end, top, and bottom it stays on the other side of the line.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
