@@ -53,34 +53,16 @@
         <SelectedTemplate />
     </MudFileUpload>
 
-    <MudFileUpload T="IReadOnlyList<IBrowserFile>" 
-                Folder="true" 
-                OnFolderFilesChanged="HandleFolderUpload"
-                Context="fileUploadInstance">
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>" Folder OnFolderFilesChanged="UploadFolder">
         <CustomContent>
             <MudButton Variant="Variant.Filled"
-                    Color="Color.Info"
-                    StartIcon="@Icons.Material.Filled.Folder"
-                    OnClick="@fileUploadInstance.OpenFilePickerAsync">
-                Upload Entire Folder
+                       Color="Color.Info"
+                       OnClick="@context.OpenFilePickerAsync"
+                       StartIcon="@Icons.Material.Filled.Folder">
+                Choose folder
             </MudButton>
         </CustomContent>
     </MudFileUpload>
-
-    @if (_folderItems.Any())
-    {
-        <MudText Typo="Typo.subtitle2" Class="mt-4">Uploaded Structures:</MudText>
-        <MudList T="string">
-            @foreach (var item in _folderItems)
-            {
-                <MudListItem Icon="@Icons.Material.Filled.InsertDriveFile">
-                    <b>@item.File.Name</b> <MudText Color="Color.Secondary" Inline="true">(@item.RelativePath)</MudText>
-                </MudListItem>
-            }
-        </MudList>
-    }
-
-
 </MudStack>
 
 <MudFlexBreak />
@@ -102,9 +84,23 @@
     }
 }
 
+@if (_folderFiles.Count > 0)
+{
+    <MudText Typo="@Typo.h6">Folder:</MudText>
+    <MudList T="string">
+        @foreach (var file in _folderFiles)
+        {
+            <MudListItem Icon="@Icons.Material.Filled.InsertDriveFile" @key="@file.File">
+                @file.RelativePath <code>@file.File.Size bytes</code>
+            </MudListItem>
+        }
+    </MudList>
+}
+
 @code
 {
     private readonly IList<IBrowserFile> _files = new List<IBrowserFile>();
+    private IReadOnlyList<MudFileWithFolderPath> _folderFiles = [];
 
     private void UploadFiles(IBrowserFile file)
     {
@@ -112,31 +108,9 @@
         //TODO upload the files to the server
     }
 
-    private void OnFilesChanged(IReadOnlyList<IBrowserFile> files)
+    private void UploadFolder(IReadOnlyList<MudFileWithFolderPath> files)
     {
-        _files.Clear();
-        foreach (var file in files)
-        {
-            _files.Add(file);
-        }
-    }
-
-    private void UploadFolderFiles(IReadOnlyList<IBrowserFile> files)
-    {
-        foreach (var file in files)
-        {
-            _files.Add(file);
-        }
-    }
-
-    private List<MudFileWithFolderPath> _folderItems = new List<MudFileWithFolderPath>();
-
-    private void HandleFolderUpload(IReadOnlyList<MudFileWithFolderPath> args)
-    {
-        _folderItems.Clear();
-        foreach (var item in args)
-        {
-            _folderItems.Add(item);
-        }
+        _folderFiles = files;
+        //TODO upload the files to the server
     }
 }
