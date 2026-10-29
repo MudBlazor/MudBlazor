@@ -211,6 +211,26 @@ public class TreeViewProjectionTests
     }
 
     /// <summary>
+    /// Verifies that reconciliation settles an item whose projected selection disagrees with its backing item, even when the backing item kept the state last written to it.
+    /// </summary>
+    [Test]
+    public void ReconcileSelectionSettlesProjectedStateWhichDisagreesWithBackingItem()
+    {
+        var item = new TreeItemData<string> { Value = "Item" };
+        var projection = new TreeViewProjection<string>();
+        projection.Rebuild([item], ["Item"], StringComparer.Ordinal);
+        projection.ReconcileSelection(true, null, ["Item"]);
+        item.Selected.Should().BeTrue();
+
+        projection.Rebuild([item], [], StringComparer.Ordinal);
+        var result = projection.ReconcileSelection(true, null, ["Item"]);
+
+        result.SelectedValues.Should().Equal("Item");
+        projection.Rows[0].IsSelected.Should().BeTrue();
+        projection.Rows[0].CheckState.Should().BeTrue();
+    }
+
+    /// <summary>
     /// Verifies that selected values synchronize all represented backing items using the comparer and string text fallback.
     /// </summary>
     [Test]

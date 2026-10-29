@@ -1713,6 +1713,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies that a selected item which leaves the items and returns is shown selected again, with its ancestors' check state, and that the next click deselects it.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_MultiSelection_SelectedItemRemovedAndRestored_StaysSelected()
+        {
+            var removed = new TreeItemData<string> { Value = "Removed", Text = "Removed" };
+            var sibling = new TreeItemData<string> { Value = "Sibling", Text = "Sibling" };
+            var folder = new TreeItemData<string> { Value = "Folder", Text = "Folder", Expanded = true, Children = [removed, sibling] };
+            IReadOnlyCollection<string> selectedValues = null;
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [folder])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.SelectedValuesChanged, values => selectedValues = values)
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<string>()));
+            await FindTreeItem(comp, "Removed").QuerySelector("div.mud-treeview-item-checkbox")!.ClickAsync();
+            selectedValues.Should().BeEquivalentTo(["Removed"]);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Items, [sibling])));
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Items, [folder])));
+
+            removed.Selected.Should().BeTrue();
+            GetCheckBoxState(comp, "Removed").Should().Be("mud-checkbox-true");
+            GetCheckBoxState(comp, "Folder").Should().Be("mud-checkbox-null");
+
+            await FindTreeItem(comp, "Removed").QuerySelector("div.mud-treeview-item-checkbox")!.ClickAsync();
+
+            selectedValues.Should().BeEmpty();
+            GetCheckBoxState(comp, "Removed").Should().Be("mud-checkbox-false");
+        }
+
+        /// <summary>
         /// Verifies that with tri-state off, a folder without a value still derives its check state from its children in both render modes, as it did before virtualization.
         /// </summary>
         [TestCase(false)]

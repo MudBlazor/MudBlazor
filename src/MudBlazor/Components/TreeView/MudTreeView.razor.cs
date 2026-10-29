@@ -729,6 +729,7 @@ namespace MudBlazor
             {
                 // A selection change can be under way, in which case the tree's selection is already new while the backing items still hold the old one.
                 // Projecting what was last applied lets the change be applied as a difference, which is what clears the old selection from items which are not rendered.
+                // What was last applied also holds values whose item left the hierarchy, so the item is selected again when it returns.
                 _projection.Rebuild(Items, _projectSelectionFromTree ? GetSelection() : _projection.SelectedValues, Comparer);
                 _projectSelectionFromTree = false;
                 _projectedItems = Items;
