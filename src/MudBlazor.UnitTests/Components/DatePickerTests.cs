@@ -1570,6 +1570,31 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A non-editable picker suppresses the on-screen keyboard, while an editable one keeps it (#8549).
+        /// </summary>
+        [TestCase(false, "none")]
+        [TestCase(true, "text")]
+        public void DatePicker_InputMode_DependsOnEditable(bool editable, string expectedInputMode)
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Editable, editable));
+
+            comp.Find("input").GetAttribute("inputmode").Should().Be(expectedInputMode);
+        }
+
+        /// <summary>
+        /// An InputMode passed through the picker's attributes overrides the default derived from Editable.
+        /// </summary>
+        [Test]
+        public void DatePicker_InputMode_UserAttributeOverridesDefault()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .AddUnmatched(nameof(MudTextField<string>.InputMode), InputMode.numeric));
+
+            comp.Find("input").GetAttribute("inputmode").Should().Be("numeric");
+        }
+
+        /// <summary>
         /// Reopening an editable picker returns the calendar to the month of the typed date, even after navigating away from it.
         /// </summary>
         [Test]

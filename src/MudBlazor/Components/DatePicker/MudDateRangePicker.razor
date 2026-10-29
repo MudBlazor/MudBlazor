@@ -13,6 +13,7 @@
                           @onclick="async () => { if (!Editable) await ToggleStateAsync(); }" ForId="@FieldId">
                <InputContent>
                    <MudRangeInput @ref="_rangeInput"
+                                  InputMode="@GetInputMode()"
                                   @attributes="UserAttributes"
                                   InputType="@InputType.Text"
                                   Class="@PickerInputClassname"
