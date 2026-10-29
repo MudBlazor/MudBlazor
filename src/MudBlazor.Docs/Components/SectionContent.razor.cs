@@ -4,6 +4,7 @@
 
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using MudBlazor.Docs.Extensions;
 using MudBlazor.Docs.Models;
 using MudBlazor.Docs.Services;
@@ -16,18 +17,26 @@ public partial class SectionContent
     [Inject] protected IJsApiService JsApiService { get; set; }
     [Inject] protected IDocsJsApiService DocsJsApiService { get; set; }
     [Inject] protected ISnackbar SnackbarService { get; set; }
+    [Inject] protected ILogger<SectionContent> Logger { get; set; }
 
     protected string Classname =>
         new CssBuilder("docs-section-content")
             .AddClass($"outlined", Outlined && ChildContent != null)
             .AddClass($"darken", DarkenBackground)
-            .AddClass("show-code", _hasCode && ShowCode)
             .AddClass(Class)
             .Build();
+
     protected string ToolbarClassname =>
         new CssBuilder("docs-section-content-toolbar")
-            .AddClass($"outlined", Outlined && ChildContent != null)
+            // The bar sits between the preview and its source, so it draws the
+            // divider that the two cancelled border radii used to fake.
+            .AddClass("seam", ChildContent != null)
             .AddClass("darken", ChildContent == null && Codes != null)
+            .Build();
+
+    protected string ToggleClassname =>
+        new CssBuilder("docs-section-code-toggle")
+            .AddClass("expanded", _showCode)
             .Build();
 
     protected string InnerClassname =>
@@ -35,18 +44,23 @@ public partial class SectionContent
             .AddClass($"relative d-flex flex-grow-1 flex-wrap justify-center align-center", !Block)
             .AddClass($"d-block mx-auto", Block)
             .AddClass($"mud-width-full", Block && FullWidth)
-            .AddClass("pa-8", !_hasCode && !IsApiSection)
-            .AddClass("px-8 pb-8 pt-2", _hasCode && !IsApiSection)
+            // The pane is evenly padded in both states now. The old "px-8 pb-8 pt-2"
+            // existed only to absorb the toolbar that used to sit on top of it.
+            .AddClass("pa-8", !IsApiSection)
             .AddClass("pa-2", IsApiSection)
             .Build();
 
     protected string SourceClassname =>
         new CssBuilder("docs-section-source")
-            .AddClass($"outlined", Outlined && ChildContent != null)
-            .AddClass("show-code", _hasCode && ShowCode)
+            // Nested in the shell the source inherits its border; standalone it
+            // still needs its own.
+            .AddClass($"outlined", Outlined && ChildContent == null)
             .Build();
 
+    // _snippetId marks the element the clipboard falls back to reading;
+    // _sourceId marks the collapsible region the toggle owns.
     private readonly string _snippetId = Identifier.Create();
+    private readonly string _sourceId = Identifier.Create();
 
     [Parameter] public string Class { get; set; }
     [Parameter] public bool DarkenBackground { get; set; }
@@ -63,23 +77,40 @@ public partial class SectionContent
     private bool _hasCode;
     private string _activeCode;
 
+    // ShowCode and the selected file are reader state, so the component owns
+    // them. Mutating the [Parameter] directly meant Blazor overwrote the
+    // reader's choice on the next parent render - and QueuedContent renders
+    // sections progressively, so parents keep re-rendering after page load.
+    private bool _showCode;
+    private bool _showCodeInitialized;
+
     protected override void OnParametersSet()
     {
-        if (Codes != null)
+        // Was only ever set to true, never back to false when the parameters
+        // changed away from having code.
+        _hasCode = Codes != null || !string.IsNullOrWhiteSpace(Code);
+
+        // Keep the reader's tab selection unless it is no longer on offer.
+        var activeIsStillValid = _activeCode != null &&
+                                 (Codes != null
+                                     ? Codes.Any(x => x.Code == _activeCode)
+                                     : _activeCode == Code);
+
+        if (!activeIsStillValid)
         {
-            _hasCode = true;
-            _activeCode = Codes.FirstOrDefault()?.Code;
+            _activeCode = Codes?.FirstOrDefault()?.Code ?? Code;
         }
-        else if (!string.IsNullOrWhiteSpace(Code))
+
+        if (!_showCodeInitialized)
         {
-            _hasCode = true;
-            _activeCode = Code;
+            _showCode = ShowCode;
+            _showCodeInitialized = true;
         }
     }
 
     public void OnShowCode()
     {
-        ShowCode = !ShowCode;
+        _showCode = !_showCode;
     }
 
     public void SetActiveCode(string value)
@@ -96,9 +127,22 @@ public partial class SectionContent
 
     private async Task CopyTextToClipboard()
     {
-        var code = Snippets.GetCode(Code);
+        // _activeCode, not Code: in a multi-file section Code is null and this
+        // used to fall through to reading the rendered DOM.
+        var code = Snippets.GetCode(_activeCode ?? Code);
         code ??= await DocsJsApiService.GetInnerTextByIdAsync(_snippetId);
-        await JsApiService.CopyToClipboardAsync(code ?? $"Snippet '{Code}' not found!");
+
+        if (string.IsNullOrWhiteSpace(code))
+        {
+            // Never put the failure on the reader's clipboard and then tell them
+            // it was copied.
+            Logger.LogWarning("No source available to copy for snippet '{Snippet}'.", _activeCode ?? Code);
+            SnackbarService.Add($"This example's source is missing from the build.", Severity.Error);
+
+            return;
+        }
+
+        await JsApiService.CopyToClipboardAsync(code);
         SnackbarService.Add("Copied to clipboard");
     }
 
@@ -107,8 +151,16 @@ public partial class SectionContent
         try
         {
             var key = typeof(SectionContent).Assembly.GetManifestResourceNames().FirstOrDefault(x => x.Contains($".{code}Code.html"));
+            if (key == null)
+            {
+                // Used to render an empty pane and tell nobody.
+                Logger.LogError("No embedded source found for snippet '{Snippet}'.", code);
+
+                return;
+            }
+
             using (var stream = typeof(SectionContent).Assembly.GetManifestResourceStream(key))
-            using (var reader = new StreamReader(stream))
+            using (var reader = new StreamReader(stream!))
             {
                 var read = reader.ReadToEnd();
 
@@ -117,27 +169,26 @@ public partial class SectionContent
 
                 if (!string.IsNullOrEmpty(HighLight))
                 {
-                    if (HighLight.Contains(','))
-                    {
-                        var highlights = HighLight.Split(",");
+                    var highlights = HighLight.Contains(',')
+                        ? HighLight.Split(",")
+                        : [HighLight];
 
-                        foreach (var value in highlights)
-                        {
-                            read = Regex.Replace(read, $"{value}(?=\\s|\")", $"<mark>$&</mark>");
-                        }
-                    }
-                    else
+                    foreach (var value in highlights)
                     {
-                        read = Regex.Replace(read, $"{HighLight}(?=\\s|\")", $"<mark>$&</mark>");
+                        // Regex.Escape: an unescaped term containing regex
+                        // metacharacters threw straight into the catch below,
+                        // which blanked the whole pane.
+                        read = Regex.Replace(read, $"{Regex.Escape(value)}(?=\\s|\")", "<mark>$&</mark>",
+                            RegexOptions.None, TimeSpan.FromMilliseconds(100));
                     }
                 }
 
                 builder.AddMarkupContent(0, read);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // todo: log this
+            Logger.LogError(ex, "Could not render the source for snippet '{Snippet}'.", code);
         }
     };
 
