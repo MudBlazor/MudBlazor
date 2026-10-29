@@ -257,14 +257,26 @@ namespace MudBlazor
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// If true, the file input will accept folder drops and folder selection.
+        /// Selects a whole folder, including its subfolders, instead of individual files.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// Only applies when <c>T</c> is <c>IReadOnlyList&lt;IBrowserFile&gt;</c>.
+        /// Browsers ignore <see cref="Accept"/> in folder mode, so every file in the folder is selected.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
         public bool Folder { get; set; }
 
-        [Category(CategoryTypes.FileUpload.Behavior)]
+        /// <summary>
+        /// Occurs when a folder selection is processed, with each accepted file and its path relative to the selected folder.
+        /// </summary>
+        /// <remarks>
+        /// Only raised when <see cref="Folder"/> is <c>true</c>.
+        /// Files rejected by validation are left out, and an empty list means none were accepted.
+        /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
         public EventCallback<IReadOnlyList<MudFileWithFolderPath>> OnFolderFilesChanged { get; set; }
 
         [CascadingParameter(Name = "ParentDisabled")]
@@ -499,18 +511,16 @@ namespace MudBlazor
         public async Task OpenFilePickerAsync()
             => await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudFileUpload.openFilePicker", GetActiveInputId());
 
-
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
-            // Ensure input container counter rotation increments first to match dev branch rules
+            // Capture the index before rotating so folder paths are read from the input that raised the change.
             int currentInputIndex = _numberOfActiveFileInputs;
             _numberOfActiveFileInputs++;
 
-            // Move the disabled state check right after the structural counter iteration
             if (GetDisabledState())
                 return;
 
-            // Handle oversized selections natively first and emit an empty callback array to reset the consumer view
+            // Report an empty list so the consumer clears paths from the previous selection.
             if (args.FileCount > MaximumFileCount)
             {
                 await ProcessFileChangeAsync(args);
@@ -534,7 +544,6 @@ namespace MudBlazor
                 }
                 catch (Exception ex)
                 {
-                    // Log via the project's internal runtime tracer instead of using a bare catch wrapper
                     Logger.LogWarning(ex, "Failed to retrieve folder path structural metadata arrays natively.");
                 }
 
@@ -552,7 +561,7 @@ namespace MudBlazor
 
             await ProcessFileChangeAsync(args);
 
-            // Filter against successfully accepted items, firing an empty fallback array if everything got rejected
+            // Only report files that passed validation.
             if (Folder && OnFolderFilesChanged.HasDelegate)
             {
                 object? currentFilesValue = _filesState.Value;
@@ -589,10 +598,10 @@ namespace MudBlazor
                     }
                 }
 
-                // Always invoke the callback to sync consumer state, even if the array is empty [[]]
                 await OnFolderFilesChanged.InvokeAsync(acceptedList);
             }
         }
+
         private async Task ProcessFileChangeAsync(InputFileChangeEventArgs args)
         {
             T? value;

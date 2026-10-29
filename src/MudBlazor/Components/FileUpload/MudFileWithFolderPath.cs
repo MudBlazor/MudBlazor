@@ -3,25 +3,25 @@
 using Microsoft.AspNetCore.Components.Forms;
 
 /// <summary>
-/// Represents a validated file payload paired with its browser-reported relative directory path structure.
+/// A file from a folder selection, paired with its path relative to the selected folder.
 /// </summary>
 public class MudFileWithFolderPath
 {
     /// <summary>
-    /// Gets the native browser file information metadata.
+    /// The selected file.
     /// </summary>
     public IBrowserFile File { get; set; }
 
     /// <summary>
-    /// Gets the relative filesystem directory structure hierarchy path extracted from webkitRelativePath.
+    /// The file's path relative to the selected folder, including the folder name, such as <c>Photos/2024/beach.jpg</c>.
     /// </summary>
     public string RelativePath { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MudFileWithFolderPath"/> class.
     /// </summary>
-    /// <param name="file">The uploaded file instance mapping target.</param>
-    /// <param name="relativePath">The webkit relative directory string metadata path structural array.</param>
+    /// <param name="file">The selected file.</param>
+    /// <param name="relativePath">The file's path relative to the selected folder.</param>
     public MudFileWithFolderPath(IBrowserFile file, string relativePath)
     {
         File = file;
