@@ -63,25 +63,29 @@
                                         <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
                                             <MudPopover UserAttributes="@FiltersPositionAttributes" Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2 mud-popover-position-override" OverflowBehavior="OverflowBehavior.FlipOnOpen" AnchorOrigin="Origin.TopLeft"
                                                         TransformOrigin="Origin.TopLeft" Elevation="4" Style="width:700px;max-width:700px;" MaxHeight="400">
-                                                @if (FilterTemplate == null)
-                                                {
-                                                    <MudStack>
-                                                        @foreach (var f in FilterDefinitions)
-                                                        {
-                                                            @Filter(f, null, f.Id == _filterDefinitionIdToFocus)
-                                                        }
-                                                    </MudStack>
-                                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_AddFilter]</MudButton>
-                                                    @if (HasServerData)
+                                                @* Escape from any control in the panel bubbles here, so one handler covers built-in and templated filters.
+                                                   It does not render, because every keystroke typed into the panel passes through it. *@
+                                                <div class="filters-panel-content d-contents" @onkeydown="this.AsNonRenderingEventHandler<KeyboardEventArgs>(OnFiltersPanelKeyDownAsync)">
+                                                    @if (FilterTemplate == null)
                                                     {
-                                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_Apply]</MudButton>
+                                                        <MudStack>
+                                                            @foreach (var f in FilterDefinitions)
+                                                            {
+                                                                @Filter(f, null, f.Id == _filterDefinitionIdToFocus)
+                                                            }
+                                                        </MudStack>
+                                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@AddFilter" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_AddFilter]</MudButton>
+                                                        @if (HasServerData)
+                                                        {
+                                                            <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Add" OnClick="@ApplyFiltersAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_Apply]</MudButton>
+                                                        }
+                                                        <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
                                                     }
-                                                    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Remove" OnClick="@ClearFiltersAsync" Color="@Color.Primary">@Localizer[LanguageResource.MudDataGrid_Clear]</MudButton>
-                                                }
-                                                else
-                                                {
-                                                    @FilterTemplate(this)
-                                                }
+                                                    else
+                                                    {
+                                                        @FilterTemplate(this)
+                                                    }
+                                                </div>
                                             </MudPopover>
                                         </th>
                                     </tr>

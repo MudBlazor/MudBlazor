@@ -4372,6 +4372,27 @@ namespace MudBlazor.UnitTests.Components
             await SelectFilterOperator(7, 1); // "is not empty"
         }
 
+        /// <summary>
+        /// Escape from any control in the Simple filters panel closes it and drops the incomplete filter (#13253).
+        /// </summary>
+        [Test]
+        public async Task DataGridSimpleFilter_Escape_ClosesPanel()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            await comp.Find(".filter-button").ClickAsync();
+            dataGrid.Instance.FilterDefinitions.Should().ContainSingle();
+
+            await comp.Find(".filters-panel .filter-operator").KeyDownAsync(new KeyboardEventArgs { Key = "a" });
+            comp.FindAll(".filters-panel").Count.Should().Be(1);
+
+            await comp.Find(".filters-panel .filter-operator").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
+
+            comp.FindAll(".filters-panel").Should().BeEmpty();
+            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+        }
+
         [Test]
         public async Task DataGridFilters()
         {
@@ -4468,7 +4489,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(7);
 
             // click the Add Filter button in the filters panel to add a filter
-            await comp.FindAll(".filters-panel > button")[0].ClickAsync();
+            await comp.FindAll(".filters-panel-content > button")[0].ClickAsync();
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(8);
@@ -5399,15 +5420,18 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Escape in the column filter menu's value box closes the menu without applying what was typed.
+        /// </summary>
         [Test]
-        public async Task DataGridColumnPopupFilteringEscapeClearsFilter()
+        public async Task DataGridColumnPopupFilteringEscapeClosesWithoutApplying()
         {
             var comp = Context.Render<DataGridColumnPopupFilteringTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
             await comp.Find(".filter-button").ClickAsync();
-            var input = comp.FindComponent<MudTextField<string>>();
-            await input.Find("input").InputAsync("Sam");
-            await input.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape", Type = "keydown" });
+            await comp.Find(".column-filter-popup .filter-input input").InputAsync("Sam");
+            // Query from the root so the keydown bubbles to the menu; a component-scoped Find has no ancestors.
+            await comp.Find(".column-filter-popup .filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape", Type = "keydown" });
 
             await comp.WaitForAssertionAsync(() =>
             {
@@ -5616,13 +5640,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Enter in the column filter menu's value box applies the filter, and Escape clears it.
+        /// Enter in the column filter menu's value box applies the filter, and Escape from another control closes the menu but keeps the applied filter (#13253).
         /// </summary>
         /// <remarks>
-        /// These shortcuts share the value box's keydown handler, which deliberately does not re-render the grid (#13639).
+        /// Enter shares the value box's keydown handler, which deliberately does not re-render the grid (#13639).
         /// </remarks>
         [Test]
-        public async Task DataGridColumnFilterMenu_EnterApplies_EscapeClears()
+        public async Task DataGridColumnFilterMenu_EnterApplies_EscapeKeepsAppliedFilter()
         {
             var comp = Context.Render<DataGridColumnFilterMenuTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuTest.Model>>();
@@ -5636,10 +5660,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
 
             await comp.Find(".filter-button").ClickAsync();
-            await comp.Find(".filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
+            await comp.Find(".column-filter-popup .filter-operator").KeyDownAsync(new KeyboardEventArgs { Key = "a" });
+            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Count.Should().Be(1);
 
-            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
-            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+            await comp.Find(".column-filter-popup .filter-operator").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
+
+            dataGrid.Instance.FilterDefinitions.Should().ContainSingle().Which.Value.Should().Be("Ira");
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
             comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
         }
 
@@ -5664,34 +5691,6 @@ namespace MudBlazor.UnitTests.Components
             await keyDown;
 
             comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(1));
-            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
-        }
-
-        /// <summary>
-        /// Escape in the column filter menu closes the menu when clearing the filter reloads server data after an await.
-        /// </summary>
-        [Test]
-        public async Task DataGridColumnFilterMenu_EscapeAfterServerLoad_ClosesMenu()
-        {
-            var comp = Context.Render<DataGridColumnFilterMenuGateTest>(parameters => parameters.Add(x => x.ServerSide, true));
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuGateTest.Model>>();
-            comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(4));
-
-            await comp.Find(".filter-button").ClickAsync();
-            await comp.Find(".filter-input input").InputAsync(new ChangeEventArgs { Value = "Ira" });
-            await comp.Find(".apply-filter-button").ClickAsync();
-            comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(1));
-
-            await comp.Find(".filter-button").ClickAsync();
-            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Count.Should().Be(1);
-
-            var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            comp.Instance.Gate = gate;
-            var keyDown = comp.Find(".filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
-            gate.SetResult();
-            await keyDown;
-
-            comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(4));
             comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
         }
 
