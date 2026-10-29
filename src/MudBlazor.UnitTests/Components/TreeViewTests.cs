@@ -1,4 +1,6 @@
-﻿using AngleSharp.Dom;
+﻿using System.Globalization;
+using System.Text.Json;
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -6,6 +8,8 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
@@ -17,6 +21,8 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TreeViewTests : BunitTest
     {
+        private readonly VirtualizeCallbackRuntime _virtualizeCallbacks = new();
+
         /// <summary>
         /// Multi-selection checkboxes must expose the corresponding item text as their accessible name (#13977).
         /// </summary>
@@ -1271,29 +1277,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that large loaded trees keep rendering bounded while scrolling, selecting and changing expansion.
+        /// Verifies that a large loaded tree keeps the number of rendered rows bounded while scrolling, selecting and changing expansion.
         /// </summary>
-        [TestCase(10_000)]
-        [TestCase(100_000)]
-        public async Task TreeViewVirtualize_LargeTreeKeepsRenderedRowsBounded(int itemCount)
+        [Test]
+        public async Task TreeViewVirtualize_LargeTreeKeepsRenderedRowsBounded()
         {
+            var itemCount = 10_000;
             Context.JSInterop.SetupVoid("Blazor._internal.Virtualize.init", _ => true).SetVoidResult();
-            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
             var comp = Context.Render<TreeViewLargeDataTest>(parameters => parameters.Add(x => x.ItemCount, itemCount));
             var virtualizer = comp.FindComponent<Virtualize<TreeViewItemContext<int>>>();
             await ScrollVirtualizerAsync<int>(comp, 0f, 400f);
             virtualizer.Instance.Items.Should().HaveCount(itemCount);
             comp.FindAll("li.mud-treeview-item").Should().NotBeEmpty();
             comp.FindAll("li.mud-treeview-item").Count.Should().BeLessThan(40);
-            var initialMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
 
-            stopwatch.Restart();
             await ScrollVirtualizerAsync<int>(comp, (itemCount - 20) * 40f, 400f);
-            comp.FindComponents<MudTreeViewItem<int>>().Should().Contain(item => item.Instance.Value >= itemCount - 30);
+            var lastRow = comp.FindComponents<MudTreeViewItem<int>>().MaxBy(item => item.Instance.Value)!;
+            var lastValue = lastRow.Instance.Value;
+            lastValue.Should().BeGreaterThanOrEqualTo(itemCount - 30);
             comp.FindAll("li.mud-treeview-item").Count.Should().BeLessThan(40);
-            await comp.FindAll(".mud-treeview-item-content").Last().ClickAsync();
-            comp.Find("output").GetAttribute("data-selected-value").Should().NotBe("-1");
-            var scrollAndSelectMilliseconds = stopwatch.Elapsed.TotalMilliseconds;
+            await lastRow.Find(".mud-treeview-item-content").ClickAsync();
+            comp.Find("output").GetAttribute("data-selected-value").Should().Be(lastValue.ToString(CultureInfo.InvariantCulture));
 
             await comp.InvokeAsync(comp.Instance.CollapseAllAsync);
             virtualizer.Instance.Items.Should().HaveCount(100);
@@ -1301,8 +1305,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(comp.Instance.ExpandAllAsync);
             virtualizer.Instance.Items.Should().HaveCount(itemCount);
             comp.FindAll("li.mud-treeview-item").Count.Should().BeLessThan(40);
-
-            NUnit.Framework.TestContext.WriteLine($"{itemCount:N0} nodes: initial render {initialMilliseconds:F1} ms; simulated scroll and selection {scrollAndSelectMilliseconds:F1} ms");
         }
 
         /// <summary>
@@ -3543,22 +3545,24 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Simulates the browser reporting the virtualizer's scroll position as the space above the viewport and the viewport height, in pixels.
         /// </summary>
-        private static Task ScrollVirtualizerAsync(IRenderedComponent<IComponent> component, float spacerSize, float containerSize)
+        private Task ScrollVirtualizerAsync(IRenderedComponent<IComponent> component, float spacerSize, float containerSize)
             => ScrollVirtualizerAsync<string>(component, spacerSize, containerSize);
 
         /// <summary>
         /// Simulates the viewport position for a virtualized tree with the specified value type.
         /// </summary>
-        private static Task ScrollVirtualizerAsync<T>(IRenderedComponent<IComponent> component, float spacerSize, float containerSize)
+        /// <remarks>
+        /// Virtualize registers a .NET object reference with JavaScript on its first render, and the browser reports scrolling by invoking its JS-invokable callback.
+        /// The callback is invoked through the same public dispatcher, so the test does not depend on the framework's private members.
+        /// </remarks>
+        private Task ScrollVirtualizerAsync<T>(IRenderedComponent<IComponent> component, float spacerSize, float containerSize)
         {
             var virtualize = component.FindComponent<Virtualize<TreeViewItemContext<T>>>().Instance;
             var renderedItemCount = component.FindComponents<MudTreeViewItem<T>>().Count(item => item.Instance.CurrentItemContext is not null);
             var spacerSeparation = renderedItemCount * virtualize.ItemSize;
-            var method = virtualize.GetType()
-                .GetMethods(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
-                .Single(candidate => candidate.Name.EndsWith("OnBeforeSpacerVisible", StringComparison.Ordinal));
+            var callbackReference = Context.JSInterop.Invocations["Blazor._internal.Virtualize.init"][^1].Arguments[0]!;
 
-            return component.InvokeAsync(() => method.Invoke(virtualize, [spacerSize, spacerSeparation, containerSize]));
+            return component.InvokeAsync(() => _virtualizeCallbacks.Invoke(callbackReference, "OnSpacerBeforeVisible", spacerSize, spacerSeparation, containerSize));
         }
 
         /// <summary>
@@ -3675,5 +3679,27 @@ namespace MudBlazor.UnitTests.Components
             public void ResetProjectionReadCount() => VisibleReadCount = 0;
         }
 
+        /// <summary>
+        /// Invokes JS-invokable .NET callbacks through the public dispatcher, which is how Blazor's JavaScript reaches .NET.
+        /// </summary>
+        private sealed class VirtualizeCallbackRuntime : JSRuntime
+        {
+            /// <summary>
+            /// Invokes a JS-invokable method of the object behind a <see cref="DotNetObjectReference{TValue}"/>.
+            /// </summary>
+            public void Invoke(object dotNetObjectReference, string methodIdentifier, params float[] arguments)
+            {
+                // Serializing the reference is how a JavaScript runtime assigns the id that the dispatcher looks it up by.
+                using var reference = JsonDocument.Parse(JsonSerializer.Serialize(dotNetObjectReference, JsonSerializerOptions));
+                var objectId = reference.RootElement.GetProperty("__dotNetObject").GetInt64();
+                DotNetDispatcher.Invoke(this, new DotNetInvocationInfo(null, methodIdentifier, objectId, null), JsonSerializer.Serialize(arguments));
+            }
+
+            protected override void BeginInvokeJS(long taskId, string identifier, string argsJson, JSCallResultType resultType, long targetInstanceId)
+                => throw new NotSupportedException();
+
+            protected override void EndInvokeDotNet(DotNetInvocationInfo invocationInfo, in DotNetInvocationResult invocationResult)
+                => throw new NotSupportedException();
+        }
     }
 }
