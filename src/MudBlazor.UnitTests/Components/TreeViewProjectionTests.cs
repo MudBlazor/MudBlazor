@@ -211,6 +211,27 @@ public class TreeViewProjectionTests
     }
 
     /// <summary>
+    /// Verifies that reconciliation reports only the values it selected, which is what auto-expansion follows.
+    /// </summary>
+    [Test]
+    public void ReconcileSelectionReportsValuesItSelected()
+    {
+        var kept = new TreeItemData<string> { Value = "Kept" };
+        var added = new TreeItemData<string> { Value = "Added" };
+        var removed = new TreeItemData<string> { Value = "Removed" };
+        var projection = new TreeViewProjection<string>();
+        projection.Rebuild([kept, added, removed], ["Kept", "Removed"], StringComparer.Ordinal);
+        projection.ReconcileSelection(true, null, ["Kept", "Removed"]);
+        added.Selected = true;
+        removed.Selected = false;
+
+        var result = projection.ReconcileSelection(true, null, ["Kept", "Removed"]);
+
+        result.SelectedValues.Should().BeEquivalentTo(["Kept", "Added"]);
+        result.AddedValues.Should().Equal("Added");
+    }
+
+    /// <summary>
     /// Verifies that reconciliation settles an item whose projected selection disagrees with its backing item, even when the backing item kept the state last written to it.
     /// </summary>
     [Test]

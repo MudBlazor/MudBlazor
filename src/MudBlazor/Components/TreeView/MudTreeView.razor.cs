@@ -505,8 +505,6 @@ namespace MudBlazor
                 var shouldRefresh = false;
                 if (reconcileSelection && IsVirtualized)
                 {
-                    // The reconciliation replaces a multi-selection instead of changing it, so the previous set can be kept without a copy.
-                    var previousSelection = MultiSelection ? _selection : GetSelection();
                     var result = await ReconcileVirtualizedSelectionAsync();
                     if (result.Changed)
                     {
@@ -515,9 +513,10 @@ namespace MudBlazor
                     }
 
                     // Auto-expansion follows selection transitions only, so that a branch the user collapsed stays collapsed when the tree merely re-renders.
-                    if (!firstRender && result.SelectionChanged && AutoExpand)
+                    // The reconciliation reports what it selected, because the selection can change again while the rows are updated.
+                    if (!firstRender)
                     {
-                        shouldRefresh = ExpandAncestors(GetSelection().Where(value => !previousSelection.Contains(value)));
+                        shouldRefresh = ExpandAncestors(result.AddedValues);
                     }
                 }
 

@@ -192,10 +192,14 @@ internal sealed class TreeViewProjection<T>
         var selectionChanged = multiSelection
             ? !currentSelection.SetEquals(reconciledSelection)
             : !_comparer.Equals(selectedValue, reconciledValue);
+        var addedValues = multiSelection
+            ? touchedValues.Where(value => reconciledSelection.Contains(value) && !currentSelection.Contains(value)).ToList()
+            : selectionChanged && reconciledValue is not null ? [reconciledValue] : [];
 
         return new TreeViewSelectionResult<T>(
             reconciledValue,
             reconciledSelection.ToList().AsReadOnly(),
+            addedValues,
             selectionChanged,
             backingItemsChanged);
     }
@@ -666,9 +670,15 @@ internal sealed class TreeViewProjection<T>
 /// Describes selected-value state reconciled from backing items.
 /// </summary>
 /// <typeparam name="T">The type of value associated with each item.</typeparam>
+/// <param name="SelectedValue">The reconciled single selected value.</param>
+/// <param name="SelectedValues">The reconciled multiple selected values.</param>
+/// <param name="AddedValues">The values which the reconciliation selected.</param>
+/// <param name="SelectionChanged">Whether the selected-value state changed.</param>
+/// <param name="BackingItemsChanged">Whether any backing item's selection was written.</param>
 internal readonly record struct TreeViewSelectionResult<T>(
     T? SelectedValue,
     IReadOnlyCollection<T> SelectedValues,
+    IReadOnlyList<T> AddedValues,
     bool SelectionChanged,
     bool BackingItemsChanged)
 {
