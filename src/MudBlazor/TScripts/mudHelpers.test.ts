@@ -85,6 +85,19 @@ test("keeps delivering the first and latest throttled sizes for a connected char
     expect(invokeMethodAsync.mock.calls.map(call => call[1].width)).toEqual([100, 300, 400]);
 });
 
+test("gives a size reported within the same millisecond as the last one a later timestamp", () => {
+    const invokeMethodAsync = mock(async (_method: string, _size: ElementSize) => { });
+    mudObserveElementSize({ invokeMethodAsync }, renderChart().chart);
+
+    resize(100);
+    resize(200);
+    jest.advanceTimersByTime(200);
+
+    const sizes = invokeMethodAsync.mock.calls.map(call => call[1]);
+    expect(sizes.map(size => size.width)).toEqual([100, 200]);
+    expect(sizes[1]!.timestamp).toBeGreaterThan(sizes[0]!.timestamp);
+});
+
 test("disconnects observers and cancels the trailing notification on ancestor removal", async () => {
     const disconnect = spyOn(MutationObserver.prototype, "disconnect");
     const invokeMethodAsync = mock(async (_method: string, _size: ElementSize) => { });

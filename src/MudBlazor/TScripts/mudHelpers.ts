@@ -153,6 +153,7 @@ export function mudObserveElementSize(dotNetReference: DotNet.DotNetObject, elem
     }
 
     let lastNotifiedTime = 0;
+    let lastTimestamp = 0;
     let scheduledCall: ReturnType<typeof setTimeout> | null = null;
 
     const notify = (width: number, height: number, timestamp: number) => {
@@ -160,6 +161,10 @@ export function mudObserveElementSize(dotNetReference: DotNet.DotNetObject, elem
             cleanup();
             return;
         }
+
+        // Two resizes within one millisecond share a timestamp, and the chart ignores a size that is not newer than the last one.
+        timestamp = Math.max(timestamp, lastTimestamp + 1);
+        lastTimestamp = timestamp;
 
         dotNetReference.invokeMethodAsync(functionName, { width, height, timestamp }).catch(error => {
             // A chart removed while its callback was in flight has already been disposed, so the failure is expected.
