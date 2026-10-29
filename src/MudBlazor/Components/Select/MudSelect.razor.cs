@@ -27,6 +27,7 @@ namespace MudBlazor
         private MudSelectItem<T>? _longestItem;
         private bool _needsHighlightAfterRender;
         private bool _needsFitContentRefresh;
+        private int _parentUpdateCount;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = [];
         private string _searchText = string.Empty;
@@ -661,6 +662,9 @@ namespace MudBlazor
                 if (comparer.Equals(ReadValue, value))
                 {
                     await UpdateSelectedValuesStateAsync(comparer);
+
+                    // CloseMenu(false) does not render, and a key interceptor callback is not a UI event that renders afterwards, so the list would stay visible.
+                    await InvokeAsync(StateHasChanged);
                     return;
                 }
 
@@ -732,6 +736,8 @@ namespace MudBlazor
                 return;
             }
 
+            // Opening rebuilds the options once, so items added since the last parent render are also registered as shadow items and their selected content resolves.
+            unchecked { _parentUpdateCount++; }
             await _openState.SetValueAsync(true);
             _needsHighlightAfterRender = true;
             UpdateIcon();
@@ -1426,6 +1432,15 @@ namespace MudBlazor
         {
             base.OnInitialized();
             UpdateIcon();
+        }
+
+        /// <inheritdoc />
+        public override Task SetParametersAsync(ParameterView parameters)
+        {
+            // Opening, closing and highlighting only change the select's own state, so the options re-render when the parent does.
+            unchecked { _parentUpdateCount++; }
+
+            return base.SetParametersAsync(parameters);
         }
 
         protected override void OnParametersSet()

@@ -17,7 +17,7 @@
     private async Task<IEnumerable<ConverterElement?>> Search1(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(50, token);
+        await Task.Yield();
 
         value ??= string.Empty;
         var elements = await _service.GetElements(value);

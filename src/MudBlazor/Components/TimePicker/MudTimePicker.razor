@@ -6,8 +6,7 @@
 
 @code {
     protected override RenderFragment PickerContent => 
-    @<CascadingValue Value="@this" IsFixed="true">
-        <MudPickerToolbar Class="@ToolbarClassname" Style="@Style" ShowToolbar="@ShowToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
+    @<text><MudPickerToolbar Class="@ToolbarClassname" Style="@Style" ShowToolbar="@ShowToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
             <div class="mud-timepicker-hourminute mud-ltr">
                 @if (TimeEditMode == TimeEditMode.Normal)
                 {
@@ -31,7 +30,7 @@
         <MudPickerContent>
             <div class="mud-picker-time-container">
                 <div class="mud-picker-time-clock">
-                    <div tabindex="-1" class="mud-picker-time-clock-mask" @ref="ClockElementReference" @oncontextmenu:preventDefault>
+                    <div tabindex="-1" class="mud-picker-time-clock-mask" @ref="ClockElementReference" @oncontextmenu="SuppressContextMenuHandler" @oncontextmenu:preventDefault>
                         <div class="@GetClockPinColor()"></div>
                         <div class="@GetClockPointerColor()" style="height: @GetPointerHeight(); transform: @GetPointerRotation()">
                             <div class="@GetClockPointerThumbColor()"></div>
@@ -95,6 +94,5 @@
                     </div>
                 </div>
             </div>
-        </MudPickerContent>
-    </CascadingValue>;
+        </MudPickerContent></text>;
 }

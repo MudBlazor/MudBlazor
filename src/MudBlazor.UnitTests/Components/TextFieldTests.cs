@@ -201,7 +201,10 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
 
             //Act
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
             await input.InputAsync(new ChangeEventArgs() { Value = "Some Value" });
+            await timeProvider.WaitForTimerAsync(timers);
 
             //Assert
             //if DebounceInterval is set, Immediate should be true by default
@@ -232,7 +235,10 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
 
             //Act
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
             await input.InputAsync(new ChangeEventArgs() { Value = "Some Value" });
+            await timeProvider.WaitForTimerAsync(timers);
 
             //Assert
             textField.DebounceInterval.Should().Be(200d);
@@ -263,7 +269,10 @@ namespace MudBlazor.UnitTests.Components
             var input = comp.Find("input");
 
             //Act
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
             await input.InputAsync(new ChangeEventArgs() { Value = "Some Value" });
+            await timeProvider.WaitForTimerAsync(timers);
 
             //Assert
             textField.ReadValue.Should().BeNull();
@@ -1539,7 +1548,13 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.Render<DebouncedTextFieldRerenderTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
-            await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "test" });
+            // The debounce commit re-renders off the test thread after the clock advances, which can replace the input's event handler between a Find and the event dispatch.
+            // Looking up the input and dispatching on the renderer makes the two atomic.
+            Task InputAsync(string text) => comp.InvokeAsync(() => comp.Find("input").InputAsync(text));
+            // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
+            var timers = timeProvider.TimersCreated;
+            await InputAsync("test");
+            await timeProvider.WaitForTimerAsync(timers);
 
             // trigger first value change
             timeProvider.Advance(TimeSpan.FromMilliseconds(comp.Instance.DebounceInterval));
@@ -1550,7 +1565,11 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 4; i++)
             {
                 currentText += "a";
-                await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
+                timers = timeProvider.TimersCreated;
+                await InputAsync(currentText);
+                // Validation of the previous commit can commit this text right away instead of starting a timer.
+                var typedText = currentText;
+                await timeProvider.WaitForTimerAsync(timers, () => textField.ReadValue == typedText);
 
                 // external re-render dispatched on the renderer's synchronization context
                 await comp.InvokeAsync(comp.Instance.TriggerExternalRerender);
@@ -1601,7 +1620,9 @@ namespace MudBlazor.UnitTests.Components
             for (var i = 0; i < 4; i++)
             {
                 currentText += "a";
+                var timers = timeProvider.TimersCreated;
                 await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
+                await timeProvider.WaitForTimerAsync(timers);
 
                 // external format change dispatched on the renderer's synchronization context
                 await comp.InvokeAsync(comp.Instance.ApplyFormatChange);
