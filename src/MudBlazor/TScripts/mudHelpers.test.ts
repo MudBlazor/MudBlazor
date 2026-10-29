@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, expect, jest, mock, spyOn, test } from "bun:test";
-import "./mudHelpers";
+import { getTabbableElements, hasDefinedParentHeight, mudGetSvgBBox, mudObserveElementSize as observeElementSize, serializeParameter } from "./mudHelpers";
 
 type ElementSize = { width: number; height: number; timestamp: number };
 type DotNetReference = { invokeMethodAsync(method: string, size: ElementSize): Promise<unknown> };
 
-const { mudObserveElementSize } = window as typeof window & {
-    mudObserveElementSize(reference: DotNetReference, element: Element, method?: string, delay?: number): unknown;
-};
+// The tests pass a plain recording object where the interop passes a DotNetObject.
+const mudObserveElementSize = observeElementSize as unknown as
+    (reference: DotNetReference, element: Element, method?: string, delay?: number) => unknown;
 const originalResizeObserver = globalThis.ResizeObserver;
 let observers: TestResizeObserver[];
 
@@ -83,6 +83,19 @@ test("keeps delivering the first and latest throttled sizes for a connected char
     resize(400);
 
     expect(invokeMethodAsync.mock.calls.map(call => call[1].width)).toEqual([100, 300, 400]);
+});
+
+test("gives a size reported within the same millisecond as the last one a later timestamp", () => {
+    const invokeMethodAsync = mock(async (_method: string, _size: ElementSize) => { });
+    mudObserveElementSize({ invokeMethodAsync }, renderChart().chart);
+
+    resize(100);
+    resize(200);
+    jest.advanceTimersByTime(200);
+
+    const sizes = invokeMethodAsync.mock.calls.map(call => call[1]);
+    expect(sizes.map(size => size.width)).toEqual([100, 200]);
+    expect(sizes[1]!.timestamp).toBeGreaterThan(sizes[0]!.timestamp);
 });
 
 test("disconnects observers and cancels the trailing notification on ancestor removal", async () => {
@@ -182,4 +195,75 @@ test("does not subscribe when registration arrives after the chart was removed",
 
     expect(observers).toHaveLength(0);
     expect(observe).not.toHaveBeenCalled();
+});
+
+test("getTabbableElements returns focusable descendants and skips disabled, hidden, and opted-out ones", () => {
+    document.body.innerHTML = `
+        <div id="dialog">
+            <a id="link" href="#"></a>
+            <a id="anchor-without-href"></a>
+            <button id="save"></button>
+            <button id="disabled" disabled></button>
+            <input id="name">
+            <input id="hidden" type="hidden">
+            <select id="choice"></select>
+            <textarea id="notes"></textarea>
+            <div id="custom" tabindex="0"></div>
+            <div id="opted-out" tabindex="-1"></div>
+            <div id="editable" contentEditable="true"></div>
+        </div>`;
+
+    const ids = Array.from(getTabbableElements(document.getElementById("dialog")!), element => element.id);
+
+    expect(ids).toEqual(["link", "save", "name", "choice", "notes", "custom", "editable"]);
+});
+
+test("serializeParameter keeps plain values and drops functions and nulls", () => {
+    expect(serializeParameter(null)).toBeNull();
+    expect(serializeParameter(undefined)).toBeNull();
+    expect(serializeParameter(42)).toBe(42);
+    expect(serializeParameter("text")).toBe("text");
+    expect(serializeParameter({ name: "Ada", age: 36, skip: null, run() { }, max: Infinity, nested: { ok: true } }))
+        .toEqual({ name: "Ada", age: 36, max: "Infinity", nested: { ok: true } });
+});
+
+test("serializeParameter converts array-likes to arrays", () => {
+    const arrayLike = { 0: { id: 1 }, 1: "two", length: 2 };
+
+    expect(serializeParameter({ items: arrayLike, list: [1, { id: 3 }], empty: { length: 0 } }))
+        .toEqual({ items: [{ id: 1 }, "two"], list: [1, { id: 3 }], empty: [] });
+});
+
+test("serializeParameter keeps only the members named in the spec", () => {
+    const data = { name: "Ada", secret: "x", address: { city: "London", street: "Main" }, tags: [{ id: 1, hidden: true }] };
+
+    expect(serializeParameter(data, { name: true, address: { city: true }, tags: { id: true } }))
+        .toEqual({ name: "Ada", address: { city: "London" }, tags: [{ id: 1 }] });
+});
+
+test("mudGetSvgBBox copies the bounding box into a plain object", () => {
+    const svgElement = { getBBox: () => ({ x: 1, y: 2, width: 30, height: 40, extra: "ignored" }) } as unknown as SVGGraphicsElement;
+
+    expect(mudGetSvgBBox(svgElement)).toEqual({ x: 1, y: 2, width: 30, height: 40 });
+    expect(mudGetSvgBBox(null)).toBeNull();
+});
+
+// Browsers resolve the computed height of a rendered element to pixels, never auto, so outside an inline height only max-height decides.
+// happy-dom defaults max-height to an empty string instead of none, so the cases spell out the browser default.
+test.each([
+    ["an explicit inline height", "height: 300px; max-height: none", true],
+    ["an inline height of auto", "height: auto; max-height: none", false],
+    ["a flex layout with a max height", "display: flex; max-height: 300px", true],
+    ["a grid layout with a max height", "display: grid; max-height: 300px", true],
+    ["a flex layout without a max height", "display: flex; max-height: none", false],
+    ["a block layout with a max height", "display: block; max-height: 300px", false],
+])("hasDefinedParentHeight for a parent with %s", (_case, style, expected) => {
+    document.body.innerHTML = `<div style="${style}"><svg></svg></div>`;
+
+    expect(hasDefinedParentHeight(document.querySelector("svg"))).toBe(expected);
+});
+
+test("hasDefinedParentHeight is false for an element without a parent", () => {
+    expect(hasDefinedParentHeight(document.createElement("div"))).toBe(false);
+    expect(hasDefinedParentHeight(null)).toBe(false);
 });

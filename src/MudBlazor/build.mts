@@ -8,7 +8,7 @@
  *
  * Parameters:
  *   watch: Watch for changes and rebuild on change.
- *   fix: Apply ESLint fixes.
+ *   fix: Apply oxlint fixes.
  */
 
 /// <reference types="bun" />
@@ -17,7 +17,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as sass from "sass";
-import { ESLint } from "eslint";
 
 const bunExecutable = process.execPath;
 const scriptFilename = fileURLToPath(import.meta.url);
@@ -28,6 +27,7 @@ const jsOutputFile = path.join(scriptDirectory, "wwwroot/MudBlazor.min.js");
 const scssInput = path.join(scriptDirectory, "Styles/MudBlazor.scss");
 const scssInputDir = path.dirname(scssInput);
 const scssOutput = path.join(scriptDirectory, "wwwroot/MudBlazor.min.css");
+const lintConfig = path.join(scriptDirectory, "../.oxlintrc.json");
 
 type TimingEntry = {
     step: string;
@@ -103,10 +103,11 @@ async function typecheck() {
 
 async function test() {
     console.log("Running Tests");
+    // --isolate gives each test file a fresh global object, which apiSurface.test.ts relies on to see exactly what entrypoint.ts adds to window.
     const timer = startTimer("tests");
 
     const proc = Bun.spawn({
-        cmd: [bunExecutable, "test"],
+        cmd: [bunExecutable, "test", "--isolate"],
         cwd: scriptDirectory,
         stdout: "ignore",
         stderr: "ignore",
@@ -116,7 +117,7 @@ async function test() {
     if (exitCode !== 0) {
         // The bun test runner is very verbose, so we re-run it with stdout/stderr attached to the console to show the errors.
         const retryProc = Bun.spawn({
-            cmd: [bunExecutable, "test"],
+            cmd: [bunExecutable, "test", "--isolate"],
             cwd: scriptDirectory,
             stdout: "inherit",
             stderr: "inherit",
@@ -136,38 +137,42 @@ async function test() {
     timer.stop();
 }
 
-async function eslint() {
+// Scripts are TypeScript only, so tsc type-checks everything that ends up in the bundle.
+// tsc never sees a JavaScript file that nothing imports, so this check covers those too.
+function rejectJavaScript() {
+    const javaScriptFiles = fs.readdirSync(jsDirectory, { recursive: true, encoding: "utf8" })
+        .filter(file => /\.[cm]?jsx?$/.test(file));
+    if (javaScriptFiles.length > 0) {
+        console.error(
+            `JavaScript files are not allowed in ${jsDirectory}, write them in TypeScript instead:\n`
+            + javaScriptFiles.map(file => `  ${file}`).join("\n"),
+        );
+        process.exit(1);
+    }
+}
+
+async function lint() {
     console.log("Linting Scripts");
-    const timer = startTimer("eslint");
+    const timer = startTimer("oxlint");
 
     const fix = process.argv.includes("fix");
-    const eslint = new ESLint({ fix: fix });
-    const results = await eslint.lintFiles([
-        // todo: add this once eslint supports TypeScript 7
-        //path.join(jsDirectory, "**/*.ts")
-        //scriptFilename,
-        path.join(jsDirectory, "**/*.js"),
-    ]);
+    const proc = Bun.spawn({
+        cmd: [
+            bunExecutable, "run", "oxlint",
+            "--config", lintConfig,
+            "--deny-warnings",
+            ...(fix ? ["--fix"] : []),
+            jsDirectory, scriptFilename, path.join(scriptDirectory, "test-setup.ts"),
+        ],
+        cwd: scriptDirectory,
+        stdout: "inherit",
+        stderr: "inherit",
+    });
 
-    if (fix) {
-        await ESLint.outputFixes(results);
-    }
-
-    const formatter = await eslint.loadFormatter("stylish");
-    const resultText = await formatter.format(results);
-
-    if (resultText.trim().length > 0) {
-        console.log(resultText);
-    }
-
-    const totalErrors = results.reduce((sum, r) => sum + (r.errorCount || 0), 0);
-    const totalWarnings = results.reduce(
-        (sum, r) => sum + (r.warningCount || 0),
-        0,
-    );
-
-    if (totalErrors > 0 || totalWarnings > 0) {
-        process.exit(1);
+    // See typecheck for why the awaited exit code is used instead of proc.exitCode.
+    const exitCode = await proc.exited;
+    if (exitCode !== 0) {
+        process.exit(exitCode);
     }
 
     timer.stop();
@@ -192,7 +197,8 @@ function buildSCSS() {
 }
 
 async function buildAll() {
-    await eslint();
+    rejectJavaScript();
+    await lint();
     await typecheck();
     await test();
     await buildJS();
@@ -216,7 +222,8 @@ if (process.argv.includes("watch")) {
         async (eventType, filename) => {
             console.log(`JS file changed: ${eventType} ${filename}`);
             try {
-                await eslint();
+                rejectJavaScript();
+                await lint();
                 await typecheck();
                 await test();
                 await buildJS();

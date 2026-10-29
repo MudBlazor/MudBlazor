@@ -2162,6 +2162,11 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        private Task OnFiltersPanelKeyDownAsync(KeyboardEventArgs args)
+        {
+            return args.Key == "Escape" ? CloseFilterAsync() : Task.CompletedTask;
+        }
+
         /// <summary>
         /// Removes all filters from all columns.
         /// </summary>
