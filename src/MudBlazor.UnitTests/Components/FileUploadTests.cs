@@ -912,23 +912,26 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("#upload-error").TextContent.Trim().Should().Be("File required");
         }
 
+        /// <summary>
+        /// Verifies that folder mode renders the <c>webkitdirectory</c> and <c>multiple</c> attributes.
+        /// </summary>
         [Test]
-        public void MudFileUpload_FolderAttribute_Test()
+        public void FileUpload_Folder_ShouldRenderDirectoryAttributes()
         {
-            // 1. Arrange & Render component with Folder mode enabled using the updated syntax
             var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
                 .Add(p => p.Folder, true));
 
-            // 2. Act: Find the target HTML file input element
             var input = comp.Find("input[type=file]");
 
-            // 3. Assert: Ensure both key HTML attributes are successfully injected 
             input.HasAttribute("webkitdirectory").Should().BeTrue();
             input.HasAttribute("multiple").Should().BeTrue();
         }
 
+        /// <summary>
+        /// Verifies that folder mode reads paths from the input that raised the change and pairs each file with its path.
+        /// </summary>
         [Test]
-        public void MudFileUpload_FolderPathsChanged_JSInterop_Test()
+        public void FileUpload_Folder_ShouldPairFilesWithPaths()
         {
             IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
 
@@ -937,27 +940,24 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Disabled, false)
                 .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
 
-            // Invoke the non-public GetInputId method via reflection to get the exact expected element ID
+            // GetInputId is private, so reflection gives the ID of the input that raises the change.
             var method = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
                 .GetMethod("GetInputId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
             var expectedInputId = method?.Invoke(comp.Instance, new object[] { 1 }) as string ?? "mud-file-input-1";
 
-            // Enforce strict argument verification matching the expected active input element ID
             var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
                 "mudInput.getFolderPaths",
                 invocation => invocation.Arguments.Count > 0 && (invocation.Arguments[0] as string) == expectedInputId
             );
             jsMock.SetResult(new List<string> { "folder/file1.txt", "folder/file2.txt" });
 
-            // 2. Act: Trigger upload batch
             var inputFileComponent = comp.FindComponent<InputFile>();
             var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
             var file2 = InputFileContent.CreateFromText("file2 content", "file2.txt");
 
             inputFileComponent.UploadFiles(file1, file2);
 
-            // 3. Assert: Verify the exact mock was triggered with the exact inputId parameter
             comp.WaitForAssertion(() =>
             {
                 jsMock.VerifyInvoke("mudInput.getFolderPaths");
@@ -969,10 +969,11 @@ namespace MudBlazor.UnitTests.Components
             }, TimeSpan.FromSeconds(2));
         }
 
-
-
+        /// <summary>
+        /// Verifies that the folder callback still fires when the input counter starts at zero.
+        /// </summary>
         [Test]
-        public void MudFileUpload_FolderPathsChanged_EmptyFileInputs_Fallback_Test()
+        public void FileUpload_Folder_ShouldReportFilesWhenInputCounterIsZero()
         {
             var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
                 "mudInput.getFolderPaths",
@@ -987,7 +988,6 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Disabled, false)
                 .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
 
-            // Force _numberOfActiveFileInputs to 0 using reflection to test the < 1 guard condition
             var field = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
                 .GetField("_numberOfActiveFileInputs", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
@@ -996,12 +996,10 @@ namespace MudBlazor.UnitTests.Components
                 field.SetValue(comp.Instance, 0);
             }
 
-            // Act: Trigger the upload
             var inputFileComponent = comp.FindComponent<InputFile>();
             var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
             inputFileComponent.UploadFiles(file1);
 
-            // Assert: Check that it ran through without crashing and invoked the JS
             comp.WaitForAssertion(() =>
             {
                 jsMock.VerifyInvoke("mudInput.getFolderPaths");
@@ -1009,8 +1007,11 @@ namespace MudBlazor.UnitTests.Components
             }, TimeSpan.FromSeconds(2));
         }
 
+        /// <summary>
+        /// Verifies that folder mode with a single-file <c>T</c> reports an empty list instead of pairing paths.
+        /// </summary>
         [Test]
-        public void MudFileUpload_FolderWithSingleFileGeneric_ShouldGuardMismatchedSelection()
+        public void FileUpload_FolderWithSingleFile_ShouldReportEmptyList()
         {
             IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
 
@@ -1026,7 +1027,6 @@ namespace MudBlazor.UnitTests.Components
 
             inputFileComponent.UploadFiles(file1, file2);
 
-            // Fix: Assert that it cleanly delivers an empty collection layout rather than null
             comp.WaitForAssertion(() =>
             {
                 uploadedItems.Should().NotBeNull();
@@ -1034,70 +1034,68 @@ namespace MudBlazor.UnitTests.Components
             }, TimeSpan.FromSeconds(2));
         }
 
+        /// <summary>
+        /// Verifies that folder mode with a single-file <c>T</c> renders neither <c>webkitdirectory</c> nor <c>multiple</c>.
+        /// </summary>
         [Test]
-        public void MudFileUpload_FolderWithSingleFileGeneric_ShouldNotRenderAttributes()
+        public void FileUpload_FolderWithSingleFile_ShouldNotRenderDirectoryAttributes()
         {
-            // Render with single-file T="IBrowserFile" but Folder="true"
             var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(p => p.Folder, true)
                 .Add(p => p.Disabled, false));
 
-            // Assert: Verify that the browser attributes are completely stripped to block selection
             var inputFile = comp.Find("input[type=file]");
             inputFile.HasAttribute("webkitdirectory").Should().BeFalse();
             inputFile.HasAttribute("multiple").Should().BeFalse();
         }
 
+        /// <summary>
+        /// Verifies that a selection over <c>MaximumFileCount</c> still moves on to a fresh input.
+        /// </summary>
         [Test]
-        public void MudFileUpload_OversizedSelection_ShouldRotateToNewInput()
+        public void FileUpload_OverMaximumFileCount_ShouldRotateToNewInput()
         {
             var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
-                .Add(p => p.MaximumFileCount, 1) // Limit to 1 file max
+                .Add(p => p.MaximumFileCount, 1)
                 .Add(p => p.Disabled, false));
 
-            // Fetch the initial state of the active file inputs counter using reflection
             var field = typeof(MudFileUpload<IReadOnlyList<IBrowserFile>>)
                 .GetField("_numberOfActiveFileInputs", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
             int initialCount = (int)field.GetValue(comp.Instance);
 
-            // Act: Upload 2 files (exceeding MaximumFileCount)
             var inputFileComponent = comp.FindComponent<InputFile>();
             var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
             var file2 = InputFileContent.CreateFromText("file2 content", "file2.txt");
 
             inputFileComponent.UploadFiles(file1, file2);
 
-            // Assert: Verify that the input element count incremented to force a clean rotation slot
             int postUploadCount = (int)field.GetValue(comp.Instance);
             postUploadCount.Should().Be(initialCount + 1);
         }
 
-
         /// <summary>
-        /// Verifies that an empty collection is emitted on validation failures to reset consumer state structures safely.
+        /// Verifies that the folder callback reports an empty list when the selection is over <c>MaximumFileCount</c>.
         /// </summary>
         [Test]
-        public void MudFileUpload_FolderPathsChanged_ValidationFailure_ShouldEmitEmptyCollection()
+        public void FileUpload_Folder_OverMaximumFileCount_ShouldReportEmptyList()
         {
             IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
 
             var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
                 .Add(p => p.Folder, true)
                 .Add(p => p.Disabled, false)
-                .Add(p => p.MaximumFileCount, 1) // Limit configuration to a max of 1 item
+                .Add(p => p.MaximumFileCount, 1)
                 .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
 
             var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>("mudInput.getFolderPaths", invocation => true);
             jsMock.SetResult(new List<string> { "folder/file1.txt", "folder/file2.txt" });
 
-            // Act: Fire an oversized selection with 2 files into a slot constrained to 1 max
             var inputFileComponent = comp.FindComponent<InputFile>();
             var file1 = InputFileContent.CreateFromText("file1", "file1.txt");
             var file2 = InputFileContent.CreateFromText("file2", "file2.txt");
             inputFileComponent.UploadFiles(file1, file2);
 
-            // Assert: Confirm that the callback fired and delivered a clean empty array container instead of skipping execution
             comp.WaitForAssertion(() =>
             {
                 uploadedItems.Should().NotBeNull();
@@ -1106,16 +1104,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that the component immediately returns early when disabled.
+        /// Verifies that a disabled folder upload ignores selections and does not raise the folder callback.
         /// </summary>
         [Test]
-        public void MudFileUpload_DisabledState_ShouldReturnEarly()
+        public void FileUpload_FolderDisabled_ShouldNotReportFiles()
         {
             IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
 
             var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
                 .Add(p => p.Folder, true)
-                .Add(p => p.Disabled, true) // Force the disabled state
+                .Add(p => p.Disabled, true)
                 .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
 
             var inputFileComponent = comp.FindComponent<InputFile>();
@@ -1129,10 +1127,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that JS interop execution failures are safely caught and trace logged without runtime crashes.
+        /// Verifies that files are still reported, with empty paths, when reading folder paths from JavaScript fails.
         /// </summary>
         [Test]
-        public void MudFileUpload_FolderPathsChanged_JSInteropFailure_ShouldCatchAndLog()
+        public void FileUpload_Folder_JSInteropFailure_ShouldReportEmptyPaths()
         {
             IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
 
@@ -1141,7 +1139,6 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.Disabled, false)
                 .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
 
-            // Force the JavaScript mock layer to explicitly throw a runtime exception
             Context.JSInterop
                 .Setup<IReadOnlyList<string>>("mudInput.getFolderPaths", _ => true)
                 .SetException(new InvalidOperationException("Simulated DOM interop failure"));
@@ -1150,7 +1147,6 @@ namespace MudBlazor.UnitTests.Components
             var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
             inputFileComponent.UploadFiles(file1);
 
-            // Assert: Confirm code flows through the catch block safely and still delivers the file item with string.Empty path
             comp.WaitForAssertion(() =>
             {
                 uploadedItems.Should().NotBeNull();
@@ -1160,14 +1156,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies folder extraction flows skip JS interop when the generic type target parameter is a single browser file constraint.
+        /// Verifies that folder mode with a single-file <c>T</c> skips reading folder paths from JavaScript.
         /// </summary>
         [Test]
-        public void MudFileUpload_SingleBrowserFileGenericType_ShouldProcessCorrectly()
+        public void FileUpload_FolderWithSingleFile_ShouldNotReadFolderPaths()
         {
             IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
 
-            // Render using single file parameter constraint assignment (T = IBrowserFile)
             var comp = Context.Render<MudFileUpload<IBrowserFile>>(parameters => parameters
                 .Add(p => p.Folder, true)
                 .Add(p => p.Disabled, false)
@@ -1187,7 +1182,6 @@ namespace MudBlazor.UnitTests.Components
             var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
             inputFileComponent.UploadFiles(file1);
 
-            // Assert: Verify the JS interop is completely skipped and an empty collection clears the state
             comp.WaitForAssertion(() =>
             {
                 Context.JSInterop.Invocations.Any(i => i.Identifier == "mudInput.getFolderPaths").Should().BeFalse();
@@ -1195,6 +1189,5 @@ namespace MudBlazor.UnitTests.Components
                 uploadedItems.Count.Should().Be(0);
             }, TimeSpan.FromSeconds(2));
         }
-
     }
 }
