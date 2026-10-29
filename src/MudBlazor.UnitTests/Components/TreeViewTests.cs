@@ -1853,6 +1853,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies that replacement items whose backing selection disagrees with the selected values are projected once, in single and multi-selection.
+        /// </summary>
+        [TestCase(SelectionMode.SingleSelection)]
+        [TestCase(SelectionMode.MultiSelection)]
+        public async Task TreeViewVirtualize_ReplacedItemsWithDisagreeingSelection_ProjectsHierarchyOnce(SelectionMode selectionMode)
+        {
+            var (initialItems, _) = CreateTrackedHierarchy();
+            var comp = RenderDataTree(initialItems, selectionMode);
+            var (items, tracked) = CreateTrackedHierarchy();
+            items.First().Selected = true;
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetTreeViewItemContexts(comp).Single(row => row.Item.Value == "Other").IsSelected.Should().BeTrue();
+            tracked.ChildrenReadCount.Should().Be(1, "the pending reconciliation already settles a mounting row whose backing selection disagrees");
+        }
+
+        /// <summary>
         /// Verifies that a selected item which leaves the items and returns is shown selected again, with its ancestors' check state, and that the next click deselects it.
         /// </summary>
         [Test]

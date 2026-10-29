@@ -889,7 +889,8 @@ namespace MudBlazor
                 // A virtualized row renders its selection from the projection, and its backing Selected flag is reconciled after the render.
                 // Writing the tree's selection into the data here would overwrite a change made outside the tree, so a mismatch only requests a reconciling render.
                 // Scrolling mounts rows without a parent render, so this is where a change made to an item while it was not rendered is noticed.
-                if (value is not null && item.CurrentItemData is not null && item.CurrentItemData.Selected != IsInSelection(value))
+                // A pending reconciliation reads every backing item after this render, so requesting another would only project the hierarchy twice.
+                if (!_reconcileSelection && value is not null && item.CurrentItemData is not null && item.CurrentItemData.Selected != IsInSelection(value))
                 {
                     RefreshProjection();
                 }
