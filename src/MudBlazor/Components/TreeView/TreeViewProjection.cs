@@ -24,7 +24,7 @@ internal sealed class TreeViewProjection<T>
     private IReadOnlyList<ProjectedNode> _roots = [];
     private List<ProjectedNode> _nodes = [];
     private Dictionary<TreeViewRowKey<T>, ProjectedNode> _rowNodes = [];
-    // The first projected node of each value; further nodes with the same value are linked through ProjectedNode.NextWithSameValue.
+    // Selecting a value has to reach every item with it, and chaining those nodes avoids allocating a list for each of the many values held by a single item.
     private Dictionary<ValueKey, ProjectedNode> _nodesByValue = [];
     private HashSet<ITreeItemData<T>>? _repeatedItems;
     private HashSet<T> _representedValues = [];
@@ -636,10 +636,9 @@ internal sealed class TreeViewProjection<T>
 
         public bool Expandable { get; init; }
 
-        // The number of items with a value in this subtree, including this item.
+        // Counts rather than flags let a selection change update the check-box state of each ancestor in constant time, instead of re-reading the ancestor's whole subtree.
         public int SelectableCount { get; set; }
 
-        // The number of selected items in this subtree, including this item.
         public int SelectedCount { get; set; }
 
         public TreeViewItemContext<T>? Row { get; set; }
