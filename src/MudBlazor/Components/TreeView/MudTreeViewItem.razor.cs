@@ -597,8 +597,6 @@ namespace MudBlazor
                 {
                     MudTreeRoot.LogConflictingExpansionPermission();
                 }
-
-                MudTreeRoot.OnVirtualizedRowParametersSet(CurrentItemContext!);
             }
 
             if (Text == null && Value == null && MudTreeRoot?.ServerData != null)
@@ -736,7 +734,7 @@ namespace MudBlazor
             if (IsVirtualizedItem && CurrentItemData is not null)
             {
                 CurrentItemData.Expanded = expanded;
-                // Marking the projection stale before ExpandedChanged runs lets the parent render it causes re-project once, instead of this row finding itself stale in that render and re-projecting again afterwards.
+                // Marking the projection stale before ExpandedChanged runs lets the parent render it causes re-project once, instead of comparing the changed items and re-projecting again afterwards.
                 MudTreeRoot?.RefreshProjection();
             }
 
@@ -918,7 +916,8 @@ namespace MudBlazor
             {
                 return (false, false);
             }
-            var value = GetValue();
+            // A virtualized row's selection belongs to its backing item, whose value can change in place before the row receives it as a parameter.
+            var value = IsVirtualizedItem && CurrentItemData is not null ? TreeViewHierarchy<T>.GetItemValue(CurrentItemData) : GetValue();
             var selected = value is not null && selectedValues.Contains(value);
             var wasSelected = IsSelected();
             var selectedBecameTrue = selected && !wasSelected;

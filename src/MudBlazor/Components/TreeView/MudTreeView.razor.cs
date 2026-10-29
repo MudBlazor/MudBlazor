@@ -89,7 +89,6 @@ namespace MudBlazor
         private bool _projectSelectionFromTree = true;
         private bool _reconcileSelection;
         private IReadOnlyCollection<ITreeItemData<T>>? _projectedItems;
-        private int _projectedItemCount;
         private IEqualityComparer<T?>? _projectedComparer;
         internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
         private bool ToggleSelection => SelectionMode == SelectionMode.ToggleSelection;
@@ -224,8 +223,6 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.  Only works when <see cref="Height"/> or <see cref="MaxHeight"/> is set, and <see cref="Items"/> and <see cref="ItemTemplate"/> are used.  This feature can improve performance for large data sets.
         /// The item template must bind <see cref="MudTreeViewItem{T}.Expanded"/> and <see cref="MudTreeViewItem{T}.Selected"/> to the backing item, and child items must come from <see cref="TreeItemData{T}.Children"/>.
         /// Items which are not rendered follow <see cref="ITreeItemData{T}.Expandable"/>, so bind <see cref="MudTreeViewItem{T}.CanExpand"/> to it when customizing expansion permissions.
-        /// The hierarchy is re-projected when <see cref="Items"/> is replaced or its count changes, after expanding, collapsing, filtering, or loading items, and when a rendered item's backing data changed.
-        /// Replace <see cref="Items"/> to apply in-place changes to items which are not rendered.
         /// All virtualized rows have the same fixed height, controlled by <see cref="ItemSize"/>. Labels are truncated, and custom content must fit within the configured height for accurate scrolling.
         /// </remarks>
         [Parameter]
@@ -456,10 +453,13 @@ namespace MudBlazor
                     _projectionDirty = true;
                     _projectSelectionFromTree = true;
                 }
-                else if (_projectionDirty || HaveProjectionInputsChanged())
+                else if (_projectionDirty
+                    || !ReferenceEquals(Items, _projectedItems)
+                    || !ReferenceEquals(Comparer, _projectedComparer)
+                    || _projection.HasChanged(Items))
                 {
-                    // Re-projecting walks the whole hierarchy, so a parent render with unchanged inputs keeps the current projection.
-                    // In-place changes to rendered rows are noticed by the rows themselves, see TreeViewItemContext<T>.IsStale.
+                    // The application changes the backing items in place, so a parent render compares them with the projection.
+                    // Rebuilding costs far more than comparing, so a parent render with unchanged items keeps the current projection.
                     _projectionDirty = true;
                     _reconcileSelection = true;
                 }
@@ -718,13 +718,6 @@ namespace MudBlazor
         /// </remarks>
         private void EnsureProjection()
         {
-            if (!_projectionDirty && HaveProjectionInputsChanged())
-            {
-                // A parameter change handler can run before OnParametersSet has noticed new items.
-                _projectionDirty = true;
-                _reconcileSelection = true;
-            }
-
             if (_projectionDirty)
             {
                 // A selection change can be under way, in which case the tree's selection is already new while the backing items still hold the old one.
@@ -733,34 +726,8 @@ namespace MudBlazor
                 _projection.Rebuild(Items, _projectSelectionFromTree ? GetSelection() : _projection.SelectedValues, Comparer);
                 _projectSelectionFromTree = false;
                 _projectedItems = Items;
-                _projectedItemCount = Items?.Count ?? 0;
                 _projectedComparer = Comparer;
                 _projectionDirty = false;
-            }
-        }
-
-        /// <summary>
-        /// Whether the inputs which can be compared without walking the hierarchy changed since the last projection.
-        /// </summary>
-        /// <remarks>
-        /// The count of the root collection is included because adding a root item in place is the most common in-place change to a tree.
-        /// </remarks>
-        private bool HaveProjectionInputsChanged()
-        {
-            return !ReferenceEquals(Items, _projectedItems)
-                || (Items?.Count ?? 0) != _projectedItemCount
-                || !ReferenceEquals(Comparer, _projectedComparer);
-        }
-
-        /// <summary>
-        /// Re-projects the tree when a rendered row finds that its backing item changed in place.
-        /// </summary>
-        internal void OnVirtualizedRowParametersSet(TreeViewItemContext<T> row)
-        {
-            // A pending re-projection or reconciliation already covers the change, and requesting another one would render the rows again for nothing.
-            if (!_projectionDirty && !_reconcileSelection && row.IsStale())
-            {
-                RefreshProjection();
             }
         }
 
@@ -921,7 +888,13 @@ namespace MudBlazor
             if (item.CurrentItemContext is not null)
             {
                 // A virtualized row renders its selection from the projection, and its backing Selected flag is reconciled after the render.
-                // Writing the tree's selection into the data here would overwrite a change made outside the tree, so a mismatch is left to the row's own check, see OnVirtualizedRowParametersSet.
+                // Writing the tree's selection into the data here would overwrite a change made outside the tree, so a mismatch only requests a reconciling render.
+                // Scrolling mounts rows without a parent render, so this is where a change made to an item while it was not rendered is noticed.
+                if (value is not null && item.CurrentItemData is not null && item.CurrentItemData.Selected != IsInSelection(value))
+                {
+                    RefreshProjection();
+                }
+
                 return;
             }
 
@@ -1131,6 +1104,8 @@ namespace MudBlazor
 
             return result;
         }
+
+        private bool IsInSelection(T value) => MultiSelection ? _selection.Contains(value) : Comparer.Equals(_selectedValueState.Value, value);
 
         private HashSet<T> GetSelection()
         {

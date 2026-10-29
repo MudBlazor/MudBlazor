@@ -68,6 +68,17 @@ internal sealed class TreeViewProjection<T>
     }
 
     /// <summary>
+    /// Whether the backing hierarchy differs from what was last projected.
+    /// </summary>
+    /// <remarks>
+    /// The application can change the backing items in place, so a parent render compares them with what was projected instead of rebuilding every time.
+    /// The walk reads each item once and allocates nothing for list-backed children, which keeps it far cheaper than a rebuild.
+    /// Children are compared by count and element identity rather than collection identity, because an implementation can return a new wrapper on every read.
+    /// </remarks>
+    /// <param name="items">The root backing items.</param>
+    public bool HasChanged(IReadOnlyCollection<ITreeItemData<T>>? items) => !Matches(items, _roots);
+
+    /// <summary>
     /// Whether an item in the projected hierarchy has a value.
     /// </summary>
     public bool Represents(T value) => _representedValues.Contains(value);
@@ -394,7 +405,12 @@ internal sealed class TreeViewProjection<T>
         foreach (var item in items)
         {
             var value = TreeViewHierarchy<T>.GetItemValue(item);
-            var node = new ProjectedNode(item, value, parent);
+            var node = new ProjectedNode(item, value, parent)
+            {
+                Visible = item.Visible,
+                Expanded = item.Expanded,
+                Expandable = item.Expandable
+            };
             if (representedItems.Add(item))
             {
                 _nodes.Add(node);
@@ -489,11 +505,7 @@ internal sealed class TreeViewProjection<T>
                 HasSelectableValues = node.SelectableCount > 0,
                 IsSelected = node.IsSelected,
                 CheckState = node.CheckState,
-                RowKey = new TreeViewRowKey<T>(node.Item, ordinal),
-                Expanded = node.Item.Expanded,
-                Children = node.Item.Children,
-                ChildCount = node.Item.Children?.Count ?? 0,
-                HasValue = node.Value is not null
+                RowKey = new TreeViewRowKey<T>(node.Item, ordinal)
             };
             node.Row = row;
             rows.Add(row);
@@ -504,6 +516,69 @@ internal sealed class TreeViewProjection<T>
                 AddVisibleRows(node.Children, depth + 1, rows, rowOrdinals);
             }
         }
+    }
+
+    private bool Matches(IReadOnlyCollection<ITreeItemData<T>>? items, IReadOnlyList<ProjectedNode> nodes)
+    {
+        if ((items?.Count ?? 0) != nodes.Count)
+        {
+            return false;
+        }
+
+        if (nodes.Count == 0)
+        {
+            return true;
+        }
+
+        // Enumerating through the interface would allocate an enumerator for every item with children.
+        if (items is IReadOnlyList<ITreeItemData<T>> list)
+        {
+            for (var index = 0; index < nodes.Count; index++)
+            {
+                if (!ReferenceEquals(list[index], nodes[index].Item) || !Matches(nodes[index]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        var position = 0;
+        foreach (var item in items!)
+        {
+            if (position == nodes.Count || !ReferenceEquals(item, nodes[position].Item) || !Matches(nodes[position]))
+            {
+                return false;
+            }
+
+            position++;
+        }
+
+        return position == nodes.Count;
+    }
+
+    private bool Matches(ProjectedNode node)
+    {
+        var item = node.Item;
+        if (item.Visible != node.Visible || item.Expanded != node.Expanded || item.Expandable != node.Expandable)
+        {
+            return false;
+        }
+
+        var value = TreeViewHierarchy<T>.GetItemValue(item);
+        if (value is null || node.Value is null ? value is not null || node.Value is not null : !_comparer.Equals(value, node.Value))
+        {
+            return false;
+        }
+
+        // An item without a value can never be selected, so its flag is not part of the selection.
+        if (value is not null && item.Selected != node.IsSelected)
+        {
+            return false;
+        }
+
+        return Matches(item.Children, node.Children);
     }
 
     private void SynchronizeSelection(
@@ -550,6 +625,12 @@ internal sealed class TreeViewProjection<T>
         public IReadOnlyList<ProjectedNode> Children { get; set; } = [];
 
         public bool IsSelected { get; set; }
+
+        public bool Visible { get; init; }
+
+        public bool Expanded { get; init; }
+
+        public bool Expandable { get; init; }
 
         // The number of items with a value in this subtree, including this item.
         public int SelectableCount { get; set; }

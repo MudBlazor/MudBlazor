@@ -1625,36 +1625,169 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that an external selection update selects an item in a collapsed branch without walking the hierarchy again.
+        /// Verifies that an external selection update selects an item in a collapsed branch without re-projecting the hierarchy.
         /// </summary>
         [Test]
         public async Task TreeViewVirtualize_ExternalSelection_DoesNotReprojectHierarchy()
         {
             var (items, tracked) = CreateTrackedHierarchy();
-            var comp = RenderTrackedTree(items, SelectionMode.SingleSelection);
-            tracked.ResetReadCount();
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+            var rows = GetTreeViewItemContexts(comp);
 
             await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.SelectedValue, "Tracked")));
 
             tracked.Selected.Should().BeTrue();
-            tracked.ChildrenReadCount.Should().Be(0);
+            GetTreeViewItemContexts(comp).Should().BeSameAs(rows, "the rows are only replaced when the hierarchy is re-projected");
         }
 
         /// <summary>
-        /// Verifies that a parent render with unchanged items does not walk the hierarchy again, which made large trees slow to re-render.
+        /// Verifies that a parent render with unchanged items does not re-project the hierarchy, which made large trees slow to re-render.
         /// </summary>
         [Test]
         public async Task TreeViewVirtualize_ParentRenderWithUnchangedItems_DoesNotReprojectHierarchy()
         {
-            var (items, tracked) = CreateTrackedHierarchy();
-            var comp = RenderTrackedTree(items, SelectionMode.SingleSelection);
-            tracked.ResetReadCount();
+            var (items, _) = CreateTrackedHierarchy();
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+            var rows = GetTreeViewItemContexts(comp);
 
             await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.Items, items)));
 
-            tracked.ChildrenReadCount.Should().Be(0);
+            GetTreeViewItemContexts(comp).Should().BeSameAs(rows, "the rows are only replaced when the hierarchy is re-projected");
+        }
+
+        /// <summary>
+        /// Verifies that a parent render shows items made visible again in place, as when an application clears its own filter.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRender_ShowsItemsMadeVisibleInPlace()
+        {
+            var hidden = new TreeItemData<string> { Value = "Hidden", Text = "Hidden", Visible = false };
+            var hiddenChild = new TreeItemData<string> { Value = "Hidden child", Text = "Hidden child", Visible = false };
+            var folder = new TreeItemData<string> { Value = "Folder", Text = "Folder", Expanded = true, Children = [hiddenChild] };
+            var items = new List<ITreeItemData<string>> { new TreeItemData<string> { Value = "Shown", Text = "Shown" }, hidden, folder };
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+            GetVirtualizedValues(comp).Should().Equal("Shown", "Folder");
+
+            hidden.Visible = true;
+            hiddenChild.Visible = true;
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetVirtualizedValues(comp).Should().Equal("Shown", "Hidden", "Folder", "Hidden child");
+        }
+
+        /// <summary>
+        /// Verifies that a parent render applies <see cref="ITreeItemData{T}.Selected"/> set in place on an item which is not rendered, including its ancestor's check state.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRender_AppliesSelectionSetInPlaceOnItemNotRendered()
+        {
+            var child = new TreeItemData<string> { Value = "Child", Text = "Child" };
+            var folder = new TreeItemData<string> { Value = "Folder", Text = "Folder", Children = [child, new TreeItemData<string> { Value = "Sibling", Text = "Sibling" }] };
+            var items = new List<ITreeItemData<string>> { folder };
+            IReadOnlyCollection<string> selectedValues = null;
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.SelectedValuesChanged, values => selectedValues = values)
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<string>()));
+
+            child.Selected = true;
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            selectedValues.Should().BeEquivalentTo(["Child"]);
+            comp.WaitForAssertion(() => GetCheckBoxState(comp, "Folder").Should().Be("mud-checkbox-null"));
+        }
+
+        /// <summary>
+        /// Verifies that a parent render applies <see cref="ITreeItemData{T}.Expanded"/> set in place on an item which is not rendered.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRender_AppliesExpansionSetInPlaceOnItemNotRendered()
+        {
+            var folder = new TreeItemData<string> { Value = "Folder", Text = "Folder", Children = [new TreeItemData<string> { Value = "Child", Text = "Child" }] };
+            var items = Enumerable.Range(0, 50)
+                .Select(index => (ITreeItemData<string>)new TreeItemData<string> { Value = $"Root {index}", Text = $"Root {index}" })
+                .Append(folder)
+                .ToList();
+            Context.JSInterop.SetupVoid("Blazor._internal.Virtualize.init", _ => true).SetVoidResult();
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+            await ScrollVirtualizerAsync(comp, 0f, 200f);
+            comp.FindComponents<MudTreeViewItem<string>>().Should().NotContain(item => item.Instance.Value == "Folder");
+
+            folder.Expanded = true;
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetVirtualizedValues(comp).Should().EndWith(["Folder", "Child"]);
+        }
+
+        /// <summary>
+        /// Verifies that a parent render shows a root item which replaced another at the same position of the same collection.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRender_ShowsRootItemReplacedInPlace()
+        {
+            var items = new List<ITreeItemData<string>>
+            {
+                new TreeItemData<string> { Value = "First", Text = "First" },
+                new TreeItemData<string> { Value = "Replaced", Text = "Replaced" }
+            };
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+
+            items[1] = new TreeItemData<string> { Value = "Replacement", Text = "Replacement" };
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetVirtualizedValues(comp).Should().Equal("First", "Replacement");
+        }
+
+        /// <summary>
+        /// Verifies that a value changed in place is selectable in the same parent render.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRender_SelectsValueChangedInPlace()
+        {
+            var item = new MutableTreeItemData("Before");
+            var items = new List<ITreeItemData<string>> { item, new TreeItemData<string> { Value = "Other", Text = "Other" } };
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+
+            item.Value = "After";
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.SelectedValue, "After")));
+
+            item.Selected.Should().BeTrue();
+            FindTreeItem(comp, "Before").QuerySelector("div.mud-treeview-item-content")!.ClassList.Should().Contain("mud-treeview-item-selected");
+        }
+
+        /// <summary>
+        /// Verifies that an item whose <see cref="ITreeItemData{T}.Children"/> returns a new collection on every read does not make a parent render re-project, while a child added to it in place is still shown.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ChildrenReturningNewCollection_ReprojectsOnlyWhenChildrenChange()
+        {
+            var folder = new MutableTreeItemData("Folder") { Expanded = true };
+            folder.ChildList.Add(new TreeItemData<string> { Value = "First", Text = "First" });
+            var items = new List<ITreeItemData<string>> { folder };
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+            var rows = GetTreeViewItemContexts(comp);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetTreeViewItemContexts(comp).Should().BeSameAs(rows, "the rows are only replaced when the hierarchy is re-projected");
+
+            folder.ChildList.Add(new TreeItemData<string> { Value = "Second", Text = "Second" });
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetVirtualizedValues(comp).Should().Equal("Folder", "First", "Second");
         }
 
         /// <summary>
@@ -1664,7 +1797,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TreeViewVirtualize_ParentRender_ShowsRootItemAddedInPlace()
         {
             var (items, _) = CreateTrackedHierarchy();
-            var comp = RenderTrackedTree(items, SelectionMode.SingleSelection);
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
 
             ((List<ITreeItemData<string>>)items).Add(new TreeItemData<string> { Value = "Added", Text = "Added" });
             await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
@@ -1681,7 +1814,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var (items, tracked) = CreateTrackedHierarchy();
             var other = items.First();
-            var comp = RenderTrackedTree(items, SelectionMode.SingleSelection);
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
             await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(x => x.SelectedValue, "Tracked")));
             tracked.Selected.Should().BeTrue();
@@ -1703,7 +1836,7 @@ namespace MudBlazor.UnitTests.Components
         public async Task TreeViewVirtualize_ClickingRow_DoesNotReprojectHierarchy(SelectionMode selectionMode)
         {
             var (items, tracked) = CreateTrackedHierarchy();
-            var comp = RenderTrackedTree(items, selectionMode);
+            var comp = RenderDataTree(items, selectionMode);
             tracked.ResetReadCount();
 
             await FindTreeItem(comp, "Other").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
@@ -3821,9 +3954,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Renders a virtualized tree over the items from <see cref="CreateTrackedHierarchy"/>.
+        /// Renders a virtualized tree over data items with <see cref="DataItemTemplate{T}"/>.
         /// </summary>
-        private IRenderedComponent<MudTreeView<string>> RenderTrackedTree(IReadOnlyCollection<ITreeItemData<string>> items, SelectionMode selectionMode)
+        private IRenderedComponent<MudTreeView<string>> RenderDataTree(IReadOnlyCollection<ITreeItemData<string>> items, SelectionMode selectionMode)
         {
             return Context.Render<MudTreeView<string>>(parameters => parameters
                 .Add(x => x.Items, items)
@@ -3916,6 +4049,36 @@ namespace MudBlazor.UnitTests.Components
             public int ChildrenReadCount { get; private set; }
 
             public void ResetReadCount() => ChildrenReadCount = 0;
+        }
+
+        /// <summary>
+        /// A data item whose value can change in place and whose <see cref="Children"/> returns a new read-only wrapper on every read, as an application exposing its own list would.
+        /// </summary>
+        private sealed class MutableTreeItemData(string value) : ITreeItemData<string>
+        {
+            public List<ITreeItemData<string>> ChildList { get; } = [];
+
+            public string Text { get; set; } = value;
+
+            public string Icon { get; set; }
+
+            public string Value { get; set; } = value;
+
+            public bool Expanded { get; set; }
+
+            public bool Expandable { get; set; } = true;
+
+            public bool Selected { get; set; }
+
+            public bool Visible { get; set; } = true;
+
+            public IReadOnlyCollection<ITreeItemData<string>> Children
+            {
+                get => ChildList.AsReadOnly();
+                set => throw new NotSupportedException();
+            }
+
+            public bool HasChildren => ChildList.Count > 0;
         }
 
         /// <summary>
