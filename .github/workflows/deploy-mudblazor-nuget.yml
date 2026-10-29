@@ -46,6 +46,16 @@ jobs:
         working-directory: ./src/MudBlazor
         run: dotnet pack -c Release --no-restore --output nupkgs /p:Version=${{ needs.get-version.outputs.VERSION }}
 
+      - name: Upload NuGet packages as artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: mudblazor-nuget-${{ needs.get-version.outputs.VERSION }}
+          path: |
+            ./src/MudBlazor/nupkgs/*.nupkg
+            ./src/MudBlazor/nupkgs/*.snupkg
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Check package contains css
         shell: pwsh
         run: ./tools/CheckPackageContainsStaticAssets.ps1 ./src/MudBlazor/nupkgs MudBlazor.min.css
@@ -61,4 +71,5 @@ jobs:
           user: MudBlazor
 
       - name: Publish nuget package
+        working-directory: ./src/MudBlazor
         run: dotnet nuget push nupkgs/*.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
