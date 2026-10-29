@@ -83,7 +83,7 @@
             "enabled": false
         },
         {
-            "description": "eslint and sass decide the bytes in MudBlazor.min.js and MudBlazor.min.css, so pin them rather than tracking a range.",
+            "description": "sass decides the bytes in MudBlazor.min.css and oxlint decides which scripts pass the build, so pin them rather than tracking a range.",
             "matchManagers": [
                 "bun"
             ],
