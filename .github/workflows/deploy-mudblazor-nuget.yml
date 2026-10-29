@@ -68,7 +68,7 @@ jobs:
         uses: NuGet/login@v1
         id: login
         with:
-          user: ${{ vars.NUGET_USERNAME }}
+          user: ${{ secrets.NUGET_USERNAME }}
 
       - name: Publish nuget package
         working-directory: ./src/MudBlazor
