@@ -197,7 +197,8 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>. A value of <c>false</c> is typically used for lazy-loaded items via <see cref="MudTreeView{T}.ServerData" />.
-        /// In virtualized trees, bind this parameter to the backing item's <see cref="ITreeItemData{T}.Expandable"/> so off-screen items use the same permission.
+        /// In virtualized trees, items which are not rendered follow the backing item's <see cref="ITreeItemData{T}.Expandable"/>, so bind this parameter to it to keep both in agreement.
+        /// A rendered item can only be expanded when both allow it, and a disagreement is logged as a warning.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -588,9 +589,14 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            if (IsVirtualizedItem && !CanExpand && CurrentItemData is { Expandable: true })
+            if (IsVirtualizedItem && MudTreeRoot is not null && CurrentItemData is not null)
             {
-                throw new InvalidOperationException("Virtualized expansion requires the backing item's Expandable to be false when CanExpand is false. Bind CanExpand to the backing item's Expandable so off-screen items use the same permission.");
+                // The rendered row honors both permissions through GetCanExpand, but items which are not rendered can only follow Expandable.
+                // A leaf has nothing to expand, so the common CanExpand="@context.HasChildren" template is not reported.
+                if (!CanExpand && CurrentItemData.Expandable && (CurrentItemData.HasChildren || MudTreeRoot.ServerData is not null))
+                {
+                    MudTreeRoot.LogConflictingExpansionPermission();
+                }
             }
 
             if (Text == null && Value == null && MudTreeRoot?.ServerData != null)

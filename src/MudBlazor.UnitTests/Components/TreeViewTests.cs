@@ -1256,24 +1256,66 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that virtualized templates cannot silently override the permission used for off-screen items.
+        /// Verifies that the common <c>CanExpand="@context.HasChildren"</c> template renders a virtualized tree, and logs nothing because a leaf has nothing to expand.
         /// </summary>
         [Test]
-        public void TreeViewVirtualize_ConflictingTemplatePermissionIsRejected()
+        public void TreeViewVirtualize_CanExpandBoundToHasChildren_RendersWithoutWarning()
         {
-            var render = () => Context.Render<MudTreeView<string>>(parameters => parameters
-                .Add(x => x.Items, [new TreeItemData<string> { Value = "Root" }])
+            var provider = new MockLoggerProvider();
+            var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
+            Context.Services.AddLogging(builder => builder.ClearProviders().AddProvider(provider));
+            var root = new TreeItemData<string> { Value = "Root", Expanded = true, Children = [new TreeItemData<string> { Value = "Leaf" }] };
+
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [root])
                 .Add(x => x.Virtualize, true)
                 .Add(x => x.Height, "200px")
                 .Add(x => x.ItemTemplate, item => builder =>
                 {
                     builder.OpenComponent<MudTreeViewItem<string>>(0);
                     builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
-                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.CanExpand), false);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.CanExpand), item.HasChildren);
                     builder.CloseComponent();
                 }));
 
-            render.Should().Throw<InvalidOperationException>().WithMessage("*Expandable*CanExpand*");
+            GetVirtualizedValues(comp).Should().Equal("Root", "Leaf");
+            logger!.GetEntries().Should().NotContain(entry => entry.Level == LogLevel.Warning);
+        }
+
+        /// <summary>
+        /// Verifies that a rendered row whose template forbids expansion while its backing item allows it cannot be expanded, and that the disagreement is logged once instead of failing the tree.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ConflictingTemplatePermission_BlocksRowAndLogsOnce()
+        {
+            var provider = new MockLoggerProvider();
+            var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
+            Context.Services.AddLogging(builder => builder.ClearProviders().AddProvider(provider));
+            var first = new TreeItemData<string> { Value = "First", Children = [new TreeItemData<string> { Value = "First child" }] };
+            var second = new TreeItemData<string> { Value = "Second", Children = [new TreeItemData<string> { Value = "Second child" }] };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [first, second])
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.CanExpand), false);
+                    builder.CloseComponent();
+                }));
+
+            var firstItem = comp.FindComponents<MudTreeViewItem<string>>().Single(item => item.Instance.Value == "First");
+            await comp.InvokeAsync(firstItem.Instance.ExpandAllAsync);
+
+            first.Expanded.Should().BeFalse();
+            GetVirtualizedValues(comp).Should().Equal("First", "Second");
+            FindTreeItem(comp, "First").QuerySelector("button.mud-treeview-item-expand-button")!.HasAttribute("disabled").Should().BeTrue();
+            logger!.GetEntries().Should().ContainSingle(entry => entry.Level == LogLevel.Warning && entry.Message.Contains("CanExpand", StringComparison.Ordinal));
         }
 
         /// <summary>

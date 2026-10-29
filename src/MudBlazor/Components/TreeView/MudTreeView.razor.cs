@@ -84,6 +84,7 @@ namespace MudBlazor
         private bool _isFirstRender = true;
         private bool _isDisposed;
         private bool _hasLoggedInvalidVirtualizeConfiguration;
+        private bool _hasLoggedConflictingExpansionPermission;
         private bool _projectionDirty = true;
         private bool _reconcileSelection;
         internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
@@ -218,7 +219,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.  Only works when <see cref="Height"/> or <see cref="MaxHeight"/> is set, and <see cref="Items"/> and <see cref="ItemTemplate"/> are used.  This feature can improve performance for large data sets.
         /// The item template must bind <see cref="MudTreeViewItem{T}.Expanded"/> and <see cref="MudTreeViewItem{T}.Selected"/> to the backing item, and child items must come from <see cref="TreeItemData{T}.Children"/>.
-        /// Expansion permissions come from <see cref="ITreeItemData{T}.Expandable"/>. Bind <see cref="MudTreeViewItem{T}.CanExpand"/> to it when customizing expansion permissions.
+        /// Items which are not rendered follow <see cref="ITreeItemData{T}.Expandable"/>, so bind <see cref="MudTreeViewItem{T}.CanExpand"/> to it when customizing expansion permissions.
         /// All virtualized rows have the same fixed height, controlled by <see cref="ItemSize"/>. Labels are truncated, and custom content must fit within the configured height for accurate scrolling.
         /// </remarks>
         [Parameter]
@@ -705,6 +706,27 @@ namespace MudBlazor
                 _projection.Rebuild(Items, GetSelection(), Comparer);
                 _projectionDirty = false;
             }
+        }
+
+        /// <summary>
+        /// Logs once that a row's <see cref="MudTreeViewItem{T}.CanExpand"/> disagrees with its backing <see cref="ITreeItemData{T}.Expandable"/>.
+        /// </summary>
+        internal void LogConflictingExpansionPermission()
+        {
+            if (_hasLoggedConflictingExpansionPermission)
+            {
+                return;
+            }
+
+            _hasLoggedConflictingExpansionPermission = true;
+            Logger.LogWarning(
+                "{Component} has a virtualized item whose {CanExpand} is false while the backing item's {Expandable} is true. The rendered item cannot be expanded, but items which are not rendered follow {Expandable}. Bind {CanExpand} to {Expandable} so both agree.",
+                nameof(MudTreeView<T>),
+                nameof(MudTreeViewItem<T>.CanExpand),
+                nameof(ITreeItemData<T>.Expandable),
+                nameof(ITreeItemData<T>.Expandable),
+                nameof(MudTreeViewItem<T>.CanExpand),
+                nameof(ITreeItemData<T>.Expandable));
         }
 
         /// <summary>
