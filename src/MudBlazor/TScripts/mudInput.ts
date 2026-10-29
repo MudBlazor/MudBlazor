@@ -18,12 +18,8 @@ export default class MudInput {
             return [];
         }
 
-        const paths: string[] = [];
-        for (let i = 0; i < input.files.length; i++) {
-            // webkitRelativePath contains the folder hierarchy structure
-            paths.push(input.files[i].webkitRelativePath || "");
-        }
-        return paths;
+        // webkitRelativePath contains the folder hierarchy structure
+        return Array.from(input.files).map(file => file.webkitRelativePath || "");
     }
 
 
