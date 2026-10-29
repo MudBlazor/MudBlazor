@@ -1,12 +1,9 @@
 ﻿<MudToggleGroup T="AttendanceStatus" SelectionMode="SelectionMode.SingleSelection"
                 Value="UserAttendanceStatus"
                 ValueChanged="@(status => OnAttendanceStatusChanged(status))">
-    <MudToggleItem Text="Attendance.Update.ToggleGroup.Yes"
-                    Value="@(AttendanceStatus.Accepted)"/>
-    <MudToggleItem Text="Attendance.Update.ToggleGroup.No"
-                    Value="@(AttendanceStatus.Declined)"/>
-    <MudToggleItem Text="Attendance.Update.ToggleGroup.Maybe"
-                    Value="@(AttendanceStatus.Maybe)"/>    
+    <MudToggleItem Value="@(AttendanceStatus.Accepted)">Attendance.Update.ToggleGroup.Yes</MudToggleItem>
+    <MudToggleItem Value="@(AttendanceStatus.Declined)">Attendance.Update.ToggleGroup.No</MudToggleItem>
+    <MudToggleItem Value="@(AttendanceStatus.Maybe)">Attendance.Update.ToggleGroup.Maybe</MudToggleItem>
 </MudToggleGroup>
 <MudPaper Class="mud-width-full">
     <MudText>@UserAttendanceStatus.ToString()</MudText>
