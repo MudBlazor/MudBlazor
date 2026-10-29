@@ -597,6 +597,8 @@ namespace MudBlazor
                 {
                     MudTreeRoot.LogConflictingExpansionPermission();
                 }
+
+                MudTreeRoot.OnVirtualizedRowParametersSet(CurrentItemContext!);
             }
 
             if (Text == null && Value == null && MudTreeRoot?.ServerData != null)
@@ -734,11 +736,16 @@ namespace MudBlazor
             if (IsVirtualizedItem && CurrentItemData is not null)
             {
                 CurrentItemData.Expanded = expanded;
+                // Marking the projection stale before ExpandedChanged runs lets the parent render it causes re-project once, instead of this row finding itself stale in that render and re-projecting again afterwards.
+                MudTreeRoot?.RefreshProjection();
             }
 
             await _expandedState.SetValueAsync(expanded);
             await TryInvokeServerLoadFunc();
-            MudTreeRoot?.RefreshProjection();
+            if (!IsVirtualizedItem)
+            {
+                MudTreeRoot?.RefreshProjection();
+            }
         }
 
         internal bool IsSelected() => IsVirtualizedItem ? CurrentItemContext?.IsSelected == true : _selectedState.Value;

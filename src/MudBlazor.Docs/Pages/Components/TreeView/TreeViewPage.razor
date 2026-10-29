@@ -151,6 +151,7 @@
                     must fit within the configured row height for accurate scrolling; clipping oversized content alone does not satisfy this requirement.
                     When virtualizing, set expansion permissions on each backing item's <CodeInline>Expandable</CodeInline> property and bind the template's <CodeInline>CanExpand</CodeInline> to it.
                     Items that are not rendered have no component, so they always follow <CodeInline>Expandable</CodeInline>, and a rendered item whose <CodeInline>CanExpand</CodeInline> disagrees cannot be expanded and logs a warning.
+                    The tree reads in-place changes to the items it renders, so replace <CodeInline>Items</CodeInline> to apply in-place changes to items that are not rendered.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewVirtualizationExample)" ShowCode="false">

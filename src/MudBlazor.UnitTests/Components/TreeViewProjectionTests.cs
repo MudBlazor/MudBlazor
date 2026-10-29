@@ -246,18 +246,22 @@ public class TreeViewProjectionTests
         var projection = new TreeViewProjection<string>();
         projection.Rebuild([root], [], StringComparer.Ordinal);
 
-        var selected = projection.ToggleSubtreeSelection(projection.Rows.Single(row => ReferenceEquals(row.Item, target)), [], true);
+        var selection = new HashSet<string>(StringComparer.Ordinal);
 
-        selected.Should().BeEquivalentTo(["Root", "Parent", "Target", "Leaf"]);
+        var newlySelected = projection.ToggleSubtreeSelection(projection.Rows.Single(row => ReferenceEquals(row.Item, target)), selection, true);
+
+        selection.Should().BeEquivalentTo(["Root", "Parent", "Target", "Leaf"]);
+        newlySelected.Should().BeEquivalentTo(["Root", "Parent", "Target", "Leaf"]);
         root.Selected.Should().BeTrue();
         parent.Selected.Should().BeTrue();
         target.Selected.Should().BeTrue();
         structuralNode.Selected.Should().BeFalse();
         leaf.Selected.Should().BeTrue();
 
-        var deselected = projection.ToggleSubtreeSelection(projection.Rows.Single(row => ReferenceEquals(row.Item, target)), selected, true);
+        var newlyDeselected = projection.ToggleSubtreeSelection(projection.Rows.Single(row => ReferenceEquals(row.Item, target)), selection, true);
 
-        deselected.Should().BeEmpty();
+        selection.Should().BeEmpty();
+        newlyDeselected.Should().BeEmpty();
         root.Selected.Should().BeFalse();
         parent.Selected.Should().BeFalse();
         target.Selected.Should().BeFalse();
@@ -275,15 +279,50 @@ public class TreeViewProjectionTests
         var projection = new TreeViewProjection<string>();
         projection.Rebuild([shared, parent], [], StringComparer.Ordinal);
 
-        var selected = projection.ToggleSubtreeSelection(projection.Rows[0], [], true);
+        var selected = new HashSet<string>(StringComparer.Ordinal);
+        projection.ToggleSubtreeSelection(projection.Rows[0], selected, true);
 
         selected.Should().BeEquivalentTo(["Shared"]);
         parent.Selected.Should().BeFalse();
 
-        var selectedThroughParent = projection.ToggleSubtreeSelection(projection.Rows[2], [], true);
+        var selectedThroughParent = new HashSet<string>(StringComparer.Ordinal);
+        projection.ToggleSubtreeSelection(projection.Rows[2], selectedThroughParent, true);
 
         selectedThroughParent.Should().BeEquivalentTo(["Shared", "Parent"]);
         parent.Selected.Should().BeTrue();
+    }
+
+    /// <summary>
+    /// Verifies that applying a selection updates only the changed items, their backing flags, and the check-box state of their ancestors without a rebuild.
+    /// </summary>
+    [Test]
+    public void ApplySelectionUpdatesChangedItemsAndAncestorCheckStateInPlace()
+    {
+        var first = new TreeItemData<string> { Value = "First" };
+        var second = new TreeItemData<string> { Value = "Second" };
+        var root = new TreeItemData<string> { Value = "Root", Expanded = true, Children = [first, second] };
+        var projection = new TreeViewProjection<string>();
+        projection.Rebuild([root], [], StringComparer.Ordinal);
+        var rows = projection.Rows;
+        var rootRow = rows[0];
+
+        projection.ApplySelection(["First"]).Should().Equal("First");
+
+        first.Selected.Should().BeTrue();
+        rows[1].IsSelected.Should().BeTrue();
+        rootRow.CheckState.Should().BeNull();
+
+        projection.ApplySelection(["First", "Second", "Root", "Missing"]).Should().BeEquivalentTo(["Second", "Root"]);
+
+        rootRow.CheckState.Should().BeTrue();
+        rootRow.IsSelected.Should().BeTrue();
+
+        projection.ApplySelection(["Second"]).Should().BeEmpty();
+
+        first.Selected.Should().BeFalse();
+        root.Selected.Should().BeFalse();
+        rootRow.CheckState.Should().BeNull();
+        projection.Rows.Should().BeSameAs(rows, "applying a selection does not rebuild the rows");
     }
 
     /// <summary>
@@ -299,29 +338,12 @@ public class TreeViewProjectionTests
         var projection = new TreeViewProjection<string>();
         projection.Rebuild([root], ["Selected"], StringComparer.Ordinal);
 
-        var changed = projection.AutoExpand(["Selected"]);
+        var changed = projection.ExpandAncestors(["Selected"]);
 
         changed.Should().BeTrue();
         root.Expanded.Should().BeTrue();
         fixedParent.Expanded.Should().BeFalse();
         nestedParent.Expanded.Should().BeTrue();
-    }
-
-    /// <summary>
-    /// Verifies that hierarchy auto-expand mirrors the projected rule on the backing data.
-    /// </summary>
-    [Test]
-    public void HierarchyAutoExpandExpandsExpandableAncestorsOfSelectedItems()
-    {
-        var selectedLeaf = new TreeItemData<string> { Value = "Selected" };
-        var fixedParent = new TreeItemData<string> { Value = "Fixed", Expandable = false, Children = [selectedLeaf] };
-        var root = new TreeItemData<string> { Value = "Root", Children = [fixedParent] };
-
-        TreeViewHierarchy<string>.AutoExpand([root], ["Selected"], StringComparer.Ordinal).Should().BeTrue();
-
-        root.Expanded.Should().BeTrue();
-        fixedParent.Expanded.Should().BeFalse();
-        TreeViewHierarchy<string>.AutoExpand([root], ["Selected"], StringComparer.Ordinal).Should().BeFalse();
     }
 
     /// <summary>

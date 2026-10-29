@@ -133,49 +133,6 @@ internal static class TreeViewHierarchy<T>
         }
     }
 
-    /// <summary>
-    /// Expands the expandable ancestors of every selected item.
-    /// </summary>
-    /// <returns>Whether any expansion changed.</returns>
-    public static bool AutoExpand(
-        IReadOnlyCollection<ITreeItemData<T>>? items,
-        IReadOnlyCollection<T> selectedValues,
-        IEqualityComparer<T?> comparer)
-    {
-        ArgumentNullException.ThrowIfNull(comparer);
-
-        var selection = new HashSet<T>(selectedValues, comparer);
-        var changed = false;
-        var visited = new HashSet<ITreeItemData<T>>(ReferenceEqualityComparer.Instance);
-        foreach (var item in items ?? [])
-        {
-            ExpandSelectedAncestors(item, selection, visited, ref changed);
-        }
-
-        return changed;
-
-        static bool ExpandSelectedAncestors(ITreeItemData<T> item, HashSet<T> selection, HashSet<ITreeItemData<T>> visited, ref bool changed)
-        {
-            var childContainsSelection = false;
-            if (visited.Add(item) && item.HasChildren)
-            {
-                foreach (var child in item.Children)
-                {
-                    childContainsSelection = ExpandSelectedAncestors(child, selection, visited, ref changed) || childContainsSelection;
-                }
-            }
-
-            if (childContainsSelection && item.Expandable && !item.Expanded)
-            {
-                item.Expanded = true;
-                changed = true;
-            }
-
-            var value = GetItemValue(item);
-            return childContainsSelection || (value is not null && selection.Contains(value));
-        }
-    }
-
     private static void Visit(IReadOnlyCollection<ITreeItemData<T>>? items, Action<ITreeItemData<T>> visit, Func<ITreeItemData<T>, bool>? traverseChildren = null)
     {
         var visited = new HashSet<ITreeItemData<T>>(ReferenceEqualityComparer.Instance);

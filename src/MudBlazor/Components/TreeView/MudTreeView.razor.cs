@@ -86,7 +86,11 @@ namespace MudBlazor
         private bool _hasLoggedInvalidVirtualizeConfiguration;
         private bool _hasLoggedConflictingExpansionPermission;
         private bool _projectionDirty = true;
+        private bool _projectSelectionFromTree = true;
         private bool _reconcileSelection;
+        private IReadOnlyCollection<ITreeItemData<T>>? _projectedItems;
+        private int _projectedItemCount;
+        private IEqualityComparer<T?>? _projectedComparer;
         internal bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
         private bool ToggleSelection => SelectionMode == SelectionMode.ToggleSelection;
 
@@ -220,6 +224,8 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.  Only works when <see cref="Height"/> or <see cref="MaxHeight"/> is set, and <see cref="Items"/> and <see cref="ItemTemplate"/> are used.  This feature can improve performance for large data sets.
         /// The item template must bind <see cref="MudTreeViewItem{T}.Expanded"/> and <see cref="MudTreeViewItem{T}.Selected"/> to the backing item, and child items must come from <see cref="TreeItemData{T}.Children"/>.
         /// Items which are not rendered follow <see cref="ITreeItemData{T}.Expandable"/>, so bind <see cref="MudTreeViewItem{T}.CanExpand"/> to it when customizing expansion permissions.
+        /// The hierarchy is re-projected when <see cref="Items"/> is replaced or its count changes, after expanding, collapsing, filtering, or loading items, and when a rendered item's backing data changed.
+        /// Replace <see cref="Items"/> to apply in-place changes to items which are not rendered.
         /// All virtualized rows have the same fixed height, controlled by <see cref="ItemSize"/>. Labels are truncated, and custom content must fit within the configured height for accurate scrolling.
         /// </remarks>
         [Parameter]
@@ -444,11 +450,17 @@ namespace MudBlazor
 
             if (MudTreeRoot == this)
             {
-                // The application mutates the backing items in place, so a changed Items reference is not the only reason to re-project.
-                // Every parent render therefore marks the projection stale, and it is rebuilt once when the rows are next read.
-                _projectionDirty = true;
-                if (IsVirtualized)
+                if (!IsVirtualized)
                 {
+                    // A standard tree changes the backing items and the selection through its item components, so both have to be projected again when the tree is virtualized again.
+                    _projectionDirty = true;
+                    _projectSelectionFromTree = true;
+                }
+                else if (_projectionDirty || HaveProjectionInputsChanged())
+                {
+                    // Re-projecting walks the whole hierarchy, so a parent render with unchanged inputs keeps the current projection.
+                    // In-place changes to rendered rows are noticed by the rows themselves, see TreeViewItemContext<T>.IsStale.
+                    _projectionDirty = true;
                     _reconcileSelection = true;
                 }
             }
@@ -491,22 +503,27 @@ namespace MudBlazor
                 var reconcileSelection = _reconcileSelection;
                 _reconcileSelection = false;
                 var shouldRefresh = false;
-                var selectionChanged = false;
                 if (reconcileSelection && IsVirtualized)
                 {
+                    // The reconciliation replaces a multi-selection instead of changing it, so the previous set can be kept without a copy.
+                    var previousSelection = MultiSelection ? _selection : GetSelection();
                     var result = await ReconcileVirtualizedSelectionAsync();
-                    selectionChanged = result.SelectionChanged;
                     if (result.Changed)
                     {
-                        await UpdateItemsAsync();
-                        shouldRefresh = true;
+                        // The reconciliation already applied the selection to the projection and the backing items, so only the rows have to catch up.
+                        await UpdateItemsAsync(synchronizeVirtualized: false);
+                    }
+
+                    // Auto-expansion follows selection transitions only, so that a branch the user collapsed stays collapsed when the tree merely re-renders.
+                    if (!firstRender && result.SelectionChanged && AutoExpand)
+                    {
+                        shouldRefresh = ExpandAncestors(GetSelection().Where(value => !previousSelection.Contains(value)));
                     }
                 }
 
-                // Auto-expansion follows selection transitions only, so that a branch the user collapsed stays collapsed when the tree merely re-renders.
-                if (firstRender || selectionChanged)
+                if (firstRender && AutoExpand)
                 {
-                    shouldRefresh = ApplyVirtualizedAutoExpand(GetSelection()) || shouldRefresh;
+                    shouldRefresh = ExpandAncestors(GetSelection()) || shouldRefresh;
                 }
 
                 if (firstRender && !IsVirtualized)
@@ -701,10 +718,48 @@ namespace MudBlazor
         /// </remarks>
         private void EnsureProjection()
         {
+            if (!_projectionDirty && HaveProjectionInputsChanged())
+            {
+                // A parameter change handler can run before OnParametersSet has noticed new items.
+                _projectionDirty = true;
+                _reconcileSelection = true;
+            }
+
             if (_projectionDirty)
             {
-                _projection.Rebuild(Items, GetSelection(), Comparer);
+                // A selection change can be under way, in which case the tree's selection is already new while the backing items still hold the old one.
+                // Projecting what was last applied lets the change be applied as a difference, which is what clears the old selection from items which are not rendered.
+                _projection.Rebuild(Items, _projectSelectionFromTree ? GetSelection() : _projection.SelectedValues, Comparer);
+                _projectSelectionFromTree = false;
+                _projectedItems = Items;
+                _projectedItemCount = Items?.Count ?? 0;
+                _projectedComparer = Comparer;
                 _projectionDirty = false;
+            }
+        }
+
+        /// <summary>
+        /// Whether the inputs which can be compared without walking the hierarchy changed since the last projection.
+        /// </summary>
+        /// <remarks>
+        /// The count of the root collection is included because adding a root item in place is the most common in-place change to a tree.
+        /// </remarks>
+        private bool HaveProjectionInputsChanged()
+        {
+            return !ReferenceEquals(Items, _projectedItems)
+                || (Items?.Count ?? 0) != _projectedItemCount
+                || !ReferenceEquals(Comparer, _projectedComparer);
+        }
+
+        /// <summary>
+        /// Re-projects the tree when a rendered row finds that its backing item changed in place.
+        /// </summary>
+        internal void OnVirtualizedRowParametersSet(TreeViewItemContext<T> row)
+        {
+            // A pending re-projection or reconciliation already covers the change, and requesting another one would render the rows again for nothing.
+            if (!_projectionDirty && !_reconcileSelection && row.IsStale())
+            {
+                RefreshProjection();
             }
         }
 
@@ -783,9 +838,16 @@ namespace MudBlazor
                 {
                     EnsureProjection();
                     var row = _projection.FindRow(clickedRow.RowKey) ?? clickedRow;
-                    _selection = new HashSet<T>(_projection.ToggleSubtreeSelection(row, _selection, AutoSelectParent), Comparer);
+                    // The selection can be the collection last published through SelectedValues, so the toggle works on a copy.
+                    _selection = new HashSet<T>(_selection, Comparer);
+                    var newlySelected = _projection.ToggleSubtreeSelection(row, _selection, AutoSelectParent);
+                    var shouldRefresh = ExpandAncestors(newlySelected);
                     await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
                     await UpdateItemsAsync(synchronizeVirtualized: false);
+                    if (shouldRefresh)
+                    {
+                        RefreshProjection();
+                    }
                     return;
                 }
 
@@ -858,12 +920,7 @@ namespace MudBlazor
             if (item.CurrentItemContext is not null)
             {
                 // A virtualized row renders its selection from the projection, and its backing Selected flag is reconciled after the render.
-                // Writing the tree's selection into the data here would overwrite a change made outside the tree, so a mismatch only requests a reconciling render.
-                if (value is not null && item.CurrentItemData is not null && item.CurrentItemData.Selected != GetSelection().Contains(value))
-                {
-                    RefreshProjection();
-                }
-
+                // Writing the tree's selection into the data here would overwrite a change made outside the tree, so a mismatch is left to the row's own check, see OnVirtualizedRowParametersSet.
                 return;
             }
 
@@ -888,9 +945,9 @@ namespace MudBlazor
                 _selection.Add(value);
                 if (!_isFirstRender)
                 {
-                    var shouldRefresh = ApplyVirtualizedAutoExpand(_selection);
+                    var shouldRefresh = SetVirtualizedSelection(value, true);
                     await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
-                    await UpdateItemsAsync();
+                    await UpdateItemsAsync(synchronizeVirtualized: false);
                     if (shouldRefresh)
                     {
                         RefreshProjection();
@@ -902,8 +959,8 @@ namespace MudBlazor
             await _selectedValueState.SetValueAsync(value);
             if (!_isFirstRender)
             {
-                var shouldRefresh = ApplyVirtualizedAutoExpand(GetSelection());
-                await UpdateItemsAsync();
+                var shouldRefresh = IsVirtualized && ApplyVirtualizedSelection([value]);
+                await UpdateItemsAsync(synchronizeVirtualized: false);
                 if (shouldRefresh)
                 {
                     RefreshProjection();
@@ -918,11 +975,42 @@ namespace MudBlazor
                 return;
             }
             _selection.Remove(value);
+            SetVirtualizedSelection(value, false);
             await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
             if (IsVirtualized)
             {
-                await UpdateItemsAsync();
+                await UpdateItemsAsync(synchronizeVirtualized: false);
             }
+        }
+
+        /// <summary>
+        /// Applies a single value's selection change to the projection of a virtualized tree.
+        /// </summary>
+        /// <returns>Whether <see cref="AutoExpand"/> expanded an ancestor, which requires re-projecting the rows.</returns>
+        private bool SetVirtualizedSelection(T value, bool selected)
+        {
+            if (!IsVirtualized)
+            {
+                return false;
+            }
+
+            EnsureProjection();
+            var becameSelected = selected && !_projection.IsSelected(value);
+            _projection.SetSelected(value, selected);
+            return becameSelected && ExpandAncestors([value]);
+        }
+
+        /// <summary>
+        /// Changes the selection of a virtualized tree's projection to the specified values.
+        /// </summary>
+        /// <remarks>
+        /// The projection keeps its own record of what it selected, because a parameter change handler already sees the new selected value.
+        /// </remarks>
+        /// <returns>Whether <see cref="AutoExpand"/> expanded an ancestor, which requires re-projecting the rows.</returns>
+        private bool ApplyVirtualizedSelection(IReadOnlyCollection<T> selection)
+        {
+            EnsureProjection();
+            return ExpandAncestors(_projection.ApplySelection(selection));
         }
 
         ///  <summary>
@@ -934,28 +1022,18 @@ namespace MudBlazor
         ///  <param name="value">The value to be set as the selected value.</param>
         internal async Task SetSelectedValueAsync(T? value)
         {
-            bool isValid;
-            var synchronizedVirtualSelection = IsVirtualized;
             if (IsVirtualized)
             {
-                var requestedSelection = new HashSet<T>(Comparer);
-                if (value is not null)
-                {
-                    requestedSelection.Add(value);
-                }
+                EnsureProjection();
+            }
 
-                var representedSelection = _projection.SynchronizeSelection(Items, requestedSelection, Comparer);
-                isValid = value is not null && representedSelection.Count > 0;
-            }
-            else
-            {
-                isValid = value is not null && GetSelectableValues().Contains(value);
-            }
+            var isValid = value is not null && (IsVirtualized ? _projection.Represents(value) : GetSelectableValues().Contains(value));
+            var newValue = isValid ? value : default;
 
             // note: if there is no item that corresponds to the value, the value is reset to default!
-            await _selectedValueState.SetValueAsync(isValid ? value : default);
-            var shouldRefresh = ApplyVirtualizedAutoExpand(GetSelection(), useBackingItems: synchronizedVirtualSelection);
-            await UpdateItemsAsync(synchronizeVirtualized: !synchronizedVirtualSelection);
+            await _selectedValueState.SetValueAsync(newValue);
+            var shouldRefresh = IsVirtualized && ApplyVirtualizedSelection(newValue is null ? [] : [newValue]);
+            await UpdateItemsAsync(synchronizeVirtualized: false);
             if (shouldRefresh)
             {
                 RefreshProjection();
@@ -968,18 +1046,23 @@ namespace MudBlazor
         ///  </summary>
         private async Task SetSelectedValuesAsync(IReadOnlyCollection<T> newValues)
         {
-            var synchronizedVirtualSelection = IsVirtualized;
-            var newSelection = synchronizedVirtualSelection
-                ? new HashSet<T>(_projection.SynchronizeSelection(Items, newValues, Comparer), Comparer)
+            if (IsVirtualized)
+            {
+                EnsureProjection();
+            }
+
+            var newSelection = IsVirtualized
+                ? new HashSet<T>(newValues.Where(_projection.Represents), Comparer)
                 : new HashSet<T>(newValues.Where(GetSelectableValues().Contains), Comparer);
             if (_selection.SetEquals(newSelection))
             {
                 return;
             }
+
             _selection = newSelection;
+            var shouldRefresh = IsVirtualized && ApplyVirtualizedSelection(newSelection);
             await _selectedValuesState.SetValueAsync(newSelection);
-            var shouldRefresh = ApplyVirtualizedAutoExpand(_selection, useBackingItems: synchronizedVirtualSelection);
-            await UpdateItemsAsync(synchronizeVirtualized: !synchronizedVirtualSelection);
+            await UpdateItemsAsync(synchronizeVirtualized: false);
             if (shouldRefresh)
             {
                 RefreshProjection();
@@ -994,10 +1077,14 @@ namespace MudBlazor
         /// <param name="forceRender">Renders every item regardless of whether its state changed.</param>
         private async Task UpdateItemsAsync(bool synchronizeVirtualized = true, bool forceRender = false)
         {
-            var selection = GetSelection();
+            // The rows only read the selection, so a virtualized multi-selection, which can hold every value in the tree, is passed without a copy.
+            var selection = IsVirtualized && MultiSelection ? _selection : GetSelection();
             if (IsVirtualized && synchronizeVirtualized)
             {
+                // A change such as a new selection mode can affect every item, so the whole hierarchy is synchronized and re-projected.
                 _projection.SynchronizeSelection(Items, selection, Comparer);
+                _projectionDirty = true;
+                _projectSelectionFromTree = true;
             }
 
             // Rows mount and dispose while the walk awaits item callbacks, so it runs over a snapshot of the registered items.
@@ -1006,7 +1093,15 @@ namespace MudBlazor
                 await item.UpdateSelectionStateAsync(selection, forceRender);
             }
 
-            RefreshProjection();
+            if (!IsVirtualized)
+            {
+                RefreshProjection();
+            }
+            else if (!_isDisposed)
+            {
+                // The rows hold their selection state, so a selection change renders without re-projecting the hierarchy.
+                StateHasChanged();
+            }
         }
 
         /// <summary>
@@ -1110,24 +1205,21 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Expands the ancestors of selected items when <see cref="AutoExpand"/> is set.
+        /// Expands the ancestors of newly selected values in a virtualized tree when <see cref="AutoExpand"/> is set.
         /// </summary>
-        /// <param name="selection">The selected values.</param>
-        /// <param name="useBackingItems">Whether to traverse the backing data instead of the last projection, because the data changed since it was built.</param>
-        private bool ApplyVirtualizedAutoExpand(HashSet<T> selection, bool useBackingItems = false)
+        /// <remarks>
+        /// Only newly selected values are passed in, matching a standard tree which expands an item when one of its descendants becomes selected.
+        /// </remarks>
+        /// <returns>Whether any expansion changed.</returns>
+        private bool ExpandAncestors(IEnumerable<T> newlySelectedValues)
         {
-            if (!IsVirtualized || !AutoExpand || selection.Count == 0)
+            if (!IsVirtualized || !AutoExpand)
             {
                 return false;
             }
 
-            if (useBackingItems)
-            {
-                return TreeViewHierarchy<T>.AutoExpand(Items, selection, Comparer);
-            }
-
             EnsureProjection();
-            return _projection.AutoExpand(selection);
+            return _projection.ExpandAncestors(newlySelectedValues);
         }
 
         /// <summary>

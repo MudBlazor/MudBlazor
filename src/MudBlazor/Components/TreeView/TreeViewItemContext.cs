@@ -45,12 +45,53 @@ internal sealed class TreeViewItemContext<T>
     /// <summary>
     /// Whether this row's own selectable value is selected.
     /// </summary>
-    public required bool IsSelected { get; init; }
+    /// <remarks>
+    /// Updated in place when the selection changes, so that a selection change does not re-project the hierarchy.
+    /// </remarks>
+    public required bool IsSelected { get; set; }
 
     /// <summary>
     /// The checkbox state derived from this row and all of its descendants.
     /// </summary>
-    public required bool? CheckState { get; init; }
+    /// <remarks>
+    /// Updated in place when the selection changes, so that a selection change does not re-project the hierarchy.
+    /// </remarks>
+    public required bool? CheckState { get; set; }
+
+    /// <summary>
+    /// The backing item's <see cref="ITreeItemData{T}.Expanded"/> when the row was projected.
+    /// </summary>
+    public required bool Expanded { get; init; }
+
+    /// <summary>
+    /// The backing item's children when the row was projected.
+    /// </summary>
+    public required IReadOnlyCollection<ITreeItemData<T>>? Children { get; init; }
+
+    /// <summary>
+    /// The number of the backing item's children when the row was projected.
+    /// </summary>
+    public required int ChildCount { get; init; }
+
+    /// <summary>
+    /// Whether the backing item has a selectable value.
+    /// </summary>
+    public required bool HasValue { get; init; }
+
+    /// <summary>
+    /// Whether the backing item changed in place since this row was projected.
+    /// </summary>
+    /// <remarks>
+    /// The tree only re-projects the whole hierarchy when its inputs change, so a rendered row is how an in-place change made by the application is noticed.
+    /// </remarks>
+    public bool IsStale()
+    {
+        return !Item.Visible
+            || Item.Expanded != Expanded
+            || !ReferenceEquals(Item.Children, Children)
+            || (Item.Children?.Count ?? 0) != ChildCount
+            || (HasValue && Item.Selected != IsSelected);
+    }
 
     /// <summary>
     /// The key which identifies the rendered row across renders.

@@ -4,6 +4,7 @@
 
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace MudBlazor;
 
@@ -13,6 +14,7 @@ namespace MudBlazor;
 /// <typeparam name="T">The type of value associated with each item.</typeparam>
 /// <remarks>
 /// <see cref="Rebuild"/> projects the whole hierarchy so that check-box state and selection can account for collapsed descendants, and records only expanded, visible items as <see cref="Rows"/>.
+/// Selection changes are applied to the projected nodes in place through <see cref="SetSelected"/>, so that selecting an item costs time proportional to the items it affects rather than to the whole hierarchy.
 /// </remarks>
 internal sealed class TreeViewProjection<T>
 {
@@ -21,10 +23,12 @@ internal sealed class TreeViewProjection<T>
     private readonly ConditionalWeakTable<ITreeItemData<T>, SelectionObservation> _selectionObservations = new();
     private IReadOnlyList<ProjectedNode> _roots = [];
     private List<ProjectedNode> _nodes = [];
-    private Dictionary<TreeViewItemContext<T>, ProjectedNode> _rowNodes = new(ReferenceEqualityComparer.Instance);
-    private Dictionary<TreeViewRowKey<T>, TreeViewItemContext<T>> _rowsByKey = [];
-    private Dictionary<ValueKey, List<ProjectedNode>> _nodesByValue = [];
+    private Dictionary<TreeViewRowKey<T>, ProjectedNode> _rowNodes = [];
+    // The first projected node of each value; further nodes with the same value are linked through ProjectedNode.NextWithSameValue.
+    private Dictionary<ValueKey, ProjectedNode> _nodesByValue = [];
+    private HashSet<ITreeItemData<T>>? _repeatedItems;
     private HashSet<T> _representedValues = [];
+    private HashSet<T> _selectedValues = [];
     private IEqualityComparer<T?> _comparer = EqualityComparer<T?>.Default;
     private bool _selectionInitialized;
 
@@ -48,18 +52,56 @@ internal sealed class TreeViewProjection<T>
 
         _comparer = comparer;
         _nodes = [];
-        _rowNodes = new Dictionary<TreeViewItemContext<T>, ProjectedNode>(ReferenceEqualityComparer.Instance);
-        _rowsByKey = [];
-        _nodesByValue = new Dictionary<ValueKey, List<ProjectedNode>>(new ValueKeyEqualityComparer(comparer));
+        _rowNodes = [];
+        _nodesByValue = new Dictionary<ValueKey, ProjectedNode>(new ValueKeyEqualityComparer(comparer));
+        _repeatedItems = null;
         _representedValues = new HashSet<T>(comparer);
+        _selectedValues = new HashSet<T>(comparer);
         var selection = new HashSet<T>(selectedValues ?? [], comparer);
         var representedItems = new HashSet<ITreeItemData<T>>(ReferenceEqualityComparer.Instance);
         _roots = BuildNodes(items ?? [], null, selection, representedItems);
 
         var rows = new List<TreeViewItemContext<T>>();
-        var rowOrdinals = new Dictionary<ITreeItemData<T>, int>(ReferenceEqualityComparer.Instance);
+        var rowOrdinals = _repeatedItems is null ? null : new Dictionary<ITreeItemData<T>, int>(ReferenceEqualityComparer.Instance);
         AddVisibleRows(_roots, 0, rows, rowOrdinals);
         Rows = rows.AsReadOnly();
+    }
+
+    /// <summary>
+    /// Whether an item in the projected hierarchy has a value.
+    /// </summary>
+    public bool Represents(T value) => _representedValues.Contains(value);
+
+    /// <summary>
+    /// The represented values which the projection last applied to the backing items as selected.
+    /// </summary>
+    public IReadOnlyCollection<T> SelectedValues => _selectedValues;
+
+    /// <summary>
+    /// Whether the projected items with a value are selected.
+    /// </summary>
+    public bool IsSelected(T value) => _selectedValues.Contains(value);
+
+    /// <summary>
+    /// Changes the projected selection to the specified values by applying only the difference.
+    /// </summary>
+    /// <param name="selectedValues">The values which should be selected; values without an item are ignored.</param>
+    /// <returns>The values which became selected.</returns>
+    public IReadOnlyList<T> ApplySelection(IReadOnlyCollection<T> selectedValues)
+    {
+        var target = selectedValues as HashSet<T> ?? new HashSet<T>(selectedValues, _comparer);
+        foreach (var value in _selectedValues.Where(value => !target.Contains(value)).ToList())
+        {
+            SetSelected(value, false);
+        }
+
+        var added = target.Where(value => _representedValues.Contains(value) && !_selectedValues.Contains(value)).ToList();
+        foreach (var value in added)
+        {
+            SetSelected(value, true);
+        }
+
+        return added;
     }
 
     /// <summary>
@@ -68,7 +110,7 @@ internal sealed class TreeViewProjection<T>
     /// <returns>The row, or <c>null</c> when no visible row has the key.</returns>
     public TreeViewItemContext<T>? FindRow(TreeViewRowKey<T> rowKey)
     {
-        return _rowsByKey.TryGetValue(rowKey, out var row) ? row : null;
+        return _rowNodes.TryGetValue(rowKey, out var node) ? node.Row : null;
     }
 
     /// <summary>
@@ -84,7 +126,8 @@ internal sealed class TreeViewProjection<T>
         IReadOnlyCollection<T>? selectedValues)
     {
         var currentSelection = new HashSet<T>(selectedValues ?? [], _comparer);
-        // Values without a backing item are kept, because a standard tree also keeps a bound value whose item has not been loaded yet.
+        // Values without a backing item are kept here, so that a bound value whose item has not been loaded yet survives a re-projection.
+        // The next checkbox click still drops them, as it does in a standard tree.
         var reconciledSelection = new HashSet<T>(currentSelection, _comparer);
         var reconciledValue = selectedValue;
         var touchedValues = new HashSet<T>(_comparer);
@@ -131,7 +174,7 @@ internal sealed class TreeViewProjection<T>
             var selected = multiSelection
                 ? reconciledSelection.Contains(value)
                 : _comparer.Equals(reconciledValue, value);
-            backingItemsChanged = SetValueSelection(value, selected) || backingItemsChanged;
+            backingItemsChanged = SetSelected(value, selected) || backingItemsChanged;
         }
 
         var selectionChanged = multiSelection
@@ -171,38 +214,31 @@ internal sealed class TreeViewProjection<T>
     /// Toggles the selectable values of a row's subtree and optionally updates its ancestors.
     /// </summary>
     /// <param name="row">The row at the root of the subtree.</param>
-    /// <param name="selectedValues">The current selected values.</param>
+    /// <param name="selection">The selected values, which are updated in place.</param>
     /// <param name="autoSelectParent">Whether ancestor selection follows direct children.</param>
-    /// <returns>The updated selected values.</returns>
-    public IReadOnlyCollection<T> ToggleSubtreeSelection(
+    /// <returns>The values which became selected.</returns>
+    public IReadOnlyList<T> ToggleSubtreeSelection(
         TreeViewItemContext<T> row,
-        IReadOnlyCollection<T> selectedValues,
+        HashSet<T> selection,
         bool autoSelectParent)
     {
         ArgumentNullException.ThrowIfNull(row);
+        ArgumentNullException.ThrowIfNull(selection);
 
-        if (!_rowNodes.TryGetValue(row, out var node))
+        selection.RemoveWhere(value => !_representedValues.Contains(value));
+        var newlySelected = new List<T>();
+        if (!_rowNodes.TryGetValue(row.RowKey, out var node) || node.Row != row)
         {
-            return selectedValues.Where(_representedValues.Contains).ToHashSet(_comparer).ToList().AsReadOnly();
+            return newlySelected;
         }
 
-        var selection = new HashSet<T>(selectedValues.Where(_representedValues.Contains), _comparer);
         var subtreeValues = new List<T>();
         AddSubtreeValues(node, subtreeValues);
         var allSelected = subtreeValues.Count > 0 && subtreeValues.All(selection.Contains);
 
         foreach (var value in subtreeValues)
         {
-            if (allSelected)
-            {
-                selection.Remove(value);
-            }
-            else
-            {
-                selection.Add(value);
-            }
-
-            SetValueSelection(value, !allSelected);
+            Select(value, !allSelected);
         }
 
         if (autoSelectParent)
@@ -217,20 +253,24 @@ internal sealed class TreeViewProjection<T>
                 var parentSelected = parent.Children
                     .Where(child => child.Value is not null)
                     .All(child => selection.Contains(child.Value!));
-                if (parentSelected)
-                {
-                    selection.Add(parent.Value);
-                }
-                else
-                {
-                    selection.Remove(parent.Value);
-                }
-
-                SetValueSelection(parent.Value, parentSelected);
+                Select(parent.Value, parentSelected);
             }
         }
 
-        return selection.ToList().AsReadOnly();
+        return newlySelected;
+
+        void Select(T value, bool selected)
+        {
+            if (selected ? selection.Add(value) : selection.Remove(value))
+            {
+                if (selected)
+                {
+                    newlySelected.Add(value);
+                }
+            }
+
+            SetSelected(value, selected);
+        }
 
         static void AddSubtreeValues(ProjectedNode node, List<T> values)
         {
@@ -247,36 +287,94 @@ internal sealed class TreeViewProjection<T>
     }
 
     /// <summary>
-    /// Expands the expandable ancestors of every selected item in the projected hierarchy.
+    /// Expands the expandable ancestors of every projected item with one of the specified values.
     /// </summary>
+    /// <remarks>
+    /// Only the ancestors of the specified values are touched, so a branch the user collapsed stays collapsed when an unrelated value is selected.
+    /// Every occurrence of a repeated item is followed, so each branch which contains it expands.
+    /// </remarks>
     /// <returns>Whether any expansion changed.</returns>
-    public bool AutoExpand(IReadOnlyCollection<T> selectedValues)
+    public bool ExpandAncestors(IEnumerable<T> values)
     {
-        var selection = new HashSet<T>(selectedValues, _comparer);
         var changed = false;
-        foreach (var root in _roots)
+        var visited = new HashSet<ProjectedNode>(ReferenceEqualityComparer.Instance);
+        foreach (var value in values)
         {
-            ExpandSelectedAncestors(root, selection, ref changed);
+            if (value is null || !_nodesByValue.TryGetValue(new ValueKey(value), out var firstNode))
+            {
+                continue;
+            }
+
+            for (var node = firstNode; node is not null; node = node.NextWithSameValue)
+            {
+                // An ancestor which was already visited had its own ancestors handled at the same time.
+                for (var parent = node.Parent; parent is not null && visited.Add(parent); parent = parent.Parent)
+                {
+                    if (parent.Item.Expandable && !parent.Item.Expanded)
+                    {
+                        parent.Item.Expanded = true;
+                        changed = true;
+                    }
+                }
+            }
         }
 
         return changed;
+    }
 
-        static bool ExpandSelectedAncestors(ProjectedNode node, HashSet<T> selection, ref bool changed)
+    /// <summary>
+    /// Selects or deselects every projected item with a value, updating the backing items and the check-box state of their ancestors.
+    /// </summary>
+    /// <returns>Whether any backing item changed.</returns>
+    public bool SetSelected(T value, bool selected)
+    {
+        if (!_nodesByValue.TryGetValue(new ValueKey(value), out var firstNode))
         {
-            var childContainsSelection = false;
-            foreach (var child in node.Children)
-            {
-                childContainsSelection = ExpandSelectedAncestors(child, selection, ref changed) || childContainsSelection;
-            }
+            return false;
+        }
 
-            if (childContainsSelection && node.Item.Expandable && !node.Item.Expanded)
+        if (selected)
+        {
+            _selectedValues.Add(value);
+        }
+        else
+        {
+            _selectedValues.Remove(value);
+        }
+
+        var changed = false;
+        for (var node = firstNode; node is not null; node = node.NextWithSameValue)
+        {
+            if (node.Item.Selected != selected)
             {
-                node.Item.Expanded = true;
+                node.Item.Selected = selected;
                 changed = true;
             }
 
-            return childContainsSelection || (node.Value is not null && selection.Contains(node.Value));
+            _selectionObservations.GetOrCreateValue(node.Item).Selected = selected;
+            if (node.IsSelected == selected)
+            {
+                continue;
+            }
+
+            node.IsSelected = selected;
+            if (node.Row is not null)
+            {
+                node.Row.IsSelected = selected;
+            }
+
+            var delta = selected ? 1 : -1;
+            for (var current = node; current is not null; current = current.Parent)
+            {
+                current.SelectedCount += delta;
+                if (current.Row is not null)
+                {
+                    current.Row.CheckState = current.CheckState;
+                }
+            }
         }
+
+        return changed;
     }
 
     private List<ProjectedNode> BuildNodes(
@@ -293,18 +391,20 @@ internal sealed class TreeViewProjection<T>
             if (representedItems.Add(item))
             {
                 _nodes.Add(node);
-                if (value is not null)
-                {
-                    _representedValues.Add(value);
-                    var key = new ValueKey(value);
-                    if (!_nodesByValue.TryGetValue(key, out var valueNodes))
-                    {
-                        valueNodes = [];
-                        _nodesByValue.Add(key, valueNodes);
-                    }
+            }
+            else
+            {
+                _repeatedItems ??= new HashSet<ITreeItemData<T>>(ReferenceEqualityComparer.Instance);
+                _repeatedItems.Add(item);
+            }
 
-                    valueNodes.Add(node);
-                }
+            // Every occurrence of a repeated item is registered, because each one contributes to the check-box state of its own ancestors.
+            if (value is not null)
+            {
+                _representedValues.Add(value);
+                ref var firstNode = ref CollectionsMarshal.GetValueRefOrAddDefault(_nodesByValue, new ValueKey(value), out _);
+                node.NextWithSameValue = firstNode;
+                firstNode = node;
             }
 
             var children = item.Children is { Count: > 0 }
@@ -312,28 +412,23 @@ internal sealed class TreeViewProjection<T>
                 : [];
             node.Children = children;
             var isSelected = value is not null && selection.Contains(value);
-            var hasSelectableValues = value is not null;
-            var hasSelectedValues = isSelected;
-            var hasUnselectedValues = value is not null && !isSelected;
+            if (isSelected)
+            {
+                _selectedValues.Add(value!);
+            }
+
+            var selectableCount = value is not null ? 1 : 0;
+            var selectedCount = isSelected ? 1 : 0;
 
             foreach (var child in children)
             {
-                hasSelectableValues |= child.HasSelectableValues;
-                hasSelectedValues |= child.HasSelectedValues;
-                hasUnselectedValues |= child.HasUnselectedValues;
-            }
-
-            bool? checkState = null;
-            if (hasSelectableValues && hasSelectedValues != hasUnselectedValues)
-            {
-                checkState = hasSelectedValues;
+                selectableCount += child.SelectableCount;
+                selectedCount += child.SelectedCount;
             }
 
             node.IsSelected = isSelected;
-            node.HasSelectableValues = hasSelectableValues;
-            node.HasSelectedValues = hasSelectedValues;
-            node.HasUnselectedValues = hasUnselectedValues;
-            node.CheckState = checkState;
+            node.SelectableCount = selectableCount;
+            node.SelectedCount = selectedCount;
             nodes.Add(node);
         }
 
@@ -344,29 +439,63 @@ internal sealed class TreeViewProjection<T>
         IReadOnlyList<ProjectedNode> nodes,
         int depth,
         List<TreeViewItemContext<T>> rows,
-        Dictionary<ITreeItemData<T>, int> rowOrdinals)
+        Dictionary<ITreeItemData<T>, int>? rowOrdinals)
     {
-        var visibleNodes = nodes.Where(node => node.Item.Visible).ToList();
-        for (var index = 0; index < visibleNodes.Count; index++)
+        // A rebuild runs over every row, so this avoids allocating per sibling group.
+        var setSize = 0;
+        foreach (var node in nodes)
         {
-            var node = visibleNodes[index];
-            rowOrdinals.TryGetValue(node.Item, out var ordinal);
-            rowOrdinals[node.Item] = ordinal + 1;
+            if (node.Item.Visible)
+            {
+                setSize++;
+            }
+        }
+
+        var position = 0;
+        foreach (var node in nodes)
+        {
+            if (!node.Item.Visible)
+            {
+                continue;
+            }
+
+            // Only repeated references need an ordinal to keep their render keys distinct.
+            var ordinal = 0;
+            if (rowOrdinals is not null && _repeatedItems!.Contains(node.Item))
+            {
+                rowOrdinals.TryGetValue(node.Item, out ordinal);
+                rowOrdinals[node.Item] = ordinal + 1;
+            }
+
+            var hasVisibleChildren = false;
+            foreach (var child in node.Children)
+            {
+                if (child.Item.Visible)
+                {
+                    hasVisibleChildren = true;
+                    break;
+                }
+            }
+
             var row = new TreeViewItemContext<T>
             {
                 Item = node.Item,
                 Depth = depth,
-                PositionInSet = index + 1,
-                SetSize = visibleNodes.Count,
-                HasVisibleChildren = node.Children.Any(child => child.Item.Visible),
-                HasSelectableValues = node.HasSelectableValues,
+                PositionInSet = ++position,
+                SetSize = setSize,
+                HasVisibleChildren = hasVisibleChildren,
+                HasSelectableValues = node.SelectableCount > 0,
                 IsSelected = node.IsSelected,
                 CheckState = node.CheckState,
-                RowKey = new TreeViewRowKey<T>(node.Item, ordinal)
+                RowKey = new TreeViewRowKey<T>(node.Item, ordinal),
+                Expanded = node.Item.Expanded,
+                Children = node.Item.Children,
+                ChildCount = node.Item.Children?.Count ?? 0,
+                HasValue = node.Value is not null
             };
+            node.Row = row;
             rows.Add(row);
-            _rowNodes.Add(row, node);
-            _rowsByKey.Add(row.RowKey, row);
+            _rowNodes.Add(row.RowKey, node);
 
             if (node.Item.Expanded)
             {
@@ -408,28 +537,6 @@ internal sealed class TreeViewProjection<T>
         }
     }
 
-    private bool SetValueSelection(T value, bool selected)
-    {
-        if (!_nodesByValue.TryGetValue(new ValueKey(value), out var nodes))
-        {
-            return false;
-        }
-
-        var changed = false;
-        foreach (var node in nodes)
-        {
-            if (node.Item.Selected != selected)
-            {
-                node.Item.Selected = selected;
-                changed = true;
-            }
-
-            _selectionObservations.GetOrCreateValue(node.Item).Selected = selected;
-        }
-
-        return changed;
-    }
-
     private sealed class ProjectedNode(ITreeItemData<T> item, T? value, ProjectedNode? parent)
     {
         public ITreeItemData<T> Item { get; } = item;
@@ -442,13 +549,19 @@ internal sealed class TreeViewProjection<T>
 
         public bool IsSelected { get; set; }
 
-        public bool HasSelectableValues { get; set; }
+        // The number of items with a value in this subtree, including this item.
+        public int SelectableCount { get; set; }
 
-        public bool HasSelectedValues { get; set; }
+        // The number of selected items in this subtree, including this item.
+        public int SelectedCount { get; set; }
 
-        public bool HasUnselectedValues { get; set; }
+        public TreeViewItemContext<T>? Row { get; set; }
 
-        public bool? CheckState { get; set; }
+        public ProjectedNode? NextWithSameValue { get; set; }
+
+        public bool? CheckState => SelectableCount == 0 || (SelectedCount > 0 && SelectedCount < SelectableCount)
+            ? null
+            : SelectedCount > 0;
     }
 
     private sealed class SelectionObservation
