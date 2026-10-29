@@ -256,6 +256,29 @@ namespace MudBlazor
         [Category(CategoryTypes.FileUpload.Behavior)]
         public bool Disabled { get; set; }
 
+        /// <summary>
+        /// Selects a whole folder, including its subfolders, instead of individual files.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// Only applies when <c>T</c> is <c>IReadOnlyList&lt;IBrowserFile&gt;</c>.
+        /// Browsers ignore <see cref="Accept"/> in folder mode, so every file in the folder is selected.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public bool Folder { get; set; }
+
+        /// <summary>
+        /// Occurs when a folder selection is processed, with each accepted file and its path relative to the selected folder.
+        /// </summary>
+        /// <remarks>
+        /// Only raised when <see cref="Folder"/> is <c>true</c>.
+        /// Files rejected by validation are left out, and an empty list means none were accepted.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FileUpload.Behavior)]
+        public EventCallback<IReadOnlyList<MudFileWithFolderPath>> OnFolderFilesChanged { get; set; }
+
         [CascadingParameter(Name = "ParentDisabled")]
         private bool ParentDisabled { get; set; }
 
@@ -490,12 +513,93 @@ namespace MudBlazor
 
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
+            // Capture the index before rotating so folder paths are read from the input that raised the change.
+            int currentInputIndex = _numberOfActiveFileInputs;
             _numberOfActiveFileInputs++;
 
             if (GetDisabledState())
                 return;
 
+            // Report an empty list so the consumer clears paths from the previous selection.
+            if (args.FileCount > MaximumFileCount)
+            {
+                await ProcessFileChangeAsync(args);
+                if (Folder && OnFolderFilesChanged.HasDelegate)
+                {
+                    await OnFolderFilesChanged.InvokeAsync(Array.Empty<MudFileWithFolderPath>());
+                }
+                return;
+            }
+
+            IReadOnlyList<MudFileWithFolderPath> combinedList = new List<MudFileWithFolderPath>();
+
+            if (Folder && typeof(T) != typeof(IBrowserFile))
+            {
+                var inputId = GetInputId(currentInputIndex);
+
+                IReadOnlyList<string> paths = Array.Empty<string>();
+                try
+                {
+                    paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudInput.getFolderPaths", inputId);
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogWarning(ex, "Failed to retrieve folder path structural metadata arrays natively.");
+                }
+
+                var nativeFiles = args.GetMultipleFiles(MaximumFileCount);
+                var list = new List<MudFileWithFolderPath>();
+
+                for (int i = 0; i < nativeFiles.Count; i++)
+                {
+                    string path = (paths != null && i < paths.Count) ? paths[i] : string.Empty;
+                    list.Add(new MudFileWithFolderPath(nativeFiles[i], path));
+                }
+
+                combinedList = list;
+            }
+
             await ProcessFileChangeAsync(args);
+
+            // Only report files that passed validation.
+            if (Folder && OnFolderFilesChanged.HasDelegate)
+            {
+                object? currentFilesValue = _filesState.Value;
+                var acceptedList = new List<MudFileWithFolderPath>();
+
+                if (currentFilesValue != null && combinedList.Count > 0)
+                {
+                    System.Collections.IEnumerable? acceptedCollection = currentFilesValue as System.Collections.IEnumerable;
+
+                    if (acceptedCollection != null)
+                    {
+                        foreach (var item in combinedList)
+                        {
+                            foreach (var acceptedFile in acceptedCollection)
+                            {
+                                if (acceptedFile is IBrowserFile browserFile && browserFile == item.File)
+                                {
+                                    acceptedList.Add(item);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else if (currentFilesValue is IBrowserFile singleBrowserFile)
+                    {
+                        foreach (var item in combinedList)
+                        {
+                            if (item.File == singleBrowserFile)
+                            {
+                                acceptedList.Add(item);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                await OnFolderFilesChanged.InvokeAsync(acceptedList);
+            }
         }
 
         private async Task ProcessFileChangeAsync(InputFileChangeEventArgs args)
