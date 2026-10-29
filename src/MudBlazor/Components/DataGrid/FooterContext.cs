@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MudBlazor
@@ -18,6 +17,11 @@ namespace MudBlazor
     public class FooterContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
     {
         private readonly MudDataGrid<T> _dataGrid;
+
+        /// <summary>
+        /// Supplies the rows of the group this footer belongs to, or <c>null</c> when the footer applies to the whole grid.
+        /// </summary>
+        internal Func<IEnumerable<T>?> GroupItemsFunc { private get; init; } = static () => null;
 
         /// <summary>
         /// The items which apply to the footer.
@@ -45,28 +49,7 @@ namespace MudBlazor
         /// <summary>
         /// Indicates whether all values are currently selected.
         /// </summary>
-        public bool? IsAllSelected
-        {
-            get
-            {
-                if (_dataGrid.Selection is not null && (Items?.Any() ?? false))
-                {
-                    if (_dataGrid.Selection.Count == Items.Count())
-                    {
-                        return true;
-                    }
-
-                    if (_dataGrid.Selection.Count == 0)
-                    {
-                        return false;
-                    }
-
-                    return null;
-                }
-
-                return false;
-            }
-        }
+        public bool? IsAllSelected => _dataGrid.GetSelectionState(GroupItemsFunc() ?? Items);
 
         /// <summary>
         /// Creates a new instance.
@@ -77,7 +60,9 @@ namespace MudBlazor
             _dataGrid = dataGrid;
             Actions = new FooterActions
             {
-                SetSelectAllAsync = x => _dataGrid.SetSelectAllAsync(x ?? false),
+                SetSelectAllAsync = x => GroupItemsFunc() is { } groupItems
+                    ? _dataGrid.SetGroupSelectAllAsync(x ?? false, groupItems)
+                    : _dataGrid.SetSelectAllAsync(x ?? false),
             };
         }
 

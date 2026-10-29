@@ -21,6 +21,9 @@
     {
         <textarea class="@InputClassname"
                   @ref="_elementReference"
+                  aria-describedby="@GetAriaDescribedByString()"
+                  aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
+                  aria-required="@Required.ToString().ToLowerInvariant()"
                   @attributes="UserAttributes"
                   id="@InputElementId"
                   type="@InputType.ToStringFast(true)"
@@ -36,10 +39,7 @@
                   @bind:set="@OnInputAsync"
                   @bind:event="oninput"
                   inputmode="@InputMode.ToStringFast(true)"
-                  aria-describedby="@GetAriaDescribedByString()"
-                  aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
-                  required="@Required"
-                  aria-required="@Required.ToString().ToLowerInvariant()">
+                  required="@Required">
             @ReadText
         </textarea>
     }
@@ -47,6 +47,9 @@
     {
         <input class="@InputClassname"
                @ref="_elementReference"
+               aria-describedby="@GetAriaDescribedByString()"
+               aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
+               aria-required="@Required.ToString().ToLowerInvariant()"
                @attributes="UserAttributes"
                id="@InputElementId"
                type="@InputType.ToStringFast(true)"
@@ -62,10 +65,7 @@
                @bind:set="@OnInputAsync"
                @bind:event="oninput"
                inputmode="@InputMode.ToStringFast(true)"
-               aria-describedby="@GetAriaDescribedByString()"
-               aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
-               required="@Required"
-               aria-required="@Required.ToString().ToLowerInvariant()">
+               required="@Required">
     }
 
     @if (GetDisabledState())

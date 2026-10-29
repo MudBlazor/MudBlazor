@@ -1,4 +1,4 @@
-﻿@import '../../abstracts/variables';
+@import '../../abstracts/variables';
 
 @mixin justify-content ($breakpoint) {
   .justify-#{$breakpoint}start {

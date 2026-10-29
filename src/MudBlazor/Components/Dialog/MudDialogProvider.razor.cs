@@ -227,7 +227,7 @@ namespace MudBlazor
 
         private IDialogReference? GetDialogReference(Guid id)
         {
-            return _dialogs.ToArray().FirstOrDefault(d => d.Id == id);
+            return _dialogs.FirstOrDefault(d => d.Id == id);
         }
 
         private void LocationChanged(object? sender, LocationChangedEventArgs args)

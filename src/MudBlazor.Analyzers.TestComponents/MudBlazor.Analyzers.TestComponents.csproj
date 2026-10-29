@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>$(PrimaryTargetFramework)</TargetFramework>
@@ -19,11 +19,11 @@
     -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <SupportedPlatform Include="browser" />
-  </ItemGroup>  
-  
+  </ItemGroup>
+
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>

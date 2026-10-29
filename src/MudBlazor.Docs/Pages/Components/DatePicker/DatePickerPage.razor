@@ -81,6 +81,35 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Default Date Format">
+                <Description>
+                    When <CodeInline>DateFormat</CodeInline> isn't set, the date pickers use the <CodeInline>ShortDatePattern</CodeInline> of their <CodeInline>Culture</CodeInline>, which defaults to <CodeInline>CultureInfo.CurrentCulture</CodeInline>.
+                    To change the format without changing the language, clone the culture and set its <CodeInline>ShortDatePattern</CodeInline>.
+                    A <CodeInline>/</CodeInline> in a .NET date format is replaced by the culture's date separator, so quote it as <CodeInline>'/'</CodeInline> when you want a literal slash.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerCultureFormatExample)">
+                <DatePickerCultureFormatExample />
+            </SectionContent>
+            <SectionHeader Class="mt-6">
+                <Description>
+                    To use the format across your app, set the changed culture at startup in <CodeInline>Program.cs</CodeInline>.
+                    This works in WebAssembly, and in a server app without request localization.
+                    It also changes other short dates that use the current culture, such as <CodeInline>DateTime.ToShortDateString()</CodeInline>.
+                    To change only the pickers, create a component that inherits <CodeInline>MudDatePicker</CodeInline> and sets <CodeInline>DateFormat</CodeInline> in its constructor.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerCultureFormatStartup)" />
+            <SectionHeader Class="mt-6">
+                <Description>
+                    With request localization, the middleware replaces the startup culture on every request, so pass the changed cultures to <CodeInline>RequestLocalizationOptions</CodeInline> instead.
+                    Pass the <CodeInline>CultureInfo</CodeInline> instances rather than their names, because names create fresh cultures without the change.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(DatePickerCultureFormatRequestLocalization)" />
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Dialog Mode">
                 <Description></Description>
             </SectionHeader>

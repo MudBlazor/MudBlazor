@@ -256,6 +256,9 @@ namespace MudBlazor
             if (Items.Count - 1 == SelectedIndex)
                 _currentColor = item.Color;
 
+            if (SelectedIndex < 0)
+                MoveTo(0);
+
             StateHasChanged();
         }
 

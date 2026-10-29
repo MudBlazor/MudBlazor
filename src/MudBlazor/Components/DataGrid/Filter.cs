@@ -3,9 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
@@ -18,6 +23,7 @@ namespace MudBlazor
         internal string? _valueString;
         internal double? _valueNumber;
         internal Enum? _valueEnum;
+        internal IReadOnlyCollection<Enum?>? _valueEnums;
         internal bool? _valueBool;
         internal DateTime? _valueDateOnlyForPicker;
         internal DateTime? _valueDateTimeForPicker;
@@ -26,6 +32,23 @@ namespace MudBlazor
 
         internal Column<T>? FilterColumn =>
             _column ?? (_dataGrid.RenderedColumns?.FirstOrDefault(c => c.PropertyName == _filterDefinition.Column?.PropertyName));
+
+        // The filter editors live in a render fragment owned by MudDataGrid, so binding their ValueChanged straight to a handler makes the grid the callback's receiver, and Blazor then re-renders the whole grid - every header cell, every popover, every visible row - after each keystroke (#13639).
+        // Routing them through this non-component receiver opts out of that automatic render; ApplyChangesAsync re-renders deliberately, and only when the edited filter is actually applied to the data.
+        internal EventCallback<Column<T>> FieldChanged => EventCallback.Factory.Create<Column<T>>(this, FieldChangedAsync);
+        internal EventCallback<string> OperatorChanged => EventCallback.Factory.Create<string>(this, OperatorChangedAsync);
+        internal EventCallback<string> StringValueChanged => EventCallback.Factory.Create<string>(this, StringValueChangedAsync);
+        internal EventCallback<double?> NumberValueChanged => EventCallback.Factory.Create<double?>(this, NumberValueChangedAsync);
+        internal EventCallback<Enum> EnumValueChanged => EventCallback.Factory.Create<Enum>(this, EnumValueChangedAsync);
+        internal EventCallback<IReadOnlyCollection<Enum?>?> EnumValuesChanged => EventCallback.Factory.Create<IReadOnlyCollection<Enum?>?>(this, EnumValuesChangedAsync);
+        internal EventCallback<bool?> BoolValueChanged => EventCallback.Factory.Create<bool?>(this, BoolValueChangedAsync);
+        internal EventCallback<DateTime?> DateValueChanged => EventCallback.Factory.Create<DateTime?>(this, DateValueChangedAsync);
+        internal EventCallback<TimeSpan?> TimeValueChanged => EventCallback.Factory.Create<TimeSpan?>(this, TimeValueChangedAsync);
+        internal EventCallback<DateTime?> DateOnlyValueChanged => EventCallback.Factory.Create<DateTime?>(this, DateOnlyValueChangedAsync);
+        internal EventCallback<Guid?> GuidValueChanged => EventCallback.Factory.Create<Guid?>(this, GuidValueChangedAsync);
+
+        // Keydown fires for every character typed, so it needs the same non-component receiver for the same reason, even though the handler only acts on Enter and Escape.
+        internal EventCallback<KeyboardEventArgs> KeyDown => EventCallback.Factory.Create<KeyboardEventArgs>(this, KeyDownAsync);
 
         public Filter(MudDataGrid<T> dataGrid, IFilterDefinition<T> filterDefinition, Column<T>? column)
         {
@@ -39,6 +62,8 @@ namespace MudBlazor
                 _valueString = _filterDefinition.Value?.ToString();
             else if (fieldType.IsNumber)
                 _valueNumber = _filterDefinition.Value == null ? null : Convert.ToDouble(_filterDefinition.Value);
+            else if (fieldType.IsEnum && _filterDefinition.Operator == FilterOperator.Enum.IsAnyOf)
+                _valueEnums = ToEnumValues(_filterDefinition.Value);
             else if (fieldType.IsEnum)
                 _valueEnum = (Enum?)_filterDefinition.Value;
             else if (fieldType.IsBoolean)
@@ -78,8 +103,18 @@ namespace MudBlazor
 
         internal Task OperatorChangedAsync(string? value)
         {
-            _filterDefinition.Operator = value;
+            SetOperator(value);
             return ApplyChangesAsync();
+        }
+
+        internal void SetOperator(string? value)
+        {
+            if (FilterOperator.ChangesValueShape(_filterDefinition.Operator, value))
+            {
+                _filterDefinition.Value = null;
+            }
+
+            _filterDefinition.Operator = value;
         }
 
         internal Task StringValueChangedAsync(string value)
@@ -102,6 +137,24 @@ namespace MudBlazor
             _filterDefinition.Value = _valueEnum;
             return ApplyChangesAsync();
         }
+
+        internal Task EnumValuesChangedAsync(IReadOnlyCollection<Enum?>? values)
+        {
+            // An empty selection is stored as null so the column does not show as filtered.
+            _valueEnums = values;
+            _filterDefinition.Value = values is { Count: > 0 } ? values : null;
+            return ApplyChangesAsync();
+        }
+
+        // The select hands back its own collection, which is reused as is so its SelectedValues parameter keeps the same instance across renders.
+        // Other collections, such as a List<TEnum> set in code, are copied into the shape the select expects.
+        internal static IReadOnlyCollection<Enum?>? ToEnumValues(object? value) => value switch
+        {
+            IReadOnlyCollection<Enum?> values => values,
+            IEnumerable values => values.Cast<Enum?>().ToArray(),
+            Enum single => [single],
+            _ => null
+        };
 
         internal Task BoolValueChangedAsync(bool? value)
         {
@@ -173,10 +226,33 @@ namespace MudBlazor
             return ApplyChangesAsync();
         }
 
+        // Enter in the column filter menu's value box applies the filter; Escape is handled by the menu itself so it works from every control.
+        // Applying refreshes the grid itself, but it closes the menu only after an await when the grid loads server data or FilterChanged is asynchronous.
+        // This receiver renders nothing, so the header cell that owns the menu is rendered once it finishes.
+        private async Task KeyDownAsync(KeyboardEventArgs args)
+        {
+            var headerCell = _column?.FilterContext.HeaderCell;
+            if (headerCell is null || args.Key != "Enter")
+            {
+                return;
+            }
+
+            await headerCell.ApplyFilterAsync();
+            ((IMudStateHasChanged)headerCell).StateHasChanged();
+        }
+
         // Regroups the data after a filter edit and, in Simple mode, raises FilterChanged.
         // Simple mode applies filters live, so it notifies here; the row and menu modes notify from their own apply paths instead.
         private Task ApplyChangesAsync()
         {
+            // The column filter menu edits a definition the grid has not applied yet, and only FilterDefinitions feeds the rows and the header's filtered icon, so its value cannot change anything on screen.
+            // Regrouping and re-rendering every cell per keystroke there is pure waste, and it is what makes typing in the menu's value box lag on a large grid (#13639).
+            // The menu's Filter button applies the definition and refreshes the grid then.
+            if (_dataGrid.FilterDefinitions.All(x => x.Id != _filterDefinition.Id))
+            {
+                return Task.CompletedTask;
+            }
+
             _dataGrid.GroupItems();
             return _dataGrid.FilterMode == DataGridFilterMode.Simple
                 ? _dataGrid.NotifyFilterChangedAsync()

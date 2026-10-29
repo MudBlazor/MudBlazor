@@ -345,5 +345,37 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("button.mud-inherit-text").Count.Should().Be(2);
             comp.FindAll("button.mud-primary-text").Count.Should().Be(0);
         }
+
+        [Test]
+        public void Carousel_SelectsFirstItemAddedAfterFirstRender()
+        {
+            var source = new List<string>();
+            var selectedIndexes = new List<int>();
+            var comp = Context.Render<MudCarousel<string>>(parameters => parameters
+                .Add(p => p.ItemsSource, source)
+                .Add(p => p.AutoCycle, false)
+                .Add(p => p.SelectedIndexChanged, index => selectedIndexes.Add(index)));
+
+            comp.Instance.SelectedIndex.Should().Be(-1);
+            comp.FindAll("div.mud-carousel-item").Count.Should().Be(0);
+
+            // The first item to arrive after an empty first render must become the selected one.
+            source.Add("Item 1");
+            comp.Render();
+
+            comp.Instance.Items.Count.Should().Be(1);
+            comp.Instance.SelectedIndex.Should().Be(0);
+            comp.Instance.SelectedContainer.Should().Be(comp.Instance.Items[0]);
+            comp.FindAll("div.mud-carousel-item").Count.Should().Be(1);
+            selectedIndexes.Should().Equal(0);
+
+            // Later items must not steal the selection.
+            source.Add("Item 2");
+            comp.Render();
+
+            comp.Instance.Items.Count.Should().Be(2);
+            comp.Instance.SelectedIndex.Should().Be(0);
+            selectedIndexes.Should().Equal(0);
+        }
     }
 }

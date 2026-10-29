@@ -8,7 +8,7 @@ namespace MudBlazor.UnitTests.Components
         {
             dataIndex = -1;
 
-            for (var i = 0; i < chartSeries.Data.Values.Count; i++)
+            for (var i = 0; i < chartSeries.Data.Count; i++)
             {
                 if (chartSeries.Data[i].Y == value)
                 {

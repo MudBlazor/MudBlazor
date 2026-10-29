@@ -104,7 +104,7 @@ namespace MudBlazor.Charts
             var yAxisTicks = ChartOptions?.YAxisTicks;
             gridYUnits = T.CreateSaturating(yAxisTicks is > 0 ? yAxisTicks.Value : 20);
 
-            var allValues = Series.SelectMany(series => series.Data.Values).ToArray();
+            var allValues = Series.SelectMany(series => series.Data).ToArray();
             if (allValues.Length != 0)
             {
                 var minY = allValues.Min();
@@ -128,7 +128,7 @@ namespace MudBlazor.Charts
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
 
-                numVerticalLines = Series.Max(series => series.Data.Values.Count);
+                numVerticalLines = Series.Max(series => series.Data.Count);
             }
             else
             {
@@ -177,7 +177,7 @@ namespace MudBlazor.Charts
                 var series = Series[i];
                 var data = series.Data;
 
-                for (var j = 0; j < data.Values.Count && j < barGroupPositions.Length; j++)
+                for (var j = 0; j < data.Count && j < barGroupPositions.Length; j++)
                 {
                     var dataValue = data.GetValue(j);
 

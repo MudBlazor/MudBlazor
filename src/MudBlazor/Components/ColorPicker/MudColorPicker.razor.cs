@@ -464,6 +464,17 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
+        public override async Task ClearAsync(bool close = true)
+        {
+            if (_valueState.Value is not null || !string.IsNullOrEmpty(_textState.Value))
+            {
+                await SetColorAsync(null);
+            }
+
+            await base.ClearAsync(close);
+        }
+
         protected override async Task SetTextAsync(string? value, bool callback)
         {
             if (callback)

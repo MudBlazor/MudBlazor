@@ -84,6 +84,7 @@
 
 
 @each $color in $mud-palette-colors {
+  .mud-fab-filled-#{$color},
   .mud-fab-#{$color} {
     color: var(--mud-palette-#{$color}-text);
     --mud-ripple-color: var(--mud-palette-#{$color}-text) !important;
@@ -99,6 +100,92 @@
     &:focus-visible, &:active {
       background-color: var(--mud-palette-#{$color}-darken);
     }
+  }
+}
+
+.mud-fab-text {
+  background-color: transparent;
+  box-shadow: none;
+  color: var(--mud-palette-text-primary);
+  --mud-ripple-color: var(--mud-palette-text-primary);
+
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      box-shadow: none;
+      background-color: var(--mud-palette-action-default-hover);
+    }
+  }
+
+  &:focus-visible, &:active {
+    box-shadow: none;
+    background-color: var(--mud-palette-action-default-hover);
+  }
+
+  &:disabled {
+    background-color: transparent;
+  }
+
+  @each $color in $mud-palette-colors {
+    &.mud-fab-text-#{$color} {
+      color: var(--mud-palette-#{$color});
+      --mud-ripple-color: var(--mud-palette-#{$color});
+
+      @media(hover: hover) and (pointer: fine) {
+        &:hover {
+          background-color: var(--mud-palette-#{$color}-hover);
+        }
+      }
+
+      &:focus-visible, &:active {
+        background-color: var(--mud-palette-#{$color}-hover);
+      }
+    }
+  }
+}
+
+.mud-fab-outlined {
+  background-color: transparent;
+  box-shadow: none;
+  border: 1px solid rgba(var(--mud-palette-text-primary-rgb), var(--mud-palette-border-opacity));
+  color: var(--mud-palette-text-primary);
+  --mud-ripple-color: var(--mud-palette-text-primary);
+
+  @media(hover: hover) and (pointer: fine) {
+    &:hover {
+      box-shadow: none;
+      background-color: var(--mud-palette-action-default-hover);
+    }
+  }
+
+  &:focus-visible, &:active {
+    box-shadow: none;
+    background-color: var(--mud-palette-action-default-hover);
+  }
+
+  @each $color in $mud-palette-colors {
+    &.mud-fab-outlined-#{$color} {
+      color: var(--mud-palette-#{$color});
+      --mud-ripple-color: var(--mud-palette-#{$color});
+      border: 1px solid rgba(var(--mud-palette-#{$color}-rgb), var(--mud-palette-border-opacity));
+
+      @media(hover: hover) and (pointer: fine) {
+        &:hover {
+          border: 1px solid rgba(var(--mud-palette-#{$color}-rgb), var(--mud-palette-border-opacity));
+          background-color: var(--mud-palette-#{$color}-hover);
+        }
+      }
+
+      &:focus-visible, &:active {
+        border: 1px solid rgba(var(--mud-palette-#{$color}-rgb), var(--mud-palette-border-opacity));
+        background-color: var(--mud-palette-#{$color}-hover);
+      }
+    }
+  }
+
+  // Must follow the color block: :disabled ties it on specificity, so order decides the border.
+  &:disabled {
+    border: 1px solid var(--mud-palette-action-disabled-background);
+    background-color: transparent;
   }
 }
 

@@ -1,0 +1,52 @@
+<MudPopoverProvider />
+
+<MudDataGrid T="Model" ServerData="@(ServerSide ? LoadServerDataAsync : null)" Items="@(ServerSide ? null : _items)" Filterable="true"
+             FilterMode="DataGridFilterMode.ColumnFilterMenu" FilterChanged="@OnFilterChangedAsync">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" Filterable="false" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Model(string Name, int? Age);
+
+    /// <summary>
+    /// Loads the rows through <c>ServerData</c> instead of <c>Items</c>.
+    /// </summary>
+    [Parameter]
+    public bool ServerSide { get; set; }
+
+    /// <summary>
+    /// When set, the next server load and <c>FilterChanged</c> handler wait for this gate before completing.
+    /// </summary>
+    public TaskCompletionSource? Gate { get; set; }
+
+    private readonly List<Model> _items =
+    [
+        new("Sam", 56),
+        new("Alicia", 54),
+        new("Ira", 27),
+        new("John", 32)
+    ];
+
+    private async Task OnFilterChangedAsync(IReadOnlyCollection<IFilterDefinition<Model>> filterDefinitions)
+    {
+        if (!ServerSide && Gate is not null)
+        {
+            await Gate.Task;
+        }
+    }
+
+    private async Task<GridData<Model>> LoadServerDataAsync(GridState<Model> state, CancellationToken token)
+    {
+        if (Gate is not null)
+        {
+            await Gate.Task;
+        }
+
+        var filterFunctions = state.FilterDefinitions.Select(x => x.GenerateFilterFunction()).ToList();
+        var items = _items.Where(item => filterFunctions.All(filter => filter(item))).ToList();
+        return new GridData<Model> { Items = items, TotalItems = items.Count };
+    }
+}

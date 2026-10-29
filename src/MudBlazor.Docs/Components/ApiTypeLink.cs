@@ -78,7 +78,7 @@ public sealed class ApiTypeLink : ComponentBase
         // Is there a linkable type?
         if (Type != null)
         {
-            builder.AddDocumentedTypeLink(0, Type);
+            builder.AddDocumentedTypeLink(0, Type, Typo, ShowTooltip);
         }
         // Is this an internal type?
         else if (TypeName != null && (TypeName.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase) || TypeName.StartsWith("System", StringComparison.OrdinalIgnoreCase)))

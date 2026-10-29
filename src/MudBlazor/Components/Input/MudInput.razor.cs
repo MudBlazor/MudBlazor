@@ -49,9 +49,9 @@ namespace MudBlazor
 
         protected string ClearButtonClassname =>
             new CssBuilder("mud-input-clear-button")
-                .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+                .AddClass("me-n1", Adornment == Adornment.End && !HideSpinButtons)
                 .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
-                .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+                .AddClass("me-6", Adornment != Adornment.End && !HideSpinButtons)
                 .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
                 .AddClass("mud-no-activator")
                 .Build();
@@ -59,6 +59,8 @@ namespace MudBlazor
         protected internal override InputType GetInputType() => InputType;
 
         protected string InputTypeString => InputType.ToStringFast(true);
+
+        internal bool IsClearing { get; set; }
 
         /// <summary>
         /// The type of input collected by this component.
@@ -196,14 +198,17 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public override async ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override async ValueTask FocusAsync(bool preventScroll)
         {
             try
             {
                 if (InputType == InputType.Hidden && ChildContent != null)
-                    await _elementReference1.FocusAsync();
+                    await _elementReference1.FocusAsync(preventScroll);
                 else
-                    await ElementReference.FocusAsync();
+                    await ElementReference.FocusAsync(preventScroll);
             }
             catch (Exception e)
             {
@@ -252,6 +257,10 @@ namespace MudBlazor
             attributes.Remove("id");
             attributes.Remove("tabindex");
 
+            // The hidden input keeps name and form because it is what posts the value; on a div they do nothing but duplicate selectors.
+            attributes.Remove("name");
+            attributes.Remove("form");
+
             var describedBy = GetAriaDescribedByString();
             if (describedBy is not null)
             {
@@ -266,6 +275,38 @@ namespace MudBlazor
             if (GetDisabledState())
             {
                 attributes.TryAdd("aria-disabled", "true");
+            }
+
+            return attributes;
+        }
+
+        /// <summary>
+        /// Builds the attributes splatted onto the <c>&lt;input&gt;</c> element.
+        /// </summary>
+        /// <remarks>
+        /// Returns <c>UserAttributes</c> unchanged for every render except hidden-input rendering with child content.
+        /// In that render <see cref="GetDisplayUserAttributes"/> already moves the consumer attributes to the focusable display element.
+        /// Splatting them onto the hidden input as well would duplicate selectors such as <c>data-testid</c> across two elements.
+        /// The hidden input keeps only <c>id</c>, <c>name</c>, and <c>form</c>.
+        /// It is still the element that posts the value in a native form, so it needs <c>name</c> and <c>form</c>.
+        /// The explicit <c>id</c> attribute after the splat takes precedence, so keeping <c>id</c> here only preserves the previous attribute set.
+        /// </remarks>
+        private Dictionary<string, object?> GetInputElementUserAttributes()
+        {
+            if (InputType != InputType.Hidden || ChildContent is null)
+            {
+                return UserAttributes;
+            }
+
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+            foreach (var (key, value) in UserAttributes)
+            {
+                if (string.Equals(key, "id", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(key, "name", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(key, "form", StringComparison.OrdinalIgnoreCase))
+                {
+                    attributes[key] = value;
+                }
             }
 
             return attributes;
@@ -305,9 +346,38 @@ namespace MudBlazor
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {
-            await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
-            await ElementReference.FocusAsync();
-            await OnClearButtonClick.InvokeAsync(e);
+            IsClearing = true;
+            try
+            {
+                await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
+                await ElementReference.FocusAsync();
+                await OnClearButtonClick.InvokeAsync(e);
+            }
+            finally
+            {
+                IsClearing = false;
+            }
+        }
+
+        // The clear button lives inside components that open on mousedown, such as MudSelect and the pickers, so its own mousedown must not reach them.
+        // A `@onmousedown:stopPropagation` directive cannot sit beside `@onmousedown` on a component, so both travel through the splat instead, which is what the directive compiles to anyway.
+        private Dictionary<string, object>? _clearButtonAttributes;
+
+        private Dictionary<string, object> ClearButtonAttributes => _clearButtonAttributes ??= new Dictionary<string, object>(3)
+        {
+            ["onmousedown"] = EventCallback.Factory.Create<MouseEventArgs>(this, HandleClearMouseDownAsync),
+            ["__internal_stopPropagation_onmousedown"] = true,
+            ["onmouseleave"] = EventCallback.Factory.Create<MouseEventArgs>(this, HandleClearMouseLeaveAsync),
+        };
+
+        protected virtual async Task HandleClearMouseDownAsync(MouseEventArgs e)
+        {
+            IsClearing = true;
+        }
+
+        protected virtual async Task HandleClearMouseLeaveAsync(MouseEventArgs e)
+        {
+            IsClearing = false;
         }
 
         protected virtual async Task HandleSpinButtonPointerDownAsync()

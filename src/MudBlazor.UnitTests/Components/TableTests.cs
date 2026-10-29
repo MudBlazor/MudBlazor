@@ -15,6 +15,25 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class TableTests : BunitTest
     {
+        /// <summary>
+        /// A row's index is its position in the filtered items, and duplicates resolve to the first match.
+        /// </summary>
+        [Test]
+        public void TableRowIndex_IsPositionInFilteredItems()
+        {
+            var comp = Context.Render<TableRowIndexTest>();
+
+            // "a" appears twice, so the third row resolves to the first match, matching List.IndexOf.
+            comp.Instance.SeenIndexes.Should().Equal(0, 1, 0, 3);
+
+            var rowIds = comp.FindAll("tbody tr").Select(row => row.Id).ToList();
+            rowIds.Should().HaveCount(4);
+            rowIds[0].Should().EndWith("_row_0");
+            rowIds[1].Should().EndWith("_row_1");
+            rowIds[2].Should().EndWith("_row_0");
+            rowIds[3].Should().EndWith("_row_3");
+        }
+
         [Test]
         public async Task CustomTableClass()
         {
@@ -140,6 +159,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("td")[0].TextContent.Trim().Should().Be("C");
             comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
             comp.FindAll("td")[2].TextContent.Trim().Should().Be("A");
+            // descending -> unsorted
+            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            // unsorted -> ascending
+            await comp.Find("span.mud-clickable.mud-table-sort-label").ClickAsync();
+            comp.FindAll("td")[0].TextContent.Trim().Should().Be("A");
+            comp.FindAll("td")[1].TextContent.Trim().Should().Be("B");
+            comp.FindAll("td")[2].TextContent.Trim().Should().Be("C");
 
             comp = Context.Render<TableInitialSortDirectionTest>(parameters => parameters
                 .Add(p => p.InitialSortDirection, SortDirection.Ascending));
@@ -289,10 +315,11 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No records");
 
-            // It should be equal to 3 = header row + loading progress row + loading text
+            // LoadingContent replaces the progress bar when there are no records (#11514):
+            // 2 rows = header row + loading text
             await switchElement.ChangeAsync(true);
-            comp.FindAll("tr").Count.Should().Be(3);
-            comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("Loading...");
 
             // Remove filter
             await searchString.ChangeAsync("");
@@ -321,10 +348,12 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
 
-            // It should be equal to 3 = empty row string + header row + loading row
+            // LoadingContent replaces the progress bar when there are no records (#11514):
+            // 2 rows = header row + loading content row
             await switchElement.ChangeAsync(true);
-            comp.FindAll("tr").Count.Should().Be(3);
-            comp.FindAll("tr")[2].TextContent.Should().Be("Loading...");
+            comp.FindAll("tr").Count.Should().Be(2);
+            comp.FindAll("tr")[1].TextContent.Should().Be("Loading...");
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(0);
         }
 
         /// <summary>
@@ -353,12 +382,36 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("tr").Count.Should().Be(2);
             comp.FindAll("tr")[1].TextContent.Should().Be("No matching records found");
 
-            // It should be equal to 6 = 4 loading rows + header row + loading row
+            // LoadingContentBody replaces the progress bar when there are no records (#11514):
+            // 5 rows = 4 loading rows + header row
             await switchElement.ChangeAsync(true);
-            comp.FindAll("tr").Count.Should().Be(6);
+            comp.FindAll("tr").Count.Should().Be(5);
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(0);
 
             // It should be equal to 20 = 4 rows * 5 columns
             comp.FindAll(".mud-skeleton").Count.Should().Be(20);
+        }
+
+        /// <summary>
+        /// Regression test for #11514: when Loading is true and LoadingContent is set, the custom content replaces the built-in progress bar rather than showing both.
+        /// The progress bar is still used when the current page has items (e.g. a background refresh), where the custom content is not rendered.
+        /// </summary>
+        [Test]
+        public async Task LoadingContentReplacesProgressBar()
+        {
+            var comp = Context.Render<TableLoadingTest>();
+            var searchString = comp.Find("#searchString");
+            var switchElement = comp.Find("#switch");
+
+            // Items present + loading => progress bar is shown, custom content is not.
+            await switchElement.ChangeAsync(true);
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(1);
+            comp.Markup.Should().NotContain("Loading...");
+
+            // No items + loading => custom content is shown, progress bar is not (the actual bug).
+            await searchString.ChangeAsync("ZZZ");
+            comp.FindAll(".mud-table-loading-progress").Count.Should().Be(0);
+            comp.FindAll("tr").Select(tr => tr.TextContent).Should().Contain("Loading...");
         }
 
         /// <summary>
@@ -511,6 +564,19 @@ namespace MudBlazor.UnitTests.Components
             //navigate to specified page
             await table.InvokeAsync(() => table.Instance.NavigateTo(pageIndex));
             comp.FindAll("tr.mud-table-row")[0].TextContent.Should().Be(expectedFirstItem);
+        }
+
+        /// <summary>
+        /// Issue #13619: Navigating an empty table keeps the current page at zero.
+        /// </summary>
+        [Test]
+        public async Task TableNavigateToEmptyTableKeepsCurrentPageAtZero()
+        {
+            var table = Context.Render<MudTable<string>>();
+
+            await table.InvokeAsync(() => table.Instance.NavigateTo(0));
+
+            table.Instance.CurrentPage.Should().Be(0);
         }
 
         /// <summary>
@@ -1234,9 +1300,12 @@ namespace MudBlazor.UnitTests.Components
         public async Task TablePaginationTest1()
         {
             var comp = Context.Render<TablePaginationTest1>();
-            await Task.Delay(200);
-            comp.FindAll("tr.mud-table-row").Count.Should().Be(11); // ten rows + header row
-            comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
+            // The items load after a delay, so wait for the render that shows them instead of sleeping.
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.FindAll("tr.mud-table-row").Count.Should().Be(11); // ten rows + header row
+                comp.FindAll("div.mud-table-pagination-caption")[^1].TextContent.Trim().Should().Be("1-10 of 20");
+            });
         }
 
         /// <summary>
@@ -1466,8 +1535,13 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TableServerSideDataTest7>();
             var table = comp.FindComponent<MudTable<int>>();
-            table.Instance.Dispose();
-            await comp.WaitForAssertionAsync(() => comp.FindAll("td").Count.Should().Be(0));
+            await comp.InvokeAsync(table.Instance.Dispose);
+
+            // The cancelled load may resume after the dispose rather than inside it, so this runs once it has finished.
+            // Its result is discarded, so the table keeps its loading row instead of rendering it.
+            await comp.InvokeAsync(() => { });
+            comp.Instance.LoadCancelled.Should().BeTrue();
+            comp.FindAll("tbody tr.mud-table-row").Should().BeEmpty();
         }
 
         /// <summary>
@@ -1527,6 +1601,339 @@ namespace MudBlazor.UnitTests.Components
 
             // Make sure this second request DID cancel the first request's token
             await comp.WaitForAssertionAsync(() => cancelToken?.IsCancellationRequested.Should().BeTrue());
+        }
+
+        /// <summary>
+        /// A ServerData load that ignores its token and finishes after a newer load does not replace the newer load's rows or pager total (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TableServerData_OlderLoadFinishingLast_DoesNotReplaceNewerData()
+        {
+            var loads = new List<TaskCompletionSource<TableData<string>>>();
+            var comp = RenderServerDataTable((_, _) =>
+            {
+                var load = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                loads.Add(load);
+                return load.Task;
+            });
+            await comp.WaitForAssertionAsync(() => loads.Should().HaveCount(1));
+
+            var reload = comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+            await comp.WaitForAssertionAsync(() => loads.Should().HaveCount(2));
+
+            loads[1].SetResult(new TableData<string> { Items = ["Apple Pie"], TotalItems = 1 });
+            await reload.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            RowTexts(comp).Should().Equal("Apple Pie");
+
+            // The first render's load answers last, as a broad search on a backend that ignores the token would.
+            loads[0].SetResult(new TableData<string> { Items = ["Apple", "Apple Cider", "Apple Pie"], TotalItems = 3 });
+            await comp.InvokeAsync(() => loads[0].Task);
+
+            RowTexts(comp).Should().Equal("Apple Pie");
+            comp.Find(".mud-table-page-number-information").TextContent.Trim().Should().Be("1-1 of 1");
+            comp.Instance.GetFilteredItemsCount().Should().Be(1);
+            comp.Instance.Loading.Should().BeFalse();
+            loads.Should().HaveCount(2);
+        }
+
+        /// <summary>
+        /// A ServerData load that ignores its token and finishes after a newer load does not move the table off the newer load's page (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TableServerData_OlderLoadFinishingLast_DoesNotResetPage()
+        {
+            var requestedPages = new List<int>();
+            var slowLoad = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var comp = RenderServerDataTable((state, _) =>
+            {
+                requestedPages.Add(state.Page);
+                if (requestedPages.Count == 2)
+                    return slowLoad.Task;
+
+                return Task.FromResult(RecipePage(state));
+            });
+            await comp.WaitForAssertionAsync(() => RowTexts(comp).Should().HaveCount(10));
+
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(1));
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(2));
+            RowTexts(comp).First().Should().Be("Recipe 21");
+
+            // The superseded load reports fewer items than the newer page starts at, which resets the page when a current load does.
+            slowLoad.SetResult(new TableData<string> { Items = ["Recipe 11", "Recipe 12", "Recipe 13", "Recipe 14", "Recipe 15"], TotalItems = 15 });
+            await comp.InvokeAsync(() => slowLoad.Task);
+
+            comp.Instance.CurrentPage.Should().Be(2);
+            RowTexts(comp).First().Should().Be("Recipe 21");
+            comp.Find(".mud-table-page-number-information").TextContent.Trim().Should().Be("21-30 of 30");
+            comp.Instance.Loading.Should().BeFalse();
+            requestedPages.Should().Equal(0, 1, 2);
+        }
+
+        /// <summary>
+        /// A ServerData load that a newer load cancels ends quietly instead of throwing, including when its API wraps the cancellation in another exception (#13943).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        [CancelAfter(5000)]
+        public async Task TableServerData_CancelledLoad_DoesNotThrow(bool wrapsCancellation)
+        {
+            var loads = 0;
+            var comp = RenderServerDataTable((_, token) =>
+            {
+                if (++loads != 2)
+                    return Task.FromResult(new TableData<string> { Items = [loads == 1 ? "Apple" : "Apple Pie"], TotalItems = 1 });
+
+                return WaitForCancellation(token, wrapsCancellation);
+            });
+            await comp.WaitForAssertionAsync(() => loads.Should().Be(1));
+
+            var cancelled = comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+            await comp.WaitForAssertionAsync(() => loads.Should().Be(2));
+            await comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+
+            Func<Task> awaitCancelled = () => cancelled.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            await awaitCancelled.Should().NotThrowAsync();
+            RowTexts(comp).Should().Equal("Apple Pie");
+            comp.Find(".mud-table-page-number-information").TextContent.Trim().Should().Be("1-1 of 1");
+            comp.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The first render's ServerData load that a newer load cancels never reaches the renderer as an unhandled exception, and later page changes still load (#13943).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        [CancelAfter(5000)]
+        public async Task TableServerData_CancelledFirstLoad_DoesNotFaultFirstRender(bool wrapsCancellation)
+        {
+            var requestedPages = new List<int>();
+            var comp = RenderServerDataTable((state, token) =>
+            {
+                requestedPages.Add(state.Page);
+                if (requestedPages.Count == 1)
+                    return WaitForCancellation(token, wrapsCancellation);
+
+                return Task.FromResult(RecipePage(state));
+            });
+            await comp.WaitForAssertionAsync(() => requestedPages.Should().HaveCount(1));
+
+            await comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+
+            // The cancelled first load resumes after the reload, so this runs once it has finished.
+            await comp.InvokeAsync(() => { });
+            Context.Renderer.UnhandledException.IsCompleted.Should().BeFalse();
+            RowTexts(comp).First().Should().Be("Recipe 1");
+            comp.Instance.Loading.Should().BeFalse();
+
+            // Page changes load only once the table counts as rendered, which a superseded first load must not prevent.
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(1));
+            requestedPages.Should().Equal(0, 0, 1);
+            RowTexts(comp).First().Should().Be("Recipe 11");
+        }
+
+        /// <summary>
+        /// A superseded ServerData load that ends while the newer load is still running leaves the rows and the loading state to the newer load (#13943).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        [CancelAfter(5000)]
+        public async Task TableServerData_SupersededLoad_LeavesLoadingToNewerLoad(bool observesToken)
+        {
+            var stale = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var newer = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var loads = 0;
+            var comp = RenderServerDataTable((_, token) =>
+            {
+                if (++loads == 2)
+                    return newer.Task;
+
+                return observesToken ? WaitForCancellation(token, wrapsCancellation: false) : stale.Task;
+            });
+            await comp.WaitForAssertionAsync(() => loads.Should().Be(1));
+
+            var reload = comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+            await comp.WaitForAssertionAsync(() => loads.Should().Be(2));
+
+            // The first render's load ends while the newer load is still running.
+            stale.SetResult(new TableData<string> { Items = ["Apple", "Apple Cider", "Apple Pie"], TotalItems = 3 });
+            await comp.InvokeAsync(() => { });
+            RowTexts(comp).Should().BeEmpty();
+            comp.Instance.Loading.Should().BeTrue();
+
+            newer.SetResult(new TableData<string> { Items = ["Apple Pie"], TotalItems = 1 });
+            await reload.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            RowTexts(comp).Should().Equal("Apple Pie");
+            comp.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A ServerData load that fails while it is still the newest load reports the error to its caller, as before (#13943).
+        /// </summary>
+        [Test]
+        public async Task TableServerData_FailedCurrentLoad_StillThrows()
+        {
+            var loads = 0;
+            var comp = RenderServerDataTable((_, _) => ++loads == 1
+                ? Task.FromResult(new TableData<string> { Items = ["Apple"], TotalItems = 1 })
+                : Task.FromException<TableData<string>>(new InvalidOperationException("The backend failed.")));
+            await comp.WaitForAssertionAsync(() => loads.Should().Be(1));
+
+            Func<Task> reload = () => comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+
+            await reload.Should().ThrowAsync<InvalidOperationException>().WithMessage("The backend failed.");
+        }
+
+        /// <summary>
+        /// A load whose cancellation resumes a superseded load, which starts another load, still loses to that newer load when it finishes last (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TableServerData_LoadStartedDuringCancellation_DoesNotReplaceNewerData()
+        {
+            var requestedPages = new List<int>();
+            var gates = new List<TaskCompletionSource<TableData<string>>>();
+            var comp = RenderServerDataTable((state, token) =>
+            {
+                requestedPages.Add(state.Page);
+                if (requestedPages.Count == 1)
+                    return Task.FromResult(RecipePage(state));
+
+                if (requestedPages.Count == 2)
+                {
+                    // Without RunContinuationsAsynchronously, cancelling resumes this load inside the newer load's cancel, as Task.Delay(delay, token) does.
+                    var cancelledInline = new TaskCompletionSource<TableData<string>>();
+                    token.Register(() => cancelledInline.TrySetCanceled(token));
+                    return cancelledInline.Task;
+                }
+
+                var gate = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                gates.Add(gate);
+                return gate.Task;
+            });
+            await comp.WaitForAssertionAsync(() => RowTexts(comp).Should().HaveCount(10));
+
+            // The superseded reload's caller goes to the next page as soon as its reload ends.
+            var navigating = comp.InvokeAsync(async () =>
+            {
+                await comp.Instance.ReloadServerData();
+                comp.Instance.NavigateTo(1);
+            });
+            var reload = comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+            await navigating.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            // The page 1 load starts inside the page 0 reload's cancel, so it asks for data first.
+            requestedPages.Should().Equal(0, 0, 1, 0);
+
+            gates[0].SetResult(RecipePage(new TableState { Page = 1, PageSize = 10 }));
+            await comp.InvokeAsync(() => gates[0].Task);
+            RowTexts(comp).First().Should().Be("Recipe 11");
+
+            gates[1].SetResult(RecipePage(new TableState { Page = 0, PageSize = 10 }));
+            await reload.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            comp.Instance.CurrentPage.Should().Be(1);
+            RowTexts(comp).First().Should().Be("Recipe 11");
+            comp.Find(".mud-table-page-number-information").TextContent.Trim().Should().Be("11-20 of 30");
+            comp.Instance.Loading.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A ServerData load that finds its page out of range keeps the table loading, without the empty message, until the first page it resets to has loaded.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TableServerData_PageReset_StaysLoadingUntilFirstPageLoads()
+        {
+            var requestedPages = new List<int>();
+            var firstPage = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var comp = RenderServerDataTable((state, _) =>
+            {
+                requestedPages.Add(state.Page);
+                return requestedPages.Count switch
+                {
+                    // The data shrinks to 15 recipes, so page 2 no longer exists.
+                    3 => Task.FromResult(new TableData<string> { Items = [], TotalItems = 15 }),
+                    4 => firstPage.Task,
+                    _ => Task.FromResult(RecipePage(state)),
+                };
+            });
+            await comp.WaitForAssertionAsync(() => RowTexts(comp).Should().HaveCount(10));
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(2));
+            RowTexts(comp).First().Should().Be("Recipe 21");
+
+            await comp.InvokeAsync(() => comp.Instance.ReloadServerData());
+
+            requestedPages.Should().Equal(0, 2, 2, 0);
+            comp.Instance.CurrentPage.Should().Be(0);
+            comp.Instance.Loading.Should().BeTrue();
+            comp.FindAll(".mud-table-loading-progress").Should().ContainSingle();
+            RowTexts(comp).Should().BeEmpty();
+            comp.Markup.Should().NotContain("No recipes found");
+
+            firstPage.SetResult(new TableData<string> { Items = RecipePage(new TableState { Page = 0, PageSize = 10 }).Items, TotalItems = 15 });
+            await comp.WaitForAssertionAsync(() => RowTexts(comp).Should().HaveCount(10));
+
+            RowTexts(comp).First().Should().Be("Recipe 1");
+            comp.Find(".mud-table-page-number-information").TextContent.Trim().Should().Be("1-10 of 15");
+            comp.Instance.Loading.Should().BeFalse();
+            comp.FindAll(".mud-table-loading-progress").Should().BeEmpty();
+            requestedPages.Should().Equal(0, 2, 2, 0);
+        }
+
+        /// <summary>
+        /// Renders a string table with a pager and an empty message whose rows come from <paramref name="serverData"/>.
+        /// </summary>
+        private IRenderedComponent<MudTable<string>> RenderServerDataTable(Func<TableState, CancellationToken, Task<TableData<string>>> serverData)
+        {
+            return Context.Render<MudTable<string>>(parameters => parameters
+                .Add(p => p.ServerData, serverData)
+                .Add(p => p.RowTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, nameof(MudTd.ChildContent), (RenderFragment)(b => b.AddContent(2, item)));
+                    builder.CloseComponent();
+                })
+                .Add(p => p.NoRecordsContent, builder => builder.AddContent(0, "No recipes found"))
+                .Add(p => p.PagerContent, builder =>
+                {
+                    builder.OpenComponent<MudTablePager>(0);
+                    builder.CloseComponent();
+                }));
+        }
+
+        /// <summary>
+        /// Returns the text of each rendered data row.
+        /// </summary>
+        private static List<string> RowTexts(IRenderedComponent<MudTable<string>> comp)
+            => comp.FindAll("tbody tr.mud-table-row").Select(row => row.TextContent.Trim()).ToList();
+
+        /// <summary>
+        /// Returns the requested page of 30 numbered recipes.
+        /// </summary>
+        private static TableData<string> RecipePage(TableState state)
+        {
+            var items = Enumerable.Range((state.Page * state.PageSize) + 1, state.PageSize).Select(n => $"Recipe {n}").ToArray();
+            return new TableData<string> { Items = items, TotalItems = 30 };
+        }
+
+        /// <summary>
+        /// Returns a load that waits until <paramref name="token"/> is cancelled, as an observing HttpClient call would.
+        /// </summary>
+        /// <param name="token">The token the table passed to ServerData.</param>
+        /// <param name="wrapsCancellation">Reports the cancellation as another exception type, as some API wrappers do.</param>
+        private static Task<TableData<string>> WaitForCancellation(CancellationToken token, bool wrapsCancellation)
+        {
+            var pending = new TaskCompletionSource<TableData<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            token.Register(() =>
+            {
+                if (wrapsCancellation)
+                    pending.TrySetException(new InvalidOperationException("The request was cancelled."));
+                else
+                    pending.TrySetCanceled(token);
+            });
+            return pending.Task;
         }
 
         /// <summary>
@@ -1614,7 +2021,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("input").Should().NotBeEmpty();
 
             // A value that passes the async rule commits and leaves edit mode.
-            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "B" });
+            // The value is set through the field rather than the DOM because the async rule re-renders the row, which re-registers the input's onchange handler while bUnit keeps serving the element it parsed before that render.
+            // The clicks either side still go through the DOM.
+            await comp.InvokeAsync(() => comp.FindComponent<MudTextField<string>>().Instance.ValueChanged.InvokeAsync("B"));
             await comp.Find("button[aria-label=\"Commit edit\"]").ClickAsync();
             comp.Instance.CommitCount.Should().Be(1);
             comp.FindAll("input").Should().BeEmpty();
@@ -2433,6 +2842,60 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Each grouping level's <see cref="TableGroupDefinition{T}.GroupHeaderClass"/> is applied only to that level's group header rows.
+        /// </summary>
+        /// <remarks>
+        /// https://github.com/MudBlazor/MudBlazor/issues/10959
+        /// </remarks>
+        [Test]
+        public void TableGrouping_GroupHeaderClass_AppliedPerLevel()
+        {
+            var comp = Context.Render<TableGroupHeaderClassTest>(parameters => parameters
+                .Add(x => x.OuterHeaderClass, "outer-group-header")
+                .Add(x => x.InnerHeaderClass, "inner-group-header"));
+
+            var groupRows = comp.FindComponents<MudTableGroupRow<TableGroupHeaderClassTest.Item>>();
+            var outerRows = groupRows.Where(row => row.Instance.GroupDefinition?.InnerGroup is not null).ToList();
+            var innerRows = groupRows.Where(row => row.Instance.GroupDefinition?.InnerGroup is null).ToList();
+            outerRows.Should().HaveCount(2);
+            innerRows.Should().HaveCount(4);
+
+            foreach (var outerRow in outerRows)
+            {
+                var header = outerRow.Find("tr");
+                header.ClassList.Should().Contain("outer-group-header");
+                header.ClassList.Should().NotContain("inner-group-header");
+            }
+
+            foreach (var innerRow in innerRows)
+            {
+                var header = innerRow.Find("tr");
+                header.ClassList.Should().Contain("inner-group-header");
+                header.ClassList.Should().NotContain("outer-group-header");
+            }
+
+            comp.FindAll("tr.outer-group-header").Should().HaveCount(2);
+            comp.FindAll("tr.inner-group-header").Should().HaveCount(4);
+        }
+
+        /// <summary>
+        /// A null <see cref="TableGroupDefinition{T}.GroupHeaderClass"/> adds no class to the group header rows.
+        /// </summary>
+        [Test]
+        public void TableGrouping_GroupHeaderClass_NullAddsNoClass()
+        {
+            var comp = Context.Render<TableGroupHeaderClassTest>();
+
+            var groupRows = comp.FindComponents<MudTableGroupRow<TableGroupHeaderClassTest.Item>>();
+            groupRows.Should().HaveCount(6);
+
+            foreach (var groupRow in groupRows)
+            {
+                groupRow.Find("tr").ClassList.Should().BeEquivalentTo("mud-table-row");
+            }
+        }
+
+        /// <summary>
         /// Tests the grouping behavior and ensure that it won't break anything else.
         /// </summary>
         /// <returns></returns>
@@ -2580,6 +3043,17 @@ namespace MudBlazor.UnitTests.Components
 
             // assert correct info-text
             tableComponent.Find("div.mud-table-page-number-information").Text().Should().Be(expectedInfoText);
+        }
+
+        [Test]
+        public void TablePagerInfoTextIsExcludedFromBrowserTranslation()
+        {
+            var tableComponent = Context.Render<TablePagerInfoTextTest1>();
+
+            tableComponent.Find("div.mud-table-page-number-information")
+                .GetAttribute("translate")
+                .Should()
+                .Be("no");
         }
 
         /// <summary>
@@ -2822,6 +3296,40 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Uses the selection hash set when its comparer matches the table comparer.
+        /// </summary>
+        [Test]
+        public async Task IsCheckedRow_UsesHashSetWithMatchingComparer()
+        {
+            var comparer = new CountingIntComparer();
+            var comp = Context.Render<TestableMudTable<int>>();
+            var table = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Comparer, comparer));
+            table.Context.Selection.UnionWith(Enumerable.Range(0, 100));
+            comparer.Reset();
+
+            table.IsRowChecked(50).Should().BeTrue();
+            comparer.EqualsCalls.Should().Be(1);
+            comparer.GetHashCodeCalls.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Uses the table comparer when externally supplied selection has a different comparer.
+        /// </summary>
+        [Test]
+        public async Task IsCheckedRow_UsesTableComparerWithMismatchedSelectionComparer()
+        {
+            var comparer = StringComparer.OrdinalIgnoreCase;
+            var comp = Context.Render<TestableMudTable<string>>();
+            var table = comp.Instance;
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Comparer, comparer)
+                .Add(x => x.SelectedItems, new HashSet<string>(["selected"], StringComparer.Ordinal)));
+
+            table.IsRowChecked("SELECTED").Should().BeTrue();
+        }
+
+        /// <summary>
         /// Using a virtualized table with multiselection must preserve checked items
         /// </summary>
         [Test]
@@ -2976,6 +3484,34 @@ namespace MudBlazor.UnitTests.Components
             {
                 table.CurrentPage.Should().Be(0);
                 component.LastRequestedPage.Should().Be(0);
+            });
+        }
+
+        // Boundary of the reset path: TotalItems equal to the offset of the current page also means the page is empty,
+        // so the table must reset to page 0 instead of showing an empty page (#13948).
+        [Test]
+        public async Task ServerDataResetsToFirstPageWhenTotalItemsEqualsPageOffset()
+        {
+            var testComponent = Context.Render<TableCurrentPageServerDataReapplyTest>();
+            var component = testComponent.Instance;
+            var table = testComponent.FindComponent<MudTable<int>>().Instance;
+
+            await testComponent.WaitForAssertionAsync(() => testComponent.FindAll("tbody tr.mud-table-row").Count.Should().BeGreaterThan(0));
+
+            await testComponent.InvokeAsync(() => table.NavigateTo(2));
+            await testComponent.WaitForAssertionAsync(() => table.CurrentPage.Should().Be(2));
+
+            // 20 items with 10 rows per page: page 2 starts exactly at the end of the data and is empty.
+            await testComponent.InvokeAsync(() =>
+            {
+                component.ShrinkTo(20);
+                return table.ReloadServerData();
+            });
+            await testComponent.WaitForAssertionAsync(() =>
+            {
+                table.CurrentPage.Should().Be(0);
+                component.LastRequestedPage.Should().Be(0);
+                testComponent.FindAll("tbody tr.mud-table-row").Count.Should().Be(10);
             });
         }
 
@@ -3471,5 +4007,198 @@ namespace MudBlazor.UnitTests.Components
             pagers[0].ClassList.Should().Contain("mud-table-pagination-top");
             pagers[1].ClassList.Should().NotContain("mud-table-pagination-top");
         }
+
+        /// <summary>
+        /// Rows spell out aria-disabled as an explicit true or false token.
+        /// </summary>
+        [Test]
+        public void RowAriaDisabled_ReflectsDisabledState()
+        {
+            var comp = Context.Render<MudTable<int>>(parameters => parameters
+                .Add(p => p.Items, new[] { 1, 2 })
+                .Add(p => p.RowTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent",
+                        (RenderFragment)(b => b.AddContent(2, item)));
+                    builder.CloseComponent();
+                })
+                .Add(p => p.RowDisabledFunc, item => item == 2)
+            );
+
+            var rows = comp.FindAll("tbody tr.mud-table-row");
+
+            rows.Count.Should().Be(2);
+
+            // A bare attribute renders with an empty value, which assistive technology resolves to the
+            // aria-disabled default of false, so the token has to be spelled out.
+            rows[1].ClassList.Should().Contain("mud-table-row-disabled");
+            rows[1].GetAttribute("aria-disabled").Should().Be("true");
+
+            rows[0].ClassList.Should().NotContain("mud-table-row-disabled");
+            rows[0].GetAttribute("aria-disabled").Should().Be("false");
+        }
+
+        private sealed class TestableMudTable<T> : MudTable<T>
+        {
+            public bool IsRowChecked(T item) => IsCheckedRow(item);
+        }
+
+        private sealed class CountingIntComparer : IEqualityComparer<int>
+        {
+            public int EqualsCalls { get; private set; }
+            public int GetHashCodeCalls { get; private set; }
+
+            public bool Equals(int x, int y)
+            {
+                EqualsCalls++;
+                return x == y;
+            }
+
+            public int GetHashCode(int obj)
+            {
+                GetHashCodeCalls++;
+                return obj;
+            }
+
+            public void Reset()
+            {
+                EqualsCalls = 0;
+                GetHashCodeCalls = 0;
+            }
+        }
+        /// <summary>
+        /// The select-all checkbox must follow the rows as they are checked one at a time.
+        /// </summary>
+        /// <remarks>
+        /// The header used to pick this up only because changing one row re-rendered the whole table.
+        /// This case binds nothing, because a bound <c>SelectedItems</c> re-renders the table anyway and hides the problem.
+        /// </remarks>
+        [Test]
+        public void TableMultiSelection_CheckingRowsIndividually_UpdatesSelectAllCheckbox()
+        {
+            var comp = Context.Render<TableMultiSelectionHeaderStateTest>();
+            var header = () => comp.Find("thead .mud-checkbox span").ClassList;
+            var rowBoxes = () => comp.FindAll("tbody .mud-checkbox input");
+            var rowCount = rowBoxes().Count;
+
+            header().Should().Contain("mud-checkbox-false");
+
+            rowBoxes()[0].Change(true);
+            header().Should().Contain("mud-checkbox-null", "some but not all rows are selected");
+
+            for (var i = 1; i < rowCount; i++)
+            {
+                rowBoxes()[i].Change(true);
+            }
+
+            header().Should().Contain("mud-checkbox-true", "every row is selected");
+
+            rowBoxes()[0].Change(false);
+            header().Should().Contain("mud-checkbox-null", "a row was deselected again");
+        }
+
+        /// <summary>
+        /// Content derived from the selection, such as the toolbar and row classes, must follow the row checkboxes.
+        /// </summary>
+        /// <remarks>
+        /// <c>ToolBarContent</c> and <c>RowClassFunc</c> are evaluated while the table renders, so skipping that
+        /// render leaves them showing the previous selection. A bound <c>SelectedItems</c> hides the problem.
+        /// </remarks>
+        [Test]
+        public void TableMultiSelection_SelectionDerivedContent_FollowsRowCheckbox()
+        {
+            var comp = Context.Render<TableSelectionDerivedContentTest>();
+
+            comp.Find("#selected-count").TextContent.Trim().Should().Be("0");
+            comp.FindAll("tbody tr")[0].ClassList.Should().NotContain("row-selected");
+
+            comp.FindAll("tbody .mud-checkbox input")[0].Change(true);
+
+            comp.Find("#selected-count").TextContent.Trim().Should().Be("1");
+            comp.FindAll("tbody tr")[0].ClassList.Should().Contain("row-selected");
+        }
+
+        /// <summary>
+        /// Row selection checkboxes have a localized accessible name.
+        /// </summary>
+        [Test]
+        public void TableMultiSelection_CheckboxesShouldHaveAccessibleNames()
+        {
+            var comp = Context.Render<TableMultiSelectionTest1>();
+
+            string LabelOf(AngleSharp.Dom.IElement input) =>
+                comp.Find($"#{input.GetAttribute("aria-labelledby")}").TextContent.Trim();
+
+            comp.FindAll("tbody input[type=\"checkbox\"]").Count.Should().Be(3);
+            foreach (var input in comp.FindAll("tbody input[type=\"checkbox\"]"))
+            {
+                LabelOf(input).Should().Be("Select row");
+            }
+        }
+
+        /// <summary>
+        /// Select-all, group, and row checkboxes each have a distinct accessible name.
+        /// </summary>
+        [Test]
+        public async Task TableGrouping_GroupCheckboxShouldHaveAccessibleName()
+        {
+            var comp = Context.Render<TableGroupingTest>();
+            var table = comp.FindComponent<MudTable<TableGroupingTest.RacingCar>>();
+            await table.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.GroupBy, new TableGroupDefinition<TableGroupingTest.RacingCar>(rc => rc.Category) { GroupName = "Category" }));
+
+            string LabelOf(AngleSharp.Dom.IElement input) =>
+                comp.Find($"#{input.GetAttribute("aria-labelledby")}").TextContent.Trim();
+
+            var inputs = comp.FindAll("input[type=\"checkbox\"]");
+            LabelOf(inputs[0]).Should().Be("Select all rows");
+            LabelOf(inputs[1]).Should().Be("Select group");
+            LabelOf(inputs[2]).Should().Be("Select row");
+        }
+
+        /// <summary>
+        /// The placeholder row shown while a table has no records is a data cell, so the column headers refer to data cells (#13762).
+        /// </summary>
+        [Test]
+        public void NoRecordsContent_RendersAsDataCell()
+        {
+            var comp = Context.Render<MudTable<string>>(parameters => parameters
+                .Add(p => p.Items, Array.Empty<string>())
+                .Add(p => p.HeaderContent, "<th>Name</th>")
+                .Add(p => p.NoRecordsContent, "No records"));
+
+            comp.Find("tbody td.mud-table-empty-row").TextContent.Trim().Should().Be("No records");
+            comp.FindAll("tbody th").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// The loading indicator row is made of data cells for the same reason as the empty row (#13762).
+        /// </summary>
+        [Test]
+        public void LoadingRow_RendersAsDataCell()
+        {
+            var comp = Context.Render<MudTable<string>>(parameters => parameters
+                .Add(p => p.Items, Array.Empty<string>())
+                .Add(p => p.Loading, true)
+                .Add(p => p.HeaderContent, "<th>Name</th>"));
+
+            comp.Find("tr.mud-table-loading-row > td").Should().NotBeNull();
+            comp.FindAll("tr.mud-table-loading-row > th").Should().BeEmpty();
+        }
+
+
+        /// <summary>
+        /// The checkbox of a selectable row renders inside a table cell.
+        /// </summary>
+        [Test]
+        public void MultiSelection_RendersCheckboxInsideTableCell()
+        {
+            var comp = Context.Render<TableMultiSelectionTest1>();
+
+            comp.FindAll("tbody tr td.mud-table-cell .mud-table-cell-checkbox").Count.Should().Be(3);
+        }
+
     }
 }

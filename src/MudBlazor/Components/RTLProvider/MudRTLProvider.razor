@@ -1,8 +1,8 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<MudElement HtmlTag="div" Class="@Classname" Style="@Style" UserAttributes="@UserAttributes" Tag="@Tag">
-    <CascadingValue Value="@RightToLeft" Name="RightToLeft">
+<div @attributes="UserAttributes" class="@Classname" style="@Style">
+    <CascadingValue Name="RightToLeft" Value="@RightToLeft">
         @ChildContent
     </CascadingValue>
-</MudElement>
+</div>

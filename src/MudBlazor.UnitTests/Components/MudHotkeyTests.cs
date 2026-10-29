@@ -18,6 +18,9 @@ namespace MudBlazor.UnitTests.Components;
 [TestFixture]
 public class MudHotkeyTests : BunitTest
 {
+    /// <summary>
+    /// Modifier names are side-agnostic for issue #13390.
+    /// </summary>
     [Test]
     public void Hotkey_ModifiersShouldBeSideAgnostic()
     {

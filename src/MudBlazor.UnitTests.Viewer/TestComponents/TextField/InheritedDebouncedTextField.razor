@@ -1,0 +1,14 @@
+@inherits MudTextField<string>
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    public InheritedDebouncedTextField()
+    {
+        // Set in the constructor on purpose: this value never travels through the ParameterView,
+        // so it exercises the initial-value path of MudDebouncedInput instead of the change handler.
+        DebounceInterval = 200d;
+    }
+}

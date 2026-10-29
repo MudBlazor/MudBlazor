@@ -1,5 +1,6 @@
 ﻿using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Badge;
 using NUnit.Framework;
@@ -9,6 +10,36 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class BadgeTests : BunitTest
     {
+        /// <summary>
+        /// A badge without an OnClick subscriber must not register a DOM click listener, so it cannot cost a round-trip.
+        /// </summary>
+        [Test]
+        public async Task Badge_WithoutOnClick_RegistersNoClickListener()
+        {
+            var comp = Context.Render<MudBadge>(parameters => parameters.Add(x => x.Visible, true));
+            var badge = comp.Find("span.mud-badge");
+
+            var click = async () => await badge.ClickAsync(new MouseEventArgs());
+
+            await click.Should().ThrowAsync<MissingEventHandlerException>();
+        }
+
+        /// <summary>
+        /// A badge with an OnClick subscriber still registers the DOM click listener.
+        /// </summary>
+        [Test]
+        public async Task Badge_WithOnClick_RegistersClickListener()
+        {
+            var clicked = false;
+            var comp = Context.Render<MudBadge>(parameters => parameters
+                .Add(x => x.Visible, true)
+                .Add(x => x.OnClick, EventCallback.Factory.Create<MouseEventArgs>(this, () => clicked = true)));
+
+            await comp.Find("span.mud-badge").ClickAsync(new MouseEventArgs());
+
+            clicked.Should().BeTrue();
+        }
+
         [Test]
         public async Task Badge_Renders_Using_Default_Values()
         {

@@ -114,6 +114,14 @@
     }
   }
 
+  & > .mud-expand-panel-header.mud-disabled {
+    color: var(--mud-palette-text-disabled);
+
+    &:hover {
+      cursor: default;
+    }
+  }
+
   & .mud-expand-panel-content {
     padding-bottom: 16px;
     flex: 1 1 auto;
@@ -127,16 +135,6 @@
     &.mud-expand-panel-dense {
       padding-top: 0px;
       padding-bottom: 0px;
-    }
-  }
-}
-
-.mud-disabled {
-  & > .mud-expand-panel-header {
-    color: var(--mud-palette-text-disabled);
-
-    &:hover {
-      cursor: default;
     }
   }
 }

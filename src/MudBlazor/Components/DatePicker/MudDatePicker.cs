@@ -64,7 +64,13 @@ namespace MudBlazor
             // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
             // will be null. We need to check if the text has been set my the user and if so handle tha validation
             // without this the UI doesn't display a validation error correctly
-            if (_value != date || (date is null && Text != null))
+            // Empty text is not user input that failed to convert, so it must not re-enter this branch.
+            // A clear-button click empties the text before ClearAsync runs, so re-entering would overwrite Text with null once the debounce window above had closed.
+            // That would leave the observable result dependent on the wall clock.
+            // Only the user can produce text the converter rejects, so the programmatic parameter write is excluded too.
+            // Blazor runs the Date setter on every render, even when the parent supplies the same value, so leaving it in
+            // let any unrelated re-render mid-typing (a form's bound Errors, for instance) wipe the half-typed date (#13887).
+            if (_value != date || (date is null && !suppressInteraction && !string.IsNullOrEmpty(Text)))
             {
                 if (!suppressInteraction)
                 {
@@ -283,6 +289,16 @@ namespace MudBlazor
             }
         }
 
+        protected override async Task ResetValueAsync()
+        {
+            // The base reset raises DateChanged only through the input field, which a static picker doesn't have, so clear through ClearAsync first.
+            await ClearAsync();
+            // The base reset still clears the input field, even inside the debounce window that ClearAsync is subject to, and puts Touched back to false.
+            await base.ResetValueAsync();
+            // Clearing keeps the month the user was looking at, but a reset should reopen the calendar where an empty picker starts.
+            ResetCalendarToStart();
+        }
+
         protected override string GetTitleDateString()
         {
             return FormatTitleDate(_selectedDate ?? Date);
@@ -403,7 +419,7 @@ namespace MudBlazor
 
                     break;
                 case "ArrowDown":
-                    if (Open == false && Editable == false)
+                    if (!Open && !Editable)
                     {
                         Open = true;
                     }

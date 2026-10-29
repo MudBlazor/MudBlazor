@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -45,6 +46,15 @@ namespace MudBlazor
             registerScope.RegisterParameter<bool>(nameof(RightToLeft))
                 .WithParameter(() => RightToLeft)
                 .WithChangeHandler(OnRightToLeftParameterChanged);
+            registerScope.RegisterParameter<string?>(nameof(Width))
+                .WithParameter(() => Width)
+                .WithChangeHandler(DrawerContainerUpdate);
+            registerScope.RegisterParameter<string?>(nameof(MiniWidth))
+                .WithParameter(() => MiniWidth)
+                .WithChangeHandler(DrawerContainerUpdate);
+            registerScope.RegisterParameter<string?>(nameof(Height))
+                .WithParameter(() => Height)
+                .WithChangeHandler(DrawerContainerUpdate);
         }
 
         // A mini drawer behaves like a temporary drawer below its breakpoint, but only for a finite breakpoint.
@@ -65,7 +75,7 @@ namespace MudBlazor
                 .AddClass($"mud-drawer--open", _openState.Value)
                 .AddClass($"mud-drawer--closed", !_openState.Value)
                 .AddClass($"mud-drawer--initial", _initial)
-                .AddClass($"mud-drawer-{Breakpoint.ToStringFast(true)}")
+                .AddClass($"mud-drawer-{NormalizedBreakpoint.ToStringFast(true)}")
                 .AddClass($"mud-drawer-clipped-{ClipMode.ToStringFast(true)}")
                 .AddClass($"mud-theme-{Color.ToStringFast(true)}", Color != Color.Default)
                 .AddClass($"mud-elevation-{Elevation}")
@@ -78,7 +88,7 @@ namespace MudBlazor
                 .AddClass($"mud-drawer-pos-{GetPosition()}")
                 .AddClass($"mud-drawer-overlay--open", _openState.Value)
                 .AddClass($"mud-drawer-overlay-{EffectiveVariant.ToStringFast(true)}")
-                .AddClass($"mud-drawer-overlay-{Breakpoint.ToStringFast(true)}")
+                .AddClass($"mud-drawer-overlay-{NormalizedBreakpoint.ToStringFast(true)}")
                 .AddClass($"mud-drawer-overlay--initial", _initial)
                 .AddClass($"mud-skip-overlay-positioning") // popovers try to position the overlay by zindex, this skips that behavior
                 .AddClass($"mud-skip-overlay-section") // drawer overlay remains outside of Section
@@ -251,7 +261,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported.  Applies to non-fixed or <see cref="DrawerVariant.Temporary"/> drawers anchored to the left or right.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.Drawer.Appearance)]
         public string? Width { get; set; }
 
@@ -261,7 +271,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported. Applies to <see cref="DrawerVariant.Mini"/> drawers achored to the left or right.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.Drawer.Appearance)]
         public string? MiniWidth { get; set; }
 
@@ -271,7 +281,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  Values such as <c>300px</c> and <c>30%</c> are supported. Applies to drawers achored to the top or bottom.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.Drawer.Appearance)]
         public string? Height { get; set; }
 
@@ -417,7 +427,7 @@ namespace MudBlazor
 
         private bool IsBelowCurrentBreakpoint() => IsBelowBreakpoint(_lastUpdatedBreakpoint);
 
-        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < NormalizeBreakpoint(Breakpoint);
+        private bool IsBelowBreakpoint(Breakpoint breakpoint) => breakpoint < NormalizedBreakpoint;
 
         private bool IsResponsiveOrMini() => Variant is DrawerVariant.Responsive or DrawerVariant.Mini;
 
@@ -436,6 +446,18 @@ namespace MudBlazor
         }
 
         internal bool IsFixed => Fixed && DrawerContainer is MudLayout;
+
+        internal Breakpoint NormalizedBreakpoint => NormalizeBreakpoint(Breakpoint);
+
+        private EventCallback<PointerEventArgs> PointerEnterCallback =>
+            EffectiveVariant == DrawerVariant.Mini && OpenMiniOnHover
+                ? EventCallback.Factory.Create<PointerEventArgs>(this, this.AsNonRenderingEventHandler(OnPointerEnterAsync))
+                : default;
+
+        private EventCallback<PointerEventArgs> PointerLeaveCallback =>
+            EffectiveVariant == DrawerVariant.Mini && (OpenMiniOnHover || _closeOnPointerLeave)
+                ? EventCallback.Factory.Create<PointerEventArgs>(this, this.AsNonRenderingEventHandler(OnPointerLeaveAsync))
+                : default;
 
         private async Task OnPointerEnterAsync()
         {

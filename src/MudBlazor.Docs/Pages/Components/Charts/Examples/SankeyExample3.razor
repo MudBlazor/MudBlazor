@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 
 <MudPaper Class="doc-section-component-container">
-    <MudChart @ref="_mudChart" ChartType="ChartType.Sankey" ChartSeries="@Series.AsList()" Width="@_width" Height="@_height" @bind-SelectedIndex="_selectedIndex"/>
+    <MudChart T="int" @ref="_mudChart" ChartType="ChartType.Sankey" ChartSeries="@Series.AsList()" Width="@_width" Height="@_height" @bind-SelectedIndex="_selectedIndex"/>
 </MudPaper>
 
 <MudGrid>
@@ -36,4 +36,3 @@
 
     private ChartSeries<int> Series => new() { Name = "Ball Catalog", Data = _edges };
 }
-

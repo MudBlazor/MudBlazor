@@ -111,7 +111,7 @@ namespace MudBlazor.Charts
             var yAxisTicks = ChartOptions?.YAxisTicks;
 
             gridYUnits = T.CreateSaturating(yAxisTicks.HasValue && yAxisTicks.Value > 0 ? yAxisTicks.Value : 20);
-            numVerticalLines = Series.Count == 0 ? 0 : Series.Max(series => series.Data.Values.Count);
+            numVerticalLines = Series.Count == 0 ? 0 : Series.Max(series => series.Data.Count);
 
             CalculateStrokeWidth(numVerticalLines);
 
@@ -132,7 +132,7 @@ namespace MudBlazor.Charts
             {
                 foreach (var seriesData in Series.Select(x => x.Data))
                 {
-                    if (j >= seriesData.Values.Count)
+                    if (j >= seriesData.Count)
                     {
                         continue;
                     }
@@ -221,7 +221,7 @@ namespace MudBlazor.Charts
             VerticalLines.Clear();
             VerticalValues.Clear();
 
-            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Values.Count) : 0;
+            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Count) : 0;
             var barPositions = CalculateBarGroupPositions(horizontalSpace, maxSeriesLength);
 
             for (var j = 0; j < numVerticalLines; j++)
@@ -254,7 +254,7 @@ namespace MudBlazor.Charts
             _bars.Clear();
             _valueLabels.Clear();
 
-            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Values.Count) : 0;
+            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Count) : 0;
             var barPositions = CalculateBarGroupPositions(horizontalSpace, maxSeriesLength);
 
             for (var dataIndex = 0; dataIndex < maxSeriesLength; dataIndex++)
@@ -268,7 +268,7 @@ namespace MudBlazor.Charts
 
                 foreach (var (series, seriesIndex) in Series.Select((s, i) => (s, i)))
                 {
-                    if (dataIndex >= series.Data.Values.Count)
+                    if (dataIndex >= series.Data.Count)
                     {
                         continue;
                     }

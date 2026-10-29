@@ -132,15 +132,15 @@ namespace MudBlazor
         /// The icon to display whether this item is selected.
         /// </summary>
         /// <remarks>
-        /// When <see cref="Selected"/> is <c>true</c>, <see cref="Icons.Material.Filled.CheckBox"/> is returned.  Otherwise, <see cref="Icons.Material.Filled.CheckBoxOutlineBlank"/>.
+        /// When <see cref="Selected"/> is <c>true</c>, the parent's <see cref="MudSelect{T}.CheckedIcon"/> is returned.  Otherwise, its <see cref="MudSelect{T}.UncheckedIcon"/>.
         /// </remarks>
         protected string? CheckBoxIcon
         {
             get
             {
-                if (!MultiSelection)
+                if (_context is not { MultiSelection: true } context)
                     return null;
-                return Selected ? Icons.Material.Filled.CheckBox : Icons.Material.Filled.CheckBoxOutlineBlank;
+                return Selected ? context.CheckedIcon : context.UncheckedIcon;
             }
         }
 
@@ -247,6 +247,12 @@ namespace MudBlazor
         {
             _context?.OnItemValueChanged(this, args.LastValue, args.Value);
             _shadowContext?.OnShadowItemValueChanged(this, args.LastValue, args.Value);
+
+            if (_context is not null)
+            {
+                //Update selected value when updated without new item creation
+                Selected = _context.IsItemSelected(this);
+            }
         }
 
         /// <summary>
