@@ -12,6 +12,7 @@
                        Color="@(Loading ? LoadingIconColor : ExpandedIconColor)"
                        Class="@Classname"
                        Style="@Style"
-                       aria-label="@(Expanded ? @Localizer[LanguageResource.MudTreeView_CollapseItem] : @Localizer[LanguageResource.MudTreeView_ExpandItem])" />
+                       aria-label="@(Expanded ? @Localizer[LanguageResource.MudTreeView_CollapseItem] : @Localizer[LanguageResource.MudTreeView_ExpandItem])"
+                       aria-expanded="@(Expanded ? "true" : "false")" />
     }
 </div>

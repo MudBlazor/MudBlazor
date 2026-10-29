@@ -3238,6 +3238,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies that the expand button exposes whether its item is expanded in both render modes, because virtualized rows are not nested inside their parents.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_ExpandButton_ExposesExpandedState(bool virtualize)
+        {
+            var parent = new TreeItemData<string> { Value = "Parent", Text = "Parent", Children = [new TreeItemData<string> { Value = "Child", Text = "Child" }] };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [parent])
+                .Add(x => x.Virtualize, virtualize)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<string>(bindExpanded: true)));
+            FindTreeItem(comp, "Parent").QuerySelector("button.mud-treeview-item-expand-button")!.GetAttribute("aria-expanded").Should().Be("false");
+
+            await FindTreeItem(comp, "Parent").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            comp.WaitForAssertion(() => FindTreeItem(comp, "Parent").QuerySelector("button.mud-treeview-item-expand-button")!.GetAttribute("aria-expanded").Should().Be("true"));
+        }
+
+        /// <summary>
         /// A virtualized tree with <see cref="MudTreeView{T}.AutoExpand"/> must keep a branch collapsed after the user collapses it.
         /// </summary>
         /// <remarks>
