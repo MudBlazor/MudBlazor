@@ -1,0 +1,105 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(2, Units.Auto())"
+           ExplicitRows="ExplicitMatrix.Pattern(2, Units.Auto())">
+
+    <MudMatrixItem>
+        <MudPaper Outlined="true" Class="pa-6">
+            <MudStack AlignItems="AlignItems.Center">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Medium" Color="Color.Info" />
+                    <MudText Typo="Typo.subtitle2">Auto sizing</MudText>
+                </MudStack>
+                <MudList T="string" ReadOnly="true">
+                    <MudListItem Icon="@Icons.Material.Filled.Circle" IconSize="Size.Small" IconColor="Color.Info">
+                        <MudText Typo="Typo.body2">
+                            <CodeInline>Units.Auto()</CodeInline> pairs well with <CodeInline>Units.Fr()</CodeInline>, 
+                            <CodeInline>Units.Auto()</CodeInline> for fixed content and <CodeInline>Units.Fr()</CodeInline> to fill the rest of the space
+                        </MudText>
+                    </MudListItem>
+                    <MudListItem Icon="@Icons.Material.Filled.Circle" IconSize="Size.Small" IconColor="Color.Info">
+                        <MudText Typo="Typo.body2">
+                            Be careful out with multiple <CodeInline>Units.Auto()</CodeInline> tracks. They share sizing, so one oversized item will pull the rest along with it.
+                        </MudText>
+                    </MudListItem>
+                </MudList>
+            </MudStack>
+        </MudPaper>
+    </MudMatrixItem>
+
+    <MudMatrixItem>
+        <MudPaper Outlined="true" Class="pa-6">
+            <MudStack AlignItems="AlignItems.Center">
+                <MudText Typo="Typo.body2" Color="Color.Tertiary">When should I use <CodeInline>MudGrid</CodeInline> Vs. <CodeInline>MudMatrix</CodeInline>?</MudText>
+
+                <MudList T="string" ReadOnly="true">
+                    <MudListItem Icon="@Icons.Material.Outlined.LooksOne" IconColor="Color.Tertiary">
+                        <MudText Typo="Typo.body2">
+                            <CodeInline>MudGrid</CodeInline> is simpler and great for layouts that just need to wrap responsively,
+                            like most forms, card lists, and dashboards sized with <CodeInline>xs</CodeInline>, <CodeInline>sm</CodeInline>, etc.
+                        </MudText>
+                    </MudListItem>
+                    <MudListItem Icon="@Icons.Material.Outlined.LooksTwo" IconColor="Color.Tertiary">
+                        <MudText Typo="Typo.body2">
+                            Reach for <CodeInline>MudMatrix</CodeInline> when items need to align to an actual structure:
+                            explicit rows and columns, items spanning multiple cells, placement at specific coordinates, or
+                            responsive column counts via <CodeInline>ExplicitMatrix.Fit</CodeInline> and 
+                            <CodeInline>ExplicitMatrix.Fill</CodeInline>
+                        </MudText>
+                    </MudListItem>
+                    <MudListItem Icon="@Icons.Material.Outlined.Looks3" IconColor="Color.Tertiary">
+                        <MudText Typo="Typo.body2"><CodeInline>MudMatrix</CodeInline> wields great power, but with great power comes great responsibility.</MudText>
+                    </MudListItem>
+                </MudList>
+            </MudStack>
+        </MudPaper>
+    </MudMatrixItem>
+
+    <MudMatrixItem>
+        <MudMatrix ExplicitColumns="ExplicitMatrix.Pattern(Units.Auto(), Units.Fr())"
+                   ExplicitRows="ExplicitMatrix.Pattern(Units.Auto(), Units.Fr())"
+                   Style="height: 200px;"
+                   ColumnGap="1"
+                   RowGap="1">
+
+            <MudMatrixItem ColumnSpan="2">
+                <MudPaper Outlined="true" Class="align-center justify-center d-flex">
+                    <MudText Typo="Typo.caption">App Bar</MudText>
+                </MudPaper>
+            </MudMatrixItem>
+            <MudMatrixItem>
+                <MudPaper Outlined="true" Class="align-center justify-center mud-height-full d-flex">
+                    <MudText Typo="Typo.caption">Side Bar</MudText>
+                </MudPaper>
+            </MudMatrixItem>
+
+            <MudMatrixItem>
+                <MudPaper Outlined="true" Class="align-center justify-center mud-height-full d-flex">
+                    <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
+                        <MudIcon Icon="@Icons.Material.Outlined.Comment" Size="Size.Medium" Color="Color.Secondary" />
+
+                        <MudText Typo="Typo.body2">
+                            Classic example of <CodeInline>Units.Auto()</CodeInline>
+                        </MudText>
+                    </MudStack>
+                </MudPaper>
+            </MudMatrixItem>
+        </MudMatrix>
+            
+    </MudMatrixItem>
+
+    <MudMatrixItem>
+        <MudPaper Outlined="true" Class="pa-6">
+            <MudStack AlignItems="AlignItems.Center" Justify="Justify.Center">
+                <MudIcon Icon="@Icons.Material.Filled.Lightbulb" Color="Color.Success" />
+
+                <MudText Typo="Typo.caption" Align="Align.Center">in most browswers: <CodeInline>CRTL + SHIFT + I</CodeInline> allows you to inspect the html of a web page</MudText>
+                <MudText Typo="Typo.caption" Align="Align.Center">This is extremely helpful when building <CodeInline>MudMatrix</CodeInline>, if you hover your cursor over it, the browser will visualize the layout</MudText>
+            </MudStack>
+        </MudPaper>
+    </MudMatrixItem>
+</MudMatrix>
+
+@code {
+
+}
