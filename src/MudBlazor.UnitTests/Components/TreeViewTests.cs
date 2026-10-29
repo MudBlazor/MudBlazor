@@ -1607,6 +1607,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies that with tri-state off, a folder without a value still derives its check state from its children in both render modes, as it did before virtualization.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public void TreeView_TriStateOff_ValuelessFolderReflectsChildren(bool virtualize)
+        {
+            var full = new TreeItemData<int?>
+            {
+                Text = "Full",
+                Expanded = true,
+                Children = [new TreeItemData<int?> { Value = 1, Text = "One" }, new TreeItemData<int?> { Value = 2, Text = "Two" }]
+            };
+            var partial = new TreeItemData<int?>
+            {
+                Text = "Partial",
+                Expanded = true,
+                Children = [new TreeItemData<int?> { Value = 3, Text = "Three" }, new TreeItemData<int?> { Value = 4, Text = "Four" }]
+            };
+            var comp = Context.Render<MudTreeView<int?>>(parameters => parameters
+                .Add(x => x.Items, [full, partial])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.TriState, false)
+                .Add(x => x.SelectedValues, [1, 2, 3])
+                .Add(x => x.Virtualize, virtualize)
+                .Add(x => x.Height, "400px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<int?>()));
+
+            GetCheckBoxState(comp, "Full").Should().Be("mud-checkbox-true");
+            GetCheckBoxState(comp, "Partial").Should().Be("mud-checkbox-null");
+            GetCheckBoxState(comp, "Four").Should().Be("mud-checkbox-false");
+        }
+
+        /// <summary>
         /// Verifies that a folder without a value whose children are all selected shows a checked box in both render modes.
         /// </summary>
         [Test]
@@ -3507,6 +3540,35 @@ namespace MudBlazor.UnitTests.Components
 
             return component.InvokeAsync(() => method.Invoke(virtualize, [spacerSize, spacerSeparation, containerSize]));
         }
+
+        /// <summary>
+        /// Gets the class which describes a rendered item's checkbox state.
+        /// </summary>
+        private static string GetCheckBoxState<TComponent>(IRenderedComponent<TComponent> component, string text)
+            where TComponent : IComponent
+        {
+            return FindTreeItem(component, text).QuerySelector(".mud-checkbox span")!.ClassList
+                .Single(className => className is "mud-checkbox-true" or "mud-checkbox-false" or "mud-checkbox-null");
+        }
+
+        /// <summary>
+        /// Creates an item template which passes the backing item's value, text, children and expansion to each item.
+        /// </summary>
+        /// <param name="bindExpanded">Whether expansion changes made by an item are written back to its backing item.</param>
+        private RenderFragment<ITreeItemData<T>> DataItemTemplate<T>(bool bindExpanded = false) => item => builder =>
+        {
+            builder.OpenComponent<MudTreeViewItem<T>>(0);
+            builder.AddAttribute(1, nameof(MudTreeViewItem<T>.Value), item.Value);
+            builder.AddAttribute(2, nameof(MudTreeViewItem<T>.Text), item.Text);
+            builder.AddAttribute(3, nameof(MudTreeViewItem<T>.Items), item.Children);
+            builder.AddAttribute(4, nameof(MudTreeViewItem<T>.Expanded), item.Expanded);
+            if (bindExpanded)
+            {
+                builder.AddAttribute(5, nameof(MudTreeViewItem<T>.ExpandedChanged), EventCallback.Factory.Create<bool>(this, expanded => item.Expanded = expanded));
+            }
+
+            builder.CloseComponent();
+        };
 
         /// <summary>
         /// Gets the values from the flattened virtualized item contexts.

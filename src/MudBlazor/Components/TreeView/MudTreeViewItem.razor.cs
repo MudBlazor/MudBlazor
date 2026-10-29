@@ -462,18 +462,11 @@ namespace MudBlazor
         /// </remarks>
         private bool? GetCheckBoxStateTriState()
         {
-            var state = ComputeCheckBoxState();
+            var state = ComputeCheckBoxStateTriState();
             _renderedCheckBoxState = state;
             _hasRenderedCheckBoxState = true;
 
             return state;
-        }
-
-        private bool? ComputeCheckBoxState()
-        {
-            return MudTreeRoot?.TriState != true
-                ? IsSelected()
-                : ComputeCheckBoxStateTriState();
         }
 
         private bool? ComputeCheckBoxStateTriState()
@@ -935,7 +928,7 @@ namespace MudBlazor
                 await _expandedState.SetValueAsync(true);
                 changed = true;
             }
-            if (forceRender || changed || (MultiSelection && _hasRenderedCheckBoxState && ComputeCheckBoxState() != _renderedCheckBoxState))
+            if (forceRender || changed || (MultiSelection && _hasRenderedCheckBoxState && ComputeCheckBoxStateTriState() != _renderedCheckBoxState))
             {
                 StateHasChanged();
             }
