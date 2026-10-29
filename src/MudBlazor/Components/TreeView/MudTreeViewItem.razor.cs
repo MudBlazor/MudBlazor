@@ -198,7 +198,8 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>true</c>. A value of <c>false</c> is typically used for lazy-loaded items via <see cref="MudTreeView{T}.ServerData" />.
         /// In virtualized trees, items which are not rendered follow the backing item's <see cref="ITreeItemData{T}.Expandable"/>, so bind this parameter to it to keep both in agreement.
-        /// A rendered item can only be expanded when both allow it, and a disagreement is logged as a warning.
+        /// A rendered item can only be expanded from its own row when both allow it, and a disagreement is logged as a warning.
+        /// Tree-wide expansion through <see cref="MudTreeView{T}.ExpandAllAsync"/>, <see cref="MudTreeView{T}.AutoExpand"/>, and <see cref="MudTreeView{T}.FilterAsync"/> follows <see cref="ITreeItemData{T}.Expandable"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]

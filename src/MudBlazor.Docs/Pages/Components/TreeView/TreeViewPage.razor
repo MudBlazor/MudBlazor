@@ -150,7 +150,8 @@
                     to accommodate taller custom content. Long labels are truncated. Custom <CodeInline>Content</CodeInline> and <CodeInline>BodyContent</CodeInline>
                     must fit within the configured row height for accurate scrolling; clipping oversized content alone does not satisfy this requirement.
                     When virtualizing, set expansion permissions on each backing item's <CodeInline>Expandable</CodeInline> property and bind the template's <CodeInline>CanExpand</CodeInline> to it.
-                    Items that are not rendered have no component, so they always follow <CodeInline>Expandable</CodeInline>, and a rendered item whose <CodeInline>CanExpand</CodeInline> disagrees cannot be expanded and logs a warning.
+                    Items that are not rendered have no component, so they always follow <CodeInline>Expandable</CodeInline>.
+                    A rendered item whose <CodeInline>CanExpand</CodeInline> disagrees logs a warning and cannot be expanded from its own row, while <CodeInline>ExpandAllAsync</CodeInline>, <CodeInline>AutoExpand</CodeInline>, and filtering follow <CodeInline>Expandable</CodeInline>.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TreeViewVirtualizationExample)" ShowCode="false">
