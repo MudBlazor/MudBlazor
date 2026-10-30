@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
-@typeparam T 
+@typeparam T
 @inject InternalMudLocalizer Localizer
 
 <MudToolBar @attributes="UserAttributes" Class="@Classname" Style="@Style">
@@ -37,7 +37,7 @@
         <div class="mud-table-pagination-actions">
             <MudPagination ShowFirstButton="true"
                            ShowLastButton="true"
-                           ShowPageButtons="@ShowPageNumbers"
+                           ShowPageButtons="@ShowPageButtons"
                            Count="@PageCount"
                            Selected="@CurrentPageNumber"
                            SelectedChanged="@(pageNumber => DataGrid?.NavigateTo(pageNumber - 1))"

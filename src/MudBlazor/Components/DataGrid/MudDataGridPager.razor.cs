@@ -103,7 +103,8 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.  When <c>true</c>, a user can jump directly to a page by clicking its number.
         /// </remarks>
         [Parameter]
-        public bool ShowPageNumbers { get; set; }
+        [Category(CategoryTypes.DataGrid.Pagination)]
+        public bool ShowPageButtons { get; set; }
 
         /// <summary>
         /// The display variant of the pagination buttons.
@@ -112,6 +113,7 @@ namespace MudBlazor
         /// Defaults to <see cref="Variant.Text"/>.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Pagination)]
         public Variant PaginationVariant { get; set; } = Variant.Text;
 
         /// <summary>
@@ -121,6 +123,7 @@ namespace MudBlazor
         /// Defaults to <see cref="Size.Medium"/>.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Pagination)]
         public Size PaginationSize { get; set; } = Size.Medium;
 
         /// <summary>
@@ -130,6 +133,7 @@ namespace MudBlazor
         /// Defaults to <see cref="Color.Primary"/>.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.DataGrid.Pagination)]
         public Color PaginationColor { get; set; } = Color.Primary;
 
         private string Info
