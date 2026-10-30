@@ -2681,6 +2681,9 @@ namespace MudBlazor
         /// <summary>
         /// Navigates to a specific page when this grid has a <see cref="MudDataGridPager{T}"/>.
         /// </summary>
+        /// <remarks>
+        /// An index outside the available pages navigates to the nearest page.
+        /// </remarks>
         /// <param name="pageIndex">The index of the page to navigate to, where the first page is <c>0</c>.</param>
         public void NavigateTo(int pageIndex)
         {

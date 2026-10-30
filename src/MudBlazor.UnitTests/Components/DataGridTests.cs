@@ -1467,6 +1467,94 @@ namespace MudBlazor.UnitTests.Components
             pagination.Color.Should().Be(Color.Secondary);
         }
 
+        /// <summary>
+        /// Verifies the navigation buttons keep their accessible names when rendered by MudPagination.
+        /// </summary>
+        [Test]
+        public void DataGridPagerNavigationButtonsHaveAccessibleNames()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+
+            var labels = comp.FindAll(".mud-table-pagination-actions button").Select(button => button.GetAttribute("aria-label"));
+
+            labels.Should().Equal("First page", "Previous page", "Next page", "Last page");
+        }
+
+        /// <summary>
+        /// Verifies NavigateTo keeps a page index inside the available pages.
+        /// </summary>
+        [TestCase(-1, 0)]
+        [TestCase(1, 1)]
+        [TestCase(99, 1)]
+        public async Task DataGridNavigateToClampsPageIndex(int pageIndex, int expectedPage)
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+
+            // 20 items at 10 per page gives the page indices 0 and 1
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(pageIndex));
+
+            dataGrid.Instance.CurrentPage.Should().Be(expectedPage);
+            comp.FindComponent<MudPagination>().Instance.Selected.Should().Be(expectedPage + 1);
+        }
+
+        /// <summary>
+        /// Verifies NavigateTo stops at the last page when the grid loads its data from a server.
+        /// </summary>
+        [Test]
+        public async Task DataGridNavigateToClampsPageIndexWithServerData()
+        {
+            var comp = Context.Render<DataGridServerPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerPaginationTest.Model>>();
+
+            // 100 items at 10 per page gives the page indices 0 to 9
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(99));
+
+            dataGrid.Instance.CurrentPage.Should().Be(9);
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("Name 90");
+        }
+
+        /// <summary>
+        /// Verifies NavigateTo stays on the first page when the grid has no items.
+        /// </summary>
+        [TestCase(-1)]
+        [TestCase(0)]
+        [TestCase(3)]
+        public async Task DataGridNavigateToStaysOnFirstPageWhenEmpty(int pageIndex)
+        {
+            var comp = Context.Render<MudDataGrid<int>>(parameters => parameters.Add(x => x.Items, Array.Empty<int>()));
+
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(pageIndex));
+
+            comp.Instance.CurrentPage.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Verifies the grid and pager move to a valid page when a filter removes the current page.
+        /// </summary>
+        [Test]
+        public async Task DataGridPagerFollowsGridWhenFilterRemovesCurrentPage()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(1));
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("10");
+
+            await dataGrid.SetParametersAndRenderAsync(parameters =>
+                parameters.Add(x => x.QuickFilter, (DataGridPaginationTest.Item x) => x.Name == "3"));
+
+            dataGrid.Instance.CurrentPage.Should().Be(0);
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("3");
+
+            var pagination = comp.FindComponent<MudPagination>().Instance;
+            pagination.Count.Should().Be(1);
+            pagination.Selected.Should().Be(1);
+
+            // only one page remains, so there is nowhere left to navigate
+            comp.FindAll(".mud-table-pagination-actions button").Should().OnlyContain(button => button.IsDisabled());
+        }
+
         [Test]
         public async Task DataGridRowsPerPageTwoWayBinding()
         {
