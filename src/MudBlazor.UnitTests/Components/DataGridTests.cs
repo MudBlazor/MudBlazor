@@ -1468,6 +1468,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies the icon button layout only applies while the pager has no page buttons.
+        /// </summary>
+        [Test]
+        public async Task DataGridPagerIconButtonLayoutFollowsShowPageButtons()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var pagerContent = comp.FindComponent<MudDataGridPager<DataGridPaginationTest.Item>>();
+
+            comp.Find(".mud-pagination").ClassList.Should().Contain("mud-table-pagination-icon-buttons");
+
+            await pagerContent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowPageButtons, true));
+
+            comp.Find(".mud-pagination").ClassList.Should().NotContain("mud-table-pagination-icon-buttons");
+        }
+
+        /// <summary>
         /// Verifies the navigation buttons keep their accessible names when rendered by MudPagination.
         /// </summary>
         [Test]

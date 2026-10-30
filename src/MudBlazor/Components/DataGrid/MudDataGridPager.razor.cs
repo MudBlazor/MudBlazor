@@ -172,6 +172,11 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
+        private string PaginationClassname =>
+            new CssBuilder()
+                .AddClass("mud-table-pagination-icon-buttons", !ShowPageButtons)
+                .Build();
+
         private async Task SetRowsPerPageAsync(int size)
         {
             if (DataGrid != null)

@@ -558,6 +558,28 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   margin-inline-end: unset;
 }
 
+// Without page buttons, MudDataGridPager keeps the size and spacing of plain icon buttons, which is also how MudTablePager looks.
+// The gap stands in for the space character that separates MudTablePager's inline buttons.
+.mud-table-pagination-actions .mud-table-pagination-icon-buttons {
+  gap: 0.25em;
+
+  .mud-pagination-item > .mud-icon-button {
+    height: auto;
+    min-width: unset;
+    margin: 0;
+    padding: 12px;
+    border-radius: 50%;
+
+    &.mud-button {
+      border-radius: var(--mud-default-borderradius);
+    }
+  }
+
+  .mud-pagination-item > .mud-icon-button-size-small {
+    padding: 3px;
+  }
+}
+
 .mud-table-smalldevices-sortselect {
   display: none;
 }

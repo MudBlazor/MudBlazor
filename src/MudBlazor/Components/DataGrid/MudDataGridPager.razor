@@ -35,7 +35,8 @@
     @if (ShowNavigation)
     {
         <div class="mud-table-pagination-actions">
-            <MudPagination ShowFirstButton="true"
+            <MudPagination Class="@PaginationClassname"
+                           ShowFirstButton="true"
                            ShowLastButton="true"
                            ShowPageButtons="@ShowPageButtons"
                            Count="@PageCount"
