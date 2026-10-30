@@ -1,0 +1,39 @@
+﻿@attribute [ViewerHidden]
+
+<MudSelect T="Product"
+           MultiSelection="true"
+           SelectedValues="_selectedProducts"
+           Comparer="ProductComparer.Instance">
+    <MudSelectItem T="Product" Value="DisplayedProduct">@DisplayedProduct.Id</MudSelectItem>
+</MudSelect>
+
+@code {
+    [Parameter]
+    public Product SelectedProduct { get; set; } = new() { Id = "1" };
+
+    [Parameter]
+    public Product DisplayedProduct { get; set; } = new() { Id = "1" };
+
+    private IReadOnlyCollection<Product> _selectedProducts = [];
+
+    protected override void OnInitialized()
+    {
+        _selectedProducts = new HashSet<Product>(ProductComparer.Instance) { SelectedProduct };
+    }
+
+    public sealed class Product
+    {
+        public required string Id { get; init; }
+
+        public override string ToString() => Id;
+    }
+
+    private sealed class ProductComparer : IEqualityComparer<Product>
+    {
+        public static ProductComparer Instance { get; } = new();
+
+        public bool Equals(Product? x, Product? y) => string.Equals(x?.Id, y?.Id, StringComparison.Ordinal);
+
+        public int GetHashCode(Product obj) => StringComparer.Ordinal.GetHashCode(obj.Id);
+    }
+}

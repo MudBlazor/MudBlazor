@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.MTP" Version="10.0.1" />
-    <PackageReference Include="JunitXml.TestLogger" Version="8.0.0" />
+    <PackageReference Include="coverlet.MTP" Version="10.1.0" />
+    <PackageReference Include="JunitXml.TestLogger" Version="8.1.0" />
     <PackageReference Include="AwesomeAssertions" Version="9.6.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="5.9.0">
       <PrivateAssets>all</PrivateAssets>
@@ -27,9 +27,9 @@
          Analyzer.Testing), so it is not referenced directly. -->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" Version="1.1.4" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing" Version="1.1.4" />
-    <PackageReference Include="Microsoft.Testing.Extensions.HangDump" Version="2.4.1" />
-    <PackageReference Include="NUnit3TestAdapter" Version="6.3.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageReference Include="Microsoft.Testing.Extensions.HangDump" Version="2.5.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="6.3.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
   </ItemGroup>
 
   <ItemGroup>

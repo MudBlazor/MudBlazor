@@ -19,14 +19,14 @@ body:
     id: what-happened
     attributes:
       label: What went wrong?
-      description: Describe the issue with code snippets, screenshots, or links.
+      description: What did you expect, and what happened instead? A screenshot or short video helps, especially for layout or styling problems.
     validations:
       required: true
   - type: input
     id: repro-link
     attributes:
       label: Reproduction link
-      description: Share a live example on [try.mudblazor.com](https://try.mudblazor.com).
+      description: A [try.mudblazor.com](https://try.mudblazor.com) snippet with an ID. If the bug reproduces on a [mudblazor.com](https://mudblazor.com) docs page, link that page. If it needs a host (Hybrid, prerendering, multiple projects), link a minimal public repository.
       placeholder: https://try.mudblazor.com/snippet/...
     validations:
       required: true
@@ -34,7 +34,7 @@ body:
     id: repro-steps
     attributes:
       label: Reproduction steps
-      value: |
+      placeholder: |
         1.
         2.
         3.
@@ -51,8 +51,8 @@ body:
   - type: input
     id: working-version
     attributes:
-      label: Version (working)
-      description: Last working version
+      label: Last working version
+      description: Only if it worked in an earlier version. This marks the issue as a regression.
       placeholder: v9.x.x
   - type: dropdown
     id: environments
@@ -72,6 +72,7 @@ body:
     id: rendering-mode
     attributes:
       label: Blazor rendering mode
+      description: Where does the bug occur?
       multiple: true
       options:
         - Interactive WebAssembly
@@ -80,3 +81,5 @@ body:
         - Static server-side rendering
         - Hybrid
         - Not applicable / unknown
+    validations:
+      required: true

@@ -326,11 +326,7 @@ namespace MudBlazor
 
         internal async Task RegisterAsync(MudListItem<T> item)
         {
-            if (_items.Contains(item))
-            {
-                return;
-            }
-
+            // Items register once, from OnInitializedAsync, so checking for a duplicate would only make mounting n items cost n².
             _items.Add(item);
             if (HasSingleSelection && _selectedValueState.Value is not null && Equals(item.GetValue(), _selectedValueState.Value))
             {

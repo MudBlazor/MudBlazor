@@ -24,6 +24,7 @@ namespace MudBlazor
         private readonly ParameterState<IReadOnlyCollection<ITreeItemData<T>>?> _itemsState;
         private readonly DefaultConverter<T?> _converter = new();
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
+        private readonly string _checkboxTextId = Identifier.Create("treeviewitem-label");
 
         public MudTreeViewItem()
         {
@@ -439,8 +440,10 @@ namespace MudBlazor
 
         private bool? ComputeCheckBoxStateTriState()
         {
-            var hasSelectedDescendant = _selectedState.Value;
-            var hasUnselectedDescendant = !_selectedState.Value;
+            // Items without a value can never be selected, so only items with a value count towards the state.
+            var hasValue = GetValue() is not null;
+            var hasSelectedDescendant = hasValue && _selectedState.Value;
+            var hasUnselectedDescendant = hasValue && !_selectedState.Value;
 
             foreach (var child in _childItems)
             {
@@ -460,13 +463,17 @@ namespace MudBlazor
 
             void Traverse(MudTreeViewItem<T> item)
             {
-                if (item.GetState<bool>(nameof(Selected)))
+                // An item without a value has nothing to count, but its sub-items may still have values.
+                if (item.GetValue() is not null)
                 {
-                    hasSelectedDescendant = true;
-                }
-                else
-                {
-                    hasUnselectedDescendant = true;
+                    if (item.GetState<bool>(nameof(Selected)))
+                    {
+                        hasSelectedDescendant = true;
+                    }
+                    else
+                    {
+                        hasUnselectedDescendant = true;
+                    }
                 }
 
                 if (!hasSelectedDescendant || !hasUnselectedDescendant)
@@ -574,6 +581,11 @@ namespace MudBlazor
         }
 
         private bool GetReadOnly() => ReadOnly || MudTreeRoot?.ReadOnly == true;
+
+        // A leaf without a value has nothing to select, so a click changes nothing in the tree.
+        // The checkbox would still move to its next state on its own and show a selection that doesn't exist.
+        // A parent stays clickable because its children may have values to select.
+        private bool GetCheckBoxReadOnly() => GetReadOnly() || (GetValue() is null && !HasChildren());
 
         private bool GetExpandOnClick() => MudTreeRoot?.ExpandOnClick == true;
 

@@ -15,6 +15,20 @@ namespace MudBlazor.UnitTests.Components
     public class DataGridGroupingTests : BunitTest
     {
         /// <summary>
+        /// A grouped grid with ServerData and a pager renders the loaded rows grouped right away, so it builds each cell once instead of first rendering the rows flat.
+        /// </summary>
+        [Test]
+        public async Task DataGridGroupedServerDataWithPagerBuildsCellsOnce()
+        {
+            var comp = Context.Render<DataGridGroupedServerPagerTest>();
+
+            await comp.InvokeAsync(comp.Instance.Gate.SetResult);
+
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-datagrid-group").Count.Should().Be(2));
+            comp.Instance.CellsCreated.Should().Be(3);
+        }
+
+        /// <summary>
         /// A row click inside a nested group must render each cell once; every DataGridGroupRow level used to add a pass of its own.
         /// </summary>
         [Test]
@@ -964,6 +978,29 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll(".color-state").Select(x => x.TextContent).Should().Equal("Expanded", "Collapsed");
             comp.FindAll("tr").First(row => row.QuerySelector(".color-state") is not null).QuerySelector("td.mud-datagrid-group")!.ClassList.Should().Contain("group-expanded");
+        }
+
+        /// <summary>
+        /// A nested group the user collapsed stays collapsed when its parent group is collapsed and expanded again, with groups expanded by default.
+        /// </summary>
+        [Test]
+        public async Task DataGridCollapsedNestedGroup_StaysCollapsedWhenParentReexpands()
+        {
+            var comp = Context.Render<DataGridGroupExpandedTemplateTest>(parameters => parameters.Add(x => x.GroupExpanded, true));
+            comp.Markup.Should().Contain("Apple").And.Contain("Banana");
+
+            // Collapse the "Red" group under "Fruit".
+            var nestedExpander = comp.FindAll("tr").First(row => row.QuerySelector(".color-state") is not null).QuerySelector("button.mud-table-row-expander")!;
+            await nestedExpander.ClickAsync();
+            comp.Markup.Should().NotContain("Apple").And.Contain("Banana");
+
+            // Collapse and expand "Fruit" again.
+            await comp.FindAll("button.mud-table-row-expander")[0].ClickAsync();
+            comp.Markup.Should().NotContain("Banana");
+            await comp.FindAll("button.mud-table-row-expander")[0].ClickAsync();
+
+            comp.Markup.Should().NotContain("Apple").And.Contain("Banana");
+            comp.FindAll(".color-state").Select(x => x.TextContent).Should().Equal("Collapsed", "Expanded", "Expanded");
         }
 
         [Test]

@@ -33,8 +33,8 @@
     - [How to write a unit test?](#how-to-write-a-unit-test)
     - [How to write a bUnit test](#how-to-write-a-bunit-test)
     - [What are common errors when writing tests?](#what-are-common-errors-when-writing-tests)
-      - [Do not save html elements you query via `Find` or `FindAll` in a variable!](#do-not-save-html-elements-you-query-via-find-or-findall-in-a-variable)
-      - [Always use InvokeAsync to set parameter values on a component](#always-use-invokeasync-to-set-parameter-values-on-a-component)
+      - [Do not save html elements you query via `FindAll` in a variable!](#do-not-save-html-elements-you-query-via-findall-in-a-variable)
+      - [Use SetParametersAndRenderAsync to change parameters and InvokeAsync to call methods](#use-setparametersandrenderasync-to-change-parameters-and-invokeasync-to-call-methods)
       - [Keep tests isolated for parallel execution](#keep-tests-isolated-for-parallel-execution)
     - [What does not need to be tested?](#what-does-not-need-to-be-tested)
     - [What is the MudBlazor.UnitTests.Viewer for?](#what-is-the-mudblazorunittestsviewer-for)
@@ -69,7 +69,6 @@ dotnet build src/MudBlazor -f net10.0
 - Choose `dev` as the target branch
 - All tests must pass, when you push, they will be executed on the CI server, and you'll receive a test report per email. But you can also execute them locally for quicker feedback.
 - You must include tests when your Pull Requests alters any logic. This also ensures that your feature will not break in the future under changes from other contributors. For more information on testing, see the appropriate section below
-- If there are new changes in the main repo, you should either merge the main repo's (upstream) dev or rebase your branch onto it.
 - Before working on a large change, it is recommended to first open an issue to discuss it with others
 - If your Pull Request is still in progress, convert it to a draft Pull Request
 - The PR Title should follow the following format: 
@@ -82,7 +81,7 @@ For example:
 ```
  DateRangePicker: Fix initializing DateRange with null values (#1997)
 ```
-- To keep your branch up to date with the `dev` branch simply merge `dev`. **Don't rebase** because if you rebase the wrong direction your PR will include tons of unrelated commits from dev.
+- To keep your branch up to date with the `dev` branch simply merge the main repo's (upstream) `dev`. **Don't rebase** because if you rebase the wrong direction your PR will include tons of unrelated commits from dev.
 - Your Pull Request should not include any unnecessary refactoring
 - If there are visual changes, you should include a screenshot, gif or video
 - If there are any corresponding issues, link them to the Pull Request. Include `Fixes #<issue nr>` for bug fixes and `Closes #<issue nr>` for other issues in the description ([Link issues guide](https://docs.github.com/en/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword)) 
@@ -95,14 +94,14 @@ For example:
 -   MudBlazor supports RTL. It basically mirrors the ui horizontally for languages which are read right-to-left. See [RTL guide](https://rtlstyling.com/posts/rtl-styling) for more information. Therefore every component should implement this functionality. If necessary include
 
 ```csharp
-[CascadingParameter] public bool RightToLeft {get; set;}
+[CascadingParameter(Name = "RightToLeft")] public bool RightToLeft {get; set;}
 ```
 
 in your component and apply styles at component level.
 - You must add tests if your component contains any logic (CSS styling requires no testing)
 - Use our `css variables` if possible. For instance, you should not hard code any colors etc.
 - Include a summary comment for every public property ([Summary documentation](https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/recommended-tags))
-- Use the `CssBuilder` for classes and styles
+- Use the `CssBuilder` for classes and the `StyleBuilder` for styles
 - Add a doc page and examples which should be ordered from easy to more complex
 - Examples with more than 15 lines should be collapsed by default
 
@@ -184,7 +183,7 @@ Using our new `ParameterState` pattern all this is not required.
 ```c#
 private readonly ParameterState<bool> _expandedState;
 
-[Parameter]
+[Parameter, ParameterState]
 public bool Expanded { get; set; }
 ```
 
@@ -304,7 +303,7 @@ private Task ToggleAsync()
 ```c#
 private readonly ParameterState<bool> _expandedState;
 
-[Parameter]
+[Parameter, ParameterState]
 public bool Expanded { get; set; }
 
 [Parameter]
@@ -408,20 +407,17 @@ When you are writing non-trivial logic, please add a unit test for it. Basically
 ### How to write a unit test?
 
 Simply follow the example of some of the simpler tests like: 
-- StringExtensionTests.cs for normal C# tests
-- CheckBoxTests.cs or RadioTests.cs for bUnit tests
+- RegexMaskUsZipCodeTests.cs for normal C# tests
+- ToggleIconButtonTests.cs for bUnit tests
 
 ### How to write a bUnit test
 
 Let's say we want to test whether a component's two-way bindable property works
 
-In MudBlazor.UnitTests.Viewer create a razor file that instantiates your component and binds it to a public field.
-
-In MudBlazor.UnitTests create another test (i.e. by copying CheckBoxTests.cs and renaming it)
-In the Test make sure to instantiate the razor file you just prepared above.
+In MudBlazor.UnitTests create a test that renders your component with `Context.Render` and binds the property to a local variable with `parameters.Bind(...)`.
  - Assert that the initial state is correct
- - Make changes to the public field of the test component and assert that it changes what it should change in the component
- - Call Click or other events on the component and check that the public field was updated properly
+ - Change the value with `SetParametersAndRenderAsync` and assert that it changes what it should change in the component
+ - Call Click or other events on the component and check that the local variable was updated properly
  
  You can print the components rendered HTML to the console at different locations of the test to 
  see how state changes affect the HTML or the class attributes. Then write 
@@ -430,43 +426,41 @@ In the Test make sure to instantiate the razor file you just prepared above.
  
 ### What are common errors when writing tests?
 
-#### Do not save html elements you query via `Find` or `FindAll` in a variable!
+#### Do not save html elements you query via `FindAll` in a variable!
 
 ```c#
-   var comp = ctx.RenderComponent<MudTextField<string>>();
+   var comp = Context.Render<MudTextField<string>>();
    
    // wrong - this will fail:
-   var textField = comp.Find("input");
-   await textField.ChangeAsync("Garfield");
-   await textField.BlurAsync();
-   comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
+   var inputs = comp.FindAll("input");
+   await inputs[0].ChangeAsync("Garfield");
+   inputs[0].GetAttribute("value").Should().Be("Garfield");
 ```
 
-As soon as you interact with html elements they are potentially re-rendered, and your variable becomes stale.
+`FindAll` returns a snapshot. As soon as you interact with html elements they are potentially re-rendered, and the elements in that snapshot become stale.
 
 ```c#
-   var comp = ctx.RenderComponent<MudTextField<string>>();
+   var comp = Context.Render<MudTextField<string>>();
    
    // correct   
-   await comp.Find("input").ChangeAsync("Garfield");
-   await comp.Find("input").BlurAsync();
-   comp.FindComponent<MudTextField<string>>().Instance.Value.NotBeNullOrEmpty();
+   await comp.FindAll("input")[0].ChangeAsync("Garfield");
+   comp.FindAll("input")[0].GetAttribute("value").Should().Be("Garfield");
 ```
 
-So never save html element references in a variable in a bUnit test. Note: you can save component references in variables just fine, so don't confuse that.
+So query `FindAll` again after every interaction. Component references are safe to keep in variables.
 
-#### Always use InvokeAsync to set parameter values on a component
+#### Use SetParametersAndRenderAsync to change parameters and InvokeAsync to call methods
 
-The bUnit test logic is not running on the Blazor UI-thread, so whenever directly interacting with a component's parameters or methods you need to use `await comp.InvokeAsync(()=> ... )`. That way the following test logic happens only after the interaction with the component has been concluded.
+Setting a parameter property from a test triggers `BL0005`, which the build treats as an error. Change parameters with `SetParametersAndRenderAsync` instead. The bUnit test logic is not running on the Blazor UI-thread, so whenever directly calling a component's methods you need to use `await comp.InvokeAsync(()=> ... )`. That way the following test logic happens only after the interaction with the component has been concluded.
 
 ```c#
-   var comp = ctx.RenderComponent<MudTextField<string>>();
-   var textField=comp.FindComponent<MudTextField<string>>().Instance;
+   var comp = Context.Render<MudTextField<string>>();
    
    // wrong!
-   textField.Value="Garfield";
+   comp.Instance.Value = "Garfield";
    // correct
-   await comp.InvokeAsync(()=>textField.Value="I love dogs");
+   await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Value, "I love dogs"));
+   await comp.InvokeAsync(() => comp.Instance.ClearAsync());
 ```
 
 #### Keep tests isolated for parallel execution
@@ -490,8 +484,8 @@ The documentation has lots of examples for every component. We use those
 examples as unit tests by instantiating them in a bUnit context and checking
 whether rendering them throws an error or not. While this is not comparable
 to a good hand-written unit test, we can at least catch exceptions thrown by
-the render logic. These tests are generated automatically on build and their
-cs files start with an underscore.
+the render logic. These tests are generated in CI, or locally with
+`-p:GenerateDocsTests=true`, into `Generated/*.generated.cs` files in MudBlazor.UnitTests.Docs.
 
 ### Continuous Integration
 

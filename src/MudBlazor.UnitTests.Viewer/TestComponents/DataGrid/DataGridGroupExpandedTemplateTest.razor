@@ -1,4 +1,4 @@
-<MudDataGrid T="Model" Items="@_items" Groupable="true" GroupExpanded="false"
+<MudDataGrid T="Model" Items="@_items" Groupable="true" GroupExpanded="@GroupExpanded"
              GroupClassFunc="@(group => group.Expanded ? "group-expanded" : "group-collapsed")"
              GroupStyleFunc="@(group => group.Expanded ? "--group-expanded: 1" : "--group-expanded: 0")">
     <Columns>
@@ -17,6 +17,9 @@
 </MudDataGrid>
 
 @code {
+    [Parameter]
+    public bool GroupExpanded { get; set; }
+
     public record Model(string Name, string Category, string Color);
 
     private readonly List<Model> _items =

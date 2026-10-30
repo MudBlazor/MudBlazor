@@ -55,6 +55,14 @@ public interface IAxisLineChartOptions : IAxisChartOptions
     /// Optional per-series display overrides.
     /// </summary>
     public IDictionary<IChartSeries, SeriesDisplayOverride> SeriesDisplayOverrides { get; set; }
+
+    /// <summary>
+    /// When <c>true</c>, lines connect across null data points instead of showing gaps.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool ConnectNullPoints { get; set; }
 }
 
 /// <summary>

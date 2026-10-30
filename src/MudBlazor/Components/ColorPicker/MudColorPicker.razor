@@ -9,8 +9,7 @@
 @code {
 
     protected override RenderFragment PickerContent =>
-    @<CascadingValue Value="@this" IsFixed="true">
-        <MudPickerToolbar ShowToolbar="@ShowToolbar" Class="mud-picker-color-toolbar">
+    @<text><MudPickerToolbar ShowToolbar="@ShowToolbar" Class="mud-picker-color-toolbar">
             @if (PickerVariant != PickerVariant.Static)
             {
                 <MudIconButton Class="pa-1 mud-close-picker-button"
@@ -291,6 +290,5 @@
                     </div>
                 }
             }
-        </MudPickerContent>
-    </CascadingValue>;
+        </MudPickerContent></text>;
 }
