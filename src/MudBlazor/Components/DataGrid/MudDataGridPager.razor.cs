@@ -130,7 +130,7 @@ namespace MudBlazor
         /// The color of the selected page button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Primary"/>.
+        /// Defaults to <see cref="Color.Primary"/>.  Only has a visible effect when <see cref="ShowPageButtons"/> is <c>true</c>, because the navigation buttons are not colored.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Pagination)]
