@@ -14,6 +14,9 @@ using Bunit;
 using Bunit.Rendering;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
+using Moq;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
@@ -1494,6 +1497,24 @@ namespace MudBlazor.UnitTests.Components
             var labels = comp.FindAll(".mud-table-pagination-actions button").Select(button => button.GetAttribute("aria-label"));
 
             labels.Should().Equal("First page", "Previous page", "Next page", "Last page");
+        }
+
+        /// <summary>
+        /// Verifies the pager labels its navigation buttons from its own resource keys, so existing translations keep working.
+        /// </summary>
+        [Test]
+        public void DataGridPagerNavigationButtonsUsePagerResourceKeys()
+        {
+            var interceptor = new Mock<ILocalizationInterceptor>();
+            interceptor.Setup(x => x.Handle(It.IsAny<string>(), It.IsAny<object[]>()))
+                .Returns((string key, object[] _) => new LocalizedString(key, key));
+            Context.Services.AddSingleton(interceptor.Object);
+
+            var comp = Context.Render<DataGridPaginationTest>();
+
+            var labels = comp.FindAll(".mud-table-pagination-actions button").Select(button => button.GetAttribute("aria-label"));
+
+            labels.Should().Equal("MudDataGridPager_FirstPage", "MudDataGridPager_PreviousPage", "MudDataGridPager_NextPage", "MudDataGridPager_LastPage");
         }
 
         /// <summary>

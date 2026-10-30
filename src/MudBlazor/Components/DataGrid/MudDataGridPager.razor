@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor
+@using MudBlazor.Resources
 @inherits MudComponentBase
 @typeparam T
 @inject InternalMudLocalizer Localizer
@@ -45,7 +46,11 @@
                            Variant="@PaginationVariant"
                            Size="@PaginationSize"
                            Color="@PaginationColor"
-                           Disabled="@Disabled" />
+                           Disabled="@Disabled"
+                           FirstButtonAriaLabel="@Localizer[LanguageResource.MudDataGridPager_FirstPage]"
+                           PreviousButtonAriaLabel="@Localizer[LanguageResource.MudDataGridPager_PreviousPage]"
+                           NextButtonAriaLabel="@Localizer[LanguageResource.MudDataGridPager_NextPage]"
+                           LastButtonAriaLabel="@Localizer[LanguageResource.MudDataGridPager_LastPage]" />
         </div>
     }
 

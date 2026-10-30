@@ -262,6 +262,46 @@ namespace MudBlazor
         [Category(CategoryTypes.Pagination.Appearance)]
         public string LastIcon { get; set; } = Icons.Material.Filled.LastPage;
 
+        /// <summary>
+        /// The accessible name of the First button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized <c>First page</c> label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
+        public string? FirstButtonAriaLabel { get; set; }
+
+        /// <summary>
+        /// The accessible name of the Previous button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized <c>Previous page</c> label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
+        public string? PreviousButtonAriaLabel { get; set; }
+
+        /// <summary>
+        /// The accessible name of the Next button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized <c>Next page</c> label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
+        public string? NextButtonAriaLabel { get; set; }
+
+        /// <summary>
+        /// The accessible name of the Last button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized <c>Last page</c> label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Pagination.Behavior)]
+        public string? LastButtonAriaLabel { get; set; }
+
         /*generates an array representing the pagination numbers, e.g. for Count==11, MiddleCount==3, BoundaryCount==1,
          Selected==6 the output will be the int array [1, 2, -1, 5, 6, 7, -1, 10, 11]
          -1 is displayed as "..." in the ui*/
