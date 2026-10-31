@@ -123,6 +123,19 @@ export default class MudElementReference {
     }
 
     /**
+     * Returns whether the focused element shows a keyboard focus indicator.
+     * Browsers re-focus an element when its tab regains focus, and dialogs restore focus by script; only :focus-visible separates keyboard focus from those.
+     */
+    isFocusVisible() {
+        try {
+            return document.activeElement?.matches(':focus-visible') ?? false;
+        } catch (_) {
+            // Browsers without :focus-visible keep treating every focus as keyboard focus.
+            return true;
+        }
+    }
+
+    /**
      * Restores focus previously captured by saveFocus.
      */
     restoreFocus (element: ReferenceElement | null | undefined) {

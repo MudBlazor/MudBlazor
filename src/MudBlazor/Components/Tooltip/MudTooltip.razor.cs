@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -15,6 +16,7 @@ namespace MudBlazor
     public partial class MudTooltip : MudComponentBase
     {
         private int _parentUpdateCount;
+        private int _focusVersion;
         private readonly ParameterState<bool> _visibleState;
         private Origin _anchorOrigin;
         private Origin _transformOrigin;
@@ -26,6 +28,9 @@ namespace MudBlazor
                 .WithParameter(() => Visible)
                 .WithEventCallback(() => VisibleChanged);
         }
+
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
         protected string ContainerClass => new CssBuilder("mud-tooltip-root")
             .AddClass("mud-tooltip-inline", Inline)
@@ -163,10 +168,13 @@ namespace MudBlazor
         public bool ShowOnHover { get; set; } = true;
 
         /// <summary>
-        /// Shows this tooltip when its content is focused.
+        /// Shows this tooltip when its content receives keyboard focus.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
+        /// Only focus that matches the <c>:focus-visible</c> CSS pseudo-class opens this tooltip, such as focus moved with the Tab key or any focus on a text input.
+        /// Otherwise, focus from a pointer click, or focus that returns after a pointer action, such as switching back to the browser tab or closing a dialog, does not open it.
+        /// To show this tooltip from code, set <see cref="Visible"/> instead of focusing its content.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
@@ -240,13 +248,27 @@ namespace MudBlazor
 
         internal Task HandlePointerLeaveAsync() => ShowOnHover ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
 
-        private Task HandleFocusInAsync()
+        private async Task HandleFocusInAsync()
         {
-            return ShowOnFocus ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
+            if (!ShowOnFocus || _visibleState.Value || !ShowToolTip())
+            {
+                return;
+            }
+
+            // Tab return and dialog focus restore also raise focusin, so only keyboard-visible focus opens the tooltip (#13553).
+            // The version check drops the result when focus left while the check was pending.
+            var version = unchecked(++_focusVersion);
+            var (_, isFocusVisible) = await JsRuntime.InvokeAsyncWithErrorHandling(true, "mudElementRef.isFocusVisible");
+            if (isFocusVisible && version == _focusVersion && ShowOnFocus)
+            {
+                await _visibleState.SetValueAsync(true);
+            }
         }
 
         private Task HandleFocusOutAsync()
         {
+            unchecked { _focusVersion++; }
+
             return ShowOnFocus ? _visibleState.SetValueAsync(false) : Task.CompletedTask;
         }
 

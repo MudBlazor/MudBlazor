@@ -73,6 +73,22 @@ test("saveFocus and restoreFocus return focus to the element that had it", () =>
     expect(document.activeElement).toBe(byId("outside"));
 });
 
+test.each([
+    ["the focus is visible", (_selectors: string) => true, true],
+    ["the focus is not visible", (_selectors: string) => false, false],
+    ["the browser rejects :focus-visible", (_selectors: string): boolean => { throw new DOMException("Invalid selector", "SyntaxError"); }, true],
+])("isFocusVisible when %s", (_case, matchesImplementation, expected) => {
+    const byId = renderForm();
+    const name = byId("name");
+    name.focus();
+    // The DOM shim's selector support is not under test, so the element answers the :focus-visible query directly.
+    const matches = mock(matchesImplementation);
+    Object.defineProperty(name, "matches", { value: matches });
+
+    expect(elementRef.isFocusVisible()).toBe(expected);
+    expect(matches).toHaveBeenCalledWith(":focus-visible");
+});
+
 test("selectRange selects text in text inputs and textareas", () => {
     const byId = renderForm();
     byId("name").value = "Ada Lovelace";
