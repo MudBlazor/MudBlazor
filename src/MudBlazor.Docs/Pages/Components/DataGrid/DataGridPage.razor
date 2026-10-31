@@ -566,6 +566,22 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Pagination">
+                <Description>
+                    Add a <CodeInline>&lt;MudDataGridPager></CodeInline> to the <CodeInline>PagerContent</CodeInline> to page through the data. By
+                    default the pager shows the first, previous, next, and last navigation buttons. Set <CodeInline>ShowPageButtons</CodeInline> to
+                    <CodeInline>true</CodeInline> to also render clickable page numbers, allowing a user to jump directly to a page. Use
+                    <CodeInline>PaginationVariant</CodeInline> and <CodeInline>PaginationSize</CodeInline> to change the appearance of the buttons.
+                    <CodeInline>PaginationColor</CodeInline> sets the color of the selected page button, so it only has a visible effect when
+                    <CodeInline>ShowPageButtons</CodeInline> is <CodeInline>true</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridPagerExample)" Block="true" FullWidth="true">
+                <DataGridPagerExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Other Options">
                 <Description>
                     There are many options available for the <CodeInline>&lt;MudDataGrid></CodeInline> that are not covered in the examples above.
