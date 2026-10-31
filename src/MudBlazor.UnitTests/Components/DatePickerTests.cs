@@ -1570,6 +1570,49 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A typed date outside <see cref="MudBaseDatePicker.MinDate"/> / <see cref="MudBaseDatePicker.MaxDate"/> is refused, like the disabled calendar days: https://github.com/MudBlazor/MudBlazor/issues/3461.
+        /// The last valid date is kept and the text goes back to it.
+        /// </summary>
+        [Test]
+        [TestCase("01/01/2020")]
+        [TestCase("12/31/2020")]
+        public async Task DatePicker_Editable_TypedDateOutsideMinMax_IsRefused(string typed)
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Culture, new CultureInfo("en-US"))
+                .Add(p => p.MinDate, new DateTime(2020, 3, 1))
+                .Add(p => p.MaxDate, new DateTime(2020, 9, 30))
+                .Add(p => p.Date, new DateTime(2020, 6, 15)));
+
+            await comp.Find("input").ChangeAsync(typed);
+
+            comp.Instance.Date.Should().Be(new DateTime(2020, 6, 15));
+            comp.Instance.Text.Should().Be("6/15/2020");
+            comp.Find("input").GetAttribute("value").Should().Be("6/15/2020");
+        }
+
+        /// <summary>
+        /// Typed dates on the boundaries of the range, and inside it, are still accepted.
+        /// </summary>
+        [Test]
+        [TestCase("03/01/2020")]
+        [TestCase("09/30/2020")]
+        [TestCase("07/04/2020")]
+        public async Task DatePicker_Editable_TypedDateInsideMinMax_IsAccepted(string typed)
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Culture, new CultureInfo("en-US"))
+                .Add(p => p.MinDate, new DateTime(2020, 3, 1))
+                .Add(p => p.MaxDate, new DateTime(2020, 9, 30)));
+
+            await comp.Find("input").ChangeAsync(typed);
+
+            comp.Instance.Date.Should().Be(DateTime.Parse(typed, new CultureInfo("en-US")));
+        }
+
+        /// <summary>
         /// Reopening an editable picker returns the calendar to the month of the typed date, even after navigating away from it.
         /// </summary>
         [Test]
