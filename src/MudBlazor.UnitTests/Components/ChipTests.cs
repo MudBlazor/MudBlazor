@@ -274,6 +274,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The close span of an interactive chip must look and press like the icon button it replaces,
+        /// which always rendered the button root and ripple classes whatever the chip ripple setting.
+        /// </summary>
+        [TestCase(null)]
+        [TestCase(false)]
+        public void Chip_ClosableInteractiveChip_CloseSpanShouldReproduceIconButtonClasses(bool? ripple)
+        {
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.Text, "Tag")
+                .Add(p => p.Ripple, ripple)
+                .Add(p => p.OnClick, () => { })
+                .Add(p => p.OnClose, () => { }));
+
+            var close = comp.Find(".mud-chip-close-button");
+            close.TagName.Should().Be("SPAN");
+            close.ClassList.Should().Contain(new[] { "mud-button-root", "mud-icon-button", "mud-ripple", "mud-ripple-icon", "mud-icon-button-size-small" });
+        }
+
+        /// <summary>
         /// A chip inside a set is a toggle button, so its close icon must not be a nested control either.
         /// </summary>
         [Test]
