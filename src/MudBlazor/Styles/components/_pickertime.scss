@@ -257,6 +257,10 @@
       justify-content: center;
       transition-duration: 120ms;
       transition-property: color;
+
+      &.mud-disabled {
+        color: var(--mud-palette-text-disabled);
+      }
     }
   }
 }

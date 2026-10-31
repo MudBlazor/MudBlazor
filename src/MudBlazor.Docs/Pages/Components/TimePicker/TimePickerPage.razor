@@ -97,6 +97,20 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Disable times">
+                <Description>
+                    Use <CodeInline>MinTime</CodeInline> and <CodeInline>MaxTime</CodeInline> to limit the selectable range,
+                    and <CodeInline>IsTimeDisabledFunc</CodeInline> to disable specific times.
+                    Disabled hours and minutes are grayed out on the clock and skipped by keyboard navigation.
+                    If switching between AM and PM lands on a disabled time, no time is selected until a valid one is picked, and the last valid value is kept.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Class="demo-datetime-margin" Code="@nameof(TimePickerDisableTimesExample)" ShowCode="false">
+                <TimePickerDisableTimesExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Keyboard Navigation">
                 <Description>
                     <MudText>MudTimePicker supports keyboard navigation.</MudText>

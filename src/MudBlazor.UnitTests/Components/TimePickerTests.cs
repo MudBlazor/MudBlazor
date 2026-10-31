@@ -753,5 +753,201 @@ namespace MudBlazor.UnitTests.Components
             picker.Time.Should().BeNull();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
         }
+
+        /// <summary>
+        /// Finds a number on the hour or minute dial by its displayed text.
+        /// </summary>
+        private static AngleSharp.Dom.IElement FindClockNumber<T>(IRenderedComponent<T> comp, string dial, string text) where T : IComponent
+            => comp.FindAll($"div.mud-time-picker-{dial} .mud-clock-number").Single(e => e.TextContent.Trim() == text);
+
+        /// <summary>
+        /// Hours outside MinTime and MaxTime are grayed out on the 24-hour dial (issue #8025).
+        /// </summary>
+        [Test]
+        public void MinMaxTime_DisablesHoursOutsideRange()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.Time, new TimeSpan(10, 0, 0))
+                .Add(p => p.MinTime, new TimeSpan(9, 30, 0))
+                .Add(p => p.MaxTime, new TimeSpan(17, 45, 0)));
+
+            FindClockNumber(comp, "hour", "08").ClassList.Should().Contain("mud-disabled");
+            FindClockNumber(comp, "hour", "09").ClassList.Should().NotContain("mud-disabled");
+            FindClockNumber(comp, "hour", "17").ClassList.Should().NotContain("mud-disabled");
+            FindClockNumber(comp, "hour", "18").ClassList.Should().Contain("mud-disabled");
+        }
+
+        /// <summary>
+        /// On the 12-hour dial, disabled hours follow the AM or PM half shown.
+        /// </summary>
+        [Test]
+        public void MinMaxTime_AmPm_DisablesHoursOfCurrentPeriod()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.AmPm, true)
+                .Add(p => p.Time, new TimeSpan(15, 0, 0))
+                .Add(p => p.MinTime, new TimeSpan(9, 30, 0))
+                .Add(p => p.MaxTime, new TimeSpan(17, 45, 0)));
+
+            // 5 PM is allowed and 6 PM is not.
+            FindClockNumber(comp, "hour", "5").ClassList.Should().NotContain("mud-disabled");
+            FindClockNumber(comp, "hour", "6").ClassList.Should().Contain("mud-disabled");
+            // 12 PM is noon, which is in range.
+            FindClockNumber(comp, "hour", "12").ClassList.Should().NotContain("mud-disabled");
+        }
+
+        /// <summary>
+        /// Minutes before MinTime are grayed out in the first allowed hour.
+        /// </summary>
+        [Test]
+        public void MinTime_DisablesMinutesBeforeLimit()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.OpenTo, OpenTo.Minutes)
+                .Add(p => p.Time, new TimeSpan(9, 45, 0))
+                .Add(p => p.MinTime, new TimeSpan(9, 30, 0)));
+
+            FindClockNumber(comp, "minute", "25").ClassList.Should().Contain("mud-disabled");
+            FindClockNumber(comp, "minute", "30").ClassList.Should().NotContain("mud-disabled");
+        }
+
+        /// <summary>
+        /// An hour whose minutes are all rejected by IsTimeDisabledFunc is disabled.
+        /// </summary>
+        [Test]
+        public void IsTimeDisabledFunc_DisablesHourWhenAllMinutesDisabled()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.Time, new TimeSpan(10, 0, 0))
+                .Add(p => p.IsTimeDisabledFunc, time => time.Hours == 12 || (time.Hours == 13 && time.Minutes < 30)));
+
+            FindClockNumber(comp, "hour", "12").ClassList.Should().Contain("mud-disabled");
+            FindClockNumber(comp, "hour", "13").ClassList.Should().NotContain("mud-disabled");
+        }
+
+        /// <summary>
+        /// Dragging or clicking a disabled stick changes nothing.
+        /// </summary>
+        [Test]
+        public async Task DisabledSticks_AreIgnored()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.Time, new TimeSpan(9, 45, 0))
+                .Add(x => x.MinTime, new TimeSpan(9, 30, 0))
+                .Add(x => x.MaxTime, new TimeSpan(17, 45, 0)));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            // 20:00 is past MaxTime.
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(20, false));
+            await comp.InvokeAsync(() => picker.OnStickClick(20));
+
+            picker.TimeIntermediate.Should().Be(new TimeSpan(9, 45, 0));
+            // Still on the hour dial, so the minute dial is the hidden one.
+            comp.FindAll("div.mud-time-picker-minute.mud-time-picker-dial-hidden").Count.Should().Be(1);
+
+            // 09:10 is before MinTime.
+            await comp.FindAll("button.mud-timepicker-button")[1].ClickAsync();
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(10, false));
+            await comp.InvokeAsync(() => picker.OnStickClick(10));
+
+            picker.TimeIntermediate.Should().Be(new TimeSpan(9, 45, 0));
+            picker.Time.Should().Be(new TimeSpan(9, 45, 0));
+        }
+
+        /// <summary>
+        /// Picking an hour whose current minute is disabled moves to that hour's first allowed minute.
+        /// </summary>
+        [Test]
+        public async Task SelectHour_WithDisabledMinute_MovesToFirstAllowedMinute()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.Time, new TimeSpan(10, 10, 0))
+                .Add(x => x.MinTime, new TimeSpan(9, 30, 0)));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(9, false));
+
+            picker.TimeIntermediate.Should().Be(new TimeSpan(9, 30, 0));
+        }
+
+        /// <summary>
+        /// Switching AM/PM onto a disabled time clears the selection but keeps the last valid value, even when the picker closes.
+        /// </summary>
+        [Test]
+        public async Task AmPmSwitch_ToDisabledTime_KeepsLastValidValue()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.AmPm, true)
+                .Add(x => x.Time, new TimeSpan(10, 0, 0))
+                .Add(x => x.MinTime, new TimeSpan(9, 0, 0))
+                .Add(x => x.MaxTime, new TimeSpan(17, 45, 0)));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            // 10 PM is past MaxTime.
+            await comp.FindAll("button.mud-timepicker-button")[3].ClickAsync();
+
+            picker.TimeIntermediate.Should().BeNull();
+            comp.FindAll("button.mud-timepicker-button")[0].TextContent.Trim().Should().Be("--");
+
+            await comp.Instance.Close();
+
+            picker.Time.Should().Be(new TimeSpan(10, 0, 0));
+            comp.Instance.Time.Should().Be(new TimeSpan(10, 0, 0));
+        }
+
+        /// <summary>
+        /// Switching AM/PM onto an allowed time selects it.
+        /// </summary>
+        [Test]
+        public async Task AmPmSwitch_ToAllowedTime_SelectsIt()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.AmPm, true)
+                .Add(x => x.Time, new TimeSpan(3, 0, 0))
+                .Add(x => x.MaxTime, new TimeSpan(17, 45, 0)));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            await comp.FindAll("button.mud-timepicker-button")[3].ClickAsync();
+
+            picker.TimeIntermediate.Should().Be(new TimeSpan(15, 0, 0));
+        }
+
+        /// <summary>
+        /// Arrow keys skip disabled hours and minutes.
+        /// </summary>
+        [Test]
+        public async Task KeyboardNavigation_SkipsDisabledTimes()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.Time, new TimeSpan(11, 0, 0))
+                .Add(x => x.MinTime, new TimeSpan(9, 0, 0))
+                .Add(x => x.MaxTime, new TimeSpan(17, 0, 0))
+                .Add(x => x.IsTimeDisabledFunc, time => time.Hours is 12 or 13));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            Task PressAsync(string key, bool shift = false) => comp.InvokeAsync(() =>
+                keyInterceptorService.OnKeyDown(picker.ElementId, new KeyboardEventArgs { Key = key, ShiftKey = shift, Type = "keydown" }));
+
+            // Up from 11:00 skips the lunch break.
+            await PressAsync("ArrowUp");
+            await comp.WaitForAssertionAsync(() => picker.TimeIntermediate.Should().Be(new TimeSpan(14, 0, 0)));
+
+            // Left from 14:00 skips back over the lunch break to 11:59.
+            await PressAsync("ArrowLeft");
+            await comp.WaitForAssertionAsync(() => picker.TimeIntermediate.Should().Be(new TimeSpan(11, 59, 0)));
+
+            // Shift+Right from 11:59 lands in the break, so it carries on to 14:00.
+            await PressAsync("ArrowRight", shift: true);
+            await comp.WaitForAssertionAsync(() => picker.TimeIntermediate.Should().Be(new TimeSpan(14, 0, 0)));
+
+            // Shift+Up from 14:00 lands past MaxTime, so it wraps around the day to the first allowed hour.
+            await PressAsync("ArrowUp", shift: true);
+            await comp.WaitForAssertionAsync(() => picker.TimeIntermediate.Should().Be(new TimeSpan(9, 0, 0)));
+        }
     }
 }
