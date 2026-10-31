@@ -137,6 +137,8 @@ namespace MudBlazor
                     await _inputReference.SetTextAsync(Text);
                 }
 
+                // ConvertGet already cleared the conversion error: recompute the error state (and the form's) before leaving.
+                await BeginValidateAsync();
                 return;
             }
 

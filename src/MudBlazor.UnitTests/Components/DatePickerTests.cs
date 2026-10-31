@@ -1593,6 +1593,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A refused out-of-range date still re-runs validation, so an earlier conversion error does not stay on the field.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_Editable_TypedDateOutsideMinMax_ClearsPreviousConversionError()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Culture, new CultureInfo("en-US"))
+                .Add(p => p.MinDate, new DateTime(2020, 3, 1))
+                .Add(p => p.MaxDate, new DateTime(2020, 9, 30))
+                .Add(p => p.Date, new DateTime(2020, 6, 15)));
+
+            await comp.Find("input").ChangeAsync("abc");
+            comp.Instance.HasErrors.Should().BeTrue();
+
+            await comp.Find("input").ChangeAsync("01/01/2020");
+
+            comp.Instance.HasErrors.Should().BeFalse();
+            comp.Instance.GetErrorText().Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
         /// Typed dates on the boundaries of the range, and inside it, are still accepted.
         /// </summary>
         [Test]
