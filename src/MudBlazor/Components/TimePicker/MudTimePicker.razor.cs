@@ -251,9 +251,16 @@ namespace MudBlazor
             }
 
             // While the clock points at a disabled time (for example after an AM/PM switch), there is nothing valid to commit.
-            // Keep the last valid value instead of clearing it.
+            // Keep the last valid value instead of clearing it, and move the clock back to it so reopening shows that value.
             if (TimeIntermediate is null && IsTimeDisabled(_timeSet.Hour, _timeSet.Minute))
             {
+                if (Time is { } keptTime)
+                {
+                    _timeSet.Hour = keptTime.Hours;
+                    _timeSet.Minute = keptTime.Minutes;
+                    TimeIntermediate = keptTime;
+                }
+
                 return Task.CompletedTask;
             }
 
@@ -470,7 +477,9 @@ namespace MudBlazor
 
         private int? GetFirstEnabledMinute(int hour)
         {
-            for (var minute = 0; minute < 60; minute++)
+            // Only minutes on the MinuteSelectionStep grid can be picked, so an hour counts as enabled only if one of them is allowed.
+            var step = MinuteSelectionStep is > 1 and < 60 ? MinuteSelectionStep : 1;
+            for (var minute = 0; minute < 60; minute += step)
             {
                 if (!IsTimeDisabled(hour, minute))
                 {

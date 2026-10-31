@@ -875,6 +875,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Moving to the first allowed minute of an hour respects MinuteSelectionStep.
+        /// </summary>
+        [Test]
+        public async Task SelectHour_WithDisabledMinute_RespectsMinuteSelectionStep()
+        {
+            var comp = await OpenPicker(parameters => parameters
+                .Add(x => x.Time, new TimeSpan(10, 0, 0))
+                .Add(x => x.MinuteSelectionStep, 15)
+                .Add(x => x.MinTime, new TimeSpan(9, 10, 0)));
+            var picker = comp.FindComponent<MudTimePicker>().Instance;
+
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(9, false));
+
+            picker.TimeIntermediate.Should().Be(new TimeSpan(9, 15, 0));
+        }
+
+        /// <summary>
+        /// An hour whose only allowed minutes are off the MinuteSelectionStep grid is disabled.
+        /// </summary>
+        [Test]
+        public void MinTime_DisablesHourWithOnlyOffStepMinutes()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.Time, new TimeSpan(10, 0, 0))
+                .Add(p => p.MinuteSelectionStep, 15)
+                .Add(p => p.MinTime, new TimeSpan(9, 50, 0)));
+
+            FindClockNumber(comp, "hour", "09").ClassList.Should().Contain("mud-disabled");
+            FindClockNumber(comp, "hour", "10").ClassList.Should().NotContain("mud-disabled");
+        }
+
+        /// <summary>
         /// Switching AM/PM onto a disabled time clears the selection but keeps the last valid value, even when the picker closes.
         /// </summary>
         [Test]
@@ -897,6 +930,12 @@ namespace MudBlazor.UnitTests.Components
 
             picker.Time.Should().Be(new TimeSpan(10, 0, 0));
             comp.Instance.Time.Should().Be(new TimeSpan(10, 0, 0));
+
+            // Reopening shows the value that was kept, not the cleared selection.
+            await comp.Instance.Open();
+
+            picker.TimeIntermediate.Should().Be(new TimeSpan(10, 0, 0));
+            comp.FindAll("button.mud-timepicker-button")[0].TextContent.Trim().Should().Be("10");
         }
 
         /// <summary>
