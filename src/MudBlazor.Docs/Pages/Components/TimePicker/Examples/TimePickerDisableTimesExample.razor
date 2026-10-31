@@ -1,0 +1,16 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTimePicker Label="Opening hours" AmPm="true" @bind-Time="_appointment"
+               MinTime="@_opening" MaxTime="@_closing" IsTimeDisabledFunc="@IsLunchBreak"
+               HelperText="09:30 AM to 05:45 PM, closed from 12:00 PM to 01:59 PM" />
+
+<MudTimePicker PickerVariant="PickerVariant.Static" AmPm="true" @bind-Time="_appointment"
+               MinTime="@_opening" MaxTime="@_closing" IsTimeDisabledFunc="@IsLunchBreak" />
+
+@code {
+    private TimeSpan? _appointment = new TimeSpan(10, 15, 0);
+    private readonly TimeSpan _opening = new TimeSpan(9, 30, 0);
+    private readonly TimeSpan _closing = new TimeSpan(17, 45, 0);
+
+    private static bool IsLunchBreak(TimeSpan time) => time.Hours is 12 or 13;
+}

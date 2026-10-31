@@ -7,7 +7,10 @@
                TimeEditMode="TimeEditMode"
                MinuteSelectionStep="MinuteSelectionStep"
                ClosingDelay="ClosingDelay"
-               InputId="@InputId" />
+               InputId="@InputId"
+               MinTime="@MinTime"
+               MaxTime="@MaxTime"
+               IsTimeDisabledFunc="@IsTimeDisabledFunc" />
 
 @code {
     private MudTimePicker _picker = null!;
@@ -33,6 +36,15 @@
 
     [Parameter]
     public string? InputId { get; set; }
+
+    [Parameter]
+    public TimeSpan? MinTime { get; set; }
+
+    [Parameter]
+    public TimeSpan? MaxTime { get; set; }
+
+    [Parameter]
+    public Func<TimeSpan, bool> IsTimeDisabledFunc { get; set; } = _ => false;
 
     public async Task Open() => await InvokeAsync(() => _picker.OpenAsync());
 
