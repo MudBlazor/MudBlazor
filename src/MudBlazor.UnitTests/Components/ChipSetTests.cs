@@ -760,7 +760,7 @@ namespace MudBlazor.UnitTests.Components
                 chip.ClassList.Should().Contain("mud-chip-label");
                 chip.ClassList.Should().NotContain("mud-ripple");
             });
-            comp.FindAll("button.mud-chip-close-button").Count.Should().Be(3);
+            comp.FindAll(".mud-chip-close-button").Count.Should().Be(3);
         }
 
         /// <summary>
