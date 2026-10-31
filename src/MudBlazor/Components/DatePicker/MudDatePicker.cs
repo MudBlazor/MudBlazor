@@ -120,14 +120,29 @@ namespace MudBlazor
             return SetTextAsync(ConvertSet(_value), false);
         }
 
-        protected override Task StringValueChangedAsync(string? value)
+        protected override async Task StringValueChangedAsync(string? value)
         {
             Touched = true;
             var hadConversionError = ConversionError;
             var date = ConvertGet(value);
+
+            // A typed date outside MinDate/MaxDate is refused like a disabled calendar day (#3461):
+            // keep the last valid date and put its text back.
+            if (date is not null && (date.Value.Date < MinDateState.Value || date.Value.Date > MaxDateState.Value))
+            {
+                await SetTextAsync(ConvertSet(_value), false);
+                // The input still holds the typed text and does not see a parameter change, so push the restored text into it.
+                if (_inputReference is not null)
+                {
+                    await _inputReference.SetTextAsync(Text);
+                }
+
+                return;
+            }
+
             // Update the date property (without updating back the Value property)
             // If the date had a conversion error and is now null or empty forceUpdate is true
-            return SetDateAsync(date, false, forceUpdate: string.IsNullOrEmpty(value) && hadConversionError);
+            await SetDateAsync(date, false, forceUpdate: string.IsNullOrEmpty(value) && hadConversionError);
         }
 
         protected override string GetDayClasses(int month, DateTime day)
