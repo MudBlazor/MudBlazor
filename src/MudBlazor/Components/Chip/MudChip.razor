@@ -43,7 +43,20 @@
             {
                 @ChildContent
             }
-            @if (IsClosable)
+            @if (IsClosable && IsButton)
+            {
+                @* The chip is itself a button, and a control nested in a button is not exposed to assistive technology and fails WCAG (axe nested-interactive).
+                   The icon is therefore a mouse-only affordance; keyboard users close the chip with Delete or Backspace. *@
+                <span class="mud-icon-button mud-icon-button-size-small mud-chip-close-button"
+                      aria-hidden="true"
+                      @onclick="OnCloseAsync"
+                      @onclick:stopPropagation="true">
+                    <span class="mud-icon-button-label">
+                        <MudIcon Icon="@GetCloseIcon()" Size="MudBlazor.Size.Small" />
+                    </span>
+                </span>
+            }
+            else if (IsClosable)
             {
                 <MudIconButton Class="mud-chip-close-button"
                                Icon="@GetCloseIcon()"

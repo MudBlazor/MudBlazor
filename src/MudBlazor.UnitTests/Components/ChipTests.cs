@@ -237,10 +237,85 @@ namespace MudBlazor.UnitTests.Components
             chip.ClassName.Should().Contain("mud-ripple");
 
             // click on close button
-            await comp.Find("button.mud-chip-close-button").ClickAsync();
+            await comp.Find(".mud-chip-close-button").ClickAsync();
 
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClose");
+        }
+
+        /// <summary>
+        /// An interactive chip must not contain another interactive control, because nested controls are not reachable for assistive technology.
+        /// The close icon is then a mouse affordance hidden from the accessibility tree; Delete and Backspace close the chip from the keyboard.
+        /// </summary>
+        [Test]
+        public async Task Chip_ClosableInteractiveChip_ShouldNotNestInteractiveControls()
+        {
+            var clicked = 0;
+            var closed = 0;
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.Text, "Tag")
+                .Add(p => p.OnClick, () => clicked++)
+                .Add(p => p.OnClose, () => closed++));
+
+            var chip = comp.Find(".mud-chip");
+            chip.TagName.Should().Be("BUTTON");
+
+            // The test DOM parser hoists a button nested in a button out of its parent, so assert on the close element itself.
+            var close = comp.Find(".mud-chip-close-button");
+            close.TagName.Should().Be("SPAN");
+            close.GetAttribute("aria-hidden").Should().Be("true");
+            close.HasAttribute("tabindex").Should().BeFalse();
+            close.HasAttribute("role").Should().BeFalse();
+
+            await close.ClickAsync();
+
+            closed.Should().Be(1);
+            clicked.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A chip inside a set is a toggle button, so its close icon must not be a nested control either.
+        /// </summary>
+        [Test]
+        public async Task Chip_ClosableChipInChipSet_ShouldKeepSelectionStateAndNotNestInteractiveControls()
+        {
+            var closed = 0;
+            var comp = Context.Render<MudChipSet<string>>(parameters => parameters
+                .Add(p => p.AllClosable, true)
+                .AddChildContent<MudChip<string>>(chip => chip
+                    .Add(p => p.Text, "One")
+                    .Add(p => p.Value, "1")
+                    .Add(p => p.OnClose, () => closed++)));
+
+            var chip = comp.Find(".mud-chip");
+            chip.GetAttribute("aria-pressed").Should().Be("false");
+
+            var close = comp.Find(".mud-chip-close-button");
+            close.TagName.Should().Be("SPAN");
+            close.GetAttribute("aria-hidden").Should().Be("true");
+
+            await chip.ClickAsync();
+
+            comp.Find(".mud-chip").GetAttribute("aria-pressed").Should().Be("true");
+
+            await comp.Find(".mud-chip-close-button").ClickAsync();
+
+            closed.Should().Be(1);
+            comp.Find(".mud-chip").GetAttribute("aria-pressed").Should().Be("true");
+        }
+
+        /// <summary>
+        /// A chip that is not interactive has no outer control, so its close button stays a real, labelled button.
+        /// </summary>
+        [Test]
+        public void Chip_ClosablePlainChip_ShouldKeepLabelledCloseButton()
+        {
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.OnClose, () => { }));
+
+            var close = comp.Find("button.mud-chip-close-button");
+            close.GetAttribute("aria-label").Should().NotBeNullOrEmpty();
+            close.HasAttribute("aria-hidden").Should().BeFalse();
         }
 
         /// <summary>
