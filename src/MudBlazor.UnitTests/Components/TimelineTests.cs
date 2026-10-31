@@ -6,6 +6,7 @@ using AngleSharp.Css.Dom;
 using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents.Timeline;
 using NUnit.Framework;
 
@@ -250,6 +251,46 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-timeline-item").Count.Should().Be(9);
             var items = comp.FindComponents<MudTimelineItem>();
             items.Count.Should().Be(9);
+        }
+
+        /// <summary>
+        /// Opposite content is rendered for start, end, top, and bottom, not only alternate (#11799).
+        /// </summary>
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Top)]
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Bottom)]
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Start)]
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.End)]
+        public void ItemOpposite_RendersOutsideAlternateMode(TimelineOrientation orientation, TimelinePosition position)
+        {
+            var comp = Context.Render<MudTimeline>(parameters => parameters
+                .Add(p => p.TimelineOrientation, orientation)
+                .Add(p => p.TimelinePosition, position)
+                .AddChildContent<MudTimelineItem>(item => item
+                    .Add(p => p.ItemContent, (RenderFragment)(builder => builder.AddContent(0, "Running")))
+                    .Add(p => p.ItemOpposite, (RenderFragment)(builder => builder.AddContent(0, "13:37")))));
+
+            var timelineItem = comp.Find(".mud-timeline-item");
+
+            timelineItem.ClassList.Should().Contain("mud-timeline-item-has-opposite");
+            timelineItem.QuerySelector(".mud-timeline-item-opposite")!.TextContent.Should().Be("13:37");
+            timelineItem.QuerySelector(".mud-timeline-item-content")!.TextContent.Should().Be("Running");
+        }
+
+        /// <summary>
+        /// Items without opposite content do not reserve an opposite column.
+        /// </summary>
+        [Test]
+        public void ItemOpposite_Absent_HasNoOppositeMarker()
+        {
+            var comp = Context.Render<MudTimeline>(parameters => parameters
+                .Add(p => p.TimelinePosition, TimelinePosition.Start)
+                .AddChildContent<MudTimelineItem>(item => item
+                    .Add(p => p.ItemContent, (RenderFragment)(builder => builder.AddContent(0, "Running")))));
+
+            var timelineItem = comp.Find(".mud-timeline-item");
+
+            timelineItem.ClassList.Should().NotContain("mud-timeline-item-has-opposite");
+            timelineItem.QuerySelector(".mud-timeline-item-opposite").Should().BeNull();
         }
     }
 }

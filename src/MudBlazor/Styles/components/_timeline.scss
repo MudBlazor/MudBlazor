@@ -156,15 +156,42 @@
       flex-direction: row;
     }
   }
-  /* Both Start & End */
+  /* Both Start & End. Opposite content is omitted from the layout unless an item provides it. */
   &.mud-timeline-position {
     &-start, &-end {
+      &:not(:has(.mud-timeline-item-opposite)) {
+        .mud-timeline-item-content {
+          max-width: calc(100% - 96px);
+        }
+      }
+
+      &:has(.mud-timeline-item-opposite) {
+        &::before {
+          left: calc(50% - 1px);
+          right: auto;
+        }
+
+        .mud-timeline-item:not(.mud-timeline-item-has-opposite)::after {
+          content: "";
+          flex: 1 1 auto;
+          max-width: calc(50% - 48px);
+        }
+      }
+    }
+
+    &-start:has(.mud-timeline-item-opposite) {
+      .mud-timeline-item-opposite {
+        text-align: end;
+      }
+    }
+
+    &-end:has(.mud-timeline-item-opposite) {
       .mud-timeline-item-content {
-        max-width: calc(100% - 96px);
+        text-align: end;
       }
 
       .mud-timeline-item-opposite {
-        display: none;
+        text-align: start;
       }
     }
   }
@@ -283,16 +310,34 @@
       flex-direction: column;
     }
   }
-  /* Both Top & Bottom */
+  /* Both Top & Bottom. Opposite content is omitted from the layout unless an item provides it. */
   &.mud-timeline-position {
     &-top, &-bottom {
-
-      .mud-timeline-item-content {
-        max-height: calc(100% - 96px);
+      &:not(:has(.mud-timeline-item-opposite)) {
+        .mud-timeline-item-content {
+          max-height: calc(100% - 96px);
+        }
       }
 
-      .mud-timeline-item-opposite {
-        display: none;
+      &:has(.mud-timeline-item-opposite) {
+        &::before {
+          top: auto;
+          bottom: calc(50% - 1px);
+        }
+
+        .mud-timeline-item-content,
+        .mud-timeline-item-opposite {
+          flex: 1 1 auto;
+          align-self: stretch;
+          max-height: calc(50% - 48px);
+          text-align: center;
+        }
+
+        .mud-timeline-item:not(.mud-timeline-item-has-opposite)::after {
+          content: "";
+          flex: 1 1 auto;
+          max-height: calc(50% - 48px);
+        }
       }
     }
   }
