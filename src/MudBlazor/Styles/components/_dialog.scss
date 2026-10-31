@@ -68,13 +68,15 @@
   color: var(--mud-palette-text-primary);
   background-color: var(--mud-palette-surface);
   border-radius: var(--mud-default-borderradius);
-  -webkit-animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
-  animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+  -webkit-animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) backwards;
+  animation: mud-open-dialog-center 0.1s cubic-bezier(0.390, 0.575, 0.565, 1.000) backwards;
   box-shadow: 0px 11px 15px -7px rgba(0,0,0,0.2), 0px 24px 38px 3px rgba(0,0,0,0.14), 0px 9px 46px 8px rgba(0,0,0,0.12);
   max-height: calc(100vh - var(--mud-appbar-height)); // keep as fallback
   max-height: calc(100dvh - var(--mud-appbar-height));
   overflow-y: auto;
   outline-style: none;
+  // Keep the dialog a stacking context without a transform, which would trap fixed-position descendants (e.g. picker dialogs)
+  isolation: isolate;
 
   &.mud-dialog-rtl .mud-dialog-title .mud-button-close {
     right: unset;
