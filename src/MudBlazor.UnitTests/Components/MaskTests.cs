@@ -1296,5 +1296,40 @@ namespace MudBlazor.UnitTests.Components
             input.GetAttribute("aria-invalid").Should().Be("false");
             input.HasAttribute("required").Should().BeTrue();
         }
+
+        [Test]
+        public async Task Mask_JsBlurFallbackShouldStopReapplyingCaretOnRender()
+        {
+            // The native blur is not always delivered (e.g. Hybrid hosts losing window focus).
+            // The JS blur bridge must then clear the focus state so later renders don't steal focus.
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudMask>(parameters => parameters.Add(p => p.Mask, new PatternMask("0000")));
+
+            Context.JSInterop.VerifyInvoke("mudElementRef.addOnBlurEvent", 1);
+
+            await comp.InvokeAsync(() => comp.Instance.OnFocused(new FocusEventArgs()));
+            await comp.InvokeAsync(comp.Instance.CallOnBlurredAsync);
+
+            var selectRangeCalls = Context.JSInterop.Invocations["mudElementRef.selectRange"].Count();
+            await comp.InvokeAsync(() => comp.Instance.OnCaretPositionChanged(0));
+            comp.Render();
+            Context.JSInterop.Invocations["mudElementRef.selectRange"].Count().Should().Be(selectRangeCalls);
+        }
+
+        [Test]
+        public async Task Mask_JsBlurFallbackShouldNotProcessBlurTwiceWhenNativeBlurRunsFirst()
+        {
+            Context.AddKeyInterceptorService();
+            var blurCount = 0;
+            var comp = Context.Render<MudMask>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000"))
+                .Add(p => p.OnBlur, _ => blurCount++));
+
+            await comp.InvokeAsync(() => comp.Instance.OnFocused(new FocusEventArgs()));
+            await comp.Find("input").BlurAsync();
+            await comp.InvokeAsync(comp.Instance.CallOnBlurredAsync);
+
+            blurCount.Should().Be(1);
+        }
     }
 }
