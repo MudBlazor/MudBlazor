@@ -1297,11 +1297,10 @@ namespace MudBlazor.UnitTests.Components
             input.HasAttribute("required").Should().BeTrue();
         }
 
+        /// <summary>Verifies the JS blur fallback clears focus so later renders stop re-applying the caret (#13274).</summary>
         [Test]
         public async Task Mask_JsBlurFallbackShouldStopReapplyingCaretOnRender()
         {
-            // The native blur is not always delivered (e.g. Hybrid hosts losing window focus).
-            // The JS blur bridge must then clear the focus state so later renders don't steal focus.
             Context.AddKeyInterceptorService();
             var comp = Context.Render<MudMask>(parameters => parameters.Add(p => p.Mask, new PatternMask("0000")));
 
@@ -1316,6 +1315,7 @@ namespace MudBlazor.UnitTests.Components
             Context.JSInterop.Invocations["mudElementRef.selectRange"].Count().Should().Be(selectRangeCalls);
         }
 
+        /// <summary>Verifies the JS blur fallback does not raise a second blur when the native blur already ran.</summary>
         [Test]
         public async Task Mask_JsBlurFallbackShouldNotProcessBlurTwiceWhenNativeBlurRunsFirst()
         {
