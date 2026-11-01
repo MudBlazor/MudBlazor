@@ -13,6 +13,14 @@ namespace MudBlazor.UnitTests.Components
     public class FieldTests : BunitTest
     {
         [Test]
+        public void FieldDoesNotUseAutoWidthInputControlClass()
+        {
+            var comp = Context.Render<MudField>();
+
+            comp.Find(".mud-input-control").ClassList.Should().NotContain("mud-input-control-width-auto");
+        }
+
+        [Test]
         public void Field_ShouldRender_Variants()
         {
             var comp = Context.Render<FieldTest>();
