@@ -506,7 +506,10 @@ namespace MudBlazor
             {
                 // Notify the consumer about the exceeded file count
                 _validationErrors.Add(Localizer[LanguageResource.MudFileUpload_MaximumFileCountExceeded, args.FileCount, MaximumFileCount]);
-                await NotifyValueChangedAsync(default); // Reset the value to indicate no valid files were processed
+                // When appending, reject only the new selection and keep the existing files.
+                // Otherwise, reset the value to indicate no valid files were processed.
+                var keepExistingFiles = AppendMultipleFiles && _filesState.Value is IReadOnlyList<IBrowserFile>;
+                await NotifyValueChangedAsync(keepExistingFiles ? _filesState.Value : default);
                 return;
             }
 

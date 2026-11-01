@@ -331,6 +331,35 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies that exceeding MaximumFileCount with AppendMultipleFiles keeps the existing files and reports the error (#14095).
+        /// </summary>
+        [Test]
+        public void FileUploadAppendMultiple_MaximumFileCountExceeded_KeepsExistingFiles()
+        {
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(x => x.AppendMultipleFiles, true)
+                .Add(x => x.MaximumFileCount, 2));
+
+            var input = comp.FindComponent<InputFile>();
+            input.UploadFiles(
+                InputFileContent.CreateFromText("content", "first.txt"),
+                InputFileContent.CreateFromText("content", "second.txt"));
+
+            comp.Instance.GetState(x => x.Files).Should().HaveCount(2);
+            comp.Instance.GetState(x => x.Error).Should().BeFalse();
+
+            input.UploadFiles(
+                InputFileContent.CreateFromText("content", "third.txt"),
+                InputFileContent.CreateFromText("content", "fourth.txt"),
+                InputFileContent.CreateFromText("content", "fifth.txt"));
+
+            comp.Instance.GetState(x => x.Files).Should().NotBeNull();
+            comp.Instance.GetState(x => x.Files)!.Select(x => x.Name).Should().Equal("first.txt", "second.txt");
+            comp.Instance.GetState(x => x.Error).Should().BeTrue();
+            comp.Instance.GetState(x => x.ErrorText).Should().Be("Selected 3 files, which exceeds the maximum of 2");
+        }
+
+        /// <summary>
         /// Optional FileUpload should not have required attribute and aria-required should be false.
         /// </summary>
         [Test]
