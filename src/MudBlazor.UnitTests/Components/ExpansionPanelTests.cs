@@ -10,6 +10,58 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class ExpansionPanelTests : BunitTest
     {
+        /// <summary>
+        /// Every panel header exposes its disclosure role, current state, and owned collapse region (#14005).
+        /// </summary>
+        [Test]
+        public void MudExpansionPanel_Header_ExposesAccessibleStateAndControls()
+        {
+            Context.AddFakeTimeProvider();
+            var comp = Context.Render<ExpansionPanelStartExpandedTest>();
+            var panels = comp.FindAll(".mud-expand-panel");
+            panels.Count.Should().Be(3);
+
+            var controls = new HashSet<string>();
+            foreach (var panel in panels)
+            {
+                var header = panel.QuerySelector(".mud-expand-panel-header");
+                var content = panel.QuerySelector(".mud-collapse-container");
+                header.Should().NotBeNull();
+                content.Should().NotBeNull();
+
+                header!.GetAttribute("role").Should().Be("button");
+                header.GetAttribute("aria-expanded").Should().Be(
+                    panel.ClassList.Contains("mud-panel-expanded") ? "true" : "false");
+
+                var id = header.GetAttribute("aria-controls");
+                id.Should().NotBeNullOrWhiteSpace();
+                content!.Id.Should().Be(id);
+                controls.Add(id!);
+            }
+
+            controls.Count.Should().Be(panels.Count);
+        }
+
+        /// <summary>
+        /// Keyboard-accessible expansion headers update their ARIA state and expose disabled state (#14005).
+        /// </summary>
+        [Test]
+        public async Task MudExpansionPanel_Header_UpdatesAccessibleStateAndDisabled()
+        {
+            Context.AddFakeTimeProvider();
+            var comp = Context.Render<ExpansionPanelStartExpandedTest>();
+            var header = comp.Find(".panel-one > .mud-expand-panel-header");
+
+            header.GetAttribute("aria-expanded").Should().Be("false");
+            await header.ClickAsync();
+            header.GetAttribute("aria-expanded").Should().Be("true");
+
+            var panel = comp.FindComponent<MudExpansionPanel>();
+            await panel.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
+            header.GetAttribute("aria-disabled").Should().Be("true");
+            header.HasAttribute("tabindex").Should().BeFalse();
+        }
+
 
         [OneTimeSetUp]
         public static void Init()
