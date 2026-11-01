@@ -14,6 +14,7 @@ namespace MudBlazor
     {
         private int _tickMarkCount = 0;
         private bool _nullableValueResetToDefault = false;
+        private bool _dragging = false;
         private readonly ParameterState<T> _valueState;
         private readonly ParameterState<T?> _nullableValueState;
 
@@ -235,6 +236,20 @@ namespace MudBlazor
         [Category(CategoryTypes.Button.Appearance)]
         public RenderFragment<SliderContext<T>>? ValueLabelContent { get; set; }
 
+        /// <summary>
+        /// Occurs when interaction with the slider starts.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Slider.Behavior)]
+        public EventCallback OnDragStart { get; set; }
+
+        /// <summary>
+        /// Occurs when interaction with the slider ends.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Slider.Behavior)]
+        public EventCallback OnDragEnd { get; set; }
+
         /// <inheritdoc />
         protected override void OnParametersSet()
         {
@@ -247,6 +262,18 @@ namespace MudBlazor
                 _tickMarkCount = 1 + (int)((max - min) / step);
             }
             base.OnParametersSet();
+        }
+
+        protected override async Task OnParametersSetAsync()
+        {
+            // a drag started but the Input got disabled
+            if (Disabled && _dragging)
+            {
+                // execute the drag end handler as the drag is terminated by disabling the input
+                await OnDragEndHandlerCore();
+            }
+
+            await base.OnParametersSetAsync();
         }
 
         private double CalculatePosition()
@@ -269,6 +296,11 @@ namespace MudBlazor
             {
                 await _valueState.SetValueAsync(result);
                 await _nullableValueState.SetValueAsync(result);
+
+                if (!Immediate)
+                {
+                    await OnDragEndHandlerCore();
+                }
             }
         }
 
@@ -296,6 +328,38 @@ namespace MudBlazor
             }
 
             return _valueState.SetValueAsync(arg.Value.GetValueOrDefault(T.Zero));
+        }
+
+        private async Task OnDragStartHandler()
+        {
+            if (Disabled || _dragging)
+            {
+                return;
+            }
+
+            this._dragging = true;
+            await OnDragStart.InvokeAsync();
+        }
+
+        private async Task OnDragEndHandler()
+        {
+            if (!Immediate)
+            {
+                return;
+            }
+
+            await OnDragEndHandlerCore();
+        }
+
+        private async Task OnDragEndHandlerCore()
+        {
+            if (!_dragging)
+            {
+                return;
+            }
+
+            this._dragging = false;
+            await OnDragEnd.InvokeAsync();
         }
 
         private string Width => CalculatePosition().ToString(CultureInfo.InvariantCulture);
