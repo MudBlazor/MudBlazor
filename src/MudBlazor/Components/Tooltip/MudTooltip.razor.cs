@@ -172,8 +172,8 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
-        /// Only focus that matches the <c>:focus-visible</c> CSS pseudo-class opens this tooltip, such as focus moved with the Tab key or any focus on a text input.
-        /// Otherwise, focus from a pointer click, or focus that returns after a pointer action, such as switching back to the browser tab or closing a dialog, does not open it.
+        /// Only keyboard focus opens this tooltip, such as focus moved with the Tab key.
+        /// A click or tap, including on a text input, does not open it, and neither does focus that returns after a pointer action, such as switching back to the browser tab or closing a dialog.
         /// To show this tooltip from code, set <see cref="Visible"/> instead of focusing its content.
         /// </remarks>
         [Parameter]

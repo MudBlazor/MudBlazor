@@ -25,6 +25,51 @@ type ReferenceElement = HTMLElement & {
     _mudBlurHandler?: (e: FocusEvent) => void;
 };
 
+type InputModality = "unknown" | "keyboard" | "pointer";
+
+// Input types that do not take typed text, so browsers already match :focus-visible only for keyboard focus.
+const nonTextInputTypes = new Set(["button", "checkbox", "radio", "range", "color", "file", "submit", "reset", "image"]);
+const modifierKeys = new Set(["Control", "Alt", "AltGraph", "Meta", "Shift", "OS"]);
+
+let inputModality: InputModality = "unknown";
+
+/**
+ * Records whether the last user input was a key press or a pointer press.
+ * Shortcut chords such as Ctrl+Tab or Alt+Tab switch browser tabs or windows and do not count as keyboard input.
+ */
+function trackInputModality() {
+    document.addEventListener("keydown", e => {
+        if (e.metaKey || e.altKey || e.ctrlKey || modifierKeys.has(e.key)) {
+            return;
+        }
+        inputModality = "keyboard";
+    }, true);
+    document.addEventListener("pointerdown", () => {
+        inputModality = "pointer";
+    }, true);
+}
+
+if (typeof document !== "undefined") {
+    trackInputModality();
+}
+
+/**
+ * Forgets the last input so tests start from the state of a freshly loaded page.
+ */
+export function resetInputModality() {
+    inputModality = "unknown";
+}
+
+function isTextEntry(element: Element) {
+    if (element instanceof HTMLTextAreaElement) {
+        return true;
+    }
+    if (element instanceof HTMLInputElement) {
+        return !nonTextInputTypes.has(element.type.toLowerCase());
+    }
+    return element instanceof HTMLElement && element.isContentEditable;
+}
+
 /**
  * Shared ElementReference interop surface for focus, selection, and DOM metrics.
  * Centralizes browser-specific behavior used by components and extension helpers.
@@ -125,10 +170,15 @@ export default class MudElementReference {
     /**
      * Returns whether the focused element shows a keyboard focus indicator.
      * Browsers re-focus an element when its tab regains focus, and dialogs restore focus by script; only :focus-visible separates keyboard focus from those.
+     * Text inputs match :focus-visible for any focus, so for them the last user input decides: focus after a pointer press is not keyboard focus.
      */
     isFocusVisible() {
         try {
-            return document.activeElement?.matches(':focus-visible') ?? false;
+            const element = document.activeElement;
+            if (!element?.matches(':focus-visible')) {
+                return false;
+            }
+            return !(inputModality === "pointer" && isTextEntry(element));
         } catch (_) {
             // Browsers without :focus-visible keep treating every focus as keyboard focus.
             return true;
