@@ -170,6 +170,69 @@ test("isFocusVisible keeps the :focus-visible result for a button after a key pr
     expect(elementRef.isFocusVisible()).toBe(false);
 });
 
+/**
+ * Leaves the browser tab and returns to it. The focused element stays document.activeElement while the window is blurred,
+ * and the browser raises focusin on it again when the window regains focus.
+ */
+function switchTabAndReturn(element: HTMLElement) {
+    window.dispatchEvent(new FocusEvent("blur"));
+    window.dispatchEvent(new FocusEvent("focus"));
+    element.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+}
+
+test("isFocusVisible stays false for a clicked text input after typing in it", () => {
+    const name = renderForm()("name");
+    pointerDown();
+    focusMatchingFocusVisible(name);
+    press("5");
+    press("Backspace");
+
+    expect(elementRef.isFocusVisible()).toBe(false);
+});
+
+test("isFocusVisible stays false for a clicked text input after typing and returning to the tab", () => {
+    const name = renderForm()("name");
+    pointerDown();
+    focusMatchingFocusVisible(name);
+    press("5");
+    switchTabAndReturn(name);
+
+    expect(elementRef.isFocusVisible()).toBe(false);
+});
+
+test("isFocusVisible stays true for a text input focused with Tab after returning to the tab", () => {
+    const name = renderForm()("name");
+    pointerDown();
+    press("Tab");
+    focusMatchingFocusVisible(name);
+    switchTabAndReturn(name);
+
+    expect(elementRef.isFocusVisible()).toBe(true);
+});
+
+test("isFocusVisible is true for a text input reached with Tab from a clicked text input", () => {
+    const byId = renderForm();
+    pointerDown();
+    focusMatchingFocusVisible(byId("name"));
+    expect(elementRef.isFocusVisible()).toBe(false);
+
+    press("Tab");
+    focusMatchingFocusVisible(byId("notes"));
+
+    expect(elementRef.isFocusVisible()).toBe(true);
+});
+
+test("a window blur only preserves the record for the element that had focus", () => {
+    const byId = renderForm();
+    press("Tab");
+    focusMatchingFocusVisible(byId("name"));
+    window.dispatchEvent(new FocusEvent("blur"));
+    pointerDown();
+    focusMatchingFocusVisible(byId("notes"));
+
+    expect(elementRef.isFocusVisible()).toBe(false);
+});
+
 test("selectRange selects text in text inputs and textareas", () => {
     const byId = renderForm();
     byId("name").value = "Ada Lovelace";

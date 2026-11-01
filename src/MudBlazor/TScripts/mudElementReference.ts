@@ -32,9 +32,13 @@ const nonTextInputTypes = new Set(["button", "checkbox", "radio", "range", "colo
 const modifierKeys = new Set(["Control", "Alt", "AltGraph", "Meta", "Shift", "OS"]);
 
 let inputModality: InputModality = "unknown";
+// The input that moved focus to each element, so typing after a click does not turn it into keyboard focus.
+let focusModality = new WeakMap<Element, InputModality>();
+// The element that had focus when the window lost it; the browser focuses it again when the window regains focus.
+let windowBlurredFrom: Element | null = null;
 
 /**
- * Records whether the last user input was a key press or a pointer press.
+ * Records whether the last user input was a key press or a pointer press, and which of them moved focus to each element.
  * Shortcut chords such as Ctrl+Tab or Alt+Tab switch browser tabs or windows and do not count as keyboard input.
  */
 function trackInputModality() {
@@ -47,6 +51,21 @@ function trackInputModality() {
     document.addEventListener("pointerdown", () => {
         inputModality = "pointer";
     }, true);
+    // Capture runs before Blazor's bubbling focusin handler, so the record exists before a component asks isFocusVisible.
+    document.addEventListener("focusin", e => {
+        const target = e.target as Element;
+        // Returning to the tab focuses the same element again; it keeps the input that focused it originally.
+        if (target !== windowBlurredFrom) {
+            focusModality.set(target, inputModality);
+        }
+        windowBlurredFrom = null;
+    }, true);
+    window.addEventListener("blur", e => {
+        // Only the window's own blur, not an element's blur seen while it travels to the target.
+        if (e.target === e.currentTarget) {
+            windowBlurredFrom = document.activeElement;
+        }
+    });
 }
 
 if (typeof document !== "undefined") {
@@ -54,10 +73,12 @@ if (typeof document !== "undefined") {
 }
 
 /**
- * Forgets the last input so tests start from the state of a freshly loaded page.
+ * Forgets the last input and every recorded focus so tests start from the state of a freshly loaded page.
  */
 export function resetInputModality() {
     inputModality = "unknown";
+    focusModality = new WeakMap();
+    windowBlurredFrom = null;
 }
 
 function isTextEntry(element: Element) {
@@ -170,7 +191,7 @@ export default class MudElementReference {
     /**
      * Returns whether the focused element shows a keyboard focus indicator.
      * Browsers re-focus an element when its tab regains focus, and dialogs restore focus by script; only :focus-visible separates keyboard focus from those.
-     * Text inputs match :focus-visible for any focus, so for them the last user input decides: focus after a pointer press is not keyboard focus.
+     * Text inputs match :focus-visible for any focus, so for them the input that moved focus there decides: focus after a pointer press is not keyboard focus.
      */
     isFocusVisible() {
         try {
@@ -178,7 +199,7 @@ export default class MudElementReference {
             if (!element?.matches(':focus-visible')) {
                 return false;
             }
-            return !(inputModality === "pointer" && isTextEntry(element));
+            return !(focusModality.get(element) === "pointer" && isTextEntry(element));
         } catch (_) {
             // Browsers without :focus-visible keep treating every focus as keyboard focus.
             return true;
