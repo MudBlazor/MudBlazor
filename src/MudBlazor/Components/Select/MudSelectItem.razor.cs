@@ -135,7 +135,23 @@ namespace MudBlazor
 
             // A nested list can appear or disappear after the item registered, and the select decides between list and tree from it.
             _shadowContext?.SyncShadowNesting(this, renderOnChange: true);
+
+            // With cascading, a row's checked state also depends on the tree around it, which can change while the selection stays the same.
+            if (_context is not null && MudSelect?.CascadesSelection == true)
+            {
+                Selected = _context.IsItemSelected(this);
+                Indeterminate = _context.IsItemIndeterminate(this);
+            }
+
+            // A parent only checks the descendants that are enabled, so enabling or disabling an item changes what a checked parent covers.
+            if (_shadowContext is not null && _shadowDisabled != Disabled)
+            {
+                _shadowDisabled = Disabled;
+                _shadowContext.InvalidateTree();
+            }
         }
+
+        private bool _shadowDisabled;
 
         /// <summary>
         /// The item that contains this one in its <see cref="NestedList"/>, if any.

@@ -172,6 +172,7 @@ internal sealed class MudSelectContext<T>
         }
 
         _shadowLookup[item.Value] = item;
+        InvalidateTree();
         SyncShadowNesting(item);
 
         GetShadowSiblings(item, create: true)?.Add(item);
@@ -192,6 +193,7 @@ internal sealed class MudSelectContext<T>
 
         _shadowLookup.Remove(item.Value);
         _nestedShadowItems.Remove(item);
+        InvalidateTree();
 
         GetShadowSiblings(item, create: false)?.Remove(item);
         _shadowChildren.Remove(item);
@@ -216,13 +218,11 @@ internal sealed class MudSelectContext<T>
     public void SyncShadowNesting(MudSelectItem<T> item, bool renderOnChange = false)
     {
         var wasTree = HasNestedItems;
-        if (item.HasNestedItems)
+        var changed = item.HasNestedItems ? _nestedShadowItems.Add(item) : _nestedShadowItems.Remove(item);
+        if (changed)
         {
-            _nestedShadowItems.Add(item);
-        }
-        else
-        {
-            _nestedShadowItems.Remove(item);
+            // An item that gains or loses children changes which items count as leaves.
+            InvalidateTree();
         }
 
         if (renderOnChange && wasTree != HasNestedItems)
@@ -251,6 +251,16 @@ internal sealed class MudSelectContext<T>
 
     private IReadOnlyCollection<T?>? _checkedLeavesSource;
     private HashSet<T?>? _checkedLeaves;
+    private int _treeVersion;
+    private int _checkedLeavesVersion;
+
+    /// <summary>
+    /// Discards the remembered checked state because the tree it was worked out from has changed.
+    /// </summary>
+    /// <remarks>
+    /// The checked state depends on which items exist, where they are and whether they are disabled, as well as on the selected values.
+    /// </remarks>
+    public void InvalidateTree() => _treeVersion++;
 
     /// <summary>
     /// Gets whether the item is partly checked because some, but not all, of its enabled descendants are checked.
@@ -285,9 +295,10 @@ internal sealed class MudSelectContext<T>
     private HashSet<T?> GetCheckedLeaves()
     {
         var source = _select.GetSelectedValues();
-        if (_checkedLeaves is null || !ReferenceEquals(source, _checkedLeavesSource))
+        if (_checkedLeaves is null || !ReferenceEquals(source, _checkedLeavesSource) || _checkedLeavesVersion != _treeVersion)
         {
             _checkedLeavesSource = source;
+            _checkedLeavesVersion = _treeVersion;
             _checkedLeaves = ExpandToLeaves(source ?? []);
         }
 
@@ -493,6 +504,7 @@ internal sealed class MudSelectContext<T>
         }
 
         _shadowLookup[newValue] = item;
+        InvalidateTree();
         _select.InvalidateFitContent();
 
         // Re-render only when the changed value is the one shown by the selected-value presenter

@@ -23,6 +23,7 @@ else
     [Parameter] public ExpandIconPlacement ExpandIconPlacement { get; set; } = ExpandIconPlacement.Start;
     [Parameter] public bool TreeLines { get; set; } = true;
     [Parameter] public bool ShowLaptops { get; set; } = true;
+    [Parameter] public bool DisableLaptops { get; set; }
     [Parameter] public bool ExpandOnClick { get; set; }
     [Parameter] public bool SelectionOnEnter { get; set; }
     [Parameter] public CheckedStrategy CheckedStrategy { get; set; } = CheckedStrategy.All;
@@ -41,7 +42,7 @@ else
                     </MudSelectItem>
                     @if (ShowLaptops)
                     {
-                        <MudSelectItem Value="@("laptops")">Laptops</MudSelectItem>
+                        <MudSelectItem Value="@("laptops")" Disabled="@DisableLaptops">Laptops</MudSelectItem>
                     }
                 </NestedList>
             </MudSelectItem>

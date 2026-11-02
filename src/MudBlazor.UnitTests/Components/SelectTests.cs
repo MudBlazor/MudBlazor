@@ -3103,6 +3103,53 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// An item added after the first render is counted in a parent's checked state, even though the selected values did not change.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_CheckedStrategyParent_ItemAddedLater_UpdatesCheckedState()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.InitiallyExpanded, true)
+                .Add(x => x.ShowLaptops, false)
+                .Add(x => x.CheckedStrategy, CheckedStrategy.Parent)
+                .Add(x => x.SelectedValues, ["electronics"]));
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+            TreeCheckbox(comp, "Electronics").Should().Be("checked");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowLaptops, true));
+
+            TreeCheckbox(comp, "Laptops").Should().Be("checked", "the selected parent covers the new item");
+            TreeCheckbox(comp, "Electronics").Should().Be("checked");
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEmpty("clicking a fully checked parent clears its branch");
+            TreeCheckbox(comp, "Electronics").Should().Be("unchecked");
+        }
+
+        /// <summary>
+        /// Disabling an item after the first render changes what a checked parent covers, so the parent's state follows.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_CheckedStrategyParent_ItemDisabledLater_UpdatesCheckedState()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.InitiallyExpanded, true)
+                .Add(x => x.CheckedStrategy, CheckedStrategy.Parent)
+                .Add(x => x.SelectedValues, ["smartphones"]));
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+            TreeCheckbox(comp, "Electronics").Should().Be("indeterminate", "only one of its two enabled leaves is checked");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DisableLaptops, true));
+
+            TreeCheckbox(comp, "Electronics").Should().Be("checked", "a disabled item is not counted, so every enabled leaf is checked");
+        }
+
+        /// <summary>
         /// The default strategy keeps items independent: checking a parent checks nothing else.
         /// </summary>
         [Test]
