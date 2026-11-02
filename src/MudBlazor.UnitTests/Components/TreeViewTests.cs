@@ -1874,6 +1874,51 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies that expanding a folder whose child is itself an expanded folder splices the whole visible subtree at the right depths,
+        /// and that collapsing it removes every nested row while keeping the rows outside the folder.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_SplicingFolderWithNestedDescendants_MovesWholeVisibleSubtree()
+        {
+            var leaf = new TreeItemData<string> { Value = "Leaf", Text = "Leaf" };
+            var sub = new TreeItemData<string> { Value = "Sub", Text = "Sub", Expanded = true, Children = [leaf] };
+            var folder = new TreeItemData<string> { Value = "Folder", Text = "Folder", Children = [sub] };
+            var sibling = new TreeItemData<string> { Value = "Sib", Text = "Sib" };
+            var comp = RenderDataTree([folder, sibling], SelectionMode.MultiSelection);
+            var siblingRow = GetTreeViewItemContexts(comp).Single(row => row.Item.Value == "Sib");
+
+            await FindTreeItem(comp, "Folder").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            var expandedRows = GetTreeViewItemContexts(comp);
+            expandedRows.Select(row => row.Item.Value).Should().Equal("Folder", "Sub", "Leaf", "Sib");
+            expandedRows.Select(row => row.Depth).Should().Equal(new[] { 0, 1, 2, 0 }, "the splice inserts the nested subtree at the depths below the toggled folder");
+            expandedRows.Single(row => row.Item.Value == "Sib").Should().BeSameAs(siblingRow, "the splice keeps the rows which are not below the toggled folder");
+
+            await FindTreeItem(comp, "Folder").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            var collapsedRows = GetTreeViewItemContexts(comp);
+            collapsedRows.Select(row => row.Item.Value).Should().Equal("Folder", "Sib");
+            collapsedRows.Single(row => row.Item.Value == "Sib").Should().BeSameAs(siblingRow, "collapsing the folder keeps the rows outside it");
+        }
+
+        /// <summary>
+        /// Verifies that expanding a folder in a tree with repeated values falls back to a full reprojection instead of splicing, keeping the duplicate rows distinct.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ExpandingFolderWithRepeatedValues_FallsBackToReprojection()
+        {
+            var shared = new TreeItemData<string> { Value = "Shared", Text = "Shared" };
+            var folder = new TreeItemData<string> { Value = "Folder", Text = "Folder", Children = [shared] };
+            var comp = RenderDataTree([shared, folder], SelectionMode.MultiSelection);
+
+            await FindTreeItem(comp, "Folder").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            var rows = GetTreeViewItemContexts(comp);
+            rows.Select(row => row.Item.Value).Should().Equal("Shared", "Folder", "Shared");
+            rows.Select(row => row.Depth).Should().Equal(0, 0, 1);
+        }
+
+        /// <summary>
         /// Verifies that a selection change arriving in the same parent render as an in-place change to the items moves the backing selection from an item which is not rendered to the new one.
         /// </summary>
         [Test]
