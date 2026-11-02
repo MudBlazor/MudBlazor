@@ -1,7 +1,7 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect T="string" @bind-Value="Value" Label="Category">
-    <MudSelectItem Value="@("electronics")" @bind-Expanded="ElectronicsExpanded" @bind-Expanded:after="CountChange"
+<MudSelect T="string" @bind-Value="Value" Label="Category" Comparer="@StringComparer.OrdinalIgnoreCase">
+    <MudSelectItem Value="@ElectronicsValue" @bind-Expanded="ElectronicsExpanded" @bind-Expanded:after="CountChange"
                    ExpandLessIcon="@Icons.Material.Filled.Remove" ExpandMoreIcon="@Icons.Material.Filled.Add" ExpandIconColor="Color.Primary">
         <ChildContent>Electronics</ChildContent>
         <NestedList>
@@ -17,6 +17,7 @@
 
     [Parameter] public string? Value { get; set; }
     [Parameter] public bool ElectronicsExpanded { get; set; }
+    [Parameter] public string ElectronicsValue { get; set; } = "electronics";
 
     /// <summary>
     /// How many times the select reported a change of <see cref="ElectronicsExpanded"/>.

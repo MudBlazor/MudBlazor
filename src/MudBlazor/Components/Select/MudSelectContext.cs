@@ -19,8 +19,8 @@ internal sealed class MudSelectContext<T>
     private readonly List<Func<IReadOnlyCollection<T?>, Task>> _selectionObservers = [];
     private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _valueLookup = new();
     private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _shadowLookup = new();
-    private readonly Dictionary<NullableObject<T?>, bool> _expansion = new();
-    private int _nestedShadowItemCount;
+    private readonly Dictionary<NullableObject<T?>, bool> _expansion;
+    private readonly HashSet<MudSelectItem<T>> _nestedShadowItems = new();
     private readonly List<MudSelectItem<T>> _shadowRoots = new();
     private readonly Dictionary<MudSelectItem<T>, List<MudSelectItem<T>>> _shadowChildren = new();
 
@@ -31,6 +31,19 @@ internal sealed class MudSelectContext<T>
     public MudSelectContext(MudSelect<T> select)
     {
         _select = select;
+        _expansion = new Dictionary<NullableObject<T?>, bool>(new ExpansionKeyComparer(select));
+    }
+
+    /// <summary>
+    /// Compares remembered expansion keys with the select's <see cref="MudSelect{T}.Comparer"/>, so equal values share one entry.
+    /// </summary>
+    private sealed class ExpansionKeyComparer(MudSelect<T> select) : IEqualityComparer<NullableObject<T?>>
+    {
+        private IEqualityComparer<T?> Comparer => select.Comparer ?? EqualityComparer<T?>.Default;
+
+        public bool Equals(NullableObject<T?> x, NullableObject<T?> y) => Comparer.Equals(x.Item, y.Item);
+
+        public int GetHashCode(NullableObject<T?> obj) => obj.Item is null ? 0 : Comparer.GetHashCode(obj.Item);
     }
 
     /// <summary>
@@ -159,10 +172,7 @@ internal sealed class MudSelectContext<T>
         }
 
         _shadowLookup[item.Value] = item;
-        if (item.HasNestedItems)
-        {
-            _nestedShadowItemCount++;
-        }
+        SyncShadowNesting(item);
 
         GetShadowSiblings(item, create: true)?.Add(item);
 
@@ -180,13 +190,14 @@ internal sealed class MudSelectContext<T>
             return;
         }
 
-        if (_shadowLookup.Remove(item.Value) && item.HasNestedItems)
-        {
-            _nestedShadowItemCount--;
-        }
+        _shadowLookup.Remove(item.Value);
+        _nestedShadowItems.Remove(item);
 
         GetShadowSiblings(item, create: false)?.Remove(item);
         _shadowChildren.Remove(item);
+
+        // The popup recreates its own items on every open and relies on this memory, but the hidden copy only goes away with the item itself.
+        _expansion.Remove(item.Value);
 
         _select.InvalidateFitContent();
     }
@@ -194,7 +205,31 @@ internal sealed class MudSelectContext<T>
     /// <summary>
     /// Gets whether any item contains nested items, which makes the popup a tree instead of a list.
     /// </summary>
-    public bool HasNestedItems => _nestedShadowItemCount > 0;
+    public bool HasNestedItems => _nestedShadowItems.Count > 0;
+
+    /// <summary>
+    /// Records whether a hidden item currently has a nested list, which can change after it registered.
+    /// </summary>
+    /// <remarks>
+    /// The select writes its list or tree attributes before its items update, so it renders again when the answer flips.
+    /// </remarks>
+    public void SyncShadowNesting(MudSelectItem<T> item, bool renderOnChange = false)
+    {
+        var wasTree = HasNestedItems;
+        if (item.HasNestedItems)
+        {
+            _nestedShadowItems.Add(item);
+        }
+        else
+        {
+            _nestedShadowItems.Remove(item);
+        }
+
+        if (renderOnChange && wasTree != HasNestedItems)
+        {
+            ((IMudStateHasChanged)_select).StateHasChanged();
+        }
+    }
 
     /// <summary>
     /// Gets the shadow items that share a parent with the given item, in markup order.

@@ -1,0 +1,19 @@
+﻿<MudPopoverProvider />
+
+<MudSelect T="string" @bind-Value="Value" Label="Category">
+    <MudSelectItem Value="@("fruit")" NestedList="@(ShowChildren ? FruitChildren : null)">Fruit</MudSelectItem>
+    <MudSelectItem Value="@("dairy")">Dairy</MudSelectItem>
+</MudSelect>
+
+@code {
+    public static string __description__ = "A select whose first item only gets a nested list after it has rendered.";
+
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public bool ShowChildren { get; set; }
+
+    private RenderFragment FruitChildren =>
+        @<text>
+            <MudSelectItem Value="@("apples")">Apples</MudSelectItem>
+            <MudSelectItem Value="@("bananas")">Bananas</MudSelectItem>
+        </text>;
+}

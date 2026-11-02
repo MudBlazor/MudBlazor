@@ -128,6 +128,15 @@ namespace MudBlazor
                 .WithChangeHandler(OnExpandedChangedAsync);
         }
 
+        /// <inheritdoc />
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            // A nested list can appear or disappear after the item registered, and the select decides between list and tree from it.
+            _shadowContext?.SyncShadowNesting(this, renderOnChange: true);
+        }
+
         /// <summary>
         /// The item that contains this one in its <see cref="NestedList"/>, if any.
         /// </summary>
@@ -237,9 +246,13 @@ namespace MudBlazor
         /// <summary>
         /// Handles the parent changing <see cref="Expanded"/> from outside.
         /// </summary>
+        /// <remarks>
+        /// While the popup is closed only the hidden copy of this item receives the change, so it must record it too.
+        /// Otherwise the visible item restores a stale remembered value the next time the popup opens.
+        /// </remarks>
         private async Task OnExpandedChangedAsync(ParameterChangedEventArgs<bool> args)
         {
-            _context?.SetExpansion(Value, args.Value);
+            (_context ?? _shadowContext)?.SetExpansion(Value, args.Value);
             if (!args.Value && MudSelect is not null)
             {
                 await MudSelect.OnItemCollapsedAsync(this);

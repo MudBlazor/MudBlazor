@@ -3191,6 +3191,69 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A bound Expanded changed by the parent while the popup is closed wins when the popup opens again, without a spurious change event.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_BoundExpandedChangedWhileClosed_IsNotRevertedOnReopen()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedExpandedTest>(parameters => parameters.Add(x => x.ElectronicsExpanded, true));
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+            await comp.InvokeAsync(() => select.Instance.CloseMenu());
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ElectronicsExpanded, false));
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+
+            comp.FindAll("[role=treeitem]").Select(x => x.TextContent.Trim()).Should().Equal("Electronics", "Books");
+            comp.Instance.ElectronicsExpanded.Should().BeFalse();
+            comp.Instance.ChangeCount.Should().Be(0, "reopening must not report a change the parent made itself");
+        }
+
+        /// <summary>
+        /// Remembered expansion follows the select's comparer, so a value that differs only by what the comparer ignores keeps its state.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_ExpansionMemory_UsesSelectComparer()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedExpandedTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+            await comp.FindAll("[role=treeitem]").First().QuerySelector(".mud-select-item-toggle")!.ClickAsync();
+            await comp.InvokeAsync(() => select.Instance.CloseMenu());
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ElectronicsValue, "ELECTRONICS"));
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+
+            comp.FindAll("[role=treeitem]").Select(x => x.TextContent.Trim()).Should().Equal("Electronics", "Phones", "Laptops", "Books");
+        }
+
+        /// <summary>
+        /// A select becomes a tree when an item gains a nested list after it first rendered, and a plain list again when it loses it.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_NestedListAddedLater_SwitchesBetweenListAndTree()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedLateTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+            comp.Find("[role=combobox]").GetAttribute("aria-haspopup").Should().Be("listbox");
+            comp.FindAll("[role=tree]").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowChildren, true));
+
+            comp.Find("[role=combobox]").GetAttribute("aria-haspopup").Should().Be("tree");
+            comp.FindAll(".mud-select-item-toggle").Should().HaveCount(1);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowChildren, false));
+
+            comp.Find("[role=combobox]").GetAttribute("aria-haspopup").Should().Be("listbox");
+            comp.FindAll(".mud-select-item-toggle").Should().BeEmpty();
+        }
+
+        /// <summary>
         /// The expand and collapse icons can be replaced per item and follow the expanded state.
         /// </summary>
         [Test]

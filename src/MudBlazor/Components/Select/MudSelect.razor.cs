@@ -360,12 +360,12 @@ namespace MudBlazor
         public bool InitiallyExpanded { get; set; }
 
         /// <summary>
-        /// Expands and collapses an item with a <see cref="MudSelectItem{T}.NestedList"/> when its row is clicked, not only its chevron.
+        /// Acts on an item with a <see cref="MudSelectItem{T}.NestedList"/> when its row is clicked, not only when its chevron is.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// With single selection, clicking a parent only expands or collapses it, so only items without children can be selected.
-        /// With <see cref="MultiSelection"/>, clicking a parent toggles its checkbox and expands it.
+        /// With single selection, clicking a parent expands or collapses it, so only items without children can be selected.
+        /// With <see cref="MultiSelection"/>, clicking a parent toggles its checkbox and expands it, but only the chevron collapses it.
         /// Pressing Enter on a highlighted parent does the same as clicking it.
         /// </remarks>
         [Parameter]
@@ -438,6 +438,12 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.ListAppearance)]
         public bool TreeLines { get; set; } = true;
 
+        /// <summary>
+        /// Whether the layout is right-to-left, which swaps the arrow keys that expand and collapse nested items.
+        /// </summary>
+        /// <remarks>
+        /// Set by a surrounding <see cref="MudRTLProvider"/>.
+        /// </remarks>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
