@@ -735,8 +735,8 @@ namespace MudBlazor
             if (IsVirtualizedItem && CurrentItemData is not null)
             {
                 CurrentItemData.Expanded = expanded;
-                // Marking the projection stale before ExpandedChanged runs lets the parent render it causes re-project once, instead of comparing the changed items and re-projecting again afterwards.
-                MudTreeRoot?.RefreshProjection();
+                // Splicing the projection before ExpandedChanged runs lets the parent render it causes update the rows without re-projecting, and the parent render still re-projects once when the change cannot be spliced.
+                MudTreeRoot?.ToggleProjection(CurrentItemContext, expanded);
             }
 
             await _expandedState.SetValueAsync(expanded);

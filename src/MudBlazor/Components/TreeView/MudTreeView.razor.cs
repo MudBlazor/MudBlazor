@@ -763,6 +763,23 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Applies an item's expansion change to the projection, splicing only the rows below the toggled row when the projection is current.
+        /// </summary>
+        /// <param name="row">The row context of the toggled item, which is null when the item is not rendered by the virtualizer.</param>
+        /// <param name="expanded">The expansion state the item moved to.</param>
+        internal void ToggleProjection(TreeViewItemContext<T>? row, bool expanded)
+        {
+            // Splicing keeps the other rows, so toggling a folder costs the rows below it instead of re-projecting the whole hierarchy.
+            if (row is not null && !_projectionDirty && _projection.TrySpliceExpansion(row.RowKey, expanded))
+            {
+                StateHasChanged();
+                return;
+            }
+
+            RefreshProjection();
+        }
+
+        /// <summary>
         /// Marks the projection stale and re-renders the tree.
         /// </summary>
         /// <param name="alwaysRender">Whether the tree re-renders even when it is not virtualized.</param>

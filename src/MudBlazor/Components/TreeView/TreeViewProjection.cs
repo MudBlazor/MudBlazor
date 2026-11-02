@@ -31,6 +31,8 @@ internal sealed class TreeViewProjection<T>
     private HashSet<T> _selectedValues = [];
     private IEqualityComparer<T?> _comparer = EqualityComparer<T?>.Default;
     private bool _selectionInitialized;
+    // The mutable list behind Rows, so an expansion change can insert or remove rows without rebuilding the projection.
+    private List<TreeViewItemContext<T>> _rowList = [];
 
     /// <summary>
     /// The current flattened visible rows.
@@ -64,7 +66,52 @@ internal sealed class TreeViewProjection<T>
         var rows = new List<TreeViewItemContext<T>>();
         var rowOrdinals = _repeatedItems is null ? null : new Dictionary<ITreeItemData<T>, int>(ReferenceEqualityComparer.Instance);
         AddVisibleRows(_roots, 0, rows, rowOrdinals);
+        _rowList = rows;
         Rows = rows.AsReadOnly();
+    }
+
+    /// <summary>
+    /// Applies an expansion change by inserting or removing only the visible rows below the toggled row, instead of rebuilding.
+    /// </summary>
+    /// <param name="key">The row key of the toggled row.</param>
+    /// <param name="expanded">The expansion state the row moved to.</param>
+    /// <returns>Whether the change was spliced; false leaves the caller to rebuild the projection.</returns>
+    /// <remarks>
+    /// A repeated item shares one row between its occurrences, so its expansion cannot be settled by a splice, and a row which is not projected cannot be located in the row list.
+    /// </remarks>
+    public bool TrySpliceExpansion(TreeViewRowKey<T> key, bool expanded)
+    {
+        if (_repeatedItems is not null || !_rowNodes.TryGetValue(key, out var node) || node.Row is null)
+        {
+            return false;
+        }
+
+        var index = _rowList.IndexOf(node.Row);
+        if (index < 0)
+        {
+            return false;
+        }
+
+        var depth = node.Row.Depth;
+        var end = index + 1;
+        while (end < _rowList.Count && _rowList[end].Depth > depth)
+        {
+            _rowNodes.Remove(_rowList[end].RowKey);
+            end++;
+        }
+
+        _rowList.RemoveRange(index + 1, end - index - 1);
+        // The walk compares Expanded with the projected snapshot, so the splice updates it to keep the snapshot honest.
+        node.Expanded = expanded;
+        if (expanded)
+        {
+            var inserted = new List<TreeViewItemContext<T>>();
+            AddVisibleRows(node.Children, depth + 1, inserted, null);
+            _rowList.InsertRange(index + 1, inserted);
+        }
+
+        Rows = _rowList.AsReadOnly();
+        return true;
     }
 
     /// <summary>
@@ -632,7 +679,7 @@ internal sealed class TreeViewProjection<T>
 
         public bool Visible { get; init; }
 
-        public bool Expanded { get; init; }
+        public bool Expanded { get; set; }
 
         public bool Expandable { get; init; }
 

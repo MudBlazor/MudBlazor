@@ -1858,6 +1858,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies that expanding a folder splices its rows into the projection instead of reprojecting the hierarchy.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ExpandingFolderSplicesRowsWithoutReprojecting()
+        {
+            var (items, _) = CreateTrackedHierarchy();
+            var comp = RenderDataTree(items, SelectionMode.MultiSelection);
+            var otherRow = GetTreeViewItemContexts(comp).Single(row => row.Item.Value == "Other");
+
+            await FindTreeItem(comp, "Collapsed").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            GetVirtualizedValues(comp).Should().Equal("Other", "Collapsed", "Tracked");
+            GetTreeViewItemContexts(comp).Single(row => row.Item.Value == "Other").Should().BeSameAs(otherRow, "the splice keeps the rows which are not below the toggled folder");
+        }
+
+        /// <summary>
         /// Verifies that a selection change arriving in the same parent render as an in-place change to the items moves the backing selection from an item which is not rendered to the new one.
         /// </summary>
         [Test]
