@@ -35,6 +35,14 @@ namespace MudBlazor
             .AddClass(BulletsClass)
             .Build();
 
+        protected string CustomNavigationButtonsClassName => new CssBuilder("mud-carousel-custom-button")
+            .AddClass(NavigationButtonsClassName)
+            .Build();
+
+        protected string CustomBulletsButtonsClassName => new CssBuilder("mud-carousel-custom-button")
+            .AddClass(BulletsButtonsClassName)
+            .Build();
+
         /// <summary>
         /// Displays carousel controls right-to-left.
         /// </summary>
