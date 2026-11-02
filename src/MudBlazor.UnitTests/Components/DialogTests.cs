@@ -1,4 +1,5 @@
 ﻿using System.Web;
+using AngleSharp.Css.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -435,6 +436,23 @@ namespace MudBlazor.UnitTests.Components
             ((DialogWithParameters)dialogReference.Dialog).TestValue.Should().Be("new_test");
             ((DialogWithParameters)dialogReference.Dialog).ParametersSetCounter.Should().Be(1);
             textField.ReadText.Should().Be("new_test");
+        }
+
+        /// <summary>
+        /// A dialog that receives a reference-type parameter renders once when opened, so forwarding renders to the container cannot loop.
+        /// </summary>
+        [Test]
+        public async Task DialogWithReferenceParameter_DoesNotRenderLoop()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            var parameters = new DialogParameters<DialogWithModelParameter> { { x => x.Model, ["a", "b"] } };
+            IDialogReference dialogReference = null;
+
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogWithModelParameter>(string.Empty, parameters));
+
+            comp.Find(".model-count").TrimmedText().Should().Be("2");
+            ((DialogWithModelParameter)dialogReference.Dialog).RenderCount.Should().Be(1, "the container re-render that MudDialog forwards must not re-render the dialog content");
         }
 
         [Test]
@@ -1962,6 +1980,97 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Verify that title content is updated when StateHasChanged invoked from non-inlined custom dialog
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task DialogTitleShouldUpdateDynamically()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogDynamicTitleUpdates>());
+
+            dialogReference.Should().NotBeNull();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".dynamic-title").Should().NotBeNull();
+                comp.Find(".dynamic-title").TrimmedText().Should().Be("");
+            });
+
+            await comp.Find(".title-btn").ClickAsync(); // test for update initiated from dialog title
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".dynamic-title").TrimmedText().Should().Be("1");
+            });
+
+            await comp.Find(".content-btn").ClickAsync(); // test for update initiated from dialog content
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".dynamic-title").TrimmedText().Should().Be("11");
+            });
+        }
+
+        /// <summary>
+        /// Verify that dialog style value is updated when StateHasChanged invoked from non-inlined custom dialog
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task DialogStyleShouldUpdateDynamically()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogDynamicStyleUpdates>());
+
+            dialogReference.Should().NotBeNull();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".test-class").Should().NotBeNull();
+                comp.Find(".test-class").GetStyle().CssText.Trimmed().Should().Be("display: flex !important");
+            });
+
+            await comp.Find(".content-btn").ClickAsync(); // test for update initiated from dialog content
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".test-class").GetStyle().CssText.Trimmed().Should().Be("display: block !important");
+            });
+        }
+
+        /// <summary>
+        /// Verify that dialog class value is updated when StateHasChanged invoked from non-inlined custom dialog
+        /// </summary>
+        /// <returns></returns>
+        [Test]
+        public async Task DialogClassShouldUpdateDynamically()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            service.Should().NotBe(null);
+            IDialogReference dialogReference = null;
+            // open simple test dialog
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogDynamicClassUpdates>());
+
+            dialogReference.Should().NotBeNull();
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".test-class").Should().NotBeNull();
+            });
+
+            await comp.Find(".content-btn").ClickAsync(); // test for update initiated from dialog content
+            await comp.WaitForAssertionAsync(() =>
+            {
+                comp.Find(".test-class-dynamic").Should().NotBeNull();
+            });
+        }
     }
     internal class CustomDialogService : DialogService
     {
