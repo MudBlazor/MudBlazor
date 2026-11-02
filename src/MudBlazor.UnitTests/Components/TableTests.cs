@@ -962,6 +962,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The multi-selection checkbox cells in the header, body and footer rows shrink to fit so the column doesn't take leftover width (issue #6785).
+        /// </summary>
+        [Test]
+        public void TableMultiSelection_CheckboxCellsFitContent()
+        {
+            var comp = Context.Render<TableMultiSelectionTest6>();
+
+            comp.FindAll("thead tr th:first-child.mud-table-cell-fit").Should().ContainSingle();
+            comp.FindAll("tbody tr td:first-child.mud-table-cell-fit").Should().HaveCount(3);
+            comp.FindAll("tfoot tr td:first-child.mud-table-cell-fit").Should().ContainSingle();
+            comp.FindAll(".mud-table-cell-fit").Should().HaveCount(5, "only the checkbox cells should fit their content");
+        }
+
+        /// <summary>
         /// checking the footer checkbox should select all items (all checkboxes on, all items in SelectedItems) with multiheader
         /// </summary>
         [Test]
