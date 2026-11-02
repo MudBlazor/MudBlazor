@@ -2,13 +2,13 @@
 
 @if (MultiSelection)
 {
-    <MudSelect T="string" MultiSelection="true" SelectAll="true" @bind-SelectedValues="SelectedValues" InitiallyExpanded="@InitiallyExpanded" ExpandIconPlacement="@ExpandIconPlacement" TreeLines="@TreeLines" ExpandOnClick="@ExpandOnClick" CheckedStrategy="@CheckedStrategy" Label="Category">
+    <MudSelect T="string" MultiSelection="true" SelectAll="true" @bind-SelectedValues="SelectedValues" InitiallyExpanded="@InitiallyExpanded" ExpandIconPlacement="@ExpandIconPlacement" TreeLines="@TreeLines" ExpandOnClick="@ExpandOnClick" SelectionOnEnter="@SelectionOnEnter" CheckedStrategy="@CheckedStrategy" Label="Category">
         @Items
     </MudSelect>
 }
 else
 {
-    <MudSelect T="string" @bind-Value="Value" InitiallyExpanded="@InitiallyExpanded" ExpandIconPlacement="@ExpandIconPlacement" TreeLines="@TreeLines" ExpandOnClick="@ExpandOnClick" CheckedStrategy="@CheckedStrategy" Label="Category">
+    <MudSelect T="string" @bind-Value="Value" InitiallyExpanded="@InitiallyExpanded" ExpandIconPlacement="@ExpandIconPlacement" TreeLines="@TreeLines" ExpandOnClick="@ExpandOnClick" SelectionOnEnter="@SelectionOnEnter" CheckedStrategy="@CheckedStrategy" Label="Category">
         @Items
     </MudSelect>
 }
@@ -24,6 +24,7 @@ else
     [Parameter] public bool TreeLines { get; set; } = true;
     [Parameter] public bool ShowLaptops { get; set; } = true;
     [Parameter] public bool ExpandOnClick { get; set; }
+    [Parameter] public bool SelectionOnEnter { get; set; }
     [Parameter] public CheckedStrategy CheckedStrategy { get; set; } = CheckedStrategy.All;
 
     private RenderFragment Items =>

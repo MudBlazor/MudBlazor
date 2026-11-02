@@ -1125,8 +1125,7 @@ namespace MudBlazor
             var child = Items.FirstOrDefault(x => ReferenceEquals(x.ParentItem, active) && (!x.Disabled || x.HasNestedItems));
             if (child is not null)
             {
-                await HighlightItemAsync(child);
-                await ScrollToItemAsync(child);
+                await MoveHighlightAsync(child);
             }
         }
 
@@ -1151,9 +1150,27 @@ namespace MudBlazor
 
             if (active.ParentItem is { } parent)
             {
-                await HighlightItemAsync(parent);
-                await ScrollToItemAsync(parent);
+                await MoveHighlightAsync(parent);
             }
+        }
+
+        /// <summary>
+        /// Moves the highlight with an expand or collapse key, and changes the value the way Up and Down do.
+        /// </summary>
+        /// <remarks>
+        /// With single selection the value follows the highlight unless <see cref="SelectionOnEnter"/> is set.
+        /// Disabled items, and parents that <see cref="ExpandOnClick"/> only expands, are highlighted without being selected.
+        /// </remarks>
+        private async Task MoveHighlightAsync(MudSelectItem<T> item)
+        {
+            if (!MultiSelection && !SelectionOnEnter && !item.Disabled && !OnlyExpands(item))
+            {
+                await SelectAndHighlightItemAsync(item);
+                return;
+            }
+
+            await HighlightItemAsync(item);
+            await ScrollToItemAsync(item);
         }
 
         private Task HighlightItemForValueAsync(T? value)
@@ -1196,6 +1213,17 @@ namespace MudBlazor
 
             return new HashSet<T?>(_context.ApplyStrategy(leaves, CheckedStrategy), Comparer);
         }
+
+        /// <summary>
+        /// Gives the Select All row a role that is allowed inside a tree.
+        /// </summary>
+        /// <remarks>
+        /// A tree only owns <c>treeitem</c> and <c>group</c> children, and the row would otherwise be an <c>option</c>.
+        /// </remarks>
+        private Dictionary<string, object?> GetSelectAllAttributes()
+            => _context.HasNestedItems
+                ? new Dictionary<string, object?> { ["role"] = "treeitem", ["aria-level"] = "1" }
+                : [];
 
         private string ResolvedSelectAllText() => string.IsNullOrEmpty(SelectAllText) ? Localizer[LanguageResource.MudSelect_SelectAll] : SelectAllText;
 

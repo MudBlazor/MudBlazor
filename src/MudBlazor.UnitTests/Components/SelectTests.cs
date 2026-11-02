@@ -2632,15 +2632,15 @@ namespace MudBlazor.UnitTests.Components
         /// Reads the visible rows of a tree select in display order.
         /// </summary>
         private static string[] TreeRows(IRenderedComponent<SelectNestedTest> comp)
-            => comp.FindAll("[role=treeitem]").Select(x => x.TextContent.Trim()).ToArray();
+            => comp.FindAll("[role=treeitem].mud-select-item-tree").Select(x => x.TextContent.Trim()).ToArray();
 
         private static IElement TreeRow(IRenderedComponent<SelectNestedTest> comp, string text)
-            => comp.FindAll("[role=treeitem]").Single(x => x.TextContent.Trim() == text);
+            => comp.FindAll("[role=treeitem].mud-select-item-tree").Single(x => x.TextContent.Trim() == text);
 
         private static string? ActiveRow(IRenderedComponent<SelectNestedTest> comp)
         {
             var id = comp.Find("[role=combobox]").GetAttribute("aria-activedescendant");
-            return comp.FindAll("[role=treeitem]").SingleOrDefault(x => x.Id == id)?.TextContent.Trim();
+            return comp.FindAll("[role=treeitem].mud-select-item-tree").SingleOrDefault(x => x.Id == id)?.TextContent.Trim();
         }
 
         /// <summary>
@@ -3188,6 +3188,109 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ElectronicsExpanded, true));
 
             Rows().Should().Equal("Electronics", "Phones", "Laptops", "Books");
+        }
+
+        /// <summary>
+        /// With SelectAll the tree still owns only tree items, so the Select All row is one instead of an option.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_SelectAllRow_IsATreeItemInsideTheTree()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters.Add(x => x.MultiSelection, true));
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+
+            var tree = comp.Find("[role=tree]");
+            tree.QuerySelectorAll("[role=option]").Should().BeEmpty("an option is not allowed inside a tree");
+            var rows = tree.QuerySelectorAll(".mud-list-item");
+            rows.Should().OnlyContain(x => x.GetAttribute("role") == "treeitem");
+            var selectAll = rows.First();
+            selectAll.TextContent.Trim().Should().Be("Select all");
+            selectAll.GetAttribute("aria-level").Should().Be("1");
+        }
+
+        /// <summary>
+        /// A flat multi-select keeps the Select All row as an option.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_FlatMultiSelectAll_KeepsOptionRole()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<MultiSelectTest2>();
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+
+            comp.FindAll("[role=tree]").Should().BeEmpty();
+            comp.FindAll("[role=treeitem]").Should().BeEmpty();
+            comp.FindAll(".mud-list-item").First().GetAttribute("role").Should().Be("option");
+        }
+
+        /// <summary>
+        /// In single selection Left and Right change the value with the highlight, like Up and Down, so the value never lags the highlighted row.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_SingleSelection_ExpandAndCollapseKeysChangeTheValue()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+
+            await PressAsync(select, keys, "ArrowDown");
+            select.Instance.ReadValue.Should().Be("electronics");
+
+            await PressAsync(select, keys, "ArrowRight");
+            TreeRows(comp).Should().Equal("Electronics", "Phones", "Laptops", "Books");
+            select.Instance.ReadValue.Should().Be("electronics", "expanding does not move the highlight");
+
+            await PressAsync(select, keys, "ArrowRight");
+            ActiveRow(comp).Should().Be("Phones");
+            select.Instance.ReadValue.Should().Be("phones");
+
+            await PressAsync(select, keys, "ArrowLeft");
+            ActiveRow(comp).Should().Be("Electronics");
+            select.Instance.ReadValue.Should().Be("electronics");
+        }
+
+        /// <summary>
+        /// With SelectionOnEnter the expand and collapse keys only move the highlight, as Up and Down do.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_SelectionOnEnter_ExpandAndCollapseKeysLeaveTheValue()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters.Add(x => x.SelectionOnEnter, true));
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+
+            await PressAsync(select, keys, "ArrowDown");
+            await PressAsync(select, keys, "ArrowRight");
+            await PressAsync(select, keys, "ArrowRight");
+
+            ActiveRow(comp).Should().Be("Phones");
+            select.Instance.ReadValue.Should().BeNull();
+
+            await PressAsync(select, keys, "Enter");
+            select.Instance.ReadValue.Should().Be("phones");
+        }
+
+        /// <summary>
+        /// With ExpandOnClick the expand and collapse keys never select a parent, because a parent only expands.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_ExpandOnClick_ExpandKeyDoesNotSelectParentChild()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters
+                .Add(x => x.ExpandOnClick, true)
+                .Add(x => x.InitiallyExpanded, true));
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+
+            await PressAsync(select, keys, "ArrowDown");
+            await PressAsync(select, keys, "ArrowRight");
+
+            ActiveRow(comp).Should().Be("Phones");
+            select.Instance.ReadValue.Should().BeNull("Phones has children, so it only expands");
         }
 
         /// <summary>
