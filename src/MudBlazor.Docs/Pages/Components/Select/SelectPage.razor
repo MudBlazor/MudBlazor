@@ -156,6 +156,44 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Nested items">
+                <Description>
+                    Put child items in the <CodeInline>NestedList</CodeInline> of a <CodeInline>MudSelectItem</CodeInline> to show a tree.
+                    A parent is selectable like any other item, and its chevron only expands or collapses it.
+                    When a <CodeInline>NestedList</CodeInline> is set, wrap the item's own content in <CodeInline>ChildContent</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(SelectNestedExample)">
+                <SelectNestedExample />
+            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Multi-selection">
+                        <Description>
+                            Items are selected independently, so selecting a parent does not select its children.
+                            <CodeInline>SelectAll</CodeInline> covers every enabled item, including those in collapsed branches.
+                            Set <CodeInline>InitiallyExpanded</CodeInline> to open every branch the first time the list is shown, or bind <CodeInline>Expanded</CodeInline> on an item to control it.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(SelectNestedMultiExample)">
+                        <SelectNestedMultiExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Keyboard">
+                        <Description>
+                            The list follows the WAI-ARIA tree pattern.
+                            <CodeInline>Right arrow</CodeInline> expands a collapsed item, or moves to its first child when it is already expanded.
+                            <CodeInline>Left arrow</CodeInline> collapses an expanded item, or moves to its parent.
+                            The keys swap in right-to-left layouts.
+                            <CodeInline>Up arrow</CodeInline>, <CodeInline>Down arrow</CodeInline>, <CodeInline>Home</CodeInline> and <CodeInline>End</CodeInline> move through the visible items.
+                        </Description>
+                    </SectionHeader>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Placement">
                 <Description>
                     The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place its list of items. It can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline>.

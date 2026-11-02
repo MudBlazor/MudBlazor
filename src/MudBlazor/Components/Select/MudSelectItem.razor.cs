@@ -14,10 +14,69 @@ namespace MudBlazor
         private MudSelectContext<T>? _context;
         private MudSelectContext<T>? _shadowContext;
         private IDisposable? _selectionSubscription;
+        private readonly ParameterState<bool> _expandedState;
 
         private string GetCssClasses() => new CssBuilder()
+            .AddClass("mud-select-item-nested", ParentItem is not null)
+            .AddClass("mud-select-item-tree", IsTree)
             .AddClass(Class)
             .Build();
+
+        /// <summary>
+        /// Whether the expand and collapse icon comes before the text.
+        /// </summary>
+        private bool ExpandIconAtStart => MudSelect?.ExpandIconPlacement != ExpandIconPlacement.End;
+
+        private string ToggleCssClass => new CssBuilder("mud-select-item-toggle")
+            .AddClass("mud-select-item-toggle-start", ExpandIconAtStart)
+            .Build();
+
+        /// <summary>
+        /// Indents nested items by one step per level, on the inline-start side so right-to-left layouts mirror.
+        /// </summary>
+        /// <remarks>
+        /// With the icon at the start, every row in a tree also reserves a column for it so leaves line up with their siblings.
+        /// </remarks>
+        private string? GetStyle() => new StyleBuilder()
+            .AddStyle("--mud-select-tree-level", Level.ToString(System.Globalization.CultureInfo.InvariantCulture), IsTree)
+            .AddStyle("padding-inline-start", ExpandIconAtStart ? $"calc(2.5rem + {Level} * 1.5rem)" : $"calc(1rem + {Level} * 1.5rem)", IsTree)
+            .AddStyle(Style)
+            .Build();
+
+        /// <summary>
+        /// Describes the connector segments drawn in the indent of this row, one per ancestor level.
+        /// </summary>
+        /// <remarks>
+        /// The last column joins this row to its parent.
+        /// Earlier columns carry an ancestor's line past this row, which only continues while that ancestor has later siblings.
+        /// </remarks>
+        private IEnumerable<(int Column, string CssClass)> GetGuides()
+        {
+            if (MudSelect?.TreeLines != true || _context is null || Level == 0)
+            {
+                yield break;
+            }
+
+            var through = new bool[Level - 1];
+            var ancestor = ParentItem;
+            for (var column = Level - 2; column >= 0 && ancestor is not null; column--)
+            {
+                through[column] = !_context.IsLastChild(ancestor);
+                ancestor = ancestor.ParentItem;
+            }
+
+            for (var column = 0; column < through.Length; column++)
+            {
+                if (through[column])
+                {
+                    yield return (column, "mud-select-item-guide");
+                }
+            }
+
+            yield return (Level - 1, _context.IsLastChild(this)
+                ? "mud-select-item-guide mud-select-item-guide-elbow mud-select-item-guide-last"
+                : "mud-select-item-guide mud-select-item-guide-elbow");
+        }
 
         internal string ItemId { get; } = Identifier.Create();
 
@@ -31,6 +90,16 @@ namespace MudBlazor
         {
             var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
             attributes.TryAdd("aria-selected", Selected ? "true" : "false");
+
+            if (IsTree)
+            {
+                attributes.TryAdd("role", "treeitem");
+                attributes.TryAdd("aria-level", (Level + 1).ToString(System.Globalization.CultureInfo.InvariantCulture));
+                if (HasNestedItems)
+                {
+                    attributes.TryAdd("aria-expanded", _expandedState.Value ? "true" : "false");
+                }
+            }
 
             if (Disabled)
             {
@@ -53,6 +122,128 @@ namespace MudBlazor
                 .WithParameter(() => Value)
                 .WithChangeHandler(OnValueChanged)
                 .WithComparer(() => (_context ?? _shadowContext)?.Comparer ?? EqualityComparer<T?>.Default);
+            _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
+                .WithParameter(() => Expanded)
+                .WithEventCallback(() => ExpandedChanged)
+                .WithChangeHandler(OnExpandedChangedAsync);
+        }
+
+        /// <summary>
+        /// The item that contains this one in its <see cref="NestedList"/>, if any.
+        /// </summary>
+        [CascadingParameter(Name = "ParentSelectItem")]
+        internal MudSelectItem<T>? ParentItem { get; set; }
+
+        /// <summary>
+        /// The depth of this item, where top-level items are <c>0</c>.
+        /// </summary>
+        internal int Level => ParentItem is null ? 0 : ParentItem.Level + 1;
+
+        /// <summary>
+        /// Whether this item contains nested items.
+        /// </summary>
+        internal bool HasNestedItems => NestedList is not null;
+
+        /// <summary>
+        /// Whether this item or the select it belongs to is a tree.
+        /// </summary>
+        private bool IsTree => ParentItem is not null || HasNestedItems || _context?.HasNestedItems == true;
+
+        /// <summary>
+        /// Whether the nested items of this item are currently shown.
+        /// </summary>
+        internal bool IsExpanded => HasNestedItems && _expandedState.Value;
+
+        /// <summary>
+        /// Items shown under this one when it is expanded.
+        /// </summary>
+        /// <remarks>
+        /// Selecting this item does not select its nested items.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.General.Behavior)]
+        public RenderFragment? NestedList { get; set; }
+
+        /// <summary>
+        /// Shows the items in <see cref="NestedList"/>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// Has no effect unless <see cref="NestedList"/> is set.
+        /// </remarks>
+        [Parameter, ParameterState]
+        [Category(CategoryTypes.General.Appearance)]
+        public bool Expanded { get; set; }
+
+        /// <summary>
+        /// Occurs when the user expands or collapses this item.
+        /// </summary>
+        [Parameter]
+        public EventCallback<bool> ExpandedChanged { get; set; }
+
+        /// <summary>
+        /// The icon shown while this item is expanded.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ExpandLess"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.General.Appearance)]
+        public string ExpandLessIcon { get; set; } = Icons.Material.Filled.ExpandLess;
+
+        /// <summary>
+        /// The icon shown while this item is collapsed.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.General.Appearance)]
+        public string ExpandMoreIcon { get; set; } = Icons.Material.Filled.ExpandMore;
+
+        /// <summary>
+        /// The color of the expand and collapse icon.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Default"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.General.Appearance)]
+        public Color ExpandIconColor { get; set; } = Color.Default;
+
+        /// <summary>
+        /// Expands or collapses this item and remembers the choice for when the popup is reopened.
+        /// </summary>
+        internal async Task SetExpandedAsync(bool expanded)
+        {
+            if (!HasNestedItems || _expandedState.Value == expanded)
+            {
+                return;
+            }
+
+            _context?.SetExpansion(Value, expanded);
+            await _expandedState.SetValueAsync(expanded);
+
+            if (!expanded && MudSelect is not null)
+            {
+                await MudSelect.OnItemCollapsedAsync(this);
+            }
+
+            StateHasChanged();
+        }
+
+        private Task ToggleExpandedAsync() => SetExpandedAsync(!_expandedState.Value);
+
+        /// <summary>
+        /// Handles the parent changing <see cref="Expanded"/> from outside.
+        /// </summary>
+        private async Task OnExpandedChangedAsync(ParameterChangedEventArgs<bool> args)
+        {
+            _context?.SetExpansion(Value, args.Value);
+            if (!args.Value && MudSelect is not null)
+            {
+                await MudSelect.OnItemCollapsedAsync(this);
+            }
         }
 
         /// <summary>
@@ -190,7 +381,7 @@ namespace MudBlazor
         /// <item><description>Updates the initial Selected state</description></item>
         /// </list>
         /// </remarks>
-        private void OnMudSelectChanged(ParameterChangedEventArgs<IMudSelect?> args)
+        private async Task OnMudSelectChanged(ParameterChangedEventArgs<IMudSelect?> args)
         {
             if (args.LastValue?.SelectContext is MudSelectContext<T> oldContext)
             {
@@ -208,6 +399,13 @@ namespace MudBlazor
                 Selected = isSelected;
 
                 _selectionSubscription = _context.SubscribeToSelectionChanges(OnSelectionChangedAsync);
+
+                // The popup rebuilds its items every time it opens, so the expansion is restored from what the select remembered.
+                if (HasNestedItems)
+                {
+                    var expanded = _context.TryGetExpansion(Value, out var remembered) ? remembered : _expandedState.Value || MudSelect?.InitiallyExpanded == true;
+                    await SetExpandedAsync(expanded);
+                }
             }
         }
 

@@ -141,3 +141,65 @@
   font-weight: 500;
   color: var(--mud-palette-text-secondary);
 }
+
+// A MudSelectItem with a nested list keeps its text on one side and the expand toggle at the inline end.
+.mud-select-item-branch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mud-select-item-branch-text {
+  min-width: 0;
+}
+
+.mud-select-item-toggle {
+  display: inline-flex;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+// At the start the icon sits in the column reserved by the row's padding, so checkboxes and text line up whether or not a row can expand.
+.mud-select-item-toggle-start {
+  position: absolute;
+  inset-inline-start: calc(1rem + var(--mud-select-tree-level, 0) * 1.5rem);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+// Each guide is one indent step wide. Its line runs down the middle, which is where the parent's icon sits.
+.mud-select-item-guide {
+  --mud-select-guide-color: var(--mud-palette-lines-default);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1.5rem;
+  inset-inline-start: calc(1rem + var(--mud-select-guide-column, 0) * 1.5rem);
+  pointer-events: none;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    inset-inline-start: 0.75rem;
+    border-inline-start: 1px solid var(--mud-select-guide-color);
+  }
+}
+
+// The elbow joins the row to its parent's line, and stops halfway down when the row is the last of its siblings.
+.mud-select-item-guide-elbow {
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    inset-inline-start: 0.75rem;
+    inset-inline-end: 0;
+    border-block-start: 1px solid var(--mud-select-guide-color);
+  }
+
+  &.mud-select-item-guide-last::before {
+    bottom: 50%;
+  }
+}

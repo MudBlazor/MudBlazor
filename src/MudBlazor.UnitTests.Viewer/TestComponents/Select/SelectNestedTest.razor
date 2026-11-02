@@ -1,0 +1,43 @@
+﻿<MudPopoverProvider />
+
+@if (MultiSelection)
+{
+    <MudSelect T="string" MultiSelection="true" SelectAll="true" @bind-SelectedValues="SelectedValues" InitiallyExpanded="@InitiallyExpanded" ExpandIconPlacement="@ExpandIconPlacement" TreeLines="@TreeLines" Label="Category">
+        @Items
+    </MudSelect>
+}
+else
+{
+    <MudSelect T="string" @bind-Value="Value" InitiallyExpanded="@InitiallyExpanded" ExpandIconPlacement="@ExpandIconPlacement" TreeLines="@TreeLines" Label="Category">
+        @Items
+    </MudSelect>
+}
+
+@code {
+    public static string __description__ = "A select with a three-level tree of items.";
+
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public IReadOnlyCollection<string?>? SelectedValues { get; set; }
+    [Parameter] public bool MultiSelection { get; set; }
+    [Parameter] public bool InitiallyExpanded { get; set; }
+    [Parameter] public ExpandIconPlacement ExpandIconPlacement { get; set; } = ExpandIconPlacement.Start;
+    [Parameter] public bool TreeLines { get; set; } = true;
+
+    private RenderFragment Items =>
+        @<text>
+            <MudSelectItem Value="@("electronics")">
+                <ChildContent>Electronics</ChildContent>
+                <NestedList>
+                    <MudSelectItem Value="@("phones")">
+                        <ChildContent>Phones</ChildContent>
+                        <NestedList>
+                            <MudSelectItem Value="@("smartphones")">Smartphones</MudSelectItem>
+                            <MudSelectItem Value="@("feature-phones")" Disabled="true">Feature phones</MudSelectItem>
+                        </NestedList>
+                    </MudSelectItem>
+                    <MudSelectItem Value="@("laptops")">Laptops</MudSelectItem>
+                </NestedList>
+            </MudSelectItem>
+            <MudSelectItem Value="@("books")">Books</MudSelectItem>
+        </text>;
+}

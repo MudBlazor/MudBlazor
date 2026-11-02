@@ -349,6 +349,42 @@ namespace MudBlazor
         public bool SelectAll { get; set; }
 
         /// <summary>
+        /// Expands every item that has a nested list the first time it is shown.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// A branch the user has expanded or collapsed keeps that state.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool InitiallyExpanded { get; set; }
+
+        /// <summary>
+        /// The side of each row where the expand and collapse icon of a nested item is shown.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="MudBlazor.ExpandIconPlacement.Start"/>.
+        /// Has no effect unless an item has a <see cref="MudSelectItem{T}.NestedList"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public ExpandIconPlacement ExpandIconPlacement { get; set; } = ExpandIconPlacement.Start;
+
+        /// <summary>
+        /// Draws lines that connect nested items to their parents.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// Has no effect unless an item has a <see cref="MudSelectItem{T}.NestedList"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListAppearance)]
+        public bool TreeLines { get; set; } = true;
+
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
+
+        /// <summary>
         /// If <c>true</c>, navigating with arrow keys will only highlight items without updating the selected value.
         /// The selection must be confirmed by pressing Enter or clicking the item.
         /// </summary>
@@ -540,7 +576,7 @@ namespace MudBlazor
                 // Only reference the listbox while it is rendered; a dangling IDREF is an invalid aria-controls value.
                 attributes.TryAdd("aria-controls", _listboxId);
             }
-            attributes.TryAdd("aria-haspopup", "listbox");
+            attributes.TryAdd("aria-haspopup", _context.HasNestedItems ? "tree" : "listbox");
 
             if (!attributes.ContainsKey("aria-label") && !attributes.ContainsKey("aria-labelledby") && !string.IsNullOrWhiteSpace(Label))
             {
@@ -567,6 +603,11 @@ namespace MudBlazor
             {
                 ["id"] = _listboxId
             };
+
+            if (_context.HasNestedItems)
+            {
+                attributes["role"] = "tree";
+            }
 
             if (MultiSelection)
             {
@@ -738,6 +779,7 @@ namespace MudBlazor
 
             // Opening rebuilds the options once, so items added since the last parent render are also registered as shadow items and their selected content resolves.
             unchecked { _parentUpdateCount++; }
+            await RevealSelectedItemsAsync();
             await _openState.SetValueAsync(true);
             _needsHighlightAfterRender = true;
             UpdateIcon();
@@ -948,6 +990,106 @@ namespace MudBlazor
             _currentIcon = _openState.Value ? CloseIcon : OpenIcon;
         }
 
+        /// <summary>
+        /// Expands the ancestors of every selected item so the selection is visible when the popup opens.
+        /// </summary>
+        private async Task RevealSelectedItemsAsync()
+        {
+            if (!_context.HasNestedItems)
+            {
+                return;
+            }
+
+            if (MultiSelection)
+            {
+                foreach (var value in _selectedValues)
+                {
+                    await _context.RevealItemAsync(value);
+                }
+            }
+            else
+            {
+                await _context.RevealItemAsync(ReadValue);
+            }
+        }
+
+        /// <summary>
+        /// Moves the highlight to a collapsed item when it was hiding the highlighted item.
+        /// </summary>
+        /// <remarks>
+        /// The highlighted item is about to leave the popup, and <c>aria-activedescendant</c> must not point at a removed element.
+        /// </remarks>
+        internal async Task OnItemCollapsedAsync(MudSelectItem<T> collapsed)
+        {
+            if (_activeItemId is null)
+            {
+                return;
+            }
+
+            var active = Items.FirstOrDefault(x => x.ItemId == _activeItemId);
+            for (var ancestor = active?.ParentItem; ancestor is not null; ancestor = ancestor.ParentItem)
+            {
+                if (ReferenceEquals(ancestor, collapsed))
+                {
+                    await HighlightItemAsync(collapsed);
+                    return;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles the key that opens a branch (Right in left-to-right layouts).
+        /// </summary>
+        /// <remarks>
+        /// Expands a collapsed branch, otherwise highlights its first enabled child.
+        /// </remarks>
+        private async Task HandleExpandKeyAsync()
+        {
+            if (!_openState.Value || !_context.HasNestedItems || Items.FirstOrDefault(x => x.ItemId == _activeItemId) is not { HasNestedItems: true } active)
+            {
+                return;
+            }
+
+            if (!active.IsExpanded)
+            {
+                await active.SetExpandedAsync(true);
+                return;
+            }
+
+            var child = Items.FirstOrDefault(x => ReferenceEquals(x.ParentItem, active) && !x.Disabled);
+            if (child is not null)
+            {
+                await HighlightItemAsync(child);
+                await ScrollToItemAsync(child);
+            }
+        }
+
+        /// <summary>
+        /// Handles the key that closes a branch (Left in left-to-right layouts).
+        /// </summary>
+        /// <remarks>
+        /// Collapses an expanded branch, otherwise highlights the parent of the highlighted item.
+        /// </remarks>
+        private async Task HandleCollapseKeyAsync()
+        {
+            if (!_openState.Value || !_context.HasNestedItems || Items.FirstOrDefault(x => x.ItemId == _activeItemId) is not { } active)
+            {
+                return;
+            }
+
+            if (active.IsExpanded)
+            {
+                await active.SetExpandedAsync(false);
+                return;
+            }
+
+            if (active.ParentItem is { } parent)
+            {
+                await HighlightItemAsync(parent);
+                await ScrollToItemAsync(parent);
+            }
+        }
+
         private Task HighlightItemForValueAsync(T? value)
         {
             _context.TryGetItemByValue(value, out var item);
@@ -966,7 +1108,7 @@ namespace MudBlazor
         {
             if (MultiSelection && SelectAll)
             {
-                var enabledValues = new HashSet<T?>(Items
+                var enabledValues = new HashSet<T?>(_context.AllItems
                     .Where(x => !x.Disabled && HasNonNullValue(x.Value))
                     .Select(x => x.Value), Comparer);
                 var selectedEnabledValuesCount = _selectedValues.Count(enabledValues.Contains);
@@ -1012,14 +1154,14 @@ namespace MudBlazor
                 return;
             }
 
-            var disabledValues = new HashSet<T?>(Items
+            var disabledValues = new HashSet<T?>(_context.AllItems
                 .Where(x => x.Disabled)
                 .Select(x => x.Value), Comparer);
             var selectedValues = new HashSet<T?>(_selectedValues.Where(disabledValues.Contains), Comparer);
 
             if (selectAll)
             {
-                selectedValues.UnionWith(Items
+                selectedValues.UnionWith(_context.AllItems
                     .Where(x => !x.Disabled && HasNonNullValue(x.Value))
                     .Select(x => x.Value));
             }
@@ -1462,6 +1604,9 @@ namespace MudBlazor
                         new("ArrowUp", preventDown: "key+none"),
                         // prevent scrolling page, instead highlight next item
                         new("ArrowDown", preventDown: "key+none"),
+                        // expand and collapse branches of a tree
+                        new("ArrowLeft"),
+                        new("ArrowRight"),
                         new("Home", preventDown: "key+none"),
                         new("End", preventDown: "key+none"),
                         new("Escape"),
@@ -1482,6 +1627,8 @@ namespace MudBlazor
                         .OnKeyDown("Tab", () => CloseMenu(false))
                         .OnKeyDown("ArrowUp", HandleArrowUpAsync)
                         .OnKeyDown("ArrowDown", HandleArrowDownAsync)
+                        .OnKeyDown("ArrowRight", () => RightToLeft ? HandleCollapseKeyAsync() : HandleExpandKeyAsync())
+                        .OnKeyDown("ArrowLeft", () => RightToLeft ? HandleExpandKeyAsync() : HandleCollapseKeyAsync())
                         .OnKeyDown(" ", ToggleMenu)
                         .OnKeyDown("Escape", () => CloseMenu(true))
                         .OnKeyDown("Home", () => SelectFirstItem())

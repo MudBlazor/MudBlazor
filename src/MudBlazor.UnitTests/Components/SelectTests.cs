@@ -2629,6 +2629,258 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Reads the visible rows of a tree select in display order.
+        /// </summary>
+        private static string[] TreeRows(IRenderedComponent<SelectNestedTest> comp)
+            => comp.FindAll("[role=treeitem]").Select(x => x.TextContent.Trim()).ToArray();
+
+        private static IElement TreeRow(IRenderedComponent<SelectNestedTest> comp, string text)
+            => comp.FindAll("[role=treeitem]").Single(x => x.TextContent.Trim() == text);
+
+        private static string? ActiveRow(IRenderedComponent<SelectNestedTest> comp)
+        {
+            var id = comp.Find("[role=combobox]").GetAttribute("aria-activedescendant");
+            return comp.FindAll("[role=treeitem]").SingleOrDefault(x => x.Id == id)?.TextContent.Trim();
+        }
+
+        /// <summary>
+        /// Nested items stay hidden until their parent is expanded with the chevron, and appear directly under it.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_Chevron_ExpandsAndCollapsesBranch()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>();
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+
+            TreeRows(comp).Should().Equal("Electronics", "Books");
+            TreeRow(comp, "Electronics").GetAttribute("aria-expanded").Should().Be("false");
+
+            await TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-toggle")!.ClickAsync();
+
+            TreeRows(comp).Should().Equal("Electronics", "Phones", "Laptops", "Books");
+            TreeRow(comp, "Electronics").GetAttribute("aria-expanded").Should().Be("true");
+
+            await TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-toggle")!.ClickAsync();
+
+            TreeRows(comp).Should().Equal("Electronics", "Books");
+        }
+
+        /// <summary>
+        /// Branches expanded after their siblings registered still appear in display order.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_ExpandingLaterBranch_KeepsDisplayOrder()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>();
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+            await TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-toggle")!.ClickAsync();
+            await TreeRow(comp, "Phones").QuerySelector(".mud-select-item-toggle")!.ClickAsync();
+
+            TreeRows(comp).Should().Equal("Electronics", "Phones", "Smartphones", "Feature phones", "Laptops", "Books");
+            comp.FindComponent<MudSelect<string>>().Instance.Items.Select(x => x.Value)
+                .Should().Equal("electronics", "phones", "smartphones", "feature-phones", "laptops", "books");
+        }
+
+        /// <summary>
+        /// A select with nested items exposes tree semantics instead of list semantics.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_UsesTreeRolesAndLevels()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters.Add(x => x.InitiallyExpanded, true));
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+
+            comp.Find("[role=combobox]").GetAttribute("aria-haspopup").Should().Be("tree");
+            comp.Find("[role=tree]").Should().NotBeNull();
+            comp.FindAll("[role=listbox]").Should().BeEmpty();
+            TreeRow(comp, "Electronics").GetAttribute("aria-level").Should().Be("1");
+            TreeRow(comp, "Phones").GetAttribute("aria-level").Should().Be("2");
+            TreeRow(comp, "Smartphones").GetAttribute("aria-level").Should().Be("3");
+            TreeRow(comp, "Smartphones").HasAttribute("aria-expanded").Should().BeFalse("leaves have no expanded state");
+        }
+
+        /// <summary>
+        /// Clicking a parent row selects it, while clicking its chevron only expands it.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_ParentRowSelectsAndChevronDoesNot()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+
+            await TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-toggle")!.ClickAsync();
+            select.Instance.ReadValue.Should().BeNull();
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+            select.Instance.ReadValue.Should().Be("electronics");
+        }
+
+        /// <summary>
+        /// Right expands a collapsed branch then enters it, and Left leaves a child then collapses the branch.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_ArrowKeys_ExpandCollapseAndMoveBetweenLevels()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters.Add(x => x.MultiSelection, true));
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+            await comp.WaitForAssertionAsync(() => ActiveRow(comp).Should().Be("Electronics"));
+
+            await PressAsync(select, keys, "ArrowRight");
+            TreeRows(comp).Should().Equal("Electronics", "Phones", "Laptops", "Books");
+            ActiveRow(comp).Should().Be("Electronics");
+
+            await PressAsync(select, keys, "ArrowRight");
+            ActiveRow(comp).Should().Be("Phones");
+
+            await PressAsync(select, keys, "ArrowLeft");
+            ActiveRow(comp).Should().Be("Electronics", "Left on a collapsed child moves to its parent");
+
+            await PressAsync(select, keys, "ArrowLeft");
+            TreeRows(comp).Should().Equal("Electronics", "Books");
+        }
+
+        /// <summary>
+        /// Collapsing a branch that contains the highlighted item moves the highlight to the branch.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_CollapsingAncestorOfActiveItem_HighlightsAncestor()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.InitiallyExpanded, true));
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+            await comp.WaitForAssertionAsync(() => ActiveRow(comp).Should().Be("Electronics"));
+            await PressAsync(select, keys, "ArrowDown");
+            await PressAsync(select, keys, "ArrowDown");
+            ActiveRow(comp).Should().Be("Smartphones");
+
+            await TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-toggle")!.ClickAsync();
+
+            TreeRows(comp).Should().Equal("Electronics", "Books");
+            ActiveRow(comp).Should().Be("Electronics");
+        }
+
+        /// <summary>
+        /// Opening with a selected value inside a collapsed branch expands its ancestors.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_OpeningWithNestedSelection_RevealsSelectedItem()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters.Add(x => x.Value, "smartphones"));
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+
+            TreeRows(comp).Should().Equal("Electronics", "Phones", "Smartphones", "Feature phones", "Laptops", "Books");
+            TreeRow(comp, "Smartphones").GetAttribute("aria-selected").Should().Be("true");
+        }
+
+        /// <summary>
+        /// A branch expanded by the user stays expanded when the popup is reopened.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_ExpansionSurvivesReopening()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+            await TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-toggle")!.ClickAsync();
+            await comp.InvokeAsync(() => select.Instance.CloseMenu());
+
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+
+            TreeRows(comp).Should().Equal("Electronics", "Phones", "Laptops", "Books");
+        }
+
+        /// <summary>
+        /// Select all covers every enabled node, including those under collapsed branches.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_SelectAll_SelectsCollapsedDescendants()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters.Add(x => x.MultiSelection, true));
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+
+            await comp.FindAll(".mud-list-item").First().ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["electronics", "phones", "smartphones", "laptops", "books"]);
+        }
+
+        /// <summary>
+        /// Describes the connector segments of a tree row as <c>column:kind</c>, where kind is through, elbow or last.
+        /// </summary>
+        private static string[] Guides(IRenderedComponent<SelectNestedTest> comp, string text)
+            => TreeRow(comp, text).QuerySelectorAll(".mud-select-item-guide").Select(x =>
+            {
+                var column = System.Text.RegularExpressions.Regex.Match(x.GetAttribute("style")!, @"--mud-select-guide-column:\s*(\d+)").Groups[1].Value;
+                var kind = x.ClassList.Contains("mud-select-item-guide-last") ? "last" : x.ClassList.Contains("mud-select-item-guide-elbow") ? "elbow" : "through";
+                return $"{column}:{kind}";
+            }).ToArray();
+
+        /// <summary>
+        /// Tree lines join each row to its parent, stop at the last sibling and carry an ancestor's line past its descendants.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_TreeLines_JoinRowsToParents()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters.Add(x => x.InitiallyExpanded, true));
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+
+            Guides(comp, "Electronics").Should().BeEmpty();
+            Guides(comp, "Phones").Should().Equal("0:elbow");
+            Guides(comp, "Smartphones").Should().Equal("0:through", "1:elbow");
+            Guides(comp, "Feature phones").Should().Equal("0:through", "1:last");
+            Guides(comp, "Laptops").Should().Equal("0:last");
+            Guides(comp, "Books").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Turning tree lines off removes every connector segment.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_TreeLinesOff_DrawsNoGuides()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters
+                .Add(x => x.InitiallyExpanded, true)
+                .Add(x => x.TreeLines, false));
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+
+            comp.FindAll(".mud-select-item-guide").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// The expand icon comes before the text by default and can be moved to the end of the row.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_ExpandIconPlacement_MovesToggle()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>();
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+
+            TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-toggle")!.ClassList.Should().Contain("mud-select-item-toggle-start");
+            TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-branch").Should().BeNull();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ExpandIconPlacement, ExpandIconPlacement.End));
+
+            TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-toggle")!.ClassList.Should().NotContain("mud-select-item-toggle-start");
+            TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-branch").Should().NotBeNull();
+        }
+
+        /// <summary>
         /// Names the checkbox icon a multi-select option renders: checked, unchecked or indeterminate.
         /// </summary>
         private static string CheckboxState(IElement option)

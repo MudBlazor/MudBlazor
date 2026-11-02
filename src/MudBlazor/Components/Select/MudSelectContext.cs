@@ -19,6 +19,10 @@ internal sealed class MudSelectContext<T>
     private readonly List<Func<IReadOnlyCollection<T?>, Task>> _selectionObservers = [];
     private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _valueLookup = new();
     private readonly Dictionary<NullableObject<T?>, MudSelectItem<T>> _shadowLookup = new();
+    private readonly Dictionary<NullableObject<T?>, bool> _expansion = new();
+    private int _nestedShadowItemCount;
+    private readonly List<MudSelectItem<T>> _shadowRoots = new();
+    private readonly Dictionary<MudSelectItem<T>, List<MudSelectItem<T>>> _shadowChildren = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MudSelectContext{T}"/> class.
@@ -75,7 +79,21 @@ internal sealed class MudSelectContext<T>
     public bool RegisterItem(MudSelectItem<T> item)
     {
         // An item registers once per select and unregisters before moving to another, so checking for a duplicate would only make opening n options cost n².
-        _items.Add(item);
+        if (item.ParentItem is { } parent && _items.IndexOf(parent) is var parentIndex and >= 0)
+        {
+            // A branch can expand after its siblings registered, so a nested item goes to the end of its parent's subtree to keep the list in display order.
+            var insertAt = parentIndex + 1;
+            while (insertAt < _items.Count && _items[insertAt].Level > parent.Level)
+            {
+                insertAt++;
+            }
+
+            _items.Insert(insertAt, item);
+        }
+        else
+        {
+            _items.Add(item);
+        }
 
         // Add to value lookup for fast access by value
         _valueLookup[item.Value] = item;
@@ -136,6 +154,13 @@ internal sealed class MudSelectContext<T>
         }
 
         _shadowLookup[item.Value] = item;
+        if (item.HasNestedItems)
+        {
+            _nestedShadowItemCount++;
+        }
+
+        GetShadowSiblings(item, create: true)?.Add(item);
+
         _select.InvalidateFitContent();
     }
 
@@ -150,8 +175,55 @@ internal sealed class MudSelectContext<T>
             return;
         }
 
-        _shadowLookup.Remove(item.Value);
+        if (_shadowLookup.Remove(item.Value) && item.HasNestedItems)
+        {
+            _nestedShadowItemCount--;
+        }
+
+        GetShadowSiblings(item, create: false)?.Remove(item);
+        _shadowChildren.Remove(item);
+
         _select.InvalidateFitContent();
+    }
+
+    /// <summary>
+    /// Gets whether any item contains nested items, which makes the popup a tree instead of a list.
+    /// </summary>
+    public bool HasNestedItems => _nestedShadowItemCount > 0;
+
+    /// <summary>
+    /// Gets the shadow items that share a parent with the given item, in markup order.
+    /// </summary>
+    private List<MudSelectItem<T>>? GetShadowSiblings(MudSelectItem<T> item, bool create)
+    {
+        if (item.ParentItem is not { } parent)
+        {
+            return _shadowRoots;
+        }
+
+        if (_shadowChildren.TryGetValue(parent, out var siblings))
+        {
+            return siblings;
+        }
+
+        return create ? _shadowChildren[parent] = new List<MudSelectItem<T>>() : null;
+    }
+
+    /// <summary>
+    /// Gets whether the item is the last one under its parent, which decides how the tree lines are drawn.
+    /// </summary>
+    /// <remarks>
+    /// The hidden copy always renders the whole tree, so it knows every sibling even while a branch is collapsed or still rendering.
+    /// </remarks>
+    public bool IsLastChild(MudSelectItem<T> item)
+    {
+        if (!_shadowLookup.TryGetValue(item.Value, out var shadow)
+            || GetShadowSiblings(shadow, create: false) is not { Count: > 0 } siblings)
+        {
+            return true;
+        }
+
+        return ReferenceEquals(siblings[^1], shadow);
     }
 
     /// <summary>
@@ -263,6 +335,52 @@ internal sealed class MudSelectContext<T>
         item = null;
         return false;
     }
+
+    /// <summary>
+    /// Gets whether the user or the select has expanded or collapsed the item with this value.
+    /// </summary>
+    /// <remarks>
+    /// The popup unmounts its items when it closes, so the expansion is kept here to survive reopening.
+    /// </remarks>
+    public bool TryGetExpansion(T? value, out bool expanded) => _expansion.TryGetValue(value, out expanded);
+
+    /// <summary>
+    /// Remembers whether the item with this value is expanded.
+    /// </summary>
+    public void SetExpansion(T? value, bool expanded) => _expansion[value] = expanded;
+
+    /// <summary>
+    /// Expands every ancestor of the item with this value, so the item is visible when the popup opens.
+    /// </summary>
+    /// <remarks>
+    /// Items already in the popup are expanded directly.
+    /// The rest pick the remembered expansion up when they are created.
+    /// </remarks>
+    public async Task RevealItemAsync(T? value)
+    {
+        if (!TryGetShadowItemByValue(value, out var item))
+        {
+            return;
+        }
+
+        for (var ancestor = item.ParentItem; ancestor is not null; ancestor = ancestor.ParentItem)
+        {
+            SetExpansion(ancestor.Value, true);
+            if (TryGetItemByValue(ancestor.Value, out var visible))
+            {
+                await visible.SetExpandedAsync(true);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets every item of the select, including those under collapsed branches.
+    /// </summary>
+    /// <remarks>
+    /// Flat selects keep using the registered items so their behavior does not change.
+    /// Only a select with nested items needs the hidden copy, because collapsed branches are not rendered in the popup.
+    /// </remarks>
+    public IEnumerable<MudSelectItem<T>> AllItems => HasNestedItems ? _shadowLookup.Values : _items;
 
     /// <summary>
     /// Subscribes to selection changes.
