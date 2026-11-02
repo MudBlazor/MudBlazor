@@ -2881,6 +2881,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A disabled branch can be highlighted and opened with the arrow keys, but navigating onto it or pressing Enter never selects it.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_DisabledBranch_OpensWithKeysWithoutSelecting()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedDisabledTest>();
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+            string?[] Rows() => comp.FindAll("[role=treeitem]").Select(x => x.TextContent.Trim()).ToArray();
+            string? Active() => comp.FindAll("[role=treeitem]").SingleOrDefault(x => x.Id == comp.Find("[role=combobox]").GetAttribute("aria-activedescendant"))?.TextContent.Trim();
+
+            await PressAsync(select, keys, "ArrowDown");
+            Active().Should().Be("Archive");
+            select.Instance.ReadValue.Should().BeNull("navigating onto a disabled branch must not select it");
+
+            await PressAsync(select, keys, "Enter");
+            select.Instance.ReadValue.Should().BeNull();
+            select.Instance.GetState(x => x.Open).Should().BeTrue("Enter does nothing on a disabled row");
+
+            await PressAsync(select, keys, "ArrowRight");
+            Rows().Should().Equal("Archive", "Old docs", "Old photos", "Current");
+
+            await PressAsync(select, keys, "ArrowRight");
+            Active().Should().Be("Old docs");
+        }
+
+        /// <summary>
         /// Names the checkbox icon a multi-select option renders: checked, unchecked or indeterminate.
         /// </summary>
         private static string CheckboxState(IElement option)

@@ -158,6 +158,8 @@
   display: inline-flex;
   flex: 0 0 auto;
   cursor: pointer;
+  // A disabled row blocks pointer events, but its children must stay reachable so the branch can still open.
+  pointer-events: auto;
 }
 
 // At the start the icon sits in the column reserved by the row's padding, so checkboxes and text line up whether or not a row can expand.

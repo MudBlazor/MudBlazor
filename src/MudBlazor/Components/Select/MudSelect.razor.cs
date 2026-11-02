@@ -1056,7 +1056,7 @@ namespace MudBlazor
                 return;
             }
 
-            var child = Items.FirstOrDefault(x => ReferenceEquals(x.ParentItem, active) && !x.Disabled);
+            var child = Items.FirstOrDefault(x => ReferenceEquals(x.ParentItem, active) && (!x.Disabled || x.HasNestedItems));
             if (child is not null)
             {
                 await HighlightItemAsync(child);
@@ -1245,7 +1245,8 @@ namespace MudBlazor
                     index = Items.Count - 1;
                 }
 
-                if (Items[index].Disabled)
+                // A disabled branch stays reachable so its children can still be opened, but it is never selected.
+                if (Items[index].Disabled && !Items[index].HasNestedItems)
                 {
                     continue;
                 }
@@ -1255,7 +1256,7 @@ namespace MudBlazor
                 {
                     // When SelectionOnEnter is true, we only update the visual highlight during navigation.
                     // When false (default), the value is immediately updated as the user moves through the list.
-                    if (!SelectionOnEnter)
+                    if (!SelectionOnEnter && !item.Disabled)
                     {
                         _selectedValues.Clear();
                         _selectedValues.Add(item.Value);
@@ -1507,6 +1508,12 @@ namespace MudBlazor
         private async Task HandleEnterAsync()
         {
             var index = Items.FindIndex(x => x.ItemId == _activeItemId);
+            if (_openState.Value && index >= 0 && Items[index].Disabled)
+            {
+                // Only disabled branches can be highlighted, and they open with the arrow keys instead.
+                return;
+            }
+
             if (!MultiSelection)
             {
                 if (!_openState.Value)
