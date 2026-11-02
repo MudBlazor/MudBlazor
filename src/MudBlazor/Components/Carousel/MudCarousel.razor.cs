@@ -114,16 +114,17 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.  When <c>true</c>, the <see cref="MudCarouselItem"/> items will be rotated after the delay specified in <see cref="AutoCycleTime" />.
+        /// Content that moves on its own needs a way to pause or stop it (WCAG 2.2.2), so provide one when enabling this.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.Carousel.Behavior)]
-        public bool AutoCycle { get; set; } = true;
+        public bool AutoCycle { get; set; }
 
         /// <summary>
         /// The delay before displaying the next <see cref="MudCarouselItem"/> when <see cref="AutoCycle"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="TimeSpan.Zero"/>.
+        /// Defaults to 5 seconds.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.Carousel.Behavior)]

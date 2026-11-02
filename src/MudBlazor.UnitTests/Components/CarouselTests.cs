@@ -218,6 +218,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Items do not rotate unless AutoCycle is set, since moving content needs a pause control (WCAG 2.2.2).
+        /// </summary>
+        [Test]
+        public async Task Carousel_DoesNotAutoCycleByDefault()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<MudCarousel<object>>();
+            comp.Instance.Items.Add(Context.Render<MudCarouselItem>().Instance);
+            comp.Instance.Items.Add(Context.Render<MudCarouselItem>().Instance);
+            await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
+
+            timeProvider.Advance(TimeSpan.FromSeconds(30));
+
+            await comp.InvokeAsync(() => comp.Instance.SelectedIndex.Should().Be(0));
+        }
+
+        /// <summary>
         /// Testing autoCycle
         /// </summary>
         [Test]
