@@ -55,11 +55,11 @@ namespace MudBlazor
         /// Position of the text to the start (Left in LTR and right in RTL).
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="HorizontalAlignment.Left"/>.
+        /// Defaults to <see cref="HorizontalAlignment.Start"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Alert.Appearance)]
-        public HorizontalAlignment ContentAlignment { get; set; } = HorizontalAlignment.Left;
+        public HorizontalAlignment ContentAlignment { get; set; } = HorizontalAlignment.Start;
 
         /// <summary>
         /// Occurs when the close button has been clicked.

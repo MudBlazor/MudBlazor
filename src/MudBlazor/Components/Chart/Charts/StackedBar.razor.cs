@@ -21,11 +21,14 @@ namespace MudBlazor.Charts
         private const double BarOverlapAmountFix = 0.5; // used to trigger slight overlap so the bars don't have gaps due to floating point rounding
 
         private readonly List<SvgPath> _bars = [];
+        private readonly List<SvgText> _valueLabels = [];
         private double _barWidth;
         private double _barWidthStroke;
         private SvgPath? _hoveredBar;
 
         private const double MinBarWidth = 6;
+        private const double ValueLabelOffset = 5;
+        private const double ValueLabelFontSize = 12;
 
         protected override void OnInitialized()
         {
@@ -108,7 +111,7 @@ namespace MudBlazor.Charts
             var yAxisTicks = ChartOptions?.YAxisTicks;
 
             gridYUnits = T.CreateSaturating(yAxisTicks.HasValue && yAxisTicks.Value > 0 ? yAxisTicks.Value : 20);
-            numVerticalLines = Series.Count == 0 ? 0 : Series.Max(series => series.Data.Values.Count);
+            numVerticalLines = Series.Count == 0 ? 0 : Series.Max(series => series.Data.Count);
 
             CalculateStrokeWidth(numVerticalLines);
 
@@ -129,7 +132,7 @@ namespace MudBlazor.Charts
             {
                 foreach (var seriesData in Series.Select(x => x.Data))
                 {
-                    if (j >= seriesData.Values.Count)
+                    if (j >= seriesData.Count)
                     {
                         continue;
                     }
@@ -218,7 +221,7 @@ namespace MudBlazor.Charts
             VerticalLines.Clear();
             VerticalValues.Clear();
 
-            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Values.Count) : 0;
+            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Count) : 0;
             var barPositions = CalculateBarGroupPositions(horizontalSpace, maxSeriesLength);
 
             for (var j = 0; j < numVerticalLines; j++)
@@ -249,8 +252,9 @@ namespace MudBlazor.Charts
         private void GenerateStackedBars(int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
         {
             _bars.Clear();
+            _valueLabels.Clear();
 
-            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Values.Count) : 0;
+            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Count) : 0;
             var barPositions = CalculateBarGroupPositions(horizontalSpace, maxSeriesLength);
 
             for (var dataIndex = 0; dataIndex < maxSeriesLength; dataIndex++)
@@ -259,15 +263,23 @@ namespace MudBlazor.Charts
                 var baseY = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
                 var positiveStack = baseY;
                 var negativeStack = baseY;
+                var barTotal = T.Zero;
+                var hasVisibleSegment = false;
 
                 foreach (var (series, seriesIndex) in Series.Select((s, i) => (s, i)))
                 {
-                    if (dataIndex >= series.Data.Values.Count)
+                    if (dataIndex >= series.Data.Count)
                     {
                         continue;
                     }
 
+                    if (series.Visible)
+                    {
+                        hasVisibleSegment = true;
+                    }
+
                     var dataValue = series.Visible ? series.Data[dataIndex].Y : T.Zero;
+                    barTotal += dataValue;
 
                     if (dataValue == T.Zero && !ChartOptions!.ShowZeroValues)
                     {
@@ -298,6 +310,21 @@ namespace MudBlazor.Charts
                     {
                         positiveStack = yEnd;
                     }
+                }
+
+                if (ChartOptions!.ShowValues && hasVisibleSegment)
+                {
+                    // Positive totals render above the stack, negative totals below it.
+                    var labelY = barTotal < T.Zero
+                        ? negativeStack + ValueLabelOffset + ValueLabelFontSize
+                        : positiveStack - ValueLabelOffset;
+
+                    _valueLabels.Add(new SvgText
+                    {
+                        X = x,
+                        Y = labelY,
+                        Value = BuildYAxisValueString(barTotal),
+                    });
                 }
             }
         }

@@ -6,15 +6,20 @@ namespace MudBlazor.UnitTests.Utilities.Comparer;
 [TestFixture]
 public class DoubleEpsilonEqualityComparerTests
 {
-    [Test]
-    public void Constructor_ShouldThrowArgumentOutOfRangeException()
+    // Valid range is (0, 1) exclusive on both ends; boundaries 0 and 1 must throw.
+    [TestCase(0.0)]
+    [TestCase(1.0)]
+    [TestCase(2.0)]
+    [TestCase(-2.0)]
+    [TestCase(double.PositiveInfinity)]
+    [TestCase(double.NegativeInfinity)]
+    public void Constructor_OutOfRangeEpsilon_ShouldThrowArgumentOutOfRangeException(double epsilon)
     {
-        // Act & Arrange
-        Action<double> construct = epsilon => _ = new DoubleEpsilonEqualityComparer(epsilon);
+        // Act
+        Action construct = () => _ = new DoubleEpsilonEqualityComparer(epsilon);
 
         // Assert
-        construct.Invoking(ctor => ctor(2)).Should().Throw<ArgumentOutOfRangeException>();
-        construct.Invoking(ctor => ctor(-2)).Should().Throw<ArgumentOutOfRangeException>();
+        construct.Should().Throw<ArgumentOutOfRangeException>().WithParameterName("epsilon");
     }
 
     [TestCase(1000000f, 1000001f, true)]

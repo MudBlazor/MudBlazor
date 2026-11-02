@@ -8,7 +8,7 @@ using MudBlazor.Services;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a service that intercepts key events for specified HTML elements.
+/// Intercepts keyboard events for specified HTML elements and dispatches them to subscribed observers, with per-key options to prevent the browser's default behavior.
 /// </summary>
 public interface IKeyInterceptorService : IAsyncDisposable
 {

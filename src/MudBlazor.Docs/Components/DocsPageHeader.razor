@@ -4,11 +4,11 @@
     <meta Name="keywords" Content="@GetKeywords()" />
     <meta Property="og:title" Content="@GetTitle()" />
     <meta Name="twitter:title" Content="@GetTitle()" />
-    @if (!string.IsNullOrEmpty(SubTitle))
+    @if (!string.IsNullOrEmpty(ComputedSubTitle))
     {
-        <meta Name="description" Content="@SubTitle" />
-        <meta Property="og:description" Content="@SubTitle" />
-        <meta Name="twitter:description" Content="@SubTitle" />
+        <meta Name="description" Content="@ComputedSubTitle" />
+        <meta Property="og:description" Content="@ComputedSubTitle" />
+        <meta Name="twitter:description" Content="@ComputedSubTitle" />
     }
     <link rel="canonical" href="@GetCanonicalUri()" />
 </HeadContent>

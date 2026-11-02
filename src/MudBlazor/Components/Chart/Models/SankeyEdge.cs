@@ -8,8 +8,7 @@ using System.Numerics;
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents a directed edge in a Sankey diagram, connecting a source node to a target node with an associated
-/// weight.
+/// A directed edge in a <see cref="Sankey{T}" /> diagram, connecting a source node to a target node with a weight that sets the flow size.
 /// </summary>
 /// <remarks>
 /// The edge is defined by its source node, target node, and a weight value that determines the size of the edge.

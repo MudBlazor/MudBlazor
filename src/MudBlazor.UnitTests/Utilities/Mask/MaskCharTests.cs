@@ -11,17 +11,6 @@ namespace MudBlazor.UnitTests.Utilities.Mask;
 public class MaskCharTests
 {
     [Test]
-    public void MaskChar_Constructor()
-    {
-        // Arrange & Act
-        var maskChar = new MaskChar('x', @"\d");
-
-        // Assert
-        maskChar.Char.Should().Be('x');
-        maskChar.Regex.Should().Be(@"\d");
-    }
-
-    [Test]
     public void MaskChar_Letter_CreatesCorrectRegex()
     {
         // Arrange & Act
@@ -52,17 +41,6 @@ public class MaskCharTests
         // Assert
         maskChar.Char.Should().Be('*');
         maskChar.Regex.Should().Be(@"\p{L}|\d");
-    }
-
-    [Test]
-    public void MaskChar_CustomRegex_WorksCorrectly()
-    {
-        // Arrange & Act
-        var maskChar = new MaskChar('h', @"[0-9A-Fa-f]");
-
-        // Assert
-        maskChar.Char.Should().Be('h');
-        maskChar.Regex.Should().Be(@"[0-9A-Fa-f]");
     }
 
     [Test]
@@ -99,13 +77,24 @@ public class MaskCharTests
     }
 
     [Test]
-    public void MaskChar_Constructor_CreatesImmutableStruct()
+    public void MaskChar_EqualsObject_DifferentType_ReturnsFalse()
     {
-        // Arrange & Act
-        var maskChar = new MaskChar('z', @"[a-z]");
+        // Arrange
+        var maskChar = new MaskChar('x', @"\d");
 
-        // Assert
-        maskChar.Char.Should().Be('z');
-        maskChar.Regex.Should().Be(@"[a-z]");
+        // Act & Assert
+        maskChar.Equals("x").Should().BeFalse();
+    }
+
+    [Test]
+    public void MaskChar_OperatorEquals_SameValue_ReturnsTrue()
+    {
+        // Arrange
+        var maskChar1 = new MaskChar('x', @"\d");
+        var maskChar2 = new MaskChar('x', @"\d");
+
+        // Act & Assert
+        (maskChar1 == maskChar2).Should().BeTrue();
+        (maskChar1 != maskChar2).Should().BeFalse();
     }
 }

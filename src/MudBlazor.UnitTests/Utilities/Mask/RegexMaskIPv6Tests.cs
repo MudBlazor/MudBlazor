@@ -76,6 +76,15 @@ public class RegexMaskIPv6Tests
     }
 
     [Test]
+    public void IPv6_Insert_FifthHexDigitJumpsToNextGroup()
+    {
+        // each group is capped at 4 hex chars ([0-9A-Fa-f]{0,4}); the 5th jumps the delimiter
+        var mask = RegexMask.IPv6();
+        mask.Insert("aaaaa");
+        mask.ToString().Should().Be("aaaa:a|");
+    }
+
+    [Test]
     public void IPv6_Delete()
     {
         var mask = RegexMask.IPv6();

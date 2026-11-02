@@ -370,6 +370,100 @@ namespace MudBlazor.UnitTests.Components
             gradientRects.Should().NotBeEmpty();
         }
 
+        /// <summary>
+        /// Verifies that each heat map cell shows its own value and its neighbors' colors when series have different lengths.
+        /// </summary>
+        [Test]
+        public void HeatMap_ShouldMatchCellsToValuesWithJaggedSeries()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2, 3]) },
+                new() { Name = "Series 2", Data = new([4]) },
+                new() { Name = "Series 3", Data = new([5, 6]) }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new HeatMapChartOptions { ValueFormatString = "F0" })
+            );
+
+            comp.FindAll(".mud-chart-cell")
+                .Select(cell => cell.QuerySelector("text")?.TextContent?.Trim())
+                .Should().Equal("1", "2", "3", "4", "5", "6");
+
+            var gradientComp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new HeatMapChartOptions { EnableSmoothGradient = true })
+            );
+
+            string StopColor(string gradientId, int stop) =>
+                gradientComp.Find($"linearGradient#{gradientId}").QuerySelectorAll("stop")[stop].GetAttribute("style");
+
+            // Series 2 has no second value, so its right neighbor is the missing-data color.
+            StopColor("gradient-right-1-0", 0).Should().Be("stop-color:#fff");
+            // Series 2's own cell has a value, so it gets a palette color.
+            StopColor("gradient-right-1-0", 1).Should().NotBe("stop-color:#fff");
+            // Neighboring cells in series 3 point at each other's colors.
+            StopColor("gradient-left-2-1", 0).Should().Be(StopColor("gradient-right-2-0", 1));
+            StopColor("gradient-left-2-1", 1).Should().Be(StopColor("gradient-right-2-0", 0));
+        }
+
+        /// <summary>
+        /// Verifies that heat map cells added by changing series in place render empty until the chart rebuilds.
+        /// </summary>
+        [Test]
+        public void HeatMap_ShouldRenderSeriesChangedInPlaceBeforeRebuild()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2]) }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new HeatMapChartOptions { ValueFormatString = "F0" })
+            );
+
+            // A longer row and a new row, neither of which RebuildChart has laid out yet.
+            series[0].Data = new([1, 2, 3]);
+            series.Add(new() { Name = "Series 2", Data = new([4]) });
+
+            // Hovering re-renders the heat map without setting parameters, so it draws from the old cells.
+            comp.FindAll(".mud-chart-cell rect")[0].MouseOver();
+
+            comp.FindAll(".mud-chart-cell")
+                .Select(cell => cell.QuerySelector("text")?.TextContent?.Trim())
+                .Should().Equal("1", "2", null, null);
+        }
+
+        /// <summary>
+        /// Verifies that a heat map series without data gets no smooth gradients and shows as missing data to its neighbors.
+        /// </summary>
+        [Test]
+        public void HeatMap_ShouldSkipGradientsForSeriesWithoutData()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2]) },
+                new() { Name = "Series 2", Data = null },
+                new() { Name = "Series 3", Data = new([3]) }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new HeatMapChartOptions { EnableSmoothGradient = true })
+            );
+
+            comp.FindAll("linearGradient[id^='gradient-right-1-']").Should().BeEmpty();
+            comp.Find("linearGradient#gradient-bottomcenter-0-0").QuerySelectorAll("stop")[0].GetAttribute("style")
+                .Should().Be("stop-color:#fff");
+        }
+
         [Test]
         [TestCase(XAxisLabelPosition.Top)]
         [TestCase(XAxisLabelPosition.Bottom)]
@@ -403,6 +497,34 @@ namespace MudBlazor.UnitTests.Components
             // Verify axis labels exist
             var axisLabels = comp.FindAll("g text.mud-charts-xaxis, g text.mud-charts-yaxis");
             axisLabels.Should().NotBeEmpty();
+        }
+
+        /// <summary>
+        /// Verifies negative heat map axis label offsets are written with an ASCII minus sign when the current culture uses U+2212.
+        /// </summary>
+        [Test]
+        [SetCulture("sv-SE")]
+        public void HeatMap_AxisLabelOffsetsUseInvariantMinusSign()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2]) }
+            };
+            var options = new HeatMapChartOptions
+            {
+                XAxisLabelPosition = XAxisLabelPosition.Top,
+                YAxisLabelPosition = YAxisLabelPosition.Left
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartLabels, new[] { "Monday", "Tuesday" })
+                .Add(p => p.ChartOptions, options)
+            );
+
+            comp.Find("text.mud-charts-xaxis").GetAttribute("y").Should().Be("-5");
+            comp.Find("text.mud-charts-yaxis").GetAttribute("x").Should().Be("-5");
         }
 
         [Test]
@@ -619,6 +741,110 @@ namespace MudBlazor.UnitTests.Components
             var heatmap = comp.FindComponent<HeatMap<double>>();
             heatmap.Instance._minValue.Should().Be(min.HasValue ? min : -0.5);
             heatmap.Instance._maxValue.Should().Be(max.HasValue ? max : .98);
+        }
+
+        [Test]
+        public async Task HeatMap_CellMouseOver_SetsAndClearsHoveredCellTooltip()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2, 3]) },
+                new() { Name = "Series 2", Data = new([4, 5, 6]) }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ChartOptions { ShowToolTips = true })
+            );
+
+            // Hovering toggles the svg overflow to visible and surfaces the cell tooltip; OnCellMouseOut clears both.
+            var firstCellRect = comp.FindAll(".mud-chart-cell rect")[0];
+            await firstCellRect.MouseOverAsync();
+
+            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().Contain("overflow:visible");
+
+            await firstCellRect.MouseOutAsync();
+            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().NotContain("overflow:visible");
+            comp.FindAll("tspan").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task HeatMap_LegendMouseOver_SetsAndClearsHoveredLegend()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2, 3]) },
+                new() { Name = "Series 2", Data = new([4, 5, 6]) }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ChartOptions { ShowLegend = true, ShowToolTips = true })
+            );
+
+            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().NotContain("overflow:visible");
+
+            // Hovering a legend swatch sets _hoveredLegend, flipping the style and rendering the legend tooltip.
+            var legendRect = comp.FindAll(".mud-chart-heatmap-legend rect")[0];
+            await legendRect.MouseOverAsync();
+
+            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().Contain("overflow:visible");
+            comp.FindAll("tspan").Count.Should().BeGreaterThan(0);
+
+            await legendRect.MouseOutAsync();
+            comp.Find("svg.mud-chart-heat").GetAttribute("style").Should().NotContain("overflow:visible");
+        }
+
+        [Test]
+        public async Task HeatMap_ClickCell_SetsSelectedCellAndSelectedIndex()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new([1, 2, 3]) },
+                new() { Name = "Series 2", Data = new([4, 5, 6]) }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, series)
+            );
+
+            var hm = comp.FindComponent<HeatMap<double>>().Instance;
+
+            // Pre-seed a non-zero selection so the click is proven to mutate state, not merely match the default.
+            await comp.InvokeAsync(() => hm.SetSelectedCellAsync(1, 2));
+            hm.SelectedCell.Should().Be((1, 2));
+
+            // Click a cell on the second row (rect index 3 == row 1, column 0).
+            var rects = comp.FindAll(".mud-chart-cell rect");
+            await rects[3].ClickAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            hm.SelectedCell.Should().Be((1, 0));
+            // SelectedIndex is driven by the row through SetSelectedIndexAsync.
+            hm.SelectedIndex.Should().Be(1);
+        }
+
+        [TestCase("400px", "300px", "0 0 400 300")]
+        [TestCase("100%", "100%", "0 0 800 350")]
+        public void HeatMap_MatchBoundsToSize_ProducesExpectedViewBox(string width, string height, string expectedViewBox)
+        {
+            // With MatchBoundsToSize and no JS-provided element size, SetBounds parses px Width/Height;
+            // non-px values cannot be parsed and fall back to the default 800x350 bounds.
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.HeatMap)
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>
+                {
+                    new() { Name = "Series 1", Data = new([1, 2, 3]) },
+                    new() { Name = "Series 2", Data = new([4, 5, 6]) }
+                })
+                .Add(p => p.MatchBoundsToSize, true)
+                .Add(p => p.Width, width)
+                .Add(p => p.Height, height)
+            );
+
+            comp.Find("svg.mud-chart-heat").GetAttribute("viewBox").Should().Be(expectedViewBox);
         }
 
         [TestCase(ChartType.Donut)]

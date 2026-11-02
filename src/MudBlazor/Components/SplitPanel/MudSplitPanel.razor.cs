@@ -179,13 +179,22 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
 
     private readonly string _containerId = Guid.NewGuid().ToString();
 
+    // The id actually rendered on the container div: a consumer-supplied id (captured into UserAttributes and splatted
+    // after the explicit id, so it wins) overrides _containerId. JS interop must target this same id or document
+    // .getElementById fails and the divider's drag/keyboard handlers are never attached. Captured at build time so
+    // teardown unsubscribes the exact id that was built.
+    private string? _builtContainerId;
+
+    private string ResolvedContainerId => _builtContainerId ?? GetEffectiveElementId(_containerId);
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
 
         if (firstRender)
         {
-            await JsRuntime.InvokeVoidAsync("mudSplitPanel.build", _containerId, Horizontal, ResetOnDoubleClick, MinPanelSize, FirstPanelInitialSize, PanelGap);
+            _builtContainerId = GetEffectiveElementId(_containerId);
+            await JsRuntime.InvokeVoidAsync("mudSplitPanel.build", _builtContainerId, Horizontal, ResetOnDoubleClick, MinPanelSize, FirstPanelInitialSize, PanelGap);
         }
     }
 
@@ -195,7 +204,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
 
         if (IsJSRuntimeAvailable)
         {
-            await JsRuntime.InvokeVoidAsync("mudSplitPanel_update", _containerId, Horizontal, ResetOnDoubleClick, MinPanelSize, PanelGap);
+            await JsRuntime.InvokeVoidAsync("mudSplitPanel_update", ResolvedContainerId, Horizontal, ResetOnDoubleClick, MinPanelSize, PanelGap);
         }
     }
 
@@ -204,7 +213,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     /// </summary>
     public async Task ResetDividerPositionAsync()
     {
-        await JsRuntime.InvokeVoidAsync("mudSplitPanel_resetDividerPosition", _containerId);
+        await JsRuntime.InvokeVoidAsync("mudSplitPanel_resetDividerPosition", ResolvedContainerId);
     }
 
     /// <summary>
@@ -216,7 +225,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     /// <param name="offset">The offset in pixels from the left or top border.</param>
     public async Task SetDividerPositionAsync(int offset)
     {
-        await JsRuntime.InvokeVoidAsync("mudSplitPanel_setDividerPosition", _containerId, offset);
+        await JsRuntime.InvokeVoidAsync("mudSplitPanel_setDividerPosition", ResolvedContainerId, offset);
     }
 
     /// <summary>
@@ -224,13 +233,13 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     /// </summary>
     public async Task<int> GetDividerPositionAsync()
     {
-        return await JsRuntime.InvokeAsync<int>("mudSplitPanel_getDividerPosition", _containerId);
+        return await JsRuntime.InvokeAsync<int>("mudSplitPanel_getDividerPosition", ResolvedContainerId);
     }
 
     /// <inheritdoc/>
     public async ValueTask DisposeAsync()
     {
-        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudSplitPanel_destroy", _containerId);
+        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudSplitPanel_destroy", ResolvedContainerId);
         GC.SuppressFinalize(this);
     }
 }

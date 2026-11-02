@@ -1,0 +1,37 @@
+﻿@*legacy @bind- spellings lower into a removed value and its removed callback, so both halves are reported*@
+@*a generic component needs an explicit T here; without it Razor stops with RZ10001 before MUD0002 runs*@
+<MudCheckBox T="bool" @bind-Checked="_flag" />
+<MudCheckBox T="bool?" @bind-Checked="_nullable" />
+<MudSwitch T="bool" @bind-Checked="_flag" />
+<MudRadioGroup T="string" @bind-SelectedOption="_text" />
+<MudDialog @bind-IsVisible="_flag" />
+<MudMessageBox @bind-IsVisible="_flag" />
+<MudTooltip Text="Tooltip" @bind-IsVisible="_flag" />
+<MudHidden Breakpoint="Breakpoint.Sm" @bind-IsHidden="_flag" />
+<MudExpansionPanels>
+    <MudExpansionPanel Text="Panel" @bind-IsExpanded="_flag" />
+</MudExpansionPanels>
+<MudTable T="string" Items="_items">
+    <RowTemplate>
+        <MudTr @bind-IsChecked="_flag" />
+    </RowTemplate>
+</MudTable>
+
+@*explicitly typed callbacks reach the same hints; a bare method group no longer compiles cleanly because the attribute has no parameter type (CS8974)*@
+<MudCheckBox T="bool?" Checked="@_nullable" CheckedChanged="@((bool? value) => _nullable = value)" />
+<MudSwitch T="bool" CheckedChanged="@((bool value) => OnChecked(value))" />
+
+@code
+{
+    public static string __description__ = "Legacy two-way bindings that MUD0002 explains";
+
+    private bool _flag = true;
+
+    private bool? _nullable;
+
+    private string _text = "a";
+
+    private readonly string[] _items = ["a", "b"];
+
+    private void OnChecked(bool value) => _flag = value;
+}

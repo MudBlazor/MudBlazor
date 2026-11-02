@@ -6,6 +6,9 @@ using System;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Assigns a display label to a model property or field so MudBlazor form fields bound with <c>For</c> can show it automatically.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public class LabelAttribute : Attribute
     {

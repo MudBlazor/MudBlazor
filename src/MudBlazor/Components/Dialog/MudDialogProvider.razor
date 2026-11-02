@@ -4,7 +4,9 @@
     <CascadingValue Value="_globalDialogOptions">
         @foreach (var dialogReference in _dialogs.ToArray().Where(x => !x.Result.IsCompleted))
         {
-            @dialogReference.RenderFragment
+            <MudRender @key="dialogReference.Id">
+                @dialogReference.RenderFragment
+            </MudRender>
         }
     </CascadingValue>
 </CascadingValue>

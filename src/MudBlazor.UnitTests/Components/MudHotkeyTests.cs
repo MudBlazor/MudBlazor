@@ -51,6 +51,34 @@ public class MudHotkeyTests : BunitTest
     }
 
     [Test]
+    public async Task Hotkey_ShouldPassEventArgsIdentifyingWhichHotkeyFired()
+    {
+        // Arrange: several hotkeys share a single handler that tells them apart via HotkeyEventArgs.
+        var comp = Context.Render<MudHotkeyEventArgsTest>();
+        var hotkeys = comp.FindComponents<MudHotkey>();
+
+        // The first hotkey: KeyA, no modifiers.
+        await comp.InvokeAsync(hotkeys[0].Instance.MudHotkeyProviderJsCallback);
+        comp.Instance.LastArgs!.Key.Should().Be(JsKey.KeyA);
+        comp.Instance.LastArgs!.KeyModifiers.Should().BeEmpty();
+        comp.Instance.LastArgs!.Sender.Should().BeSameAs(hotkeys[0].Instance);
+
+        // The second hotkey: KeyB + ShiftLeft.
+        await comp.InvokeAsync(hotkeys[1].Instance.MudHotkeyProviderJsCallback);
+        comp.Instance.LastArgs!.Key.Should().Be(JsKey.KeyB);
+        comp.Instance.LastArgs!.KeyModifiers.Should().ContainSingle().Which.Should().Be(JsKeyModifier.ShiftLeft);
+        comp.Instance.LastArgs!.Sender.Should().BeSameAs(hotkeys[1].Instance);
+
+        // The third hotkey: SAME Key as the second, distinguished only by its (multiple) modifiers.
+        await comp.InvokeAsync(hotkeys[2].Instance.MudHotkeyProviderJsCallback);
+        comp.Instance.LastArgs!.Key.Should().Be(JsKey.KeyB);
+        comp.Instance.LastArgs!.KeyModifiers.Should().BeEquivalentTo([JsKeyModifier.ControlLeft, JsKeyModifier.ShiftLeft]);
+        comp.Instance.LastArgs!.Sender.Should().BeSameAs(hotkeys[2].Instance);
+
+        comp.Instance.PressedCount.Should().Be(3);
+    }
+
+    [Test]
     public async Task Hotkey_JsTestComponentLifetimeCycle()
     {
         var jsRuntimeMock = new Mock<IJSRuntime>();

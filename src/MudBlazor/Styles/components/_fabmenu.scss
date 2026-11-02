@@ -175,6 +175,7 @@
 
     &.mud-fab-menu-open {
       pointer-events: auto;
+      z-index: var(--mud-zindex-popover);
 
       .mud-fab-menu-item {
         opacity: 1;

@@ -26,6 +26,33 @@ public class RadarChartTests : BunitTest
         comp.FindAll("path.mud-chart-axis-line").Count.Should().Be(0); // No labels, no data, so no axes.
     }
 
+    /// <summary>
+    /// Verifies fractional radar stroke widths and marker radii are written with the invariant culture when the current culture uses a decimal comma.
+    /// </summary>
+    [Test]
+    [SetCulture("de-DE")]
+    public void RadarChart_FractionalStrokeAndRadius_UseInvariantCulture()
+    {
+        var options = new RadarChartOptions
+        {
+            StrokeWidth = 1.5,
+            GridLineWidth = 0.5,
+            AxisLineWidth = 0.75,
+            DataPointRadius = 2.5,
+            ShowDataMarkers = true
+        };
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Skills", Data = new double[] { 10, 20, 30 } } })
+            .Add(p => p.ChartLabels, new[] { "Speed", "Power", "Range" })
+            .Add(p => p.ChartOptions, options));
+
+        comp.Find("path.mud-chart-serie").GetAttribute("stroke-width").Should().Be("1.5");
+        comp.Find("path.mud-chart-grid-line").GetAttribute("stroke-width").Should().Be("0.5");
+        comp.Find("path.mud-chart-axis-line").GetAttribute("stroke-width").Should().Be("0.75");
+        comp.Find("circle.mud-chart-series-point").GetAttribute("r").Should().Be("2.5");
+    }
+
     [Test]
     public async Task RadarChart_Should_UpdateSelectedPointIndex_OnDataMarkerClick()
     {
@@ -1472,5 +1499,91 @@ public class RadarChartTests : BunitTest
         axisValues.Count.Should().Be(2);
         axisValues[0].TextContent.Should().Be("2.5");
         axisValues[1].TextContent.Should().Be("5");
+    }
+
+    [Test]
+    public void RadarChartOptions_ImplicitOperator_CopiesSharedProperties()
+    {
+        var palette = new[] { "#2979FF", "#1DE9B6", "#FFC400" };
+        var source = new ChartOptions
+        {
+            ShowLegend = false,
+            ShowToolTips = false,
+            TooltipTitleFormat = "T:{{X_VALUE}}",
+            TooltipSubtitleFormat = "S:{{Y_VALUE}}",
+            ChartPalette = palette,
+        };
+
+        RadarChartOptions converted = source;
+
+        converted.ShowLegend.Should().BeFalse();
+        converted.ShowToolTips.Should().BeFalse();
+        converted.TooltipTitleFormat.Should().Be("T:{{X_VALUE}}");
+        converted.TooltipSubtitleFormat.Should().Be("S:{{Y_VALUE}}");
+        converted.ChartPalette.Should().BeSameAs(palette);
+        // Radar default aggregation is preserved (not part of the copy).
+        converted.AggregationOption.Should().Be(AggregationOption.GroupByDataSet);
+    }
+
+    [TestCase(AggregationOption.GroupByLabel, false, "OnlySeries")]
+    [TestCase(AggregationOption.GroupByLabel, true, "2")]
+    [TestCase(AggregationOption.GroupByDataSet, false, "TheLabel")]
+    [TestCase(AggregationOption.GroupByDataSet, true, "2")]
+    public void GetSeriesName_ReturnsNameOrLabelForSingle_AndCountForMultiple(AggregationOption aggregation, bool multiple, string expected)
+    {
+        List<ChartSeries<double>> series;
+        string[] labels;
+        if (multiple)
+        {
+            series = new()
+            {
+                new() { Name = "S1", Data = new double[] { 10, 20 } },
+                new() { Name = "S2", Data = new double[] { 5, 15 } },
+            };
+            labels = new[] { "L1", "L2" };
+        }
+        else if (aggregation == AggregationOption.GroupByLabel)
+        {
+            // Single series -> series name is used.
+            series = new() { new() { Name = "OnlySeries", Data = new double[] { 10, 20, 30 } } };
+            labels = new[] { "A", "B", "C" };
+        }
+        else
+        {
+            // Single label -> label is used.
+            series = new() { new() { Name = "S1", Data = new double[] { 10 } } };
+            labels = new[] { "TheLabel" };
+        }
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, series)
+            .Add(p => p.ChartLabels, labels)
+            .Add(p => p.ChartOptions, new RadarChartOptions { AggregationOption = aggregation }));
+
+        var radial = comp.FindComponent<BaseRadialChart<double, RadarChartOptions>>().Instance;
+        radial.GetSeriesName(aggregation).Should().Be(expected);
+    }
+
+    [Test]
+    public void GetSeriesName_NoSeries_ReturnsEmpty()
+    {
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>>()));
+
+        var radial = comp.FindComponent<BaseRadialChart<double, RadarChartOptions>>().Instance;
+        radial.GetSeriesName(AggregationOption.GroupByLabel).Should().BeEmpty();
+    }
+
+    [Test]
+    public void GetSeriesName_UnsupportedAggregation_Throws()
+    {
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "S1", Data = new double[] { 10, 20 } } })
+            .Add(p => p.ChartLabels, new[] { "A", "B" })
+            .Add(p => p.ChartOptions, new RadarChartOptions { AggregationOption = AggregationOption.GroupByDataSet }));
+
+        var radial = comp.FindComponent<BaseRadialChart<double, RadarChartOptions>>().Instance;
+        var act = () => radial.GetSeriesName(AggregationOption.None);
+        act.Should().Throw<ArgumentOutOfRangeException>();
     }
 }

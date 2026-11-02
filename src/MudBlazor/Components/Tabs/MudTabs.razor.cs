@@ -98,6 +98,18 @@ namespace MudBlazor
         public bool KeepPanelsAlive { get; set; }
 
         /// <summary>
+        /// Initializes tab panels only once visited. Only has an effect when <see cref="KeepPanelsAlive"/> is <c>true</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.<br />
+        /// When <c>false</c>, all tabs' contents are initialized immediately.<br />
+        /// When <c>true</c>, a tab's content is initialized only once it is visited.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Tabs.Behavior)]
+        public bool LazyLoadPanels { get; set; }
+
+        /// <summary>
         /// Disables user interaction for all tab panels.
         /// </summary>
         /// <remarks>
@@ -637,7 +649,7 @@ namespace MudBlazor
 
         internal async Task SetPanelRefAsync(ElementReference reference)
         {
-            if (HasRendered && _resizeObserver!.IsElementObserved(reference) == false)
+            if (HasRendered && !_resizeObserver!.IsElementObserved(reference))
                 await _resizeObserver!.Observe(reference);
 
             _redraw = true;
@@ -881,23 +893,24 @@ namespace MudBlazor
                 .AddStyle("max-height", MaxHeight.ToPx(), MaxHeight != null)
                 .Build();
 
-        protected string SliderStyle => RightToLeft
-            ? new StyleBuilder()
-                .AddStyle("width", _sliderSizePercentage.ToPercent(), Position is Position.Top or Position.Bottom)
-                .AddStyle("right", _sliderPositionPercentage.ToPercent(), Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "right .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", _isVerticalTabs)
-                .AddStyle("height", _sliderSizePercentage.ToPercent(), _isVerticalTabs)
-                .AddStyle("top", _sliderPositionPercentage.ToPercent(), _isVerticalTabs)
-                .Build()
-            : new StyleBuilder()
-                .AddStyle("width", _sliderSizePercentage.ToPercent(), Position is Position.Top or Position.Bottom)
-                .AddStyle("left", _sliderPositionPercentage.ToPercent(), Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "left .3s cubic-bezier(.64,.09,.08,1);" : "none", Position is Position.Top or Position.Bottom)
-                .AddStyle("transition", SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none", _isVerticalTabs)
-                .AddStyle("height", _sliderSizePercentage.ToPercent(), _isVerticalTabs)
-                .AddStyle("top", _sliderPositionPercentage.ToPercent(), _isVerticalTabs)
-                .Build();
+        protected string SliderStyle
+        {
+            get
+            {
+                var horizontalEdge = RightToLeft ? "right" : "left";
+                var horizontalTransition = SliderAnimation ? $"{horizontalEdge} .3s cubic-bezier(.64,.09,.08,1);" : "none";
+                var verticalTransition = SliderAnimation ? "top .3s cubic-bezier(.64,.09,.08,1);" : "none";
+
+                return new StyleBuilder()
+                    .AddStyle("width", _sliderSizePercentage.ToPercent(), Position is Position.Top or Position.Bottom)
+                    .AddStyle(horizontalEdge, _sliderPositionPercentage.ToPercent(), Position is Position.Top or Position.Bottom)
+                    .AddStyle("transition", horizontalTransition, Position is Position.Top or Position.Bottom)
+                    .AddStyle("transition", verticalTransition, _isVerticalTabs)
+                    .AddStyle("height", _sliderSizePercentage.ToPercent(), _isVerticalTabs)
+                    .AddStyle("top", _sliderPositionPercentage.ToPercent(), _isVerticalTabs)
+                    .Build();
+            }
+        }
 
         private Position ConvertPosition(Position position)
         {
@@ -912,10 +925,10 @@ namespace MudBlazor
         private string GetTabClass(MudTabPanel panel)
         {
             var tabClass = new CssBuilder("mud-tab")
-              .AddClass($"mud-tab-active", when: () => panel == ActivePanel)
+              .AddClass($"mud-tab-active", panel == ActivePanel)
               .AddClass($"mud-disabled", IsPanelDisabled(panel))
               .AddClass($"mud-ripple", Ripple)
-              .AddClass(ActiveTabClass, when: () => panel == ActivePanel)
+              .AddClass(ActiveTabClass, panel == ActivePanel)
               .AddClass(TabButtonsClass)
               .AddClass(panel.Classname)
               .Build();
@@ -1195,7 +1208,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Scroll by page; isNext is true to scroll forward (right or down), false to scroll backward (left or up), depending on tab orientation.
+        /// Scroll by page; isNext is true to scroll toward the last panel, false toward the first, whatever the tab orientation or text direction.
         /// </summary>
         private void ScrollBy(bool isNext)
         {
@@ -1209,8 +1222,11 @@ namespace MudBlazor
             {
                 scrollAmount = -scrollAmount;
             }
-            var position = ScrollEdgeAdjust(_scrollPosition + scrollAmount, panelSize);
-            _scrollPosition = position;
+            // right to left uses negative positioning but only when it's horizontal tabs
+            var isMirrored = RightToLeft && !_isVerticalTabs;
+            var current = isMirrored ? -_scrollPosition : _scrollPosition;
+            var position = ScrollEdgeAdjust(current + scrollAmount, panelSize);
+            _scrollPosition = isMirrored ? -position : position;
         }
 
         private void CenterScrollPositionAroundSelectedItem()
@@ -1220,7 +1236,7 @@ namespace MudBlazor
                 return;
             if (activeIndex + 1 == _panels.Count)
             {
-                var lastPanel = _panels.Last();
+                var lastPanel = _panels[^1];
                 ScrollToItem(lastPanel, true);
                 return;
             }

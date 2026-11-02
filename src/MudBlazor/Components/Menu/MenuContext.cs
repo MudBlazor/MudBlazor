@@ -32,6 +32,9 @@ public sealed class MenuContext
     /// <summary>
     /// Opens the menu.
     /// </summary>
+    /// <remarks>
+    /// This opens the menu directly and does not filter the event against <see cref="MudMenu.ActivationEvent"/>.
+    /// </remarks>
     /// <param name="args">
     /// Optional event arguments. When <see cref="MudMenu.PositionAtCursor"/> is <c>true</c>,
     /// the menu will be positioned at the coordinates from <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/>.
@@ -42,12 +45,21 @@ public sealed class MenuContext
     /// <summary>
     /// Closes the menu and any open sub-menus.
     /// </summary>
+    /// <remarks>
+    /// For hover activators, prefer <see cref="MudMenu.ActivationEvent"/> with <see cref="MouseEvent.MouseOver"/>
+    /// instead of wiring this method to pointer leave events.
+    /// </remarks>
     /// <returns>A task that represents the asynchronous operation.</returns>
     public Task CloseAsync() => _menu.CloseMenuAsync();
 
     /// <summary>
     /// Toggles the menu between open and closed states.
     /// </summary>
+    /// <remarks>
+    /// When <paramref name="args"/> is a <see cref="MouseEventArgs"/> and <see cref="MudMenu.ActivationEvent"/>
+    /// is <see cref="MouseEvent.LeftClick"/> or <see cref="MouseEvent.RightClick"/>, the mouse button is checked
+    /// before the menu is toggled.
+    /// </remarks>
     /// <param name="args">
     /// Optional event arguments. When <see cref="MudMenu.PositionAtCursor"/> is <c>true</c>,
     /// the menu will be positioned at the coordinates from <see cref="MouseEventArgs"/> or <see cref="TouchEventArgs"/>.

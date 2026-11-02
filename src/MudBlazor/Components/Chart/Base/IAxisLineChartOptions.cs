@@ -5,7 +5,7 @@
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents the options for a line chart that has axes.
+/// Line and area chart options such as stroke width, data markers, interpolation, and per-series display overrides.
 /// </summary>
 public interface IAxisLineChartOptions : IAxisChartOptions
 {
@@ -55,6 +55,14 @@ public interface IAxisLineChartOptions : IAxisChartOptions
     /// Optional per-series display overrides.
     /// </summary>
     public IDictionary<IChartSeries, SeriesDisplayOverride> SeriesDisplayOverrides { get; set; }
+
+    /// <summary>
+    /// When <c>true</c>, lines connect across null data points instead of showing gaps.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool ConnectNullPoints { get; set; }
 }
 
 /// <summary>

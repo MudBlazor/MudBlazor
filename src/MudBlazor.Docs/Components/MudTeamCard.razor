@@ -1,55 +1,43 @@
-﻿<MudCard Style="height: 100%">
+<MudCard Style="height: 100%" Class="d-flex flex-column">
     <MudCardHeader>
         <CardHeaderAvatar>
-            <MudAvatar Size="Size.Large" Class="mud-elevation-4">
+            <MudAvatar Style="width: 64px; height: 64px;" Class="mud-elevation-4">
                 <MudImage Src="@Member.Avatar" Alt="GitHub Avatar" />
             </MudAvatar>
         </CardHeaderAvatar>
 
         <CardHeaderContent>
-            <div class="d-flex flex-row justify-space-between">
-                <div class="d-flex flex-column">
-                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
-                        <MudText Typo="Typo.h6">@Member.Name</MudText>
-                        @if (!DisplayTeam && Member.Team == Team.CoreMaintainer)
-                        {
-                            <MudChip T="string" Variant="Variant.Text" Color="Color.Primary">@Member.Team.ToStringFast(true)</MudChip>
-                        }
-                    </MudStack>
-                    
-                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
-                        <MudText Typo="Typo.body2" Class="mud-text-secondary">@Member.GitHub</MudText>
-                        @if (DisplayTeam)
-                        {
-                            <MudChip T="string" Variant="Variant.Text" Color="@(Member.Team == Team.Contribution ? Color.Secondary : Color.Primary)" Size="Size.Small">@Member.Team.ToStringFast(true)</MudChip>
-                        }
-                    </MudStack>
-                    
-                </div>
-
-                @if (!string.IsNullOrWhiteSpace(Member.From))
-                {
-                    <div class="d-flex flex-row align-self-start align-center justify-center mud-text-secondary">
-                        <MudIcon Icon="@Icons.Material.Filled.Place" Color="Color.Inherit" Class="me-1" />
-
-                        <MudText Typo="Typo.body2">
-                            @Member.From
-                        </MudText>
-                    </div>
-                }
-                
-            </div>
+            <MudText Typo="Typo.h6">@Member.Name</MudText>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary">@($"@{Member.GitHub}")</MudText>
         </CardHeaderContent>
     </MudCardHeader>
 
-    <MudCardContent Class="py-0">
+    <MudCardContent Class="py-0 flex-grow-1">
+        @if (DisplayTeam || Member.Team == Team.CoreMaintainer || !string.IsNullOrWhiteSpace(Member.From))
+        {
+            <MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2" Class="mb-2">
+                @if (DisplayTeam || Member.Team == Team.CoreMaintainer)
+                {
+                    <MudChip T="string" Variant="Variant.Text" Size="Size.Small" Color="@(Member.Team == Team.Contribution ? Color.Secondary : Color.Primary)">@Member.Team.ToStringFast(true)</MudChip>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Member.From))
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="0" Class="mud-text-secondary">
+                        <MudIcon Icon="@Icons.Material.Filled.Place" Size="Size.Small" Color="Color.Inherit" Class="me-1" />
+                        <MudText Typo="Typo.body2">@Member.From</MudText>
+                    </MudStack>
+                }
+            </MudStack>
+        }
+
         @if (!string.IsNullOrWhiteSpace(Member.Bio))
         {
             <MudText Typo="Typo.body2">@Member.Bio</MudText>
         }
     </MudCardContent>
 
-    <MudCardActions>
+    <MudCardActions Class="mt-auto flex-wrap">
         <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Target="_blank" Href="@($"https://github.com/{Member.GitHub}")">
             GitHub
         </MudChip>

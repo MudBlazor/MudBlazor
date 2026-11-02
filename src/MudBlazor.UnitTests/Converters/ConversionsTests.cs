@@ -68,6 +68,29 @@ internal class ConversionsTests
         composed.ConvertBack(18).Should().Be((18 / 2) - 4);
     }
 
+    [Test]
+    public void From_IReversibleConverter_Then_IReversibleConverter_ComposesBothDirections()
+    {
+        var chain = Conversions
+            .From(new IntStringReversible(offset: 4))   // forward: i -> (i+4); backward: s -> int.Parse - 4
+            .Then(new ParseTimesTwoReversible());        // forward: s -> int.Parse * 2; backward: v -> (v/2).ToString()
+
+        chain.Convert(2).Should().Be((2 + 4) * 2);          // 12
+        chain.ConvertBack(12).Should().Be((12 / 2) - 4);    // 2
+    }
+
+    [Test]
+    public void ReversibleChain_Then_ForwardOnlyDelegate_DropsReversibility()
+    {
+        // Documented behavior: the inherited single-delegate Then loses backward conversion.
+        var chain = Conversions
+            .From<int, string>(i => i.ToString(), s => int.Parse(s))
+            .Then(s => int.Parse(s) + 1);
+
+        chain.Convert(5).Should().Be(6);
+        chain.Should().NotBeAssignableTo<IReversibleConverter<int, int>>();
+    }
+
     private sealed class MulConverter(int mul) : IConverter<int, string>
     {
         public string Convert(int input) => (input * mul).ToString();
@@ -78,5 +101,12 @@ internal class ConversionsTests
         public string Convert(int input) => (input + offset).ToString();
 
         public int ConvertBack(string input) => int.Parse(input) - offset;
+    }
+
+    private sealed class ParseTimesTwoReversible : IReversibleConverter<string, int>
+    {
+        public int Convert(string input) => int.Parse(input) * 2;
+
+        public string ConvertBack(int input) => (input / 2).ToString();
     }
 }

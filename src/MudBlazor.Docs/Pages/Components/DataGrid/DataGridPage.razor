@@ -81,7 +81,7 @@
         <DocsPageSection>
             <SectionHeader Title="Editing">
                 <Description>
-                    Enable editing with <CodeInline>ReadOnly="false"</CodeInline>. Use <CodeInline>DataGridEditMode.Form</CodeInline> for dialog editing or <CodeInline>DataGridEditMode.Cell</CodeInline> for inline editing.
+                    Enable editing with <CodeInline>ReadOnly="false"</CodeInline>. Use <CodeInline>DataGridEditMode.Form</CodeInline> for dialog editing, <CodeInline>DataGridEditMode.Cell</CodeInline> for always-on cell editing, or <CodeInline>DataGridEditMode.Inline</CodeInline> for single-row inline editing triggered manually.
                     <br /><br />
 
                     Edit events:
@@ -107,6 +107,34 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridEditingExample)" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridEditingExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Inline Row Editing">
+                <Description>
+                    Use <CodeInline>DataGridEditMode.Inline</CodeInline> for single-row inline editing. This mode combines the best of form and cell editing:
+                    <ul>
+                        <li><span class="mr-2">&bull;</span>Only one row can be edited at a time</li>
+                        <li><span class="mr-2">&bull;</span>Editing is triggered manually via an Edit button (not by clicking cells)</li>
+                        <li><span class="mr-2">&bull;</span>Edit controls appear inline within the row's cells</li>
+                        <li><span class="mr-2">&bull;</span>All other rows remain read-only while one is being edited</li>
+                    </ul>
+                    <br />
+                    Use <CodeInline>EditTemplate</CodeInline> to define custom editors for each column. The <CodeInline>CellContext</CodeInline> provides:
+                    <ul>
+                        <li><span class="mr-2">&bull;</span><CodeInline>IsEditing</CodeInline>: indicates if the current row is being edited</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>Item</CodeInline>: the editing copy when in edit mode, or the source item otherwise</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>Actions.StartEditingItemAsync</CodeInline>: begins editing the row</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>Actions.CommitEditingItemAsync</CodeInline>: saves changes and exits edit mode</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>Actions.CancelEditingItemAsync</CodeInline>: discards changes and exits edit mode</li>
+                    </ul>
+                    <br />
+                    The row's editors are validated before a commit is applied, so a failing <CodeInline>Required</CodeInline> or <CodeInline>Validation</CodeInline> rule keeps the row in edit mode on its own. For checks the editors cannot express, such as uniqueness or a server round-trip, validate in <CodeInline>CommittedItemChanges</CodeInline> and return <CodeInline>KeepOpen</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridInlineRowEditingExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridInlineRowEditingExample />
             </SectionContent>
         </DocsPageSection>
 
@@ -259,13 +287,18 @@
                     The <CodeInline>&lt;MudDataGrid></CodeInline> component supports both single and multi-row selection.<br><br>
                     Selection can be triggered either by row clicks or by checkboxes.<br>
                     Row clicks are enabled by default via the <CodeInline>SelectOnRowClick</CodeInline> property (default: <CodeInline>true</CodeInline>). 
-                    This allows users to select a row by clicking anywhere on it.<br>
+                    This allows users to select a row by clicking anywhere on it.
+                    Set it to <CodeInline>false</CodeInline> to leave selection to the checkboxes; the <CodeInline>RowClick</CodeInline> event is raised either way.<br>
                     To provide visual feedback and explicit selection controls, add a <CodeInline>SelectColumn</CodeInline> in the <CodeInline>&lt;Columns></CodeInline> definition. 
                     This renders a checkbox for each row.<br><br>
                     When using <CodeInline>SelectColumn</CodeInline> checkboxes, built-in accessible labels are provided by default and can be overridden with <CodeInline>AriaLabelFunc</CodeInline>.
                     <br><br>
                     Use the <CodeInline>MultiSelection</CodeInline> property (default: <CodeInline>false</CodeInline>) to control whether users can select one or multiple rows.
                     Single selection is enabled by default.
+                    <br><br>
+                    To change the selection from code, assign a new set to the bound <CodeInline>SelectedItems</CodeInline> instead of editing the existing one.
+                    The grid detects a change by reference, so calling <CodeInline>Clear</CodeInline>, <CodeInline>Add</CodeInline> or <CodeInline>Remove</CodeInline> on the bound set does not update the grid's selection.
+                    Likewise, assign a new list to <CodeInline>Items</CodeInline> when removing rows, so selected rows that were removed are dropped from the selection.
                     <br><br>
                     To disable selection for specific rows, use the <CodeInline>DisabledFunc</CodeInline> parameter on the <CodeInline>SelectColumn</CodeInline>.<br>
                     For example, rows 5 and 10 can be disabled by returning true for those rows in the function.
@@ -382,10 +415,10 @@
                     DataGrid will call this async function whenever the user navigates the pager or changes sorting by clicking on the sort header icons.
                     In this example, we also show how to force the datagrid to update when the search textfield blurs, so that the datagrid reloads server-filtered data.
                     <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">
-                        The parameter <CodeInline>ServerData</CodeInline> is incompatible with the parameters <CodeInline>Items</CodeInline> and <CodeInline>QuickFilter</CodeInline>. If <CodeInline>ServerData</CodeInline> is mixed with <CodeInline>Items</CodeInline> and <CodeInline>QuickFilter</CodeInline>, a <CodeInline>InvalidOperationException</CodeInline> is throw at runtime.
+                        The parameter <CodeInline>ServerData</CodeInline> is incompatible with the parameters <CodeInline>Items</CodeInline> and <CodeInline>QuickFilter</CodeInline>. If <CodeInline>ServerData</CodeInline> is mixed with <CodeInline>Items</CodeInline> and <CodeInline>QuickFilter</CodeInline>, an <CodeInline>InvalidOperationException</CodeInline> is thrown at runtime.
                     </MudAlert>
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
-                        The example show a solution to replace <CodeInline>QuickFilter</CodeInline> when <CodeInline>ServerData</CodeInline> is used.
+                        The example shows a solution to replace <CodeInline>QuickFilter</CodeInline> when <CodeInline>ServerData</CodeInline> is used.
                     </MudAlert>
                 </Description>
             </SectionHeader>
@@ -439,9 +472,10 @@
         <DocsPageSection>
             <SectionHeader Title="CultureInfo">
                 <Description>
-                    DataGrid <CodeInline>Culture</CodeInline> (CultureInfo) property is used to display and editing/filter columns data.
-                    Each <CodeInline>&lt;Column></CodeInline> can define his own culture,
-                    to allow to specify its format individually.
+                    DataGrid <CodeInline>Culture</CodeInline> (CultureInfo) property is used to display and edit/filter column data.
+                    When it is not set, cell values use the current culture through .NET's default formatting behavior.
+                    Set it to <CodeInline>CultureInfo.InvariantCulture</CodeInline> when invariant numeric or date formatting is required.
+                    Each <CodeInline>&lt;Column></CodeInline> can define its own culture to specify its format individually.
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnCultureExample)" ShowCode="false" Block="true" FullWidth="true">
@@ -453,7 +487,9 @@
             <SectionHeader Title="Column Reordering">
                 <Description>
                     To enable Column Reordering via Drag and Drop, set the <CodeInline>DragDropColumnReordering</CodeInline> parameter to true. Columns can override this parameter with their <CodeInline>DragAndDropEnabled</CodeInline> parameter if necessary.
-                    In the example all but two fixed columns can be reordered by dragging their header onto another column header to swap places. On mouse-over the draggable columns show their <CodeInline>DragIndicatorIcon</CodeInline> and when dragging
+                    Header drag-and-drop behavior is controlled by <CodeInline>ColumnReorderMode</CodeInline> using <CodeInline>DataGridDragAndDropColumnReorderMode</CodeInline>:
+                    <CodeInline>DataGridDragAndDropColumnReorderMode.Swap</CodeInline> (default) swaps the dragged column with the target column, while <CodeInline>DataGridDragAndDropColumnReorderMode.Insert</CodeInline> inserts the dragged column at the target position and shifts intermediate columns.
+                    In the example all but two fixed columns can be reordered by dragging their header onto another. On mouse-over the draggable columns show their <CodeInline>DragIndicatorIcon</CodeInline> and when dragging
                     a header over another column header, it will signal its ability to swap places by changing its text color. The drag-over effect can be customized by setting parameters <CodeInline>DropAllowedClass</CodeInline> and <CodeInline>DropNotAllowedClass</CodeInline>
                     to your own CSS classes.
                 </Description>
@@ -491,6 +527,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Cell Context Menu">
+                <Description>
+                    A context menu for cells can be added to increase the flexibility and efficiency that the <CodeInline>&lt;MudDataGrid></CodeInline> offers.
+                    There are several scenarios where a context menu can be beneficial such as performing cell level actions,
+                    accessing additional information, or just providing a more intuitive user experience.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridCellContextMenuExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridCellContextMenuExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Validator">
                 <Description>
                     When a <CodeInline>&lt;MudDataGrid></CodeInline> is used as part of a <CodeInline>MudForm</CodeInline> you might want to
@@ -500,6 +549,19 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridValidatorExample)" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridValidatorExample />
+            </SectionContent>
+        </DocsPageSection>
+        
+        <DocsPageSection>
+            <SectionHeader Title="Accessibility">
+                <Description>
+                    Set <CodeInline>aria-label</CodeInline> or <CodeInline>aria-labelledby</CodeInline> in the
+                    <CodeInline>TableAttributes</CodeInline> parameter to provide an accessible name for the HTML
+                    <CodeInline>&lt;table&gt;</CodeInline> element. This helps screen readers announce the purpose of the table.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridAriaLabelExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridAriaLabelExample />
             </SectionContent>
         </DocsPageSection>
 

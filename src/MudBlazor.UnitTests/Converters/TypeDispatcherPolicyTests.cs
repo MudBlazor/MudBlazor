@@ -302,6 +302,34 @@ public class TypeDispatcherPolicyTests
     }
 
     [Test]
+    public void ReversibleTypeDispatcher_AddDynamicForward_NullSpecificType_ThrowsArgumentNullException()
+    {
+        var builder = ReversibleTypeDispatcher.Create<int, string>();
+
+        Action act = () => builder.AddDynamicForward(null!, new ForwardOnlyIntConverter());
+
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .Which.ParamName
+            .Should()
+            .Be("specificType");
+    }
+
+    [Test]
+    public void TypeDispatcher_AddDynamic_NullConverter_ThrowsArgumentNullException()
+    {
+        var builder = TypeDispatcher.Create<int, string>();
+
+        Action act = () => builder.AddDynamic(typeof(int), null!);
+
+        act.Should()
+            .Throw<ArgumentNullException>()
+            .Which.ParamName
+            .Should()
+            .Be("converter");
+    }
+
+    [Test]
     public void ReversibleTypeDispatcher_UnsupportedRegistrationPolicy_ThrowsOnAdd()
     {
         var builder = ReversibleTypeDispatcher.Create<int, string>((DispatcherRegistrationPolicy)999);

@@ -54,5 +54,15 @@ namespace MudBlazor.UnitTests.Extensions
             ((long?)3L).ToPercent().Should().Be("3%");
             ((long?)null).ToPercent().Should().Be(string.Empty);
         }
+
+        // The "0.##" format trims trailing zeros and rounds anything past the second decimal.
+        [TestCase(3.0, "3px")]
+        [TestCase(3.5, "3.5px")]
+        [TestCase(3.05, "3.05px")]
+        [TestCase(1234.5678, "1234.57px")]
+        public void ToPx_Double_RoundsToTwoDecimalsAndTrimsZeros(double value, string expected)
+        {
+            value.ToPx().Should().Be(expected);
+        }
     }
 }

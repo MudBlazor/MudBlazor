@@ -56,9 +56,9 @@
                 <DocsPageSection>
                     <SectionHeader Title="Custom Activator">
                         <Description>
-                            If the regular customization options are not enough, use the <CodeInline>ActivatorContent</CodeInline> render fragment to define a custom activator element for opening the menu.
-                            In this example, a custom button, chip, and avatar are each used to open a menu. When generating activator elements inside a Blazor code block (<CodeInline>&#64;{ ... }</CodeInline>) or conditional markup, ensure that the element includes
-							<CodeInline>tabindex="0"</CodeInline> so it can receive focus and remain accessible via keyboard input.
+                            Use <CodeInline>ActivatorContent</CodeInline> when the built-in activators are not enough.
+                            Wire click and right-click activators to the provided menu context; for hover, set <CodeInline>ActivationEvent</CodeInline> to <CodeInline>MouseEvent.MouseOver</CodeInline> and let <CodeInline>MudMenu</CodeInline> handle pointer events.
+                            Add <CodeInline>tabindex="0"</CodeInline> to activators generated from code or conditional markup so they can receive keyboard focus.
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuActivatorExample1)" ShowCode="false">
@@ -140,8 +140,9 @@
                 <DocsPageSection>
                     <SectionHeader Title="Mouse Events">
                         <Description>
-                            Use the <CodeInline>ActivationEvent</CodeInline> property to specify which mouse event opens the menu.
-                            If the menu is a nested menu, this property may act differently.
+                            Use <CodeInline>ActivationEvent</CodeInline> to choose which mouse event opens a menu with a built-in activator.
+                            With <CodeInline>ActivatorContent</CodeInline>, wire only events that are not handled automatically, such as custom right-click.
+                            Nested menus may handle activation differently.
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuActivatorExample2)" ShowCode="false">

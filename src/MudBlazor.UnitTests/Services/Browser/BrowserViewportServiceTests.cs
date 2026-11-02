@@ -659,4 +659,21 @@ public class BrowserViewportServiceTests
         observer.Notifications.Count.Should().Be(0);
         service.ObserversCount.Should().Be(0);
     }
+
+    [Test]
+    public async Task DisposeAsync_WhenNeverSubscribed_ShouldNotCallJsDispose()
+    {
+        // A scoped service is disposed by the DI scope at the end of a prerender request, before a
+        // circuit exists. With no subscription there is no JS listener to tear down, so DisposeAsync
+        // must not call JS - otherwise it throws a first-chance InvalidOperationException. See #12574.
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
+
+        // Act
+        await service.DisposeAsync();
+
+        // Assert
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.dispose", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
+    }
 }

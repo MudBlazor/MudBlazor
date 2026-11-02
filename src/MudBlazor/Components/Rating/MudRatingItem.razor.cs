@@ -21,8 +21,7 @@ namespace MudBlazor
         /// </summary>
         protected string ClassName =>
             new CssBuilder("mud-rating-item")
-                .AddClass("mud-ripple mud-ripple-icon", Ripple)
-                .AddClass("yellow-text.text-darken-3", Color == Color.Default)
+                .AddClass("mud-ripple", Ripple && !ReadOnly)
                 .AddClass($"mud-{Color.ToStringFast(true)}-text", Color != Color.Default)
                 .AddClass("mud-rating-item-active", Active)
                 .AddClass("mud-disabled", Disabled)
@@ -43,34 +42,38 @@ namespace MudBlazor
         /// Defaults to the index of this item in the parent <see cref="MudRating"/>.  (e.g. The 3rd item has a value of <c>3</c>.)
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.Rating.Data)]
         public int ItemValue { get; set; }
 
         /// <summary>
         /// The size of this item.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.  Can be overridden by <see cref="MudRating.Size"/>.
+        /// Defaults to <see cref="Size.Medium"/>.  When used within a <see cref="MudRating"/>, the value of <see cref="MudRating.Size"/> is applied instead.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.Rating.Appearance)]
         public Size Size { get; set; } = Size.Medium;
 
         /// <summary>
         /// The color of this item.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Color.Default"/>.  Can be overridden by <see cref="MudRating.Color"/>.
+        /// Defaults to <see cref="Color.Default"/>.  When used within a <see cref="MudRating"/>, the value of <see cref="MudRating.Color"/> is applied instead.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.Rating.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
         /// Show a ripple effect when the user clicks the button.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.  Can be overridden by <see cref="MudRating.Ripple"/>.
+        /// Defaults to <c>false</c>.  When used within a <see cref="MudRating"/>, the value of <see cref="MudRating.Ripple"/> is applied instead.
         /// </remarks>
         [Parameter]
-        public bool Ripple { get; set; } = true;
+        [Category(CategoryTypes.Rating.Appearance)]
+        public bool Ripple { get; set; } = false;
 
         /// <summary>
         /// Prevents the user from interacting with this item, and uses a disabled style.
@@ -79,15 +82,17 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.Rating.Behavior)]
         public bool Disabled { get; set; }
 
         /// <summary>
-        /// Prevents thid item from being changed.
+        /// Prevents this item from being changed.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
+        [Category(CategoryTypes.Rating.Behavior)]
         public bool ReadOnly { get; set; }
 
         /// <summary>
@@ -191,7 +196,7 @@ namespace MudBlazor
         // rating item lose hover
         internal Task HandlePointerOutAsync(PointerEventArgs e)
         {
-            if (Disabled || Rating is null)
+            if (Disabled || ReadOnly || Rating is null)
             {
                 return Task.CompletedTask;
             }
@@ -203,7 +208,7 @@ namespace MudBlazor
 
         internal Task HandlePointerOverAsync(PointerEventArgs e)
         {
-            if (Disabled)
+            if (Disabled || ReadOnly)
             {
                 return Task.CompletedTask;
             }

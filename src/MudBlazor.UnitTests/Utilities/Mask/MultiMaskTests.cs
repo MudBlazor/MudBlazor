@@ -60,7 +60,7 @@ namespace MudBlazor.UnitTests.Utilities.Mask
 
             mask.Selection = (0, 2);
             mask.Insert("4");
-            mask.DetectedOption.Value.Id.Should().Be("VISA");
+            mask.DetectedOption!.Value.Id.Should().Be("VISA");
             mask.Text.Should().Be("4123 4567 8901 ");
             option.Value.Id.Should().Be("VISA");
             eventCount.Should().Be(4);
@@ -225,5 +225,25 @@ namespace MudBlazor.UnitTests.Utilities.Mask
             initialOption.Should().NotBeNull();
             mask.DetectedOption.Should().BeNull();
         }
+
+        [Test]
+        public void MultiMask_OptionDetected_DoesNotRefireWhileOptionUnchanged()
+        {
+            // Arrange
+            var mask = new MultiMask("0000 0000",
+                new MaskOption("VISA", "0000 0000", @"^4"));
+            var eventCount = 0;
+            mask.OptionDetected = (_, _) => eventCount++;
+
+            // Act
+            mask.Insert("4");
+            mask.Insert("123");
+            mask.Insert("5678");
+
+            // Assert: event fires once on detection, not for every keystroke within the same option
+            mask.DetectedOption!.Value.Id.Should().Be("VISA");
+            eventCount.Should().Be(1);
+        }
+
     }
 }

@@ -19,7 +19,7 @@ static async Task Run()
     var srcDirectory = Path.Combine(repositoryRoot, "src");
     var mudblazorProjectDirectory = Path.Combine(srcDirectory, "MudBlazor");
     var mudblazorDocsProjectDirectory = Path.Combine(srcDirectory, "MudBlazor.Docs.Server");
-    var assetBuildScript = Path.Combine(mudblazorProjectDirectory, "build.mjs");
+    var assetBuildScript = Path.Combine(mudblazorProjectDirectory, "build.mts");
     var buildPropsFile = Path.Combine(srcDirectory, "Directory.Build.props");
     var versions = GetVersions(buildPropsFile);
     await RestoreTools(repositoryRoot);

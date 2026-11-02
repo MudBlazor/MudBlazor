@@ -9,9 +9,6 @@
 @code {
     public static string __description__ = @"Test Sortable DataGrid with loading of data and sorting being simulated on server side.";
 
-    // Allow disable of simulated server time for unit-tests
-    public static bool DisableServerTimeoutForTests = false;
-
     public class Item(string name, int value, string misc)
     {
         public string Name { get; set; } = name;
@@ -20,6 +17,9 @@
     }
 
     private int _totalItems;
+
+    [Parameter]
+    public TimeSpan ServerDelay { get; set; } = TimeSpan.FromSeconds(1);
 
     /// <summary>
     /// Here we simulate getting the paged, filtered and ordered data from the server
@@ -41,9 +41,8 @@
 
         data = data.OrderBySortDefinitions(state);
 
-        // Simulate some load on the server.
-        if (!DisableServerTimeoutForTests)
-            await Task.Delay(1000, token);
+        if (ServerDelay > TimeSpan.Zero)
+            await Task.Delay(ServerDelay, token);
 
         return await Task.FromResult(new GridData<Item> { TotalItems = _totalItems, Items = data });
     }

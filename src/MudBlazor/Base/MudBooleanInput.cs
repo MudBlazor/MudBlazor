@@ -8,7 +8,7 @@ using MudBlazor.State;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a form input component which stores a boolean value.
+    /// Base class for form inputs backed by a boolean value, such as <see cref="MudCheckBox{T}"/>, <see cref="MudSwitch{T}"/>, and <see cref="MudRadio{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this component.</typeparam>
     public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
@@ -26,6 +26,8 @@ namespace MudBlazor
         protected virtual string? Classname { get; set; }
         protected virtual string? LabelClassname { get; set; }
         protected virtual string? IconClassname { get; set; }
+
+        internal string TextClassname => HasErrors ? "mud-typography mud-typography-body1 mud-error-text" : "mud-typography mud-typography-body1";
 
         /// <summary>
         /// Prevents the user from interacting with this input.
@@ -141,6 +143,13 @@ namespace MudBlazor
             {
                 ["tabindex"] = GetDisabledState() ? -1 : 0
             };
+
+            if (HasErrors)
+            {
+                // Link the input to the rendered error text the same way MudInput does.
+                attributes["aria-invalid"] = "true";
+                attributes["aria-describedby"] = ErrorIdState.Value;
+            }
 
             foreach (var userAttribute in UserAttributes)
             {

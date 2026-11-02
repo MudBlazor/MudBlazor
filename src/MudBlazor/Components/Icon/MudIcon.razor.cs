@@ -94,6 +94,29 @@ namespace MudBlazor
         [MemberNotNullWhen(true, nameof(Icon))]
         private bool IsAngleBracket => !string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith('<');
 
+        /// <summary>
+        /// Hides the icon from assistive technology unless it was given an accessible name, in which case it carries meaning of its own.
+        /// </summary>
+        private string? GetAriaHidden()
+        {
+            if (!string.IsNullOrWhiteSpace(Title))
+            {
+                return null;
+            }
+
+            foreach (var (key, value) in UserAttributes)
+            {
+                // A bound attribute can carry null or blank text, which yields no accessible name, so only a usable value exposes the icon.
+                if ((key.Equals("aria-label", StringComparison.OrdinalIgnoreCase) || key.Equals("aria-labelledby", StringComparison.OrdinalIgnoreCase))
+                    && !string.IsNullOrWhiteSpace(value?.ToString()))
+                {
+                    return null;
+                }
+            }
+
+            return "true";
+        }
+
         private partial class IconSyntax
         {
             public string FontIconClass { get; }

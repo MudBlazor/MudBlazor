@@ -39,7 +39,7 @@
                 <DocsPageSection>
                     <SectionHeader Title="Spin Buttons">
                         <Description>
-                            By default, numeric fields display up/down spin buttons for easy value adjustment. Set <CodeInline>HideSpinButtons="true"</CodeInline> to hide these controls while preserving keyboard navigation (arrow keys), Shift + mouse wheel stepping, and manual input.
+                            By default, numeric fields display up/down spin buttons for easy value adjustment. Set <CodeInline>HideSpinButtons="true"</CodeInline> to hide these controls while preserving keyboard navigation (arrow keys) and manual input.
                         </Description>
                     </SectionHeader>
                     <SectionContent Class="demo-numericfield" Code="@nameof(NumericFieldHideButtonsExample)" ShowCode="false">
@@ -79,7 +79,7 @@
                             By default, numeric fields update the bound value on Enter or when focus is lost. Set <CodeInline>Immediate="true"</CodeInline> to update values as the user types.
                             You can also use <CodeInline>DebounceInterval</CodeInline> to delay updates until the user stops typing, preventing excessive updates during input. The debounced example updates 500ms after typing stops.
                             <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">
-                                <strong>Note:</strong> Arrow keys and Shift + mouse wheel interactions are not debounced for immediate responsiveness.
+                                <strong>Note:</strong> Arrow key interactions are not debounced for immediate responsiveness.
                             </MudAlert>
                         </Description>
                     </SectionHeader>
@@ -104,18 +104,6 @@
                 <strong>For Floating Point Values:</strong> When using string literals for <CodeInline>Min</CodeInline>, <CodeInline>Max</CodeInline> or <CodeInline>Step</CodeInline>, 
                 add a decimal point (e.g., <CodeInline>0.0</CodeInline>) or suffix (e.g., <CodeInline>0.5M</CodeInline> for decimal) to avoid compilation errors.
             </MudAlert>
-        </DocsPageSection>
-
-        <DocsPageSection>
-            <SectionHeader Title="Mouse Wheel Support">
-                <Description>
-                    Numeric fields respond to Shift + mouse wheel to increment or decrement values by the configured step amount without inheriting browser-specific wheel stepping behavior.
-                    Use <CodeInline>InvertMouseWheel="true"</CodeInline> to reverse the scroll direction if desired.
-                </Description>
-            </SectionHeader>
-            <SectionContent Code="@nameof(ChangeTheValueWithTheMouseWheelExample)" ShowCode="false">
-                <ChangeTheValueWithTheMouseWheelExample/>
-            </SectionContent>
         </DocsPageSection>
 
     </DocsPageContent>

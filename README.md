@@ -13,16 +13,20 @@
 [![NuGet version](https://img.shields.io/nuget/v/MudBlazor?color=ff4081&label=nuget%20version&logo=nuget&style=flat-square)](https://www.nuget.org/packages/MudBlazor/)
 [![NuGet downloads](https://img.shields.io/nuget/dt/MudBlazor?color=ff4081&label=nuget%20downloads&logo=nuget&style=flat-square)](https://www.nuget.org/packages/MudBlazor/)
 
-Build stunning, interactive web applications with MudBlazor — the open-source Material Design library for Blazor.
+MudBlazor is an ambitious Material Design component framework for Blazor with an emphasis on ease of use and clear structure. It is perfect for .NET developers who want to rapidly build web applications without having to struggle with CSS and Javascript. MudBlazor, being written entirely in C#, empowers you to adapt, fix or extend the framework. There are plenty of examples in the documentation, which makes understanding and learning MudBlazor very easy.
 
 **🌐 [Documentation](https://mudblazor.com/docs/overview) ⚡ [Interactive Playground](https://try.mudblazor.com)**
 
 ## 💎 Why Choose MudBlazor?
 
-📖 Comprehensive documentation and examples  
-🎨 Beautiful Material Design components  
-💻 Write in C# with minimal JavaScript  
-✅ Extensive test coverage  
+- Clean and aesthetic graphic design based on Material Design.
+- Clear and easy to understand structure.
+- Good documentation with many examples and source snippets.
+- All components are written entirely in C#, no JavaScript allowed (except where absolutely necessary).
+- Users can make beautiful apps without needing CSS (but they can of course use CSS too).
+- No dependencies on other component libraries, 100% control over components and features.
+- Stability! We strive for a complete test coverage.
+- Releasing often so developers can get their PRs and fixes in a timely fashion.
 
 ## 📊 Repo Stats
 

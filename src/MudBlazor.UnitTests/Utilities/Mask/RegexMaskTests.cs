@@ -62,59 +62,6 @@ public class RegexMaskTests
     }
 
     [Test]
-    public void RegexMask_AlignAgainstMask_SimpleDigits()
-    {
-        // Arrange
-        var mask = new RegexMask("^[0-9]+$");
-
-        // Act
-        mask.Insert("123");
-
-        // Assert
-        mask.Text.Should().Be("123");
-    }
-
-    [Test]
-    public void RegexMask_AlignAgainstMask_FilterInvalidChars()
-    {
-        // Arrange
-        var mask = new RegexMask("^[0-9]+$");
-
-        // Act
-        mask.Insert("1a2b3c");
-
-        // Assert
-        mask.Text.Should().Be("123");
-    }
-
-    [Test]
-    public void RegexMask_Delimiters_AutoInsert()
-    {
-        // Arrange - Use IPv4 which has delimiters built-in
-        var mask = RegexMask.IPv4();
-
-        // Act
-        mask.Insert("192168001001");
-
-        // Assert
-        mask.Text.Should().Contain(".");
-    }
-
-    [Test]
-    public void RegexMask_GetCleanText()
-    {
-        // Arrange
-        var mask = new RegexMask("^[0-9]+$");
-        mask.Insert("12345");
-
-        // Act
-        var cleanText = mask.GetCleanText();
-
-        // Assert
-        cleanText.Should().Be("12345");
-    }
-
-    [Test]
     public void RegexMask_SelectionDelete()
     {
         // Arrange
@@ -145,115 +92,6 @@ public class RegexMaskTests
     }
 
     [Test]
-    public void RegexMask_IPv4_Basic()
-    {
-        // Arrange
-        var mask = RegexMask.IPv4();
-
-        // Act
-        mask.Insert("192.168.1.1");
-
-        // Assert
-        mask.Text.Should().Be("192.168.1.1");
-    }
-
-    [Test]
-    public void RegexMask_IPv4_WithPort()
-    {
-        // Arrange
-        var mask = RegexMask.IPv4(includePort: true);
-
-        // Act
-        mask.Insert("192168001001:8080");
-
-        // Assert
-        mask.Text.Should().Contain(":");
-        mask.Text.Should().Contain("8080");
-    }
-
-    [Test]
-    public void RegexMask_IPv6_Basic()
-    {
-        // Arrange
-        var mask = RegexMask.IPv6();
-
-        // Act
-        mask.Insert("2001:0db8:85a3:0000:0000:8a2e:0370:7334");
-
-        // Assert
-        mask.Text.Should().Contain(":");
-    }
-
-    [Test]
-    public void RegexMask_IPv6_WithPort()
-    {
-        // Arrange
-        var mask = RegexMask.IPv6(includePort: true);
-
-        // Act
-        mask.Insert("[::1]:8080");
-
-        // Assert
-        mask.Text.Should().Contain("[");
-        mask.Text.Should().Contain("]");
-    }
-
-    [Test]
-    public void RegexMask_Email_Basic()
-    {
-        // Arrange
-        var mask = RegexMask.Email();
-
-        // Act
-        mask.Insert("test@example.com");
-
-        // Assert
-        mask.Text.Should().Be("test@example.com");
-    }
-
-    [Test]
-    public void RegexMask_Email_WithSubdomain()
-    {
-        // Arrange
-        var mask = RegexMask.Email();
-
-        // Act
-        mask.Insert("user@mail.sub.domain.com");
-
-        // Assert
-        mask.Text.Should().Contain("@");
-        mask.Text.Should().Contain(".");
-    }
-
-    [Test]
-    public void RegexMask_HexPattern()
-    {
-        // Arrange
-        var mask = new RegexMask("^[0-9A-Fa-f]+$");
-
-        // Act
-        mask.Insert("1A2B3C");
-
-        // Assert
-        mask.Text.Should().Be("1A2B3C");
-    }
-
-    [Test]
-    public void RegexMask_UpdateFrom_WithDelimiters()
-    {
-        // Arrange
-        var mask = new RegexMask("^[0-9]+$");
-        var otherMask = new RegexMask("^[0-9.]+$");
-
-        // Act
-        mask.UpdateFrom(otherMask);
-        mask.Insert("123.456");
-
-        // Assert - After UpdateFrom, behavior should be updated
-        mask.Text.Should().NotBeNullOrEmpty();
-    }
-
-    [Test]
     public void RegexMask_EmptyInput()
     {
         // Arrange
@@ -278,4 +116,30 @@ public class RegexMaskTests
         // Assert
         mask.Text.Should().BeNullOrEmpty();
     }
+
+    [Test]
+    public void RegexMask_NonProgressiveRegex_BlocksAllInput()
+    {
+        // Documented contract: the regex must match every input prefix. A fixed-length
+        // pattern like ^[0-9]{5}$ matches neither "1" nor "12345" as it is being typed,
+        // so AlignAgainstMask appends nothing and the input is silently rejected.
+        var mask = new RegexMask("^[0-9]{5}$");
+
+        mask.Insert("12345");
+
+        mask.Text.Should().BeEmpty();
+    }
+
+    [Test]
+    public void RegexMask_ProgressiveRegex_AcceptsBoundedInput()
+    {
+        // The progressive form ^[0-9]{0,5}$ matches partial input, so the same digits
+        // are accepted up to the upper bound and further digits are dropped.
+        var mask = new RegexMask("^[0-9]{0,5}$");
+
+        mask.Insert("1234567");
+
+        mask.Text.Should().Be("12345");
+    }
+
 }

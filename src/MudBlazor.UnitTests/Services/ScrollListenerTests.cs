@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using AwesomeAssertions;
+using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
 using Moq;
 using NUnit.Framework;
@@ -46,5 +47,34 @@ public class ScrollListenerTests
         return;
 
         void OnOnScroll(object sender, ScrollEventArgs e) { }
+    }
+
+    [Test]
+    public void OnScroll_SecondSubscriber_DoesNotRestartJsListener()
+    {
+        // Only the first subscriber starts the JS listener; the second reuses it.
+        _runtimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudScrollListener.listenForScroll", It.IsAny<object[]>()))
+            .ReturnsAsync((IJSVoidResult)null);
+
+        _service.OnScroll += (_, _) => { };
+        _service.OnScroll += (_, _) => { };
+
+        _runtimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudScrollListener.listenForScroll", It.IsAny<object[]>()), Times.Once);
+    }
+
+    [Test]
+    public async Task GetCurrentScrollDataAsync_PassesSelectorAndReturnsJsResult()
+    {
+        _service.Selector = "#content";
+        var expected = new ScrollEventArgs { ScrollTop = 13, NodeName = "DIV" };
+        // Strict mock only matches when the configured selector is forwarded as the sole argument.
+        _runtimeMock.Setup(x => x.InvokeAsync<ScrollEventArgs>(
+                "mudScrollListener.getCurrentScrollPosition",
+                It.Is<object[]>(a => a.Length == 1 && (string)a[0] == "#content")))
+            .ReturnsAsync(expected);
+
+        var actual = await _service.GetCurrentScrollDataAsync();
+
+        actual.Should().BeSameAs(expected);
     }
 }

@@ -93,6 +93,15 @@ public class RegexMaskEmailTests
     }
 
     [Test]
+    public void Email_Insert_DuplicateAtSign_CollapsesToSingle()
+    {
+        // The mask permits at most one '@'; extras are dropped.
+        var mask = RegexMask.Email();
+        mask.Insert("user@@domain.com");
+        mask.Text.Should().Be("user@domain.com");
+    }
+
+    [Test]
     [TestCase("user@example.com", "user@example.com")] //valid
     [TestCase("valid.email@domain.co1", "valid.email@domain.co1")]
     [TestCase("user-123@my-domain.org9", "user-123@my-domain.org9")]

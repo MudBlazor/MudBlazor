@@ -5,8 +5,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a date range used by a <see cref="MudDatePicker"/>.
+/// A start and end date pair selected in a <see cref="MudDateRangePicker"/>.
 /// </summary>
+/// <seealso cref="MudDatePicker" />
+/// <seealso cref="MudDateRangePicker" />
 public class DateRange : Range<DateTime?>, IEquatable<DateRange?>
 {
     /// <summary>

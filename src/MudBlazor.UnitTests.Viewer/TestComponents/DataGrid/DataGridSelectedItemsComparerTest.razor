@@ -1,0 +1,61 @@
+﻿<MudDataGrid T="Person" Items="@Items" Comparer="@ItemComparer" MultiSelection="true" @bind-SelectedItems="SelectedItems">
+    <Columns>
+        <SelectColumn T="Person" />
+        <PropertyColumn Property="x => x.Id" />
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Rows must render selected when SelectedItems holds different instances which are equal under the custom Comparer";
+
+    public IdComparer ItemComparer { get; } = new();
+
+    public List<Person> Items { get; } =
+    [
+        new Person(1, "Alpha"),
+        new Person(2, "Beta"),
+        new Person(3, "Gamma")
+    ];
+
+    public HashSet<Person> SelectedItems { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        // Distinct instances which only match rows 1 and 3 under ItemComparer, never under reference equality.
+        SelectedItems = new HashSet<Person>(ItemComparer) { new Person(1, "Alpha copy"), new Person(3, "Gamma copy") };
+    }
+
+    public void ReapplySelectedItems()
+    {
+        SelectedItems = new HashSet<Person>(ItemComparer) { new Person(2, "Beta copy") };
+        StateHasChanged();
+    }
+
+    public class Person
+    {
+        public Person(int id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
+
+        public int Id { get; }
+
+        public string Name { get; }
+    }
+
+    public class IdComparer : IEqualityComparer<Person>
+    {
+        public int EqualsCallCount { get; private set; }
+
+        public bool Equals(Person? x, Person? y)
+        {
+            EqualsCallCount++;
+
+            return x?.Id == y?.Id;
+        }
+
+        public int GetHashCode(Person obj) => obj.Id;
+    }
+}

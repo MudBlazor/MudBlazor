@@ -18,7 +18,6 @@ public class PickerToolbarTests : BunitTest
             .Add(p => p.PickerVariant, PickerVariant.Static)
             .Add(p => p.Orientation, Orientation.Landscape));
 
-        var pickerToolbar = component.Instance;
         component.FindAll(".mud-picker-toolbar-landscape").Count.Should().Be(1);
     }
 
@@ -31,7 +30,50 @@ public class PickerToolbarTests : BunitTest
             .Add(p => p.PickerVariant, pickerVariant)
             .Add(p => p.Orientation, Orientation.Landscape));
 
-        var pickerToolbar = component.Instance;
         component.FindAll(".mud-picker-toolbar-landscape").Count.Should().Be(0);
+    }
+
+    [Test]
+    [TestCase(Color.Primary, "mud-theme-primary")]
+    [TestCase(Color.Secondary, "mud-theme-secondary")]
+    public void PickerToolbar_AppliesThemeColorClass(Color color, string expectedClass)
+    {
+        var component = Context.Render<MudPickerToolbar>(parameters => parameters
+            .Add(p => p.Color, color));
+
+        component.Find(".mud-picker-toolbar").ClassList.Should().Contain(expectedClass);
+    }
+
+    [Test]
+    public void PickerToolbar_RendersChildContent_WhenShowToolbar()
+    {
+        var component = Context.Render<MudPickerToolbar>(parameters => parameters
+            .Add(p => p.ShowToolbar, true)
+            .AddChildContent("<span class=\"probe\"></span>"));
+
+        component.FindAll(".probe").Count.Should().Be(1);
+    }
+
+    [Test]
+    public void PickerToolbar_HidesContent_WhenShowToolbarFalse()
+    {
+        var component = Context.Render<MudPickerToolbar>(parameters => parameters
+            .Add(p => p.ShowToolbar, false)
+            .AddChildContent("<span class=\"probe\"></span>"));
+
+        component.FindAll(".mud-picker-toolbar").Count.Should().Be(0);
+        component.FindAll(".probe").Count.Should().Be(0);
+    }
+
+    [Test]
+    public void PickerContent_RendersClassAndChildContent()
+    {
+        var component = Context.Render<MudPickerContent>(parameters => parameters
+            .Add(p => p.Class, "my-content")
+            .AddChildContent("<span class=\"probe\"></span>"));
+
+        var content = component.Find(".mud-picker-content");
+        content.ClassList.Should().Contain("my-content");
+        component.FindAll(".probe").Count.Should().Be(1);
     }
 }

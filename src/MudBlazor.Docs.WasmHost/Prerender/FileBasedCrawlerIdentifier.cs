@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,7 +20,8 @@ public class FileBasedCrawlerIdentifier : ICrawlerIdentifier
     private readonly string _filename;
     private readonly LimitedConcurrentDictionary<string, bool> _cache = new(1_000);
 
-    private IEnumerable<Regex> _patterns = [];
+    private string[] _literals = [];
+    private Regex[] _patterns = [];
 
     public FileBasedCrawlerIdentifier(string filename)
     {
@@ -31,9 +33,16 @@ public class FileBasedCrawlerIdentifier : ICrawlerIdentifier
         var content = await File.ReadAllTextAsync(_filename);
 
         var crawlers = JsonSerializer.Deserialize<IEnumerable<CrawlerEntry>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var entries = crawlers?.Select(crawler => crawler.Pattern).ToArray() ?? [];
 
-        _patterns = crawlers?.Select(x => new Regex(x.Pattern, RegexOptions.Compiled)).ToArray() ?? Enumerable.Empty<Regex>();
+        _literals = entries.Where(IsLiteral).ToArray();
+        _patterns = entries.Where(pattern => !IsLiteral(pattern)).Select(pattern => new Regex(pattern)).ToArray();
     }
+
+    /// <summary>
+    /// Pattern contains no regular expression syntax, so a substring search answers it.
+    /// </summary>
+    private static bool IsLiteral(string pattern) => Regex.Escape(pattern) == pattern;
 
     public Task<bool> IsRequestByCrawler(HttpContext context)
     {
@@ -49,18 +58,30 @@ public class FileBasedCrawlerIdentifier : ICrawlerIdentifier
             return Task.FromResult(_cache[value]);
         }
 
-        foreach (var item in _patterns)
-        {
-            if (item.IsMatch(value))
-            {
-                _cache.TryAdd(value, true);
+        var isCrawler = IsCrawler(value);
+        _cache.TryAdd(value, isCrawler);
 
-                return Task.FromResult(true);
+        return Task.FromResult(isCrawler);
+    }
+
+    private bool IsCrawler(string userAgent)
+    {
+        foreach (var literal in _literals)
+        {
+            if (userAgent.Contains(literal, StringComparison.Ordinal))
+            {
+                return true;
             }
         }
 
-        _cache.TryAdd(value, false);
+        foreach (var pattern in _patterns)
+        {
+            if (pattern.IsMatch(userAgent))
+            {
+                return true;
+            }
+        }
 
-        return Task.FromResult(false);
+        return false;
     }
 }

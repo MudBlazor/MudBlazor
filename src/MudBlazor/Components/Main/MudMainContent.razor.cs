@@ -8,8 +8,9 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents the main content area of the <see cref="MudLayout"/>.
+/// The main content region of a <see cref="MudLayout"/> where each page's content is rendered.
 /// </summary>
+/// <seealso cref="MudLayout" />
 public partial class MudMainContent : MudComponentBase
 {
     /// <summary>

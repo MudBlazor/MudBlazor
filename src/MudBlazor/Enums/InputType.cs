@@ -3,6 +3,9 @@ using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// The type of an HTML input element.
+    /// </summary>
     [EnumExtensions]
     public enum InputType
     {

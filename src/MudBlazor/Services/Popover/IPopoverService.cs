@@ -5,7 +5,7 @@
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a service for managing popovers.
+/// Creates, updates, and destroys popovers rendered by the <see cref="MudPopoverProvider"/> and notifies subscribed <see cref="IPopoverObserver"/> instances of changes.
 /// </summary>
 public interface IPopoverService : IAsyncDisposable
 {

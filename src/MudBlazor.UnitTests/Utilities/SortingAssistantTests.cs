@@ -127,6 +127,18 @@ namespace MudBlazor.UnitTests.Utilities
             actualOrders.Should().ContainInOrder(expectedOrders);
         }
 
+        [Test]
+        public void UpdateOrder_BodyNotMemberExpression_Throws()
+        {
+            var items = GenerateList();
+            var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[0], "something", 0);
+
+            // Body is a BinaryExpression, not a MemberExpression.
+            var act = () => items.UpdateOrder(dropInfo, x => x.Prio + 1);
+
+            act.Should().Throw<InvalidOperationException>();
+        }
+
         private static List<ItemsWithOrder> GenerateList()
         {
             return new()

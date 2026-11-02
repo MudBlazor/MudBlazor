@@ -320,32 +320,6 @@ public class ObserverManagerTests
     }
 
     [Test]
-    public void GetEnumerator_ReturnsAllObservers()
-    {
-        // Expected
-        var expectedObservers = new List<string> { "Observer1", "Observer2", "Observer3" };
-
-        // Arrange
-        for (var i = 0; i < expectedObservers.Count; i++)
-        {
-            _observerManager.Subscribe(i + 1, expectedObservers[i]);
-        }
-
-        // Act
-        var actualObservers = new List<string>();
-        using (var enumerator = _observerManager.GetEnumerator())
-        {
-            while (enumerator.MoveNext())
-            {
-                actualObservers.Add(enumerator.Current);
-            }
-        }
-
-        // Assert
-        actualObservers.Should().BeEquivalentTo(expectedObservers);
-    }
-
-    [Test]
     public void GetEnumeratorNonGeneric_ReturnsAllObservers()
     {
         // Expected
@@ -504,4 +478,35 @@ public class ObserverManagerTests
         // Act & Assert
         Assert.DoesNotThrowAsync(() => observerManager.NotifyAsync(NotificationAsync, Predicate));
     }
+
+    [Test]
+    public async Task NotifyAsync_DefunctObserverRemoved_StillNotifiesRemaining()
+    {
+        // Arrange
+        _observerManager.Subscribe(1, "Observer1");
+        _observerManager.Subscribe(2, "Observer2");
+        _observerManager.Subscribe(3, "Observer3");
+        var notified = new List<string>();
+
+        Task NotificationAsync(string observer)
+        {
+            notified.Add(observer);
+            if (observer == "Observer1")
+            {
+                throw new Exception("Notification failed");
+            }
+
+            return Task.CompletedTask;
+        }
+
+        // Act
+        await _observerManager.NotifyAsync(NotificationAsync);
+
+        // Assert
+        // The throwing observer is invoked and removed, but the rest are still notified.
+        notified.Should().BeEquivalentTo("Observer1", "Observer2", "Observer3");
+        _observerManager.Count.Should().Be(2);
+        _observerManager.IsSubscribed(1).Should().BeFalse();
+    }
+
 }

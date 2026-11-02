@@ -3,6 +3,9 @@ using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Moq;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.TestComponents.ThemeProvider;
 using MudBlazor.Utilities;
@@ -676,6 +679,31 @@ namespace MudBlazor.UnitTests.Components
 
             // Assert - should be light palette again
             comp.Instance.GetCurrentPalette().Should().BeOfType<PaletteLight>();
+        }
+
+        [Test]
+        public void FirstRender_WithoutScript_LogsGuidance()
+        {
+            // window.mudElementRef missing means MudBlazor.min.js never loaded; interop degrades silently, so surface the one actionable hint.
+            var loggerMock = new Mock<ILogger<MudThemeProvider>>();
+            Context.Services.AddSingleton(loggerMock.Object);
+            Context.JSInterop.Setup<bool>("window.hasOwnProperty", "mudElementRef").SetResult(false);
+
+            Context.Render<MudThemeProvider>();
+
+            loggerMock.VerifyLogging(MudThemeProvider.MissingScriptMessage, LogLevel.Error, Times.Once());
+        }
+
+        [Test]
+        public void FirstRender_WithScript_DoesNotLog()
+        {
+            var loggerMock = new Mock<ILogger<MudThemeProvider>>();
+            Context.Services.AddSingleton(loggerMock.Object);
+            Context.JSInterop.Setup<bool>("window.hasOwnProperty", "mudElementRef").SetResult(true);
+
+            Context.Render<MudThemeProvider>();
+
+            loggerMock.VerifyLogging(MudThemeProvider.MissingScriptMessage, LogLevel.Error, Times.Never());
         }
     }
 }

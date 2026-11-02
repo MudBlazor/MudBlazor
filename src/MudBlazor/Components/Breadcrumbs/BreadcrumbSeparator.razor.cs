@@ -8,11 +8,11 @@ namespace MudBlazor;
 
 
 /// <summary>
-/// Represents a divider between breadcrumb items.
+/// The divider rendered between items in a <see cref="MudBreadcrumbs"/> trail, showing the separator character or a custom template.
 /// </summary>
-/// <seealso cref="MudBreadcrumbs" />
 /// <seealso cref="BreadcrumbItem" />
 /// <seealso cref="BreadcrumbLink" />
+/// <seealso cref="MudBreadcrumbs" />
 public partial class BreadcrumbSeparator
 {
     /// <summary>

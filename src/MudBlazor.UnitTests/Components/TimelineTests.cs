@@ -166,6 +166,75 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div.mud-timeline-item-dot-inner").GetStyle()["background-color"].Should().Be("rgba(255, 0, 0, 1)");
         }
 
+        [Test]
+        public async Task Timeline_Icon()
+        {
+            var comp = Context.Render<TimelineTest>();
+            var firstItem = comp.FindComponent<MudTimelineItem>();
+
+            // No icon by default.
+            comp.FindAll(".mud-timeline-item-dot-inner .mud-icon-root").Should().BeEmpty();
+
+            await firstItem.SetParametersAndRenderAsync(p =>
+            {
+                p.Add(t => t.Icon, Icons.Material.Filled.Groups);
+            });
+
+            var icon = comp.Find(".mud-timeline-item-dot-inner .mud-icon-root");
+            icon.ClassList.Should().Contain("mud-timeline-item-dot-icon");
+            comp.Markup.Should().Contain(Icons.Material.Filled.Groups);
+            // Only the item with an icon set renders one.
+            comp.FindAll(".mud-icon-root").Count.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Timeline_Icon_EmptyRendersNoIcon()
+        {
+            var comp = Context.Render<TimelineTest>();
+            var firstItem = comp.FindComponent<MudTimelineItem>();
+
+            await firstItem.SetParametersAndRenderAsync(p =>
+            {
+                p.Add(t => t.Icon, string.Empty);
+            });
+
+            comp.FindAll(".mud-icon-root").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task Timeline_ItemDotTakesPrecedenceOverIcon()
+        {
+            var comp = Context.Render<TimelineTest>();
+            var firstItem = comp.FindComponent<MudTimelineItem>();
+
+            await firstItem.SetParametersAndRenderAsync(p =>
+            {
+                p.Add(t => t.Icon, Icons.Material.Filled.Groups);
+                p.Add(t => t.ItemDot, "<span class=\"custom-dot\">X</span>");
+            });
+
+            comp.FindAll(".mud-timeline-item-dot-inner .custom-dot").Should().ContainSingle();
+            comp.FindAll(".mud-timeline-item-dot-icon").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task Timeline_HideDotHidesIcon()
+        {
+            var comp = Context.Render<TimelineTest>();
+            var firstItem = comp.FindComponent<MudTimelineItem>();
+
+            await firstItem.SetParametersAndRenderAsync(p =>
+            {
+                p.Add(t => t.Icon, Icons.Material.Filled.Groups);
+                p.Add(t => t.HideDot, true);
+            });
+
+            // The whole dot (and therefore the icon) is gone for that item.
+            comp.FindAll(".mud-timeline-item").Count.Should().Be(5);
+            comp.FindAll(".mud-timeline-item-dot").Count.Should().Be(4);
+            comp.FindAll(".mud-icon-root").Should().BeEmpty();
+        }
+
         /// <summary>
         /// Test horizontal timeline inside vertical timeline.
         /// </summary>

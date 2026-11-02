@@ -1,0 +1,32 @@
+﻿<MudDataGrid T="int" ServerData="ServerReload" RowsPerPage="10">
+    <Columns>
+        <PropertyColumn Property="x => x" Title="Item" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="int" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "DataGrid - A ServerData load that reveals the current page is beyond the data must reset to the first page, also when TotalItems equals the page offset (#13948)";
+
+    public int LoadCount { get; private set; }
+
+    public int LastRequestedPage { get; private set; }
+
+    private int _totalItems = 200;
+
+    // Lets a test shrink the dataset so the current page overflows and the server-reset path runs.
+    public void ShrinkTo(int totalItems) => _totalItems = totalItems;
+
+    private Task<GridData<int>> ServerReload(GridState<int> state, CancellationToken token)
+    {
+        LoadCount++;
+        LastRequestedPage = state.Page;
+        var start = state.Page * state.PageSize;
+        var count = Math.Clamp(_totalItems - start, 0, state.PageSize);
+        var items = Enumerable.Range(start + 1, count);
+
+        return Task.FromResult(new GridData<int> { TotalItems = _totalItems, Items = items });
+    }
+}
