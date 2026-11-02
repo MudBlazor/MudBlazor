@@ -338,6 +338,7 @@ exports[`window API surface is unchanged 1`] = `
       },
     },
     "flipMargin": "number",
+    "getBodyZoom": "function(0)",
     "getEffectiveZIndex": "function(1)",
     "getPositionForFlippedPopver": "function(4)",
     "handleScroll": "function(0)",
