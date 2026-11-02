@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State.Comparer;
 using NUnit.Framework;

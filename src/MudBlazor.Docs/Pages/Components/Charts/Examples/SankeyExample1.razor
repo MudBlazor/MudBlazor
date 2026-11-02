@@ -1,0 +1,46 @@
+﻿@using MudBlazor.Charts
+
+@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart T="int" ChartType="ChartType.Sankey" Width="650px" Height="350px" ChartSeries="@_series"/>
+</MudPaper>
+
+@code {
+
+    private List<ChartSeries<int>> _series = new()
+    {
+        new()
+        { 
+            Name = "Income Flow", 
+            Data = new List<SankeyEdge<int>> 
+            {
+                //Income
+                new("Income", "Expenses", 2800),
+                new("Income", "Savings", 400),
+
+                // Expenses
+                new("Expenses", "Housing", 1200),
+                new("Expenses", "Food", 500),
+                new("Expenses", "Insurance", 250),
+                new("Expenses", "Mobility", 125),
+                new("Expenses", "Travel", 425),
+                new("Expenses", "Leisure", 300),
+                // Savings
+                new("Savings", "Interest", 10),
+                new("Savings", "Stocks", 390),
+
+                // Housing
+                new("Housing", "Rent", 950),
+                new("Housing", "Other", 250),
+                // Insurance
+                new("Insurance", "Home insurance", 50),
+                new("Insurance", "Car insurance", 75),
+                new("Insurance", "Health insurance", 125),
+                // Travel
+                new("Travel", "Car", 300),
+                new("Travel", "Public transport", 125),
+            },
+        }
+    };
+}

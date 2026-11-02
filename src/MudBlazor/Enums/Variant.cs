@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
     /// <summary>
     /// Indicates the display variation applied to a component.
     /// </summary>
+    [EnumExtensions]
     public enum Variant
     {
         /// <summary>

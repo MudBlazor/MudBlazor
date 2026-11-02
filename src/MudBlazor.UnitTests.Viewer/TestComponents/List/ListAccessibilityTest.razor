@@ -1,0 +1,26 @@
+<MudList T="string"
+         ReadOnly="@ReadOnly"
+         SelectionMode="@SelectionMode"
+         @bind-SelectedValue="_selectedValue"
+         @bind-SelectedValues="_selectedValues">
+    <MudListItem Text="Alpha" />
+    <MudListItem Text="Bravo" Disabled="@IncludeDisabledItem" />
+    <MudListItem Text="Charlie" />
+</MudList>
+
+<p class="selected-value">@(_selectedValue ?? string.Empty)</p>
+<p class="selected-values">@string.Join(", ", _selectedValues.OrderBy(x => x))</p>
+
+@code {
+    private string? _selectedValue;
+    private IReadOnlyCollection<string> _selectedValues = Array.Empty<string>();
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    [Parameter]
+    public SelectionMode SelectionMode { get; set; } = SelectionMode.SingleSelection;
+
+    [Parameter]
+    public bool IncludeDisabledItem { get; set; }
+}

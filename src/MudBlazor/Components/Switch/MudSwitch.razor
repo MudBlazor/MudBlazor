@@ -2,13 +2,13 @@
 @inherits MudBooleanInput<T>
 @typeparam T
 
-<MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorText="@GetErrorText()" Required="@Required">
+<MudInputControl Class="@Classname" Style="@Style" Error="@HasErrors" ErrorId="@ErrorIdState.Value" ErrorText="@GetErrorText()" Required="@Required">
     <InputContent>
-        <label class="@LabelClassname" style="@Style" @onkeydown="HandleKeyDownAsync" id="@_elementId">
+        <label class="@LabelClassname" style="@Style" @onkeydown="HandleKeyDownAsync" id="@ElementId">
             <span class="@SpanClassname">
-                <span tabindex="0" class="@SwitchClassname">
+                <span class="@SwitchClassname">
                     <span class="mud-switch-button">
-                        <input tabindex="-1" @attributes="UserAttributes" aria-checked="@((BoolValue == true).ToString().ToLower())" aria-readonly="@(GetDisabledState().ToString().ToLower())" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" aria-required="@Required.ToString().ToLowerInvariant()" />
+                        <input aria-labelledby="@(string.IsNullOrWhiteSpace(AriaLabel) ? null : _ariaId)" @attributes="GetInputAttributes()" aria-readonly="@(GetReadOnlyState().ToString().ToLowerInvariant())" role="switch" aria-checked="@AriaCheckedState" type="checkbox" class="mud-switch-input" checked="@BoolValue" @onchange="@OnChange" disabled="@GetDisabledState()" @onclick:preventDefault="@GetReadOnlyState()" required="@Required" />
                         <span class="@ThumbClassname">
                             @if (!string.IsNullOrEmpty(ThumbIcon))
                             {
@@ -21,15 +21,21 @@
             </span>
             @if (!string.IsNullOrEmpty(Label))
             {
-                <MudText Class="@LabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
+                <span aria-hidden="@(AriaLabel is not null ? "true" : null)" class="@TextClassname">
                     @Label
-                </MudText>
+                </span>
             }
             @if (ChildContent != null)
             {
-                <MudText Class="@LabelClassname" Color="HasErrors ? Color.Error : Color.Inherit">
+                <span aria-hidden="@(AriaLabel is not null ? "true" : null)" class="@TextClassname">
                     @ChildContent
-                </MudText>
+                </span>
+            }
+            @if (AriaLabel is not null)
+            {
+                <span id="@_ariaId" class="mud-sr-only">
+                    @AriaLabel
+                </span>
             }
         </label>
     </InputContent>

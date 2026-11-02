@@ -70,14 +70,14 @@
         _elements = await _periodicTableService.GetElements();
     }
 
-    private void ExpandAllGroups()
+    private Task ExpandAllGroups()
     {
-        _dataGrid.ExpandAllGroups();
+        return _dataGrid.ExpandAllGroupsAsync();
     }
 
-    private void CollapseAllGroups()
+    private Task CollapseAllGroups()
     {
-        _dataGrid.CollapseAllGroups();
+        return _dataGrid.CollapseAllGroupsAsync();
     }
 
     private void CustomizeByGroupChanged(bool isChecked)

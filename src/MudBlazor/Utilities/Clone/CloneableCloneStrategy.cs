@@ -6,9 +6,8 @@ using System;
 
 namespace MudBlazor.Utilities.Clone;
 
-#nullable enable
 /// <summary>
-/// Provides a deep copy implementation for objects of type <typeparamref name="T"/> that implement the <see cref="ICloneable"/> interface.
+/// Deep-copies objects that implement <see cref="ICloneable"/> by delegating to their own <c>Clone</c> method.
 /// </summary>
 /// <typeparam name="T">The type of the object to be deep-copied, which must implement the <see cref="ICloneable"/> interface.</typeparam>
 public sealed class CloneableCloneStrategy<T> : ICloneStrategy<T> where T : ICloneable

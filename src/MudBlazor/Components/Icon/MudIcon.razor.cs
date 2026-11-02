@@ -5,7 +5,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A picture displayed via an SVG path or font.
@@ -20,8 +19,8 @@ namespace MudBlazor
             new CssBuilder("mud-icon-root")
                 .AddClass("mud-icon-default", Color == Color.Default && !Disabled)
                 .AddClass("mud-svg-icon", !string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith("<"))
-                .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit && !Disabled)
-                .AddClass($"mud-icon-size-{Size.ToDescriptionString()}")
+                .AddClass($"mud-{Color.ToStringFast(true)}-text", Color != Color.Default && Color != Color.Inherit && !Disabled)
+                .AddClass($"mud-icon-size-{Size.ToStringFast(true)}")
                 .AddClass(Class)
                 .Build();
 
@@ -94,6 +93,29 @@ namespace MudBlazor
 
         [MemberNotNullWhen(true, nameof(Icon))]
         private bool IsAngleBracket => !string.IsNullOrEmpty(Icon) && Icon.Trim().StartsWith('<');
+
+        /// <summary>
+        /// Hides the icon from assistive technology unless it was given an accessible name, in which case it carries meaning of its own.
+        /// </summary>
+        private string? GetAriaHidden()
+        {
+            if (!string.IsNullOrWhiteSpace(Title))
+            {
+                return null;
+            }
+
+            foreach (var (key, value) in UserAttributes)
+            {
+                // A bound attribute can carry null or blank text, which yields no accessible name, so only a usable value exposes the icon.
+                if ((key.Equals("aria-label", StringComparison.OrdinalIgnoreCase) || key.Equals("aria-labelledby", StringComparison.OrdinalIgnoreCase))
+                    && !string.IsNullOrWhiteSpace(value?.ToString()))
+                {
+                    return null;
+                }
+            }
+
+            return "true";
+        }
 
         private partial class IconSyntax
         {

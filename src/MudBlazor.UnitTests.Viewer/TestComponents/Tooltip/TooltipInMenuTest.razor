@@ -1,0 +1,20 @@
+﻿<MudText Typo="Typo.h6">MudTooltip is @Text</MudText>
+<MudMenu Label="Menu">
+    <MudTooltip Text="Some text">
+        <MudMenuItem AutoClose="true">
+            Some button with flashing tooltip
+        </MudMenuItem>
+    </MudTooltip>
+</MudMenu>
+
+<MudTooltip Text="Some text">
+    <MudButton>
+        Some button with normal tooltip
+    </MudButton>
+</MudTooltip>
+
+@code {
+    public static string __description__ = "Shows tooltips in a menu";
+
+    private const string Text = "Testing";
+}

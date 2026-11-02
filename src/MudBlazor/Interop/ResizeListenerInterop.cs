@@ -8,7 +8,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor.Interop;
 
-#nullable enable
 internal class ResizeListenerInterop
 {
     private readonly IJSRuntime _jsRuntime;
@@ -20,7 +19,7 @@ internal class ResizeListenerInterop
 
     public async ValueTask<bool> MatchMedia(string mediaQuery, CancellationToken cancellationToken = default)
     {
-        var (success, value) = await _jsRuntime.InvokeAsyncWithErrorHandling(false, "mudResizeListener.matchMedia", cancellationToken, mediaQuery);
+        var (_, value) = await _jsRuntime.InvokeAsyncWithErrorHandling(false, "mudResizeListener.matchMedia", cancellationToken, mediaQuery);
 
         return value;
     }
@@ -41,14 +40,14 @@ internal class ResizeListenerInterop
         return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudResizeListenerFactory.cancelListeners", cancellationToken, jsListenerIds);
     }
 
-    public ValueTask Dispose(CancellationToken cancellationToken = default)
+    public ValueTask DisposeAsync(CancellationToken cancellationToken = default)
     {
         return _jsRuntime.InvokeVoidAsyncIgnoreErrors("mudResizeListenerFactory.dispose", cancellationToken);
     }
 
     public async ValueTask<BrowserWindowSize> GetBrowserWindowSize(CancellationToken cancellationToken = default)
     {
-        var (success, value) = await _jsRuntime.InvokeAsyncWithErrorHandling(new BrowserWindowSize(), "mudResizeListener.getBrowserWindowSize", cancellationToken);
+        var (_, value) = await _jsRuntime.InvokeAsyncWithErrorHandling(new BrowserWindowSize(), "mudResizeListener.getBrowserWindowSize", cancellationToken);
 
         return value;
     }

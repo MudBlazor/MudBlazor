@@ -2,5 +2,13 @@
 @inherits MudComponentBase
 
 <a @attributes="Attributes" @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(OnClickHandler)" class="@Classname" style="@Style">
+    @if (!string.IsNullOrWhiteSpace(StartIcon))
+    {
+        <MudIcon Icon="@StartIcon" Class="@StartIconClassname" />
+    }
     @ChildContent
+    @if (!string.IsNullOrWhiteSpace(EndIcon))
+    {
+        <MudIcon Icon="@EndIcon" Class="@EndIconClassname" />
+    }
 </a>

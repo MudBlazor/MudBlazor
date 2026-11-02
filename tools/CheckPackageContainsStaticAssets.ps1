@@ -9,6 +9,6 @@ if($fileNames.Contains($assetName))
 }
 else
 {
-    Write-Error -Message "Static asset check - $nupkgFilePath does not contain $assetNamh"
+    Write-Error -Message "Static asset check - $nupkgFilePath does not contain $assetName"
     exit 1
 }

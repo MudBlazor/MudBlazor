@@ -4,9 +4,8 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Represents the operation types for <see cref="IMudPopoverHolder"/>.
+/// Indicates whether a popover holder is being created, removed, or updated in the <see cref="IPopoverService"/>.
 /// </summary>
 public enum PopoverHolderOperation
 {

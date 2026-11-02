@@ -40,7 +40,8 @@
         }
 
         await Task.Delay(500);
-        return _treeItems.FirstOrDefault(x => x.Value == parentValue)?.Children;
+        var children = _treeItems.FirstOrDefault(x => x.Value == parentValue)?.Children;
+        return children is null ? null : children.OfType<TreeItemData<string>>().ToList();
     }
 
     public sealed class TreeItemData : TreeItemData<string>

@@ -2,18 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.UnitTests.Components;
 using MudBlazor.UnitTests.TestComponents.Utilities;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Utilities
 {
@@ -23,7 +16,7 @@ namespace MudBlazor.UnitTests.Utilities
         [Test]
         public void EventUtil_ShouldPreventRenderCycle()
         {
-            var comp = Context.RenderComponent<EventUtil1Test>();
+            var comp = Context.Render<EventUtil1Test>();
             comp.Find("#clicks").TrimmedText().Should().Be("Clicks: 0/0/0");
             comp.RenderCount.Should().Be(1);
             // normal click handler causes a re-render automatically (normal Blazor behavior)
@@ -78,6 +71,23 @@ namespace MudBlazor.UnitTests.Utilities
             comp.Instance.NumClicks5.Should().Be(1);
             comp.Instance.ScreenX.Should().Be(66);
             comp.Instance.ScreenY.Should().Be(99);
+        }
+
+        /// <summary>
+        /// A canceled handler that removed its component is still ignored, as the renderer ignores canceled handlers (#13952).
+        /// </summary>
+        [Test]
+        public async Task CanceledHandlerIsIgnoredAfterComponentIsRemoved()
+        {
+            var comp = Context.Render<ErrorBoundary>(parameters => parameters
+                .AddChildContent<EventUtilRemovedCanceledTest>()
+                .Add(p => p.ErrorContent, exception => $"<p class=\"error\">{exception.Message}</p>"));
+
+            await comp.Find("button").ClickAsync();
+
+            comp.FindAll("button").Should().BeEmpty();
+            comp.FindAll("p.error").Should().BeEmpty();
+            Context.Renderer.UnhandledException.IsCompleted.Should().BeFalse();
         }
     }
 }

@@ -7,29 +7,69 @@ using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for selecting date, time, and color values.
+    /// Base class for MudBlazor pickers such as <see cref="MudDatePicker"/>, <see cref="MudTimePicker"/>, and <see cref="MudColorPicker"/>.
     /// </summary>
     /// <typeparam name="T">The type of value being chosen.</typeparam>
     /// <seealso cref="MudPickerContent" />
     /// <seealso cref="MudPickerToolbar" />
-    public partial class MudPicker<T> : MudFormComponent<T, string>
+    public abstract partial class MudPicker<T> : MudFormComponent<T, string>
     {
         private string? _text;
+        private string? _lastTextParameter;
+        private bool _textParameterInitialized;
         private bool _pickerSquare;
         private ElementReference _pickerInlineRef;
-        private bool _keyInterceptorObserving = false;
-        private string _elementId = Identifier.Create("picker");
+        private bool _keyInterceptorObserving;
 
-        public MudPicker() : base(new Converter<T, string>()) { }
+        internal string ElementId { get; } = Identifier.Create("picker");
 
-        protected MudPicker(Converter<T, string> converter) : base(converter) { }
+        /// <summary>
+        /// The element that names the popup: an explicit <see cref="PopupAriaLabelledBy"/>, else nothing.
+        /// </summary>
+        private string? GetPopupAriaLabelledBy()
+        {
+            return string.IsNullOrWhiteSpace(PopupAriaLabelledBy) ? null : PopupAriaLabelledBy;
+        }
+
+        /// <summary>
+        /// The text that names the popup when no element does: an explicit <see cref="PopupAriaLabel"/>, else the field label, else the placeholder.
+        /// </summary>
+        private string? GetPopupAriaLabel()
+        {
+            if (GetPopupAriaLabelledBy() is not null)
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(PopupAriaLabel))
+            {
+                return PopupAriaLabel;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Label))
+            {
+                return Label;
+            }
+
+            return string.IsNullOrWhiteSpace(Placeholder) ? null : Placeholder;
+        }
+
+        /// <summary>
+        /// The popup is announced as a dialog only when it has a name, since an unnamed dialog tells the user nothing.
+        /// </summary>
+        private string? GetPopupRole()
+        {
+            return GetPopupAriaLabelledBy() is not null || GetPopupAriaLabel() is not null ? "dialog" : null;
+        }
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
+        [Inject]
+        private IPopoverService PopoverService { get; set; } = null!;
 
         protected string PickerClassname =>
             new CssBuilder("mud-picker")
@@ -39,7 +79,7 @@ namespace MudBlazor
                 .AddClass($"mud-elevation-{Elevation ?? 0}", PickerVariant != PickerVariant.Inline)
                 .AddClass("mud-picker-input-button", !Editable && PickerVariant != PickerVariant.Static)
                 .AddClass("mud-picker-input-text", Editable && PickerVariant != PickerVariant.Static)
-                .AddClass("mud-disabled", GetDisabledState() && PickerVariant != PickerVariant.Static)
+                .AddClass("mud-disabled", GetDisabledState())
                 .AddClass(Class)
                 .Build();
 
@@ -54,8 +94,11 @@ namespace MudBlazor
 
         protected string PickerPaperStylename =>
             new StyleBuilder()
-                .AddStyle("transition-duration", $"{Math.Round(MudGlobal.TransitionDefaults.Duration.TotalMilliseconds)}ms")
-                .AddStyle("transition-delay", $"{Math.Round(MudGlobal.TransitionDefaults.Delay.TotalMilliseconds)}ms")
+                .AddStyle("transition-duration", $"{Math.Round(PopoverService.PopoverOptions.Duration.TotalMilliseconds)}ms")
+                .AddStyle("transition-delay", $"{Math.Round(PopoverService.PopoverOptions.Delay.TotalMilliseconds)}ms")
+                .AddStyle("opacity", "0.5", GetDisabledState() && PickerVariant == PickerVariant.Static)
+                .AddStyle("pointer-events", "none", GetDisabledState() && PickerVariant == PickerVariant.Static)
+                .AddStyle("filter", "grayscale(1)", GetDisabledState() && PickerVariant == PickerVariant.Static)
                 .AddStyle(Style)
                 .Build();
 
@@ -78,7 +121,7 @@ namespace MudBlazor
         protected string PopoverClassname =>
             new CssBuilder("mud-picker-popover")
                 // We can't use the Elevation parameter because it requires Paper=true; Instead we define the class explicitly.
-                .AddClass($"mud-elevation-{Elevation ?? MudGlobal.PopoverDefaults.Elevation}")
+                .AddClass($"mud-elevation-{Elevation ?? 8}")
                 .Build();
 
         protected string ActionsClassname =>
@@ -133,6 +176,26 @@ namespace MudBlazor
         public string? Placeholder { get; set; }
 
         /// <summary>
+        /// The accessible name announced for the popup.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which names the popup after <see cref="Label"/>, or <see cref="Placeholder"/> when there is no label. Without any of these the popup is not announced as a dialog.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? PopupAriaLabel { get; set; }
+
+        /// <summary>
+        /// The id of the element that names the popup.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Takes precedence over <see cref="PopupAriaLabel"/> and the field text.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? PopupAriaLabelledBy { get; set; }
+
+        /// <summary>
         /// Occurs when this picker has opened.
         /// </summary>
         [Parameter]
@@ -160,23 +223,21 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public bool Square { get; set; } = MudGlobal.Rounded == false;
+        public bool Square { get; set; }
 
         /// <summary>
         /// Shows rounded corners.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
         /// When <c>true</c>, the <c>border-radius</c> style is set to the theme's default value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerAppearance)]
-        public bool Rounded { get; set; } = MudGlobal.Rounded == true;
+        public bool Rounded { get; set; }
 
         /// <summary>
         /// The text displayed below the text field.
@@ -213,11 +274,21 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.<br />
-        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <c>ClearIcon</c> property to control the Clear button icon.
+        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <see cref="ClearIcon"/> property to control the Clear button icon.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Clearable { get; set; } = false;
+        public bool Clearable { get; set; }
+
+        /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Clear"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// Prevents the user from interacting with this button.
@@ -258,7 +329,18 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Editable { get; set; } = false;
+        public bool Editable { get; set; }
+
+        /// <summary>
+        /// The ID of the input element.
+        /// </summary>
+        /// <remarks>
+        /// When set takes precedence over any internally generated IDs.
+        /// When used with a range picker, the ID is suffixed with <c>-start</c> for the start input and <c>-end</c> for the end input.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? InputId { get; set; }
 
         /// <summary>
         /// Shows the toolbar.
@@ -345,7 +427,7 @@ namespace MudBlazor
         /// Occurs when <see cref="Text"/> has changed.
         /// </summary>
         [Parameter]
-        public EventCallback<string> TextChanged { get; set; }
+        public EventCallback<string?> TextChanged { get; set; }
 
         /// <summary>
         /// Updates <see cref="Text"/> immediately upon typing when <see cref="Editable"/> is <c>true</c>.
@@ -369,10 +451,27 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Data)]
-        public string? Text
+        public virtual string? Text
         {
             get => _text;
-            set => SetTextAsync(value, true).CatchAndLog();
+            set
+            {
+                // This setter is the parameter-write path (Blazor assigns it during SetParametersAsync).
+                // Only re-parse when the incoming parameter actually differs from the last one supplied.
+                // The old behavior compared against _text, which drifts as the user picks values, so a
+                // parent re-supplying the same literal Text every render re-ran StringValueChanged and
+                // pushed a conflicting value back; combined with a bound Time/Date, that spun an infinite
+                // render loop and froze the page (#13439). This mirrors ParameterState: a parameter the
+                // parent does not change is applied once. User edits go through WriteTextAsync, not here.
+                if (_textParameterInitialized && value == _lastTextParameter)
+                {
+                    return;
+                }
+
+                _lastTextParameter = value;
+                _textParameterInitialized = true;
+                SetTextAsync(value, true).CatchAndLog();
+            }
         }
 
         /// <summary>
@@ -391,11 +490,25 @@ namespace MudBlazor
         public RenderFragment<MudPicker<T>>? PickerActions { get; set; }
 
         /// <summary>
-        /// Applies vertical spacing.
+        /// The amount of vertical spacing for the text input.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Margin.None"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Margin Margin { get; set; } = Margin.None;
+
+        /// <summary>
+        /// Shows the label inside the text input if no <see cref="Text"/> is specified.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// When <c>true</c>, the label will not move into the input when the input is empty.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public bool ShrinkLabel { get; set; }
 
         /// <summary>
         /// The mask to apply to input values when <see cref="Editable"/> is <c>true</c>.
@@ -407,6 +520,22 @@ namespace MudBlazor
             get => _mask;
             set => _mask = value;
         }
+
+        /// <summary>
+        /// Prevents interaction with background elements while the picker is open.
+        /// </summary>
+        /// <remarks>
+        /// <para>Defaults to <see cref="PopoverOptions.ModalOverlay" />.</para>
+        /// <para>Only possible to set to <c>false</c> when <see cref="PickerVariant"/> is <see cref="PickerVariant.Inline"/>.</para>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public bool? Modal { get; set; }
+
+        /// <summary>
+        /// Gets the resolved modal overlay value, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
+        /// </summary>
+        protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
 
         /// <summary>
         /// The location the popover opens, relative to its container.
@@ -429,16 +558,6 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
-        /// The behavior of the popover when it overflows its container.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <see cref="OverflowBehavior.FlipOnOpen"/>.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.Popover.Appearance)]
-        public OverflowBehavior OverflowBehavior { get; set; } = OverflowBehavior.FlipOnOpen;
-
-        /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.
         /// </summary>
         /// <remarks>
@@ -456,7 +575,7 @@ namespace MudBlazor
 
         protected bool GetReadOnlyState() => ReadOnly || ParentReadOnly;
 
-        protected async Task SetTextAsync(string? value, bool callback)
+        protected virtual async Task SetTextAsync(string? value, bool callback)
         {
             if (_text != value)
             {
@@ -605,7 +724,30 @@ namespace MudBlazor
                     new("/./", subscribeDown: true, subscribeUp: true)
                 ]);
 
-            await KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: OnHandleKeyDownAsync);
+            await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
+                .HookKeyDown(OnHandleKeyDownAsync)
+                .When(CanHandleKeys, builder => builder
+                    .OnKeyDown("Backspace", HandleBackspaceAsync)
+                    .OnKeyDown("Escape", () => CloseAsync(false))
+                    .OnKeyDown("Tab", () => CloseAsync(Open && PickerActions == null))));
+        }
+
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
+
+        private async Task HandleBackspaceAsync(KeyboardEventArgs args)
+        {
+            // Ctrl+Shift+Backspace clears the value
+            if (args.CtrlKey && args.ShiftKey)
+            {
+                await ClearAsync();
+                await SetValueCoreAsync(default);
+                await ResetAsync();
+            }
+        }
+
+        protected internal virtual Task OnHandleKeyDownAsync(KeyboardEventArgs args)
+        {
+            return Task.CompletedTask;
         }
 
         private async Task OnClickAsync(MouseEventArgs args)
@@ -658,7 +800,7 @@ namespace MudBlazor
             }
 
             await EnsureKeyInterceptorAsync();
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "key+none"));
+            await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "key+none"));
         }
 
         protected virtual async Task OnClosedAsync()
@@ -666,34 +808,24 @@ namespace MudBlazor
             await OnPickerClosedAsync();
 
             await EnsureKeyInterceptorAsync();
-            await KeyInterceptorService.UpdateKeyAsync(_elementId, new("Escape", stopDown: "none"));
+            await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "none"));
         }
 
         protected virtual Task OnPickerOpenedAsync() => PickerOpened.InvokeAsync(this);
 
         protected virtual Task OnPickerClosedAsync() => PickerClosed.InvokeAsync(this);
 
-        protected internal virtual async Task OnHandleKeyDownAsync(KeyboardEventArgs args)
-        {
-            if (GetDisabledState() || GetReadOnlyState())
-                return;
-            switch (args.Key)
-            {
-                case "Backspace":
-                    if (args.CtrlKey && args.ShiftKey)
-                    {
-                        await ClearAsync();
-                        _value = default;
-                        await ResetAsync();
-                    }
+        // A proxy for components that will utilize ParameterState
+        // Since for ParameterState we don't want to read directly from the Text property, but we have other components that inherit from MudPicker
+        // In future when all Pickers will use ParameterState, we can remove this.
+        protected virtual string? ReadText => Text;
 
-                    break;
-                case "Escape":
-                case "Tab":
-                    await CloseAsync(false);
-                    break;
-            }
-        }
+        // A proxy for components that will utilize ParameterState
+        // Since for ParameterState we don't want to write directly from the Text property, but we have other components that inherit from MudPicker
+        // In future when all Pickers will use ParameterState, we can remove this.
+        // Goes straight to SetTextAsync rather than through the Text parameter setter so a user edit is
+        // never mistaken for a repeated parameter and skipped by that setter's idempotency guard (#13439).
+        protected virtual Task WriteTextAsync(string? value) => SetTextAsync(value, true);
 
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
@@ -702,7 +834,7 @@ namespace MudBlazor
 
             if (IsJSRuntimeAvailable)
             {
-                await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                await KeyInterceptorService.UnsubscribeAsync(ElementId);
             }
         }
     }

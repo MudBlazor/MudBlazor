@@ -1,5 +1,5 @@
 ﻿<MudPaper Class="pa-4">
-    <MudChart ChartType="ChartType.Pie" InputData="@_data" @bind-SelectedIndex="_index" InputLabels="@_labels" Width="300px" Height="300px" />
+    <MudChart ChartType="ChartType.Pie" ChartSeries="@_data.AsChartDataSet()" @bind-SelectedIndex="_index" ChartLabels="@_labels" Width="300px" Height="300px" />
 </MudPaper>
 <MudPaper Class="pa-4 mt-2 d-flex justify-center">
     <MudButton OnClick="AddDataSize" Variant="Variant.Filled" Color="Color.Primary">Add</MudButton>
@@ -25,7 +25,7 @@
     {
         var newData = new double[_dataSize];
         for (int i = 0; i < newData.Length; i++)
-            newData[i] = Random.Shared.NextDouble() * 100;
+            newData[i] = Math.Round(Random.Shared.NextDouble() * 100, 2);
         _data = newData;
         StateHasChanged();
     }

@@ -1,21 +1,19 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
-    /// A component which can be expanded to show more content or collapsed to show only its header.
+    /// Accordion-style collapsible panel within a <see cref="MudExpansionPanels"/> group that expands to reveal content or collapses to show only its header.
     /// </summary>
     /// <remarks>
     /// This component is always inside a <see cref="MudExpansionPanels"/> component.
     /// </remarks>
-    /// <seealso cref="MudExpansionPanels"/>
-    /// <seealso cref="MudCollapse"/>
+    /// <seealso cref="MudCollapse" />
+    /// <seealso cref="MudExpansionPanels" />
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
         internal readonly ParameterState<bool> _expandedState;
@@ -27,7 +25,6 @@ namespace MudBlazor
             new CssBuilder("mud-expand-panel")
                 .AddClass("mud-panel-expanded", _expandedState.Value)
                 .AddClass("mud-panel-next-expanded", NextPanelExpanded)
-                .AddClass("mud-disabled", Disabled)
                 .AddClass($"mud-elevation-{Parent?.Elevation.ToString()}")
                 .AddClass($"mud-expand-panel-border", Parent?.Outlined == true)
                 .AddClass(Class)
@@ -35,12 +32,14 @@ namespace MudBlazor
 
         protected string HeaderClassname =>
             new CssBuilder("mud-expand-panel-header")
+                .AddClass("mud-expand-panel-header-gutters", Gutters && Parent?.Gutters != false)
+                .AddClass("mud-disabled", Disabled)
                 .AddClass(HeaderClass)
                 .Build();
 
         protected string PanelContentClassname =>
             new CssBuilder("mud-expand-panel-content")
-                .AddClass("mud-expand-panel-gutters", Gutters || Parent?.Gutters == true)
+                .AddClass("mud-expand-panel-gutters", Gutters && Parent?.Gutters != false)
                 .AddClass("mud-expand-panel-dense", Dense || Parent?.Dense == true)
                 .Build();
 
@@ -155,7 +154,14 @@ namespace MudBlazor
         public RenderFragment? ChildContent { get; set; }
 
         /// <summary>
-        /// Indicates whether the next panel is currently expanded.
+        /// When true, the content remains in the DOM even when the panel is collapsed.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.ExpansionPanel.Behavior)]
+        public bool KeepContentAlive { get; set; } = true;
+
+        /// <summary>
+        /// The next panel is currently expanded.
         /// </summary>
         public bool NextPanelExpanded { get; set; }
 
@@ -251,6 +257,19 @@ namespace MudBlazor
             if (disposing)
             {
                 Parent?.RemovePanel(this);
+            }
+        }
+
+        private async Task HandleKeyDownAsync(KeyboardEventArgs e)
+        {
+            if (Disabled)
+            {
+                return;
+            }
+
+            if (e.Key == "Enter" || e.Key == " ")
+            {
+                await ToggleExpansionAsync();
             }
         }
     }

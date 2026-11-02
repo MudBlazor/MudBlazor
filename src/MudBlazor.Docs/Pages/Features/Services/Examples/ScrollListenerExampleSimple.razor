@@ -1,0 +1,66 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@inject IScrollListenerFactory ScrollListenerFactory
+@implements IAsyncDisposable
+
+<!--suppress CssUnresolvedCustomProperty -->
+<style>
+    #scroll_simple {
+        height: 5rem;
+        width: 100%;
+        overflow-y: scroll;
+        scrollbar-width: auto;
+        border-radius: var(--mud-default-borderradius);
+    }
+
+    .scroll_stack {
+        color: var(--mud-palette-text-primary);
+        background-color: var(--mud-palette-background);
+    }
+</style>
+
+<MudStack>
+    <MudText>You can attach the scroll listener to any element:</MudText>
+    <MudStack>
+        <MudText>Rectangle scroll position: @_scrollTopRectangle px</MudText>
+        <div id="scroll_simple">
+            <MudStack Spacing="0" Class="scroll_stack px-4">
+                @for (var i = 0; i < 100; i++)
+                {
+                    var iLocal = i;
+                    <MudText>Line @iLocal</MudText>
+                }
+            </MudStack>
+        </div>
+    </MudStack>
+</MudStack>
+
+
+@code {
+    private double _scrollTopRectangle;
+    private IScrollListener _scrollListener;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            _scrollListener = ScrollListenerFactory.Create("#scroll_simple");
+            _scrollListener.OnScroll += ScrollListenerOnScroll;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_scrollListener != null)
+        {
+            await _scrollListener.DisposeAsync();
+        }
+    }
+
+    private void ScrollListenerOnScroll(object sender, ScrollEventArgs e)
+    {
+        _scrollTopRectangle = e.ScrollTop;
+        StateHasChanged();
+    }
+}

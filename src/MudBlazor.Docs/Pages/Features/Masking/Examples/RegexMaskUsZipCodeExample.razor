@@ -1,0 +1,17 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+
+<MudGrid Class="justify-space-between" Style="max-width: 800px;">
+    <MudItem xs="12" sm="6">
+        <MudTextField Mask="@zipCodeMask" Label="ZIP Code" HelperText="@zipCodeMask.Mask"
+                      @bind-Value="zipCode" Variant="@Variant.Text" Clearable />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        ZIP Code: <b>@zipCode</b>
+    </MudItem>
+</MudGrid>
+
+@code {
+    public string zipCode;
+    public IMask zipCodeMask = RegexMask.UsZipCode();
+}

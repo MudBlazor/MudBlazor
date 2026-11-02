@@ -30,12 +30,12 @@ public partial class ParameterStateMultipleScopeTestComp : MudComponentBase
     private readonly ParameterState<int> _b;
     private readonly ParameterState<int> _c;
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int A { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int B { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int C { get; set; }
 }

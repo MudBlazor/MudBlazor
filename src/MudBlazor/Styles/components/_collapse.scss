@@ -12,6 +12,10 @@
 .mud-collapse-entered {
   overflow: initial;
   grid-template-rows: minmax(0, 1fr);
+
+  & .mud-collapse-wrapper {
+      overflow-y: auto;
+  }
 }
 
 .mud-collapse-hidden {

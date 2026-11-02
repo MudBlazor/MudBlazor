@@ -19,7 +19,7 @@ namespace MudBlazor
         /// <param name="identifier">An identifier for the function to invoke. For example, the value <c>"someScope.someFunction"</c> will invoke the function <c>window.someScope.someFunction</c>.</param>
         /// <param name="args">JSON-serializable arguments.</param>
         /// <returns>A <see cref="ValueTask"/> that represents the asynchronous invocation operation.</returns>
-        public static async ValueTask InvokeVoidAsyncIgnoreErrors(this IJSRuntime jsRuntime, string identifier, params object[] args)
+        public static async ValueTask InvokeVoidAsyncIgnoreErrors(this IJSRuntime jsRuntime, string identifier, params object?[] args)
         {
             try
             {
@@ -28,21 +28,27 @@ namespace MudBlazor
 #if !DEBUG
             catch (JSException)
             {
+                // A missing or failing script must not break the consuming app in release builds.
+                // Debug builds let it bubble up so the broken interop call is noticed while developing.
             }
 #endif
-            // Catch pre-rending errors since there is no browser at this point.
             catch (InvalidOperationException) when (IsUnsupportedJavaScriptRuntime(jsRuntime))
             {
+                // There is no browser during pre-rendering, so the call can never reach JavaScript.
             }
             catch (JSDisconnectedException)
             {
+                // The circuit is already gone, so there is nothing left to invoke the function on.
             }
             catch (TaskCanceledException)
             {
+                // The invocation was cancelled or hit the interop timeout, and a void call leaves nothing to recover.
             }
 #if !DEBUG
             catch (ObjectDisposedException)
             {
+                // The runtime was disposed mid-call, usually during teardown, so the call can never complete.
+                // Debug builds let it bubble up to expose the lifetime bug behind it.
             }
 #endif
         }
@@ -58,7 +64,7 @@ namespace MudBlazor
         /// </param>
         /// <param name="args">JSON-serializable arguments.</param>
         /// <returns>A <see cref="ValueTask"/> that represents the asynchronous invocation operation.</returns>
-        public static async ValueTask InvokeVoidAsyncIgnoreErrors(this IJSRuntime jsRuntime, string identifier, CancellationToken cancellationToken, params object[] args)
+        public static async ValueTask InvokeVoidAsyncIgnoreErrors(this IJSRuntime jsRuntime, string identifier, CancellationToken cancellationToken, params object?[] args)
         {
             try
             {
@@ -67,21 +73,27 @@ namespace MudBlazor
 #if !DEBUG
             catch (JSException)
             {
+                // A missing or failing script must not break the consuming app in release builds.
+                // Debug builds let it bubble up so the broken interop call is noticed while developing.
             }
 #endif
-            // Catch pre-rending errors since there is no browser at this point.
             catch (InvalidOperationException) when (IsUnsupportedJavaScriptRuntime(jsRuntime))
             {
+                // There is no browser during pre-rendering, so the call can never reach JavaScript.
             }
             catch (JSDisconnectedException)
             {
+                // The circuit is already gone, so there is nothing left to invoke the function on.
             }
             catch (TaskCanceledException)
             {
+                // The caller cancelled the token, and a void call leaves nothing to recover.
             }
 #if !DEBUG
             catch (ObjectDisposedException)
             {
+                // The runtime was disposed mid-call, usually during teardown, so the call can never complete.
+                // Debug builds let it bubble up to expose the lifetime bug behind it.
             }
 #endif
         }
@@ -93,7 +105,7 @@ namespace MudBlazor
         /// <param name="identifier">An identifier for the function to invoke. For example, the value <c>"someScope.someFunction"</c> will invoke the function <c>window.someScope.someFunction</c>.</param>
         /// <param name="args">JSON-serializable arguments.</param>
         /// <returns>A <see cref="ValueTask"/> that represents the asynchronous invocation operation and resolves to true in case no exception has occured otherwise false.</returns>
-        public static async ValueTask<bool> InvokeVoidAsyncWithErrorHandling(this IJSRuntime jsRuntime, string identifier, params object[] args)
+        public static async ValueTask<bool> InvokeVoidAsyncWithErrorHandling(this IJSRuntime jsRuntime, string identifier, params object?[] args)
         {
             try
             {
@@ -138,7 +150,7 @@ namespace MudBlazor
         /// </param>
         /// <param name="args">JSON-serializable arguments.</param>
         /// <returns>A <see cref="ValueTask"/> that represents the asynchronous invocation operation and resolves to true in case no exception has occured otherwise false.</returns>
-        public static async ValueTask<bool> InvokeVoidAsyncWithErrorHandling(this IJSRuntime jsRuntime, string identifier, CancellationToken cancellationToken, params object[] args)
+        public static async ValueTask<bool> InvokeVoidAsyncWithErrorHandling(this IJSRuntime jsRuntime, string identifier, CancellationToken cancellationToken, params object?[] args)
         {
             try
             {
@@ -180,7 +192,7 @@ namespace MudBlazor
         /// <param name="identifier">An identifier for the function to invoke. For example, the value <c>"someScope.someFunction"</c> will invoke the function <c>window.someScope.someFunction</c>.</param>
         /// <param name="args">JSON-serializable arguments.</param>
         /// <returns>An instance of <typeparamref name="TValue"/> obtained by JSON-deserializing the return value into a tuple. The first item (sucess) is true in case where there was no exception, otherwise fall.</returns>
-        public static async ValueTask<(bool success, TValue value)> InvokeAsyncWithErrorHandling<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(this IJSRuntime jsRuntime, string identifier, params object[] args)
+        public static async ValueTask<(bool success, TValue? value)> InvokeAsyncWithErrorHandling<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(this IJSRuntime jsRuntime, string identifier, params object?[] args)
             => await jsRuntime.InvokeAsyncWithErrorHandling(default(TValue), identifier, args);
 
         /// <summary>
@@ -195,7 +207,7 @@ namespace MudBlazor
         /// </param>
         /// <param name="args">JSON-serializable arguments.</param>
         /// <returns>An instance of <typeparamref name="TValue"/> obtained by JSON-deserializing the return value into a tuple. The first item (sucess) is true in case where there was no exception, otherwise fall.</returns>
-        public static async ValueTask<(bool success, TValue value)> InvokeAsyncWithErrorHandling<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(this IJSRuntime jsRuntime, string identifier, CancellationToken cancellationToken, params object[] args)
+        public static async ValueTask<(bool success, TValue? value)> InvokeAsyncWithErrorHandling<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(this IJSRuntime jsRuntime, string identifier, CancellationToken cancellationToken, params object?[] args)
             => await jsRuntime.InvokeAsyncWithErrorHandling(default(TValue), identifier, cancellationToken, args);
 
         /// <summary>
@@ -207,7 +219,7 @@ namespace MudBlazor
         /// <param name="identifier">An identifier for the function to invoke. For example, the value <c>"someScope.someFunction"</c> will invoke the function <c>window.someScope.someFunction</c>.</param>
         /// <param name="args">JSON-serializable arguments.</param>
         /// <returns>An instance of <typeparamref name="TValue"/> obtained by JSON-deserializing the return value into a tuple. The first item (sucess) is true in case where there was no exception, otherwise fall.</returns>
-        public static async ValueTask<(bool success, TValue value)> InvokeAsyncWithErrorHandling<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(this IJSRuntime jsRuntime, TValue fallbackValue, string identifier, params object[] args)
+        public static async ValueTask<(bool success, TValue value)> InvokeAsyncWithErrorHandling<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(this IJSRuntime jsRuntime, TValue fallbackValue, string identifier, params object?[] args)
         {
             try
             {
@@ -254,7 +266,7 @@ namespace MudBlazor
         /// </param>
         /// <param name="args">JSON-serializable arguments.</param>
         /// <returns>An instance of <typeparamref name="TValue"/> obtained by JSON-deserializing the return value into a tuple. The first item (sucess) is true in case where there was no exception, otherwise fall.</returns>
-        public static async ValueTask<(bool success, TValue value)> InvokeAsyncWithErrorHandling<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(this IJSRuntime jsRuntime, TValue fallbackValue, string identifier, CancellationToken cancellationToken, params object[] args)
+        public static async ValueTask<(bool success, TValue value)> InvokeAsyncWithErrorHandling<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicProperties)] TValue>(this IJSRuntime jsRuntime, TValue fallbackValue, string identifier, CancellationToken cancellationToken, params object?[] args)
         {
             try
             {

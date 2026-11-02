@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// Information about a swipe event when <see cref="MudSwipeArea.OnSwipeEnd"/> occurs.
     /// </summary>

@@ -2,8 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.ToolBar;
 using NUnit.Framework;
 
@@ -13,9 +13,9 @@ namespace MudBlazor.UnitTests.Components
     public class ToolBarTests : BunitTest
     {
         [Test]
-        public void ToolBarWrapContentTest()
+        public void ToolBarWrapContent()
         {
-            var component = Context.RenderComponent<ToolBarWrapContentTest>();
+            var component = Context.Render<ToolBarWrapContentTest>();
             var mudToolBar = component.Find(".mud-toolbar");
 
             mudToolBar.ClassList.Should().Contain("mud-toolbar-wrap-content");
@@ -27,9 +27,8 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ToolBar_WrapContent_ShouldBeFalseByDefault()
         {
-            var comp = Context.RenderComponent<MudToolBar>();
+            var comp = Context.Render<MudToolBar>();
             comp.Instance.WrapContent.Should().Be(false);
         }
-
     }
 }

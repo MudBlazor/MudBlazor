@@ -15,8 +15,8 @@
 </MudPaper>
 
 <MudStack Row Justify="Justify.Center" Style="width: 100%" Wrap="Wrap.Wrap">
-    <MudButton Color="Color.Primary" OnClick="@(()=>TreeView.ExpandAllAsync())" Variant="Variant.Filled">Expand All</MudButton>
-    <MudButton Color="Color.Dark" OnClick="@(()=>TreeView.CollapseAllAsync())" Variant="Variant.Filled">Collapse All</MudButton>
+    <MudButton Color="Color.Primary" OnClick="@(()=>TreeView.ExpandAllAsync())" Variant="Variant.Filled">Expand all</MudButton>
+    <MudButton Color="Color.Dark" OnClick="@(()=>TreeView.CollapseAllAsync())" Variant="Variant.Filled">Collapse all</MudButton>
     <MudChipSet T="string" @bind-SelectedValue="SelectedValue" Color="Color.Primary" Variant="Variant.Text" SelectionMode="@SelectionMode.ToggleSelection">
         <MudChip Text="config"/>
         <MudChip Text="launch.json"/>

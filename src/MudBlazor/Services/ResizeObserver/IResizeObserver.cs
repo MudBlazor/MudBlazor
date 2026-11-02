@@ -3,9 +3,8 @@ using MudBlazor.Interop;
 
 namespace MudBlazor.Services
 {
-#nullable enable
     /// <summary>
-    /// Interface for observing resize events on elements.
+    /// Watches HTML elements for size changes with the browser's ResizeObserver and reports their bounding rectangles to subscribers.
     /// </summary>
     public interface IResizeObserver : IAsyncDisposable
     {

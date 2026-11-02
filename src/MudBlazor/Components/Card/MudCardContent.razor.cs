@@ -3,9 +3,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents the primary content displayed within a <see cref="MudCard"/>.
+    /// The primary content area of a <see cref="MudCard"/>, holding its text and body elements.
     /// </summary>
     /// <seealso cref="MudCard" />
     /// <seealso cref="MudCardActions" />
@@ -14,8 +13,12 @@ namespace MudBlazor
     public partial class MudCardContent : MudComponentBase
     {
         protected string Classname => new CssBuilder("mud-card-content")
+            .AddClass("mud-card-content-padding", ParentCard?.ContentPadding ?? true)
             .AddClass(Class)
             .Build();
+
+        [CascadingParameter]
+        private MudCard? ParentCard { get; set; }
 
         /// <summary>
         /// The content within this component.

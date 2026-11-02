@@ -22,7 +22,7 @@ public partial class ParameterStateTestComp : MudComponentBase
         _parameterChanges.Add($"IntParam: {args.LastValue}=>{args.Value}");
     }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int IntParam { get; set; }
 
     [Parameter]

@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudContainer Class="mt-8" Style="justify-items: center">
+    <MudPaper Class="pa-4" MaxWidth="400px">
+        <MudStack Spacing="2">
+            <MudButton OnClick="Update">@(_isExpanded ? "Collapse" : "Expand")</MudButton>
+            <MudDivider />
+            <MudCollapse @bind-Expanded="@_isExpanded">
+                This content is collapsible.
+            </MudCollapse>
+        </MudStack>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private bool _isExpanded;
+
+    private void Update()
+    {
+        _isExpanded = !_isExpanded;
+    }
+}

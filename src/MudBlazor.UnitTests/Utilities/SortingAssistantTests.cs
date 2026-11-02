@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -125,6 +125,18 @@ namespace MudBlazor.UnitTests.Utilities
             var actualOrders = items.Select(x => x.Prio).ToList();
 
             actualOrders.Should().ContainInOrder(expectedOrders);
+        }
+
+        [Test]
+        public void UpdateOrder_BodyNotMemberExpression_Throws()
+        {
+            var items = GenerateList();
+            var dropInfo = new MudItemDropInfo<ItemsWithOrder>(items[0], "something", 0);
+
+            // Body is a BinaryExpression, not a MemberExpression.
+            var act = () => items.UpdateOrder(dropInfo, x => x.Prio + 1);
+
+            act.Should().Throw<InvalidOperationException>();
         }
 
         private static List<ItemsWithOrder> GenerateList()

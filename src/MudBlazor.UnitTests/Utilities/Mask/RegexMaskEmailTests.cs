@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Utilities.Mask;
@@ -90,6 +90,15 @@ public class RegexMaskEmailTests
         mask.CaretPos = 1;
         mask.UpdateFrom(null);
         mask.ToString().Should().Be("t|est@domain.com");
+    }
+
+    [Test]
+    public void Email_Insert_DuplicateAtSign_CollapsesToSingle()
+    {
+        // The mask permits at most one '@'; extras are dropped.
+        var mask = RegexMask.Email();
+        mask.Insert("user@@domain.com");
+        mask.Text.Should().Be("user@domain.com");
     }
 
     [Test]

@@ -9,18 +9,25 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
-    /// An option from a set of mutually exclusive options, often as part of a <see cref="MudRadioGroup{T}"/>.
+    /// Allows the user to select a single choice from a group of options. Use radio buttons (not switches) when only one item can be selected from a list.
     /// </summary>
     /// <typeparam name="T">The type of value being selected, often a <c>bool</c>.</typeparam>
     /// <seealso cref="MudCheckBox{T}" />
     /// <seealso cref="MudRadioGroup{T}" />
+    /// <seealso cref="MudSwitch{T}"/>
     public partial class MudRadio<T> : MudBooleanInput<T>
     {
         private IMudRadioGroup? _parent;
-        private string _elementId = Identifier.Create("radio");
+        private readonly string _elementId = Identifier.Create("radio");
+        private readonly string _ariaId = Identifier.Create("radio-aria-");
+
+        public MudRadio()
+        {
+            // The MudRadioGroup is the form participant; individual radios must not register (#11540).
+            SubscribeToParentForm = false;
+        }
 
         protected override string Classname => new CssBuilder("mud-input-control-boolean-input")
             .AddClass("mud-disabled", GetDisabledState())
@@ -32,19 +39,42 @@ namespace MudBlazor
         protected override string LabelClassname => new CssBuilder("mud-radio")
             .AddClass($"mud-disabled", GetDisabledState())
             .AddClass($"mud-readonly", GetReadOnlyState())
-            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToDescriptionString()}")
+            .AddClass($"mud-input-content-placement-{ConvertPlacement(LabelPlacement).ToStringFast(true)}")
             .Build();
 
         protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
             .AddClass("mud-ripple mud-ripple-radio", Ripple && !GetDisabledState() && !GetReadOnlyState())
-            .AddClass($"mud-{Color.ToDescriptionString()}-text hover:mud-{Color.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || (UncheckedColor != null && Checked)))
-            .AddClass($"mud-{UncheckedColor?.ToDescriptionString()}-text hover:mud-{UncheckedColor?.ToDescriptionString()}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && Checked == false)
+            .AddClass($"mud-{Color.ToStringFast(true)}-text", !GetDisabledState() && (UncheckedColor == null || Checked))
+            .AddClass($"mud-{UncheckedColor?.ToStringFast(true)}-text", !GetDisabledState() && UncheckedColor != null && !Checked)
+            .AddClass($"hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || Checked))
+            .AddClass($"hover:mud-{UncheckedColor?.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && !Checked)
             .AddClass("mud-radio-dense", Dense)
             .AddClass("mud-disabled", GetDisabledState())
             .AddClass("mud-readonly", GetReadOnlyState())
             .AddClass("mud-checked", Checked)
-            .AddClass("mud-error-text", MudRadioGroup?.HasErrors)
+            .AddClass("mud-error-text", GroupHasErrors)
             .Build();
+
+        /// <summary>
+        /// The <c>name</c> shared by every radio in the parent group.
+        /// </summary>
+        /// <remarks>
+        /// Pushed by the group rather than read off it, so a radio re-renders when it changes without the group having to notify every radio on every render.
+        /// </remarks>
+        [CascadingParameter(Name = "RadioGroupName")]
+        private string? GroupName { get; set; }
+
+        /// <summary>
+        /// Whether the parent group is showing a validation error.
+        /// </summary>
+        [CascadingParameter(Name = "RadioGroupHasErrors")]
+        private bool GroupHasErrors { get; set; }
+
+        /// <summary>
+        /// The id of the parent group's error text, used to describe each radio.
+        /// </summary>
+        [CascadingParameter(Name = "RadioGroupErrorId")]
+        private string? GroupErrorId { get; set; }
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
@@ -72,6 +102,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Radio.Appearance)]
         public Color? UncheckedColor { get; set; } = null;
+
+        /// <summary>
+        /// The Aria Label to be assigned to the radio button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Used to improve accessibility for screen readers. Adds an <c>aria-labelledby</c> to the <c>input</c> element.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Radio.Appearance)]
+        public string? AriaLabel { get; set; }
 
         /// <summary>
         /// Uses compact vertical padding.
@@ -124,7 +164,7 @@ namespace MudBlazor
 
         internal bool Checked { get; private set; }
 
-        internal MudRadioGroup<T>? MudRadioGroup => (MudRadioGroup<T>?)IMudRadioGroup;
+        internal MudRadioGroup<T>? MudRadioGroup => IMudRadioGroup as MudRadioGroup<T>;
 
         internal void SetChecked(bool value)
         {
@@ -166,29 +206,9 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
-        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
-        {
-            if (GetDisabledState() || GetReadOnlyState() || (MudRadioGroup?.GetReadOnlyState() ?? false))
-            {
-                return;
-            }
+        protected Task HandleKeyDownAsync(KeyboardEventArgs obj) => KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
 
-            switch (keyboardEventArgs.Key)
-            {
-                case "Enter" or "NumpadEnter" or " ":
-                    await SelectAsync();
-                    break;
-                case "Backspace":
-                    {
-                        if (MudRadioGroup is not null)
-                        {
-                            await MudRadioGroup.ResetAsync();
-                        }
-
-                        break;
-                    }
-            }
-        }
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState() && !(MudRadioGroup?.GetReadOnlyState() ?? false);
 
         /// <inheritdoc />
         protected override async Task OnInitializedAsync()
@@ -212,11 +232,12 @@ namespace MudBlazor
                         // prevent scrolling page
                         new(" ", preventDown: "key+none", preventUp: "key+none"),
                         new("Enter", preventDown: "key+none"),
-                        new("NumpadEnter", preventDown: "key+none"),
-                        new("Backspace", preventDown: "key+none")
+                        new("NumpadEnter", preventDown: "key+none")
                     ]);
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDownAny(["Enter", "NumpadEnter", " "], SelectAsync)));
             }
 
             await base.OnAfterRenderAsync(firstRender);

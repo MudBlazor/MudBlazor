@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿namespace MudBlazor;
 
-namespace MudBlazor;
-
-#nullable enable
 /// <summary>
-/// Provides a comparer for <see cref="IReadOnlyCollection{T}"/> values by using a <see cref="IEqualityComparer{T}"/>.
-/// Equality is based on HashSet and the given IEqualityComparer
-/// 
-/// Note: Order of the sequence is not relevant, neither are multiple entries of the same value !
+/// Set-based equality comparer for <see cref="IReadOnlyCollection{T}"/> values that ignores element order and duplicates.
+/// Two collections are equal when they contain the same distinct elements.
+/// Null is only equal to null.
+/// <para>Note:</para>
+/// <list type="bullet">
+///   <item>The order of elements does not affect equality or hash code.</item>
+///   <item>Multiple entries of the same value are ignored.</item>
+///   <item>Null and empty collections are treated as distinct values.</item>
+/// </list>
 /// </summary>
+/// <typeparam name="T">The type of the elements in the collection.</typeparam>
 public class CollectionComparer<T> : IEqualityComparer<IReadOnlyCollection<T>?>
 {
     private readonly IEqualityComparer<T> _comparer;
@@ -50,30 +52,27 @@ public class CollectionComparer<T> : IEqualityComparer<IReadOnlyCollection<T>?>
     public int GetHashCode(IReadOnlyCollection<T>? obj)
     {
         if (obj is null)
-            return 0;
-
-        return CombineHashCodes(obj.Distinct(_comparer).Select(x => _comparer.GetHashCode(x!)).OrderBy(x => x));
-    }
-
-    // System.String.GetHashCode(): http://referencesource.microsoft.com/#mscorlib/system/string.cs,0a17bbac4851d0d4
-    // System.Web.Util.StringUtil.GetStringHashCode(System.String): http://referencesource.microsoft.com/#System.Web/Util/StringUtil.cs,c97063570b4e791a
-    public static int CombineHashCodes(IEnumerable<int> hashCodes)
-    {
-        var hash1 = (5381 << 16) + 5381;
-        var hash2 = hash1;
-
-        var i = 0;
-        foreach (var hashCode in hashCodes)
         {
-            if (i % 2 == 0)
-                hash1 = ((hash1 << 5) + hash1 + (hash1 >> 27)) ^ hashCode;
-            else
-                hash2 = ((hash2 << 5) + hash2 + (hash2 >> 27)) ^ hashCode;
-
-            ++i;
+            return 0;
+        }
+        if (obj.Count == 0)
+        {
+            // Empty collection seed
+            return 0x34502209;
         }
 
-        return hash1 + (hash2 * 1566083941);
+        var hash = 0;
+        var seen = new HashSet<T>(_comparer);
+
+        foreach (var item in obj)
+        {
+            if (seen.Add(item))
+            {
+                hash ^= item is null ? 0 : _comparer.GetHashCode(item);
+            }
+        }
+
+        return hash;
     }
 
     public static readonly CollectionComparer<T> Default = new();

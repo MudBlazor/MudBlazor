@@ -50,16 +50,16 @@ public abstract class AnotherComponentBase : MudComponentBase
 
     public int XyzHandlerCallCount { get; private set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int A { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int C { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int O { get; set; }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int Z { get; set; }
 }
 
@@ -91,7 +91,6 @@ public partial class SharedStateInheritanceTestComp : AnotherComponentBase
     private readonly ParameterState<int> _p;
     private readonly ParameterState<int> _x;
     private readonly ParameterState<int> _y;
-
 
     [Parameter]
     public int B { get; set; }

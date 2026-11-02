@@ -2,9 +2,12 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
+using Bunit;
+using Bunit.TestDoubles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 using MudBlazor.Services;
@@ -36,8 +39,9 @@ public class ServiceCollectionExtensionsTests
     public void AddMudBlazorSnackBar_ShouldRegisterServices()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
@@ -53,8 +57,9 @@ public class ServiceCollectionExtensionsTests
     public void AddMudBlazorSnackBar_ShouldRegisterServices_WithConfigurationAction()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
         SnackbarConfiguration? expectedOptions = null;
 
@@ -75,7 +80,6 @@ public class ServiceCollectionExtensionsTests
         snackBarService.Should().NotBeNull();
         actualOptions.Should().BeSameAs(expectedOptions);
     }
-
 
     [Test]
     public void AddMudBlazorResizeListener_ShouldRegisterServices()
@@ -292,8 +296,10 @@ public class ServiceCollectionExtensionsTests
             options.QueueDelay = TimeSpan.FromSeconds(5);
             options.ContainerClass = "container_class";
             options.FlipMargin = 100;
+            options.OverflowPadding = 0;
             options.ThrowOnDuplicateProvider = false;
-            options.Mode = PopoverMode.Default;
+            options.ModalOverlay = true;
+            options.OverflowBehavior = OverflowBehavior.FlipNever;
             expectedOptions = options;
         });
         var serviceProvider = services.BuildServiceProvider();
@@ -360,21 +366,20 @@ public class ServiceCollectionExtensionsTests
     }
 
     [Test]
-    public void AddMudEventManager_ShouldRegisterServices()
+    public void AddMudBlazorPointerEventsNoneService_ShouldRegisterServices()
     {
         // Arrange
         var services = new ServiceCollection()
+            .AddLogging()
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
-        services.AddMudEventManager();
+        services.AddMudBlazorPointerEventsNoneService();
         var serviceProvider = services.BuildServiceProvider();
-        var eventListener = serviceProvider.GetService<IEventListener>();
-        var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
+        var pointerEventsNoneService = serviceProvider.GetService<IPointerEventsNoneService>();
 
         // Assert
-        eventListener.Should().NotBeNull();
-        eventListenerFactory.Should().NotBeNull();
+        pointerEventsNoneService.Should().NotBeNull();
     }
 
     [Test]
@@ -398,13 +403,36 @@ public class ServiceCollectionExtensionsTests
         localizationEnumInterceptor.Should().NotBeNull();
     }
 
+    /// <summary>
+    /// Every form component injects the localizer, and the default interceptor builds a resource reader, so one instance must serve the whole scope (#13519).
+    /// </summary>
     [Test]
-    public void AddMudServices_ShouldRegisterAllServices()
+    public void AddMudLocalization_ShouldRegisterOneLocalizerPerScope()
     {
         // Arrange
         var services = new ServiceCollection()
             .AddLogging()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<IJSRuntime, MockJsRuntime>();
+
+        // Act
+        services.AddMudLocalization();
+        using var serviceProvider = services.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
+        var first = scope.ServiceProvider.GetRequiredService<InternalMudLocalizer>();
+        var second = scope.ServiceProvider.GetRequiredService<InternalMudLocalizer>();
+
+        // Assert
+        first.Should().BeSameAs(second);
+    }
+
+    [Test]
+    public void AddMudServices_ShouldRegisterAllServices()
+    {
+        // Arrange
+        using var testContext = new BunitContext();
+        var services = new ServiceCollection()
+            .AddLogging()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
 
         // Act
@@ -426,8 +454,6 @@ public class ServiceCollectionExtensionsTests
         var scrollSpy = serviceProvider.GetService<IScrollSpy>();
         var scrollSpyFactory = serviceProvider.GetService<IScrollSpyFactory>();
         var jsApiService = serviceProvider.GetService<IJsApiService>();
-        var eventListener = serviceProvider.GetService<IEventListener>();
-        var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
         var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
         var localizationEnumInterceptor = serviceProvider.GetService<ILocalizationEnumInterceptor>();
@@ -449,8 +475,6 @@ public class ServiceCollectionExtensionsTests
         scrollSpy.Should().NotBeNull();
         scrollSpyFactory.Should().NotBeNull();
         jsApiService.Should().NotBeNull();
-        eventListener.Should().NotBeNull();
-        eventListenerFactory.Should().NotBeNull();
         mudLocalizer.Should().NotBeNull();
         localizationInterceptor.Should().NotBeNull();
         localizationEnumInterceptor.Should().NotBeNull();
@@ -460,9 +484,10 @@ public class ServiceCollectionExtensionsTests
     public void AddMudServices_ShouldRegisterAllServices_WithOptionsAction()
     {
         // Arrange
+        using var testContext = new BunitContext();
         var services = new ServiceCollection()
             .AddLogging()
-            .AddSingleton<NavigationManager, MockNavigationManager>()
+            .AddSingleton<NavigationManager>(new BunitNavigationManager(testContext))
             .AddSingleton<IJSRuntime, MockJsRuntime>();
         MudServicesConfiguration? expectedOptions = null;
 
@@ -504,8 +529,12 @@ public class ServiceCollectionExtensionsTests
             options.PopoverOptions.QueueDelay = TimeSpan.FromSeconds(5);
             options.PopoverOptions.ContainerClass = "container_class";
             options.PopoverOptions.FlipMargin = 100;
+            options.PopoverOptions.OverflowPadding = 12;
             options.PopoverOptions.ThrowOnDuplicateProvider = false;
-            options.PopoverOptions.Mode = PopoverMode.Default;
+            options.PopoverOptions.ModalOverlay = true;
+            options.PopoverOptions.OverflowBehavior = OverflowBehavior.FlipNever;
+            options.PopoverOptions.Delay = TimeSpan.FromSeconds(1);
+            options.PopoverOptions.Duration = TimeSpan.FromSeconds(2);
 
             expectedOptions = options;
         });
@@ -526,8 +555,6 @@ public class ServiceCollectionExtensionsTests
         var scrollSpy = serviceProvider.GetService<IScrollSpy>();
         var scrollSpyFactory = serviceProvider.GetService<IScrollSpyFactory>();
         var jsApiService = serviceProvider.GetService<IJsApiService>();
-        var eventListener = serviceProvider.GetService<IEventListener>();
-        var eventListenerFactory = serviceProvider.GetService<IEventListenerFactory>();
         var mudLocalizer = serviceProvider.GetService<InternalMudLocalizer>();
         var localizationInterceptor = serviceProvider.GetService<ILocalizationInterceptor>();
         var localizationEnumInterceptor = serviceProvider.GetService<ILocalizationEnumInterceptor>();
@@ -557,8 +584,6 @@ public class ServiceCollectionExtensionsTests
         scrollSpy.Should().NotBeNull();
         scrollSpyFactory.Should().NotBeNull();
         jsApiService.Should().NotBeNull();
-        eventListener.Should().NotBeNull();
-        eventListenerFactory.Should().NotBeNull();
         mudLocalizer.Should().NotBeNull();
         localizationInterceptor.Should().NotBeNull();
         localizationEnumInterceptor.Should().NotBeNull();
@@ -567,8 +592,12 @@ public class ServiceCollectionExtensionsTests
         actualPopoverOptions.QueueDelay.Should().Be(expectedOptions!.PopoverOptions.QueueDelay);
         actualPopoverOptions.ContainerClass.Should().Be(expectedOptions.PopoverOptions.ContainerClass);
         actualPopoverOptions.FlipMargin.Should().Be(expectedOptions.PopoverOptions.FlipMargin);
+        actualPopoverOptions.OverflowPadding.Should().Be(expectedOptions.PopoverOptions.OverflowPadding);
         actualPopoverOptions.ThrowOnDuplicateProvider.Should().Be(expectedOptions.PopoverOptions.ThrowOnDuplicateProvider);
-        actualPopoverOptions.Mode.Should().Be(expectedOptions.PopoverOptions.Mode);
+        actualPopoverOptions.ModalOverlay.Should().Be(expectedOptions.PopoverOptions.ModalOverlay);
+        actualPopoverOptions.OverflowBehavior.Should().Be(expectedOptions.PopoverOptions.OverflowBehavior);
+        actualPopoverOptions.Delay.Should().Be(expectedOptions.PopoverOptions.Delay);
+        actualPopoverOptions.Duration.Should().Be(expectedOptions.PopoverOptions.Duration);
 
         actualResizeObserverOptions.EnableLogging.Should().Be(expectedOptions.ResizeObserverOptions.EnableLogging);
         actualResizeObserverOptions.ReportRate.Should().Be(expectedOptions.ResizeObserverOptions.ReportRate);
@@ -598,5 +627,45 @@ public class ServiceCollectionExtensionsTests
         actualSnackBarOptions.SuccessIcon.Should().Be(expectedOptions.SnackbarConfiguration.SuccessIcon);
         actualSnackBarOptions.WarningIcon.Should().Be(expectedOptions.SnackbarConfiguration.WarningIcon);
         actualSnackBarOptions.ErrorIcon.Should().Be(expectedOptions.SnackbarConfiguration.ErrorIcon);
+    }
+
+    [Test]
+    public void AddMudBlazorDialog_WhenServiceAlreadyRegistered_ShouldNotOverwrite()
+    {
+        // Arrange: registration uses TryAddScoped so a pre-registered service must survive.
+        var existing = new StubDialogService();
+        var services = new ServiceCollection();
+        services.AddSingleton<IDialogService>(existing);
+
+        // Act
+        services.AddMudBlazorDialog();
+        var serviceProvider = services.BuildServiceProvider();
+        var dialogService = serviceProvider.GetService<IDialogService>();
+
+        // Assert
+        dialogService.Should().BeSameAs(existing);
+    }
+
+    [Test]
+    public void AddLocalizationInterceptor_ShouldReplaceDefaultInterceptor()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        services.AddMudLocalization();
+
+        // Act
+        services.AddLocalizationInterceptor<StubLocalizationInterceptor>();
+
+        // Assert: Replace keeps a single registration but swaps the implementation.
+        var descriptors = services.Where(x => x.ServiceType == typeof(ILocalizationInterceptor)).ToList();
+        descriptors.Should().ContainSingle();
+        descriptors[0].ImplementationType.Should().Be<StubLocalizationInterceptor>();
+    }
+
+    private sealed class StubDialogService : DialogService;
+
+    private sealed class StubLocalizationInterceptor : ILocalizationInterceptor
+    {
+        public LocalizedString Handle(string key, params object[] arguments) => new(key, key, resourceNotFound: true);
     }
 }

@@ -1,0 +1,38 @@
+name: Nuntia (Release Notes)
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      prompt-url:
+        description: "Raw prompt URL to try (blank uses the bundled prompt)"
+        required: false
+        default: ""
+
+jobs:
+  release-notes:
+    if: ${{ github.repository_owner == 'MudBlazor' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Writes the notes into the release.
+      issues: read
+      pull-requests: read
+    steps:
+      # A published release gets Nuntia's notes just above GitHub's generated list. A manual run previews the next release's notes in the job summary.
+      - name: Generate release notes
+        uses: danielchalmers/Nuntia@v2
+        with:
+          model: claude-opus-5-5
+          prompt-url: ${{ inputs.prompt-url }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY_NUNTIA }}
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: nuntia-${{ github.run_number }}
+          path: artifacts
+          if-no-files-found: ignore

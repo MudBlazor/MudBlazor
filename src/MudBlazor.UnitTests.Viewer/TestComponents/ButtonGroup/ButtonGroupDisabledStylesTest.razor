@@ -1,0 +1,43 @@
+﻿<MudText Typo="Typo.h6">Buttons</MudText>
+
+<MudButton Disabled="_disabled" Color="Color.Primary" Variant="Variant.Filled">One</MudButton>
+<MudButton Disabled="_disabled" Color="Color.Primary" Variant="Variant.Filled">Two</MudButton>
+<MudButton Disabled="_disabled" Color="Color.Primary" Variant="Variant.Filled">Three</MudButton>
+
+<MudButton Disabled="_disabled" Color="Color.Primary" Variant="Variant.Text">One</MudButton>
+<MudButton Disabled="_disabled" Color="Color.Primary" Variant="Variant.Text">Two</MudButton>
+<MudButton Disabled="_disabled" Color="Color.Primary" Variant="Variant.Text">Three</MudButton>
+
+<MudButton Disabled="_disabled" Color="Color.Primary" Variant="Variant.Outlined">One</MudButton>
+<MudButton Disabled="_disabled" Color="Color.Primary" Variant="Variant.Outlined">Two</MudButton>
+<MudButton Disabled="_disabled" Color="Color.Primary" Variant="Variant.Outlined">Three</MudButton>
+
+<MudText Typo="Typo.h6">ButtonGroup</MudText>
+
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles="_overrideStyles">
+    <MudButton Disabled="_disabled">One</MudButton>
+    <MudButton Disabled="_disabled">Two</MudButton>
+    <MudButton Disabled="_disabled">Three</MudButton>
+</MudButtonGroup>
+
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Text" OverrideStyles="_overrideStyles">
+    <MudButton Disabled="_disabled">One</MudButton>
+    <MudButton Disabled="_disabled">Two</MudButton>
+    <MudButton Disabled="_disabled">Three</MudButton>
+</MudButtonGroup>
+
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="_overrideStyles">
+    <MudButton Disabled="_disabled">One</MudButton>
+    <MudButton Disabled="_disabled">Two</MudButton>
+    <MudButton Disabled="_disabled">Three</MudButton>
+</MudButtonGroup>
+
+<br />
+<br />
+<MudSwitch Label="Disabled" @bind-Value="_disabled" />
+<MudSwitch Label="Override Styles" @bind-Value="_overrideStyles" />
+
+@code {
+    private bool _disabled;
+    private bool _overrideStyles = true;
+}

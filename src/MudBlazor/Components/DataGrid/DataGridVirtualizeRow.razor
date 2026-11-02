@@ -1,0 +1,128 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+@using MudBlazor.Utilities
+@using MudBlazor.Resources
+@inject InternalMudLocalizer Localizer
+
+@{
+    IEnumerable<T> sourceItems = DataGrid.IsGrouped ? (GroupedItems ?? Enumerable.Empty<T>()) : DataGrid.CurrentPageItems;
+    var resolvedItems = BuildIndexBags(sourceItems);
+}
+
+<MudVirtualize @ref="DataGrid._mudVirtualize"
+               ItemsProvider="@DataGrid.VirtualItemsProvider"
+               Enabled="@DataGrid.Virtualize"
+               Items="@resolvedItems"
+               OverscanCount="@DataGrid.OverscanCount"
+               ItemSize="@DataGrid.ItemSize"
+               SpacerElement="tr"
+               Context="itemBag">
+    <Placeholder>
+        @if (DataGrid.RowLoadingContent != null)
+        {
+            @DataGrid.RowLoadingContent
+        }
+        else
+        {
+            <tr class="mud-table-row">
+                <td class="mud-table-cell" colspan="1000">
+                    @Localizer[LanguageResource.MudDataGrid_Loading]
+                </td>
+            </tr>
+        }
+    </Placeholder>
+
+    <ChildContent>
+        @{
+            var rowClass = new CssBuilder(DataGrid.RowClass)
+                .AddClass(DataGrid.RowClassFunc?.Invoke(itemBag.Item, itemBag.Index))
+                .AddClass("mud-table-row-stripe", DataGrid.Striped && itemBag.Index % 2 == 0)
+                .Build();
+            var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle).AddStyle(DataGrid.RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
+        }
+        <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
+            @attributes="GetRowAttributes(itemBag.Item)"
+            @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(args => RowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
+            @oncontextmenu="@GetContextMenuCallback(itemBag)"
+            @oncontextmenu:preventDefault="@DataGrid.RowContextMenuClick.HasDelegate">
+            <CascadingValue Value="@DataGrid.Validator" IsFixed="true">
+                @{
+                    var colIdx = 0;
+                    foreach (var column in DataGrid.RenderedColumns)
+                    {
+                        if (column.HiddenState.Value)
+                            continue;
+
+                        @DataGrid.Cell(column, itemBag.Item, itemBag.Index, colIdx)
+                        colIdx++;
+                    }
+                }
+            </CascadingValue>
+        </tr>
+        @if ((DataGrid.ChildRowContent != null || DataGrid.ChildRowRenderer != null)&& (DataGrid._openHierarchies.Contains(itemBag.Item) || !DataGrid.HasHierarchyColumn))
+        {
+            @if (DataGrid.ChildRowRenderer != null)
+            {
+                @DataGrid.ChildRowRenderer(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Item))
+            }
+            @if (DataGrid.ChildRowContent != null)
+            {
+                <tr class="mud-table-row">
+                    <td class="mud-table-cell mud-table-child-content" colspan="1000">
+                        @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Item))
+                    </td>
+                </tr>
+            }
+        }
+    </ChildContent>
+    <NoRecordsContent>
+        <tr>
+            <th colspan="1000" class="mud-table-empty-row">
+                <div Class="my-3">
+                    @DataGrid.NoRecordsContent
+                </div>
+            </th>
+        </tr>
+    </NoRecordsContent>
+</MudVirtualize>
+
+@code {
+    private readonly List<IndexBag<T>> _resolvedItems = new();
+
+    private List<IndexBag<T>> BuildIndexBags(IEnumerable<T> source)
+    {
+        _resolvedItems.Clear();
+        foreach (var item in source)
+        {
+            _resolvedItems.Add(new IndexBag<T>(_resolvedItems.Count, item));
+        }
+        return _resolvedItems;
+    }
+
+    // ContextRowClick only ever reaches DataGrid.RowContextMenuClick, so without that delegate the handler would be a no-op that still costs a DOM listener on every row. The lambda lives in its own method so its closure is not allocated when the branch is not taken.
+    private EventCallback<MouseEventArgs> GetContextMenuCallback(IndexBag<T> itemBag)
+        => DataGrid.RowContextMenuClick.HasDelegate
+            ? CreateContextMenuCallback(itemBag)
+            : default;
+
+    // ContextRowClick ends at a grid-owned callback whose receiver already schedules the grid's render, so this row must not add its own.
+    private EventCallback<MouseEventArgs> CreateContextMenuCallback(IndexBag<T> itemBag)
+        => EventCallback.Factory.Create<MouseEventArgs>(
+            this,
+            this.AsNonRenderingEventHandler<MouseEventArgs>(args => ContextRowClick.InvokeAsync((args, itemBag.Item, itemBag.Index))));
+
+    private Dictionary<string, object?>? GetRowAttributes(T item)
+    {
+        var rowSelectionState = DataGrid.GetRowSelectionState(item);
+        if (rowSelectionState is null)
+        {
+            return null;
+        }
+
+        return new Dictionary<string, object?>(1)
+        {
+            ["aria-selected"] = rowSelectionState.Value.ToString().ToLowerInvariant()
+        };
+    }
+}

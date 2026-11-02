@@ -1,0 +1,40 @@
+﻿@* Repro for #13439 on MudDatePicker: a literal Text alongside a bound Date froze the page.
+   Same root cause and guard as TimePickerTextLoopTest; proves the base MudPicker fix covers the
+   DatePicker value/converter path too. *@
+@using System.Globalization
+<MudPopoverProvider />
+
+@if (_showPicker)
+{
+    <MudDatePicker @ref="Picker"
+                   Date="_date"
+                   DateChanged="OnDateChanged"
+                   Text="@Text"
+                   Culture="@(new CultureInfo("en-US"))"
+                   PickerVariant="PickerVariant.Static" />
+}
+
+@code {
+    private DateTime? _date;
+    private bool _showPicker = true;
+    private const int LoopGuardThreshold = 25;
+
+    public MudDatePicker Picker { get; set; } = null!;
+
+    [Parameter]
+    public string? Text { get; set; } = "Broken";
+
+    public int DateChangedCount { get; private set; }
+
+    public bool LoopGuardTripped => DateChangedCount > LoopGuardThreshold;
+
+    private void OnDateChanged(DateTime? value)
+    {
+        _date = value;
+        DateChangedCount++;
+        if (LoopGuardTripped)
+        {
+            _showPicker = false;
+        }
+    }
+}

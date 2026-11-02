@@ -48,6 +48,7 @@ Generated\ Files/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+junit.xml
 
 # Build Results of an ATL Project
 [Dd]ebugPS/
@@ -377,6 +378,7 @@ FodyWeavers.xsd
 **/MudBlazor.js
 **/MudBlazor.min.js
 **/MudBlazor.min.js.gz
+**/MudBlazor.min.js.map
 **/MudBlazorDocs.min.css
 **/MudBlazorDocs.css
 **/MudBlazorDocs.min.css.map

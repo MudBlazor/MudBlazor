@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace MudBlazor.Services
 {
-#nullable enable
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {
@@ -31,6 +30,7 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudBlazorSnackbar(this IServiceCollection services)
         {
+            services.AddCommonServices();
             services.TryAddScoped<ISnackbar, SnackbarService>();
 
             return services;
@@ -170,6 +170,7 @@ namespace MudBlazor.Services
         /// <param name="services">IServiceCollection</param>
         public static IServiceCollection AddMudPopoverService(this IServiceCollection services)
         {
+            services.AddCommonServices();
             services.TryAddScoped<IPopoverService, PopoverService>();
 
             return services;
@@ -224,13 +225,12 @@ namespace MudBlazor.Services
         }
 
         /// <summary>
-        /// Adds IEventListener as a transient instance.
+        /// Adds IPointerEventsNoneService as a scoped dependency.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
-        public static IServiceCollection AddMudEventManager(this IServiceCollection services)
+        public static IServiceCollection AddMudBlazorPointerEventsNoneService(this IServiceCollection services)
         {
-            services.TryAddTransient<IEventListener, EventListener>();
-            services.TryAddScoped<IEventListenerFactory, EventListenerFactory>();
+            services.TryAddScoped<IPointerEventsNoneService, PointerEventsNoneService>();
 
             return services;
         }
@@ -239,11 +239,14 @@ namespace MudBlazor.Services
         /// Adds the services required for translations.
         /// </summary>
         /// <param name="services">IServiceCollection</param>
+        /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudLocalization(this IServiceCollection services)
         {
-            services.TryAddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
-            services.TryAddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
-            services.TryAddTransient<InternalMudLocalizer>();
+            // Scoped, not transient: the default interceptor builds a ResourceManagerStringLocalizerFactory and its resource cache.
+            // Every form component injects the localizer, so a transient registration rebuilt all of that per component instance.
+            services.TryAddScoped<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
+            services.TryAddScoped<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
+            services.TryAddScoped<InternalMudLocalizer>();
 
             return services;
         }
@@ -323,7 +326,7 @@ namespace MudBlazor.Services
                 .AddMudBlazorJsApi()
                 .AddMudBlazorScrollSpy()
                 .AddMudPopoverService()
-                .AddMudEventManager()
+                .AddMudBlazorPointerEventsNoneService()
                 .AddMudLocalization();
         }
 
@@ -364,6 +367,7 @@ namespace MudBlazor.Services
                     snackBarConfiguration.SuccessIcon = options.SnackbarConfiguration.SuccessIcon;
                     snackBarConfiguration.WarningIcon = options.SnackbarConfiguration.WarningIcon;
                     snackBarConfiguration.ErrorIcon = options.SnackbarConfiguration.ErrorIcon;
+                    snackBarConfiguration.HideIcon = options.SnackbarConfiguration.HideIcon;
                 })
                 .AddMudBlazorResizeListener(resizeOptions =>
                 {
@@ -395,10 +399,14 @@ namespace MudBlazor.Services
                     popoverOptions.FlipMargin = options.PopoverOptions.FlipMargin;
                     popoverOptions.QueueDelay = options.PopoverOptions.QueueDelay;
                     popoverOptions.ThrowOnDuplicateProvider = options.PopoverOptions.ThrowOnDuplicateProvider;
-                    popoverOptions.Mode = options.PopoverOptions.Mode;
+                    popoverOptions.OverflowPadding = options.PopoverOptions.OverflowPadding;
+                    popoverOptions.ModalOverlay = options.PopoverOptions.ModalOverlay;
+                    popoverOptions.OverflowBehavior = options.PopoverOptions.OverflowBehavior;
+                    popoverOptions.Delay = options.PopoverOptions.Delay;
+                    popoverOptions.Duration = options.PopoverOptions.Duration;
                 })
                 .AddMudBlazorScrollSpy()
-                .AddMudEventManager()
+                .AddMudBlazorPointerEventsNoneService()
                 .AddMudLocalization();
         }
 

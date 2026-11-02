@@ -8,8 +8,11 @@ using Microsoft.JSInterop;
 namespace MudBlazor.Services;
 
 /// <summary>
-/// Provides a factory for creating instances of <see cref="IJsEvent"/>.
+/// Creates <see cref="IJsEvent"/> instances wired to the current JS runtime.
 /// </summary>
+/// <remarks>
+/// Components use this to obtain a JS event bridge without constructing interop dependencies directly.
+/// </remarks>
 internal sealed class JsEventFactory : IJsEventFactory
 {
     private readonly IServiceProvider _provider;

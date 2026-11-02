@@ -3,22 +3,22 @@
 @typeparam T
 
 <MudButton role="checkbox"
-           aria-checked="@(Selected.ToString().ToLower())"
+           aria-checked="@(Selected.ToString().ToLowerInvariant())"
            @attributes="UserAttributes"
            Class="@Classname"
            Style="@Style"
            OnClick="HandleOnClickAsync"
-           Size="@(Parent?.Size ?? Size.Medium)"
-           Color="@(Parent?.Color ?? Color.Default)"
+           Size="AssertedParent.Size"
+           Color="AssertedParent.Color"
            Variant="@(Selected ? Variant.Filled : Variant.Outlined)"
-           Disabled="Disabled || (Parent?.Disabled ?? false)"
-           Ripple="Parent?.Ripple == true">
+           Disabled="Disabled || AssertedParent.Disabled"
+           Ripple="AssertedParent.Ripple">
     @if (!string.IsNullOrWhiteSpace(GetCurrentIcon()))
     {
         <MudIcon Class="@CheckMarkClassname"
                  Disabled="Disabled"
                  Icon="@GetCurrentIcon()"
-                 Size="Parent?.Size ?? Size.Medium" />
+                 Size="AssertedParent.Size" />
     }
     @if (ChildContent is not null)
     {

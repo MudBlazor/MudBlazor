@@ -37,14 +37,14 @@
         _fruits.Add(new Fruit("Banana", 5, "Musa"));
     }
 
-    public void ExpandAllGroups()
+    public Task ExpandAllGroups()
     {
-        _dataGrid.ExpandAllGroups();
+        return _dataGrid.ExpandAllGroupsAsync();
     }
 
-    public void CollapseAllGroups()
+    public Task CollapseAllGroups()
     {
-        _dataGrid.CollapseAllGroups();
+        return _dataGrid.CollapseAllGroupsAsync();
     }
 
     public record Fruit(string Name, int Count, string Category);

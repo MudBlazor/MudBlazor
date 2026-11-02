@@ -1,0 +1,42 @@
+﻿@page "/components/rosechart"
+@page "/components/chart-types/rosechart"
+@page "/components/rose"
+
+
+<DocsPage>
+    <DocsPageHeader Title="Rose Chart" Component="@nameof(MudBlazor.Charts.Rose<T>)" />
+    <DocsPageContent>
+
+        <DocsPageSection>
+            <SectionHeader Title="Basic Rose Chart">
+                <Description>
+                    Rose charts display data as sectors of varying radii on a circular chart.
+                    The example below shows a basic Rose chart with a single data series.
+                    It also demonstrates selection, where clicking on a sector displays its value.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(RoseChartExample1)" ShowCode="false" Block="true">
+                <RoseChartExample1 />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Customized Rose Chart">
+                <Description>
+                    This example demonstrates further customization options for the Rose chart:
+                    <ul>
+                        <li><CodeInline>AngleOffset</CodeInline>: Rotates the starting point of the chart.</li>
+                        <li><CodeInline>ScaleFactor</CodeInline>: Adjusts the maximum radius of the sectors relative to the chart area.</li>
+                        <li><CodeInline>ShowAsPercentage</CodeInline>: Displays values as percentages of the total.</li>
+                        <li><CodeInline>AggregationOption</CodeInline>: Defines how data is aggregated when multiple series are provided (though Rose charts are typically single-series, this shows potential aggregation behavior).</li>
+                        <li><CodeInline>ShowValues</CodeInline>: Displays values for each sector.</li>
+                    </ul>
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(RoseChartExample2)" ShowCode="false" Block="true">
+                <RoseChartExample2 />
+            </SectionContent>
+        </DocsPageSection>
+
+    </DocsPageContent>
+</DocsPage>

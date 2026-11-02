@@ -10,14 +10,11 @@ public partial class TableMultiSelectionItemsTest1
 {
     public static string __description__ = "The selected items should not be cleared when the page changes or filters are applied.";
 
-    private DateRange _dateRange = new();
     private readonly ElementComparer _comparer = new();
     private HashSet<ComplexObject> _selectedItems = [];
 
     [Parameter]
-    public DateTime? StartDate { get => _dateRange.Start; set => _dateRange.Start = value; }
-    [Parameter]
-    public DateTime? EndDate { get => _dateRange.End; set => _dateRange.End = value; }
+    public DateRange DateRange { get; set; } = new();
 
     private readonly List<ComplexObject> _simulatedServerData = Enumerable
         .Range(1, 25)
@@ -31,7 +28,7 @@ public partial class TableMultiSelectionItemsTest1
         .ToList();
 
     protected bool Filter(ComplexObject item)
-        => (StartDate is null || item.DateTime > StartDate) && (EndDate is null || item.DateTime < EndDate);
+        => (DateRange.Start is null || item.DateTime > DateRange.Start) && (DateRange.End is null || item.DateTime < DateRange.End);
 
     private class ElementComparer : IEqualityComparer<ComplexObject?>
     {

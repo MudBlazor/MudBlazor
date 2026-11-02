@@ -1,0 +1,15 @@
+﻿<MudText Typo="Typo.h6">ParameterSet calls (for MyObject): @_parameterSet</MudText>
+
+@code {
+    private int _parameterSet;
+
+    [Parameter]
+    public MyObject MyValue { get; set; } = new();
+
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        _parameterSet++;
+
+        return base.SetParametersAsync(parameters);
+    }
+}

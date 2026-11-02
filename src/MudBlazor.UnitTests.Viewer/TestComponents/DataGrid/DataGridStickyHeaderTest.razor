@@ -1,0 +1,46 @@
+﻿
+<MudDataGrid Class="mygrid" 
+             Items="@_persons" T="Person" Loading="@_loading"
+             FilterMode="@_filterMode"
+             Filterable Dense="@_dense" FixedHeader ShowMenuIcon Height="350px">
+    <ToolBarContent>
+        <MudSwitch Class="ml-auto" @bind-Value="@_dense" Label="Dense" />
+        <MudSwitch Class="mr-auto" @bind-Value="@_loading" Label="Loading" /> 
+    </ToolBarContent>
+    <ColGroup>
+        <col style="width: 50px; background: var(--mud-palette-tertiary);" />
+        <col />
+    </ColGroup>
+    <Columns>
+        <PropertyColumn Property="x => x.Id" Title="Id" />
+        <PropertyColumn Property="x => x.Name" Title="Name" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Person" PageSizeOptions="new[] {10, 1000}" />
+    </PagerContent>
+</MudDataGrid>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudRadioGroup T="DataGridFilterMode" @bind-Value="@_filterMode">
+        <MudRadio Dense="true" Value="@DataGridFilterMode.Simple" Color="Color.Primary">Simple</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterMenu" Color="Color.Tertiary">Column Menu</MudRadio>
+        <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterRow">Column Row</MudRadio>
+    </MudRadioGroup>
+</div>
+
+@code {
+    public static string __description__ = "Visual Representation of Sticky Headers";
+    private bool _dense = false;
+    private bool _loading = false;
+    private DataGridFilterMode _filterMode = DataGridFilterMode.ColumnFilterRow;
+    private readonly List<Person> _persons = Enumerable.Repeat(0, 100)
+                .Select((_, i) => new Person { Id = i, Name = $"Name{i}" })
+                .ToList();
+
+    public class Person
+    {
+        public required int Id { get; init; }
+
+        public required string Name { get; init; }
+    }
+}

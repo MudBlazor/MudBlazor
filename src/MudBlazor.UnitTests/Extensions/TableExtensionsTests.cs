@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Linq.Expressions;
-using FluentAssertions;
+using AwesomeAssertions;
 using Moq;
 using NUnit.Framework;
 
@@ -118,6 +118,44 @@ public class TableExtensionsTests
         var tableMock = new Mock<MudTable<TestItem>>();
         var context = new TableContext<TestItem> { Table = tableMock.Object };
         var item = new TestItem("B");
+
+        // Act
+        var result = context.EditButtonDisabled(item);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Test]
+    public void EditButtonDisabled_ShouldReturnTrue_WhenBlockedAndAnotherItemIsEditing()
+    {
+        // Arrange
+        var tableMock = new Mock<MudTable<TestItem>>();
+#pragma warning disable BL0005
+        tableMock.Object.IsEditRowSwitchingBlocked = true;
+#pragma warning restore BL0005
+        tableMock.Object._editingItem = new TestItem("A");
+        var context = new TableContext<TestItem> { Table = tableMock.Object };
+        var item = new TestItem("B");
+
+        // Act
+        var result = context.EditButtonDisabled(item);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Test]
+    public void EditButtonDisabled_ShouldReturnFalse_WhenBlockedAndItemIsTheEditingItem()
+    {
+        // Arrange
+        var item = new TestItem("B");
+        var tableMock = new Mock<MudTable<TestItem>>();
+#pragma warning disable BL0005
+        tableMock.Object.IsEditRowSwitchingBlocked = true;
+#pragma warning restore BL0005
+        tableMock.Object._editingItem = item;
+        var context = new TableContext<TestItem> { Table = tableMock.Object };
 
         // Act
         var result = context.EditButtonDisabled(item);

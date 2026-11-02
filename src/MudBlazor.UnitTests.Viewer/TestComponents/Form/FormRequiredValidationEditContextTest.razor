@@ -1,0 +1,31 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+<EditForm EditContext="@EditContext">
+    <DataAnnotationsValidator />
+    <MudTextField @bind-Value="_model.Name" For="@(() => _model.Name)" Label="Name" />
+    <MudTextField @bind-Value="_model.Other" For="@(() => _model.Other)" Required="true" RequiredError="Other is required" Label="Other" />
+</EditForm>
+
+@code {
+    public static string __description__ = "#13381: blurring an empty required field under an EditContext should validate it (data-annotations [Required] and the component's own Required parameter), without marking the form dirty.";
+
+    public EditContext EditContext { get; private set; } = null!;
+    public int FieldChangedCount { get; private set; }
+
+    private readonly TestModel _model = new();
+
+    protected override void OnInitialized()
+    {
+        EditContext = new EditContext(_model);
+        EditContext.OnFieldChanged += (_, _) => FieldChangedCount++;
+    }
+
+    public sealed class TestModel
+    {
+        [Required(ErrorMessage = "Name is required")]
+        public string? Name { get; set; }
+
+        // No data-annotation here: only the component's own Required parameter guards it.
+        public string? Other { get; set; }
+    }
+}

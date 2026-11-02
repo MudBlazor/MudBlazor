@@ -3,21 +3,31 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using MudBlazor.State;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents a form input component which stores a boolean value.
+    /// Base class for form inputs backed by a boolean value, such as <see cref="MudCheckBox{T}"/>, <see cref="MudSwitch{T}"/>, and <see cref="MudRadio{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item managed by this component.</typeparam>
     public class MudBooleanInput<T> : MudFormComponent<T?, bool?>
     {
-        public MudBooleanInput() : base(new BoolConverter<T?>()) { }
+        private readonly ParameterState<T?> _valueState;
+
+        public MudBooleanInput()
+        {
+            using var registerScope = CreateRegisterScope();
+            _valueState = registerScope.RegisterParameter<T?>(nameof(Value))
+                .WithParameter(() => Value)
+                .WithEventCallback(() => ValueChanged);
+        }
 
         protected virtual string? Classname { get; set; }
         protected virtual string? LabelClassname { get; set; }
         protected virtual string? IconClassname { get; set; }
+
+        internal string TextClassname => HasErrors ? "mud-typography mud-typography-body1 mud-error-text" : "mud-typography mud-typography-body1";
 
         /// <summary>
         /// Prevents the user from interacting with this input.
@@ -52,17 +62,9 @@ namespace MudBlazor
         /// <summary>
         /// The currently selected value.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Data)]
-        public T? Value
-        {
-            get => _value;
-            set
-            {
-                _value = value;
-
-            }
-        }
+        public T? Value { get; set; }
 
         /// <summary>
         /// Prevents the parent component from receiving click events.
@@ -74,6 +76,9 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool StopClickPropagation { get; set; } = true;
 
+        /// <summary>
+        /// Displays this input using right-to-left layout.
+        /// </summary>
         [CascadingParameter(Name = "RightToLeft")]
         public bool RightToLeft { get; set; }
 
@@ -92,7 +97,7 @@ namespace MudBlazor
         public string? Label { get; set; }
 
         /// <summary>
-        /// Gets or sets whether to show a ripple effect when the user clicks the button. Default is true.
+        /// Shows a ripple effect when button is clicked. Default is <c>true</c>.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]
@@ -112,6 +117,9 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Appearance)]
         public Color Color { get; set; } = Color.Default;
 
+        /// <summary>
+        /// The content within this component.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public RenderFragment? ChildContent { get; set; }
@@ -122,11 +130,33 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<T?> ValueChanged { get; set; }
 
-        protected bool? BoolValue => Converter.Set(Value);
+        protected bool? BoolValue => ConvertSet(_valueState.Value);
 
         protected virtual Task OnChange(ChangeEventArgs args)
         {
             return SetBoolValueAsync((bool?)args.Value, true);
+        }
+
+        protected Dictionary<string, object?> GetInputAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["tabindex"] = GetDisabledState() ? -1 : 0
+            };
+
+            if (HasErrors)
+            {
+                // Link the input to the rendered error text the same way MudInput does.
+                attributes["aria-invalid"] = "true";
+                attributes["aria-describedby"] = ErrorIdState.Value;
+            }
+
+            foreach (var userAttribute in UserAttributes)
+            {
+                attributes[userAttribute.Key] = userAttribute.Value;
+            }
+
+            return attributes;
         }
 
         protected Task SetBoolValueAsync(bool? value, bool? markAsTouched = null)
@@ -135,7 +165,8 @@ namespace MudBlazor
             {
                 Touched = true;
             }
-            return SetCheckedAsync(Converter.Get(value));
+
+            return SetCheckedAsync(ConvertGet(value));
         }
 
         protected async Task SetCheckedAsync(T? value)
@@ -145,25 +176,27 @@ namespace MudBlazor
                 return;
             }
 
-            if (!EqualityComparer<T>.Default.Equals(Value, value))
+            if (!EqualityComparer<T>.Default.Equals(_valueState.Value, value))
             {
-                Value = value;
-                await ValueChanged.InvokeAsync(value);
+                await _valueState.SetValueAsync(value);
                 await BeginValidateAsync();
-                FieldChanged(Value);
+                FieldChanged(_valueState.Value);
             }
         }
 
-        protected override bool SetConverter(Converter<T?, bool?> value)
+        /// <inheritdoc />
+        protected override IConverter<T?, bool?> GetDefaultConverter() => BoolConverter<T?>.Instance;
+
+        /// <inheritdoc />
+        protected override async Task OnConverterChangedAsync()
         {
-            var changed = base.SetConverter(value);
-            if (changed)
-            {
-                SetBoolValueAsync(Converter.Set(Value)).CatchAndLog();
-            }
-
-            return changed;
+            await base.OnConverterChangedAsync();
+            await SetBoolValueAsync(ConvertSet(_valueState.Value));
         }
+
+        protected internal override T? ReadValue => _valueState.Value;
+
+        protected override Task SetValueCoreAsync(T? value) => _valueState.SetValueAsync(value);
 
         /// <summary>
         /// A value is required, so if not checked we return ERROR.
@@ -181,6 +214,17 @@ namespace MudBlazor
                 Placement.Right => Placement.End,
                 _ => placement
             };
+        }
+
+        /// <inheritdoc />
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+
+            if (Label is null && For is not null)
+            {
+                Label = For.GetLabelString();
+            }
         }
     }
 }

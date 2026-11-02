@@ -1,0 +1,20 @@
+@namespace MudBlazor.UnitTests.TestComponents.Dialog
+@using MudBlazor
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField T="string" @ref="_textField" Label="Test Field" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private MudTextField<string> _textField = null!;
+
+    [CascadingParameter]
+    IMudDialogInstance MudDialog { get; set; } = null!;
+
+    void Close() => MudDialog.Close();
+}

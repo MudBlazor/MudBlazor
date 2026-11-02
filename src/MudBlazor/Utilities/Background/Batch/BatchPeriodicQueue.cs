@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace MudBlazor.Utilities.Background.Batch;
 
-#nullable enable
 /// <summary>
 /// Represents a batch periodic queue for managing items of type <typeparamref name="T"/>.
 /// </summary>
@@ -27,10 +26,21 @@ internal class BatchPeriodicQueue<T> : BackgroundWorkerBase
     /// <param name="handler">The batch timer handler.</param>
     /// <param name="period">The time period for triggering batch execution.</param>
     public BatchPeriodicQueue(IBatchTimerHandler<T> handler, TimeSpan period)
+        : this(handler, period, TimeProvider.System)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BatchPeriodicQueue{T}"/> class with the specified batch timer handler, period, and time provider.
+    /// </summary>
+    /// <param name="handler">The batch timer handler.</param>
+    /// <param name="period">The time period for triggering batch execution.</param>
+    /// <param name="timeProvider">The time provider used by the periodic timer.</param>
+    public BatchPeriodicQueue(IBatchTimerHandler<T> handler, TimeSpan period, TimeProvider timeProvider)
     {
         _handler = handler;
         _items = new ConcurrentQueue<T>();
-        _periodicTimer = new PeriodicTimer(period);
+        _periodicTimer = new PeriodicTimer(period, timeProvider);
     }
 
     /// <summary>

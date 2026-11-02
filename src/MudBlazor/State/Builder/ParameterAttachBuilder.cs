@@ -4,7 +4,6 @@
 
 namespace MudBlazor.State.Builder;
 
-#nullable enable
 /// <summary>
 /// Helper class for creating instances of <see cref="ParameterAttachBuilder{T}"/>.
 /// </summary>

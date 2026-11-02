@@ -31,16 +31,10 @@ public partial class DocsLayout : LayoutComponentBase
         _drawerOpen = !_drawerOpen;
     }
 
-    private void OpenTopMenu()
-    {
-        _topMenuOpen = true;
-    }
-
     private void OnDrawerOpenChanged(bool value)
     {
         _topMenuOpen = false;
         _drawerOpen = value;
         StateHasChanged();
     }
-
 }

@@ -1,0 +1,32 @@
+<MudPopoverProvider />
+
+<MudSelect @bind-SelectedValues="SelectedItems"
+           Label="Test"
+           Variant="Variant.Outlined"
+           MultiSelection="true"
+           Comparer="TestStringComparer">
+    @foreach (var item in TestItems)
+    {
+        <MudSelectItem Value="item" />
+    }
+</MudSelect>
+
+@code {
+    public IReadOnlyCollection<string> TestItems { get; set; } = ["test1", "test2", "test3"];
+
+    public IReadOnlyCollection<string> SelectedItems { get; set; } = ["test1"];
+
+    public StringComparer TestStringComparer { get; set; } = new StringComparer();
+
+    public class StringComparer : IEqualityComparer<string?>
+    {
+        public bool Equals(string? x, string? y)
+        {
+            if (x is null && y is null) return true;
+            if (x is null || y is null) return false;
+            return x.Equals(y);
+        }
+
+        public int GetHashCode(string obj) => obj.GetHashCode();
+    }
+}

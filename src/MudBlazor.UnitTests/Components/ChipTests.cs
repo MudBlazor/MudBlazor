@@ -2,8 +2,9 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Chip;
 using NUnit.Framework;
 
@@ -15,7 +16,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Chip_ShouldRenderDivByDefault()
         {
-            var comp = Context.RenderComponent<MudChip<string>>();
+            var comp = Context.Render<MudChip<string>>();
 
             var chip = comp.Find(".mud-chip");
 
@@ -29,13 +30,82 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void Chip_PlainChips_ShouldNotSubscribeToKeyInterceptor()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+
+            for (var i = 0; i < 20; i++)
+            {
+                Context.Render<MudChip<string>>();
+            }
+
+            keyInterceptorService.ObserversCount.Should().Be(0);
+        }
+
+        [Test]
+        public void Chip_InteractiveChips_ShouldSubscribeToKeyInterceptor()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+
+            Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.OnClick, () => { }));
+            Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.OnClose, () => { }));
+
+            keyInterceptorService.ObserversCount.Should().Be(2);
+        }
+
+        [Test]
+        public async Task Chip_KeyInterceptorSubscription_ShouldFollowParameterTransitions()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudChip<string>>();
+
+            keyInterceptorService.ObserversCount.Should().Be(0);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.OnClick, () => { }));
+            keyInterceptorService.ObserversCount.Should().Be(1);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Disabled, true));
+            keyInterceptorService.ObserversCount.Should().Be(0);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Disabled, false));
+            keyInterceptorService.ObserversCount.Should().Be(1);
+        }
+
+        [Test]
+        public async Task Chip_KeyboardInterceptor_ShouldInvokeClickAndClose()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var clicked = 0;
+            var closed = 0;
+            var clickable = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.OnClick, () => clicked++)
+                .Add(p => p.OnClose, () => { }));
+            var closable = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.OnClose, () => closed++));
+            var clickableId = clickable.Find(".mud-chip-container").GetAttribute("id")!;
+            var closableId = closable.Find(".mud-chip-container").GetAttribute("id")!;
+
+            await clickable.InvokeAsync(() => keyInterceptorService.OnKeyDown(clickableId, new KeyboardEventArgs { Key = " " }));
+            await closable.InvokeAsync(() => keyInterceptorService.OnKeyDown(closableId, new KeyboardEventArgs { Key = "Delete" }));
+            await closable.InvokeAsync(() => keyInterceptorService.OnKeyDown(closableId, new KeyboardEventArgs { Key = "Backspace" }));
+
+            clicked.Should().Be(1);
+            closed.Should().Be(2);
+        }
+
+        [Test]
         [Combinatorial]
         public void Chip_ShouldRenderAnchorIfLinkSet(
             [Values("", "ASDF", "nofollow", "_blank")] string target,
             [Values(null, "noopener", "nofollow")] string rel)
         {
 
-            var comp = Context.RenderComponent<MudChip<string>>(parameters => parameters
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
                 .Add(p => p.Href, "https://example.com")
                 .Add(p => p.Target, target)
                 .Add(p => p.Rel, rel)
@@ -52,14 +122,17 @@ namespace MudBlazor.UnitTests.Components
             chip.GetAttribute("rel").Should().Be(expectedRel);
         }
 
+        /// <summary>
+        /// A chip with OnClick and no usable Href renders as a button.
+        /// </summary>
         [Test]
         [Combinatorial]
         public void Chip_ShouldRenderButtonAndNotAnchorIfOnClickSet(
-            [Values(null, "", "https://example.com")] string href,
+            [Values(null, "", " ")] string href,
             [Values(null, "", "ASDF", "_blank")] string target,
             [Values(null, "", "noopener", "nofollow")] string rel)
         {
-            var comp = Context.RenderComponent<MudChip<string>>(parameters => parameters
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
                 .Add(p => p.OnClick, () => { })
                 .Add(p => p.Href, href)
                 .Add(p => p.Target, target)
@@ -77,6 +150,26 @@ namespace MudBlazor.UnitTests.Components
             chip.GetAttribute("rel").Should().BeNull();
         }
 
+        /// <summary>
+        /// Href takes precedence over OnClick, so the chip renders as a link and the browser handles the click.
+        /// </summary>
+        [Test]
+        public async Task Chip_HrefWithOnClick_ShouldRenderAnchorAndNotRaiseOnClick()
+        {
+            var clicked = false;
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.Href, "https://example.com")
+                .Add(p => p.OnClick, () => clicked = true));
+
+            var chip = comp.Find(".mud-chip");
+            chip.TagName.Should().Be("A");
+            chip.GetAttribute("href").Should().Be("https://example.com");
+            chip.HasAttribute("type").Should().BeFalse();
+            var act = async () => await comp.Find(".mud-chip").ClickAsync();
+            await act.Should().ThrowAsync<MissingEventHandlerException>();
+            clicked.Should().BeFalse();
+        }
+
         [Test]
         public void Chip_ShouldAllowUserDefinedAttributesToOverrideDefaults()
         {
@@ -87,7 +180,7 @@ namespace MudBlazor.UnitTests.Components
                 { "data-test", "testValue" }
             };
 
-            var comp = Context.RenderComponent<MudChip<string>>(parameters => parameters
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
                 .Add(p => p.OnClick, () => { })
                 .Add(p => p.UserAttributes, userAttributes)
             );
@@ -103,7 +196,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void Chip_ShouldRenderAvatar()
         {
-            var comp = Context.RenderComponent<ChipAvatarContentTest>();
+            var comp = Context.Render<ChipAvatarContentTest>();
 
             comp.Find("div.mud-chip").InnerHtml.Should().Contain("mud-avatar");
         }
@@ -112,9 +205,9 @@ namespace MudBlazor.UnitTests.Components
         /// Clicks on the chip and tests if the OnClick event works
         /// </summary>
         [Test]
-        public void Chip_OnClick()
+        public async Task Chip_OnClick()
         {
-            var comp = Context.RenderComponent<ChipOnClickTest>();
+            var comp = Context.Render<ChipOnClickTest>();
             // print the generated html
 
             // chip should have mud-clickable and mud-ripple classes
@@ -123,7 +216,7 @@ namespace MudBlazor.UnitTests.Components
             chip.ClassName.Should().Contain("mud-ripple");
 
             // click on chip
-            chip.Click();
+            await chip.ClickAsync();
 
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClick");
@@ -133,9 +226,9 @@ namespace MudBlazor.UnitTests.Components
         /// Clicks on the close button and tests if the OnClose event works
         /// </summary>
         [Test]
-        public void Chip_OnClose()
+        public async Task Chip_OnClose()
         {
-            var comp = Context.RenderComponent<ChipOnClickTest>();
+            var comp = Context.Render<ChipOnClickTest>();
             // print the generated html
 
             // chip should have mud-clickable and mud-ripple classes
@@ -144,10 +237,83 @@ namespace MudBlazor.UnitTests.Components
             chip.ClassName.Should().Contain("mud-ripple");
 
             // click on close button
-            comp.Find("button.mud-chip-close-button").Click();
+            await comp.Find("button.mud-chip-close-button").ClickAsync();
 
             var expectedEvent = comp.Find("#chip-click-test-expected-value");
             expectedEvent.InnerHtml.Should().Be("OnClose");
+        }
+
+        /// <summary>
+        /// A disabled clickable chip keeps its button role and reports aria-disabled.
+        /// </summary>
+        [Test]
+        public void Chip_Disabled_ShouldExposeAriaDisabled()
+        {
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.Disabled, true)
+                .Add(p => p.OnClick, () => { }));
+
+            var chip = comp.Find(".mud-chip");
+            chip.TagName.Should().Be("DIV");
+            chip.GetAttribute("role").Should().Be("button");
+            chip.GetAttribute("aria-disabled").Should().Be("true");
+            chip.HasAttribute("aria-pressed").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A chip that is not clickable is a plain element with no button role or state.
+        /// </summary>
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Chip_Plain_ShouldNotExposeToggleState(bool disabled)
+        {
+            var comp = Context.Render<MudChip<string>>(parameters => parameters.Add(p => p.Disabled, disabled));
+
+            var chip = comp.Find(".mud-chip");
+            chip.HasAttribute("role").Should().BeFalse();
+            chip.HasAttribute("aria-disabled").Should().BeFalse();
+            chip.HasAttribute("aria-pressed").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A class or style supplied through UserAttributes keeps winning over the computed ones, as it did through the MudElement boundary.
+        /// </summary>
+        [Test]
+        public void Chip_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(x => x.Text, "Chip")
+                .Add(x => x.Style, "color:blue")
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    ["class"] = "user-class",
+                    ["style"] = "color:red",
+                }));
+
+            var chip = comp.Find(".mud-chip-container > *");
+            chip.GetAttribute("class").Should().Be("user-class");
+            chip.GetAttribute("style").Should().Be("color:red");
+        }
+
+        /// <summary>
+        /// A chip that is not a button has no click handler, so clicking it does not throw and does not raise OnClick.
+        /// </summary>
+        [Test]
+        public async Task Chip_Disabled_HasNoClickHandler()
+        {
+            var clicked = false;
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(x => x.Text, "Chip")
+                .Add(x => x.Disabled, true)
+                .Add(x => x.OnClick, () => clicked = true));
+
+            var chip = comp.Find(".mud-chip");
+            chip.GetAttribute("role").Should().Be("button");
+            chip.GetAttribute("aria-disabled").Should().Be("true");
+            var act = async () => await chip.ClickAsync();
+            await act.Should().ThrowAsync<MissingEventHandlerException>();
+            clicked.Should().BeFalse();
         }
     }
 }

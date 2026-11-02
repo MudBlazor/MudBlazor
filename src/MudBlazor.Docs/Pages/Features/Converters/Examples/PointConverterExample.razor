@@ -9,26 +9,27 @@
         <MudTextField Label="Point"
                       Variant="Variant.Outlined"
                       @bind-Value="_point"
-                      Immediate="true" />
+                      Immediate="true"
+                      Converter="_pointConverter"/>
     </MudItem>
     
     <MudItem xs="12" sm="6" md="4">
         <MudTextField Label="Mirrored point" 
                       Variant="Variant.Outlined"  
                       @bind-Value="_point" 
-                      Immediate="true"/>
+                      Immediate="true"
+                      Converter="_pointConverter" />
     </MudItem>
 
 </MudGrid>
 
 @code {
-    Point _point;
-
-    protected override void OnInitialized()
-    {
-        // should be in your Startup:
-        DefaultConverter<Point>.GlobalGetFunc = x => $"[{x.X}, {x.Y}]";
-        DefaultConverter<Point>.GlobalSetFunc = x => { var tmp = JsonSerializer.Deserialize<int[]>(x); return new Point(tmp[0], tmp[1]); };
-
-    }
+    private Point _point;
+    private readonly IConverter<Point, string> _pointConverter = Conversions.From(
+        (Point x) => $"[{x.X}, {x.Y}]",
+        x =>
+        {
+            var tmp = JsonSerializer.Deserialize<int[]>(x);
+            return new Point(tmp[0], tmp[1]);
+        });
 }

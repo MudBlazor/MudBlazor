@@ -2,13 +2,15 @@
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for collecting start and end values which define a range.
+    /// Collects start and end values that define a range using two input fields, as used by the <see cref="MudDateRangePicker"/>.
     /// </summary>
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
+    /// <seealso cref="MudBaseInput{T}" />
+    /// <seealso cref="MudDateRangePicker" />
+    /// <seealso cref="MudInput{T}" />
     public partial class MudRangeInput<T> : MudBaseInput<Range<T>>
     {
         private string? _textStart;
@@ -22,13 +24,16 @@ namespace MudBlazor
         public MudRangeInput()
         {
             Value = new Range<T>();
-            Converter = new RangeConverter<T>();
         }
 
         protected string Classname => MudInputCssHelper.GetClassname(this,
-            () => !string.IsNullOrEmpty(Text) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(PlaceholderStart) || !string.IsNullOrWhiteSpace(PlaceholderEnd));
+            () => !string.IsNullOrEmpty(ReadText)
+                  || Adornment == Adornment.Start
+                  || !string.IsNullOrWhiteSpace(PlaceholderStart)
+                  || !string.IsNullOrWhiteSpace(PlaceholderEnd)
+                  || ShrinkLabel);
 
-        internal override InputType GetInputType() => InputType;
+        protected internal override InputType GetInputType() => InputType;
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
 
@@ -61,6 +66,26 @@ namespace MudBlazor
         public string? PlaceholderEnd { get; set; }
 
         /// <summary>
+        /// The accessible name for the starting input field.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized <c>Start</c> label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? StartInputAriaLabel { get; set; }
+
+        /// <summary>
+        /// The accessible name for the ending input field.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to a localized <c>End</c> label when <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Behavior)]
+        public string? EndInputAriaLabel { get; set; }
+
+        /// <summary>
         /// Occurs when the Clear button is clicked.
         /// </summary>
         /// <remarks>
@@ -74,9 +99,20 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// When <c>true</c>, an icon is displayed which, when clicked, clears the Text and Value.  Use the <see cref="ClearIcon"/> property to control the Clear button icon.
         /// </remarks>
         [Parameter]
         public bool Clearable { get; set; }
+
+        /// <summary>
+        /// Custom clear icon when <see cref="Clearable"/> is enabled.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Icons.Material.Filled.Clear"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        public string ClearIcon { get; set; } = Icons.Material.Filled.Clear;
 
         /// <summary>
         /// The content within this input component.
@@ -100,6 +136,12 @@ namespace MudBlazor
         /// Moves the cursor to the starting input component.
         /// </summary>
         public ValueTask FocusStartAsync() => _elementReferenceStart.FocusAsync();
+
+        public override async ValueTask BlurAsync()
+        {
+            await _elementReferenceStart.MudBlurAsync();
+            await _elementReferenceEnd.MudBlurAsync();
+        }
 
         /// <summary>
         /// Selects the text in the starting input.
@@ -141,7 +183,7 @@ namespace MudBlazor
                 if (_textStart == value)
                     return;
                 _textStart = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
+                SetTextAndUpdateValueAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
@@ -156,31 +198,41 @@ namespace MudBlazor
                 if (_textEnd == value)
                     return;
                 _textEnd = value;
-                SetTextAsync(RangeConverter<T>.Join(_textStart, _textEnd)).CatchAndLog();
+                SetTextAndUpdateValueAsync(RangeUtility.Join(_textStart, _textEnd)).CatchAndLog();
             }
         }
 
-        protected string InputTypeString => InputType.ToDescriptionString();
+        protected string InputTypeString => InputType.ToStringFast(true);
 
-        protected bool IsClearable() => Clearable && Value is not null;
+        protected bool IsClearable() => Clearable && ReadValue is not null;
+
+        /// <inheritdoc />
+        protected override IConverter<Range<T>?, string?> GetDefaultConverter()
+        {
+            return new RangeConverter<T>
+            {
+                Culture = GetCulture,
+                Format = GetFormat
+            };
+        }
 
         protected override async Task UpdateTextPropertyAsync(bool updateValue)
         {
             await base.UpdateTextPropertyAsync(updateValue);
 
-            RangeConverter<T>.Split(Text, out _textStart, out _textEnd);
+            RangeUtility.Split(ReadText, out _textStart, out _textEnd);
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
             await base.UpdateValuePropertyAsync(updateText);
 
-            RangeConverter<T>.Split(Text, out _textStart, out _textEnd);
+            RangeUtility.Split(ReadText, out _textStart, out _textEnd);
         }
 
         protected virtual async Task ClearButtonClickHandlerAsync(MouseEventArgs e)
         {
-            await SetTextAsync(string.Empty, updateValue: true);
+            await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
             await _elementReferenceStart.FocusAsync();
             await OnClearButtonClick.InvokeAsync(e);
         }

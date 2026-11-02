@@ -1,4 +1,4 @@
-﻿<MudTextField T="DateTime"
+<MudTextField T="DateTime"
               @bind-Value="@Date"
               Format="@Format"
               Immediate="@true"
@@ -6,13 +6,6 @@
               Required="@true"
               RequiredError="Enter a star"
               Culture="System.Globalization.CultureInfo.InvariantCulture" />
-
-<MudButton id="format-change-button"
-           Variant="@Variant.Filled"
-           Color="@Color.Primary"
-           OnClick="@LaunchDelayedFormatChange">
-    Launch delayed format change
-</MudButton>
 
 <MudText>
     RenderCount: @_renderCount
@@ -29,8 +22,6 @@
 
     public int DebounceInterval => 500;
 
-    public int RerenderDelay => 2000;
-
     public DateTime Date { get; set; } = new(2023, 07, 12);
 
     public string Format { get; set; } = "yyyy/MM/dd";
@@ -42,9 +33,8 @@
         base.OnAfterRender(firstRender);
     }
 
-    private async Task LaunchDelayedFormatChange()
+    public void ApplyFormatChange()
     {
-        await Task.Delay(RerenderDelay);
         Format = "dd/MM/yyyy";
         StateHasChanged();
     }

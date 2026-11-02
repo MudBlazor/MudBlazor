@@ -1,11 +1,10 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Components;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a series of series labels as an SVG path.
+    /// A single legend entry describing one chart series, with its label, value, and visibility toggle.
     /// </summary>
     [DebuggerDisplay("{Index} = {Labels}")]
     public class SvgLegend

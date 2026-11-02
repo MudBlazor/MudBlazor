@@ -1,0 +1,16 @@
+﻿<MudPopoverProvider />
+
+<MudForm @ref="Form" ValidationDelay="0">
+    <MudAutocomplete T="string" @bind-Value="_value" Required="true" RequiredError="required"
+                     SearchFunc="Search" DebounceInterval="0" />
+</MudForm>
+
+@code {
+    public static string __description__ = "#11946: a Required MudAutocomplete inside a MudForm.";
+
+    public MudForm Form { get; set; } = null!;
+    private string? _value;
+
+    private Task<IEnumerable<string>> Search(string value, CancellationToken ct)
+        => Task.FromResult<IEnumerable<string>>(new[] { "Alpha", "Beta" }.Where(x => string.IsNullOrEmpty(value) || x.Contains(value, StringComparison.OrdinalIgnoreCase)));
+}

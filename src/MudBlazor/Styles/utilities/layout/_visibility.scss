@@ -1,4 +1,4 @@
-﻿.visible {
+.visible {
   visibility: visible;
 }
 
@@ -8,4 +8,8 @@
 
 [hidden] {
   display: none !important;
+}
+
+.mud-sr-only {
+  @include sr-only;
 }

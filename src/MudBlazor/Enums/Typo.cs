@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Typography controls the text throughout the theme, like font-family, size, and other settings.
 /// </summary>
+[EnumExtensions]
 public enum Typo
 {
     /// <summary>

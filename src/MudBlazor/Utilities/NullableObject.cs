@@ -2,9 +2,8 @@
 
 namespace MudBlazor.Utilities;
 
-#nullable enable
 /// <summary>
-/// Represents a wrapper for an object that can be null.
+/// Wraps a value so that null can be stored and compared, including for value types that are not otherwise nullable.
 /// </summary>
 /// <typeparam name="T">The type of the object.</typeparam>
 public readonly struct NullableObject<T> : IEquatable<NullableObject<T>>, IEquatable<T>

@@ -6,9 +6,8 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Represents an observer that observes and responds to key up events.
+/// Receives key-up events dispatched by the <see cref="IKeyInterceptorService"/>.
 /// </summary>
 public interface IKeyUpObserver
 {

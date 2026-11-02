@@ -4,7 +4,9 @@
 
 namespace MudBlazor
 {
-#nullable enable
+    /// <summary>
+    /// Configures the CSS scope that MudBlazor's generated theme variables are emitted under, defaulting to <c>:root</c>.
+    /// </summary>
     public class PseudoCss
     {
         private string _scope = ":root";

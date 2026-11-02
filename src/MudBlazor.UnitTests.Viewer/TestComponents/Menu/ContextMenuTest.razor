@@ -18,7 +18,7 @@
 else
 {
     <MudMenu PositionAtCursor @ref="_contextMenu" Label="@Label">
-        <ActivatorContent>@ActivatorContent</ActivatorContent>
+        <ActivatorContent>@ActivatorContent(context)</ActivatorContent>
         <ChildContent>
             <MudMenuItem Label="Cut" />
             <MudMenuItem Label="Copy" />
@@ -37,7 +37,7 @@ else
     public string? Label { get; set; }
 
     [Parameter]
-    public RenderFragment? ActivatorContent { get; set; }
+    public RenderFragment<MenuContext>? ActivatorContent { get; set; }
 
     private async Task OpenContextMenu(MouseEventArgs args)
     {

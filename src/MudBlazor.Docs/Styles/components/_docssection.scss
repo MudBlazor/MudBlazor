@@ -250,3 +250,12 @@
     margin-left: 8px;
   }
 }
+
+.doc-section-component-container {
+  padding: 16px;
+  width: 100%;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

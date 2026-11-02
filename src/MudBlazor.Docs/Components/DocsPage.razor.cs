@@ -28,10 +28,12 @@ namespace MudBlazor.Docs.Components
         private bool _displayView;
         private string _componentName;
         private bool _renderAds;
+        private bool _adBlockerDetected;
         [Inject] NavigationManager NavigationManager { get; set; }
 
         [Inject] private IDocsNavigationService DocsService { get; set; }
         [Inject] private IRenderQueueService RenderQueue { get; set; }
+        [Inject] private IAdBlockDetectionService AdBlockDetection { get; set; }
         [Parameter] public RenderFragment ChildContent { get; set; }
 
         private bool _contentDrawerOpen = true;
@@ -59,10 +61,11 @@ namespace MudBlazor.Docs.Components
         {
             base.OnInitialized();
             RenderQueue.Clear();
-            var relativePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-            if (relativePath.Contains('#'))
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+            var anchor = uri.Fragment.TrimStart('#');
+            if (!string.IsNullOrEmpty(anchor))
             {
-                _anchor = relativePath.Split(new[] { "#" }, StringSplitOptions.RemoveEmptyEntries)[1];
+                _anchor = anchor;
             }
         }
 
@@ -86,7 +89,7 @@ namespace MudBlazor.Docs.Components
             }*/
         }
 
-        protected override void OnAfterRender(bool firstRender)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (_stopwatch.IsRunning)
             {
@@ -98,6 +101,16 @@ namespace MudBlazor.Docs.Components
             {
                 _renderAds = true;
                 StateHasChanged();
+
+                // Carbon Ads injects '#carbonads' only after carbon.js fetches and runs.
+                // Probe after a short wait so we can show a fallback message when
+                // the script is being blocked by an ad blocker or network filter.
+                var blocked = await AdBlockDetection.IsAdBlockedAsync();
+                if (blocked && !_adBlockerDetected)
+                {
+                    _adBlockerDetected = true;
+                    StateHasChanged();
+                }
             }
         }
 

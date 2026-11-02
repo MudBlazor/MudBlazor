@@ -1,0 +1,42 @@
+﻿<MudPaper Outlined Class="my-4">
+    <MudList T="string" @bind-SelectedValues="Dos" SelectionMode="SelectionMode.MultiSelection" CheckBoxColor="Color.Tertiary" ReadOnly>
+        <MudListSubheader>
+            Parameter Do's
+        </MudListSubheader>
+        @foreach (var item in Dos) 
+        {
+            <MudListItem Text="@item" />
+        }
+    </MudList>
+</MudPaper>
+
+<MudPaper Outlined Class="my-4">
+    <MudList T="string" @bind-SelectedValues="Donts" SelectionMode="SelectionMode.MultiSelection" CheckBoxColor="Color.Error" CheckedIcon="@Icons.Material.Filled.Dangerous" ReadOnly>
+        <MudListSubheader>
+            Parameter Don'ts
+        </MudListSubheader>
+        @foreach (var item in Donts)
+        {
+            <MudListItem Text="@item" />
+        }
+    </MudList>
+</MudPaper>
+
+@code
+{
+    public IReadOnlyCollection<string> Dos = [
+        "Store parameter values in a private field instead of modifying parameters directly",
+        "Default parameter values should be set directly on the parameter, in the components constructor or SetParametersAsync().",
+        "Use OnParametersSet if the component needs to react to external parameter changes.",
+        "Implement two-way binding for parameters that should be updated both internally and externally.",
+        "Minimize unnecessary re-renders by avoiding direct parameter modifications.",
+    ];
+
+    public IReadOnlyCollection<string> Donts = [
+        "Don't modify a parameter directly inside the child component.",
+        "Don't assume that a parameter's value will persist after a parent component re-renders.",
+        "Don't forget that calling StateHasChanged in a parent resets child parameters unless state is stored separately or two-way binding is used.",
+        "Don't store mutable objects (like RenderFragment) as parameters if you want to avoid unnecessary re-renders.",
+        "Don't expect the component to reflect new parameter values unless explicitly handled in OnParametersSet.",
+    ];
+}

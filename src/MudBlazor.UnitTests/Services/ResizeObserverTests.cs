@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using AwesomeAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
@@ -15,6 +15,9 @@ namespace MudBlazor.UnitTests.Services
     {
         private class PseudoElementReferenceContext : ElementReferenceContext;
 
+        // A fixed seed keeps the generated sizes the same on every run.
+        private const int Seed = 42;
+
         private Mock<IJSRuntime> _runtimeMock;
         private ResizeObserver _service;
 
@@ -29,7 +32,7 @@ namespace MudBlazor.UnitTests.Services
         public async Task ObserveAndCache()
         {
             // Arrange
-            var random = new Random();
+            var random = new Random(Seed);
 
             List<ElementReference> allReferences = new();
             List<ElementReference> notObservedReferences = new();
@@ -129,7 +132,7 @@ namespace MudBlazor.UnitTests.Services
         public async Task Unobserve()
         {
             // Arrange
-            var random = new Random();
+            var random = new Random(Seed);
 
             Dictionary<ElementReference, BoundingClientRect> resolvedElements = new(ElementReferenceComparer.Default);
 
@@ -155,7 +158,6 @@ namespace MudBlazor.UnitTests.Services
                     (z[4] is ResizeObserverOptions) && ((ResizeObserverOptions)z[4]).EnableLogging == false && ((ResizeObserverOptions)z[4]).ReportRate == 200
                 )
             )).ReturnsAsync(resolvedElements.Values.ToArray).Callback<string, object[]>((x, y) => { observerId = (Guid)y[0]; ids = new List<Guid>((IEnumerable<Guid>)y[3]); }).Verifiable();
-
 
             foreach (var item in resolvedElements)
             {
@@ -188,7 +190,7 @@ namespace MudBlazor.UnitTests.Services
         public async Task OnSizeChanged()
         {
             // Arrange
-            var random = new Random();
+            var random = new Random(Seed);
 
             Dictionary<ElementReference, BoundingClientRect> resolvedElements = new(ElementReferenceComparer.Default);
 
@@ -220,12 +222,13 @@ namespace MudBlazor.UnitTests.Services
 
             Dictionary<ElementReference, BoundingClientRect> expectedRects = new(ElementReferenceComparer.Default);
 
-            for (var i = 0; i < resolvedElements.Count(); i++)
+            for (var i = 0; i < resolvedElements.Count; i++)
             {
                 var item = resolvedElements.ElementAt(i);
                 var correspondingId = ids[i];
 
-                if (random.NextDouble() > 0.5)
+                // Alternate unknown ids with observed elements so both paths run and the expected set is never empty.
+                if (i % 2 == 1)
                 {
                     changes.Add(new ResizeObserver.SizeChangeUpdateInfo(Guid.NewGuid(), GetRandomRect(random)));
                 }
@@ -268,6 +271,31 @@ namespace MudBlazor.UnitTests.Services
             _runtimeMock.Verify();
         }
 
+        [Test]
+        public async Task Observe_AlreadyCachedElement_SkipsSecondJsConnect()
+        {
+            // Arrange
+            var random = new Random(Seed);
+            var reference = new ElementReference(Guid.NewGuid().ToString(), new PseudoElementReferenceContext());
+            var rect = GetRandomRect(random);
+
+            // Strict mock allows exactly one connect; a second call would throw.
+            _runtimeMock.Setup(x => x.InvokeAsync<BoundingClientRect[]>(
+                "mudResizeObserver.connect",
+                It.IsAny<object[]>()
+            )).ReturnsAsync([rect]).Verifiable();
+
+            await _service.Observe(reference);
+
+            // Act
+            var actual = await _service.Observe(reference);
+
+            // Assert
+            // Already-cached elements are filtered out, so the second Observe connects to nothing and returns no rect.
+            actual.Should().BeNull();
+            _service.GetSizeInfo(reference).Should().BeEquivalentTo(rect);
+            _runtimeMock.Verify(x => x.InvokeAsync<BoundingClientRect[]>("mudResizeObserver.connect", It.IsAny<object[]>()), Times.Once);
+        }
 
         private static BoundingClientRect GetRandomRect(Random random)
         {

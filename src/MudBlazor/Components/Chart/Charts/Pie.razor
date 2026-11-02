@@ -1,13 +1,28 @@
 ﻿@namespace MudBlazor.Charts
-@inherits MudCategoryChartBase
+@inherits MudRadialChartBase<T, PieChartOptions>
+@typeparam T 
 
-<svg @attributes="UserAttributes" class="mud-chart-pie" width="@MudChartParent?.Width" height="@MudChartParent?.Height" viewBox="-1 -1 2 2" style="transform: rotate(-90deg);">
-    <Filters />
-    @foreach (var item in _paths)
-    {
-        <path @onclick="() => SelectedIndex = item.Index" class="mud-chart-serie" fill="@MudChartParent?.ChartOptions.ChartPalette.GetValue(item.Index % MudChartParent.ChartOptions.ChartPalette.Length)" d="@item.Data"></path>
-	}
+<div @attributes="UserAttributes" class="@Classname">
+    <BaseRadialChart T="T" 
+                     TChartOptions="PieChartOptions"
+                     ElementRefChanged="SetElementReference"
+                     Width="@Width"
+                     Height="@Height"
+                     Paths="@_paths"
+                     Radius="@Radius"
+                     ChartClass="mud-chart-pie"
+                     ChartSeries="@ChartSeries"
+                     ChartLabels="@ChartLabels"
+                     ChartOptions="@ChartOptions"
+                     CustomGraphics="@CustomGraphics"
+                     HoveredSegment="@_hoveredSegment"
+                     UserAttributes="@UserAttributes"
+                     TooltipTemplate="@TooltipTemplate"
+                     TooltipPositionFunc="@TooltipPositionFunc"
+                     OnPathClick="async (i) => await SetSelectedIndexAsync(i)"
+                     OnMouseOver="(x) => OnSegmentMouseOver(x.Args, x.Segment)"
+                     OnMouseOut="OnSegmentMouseOut" />
 
-	@MudChartParent?.CustomGraphics
-</svg>
-<Legend Data="@_legends" />
+    <Legend T="T" Data="@_legends" ShowLegend="@ChartOptions?.ShowLegend" CanHideSeries="@CanHideSeries"
+            ChartPalette="@ChartOptions?.ChartPalette" OnLegendSelected="async (i) => await SetSelectedIndexAsync(i)" />
+</div>

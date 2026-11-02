@@ -12,7 +12,7 @@
 
     private async void OnButtonClicked()
     {
-        bool? result = await DialogService.ShowMessageBox(
+        bool? result = await DialogService.ShowMessageBoxAsync(
             "Secure The Ring", 
             (MarkupString) $"You <br /> Shall <br /> not <br /> <b>Pass!<b/>",
             yesText:"Fire Whip!", cancelText:"Smash Ground");

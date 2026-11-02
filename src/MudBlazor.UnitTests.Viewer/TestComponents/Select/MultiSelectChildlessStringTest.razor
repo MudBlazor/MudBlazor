@@ -1,0 +1,15 @@
+<MudPopoverProvider />
+
+<MudSelect T="string" MultiSelection="true" @bind-SelectedValues="_selected">
+    @foreach (var item in _items)
+    {
+        <MudSelectItem T="string" Value="@item" />
+    }
+</MudSelect>
+
+@code {
+    public static string __description__ = "Multi-selection with childless string items should refresh checkbox state immediately without explicit item text.";
+
+    private IReadOnlyCollection<string> _selected = [];
+    private readonly string[] _items = ["Cardinale", "Diavolo", "Margarita", "Spinaci"];
+}

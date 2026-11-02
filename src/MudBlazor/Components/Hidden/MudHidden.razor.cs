@@ -3,10 +3,9 @@ using MudBlazor.State;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
-    /// A component which conditionally renders content depending on the screen size.
+    /// Conditionally renders its content based on the current screen-size breakpoint, showing or hiding it as the viewport changes.
     /// </summary>
     /// <remarks>
     /// This component uses JavaScript to listen for browser window size changes.  If you want a solution using only CSS, you can use the <see href="https://mudblazor.com/features/display#class-reference">responsive display classes</see>.
@@ -55,7 +54,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>true</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Hidden.Behavior)]
         public bool Hidden { get; set; } = true;
 

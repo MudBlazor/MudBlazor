@@ -9,10 +9,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
-/// Represents a set of multiple <see cref="MudChip{T}"/> components.
+/// A collection of multiple <see cref="MudChip{T}"/> components that allows single or multi-selection.
 /// </summary>
 /// <typeparam name="T">The type of item managed by this component.</typeparam>
 /// <seealso cref="MudChip{T}"/>
@@ -34,16 +33,52 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         registerScope.RegisterParameter<IEqualityComparer<T>>(nameof(Comparer))
             .WithParameter(() => Comparer)
             .WithChangeHandler(OnComparerChangedAsync);
+        registerScope.RegisterParameter<bool>(nameof(AllClosable))
+            .WithParameter(() => AllClosable)
+            .WithChangeHandler(RenderChips);
+        registerScope.RegisterParameter<Variant>(nameof(Variant))
+            .WithParameter(() => Variant)
+            .WithChangeHandler(RenderChips);
+        registerScope.RegisterParameter<Color>(nameof(Color))
+            .WithParameter(() => Color)
+            .WithChangeHandler(RenderChips);
+        registerScope.RegisterParameter<Color>(nameof(SelectedColor))
+            .WithParameter(() => SelectedColor)
+            .WithChangeHandler(RenderChips);
+        registerScope.RegisterParameter<Color>(nameof(IconColor))
+            .WithParameter(() => IconColor)
+            .WithChangeHandler(RenderChips);
+        registerScope.RegisterParameter<Size>(nameof(Size))
+            .WithParameter(() => Size)
+            .WithChangeHandler(RenderChips);
         registerScope.RegisterParameter<bool>(nameof(CheckMark))
             .WithParameter(() => CheckMark)
-            .WithChangeHandler(OnCheckMarkChanged);
+            .WithChangeHandler(RenderChips);
+        registerScope.RegisterParameter<string>(nameof(CheckedIcon))
+            .WithParameter(() => CheckedIcon)
+            .WithChangeHandler(RenderChips);
+        registerScope.RegisterParameter<string>(nameof(CloseIcon))
+            .WithParameter(() => CloseIcon)
+            .WithChangeHandler(RenderChips);
+        registerScope.RegisterParameter<bool>(nameof(Ripple))
+            .WithParameter(() => Ripple)
+            .WithChangeHandler(RenderChips);
+        registerScope.RegisterParameter<bool>(nameof(Label))
+            .WithParameter(() => Label)
+            .WithChangeHandler(RenderChips);
+        registerScope.RegisterParameter<bool>(nameof(Disabled))
+            .WithParameter(() => Disabled)
+            .WithChangeHandler(RenderChips);
+        registerScope.RegisterParameter<bool>(nameof(ReadOnly))
+            .WithParameter(() => ReadOnly)
+            .WithChangeHandler(RenderChips);
     }
 
     private readonly ParameterState<T?> _selectedValue;
     private readonly ParameterState<IReadOnlyCollection<T>?> _selectedValues;
 
     private HashSet<T> _selection = new();
-    private HashSet<MudChip<T>> _chips = new();
+    private readonly HashSet<MudChip<T>> _chips = new();
     private bool MultiSelection => SelectionMode == SelectionMode.MultiSelection;
     private bool Mandatory => SelectionMode == SelectionMode.SingleSelection;
 
@@ -211,7 +246,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     /// <remarks>
     /// This property is used when <see cref="SelectionMode"/> is <see cref="SelectionMode.SingleSelection" /> or <see cref="SelectionMode.ToggleSelection"/>.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.ChipSet.Behavior)]
     public T? SelectedValue { get; set; }
 
@@ -230,7 +265,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     /// <remarks>
     /// This event occurs when <see cref="SelectionMode"/> is <see cref="SelectionMode.MultiSelection" />.
     /// </remarks>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.ChipSet.Behavior)]
     public IReadOnlyCollection<T>? SelectedValues { get; set; }
 
@@ -264,7 +299,14 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         return UpdateChipsAsync();
     }
 
-    private void OnCheckMarkChanged(ParameterChangedEventArgs<bool> args)
+    /// <summary>
+    /// Renders every chip after a parameter that chips read from this set has changed.
+    /// </summary>
+    /// <remarks>
+    /// Chips read these values through a fixed cascade, so the cascade never tells them about the change.
+    /// A chip whose own parameters are unchanged is not re-rendered by the framework, and the selection walk only renders chips whose selection changed.
+    /// </remarks>
+    private void RenderChips()
     {
         foreach (IMudStateHasChanged chip in _chips)
             chip.StateHasChanged();
@@ -321,7 +363,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         var value = chip.GetValue();
         if (MultiSelection)
         {
-            if (value is not null && (chip.Default == true && !_selection.Contains(value) || (chip.Default == false && _selection.Contains(value))))
+            if (value is not null && ((chip.Default == true && !_selection.Contains(value)) || (chip.Default == false && _selection.Contains(value))))
             {
                 var newSelection = MultiSelection ? new HashSet<T>(_selection, Comparer) : new HashSet<T>(Comparer);
                 if (chip.Default == true)
@@ -352,11 +394,7 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
         if (_disposed)
             return; // don't raise any events if we are already disposed
         var value = chip.GetValue();
-        //if (chip.IsSelectedState.Value && value is not null)
-        //{
         await UpdateSelectedValuesAsync(_selection.Where(x => !Comparer.Equals(x, value)).ToList());
-        //}
-        // return Task.CompletedTask;
         StateHasChanged();
     }
 
@@ -405,6 +443,21 @@ public partial class MudChipSet<T> : MudComponentBase, IDisposable
     /// </summary>
     public void Dispose()
     {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Releases unused resources.
+    /// </summary>
+    /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposing)
+        {
+            return;
+        }
+
         _disposed = true;
     }
 }

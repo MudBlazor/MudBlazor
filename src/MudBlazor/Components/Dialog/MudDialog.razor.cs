@@ -2,17 +2,17 @@
 // Copyright (c) 2019 Blazored - See https://github.com/Blazored
 // Copyright (c) 2020 MudBlazor Contributors
 
+using System.Threading;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
-    /// An overlay providing the user with information, a choice, or other input.
+    /// Displays an overlay that prompts users to confirm an action or provide additional information.
     /// </summary>
     /// <seealso cref="MudDialogContainer"/>
     /// <seealso cref="MudDialogProvider"/>
@@ -25,6 +25,7 @@ namespace MudBlazor
     {
         private IDialogReference? _reference;
         private readonly ParameterState<bool> _visibleState;
+        private readonly SemaphoreSlim _showLock = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// Creates a new instance.
@@ -51,6 +52,9 @@ namespace MudBlazor
 
         [CascadingParameter(Name = "IsNested")]
         private bool IsNested { get; set; }
+
+        [CascadingParameter]
+        private DialogOptions GlobalDialogOptions { get; set; } = DialogOptions.Default;
 
         [Inject]
         protected IDialogService DialogService { get; set; } = null!;
@@ -154,6 +158,7 @@ namespace MudBlazor
         /// <summary>
         /// The CSS styles applied to the main dialog content.
         /// </summary>
+        [Obsolete("Prefer the ContentClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Dialog.Appearance)]
         public string? ContentStyle { get; set; }
@@ -165,7 +170,7 @@ namespace MudBlazor
         /// Defaults to <c>false</c>.<br />
         /// This can be bound via <c>@bind-Visible</c> to show or hide inline dialogs.  For regular dialogs, use the <see cref="DialogService.ShowAsync(Type)"/> and <see cref="IMudDialogInstance.Close()"/> methods.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Dialog.Behavior)]
         public bool Visible { get; set; }
 
@@ -179,11 +184,31 @@ namespace MudBlazor
         /// The element which will receive focus when this dialog is shown.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DefaultFocus.Element"/> in <see cref="MudGlobal.DialogDefaults.DefaultFocus"/>.        
+        /// Defaults to <c>null</c>, which will use the global default from <see cref="MudDialogProvider.DefaultFocus"/> if set, otherwise <see cref="DefaultFocus.Element"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
-        public DefaultFocus DefaultFocus { get; set; } = MudGlobal.DialogDefaults.DefaultFocus;
+        public DefaultFocus? DefaultFocus { get; set; }
+
+        /// <summary>
+        /// The accessible name announced for this dialog.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which names the dialog by its title bar, or by the title text when the header is hidden. Set this when the header is hidden and no title is available, such as an inline dialog with <see cref="DialogOptions.NoHeader"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public string? AriaLabel { get; set; }
+
+        /// <summary>
+        /// The id of the element that names this dialog.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Takes precedence over <see cref="AriaLabel"/> and the title bar. Point it at a heading inside <see cref="DialogContent"/> when a custom header replaces the title bar.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public string? AriaLabelledBy { get; set; }
 
         private bool IsInline => IsNested || DialogInstance is null;
 
@@ -195,44 +220,55 @@ namespace MudBlazor
         /// <returns>The reference to the displayed instance of this dialog.</returns>
         public async Task<IDialogReference> ShowAsync(string? title = null, DialogOptions? options = null)
         {
-            if (!IsInline)
+            await _showLock.WaitAsync();
+            try
             {
-                throw new InvalidOperationException("You can only show an inlined dialog.");
+                if (!IsInline)
+                {
+                    throw new InvalidOperationException("You can only show an inlined dialog.");
+                }
+
+                if (_reference is not null && !_reference.Result.IsCompleted)
+                    return _reference;
+
+#pragma warning disable CS0618 // Type or member is obsolete
+                var parameters = new DialogParameters
+                {
+                    [nameof(Class)] = Class,
+                    [nameof(Style)] = Style,
+                    [nameof(Tag)] = Tag,
+                    [nameof(UserAttributes)] = UserAttributes,
+                    [nameof(TitleContent)] = TitleContent,
+                    [nameof(DialogContent)] = DialogContent,
+                    [nameof(DialogActions)] = DialogActions,
+                    [nameof(OnBackdropClick)] = OnBackdropClick,
+                    [nameof(Gutters)] = Gutters,
+                    [nameof(TitleClass)] = TitleClass,
+                    [nameof(ContentClass)] = ContentClass,
+                    [nameof(ActionsClass)] = ActionsClass,
+                    [nameof(ContentStyle)] = ContentStyle,
+                    [nameof(DefaultFocus)] = DefaultFocus,
+                    [nameof(AriaLabel)] = AriaLabel,
+                    [nameof(AriaLabelledBy)] = AriaLabelledBy,
+                };
+#pragma warning restore CS0618 // Type or member is obsolete
+
+                var reference = _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
+
+                await _visibleState.SetValueAsync(true);
+
+                // Do not await this!
+                reference.Result.ContinueWith(t =>
+                {
+                    return InvokeAsync(() => ReferenceEquals(_reference, reference)
+                        ? _visibleState.SetValueAsync(false)
+                        : Task.CompletedTask);
+                }).CatchAndLog();
             }
-
-            if (_reference is not null)
+            finally
             {
-                await CloseAsync();
+                _showLock.Release();
             }
-
-            var parameters = new DialogParameters
-            {
-                [nameof(Class)] = Class,
-                [nameof(Style)] = Style,
-                [nameof(Tag)] = Tag,
-                [nameof(UserAttributes)] = UserAttributes,
-                [nameof(TitleContent)] = TitleContent,
-                [nameof(DialogContent)] = DialogContent,
-                [nameof(DialogActions)] = DialogActions,
-                [nameof(OnBackdropClick)] = OnBackdropClick,
-                [nameof(Gutters)] = Gutters,
-                [nameof(TitleClass)] = TitleClass,
-                [nameof(ContentClass)] = ContentClass,
-                [nameof(ActionsClass)] = ActionsClass,
-                [nameof(ContentStyle)] = ContentStyle,
-                [nameof(DefaultFocus)] = DefaultFocus,
-            };
-
-            await _visibleState.SetValueAsync(true);
-
-            _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
-
-            // Do not await this!
-            _reference.Result.ContinueWith(t =>
-            {
-                return InvokeAsync(() => _visibleState.SetValueAsync(false));
-            }).CatchAndLog();
-
             return _reference;
         }
 
@@ -242,14 +278,17 @@ namespace MudBlazor
         /// <param name="result">The optional data to include.</param>
         public async Task CloseAsync(DialogResult? result = null)
         {
-            if (!IsInline || _reference is null)
+            var reference = _reference;
+            if (!IsInline || reference is null)
             {
                 return;
             }
 
-            await _visibleState.SetValueAsync(false);
-            _reference.Close(result);
+            // Clear the reference before raising VisibleChanged.
+            // Outside an event handler the parent re-renders synchronously, and OnAfterRenderAsync would otherwise re-enter this method and close without the result.
             _reference = null;
+            await _visibleState.SetValueAsync(false);
+            reference.Close(result);
         }
 
         /// <inheritdoc/>
@@ -268,6 +307,10 @@ namespace MudBlazor
                     {
                         // Forward render update to instance
                         (_reference.Dialog as IMudStateHasChanged)?.StateHasChanged();
+
+                        //forward render update to instance container
+                        if (_reference.Dialog is MudDialog { DialogInstance: not null } dialog)
+                            await InvokeAsync(dialog.DialogInstance!.StateHasChanged);
                     }
                     else
                     {

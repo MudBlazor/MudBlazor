@@ -1,0 +1,48 @@
+﻿<MudDataGrid T="ContractEntity"
+             Items="_contracts"
+             MultiSelection="false"
+             SelectedItem="_selectedItem"
+             SelectedItemChanged="SelectedItemChanged">
+    <Columns>
+        <SelectColumn T="ContractEntity" ShowInHeader="false" />
+        <PropertyColumn Property="x => x.ValidFrom" Title="ValidFrom">
+            <CellTemplate>
+                @DateOnly.FromDateTime(context.Item.ValidFrom)
+            </CellTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.ValidTo" Title="ValidTo">
+            <CellTemplate>
+                @DateOnly.FromDateTime(context.Item.ValidTo)
+            </CellTemplate>
+        </PropertyColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="ContractEntity" />
+    </PagerContent>
+</MudDataGrid>
+
+<MudText>
+    @_selectedItem?.Id
+</MudText>
+
+@code {
+    private ContractEntity? _selectedItem;
+    private readonly List<ContractEntity> _contracts =
+    [
+        new ContractEntity(1, DateTime.Now, DateTime.Now),
+        new ContractEntity(2, DateTime.Now, DateTime.Now),
+        new ContractEntity(3, DateTime.Now, DateTime.Now)
+    ];
+
+    protected override void OnInitialized()
+    {
+        _selectedItem = _contracts.First();
+    }
+
+    private void SelectedItemChanged(ContractEntity entity)
+    {
+        _selectedItem = entity;
+    }
+
+    public record ContractEntity(int Id, DateTime ValidFrom, DateTime ValidTo);
+}

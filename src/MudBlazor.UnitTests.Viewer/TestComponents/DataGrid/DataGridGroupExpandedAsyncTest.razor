@@ -1,4 +1,4 @@
-<MudDataGrid @ref="_dataGrid" Items="@_fruits" Filterable="true" Hideable="true" Groupable="true"
+﻿<MudDataGrid @ref="_dataGrid" Items="@_fruits" Filterable="true" Hideable="true" Groupable="true"
              GroupExpanded="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Fruits</MudText>
@@ -39,14 +39,14 @@
         _fruits.Add(new Fruit("Banana", 5, "Musa"));
     }
 
-    public void ExpandAllGroups()
+    public Task ExpandAllGroups()
     {
-        _dataGrid.ExpandAllGroups();
+        return _dataGrid.ExpandAllGroupsAsync();
     }
 
-    public void CollapseAllGroups()
+    public Task CollapseAllGroups()
     {
-        _dataGrid.CollapseAllGroups();
+        return _dataGrid.CollapseAllGroupsAsync();
     }
 
     public record Fruit(string Name, int Count, string Category);

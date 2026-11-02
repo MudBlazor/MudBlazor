@@ -3,7 +3,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A header displayed as part of a <see cref="MudList{T}"/>.

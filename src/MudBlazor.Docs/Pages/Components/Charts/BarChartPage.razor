@@ -3,7 +3,7 @@
 @page "/components/bar"
 
 <DocsPage>
-    <DocsPageHeader Title="Bar Chart" Component="@nameof(MudBlazor.Charts.Bar)" />
+    <DocsPageHeader Title="Bar Chart" Component="@nameof(MudBlazor.Charts.Bar<T>)" />
 
     <DocsPageContent>
         <DocsPageSection>
@@ -12,6 +12,15 @@
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(BarExample1)">
                 <BarExample1 />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Value Labels">
+                <Description>Set <CodeInline>ShowValues</CodeInline> in <CodeInline>BarChartOptions</CodeInline> to display the value above each bar.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(BarValueLabelsExample)">
+                <BarValueLabelsExample />
             </SectionContent>
         </DocsPageSection>
 

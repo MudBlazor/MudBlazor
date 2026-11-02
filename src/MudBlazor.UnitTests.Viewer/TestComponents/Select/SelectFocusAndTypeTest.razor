@@ -8,10 +8,10 @@
 </MudSelect>
 
 @code {
-    string? _value;
+    private string? _value;
 
-    private string[] _states =
-    {
+    private readonly string[] _states =
+    [
         "Alabama", "Alaska", "Arizona", "Arkansas", "California",
         "Colorado", "Connecticut", "Delaware", "Florida", "Georgia",
         "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
@@ -22,5 +22,5 @@
         "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
         "Tennessee", "Texas", "Utah", "Vermont", "Virginia",
         "Washington", "West Virginia", "Wisconsin", "Wyoming"
-    };
+    ];
 }

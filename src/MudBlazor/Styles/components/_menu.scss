@@ -28,12 +28,15 @@
 
 .mud-menu-list {
   padding: 4px 0;
+  min-width: 112px;
 
   > .mud-menu {
     width: 100%;
+    display: inline;
   }
 
-  > .mud-divider {
+  > .mud-divider,
+  > .mud-divider-with-content {
     margin: 4px 0;
   }
 }
@@ -82,4 +85,25 @@
 // If any menu item has an icon, then give the other ones the same gutters.
 .mud-menu-list:has(.mud-menu-item-icon) .mud-menu-item:not(:has(.mud-menu-item-icon)) .mud-menu-item-text {
   margin-inline-start: 36px;
+}
+
+.mud-menu-list:has(.mud-menu-submenu-icon) .mud-menu-item:not(:has(.mud-menu-submenu-icon)) .mud-menu-item-text {
+  margin-inline-end: 36px;
+}
+
+// The list is wrapped by a keyboard/focus container. Forward the popover's
+// max-height through the wrapper so the list inherits it and becomes the scroll
+// container. The popover below clips its overflow, so without this an explicit
+// MaxHeight menu would have no scrollbar and clip its items.
+.mud-menu-list-wrapper {
+  max-height: inherit;
+}
+
+.mud-popover:has(.mud-menu-list) {
+  // Prevent menu item hover effects peeking through rounded popovers.
+  overflow: hidden;
+  // Hide the menu if it doesn't have any content.
+  &:has(.mud-menu-list:empty) {
+    visibility: hidden;
+  }
 }

@@ -6,10 +6,12 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Breakpoint definitions for <see cref="BrowserViewportService"/>.
+/// Stores global breakpoint definitions and resolves per-component overrides.
 /// </summary>
+/// <remarks>
+/// This helper keeps breakpoint logic centralized so viewport services can rely on a consistent source of truth when mapping sizes to breakpoints.
+/// </remarks>
 internal class BreakpointGlobalOptions
 {
     /// <summary>

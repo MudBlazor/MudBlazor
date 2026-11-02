@@ -8,45 +8,46 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A deeper level of navigation links as part of a <see cref="MudNavMenu"/>.
     /// </summary>
     /// <seealso cref="MudNavLink"/>
     /// <seealso cref="MudNavMenu"/>
-    public partial class MudNavGroup : MudComponentBase
+    public partial class MudNavGroup : MudComponentBase, IDisposable
     {
         private readonly ParameterState<bool> _expandedState;
-        private readonly ParameterState<bool> _disabledState;
-        private readonly ParameterState<NavigationContext?> _parentNavigationContextState;
         private NavigationContext _navigationContext = new(false, true);
+
+        [CascadingParameter]
+        private MudNavMenu? ParentMenu { get; set; }
 
         public MudNavGroup()
         {
             using var registerScope = CreateRegisterScope();
-            _disabledState = registerScope.RegisterParameter<bool>(nameof(Disabled))
-                .WithParameter(() => Disabled)
-                .WithChangeHandler(UpdateNavigationContext);
-            _parentNavigationContextState = registerScope.RegisterParameter<NavigationContext?>(nameof(ParentNavigationContext))
-                .WithParameter(() => ParentNavigationContext)
-                .WithChangeHandler(UpdateNavigationContext);
             _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
                 .WithParameter(() => Expanded)
                 .WithEventCallback(() => ExpandedChanged)
+                .WithChangeHandler(UpdateNavigationContext);
+            registerScope.RegisterParameter<bool>(nameof(Disabled))
+                .WithParameter(() => Disabled)
+                .WithChangeHandler(UpdateNavigationContext);
+            registerScope.RegisterParameter<NavigationContext?>(nameof(ParentNavigationContext))
+                .WithParameter(() => ParentNavigationContext)
                 .WithChangeHandler(UpdateNavigationContext);
         }
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            ParentMenu?.RegisterGroup(this);
             UpdateNavigationContext();
         }
 
         protected string Classname =>
             new CssBuilder("mud-nav-group")
                 .AddClass(Class)
-                .AddClass("mud-nav-group-disabled", _disabledState.Value)
+                .AddClass("mud-nav-group-disabled", Disabled)
                 .Build();
 
         protected string ButtonClassname =>
@@ -63,11 +64,11 @@ namespace MudBlazor
 
         protected string ExpandIconClassname =>
             new CssBuilder("mud-nav-link-expand-icon")
-                .AddClass("mud-transform", _expandedState.Value && _disabledState.Value is false)
-                .AddClass("mud-transform-disabled", _expandedState.Value && _disabledState.Value)
+                .AddClass("mud-transform", _expandedState.Value && !Disabled)
+                .AddClass("mud-transform-disabled", _expandedState.Value && Disabled)
                 .Build();
 
-        protected int ButtonTabIndex => _disabledState.Value || _parentNavigationContextState.Value is { Disabled: true } or { Expanded: false } ? -1 : 0;
+        protected int ButtonTabIndex => Disabled || ParentNavigationContext is { Disabled: true } or { Expanded: false } ? -1 : 0;
 
         [CascadingParameter]
         private NavigationContext? ParentNavigationContext { get; set; }
@@ -86,7 +87,7 @@ namespace MudBlazor
         /// The content within the title area.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  When set, overrides the <see cref="Title"/> property.
+        /// Defaults to <c>null</c>.  When set, overrides the <see cref="Title"/> property for display purposes only.  The <see cref="Title"/> property is still used for the <c>aria-label</c> attribute of the underlying button for accessibility.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Behavior)]
@@ -125,7 +126,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public bool Disabled { get; set; }
 
@@ -145,7 +146,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.  When this value changes, <see cref="ExpandedChanged"/> occurs.  Can be bound via <c>@bind-Expanded</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.NavMenu.Behavior)]
         public bool Expanded { get; set; }
 
@@ -195,18 +196,43 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
+        /// <summary>
+        /// Toggles the expanded state of this group (expand or collapse) and updates the navigation context.
+        /// When expanded, notifies the parent menu so it can collapse other groups if exclusive expansion is enabled.
+        /// </summary>
         private async Task ExpandedToggleAsync()
         {
             await _expandedState.SetValueAsync(!_expandedState.Value);
             UpdateNavigationContext();
+            if (_expandedState.Value && ParentMenu is not null)
+            {
+                await ParentMenu.NotifyGroupExpandedAsync(this);
+            }
         }
+
+        /// <summary>
+        /// Collapse this group programmatically.
+        /// </summary>
+        internal async Task CollapseAsync()
+        {
+            if (!_expandedState.Value)
+            {
+                return;
+            }
+
+            await _expandedState.SetValueAsync(false);
+            UpdateNavigationContext();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        public void Dispose()
+            => ParentMenu?.UnregisterGroup(this);
 
         private void UpdateNavigationContext()
             => _navigationContext = _navigationContext with
             {
-                Disabled = _disabledState.Value || _parentNavigationContextState.Value is { Disabled: true },
-                Expanded = _expandedState.Value
-                           && _parentNavigationContextState.Value is null or { Expanded: true }
+                Disabled = Disabled || ParentNavigationContext is { Disabled: true },
+                Expanded = _expandedState.Value && ParentNavigationContext is null or { Expanded: true }
             };
     }
 }

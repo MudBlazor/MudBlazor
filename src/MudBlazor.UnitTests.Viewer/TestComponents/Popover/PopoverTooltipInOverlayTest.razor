@@ -1,8 +1,15 @@
-﻿<MudPopoverProvider />
+﻿@inject NavigationManager NavManager
 
-<MudButton OnClick="@(() => _isVisible = !_isVisible)" Variant="Variant.Filled" Color="Color.Primary">
-    Tooltip Test
-</MudButton>
+<MudStack Row Justify="Justify.SpaceAround">
+    <MudButton OnClick="@(() => _isVisible = !_isVisible)" Variant="Variant.Filled" Color="Color.Primary">
+        Tooltip Test
+    </MudButton>
+    <MudMenu Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" AnchorOrigin="@Origin.BottomLeft" 
+             TransformOrigin="@Origin.TopLeft" AriaLabel="User menu dropdown">
+        <MudMenuItem Disabled>Popover Tooltip In Overlay</MudMenuItem>
+        <MudMenuItem OnClick="@(() => NavigateToTest())">Same but with different Popover provider and Page</MudMenuItem>
+    </MudMenu>
+</MudStack>
 
 <MudOverlay @bind-Visible="_isVisible" DarkBackground="true" Style="z-index:1203;" AutoClose="false">
     <MudContainer MaxWidth="MaxWidth.ExtraSmall" Class="d-flex align-center" Style=@($"height: 100vh;min-width:{500}px;")>
@@ -32,4 +39,9 @@
     public static string __description__ = "Popover Tooltip inside Overlay";
 
     private bool _isVisible;
+
+    private void NavigateToTest()
+    {
+        NavManager.NavigateTo("/popover-switch-test/PopoverTwoLayoutsTest");
+    }
 }

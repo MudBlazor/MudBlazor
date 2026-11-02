@@ -3,6 +3,15 @@
   z-index: calc(var(--mud-zindex-popover) + 1);
   position: absolute;
   opacity: 0;
+  top: -9999px;
+  left: -9999px;
+
+  // A right-to-left page scrolls to overflow past its left edge, so the offset above can add a page-wide horizontal scrollbar (#14044).
+  // The top offset alone keeps the popover out of sight until it is placed.
+  html[dir="rtl"] &,
+  body[dir="rtl"] & {
+    left: 0;
+  }
 
   &.mud-popover-fixed {
     position: fixed;
@@ -21,6 +30,10 @@
     pointer-events: none;
     transition-duration: 0ms !important;
     transition-delay: 0ms !important;
+  }
+
+  &:empty {
+    box-shadow: none !important;
   }
 
   .mud-list {
@@ -60,7 +73,7 @@
 }
 
 .mud-select {
-    .mud-popover-cascading-value {
+  .mud-popover-cascading-value {
     z-index: calc(var(--mud-zindex-select) + 5);
   }
 }

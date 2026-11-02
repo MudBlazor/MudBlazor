@@ -1,0 +1,46 @@
+﻿<MudPopoverProvider />
+
+<MudDataGrid @ref="_dataGrid" Items="@_items" Filterable FilterMode="DataGridFilterMode.ColumnFilterRow">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Status" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Model(string Name, int? Age, Severity? Status);
+
+    private MudDataGrid<Model>? _dataGrid;
+
+    private readonly IEnumerable<Model> _items = new List<Model>
+    {
+        new("Charlie", 56, Severity.Normal),
+        new("Alicia", 54, Severity.Info),
+        new("Ira", 27, Severity.Success),
+        new("John", 32, Severity.Warning)
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender && _dataGrid != null)
+        {
+            // Add a default filter programmatically (as reported in issue #8060)
+            var nameColumn = _dataGrid.GetColumnByPropertyName("Name");
+            if (nameColumn != null)
+            {
+                var filterDefinition = new FilterDefinition<Model>
+                {
+                    Column = nameColumn,
+                    Operator = FilterOperator.String.Contains,
+                    Value = "C",
+                    Title = "Name"
+                };
+
+                await _dataGrid.AddFilterAsync(filterDefinition);
+            }
+        }
+    }
+}

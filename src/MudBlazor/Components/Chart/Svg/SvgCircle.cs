@@ -1,19 +1,13 @@
 ﻿using System.Diagnostics;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a circular shape drawn as an SVG path.
+    /// Circle shape rendered as SVG, used to draw points and markers in a chart.
     /// </summary>
     [DebuggerDisplay("{Index} = {CX},{CY}, R={Radius}")]
-    internal class SvgCircle
+    public sealed class SvgCircle : SvgPath
     {
-        /// <summary>
-        /// The position of this path within a list.
-        /// </summary>
-        public int Index { get; set; }
-
         /// <summary>
         /// The horizontal position of the center of the circle.
         /// </summary>

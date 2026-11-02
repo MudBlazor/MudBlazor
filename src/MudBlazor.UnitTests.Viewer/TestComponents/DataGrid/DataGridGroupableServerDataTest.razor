@@ -36,7 +36,7 @@
         new Item("Calcium", 20)
     };
 
-    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState)
+    private async Task<GridData<Item>> ServerDataFunc(GridState<Item> gridState, CancellationToken token)
     {
         await Task.CompletedTask;
         List<Item> itemsAscendingByNumber = _items.ToList();

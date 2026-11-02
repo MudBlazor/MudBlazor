@@ -1,24 +1,28 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// An input for collecting text values.
     /// </summary>
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
     public partial class MudTextField<T> : MudDebouncedInput<T>
     {
-        private IMask? _mask = null;
-        private MudMask? _maskReference = null;
+        private IMask? _mask;
+        private MudMask? _maskReference;
 
         protected string Classname =>
-           new CssBuilder("mud-input-input-control")
-               .AddClass(Class)
-               .Build();
+            new CssBuilder("mud-input-input-control")
+                .AddClass($"mud-input-sizing-{Sizing.ToStringFast(true)}")
+                .AddClass(Class)
+                .Build();
+
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
         /// <summary>
         /// The reference to the underlying <see cref="MudInput{T}"/> component.
@@ -43,7 +47,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool Clearable { get; set; } = false;
+        public bool Clearable { get; set; }
 
         /// <summary>
         /// The icon to display when <see cref="Clearable"/> is <c>true</c>.
@@ -69,7 +73,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Typically set to common masks such as <see cref="PatternMask"/>, <see cref="MultiMask"/>, <see cref="RegexMask"/>, and <see cref="BlockMask"/>.
-        /// When set, some properties will be ignored such as <see cref="MudInput{T}.MaxLines"/>, <see cref="MudInput{T}.AutoGrow"/>, and <see cref="MudInput{T}.HideSpinButtons"/>.
+        /// When set, some properties will be ignored such as <see cref="MudInput{T}.MaxLines"/>, <see cref="MudInput{T}.Sizing"/>, and <see cref="MudInput{T}.HideSpinButtons"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Data)]
@@ -80,17 +84,17 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Stretches this input vertically to accommodate the <see cref="MudBaseInput{T}.Text"/> value.
+        /// Defines the resizing behavior of this input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <see cref="InputSizing.Fixed"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.General.Behavior)]
-        public bool AutoGrow { get; set; }
+        public InputSizing Sizing { get; set; } = InputSizing.Fixed;
 
         /// <summary>
-        /// The maximum vertical lines to display when <see cref="AutoGrow"/> is <c>true</c>.
+        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.  When <c>0</c>. this property is ignored.
@@ -104,14 +108,17 @@ namespace MudBlazor
         private bool HasMask => _mask is not null;
 
         /// <inheritdoc />
-        public override ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override ValueTask FocusAsync(bool preventScroll)
         {
             if (!HasMask)
             {
-                return InputReference.FocusAsync();
+                return InputReference.FocusAsync(preventScroll);
             }
 
-            return _maskReference.FocusAsync();
+            return _maskReference.FocusAsync(preventScroll);
         }
 
         /// <inheritdoc />
@@ -165,7 +172,7 @@ namespace MudBlazor
         /// <summary>
         /// Clears the <see cref="MudBaseInput{T}.Text"/> and sets <see cref="MudBaseInput{T}.Value"/> to <c>default(T)</c>.
         /// </summary>
-        public Task Clear()
+        public Task ClearAsync()
         {
             if (!HasMask)
             {
@@ -179,32 +186,104 @@ namespace MudBlazor
         /// Sets the <see cref="MudBaseInput{T}.Text"/> to the specified value.
         /// </summary>
         /// <param name="text">The new text value to use.</param>
-        public async Task SetText(string text)
+        public async Task SetTextAsync(string? text)
         {
-            if (!HasMask)
+            // A programmatic text set is not a user interaction, so suppress the touched/FieldChanged side effects during the value sync: otherwise the change validates and updates the form while Touched is momentarily true (#12997).
+            var previousValue = ReadValue;
+            await SuppressInteractionEffectsWhileAsync(async () =>
             {
-                await InputReference.SetText(text);
-                return;
-            }
+                if (HasMask)
+                {
+                    await _maskReference.Clear();
+                    await _maskReference.OnPasteAsync(text);
+                }
+                else
+                {
+                    await InputReference.SetText(text);
+                }
+            });
 
-            await _maskReference.Clear();
-            _maskReference.OnPaste(text);
+            // Notify the form explicitly to keep the SetTextAsync-fires-FieldChanged contract, but only on a real change so a no-op set (same value) is not a spurious notification, matching the suppressed path's early-returns.
+            if (!EqualityComparer<T?>.Default.Equals(previousValue, ReadValue))
+            {
+                FieldChanged(ReadValue);
+            }
         }
 
-        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        /// <summary>
+        /// Returns the current caret position.
+        /// </summary>
+        /// <remarks>
+        /// Returns the text length if called and this field hasn't been focused yet.
+        /// Returns <c>-1</c> if called before this component has been rendered.
+        /// </remarks>
+        public async Task<int> GetCurrentCaretPositionAsync()
+        {
+            if (IsJSRuntimeAvailable && InputReference != null)
+            {
+                return await JsRuntime.InvokeAsync<int>("mudInput.getCaretPosition", InputReference.ElementReference);
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// Inserts the given text at the given caret position.
+        /// </summary>
+        /// <param name="text">The text to insert.</param>
+        /// <param name="position">The position to insert the text at. Set to <c>0</c> to insert the text before and to <c>int.MaxValue</c> after the existing text.</param>
+        /// <remarks>
+        /// If <c>position</c> is greater than the current text length, the text will be inserted at the end.<br/>
+        /// If <c>position</c> is less than <c>0</c>, the text will be inserted at the beginning.<br/>
+        /// Note that this function doesn't support <see cref="MudMask"/>.
+        /// </remarks>
+        public async Task InsertTextAsync(string text, int position = int.MaxValue)
         {
             if (HasMask)
             {
-                var textValue = Converter.Set(value);
-                _mask.SetText(textValue);
-                textValue = Mask.GetCleanText();
-                value = Converter.Get(textValue);
+                throw new InvalidOperationException("Cannot insert text into masked input.");
             }
 
-            return base.SetValueAsync(value, updateText, force);
+            if (IsJSRuntimeAvailable && InputReference != null)
+            {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.insertAtPosition", InputReference.ElementReference, text, position);
+            }
         }
 
-        protected override Task SetTextAsync(string? text, bool updateValue = true)
+        /// <summary>
+        /// Inserts the given text at the current caret position.
+        /// </summary>
+        /// <param name="text">The text to insert.</param>
+        public async Task InsertTextAtCurrentCaretPositionAsync(string text)
+        {
+            if (!HasMask && IsJSRuntimeAvailable && InputReference != null)
+            {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInput.insertAtCurrentCaretPosition", InputReference.ElementReference, text);
+                return;
+            }
+
+            if (HasMask)
+            {
+                await _maskReference.OnPasteAsync(text);
+            }
+        }
+
+        /// <inheritdoc />
+        protected override Task SetValueAndUpdateTextAsync(T? value, bool updateText = true, bool force = false)
+        {
+            if (HasMask)
+            {
+                var textValue = ConvertSet(value);
+                _mask.SetText(textValue);
+                textValue = Mask.GetCleanText();
+                value = ConvertGet(textValue);
+            }
+
+            return base.SetValueAndUpdateTextAsync(value, updateText, force);
+        }
+
+        /// <inheritdoc />
+        protected override Task SetTextAndUpdateValueAsync(string? text, bool updateValue = true)
         {
             if (HasMask)
             {
@@ -212,10 +291,11 @@ namespace MudBlazor
                 text = _mask.Text;
             }
 
-            return base.SetTextAsync(text, updateValue);
+            return base.SetTextAndUpdateValueAsync(text, updateValue);
         }
 
-        internal override InputType GetInputType() => InputType;
+        /// <inheritdoc />
+        protected internal override InputType GetInputType() => InputType;
 
         private bool ShowClearButton()
         {
@@ -224,13 +304,60 @@ namespace MudBlazor
             return Clearable && !GetDisabledState();
         }
 
-        private Task OnMaskedValueChanged(string s) => SetTextAsync(s);
+        private async Task OnInnerValueChangedAsync(string? text)
+        {
+            var valueBefore = ReadValue;
+            await SetTextAndUpdateValueAsync(text);
+
+            // When the entered text parses to the SAME Value, SetValueAndUpdateTextAsync returns early and
+            // the value->text round-trip that MudTextField relies on for formatting never runs, so a
+            // Converter or Format is not re-applied and the raw text is left on screen (#13096). Only in
+            // that value-unchanged case, resync the displayed text to the value's formatted representation.
+            // Gated to committed changes (not live oninput typing, not while debouncing) so we never
+            // reformat mid-keystroke and jump the caret, matching MudNumericField.
+            if (!Immediate && DebounceInterval <= 0 && !ConversionError && !HasMask
+                && EqualityComparer<T?>.Default.Equals(valueBefore, ReadValue))
+            {
+                var formatted = ConvertSet(ReadValue);
+                if (!string.Equals(ReadText, formatted, StringComparison.Ordinal))
+                {
+                    await SetTextCoreAsync(formatted);
+                    await InputReference.SetText(formatted, updateValue: false);
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        protected internal override async Task OnBlurredAsync(FocusEventArgs obj)
+        {
+            await base.OnBlurredAsync(obj);
+
+            // Apply the format/converter to the displayed text on blur. While the user edits an Immediate
+            // input the value->text echo is suppressed so their raw text is preserved (#13002), so we
+            // re-derive the formatted text here to restore the pre-v9 "format on LostFocus" behavior.
+            // No-op for plain text fields (ConvertSet(Value) == Text); skipped for masks and conversion errors.
+            if (!HasMask && !ConversionError)
+            {
+                await UpdateTextPropertyAsync(false);
+                await InputReference.SetText(ReadText, updateValue: false);
+            }
+        }
+
+        private Task OnMaskedValueChangedAsync(string s) => SetTextAndUpdateValueAsync(s);
 
         private string GetCounterText() => Counter switch
         {
             null => string.Empty,
-            0 => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}"),
-            _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
+            0 => string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}",
+            _ => (string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}") + $" / {Counter}"
         };
+
+        protected async Task HandleContainerClickAsync()
+        {
+            if (!_isFocused && IsJSRuntimeAvailable && InputReference != null)
+            {
+                await InputReference.FocusAsync();
+            }
+        }
     }
 }

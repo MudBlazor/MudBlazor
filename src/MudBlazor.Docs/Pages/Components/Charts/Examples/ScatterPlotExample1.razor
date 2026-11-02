@@ -1,0 +1,59 @@
+﻿@using MudBlazor.Charts;
+
+@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart T="double"
+              ChartType="ChartType.ScatterPlot"
+              ChartSeries="@_series"
+              @bind-SelectedIndex="_index"
+              CanHideSeries="true"
+              Width="100%"
+              Height="@_height"
+              ChartOptions="@_options" />
+</MudPaper>
+
+<MudGrid>
+    <MudItem xs="12">
+        <MudText Typo="Typo.body1" Class="py-3">Selected: @(_index < 0 ? "None" : _series[_index].Name)</MudText>
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudCheckBox T="bool" @bind-Value="_options.ShowDataLabels" Color="Color.Primary" Label="Show Data Labels" />
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudCheckBox T="bool" @bind-Value="_options.ShowToolTips" Color="Color.Primary" Label="Show Tooltips" />
+    </MudItem>
+    <MudItem md="6" xs="12">
+        <MudSlider @bind-Value="_options.PointRadius" Min="2" Max="12" Step="1">Point Radius: @_options.PointRadius</MudSlider>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int _index = -1;
+    private string _height = "350px";
+
+    private ScatterPlotChartOptions _options = new()
+    {
+        XAxisTitle = "Age (years)",
+        YAxisTitle = "Blood Pressure (mmHg)",
+        XAxisTicks = 10,
+        YAxisTicks = 10,
+        XAxisLines = true,
+        ShowToolTips = true,
+        PointRadius = 5,
+    };
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new()
+        {
+            Name = "Group A (Treated)",
+            Data = new([(20, 112), (20, 118), (30, 119), (30, 124), (40, 122), (40, 130), (50, 128), (50, 135), (60, 133), (60, 140)]),
+        },
+        new()
+        {
+            Name = "Group B (Control)",
+            Data = new([(20, 125), (20, 130), (30, 132), (30, 138), (40, 138), (40, 145), (50, 142), (50, 150), (60, 150), (60, 158)]),
+        },
+    ];
+}

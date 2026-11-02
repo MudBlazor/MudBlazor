@@ -3,7 +3,9 @@
 
 namespace MudBlazor
 {
-#nullable enable
+    /// <summary>
+    /// Global options for the <see cref="ISnackbar"/> service.
+    /// </summary>
     public class SnackbarConfiguration : CommonSnackbarOptions
     {
         private bool _newestOnTop;

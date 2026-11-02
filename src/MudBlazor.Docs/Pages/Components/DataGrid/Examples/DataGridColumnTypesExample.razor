@@ -10,9 +10,9 @@
         <PropertyColumn Property="x => x.YearsEmployed" Title="Years Employed" />
         <PropertyColumn Property="x => x.Salary" Format="C" />
         <PropertyColumn Property="x => x.Salary * x.YearsEmployed" Title="Total Earned" Format="C" />
-        <TemplateColumn CellClass="d-flex justify-end">
+        <TemplateColumn>
             <CellTemplate>
-                <MudStack Row>
+                <MudStack Row Justify="Justify.FlexEnd">
                     <MudRating Size="@Size.Small" SelectedValue="@context.Item.Rating" />
                     <MudButton Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Primary">Hire</MudButton>
                 </MudStack>

@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// The type of user interaction when <see cref="MudTabs.OnPreviewInteraction"/> occurs.
