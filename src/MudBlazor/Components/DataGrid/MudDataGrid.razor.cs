@@ -330,6 +330,9 @@ namespace MudBlazor
         /// </summary>
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
 
+        // Full-width rows must not span past the header, because `table-layout: fixed` would divide the width across the extra columns.
+        internal int VisibleColumnSpan => Math.Max(1, RenderedColumns.Where(column => !column.HiddenState.Value).Sum(column => column.HeaderColSpan));
+
         internal T? _editingItem;
 
         internal T? _editingSourceItem;
