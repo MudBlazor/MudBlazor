@@ -100,9 +100,14 @@ namespace MudBlazor.Charts
             }
 
             var visibleSeries = Series.Where(series => series.Visible).ToArray();
-            var values = visibleSeries.SelectMany(series => series.Data);
+            var values = visibleSeries
+                .Select(s => s.Data)
+                .Where(d => d != null)
+                .SelectMany(d => d.Points)
+                .Where(p => p.HasValue)
+                .Select(p => p.Y);
 
-            if (visibleSeries.Length > 0 && visibleSeries.Any(series => series.Data.Count != 0))
+            if (visibleSeries.Length > 0 && values.Any())
             {
                 var minY = values.Min();
                 var maxY = ChartOptions?.YAxisSuggestedMax is null
@@ -133,7 +138,7 @@ namespace MudBlazor.Charts
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
 
-                numVerticalLines = visibleSeries.Max(series => series.Data.Count);
+                numVerticalLines = visibleSeries.Max(series => series.Data?.Count ?? 0);
             }
             else
             {
@@ -167,32 +172,5 @@ namespace MudBlazor.Charts
             return (x, y);
         }
 
-        internal override ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
-        {
-            var series = Series[seriesIndex];
-            var data = series.Data;
-            var interpolationResolution = 10;
-
-            var xValues = new double[data.Count];
-            var yValues = new double[data.Count];
-
-            for (var j = 0; j < data.Count; j++)
-            {
-                (xValues[j], yValues[j]) = GetXYForDataPoint(seriesIndex, j, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
-            }
-
-            var overrideSettings = GetSeriesDisplayOverride(series);
-            var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;
-
-            ILineInterpolator interpolator = interpolationOption switch
-            {
-                InterpolationOption.NaturalSpline => new NaturalSpline(xValues, yValues, interpolationResolution),
-                InterpolationOption.EndSlope => new EndSlopeSpline(xValues, yValues, interpolationResolution),
-                InterpolationOption.Periodic => new PeriodicSpline(xValues, yValues, interpolationResolution),
-                _ => throw new NotImplementedException("Interpolation option not implemented yet")
-            };
-
-            return interpolator;
-        }
     }
 }

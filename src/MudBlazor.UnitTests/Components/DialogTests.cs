@@ -225,7 +225,7 @@ namespace MudBlazor.UnitTests.Components
         /// https://github.com/MudBlazor/MudBlazor/issues/11789
         /// </remarks>
         [Test]
-        public void InlineDialog_OpenCancelOpen()
+        public async Task InlineDialog_OpenCancelOpen()
         {
             // Arrange
 
@@ -238,7 +238,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act : Open the dialog
 
-            sup.Find(".open-dialog-button").Click();
+            await sup.Find(".open-dialog-button").ClickAsync();
 
             // Assert : Dialog should be open
 
@@ -246,7 +246,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act : Cancel by click outside
 
-            comp.Find("div.mud-overlay-dialog").Click();
+            await comp.Find("div.mud-overlay-dialog").ClickAsync();
 
             // Assert : Dialog should be closed
 
@@ -254,7 +254,7 @@ namespace MudBlazor.UnitTests.Components
 
             // Act : Reopen the dialog
 
-            sup.Find(".open-dialog-button").Click();
+            await sup.Find(".open-dialog-button").ClickAsync();
 
             // Assert : Dialog should be open
 
@@ -315,6 +315,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Closing a bound inline dialog outside an event handler re-renders the parent synchronously and must not throw or lose the result.
+        /// </summary>
+        [Test]
+        public async Task InlineDialog_CloseAsync_OutsideEventHandler()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var comp = Context.Render<InlineDialogIsVisibleStateTest>();
+            await comp.Find("button").ClickAsync();
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-dialog-container").Count.Should().Be(1));
+            var dialog = comp.FindComponent<MudDialog>();
+            var reference = await comp.InvokeAsync(() => dialog.Instance.ShowAsync());
+
+            await comp.InvokeAsync(() => dialog.Instance.CloseAsync(DialogResult.Ok(true)));
+
+            var result = await reference.Result;
+            result.Canceled.Should().BeFalse();
+            await provider.WaitForAssertionAsync(() => provider.Markup.Trim().Should().BeEmpty());
+        }
+
+        /// <summary>
         /// Based on bug report #3701 #3687
         /// Dialog inline should not be closed after any event inside
         /// </summary>
@@ -333,6 +353,27 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("span.mud-rating-item").FirstElementChild.Click();
             // check if is still opened
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-dialog-container").Should().NotBe(null), TimeSpan.FromSeconds(5));
+        }
+
+        /// <summary>
+        /// An inline dialog closed and reopened in one dispatcher turn stays open (#13917).
+        /// </summary>
+        [Test]
+        public async Task InlineDialogShouldStayOpenWhenReopenedImmediately()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var host = Context.Render<InlineDialogReopenTest>();
+            await host.Find("button").ClickAsync();
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-dialog-container").Should().ContainSingle());
+
+            await host.InvokeAsync(host.Instance.CloseAndReopen);
+
+            // The first dialog's close callback hops through the thread pool.
+            // Without the wait for the reopened content, the assertions below can run before it lands and miss the bug.
+            await provider.InvokeAsync(() => { });
+            await provider.WaitForAssertionAsync(() => provider.Find(".dialog-item").TextContent.Should().Be("Item 2"));
+            provider.FindAll("div.mud-dialog-container").Should().ContainSingle();
+            host.Instance.Visible.Should().BeTrue();
         }
 
         /// <summary>
@@ -1790,6 +1831,137 @@ namespace MudBlazor.UnitTests.Components
 
             second.Should().NotBeNull();
         }
+
+        /// <summary>
+        /// A dialog is aria-modal and is named by its visible title (#13609).
+        /// </summary>
+        [Test]
+        public async Task DialogShouldExposeModalSemanticsForAssistiveTechnologies()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>("Dialog title"));
+
+            var dialog = comp.Find("div[role='dialog']");
+            dialog.GetAttribute("aria-modal").Should().Be("true");
+            // The visible title already names the dialog, so no redundant aria-label is emitted.
+            dialog.HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A dialog without a header falls back to an aria-label from its title (#13609).
+        /// </summary>
+        [Test]
+        public async Task DialogWithoutHeaderShouldFallBackToAriaLabelFromTitle()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>("Dialog title", new DialogOptions { NoHeader = true }));
+
+            var dialog = comp.Find("div[role='dialog']");
+            dialog.GetAttribute("aria-labelledby").Should().BeNull();
+            dialog.GetAttribute("aria-label").Should().Be("Dialog title");
+        }
+
+        /// <summary>
+        /// A dialog with neither a header nor a title gets no empty aria-label (#13609).
+        /// </summary>
+        [Test]
+        public async Task DialogWithoutHeaderOrTitleShouldNotEmitEmptyAriaLabel()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>(string.Empty, new DialogOptions { NoHeader = true }));
+
+            var dialog = comp.Find("div[role='dialog']");
+            dialog.HasAttribute("aria-labelledby").Should().BeFalse();
+            dialog.HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// An inline dialog shown through the parameterless ShowAsync has no title, so a hidden header leaves it unnamed unless AriaLabel names it (#13609).
+        /// </summary>
+        [Test]
+        public async Task InlineDialogWithoutHeaderShouldUseAriaLabel()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var comp = Context.Render<InlineDialogAriaLabelTest>(parameters => parameters.Add(p => p.AriaLabel, "Confirm removal"));
+
+            await comp.Find("button").ClickAsync();
+
+            await provider.WaitForAssertionAsync(() =>
+            {
+                var dialog = provider.Find("div[role='dialog']");
+                dialog.GetAttribute("aria-modal").Should().Be("true");
+                dialog.GetAttribute("aria-label").Should().Be("Confirm removal");
+                dialog.HasAttribute("aria-labelledby").Should().BeFalse();
+            });
+        }
+
+        /// <summary>
+        /// AriaLabelledBy names the dialog by an element inside its content and suppresses the text fallback.
+        /// </summary>
+        [Test]
+        public async Task InlineDialogShouldUseAriaLabelledBy()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var comp = Context.Render<InlineDialogAriaLabelTest>(parameters => parameters
+                .Add(p => p.AriaLabel, "Ignored")
+                .Add(p => p.AriaLabelledBy, "custom-heading"));
+
+            await comp.Find("button").ClickAsync();
+
+            await provider.WaitForAssertionAsync(() =>
+            {
+                var dialog = provider.Find("div[role='dialog']");
+                dialog.GetAttribute("aria-labelledby").Should().Be("custom-heading");
+                dialog.HasAttribute("aria-label").Should().BeFalse();
+                provider.Find("#custom-heading").TextContent.Trim().Should().Be("Remove this item?");
+            });
+        }
+
+        /// <summary>
+        /// An inline dialog with a hidden header and no name of its own stays unlabelled rather than getting an empty attribute.
+        /// </summary>
+        [Test]
+        public async Task InlineDialogWithoutHeaderOrNameShouldNotEmitEmptyAttributes()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var comp = Context.Render<InlineDialogAriaLabelTest>();
+
+            await comp.Find("button").ClickAsync();
+
+            await provider.WaitForAssertionAsync(() =>
+            {
+                var dialog = provider.Find("div[role='dialog']");
+                dialog.HasAttribute("aria-label").Should().BeFalse();
+                dialog.HasAttribute("aria-labelledby").Should().BeFalse();
+            });
+        }
+
+        /// <summary>
+        /// An explicit AriaLabel replaces the title bar as the name of a service-shown dialog.
+        /// </summary>
+        [Test]
+        public async Task DialogAriaLabelShouldReplaceTitleBarName()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await comp.InvokeAsync(async () => await service.ShowAsync<DialogAriaLabelContent>("Dialog title"));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                var dialog = comp.Find("div[role='dialog']");
+                dialog.GetAttribute("aria-label").Should().Be("Spoken name");
+                dialog.HasAttribute("aria-labelledby").Should().BeFalse();
+                comp.Find("div.mud-dialog-title").TrimmedText().Should().Contain("Dialog title");
+            });
+        }
+
     }
     internal class CustomDialogService : DialogService
     {

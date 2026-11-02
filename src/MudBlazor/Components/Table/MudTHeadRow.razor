@@ -1,28 +1,30 @@
 ﻿@namespace MudBlazor
 @implements IDisposable
+@using MudBlazor.Resources
 @inherits MudComponentBase
+@inject InternalMudLocalizer Localizer
 
 <tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
-	@if (Context.DisplayApplyButtonAtStart(IgnoreEditable) || Context.DisplayEditButtonAtStart(IgnoreEditable))
-	{
-		<MudTh />
-	}
-	@if (Expandable || ((Context?.Table?.MultiSelection ?? false) && !IgnoreCheckbox))
-	{
-		<MudTh>
-			@if (Expandable)
-			{
-				<div class="ml-4 mr-5"></div>
-			}
-			@if (Checkable)
-			{
-				<MudCheckBox @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" Class="mud-table-cell-checkbox" />
-			}
-		</MudTh>
-	}
-	@ChildContent
-	@if (Context.DisplayApplyButtonAtEnd(IgnoreEditable) || Context.DisplayEditButtonAtEnd(IgnoreEditable))
-	{
-		<MudTh />
-	}
+    @if (Context.DisplayApplyButtonAtStart(IgnoreEditable) || Context.DisplayEditButtonAtStart(IgnoreEditable))
+    {
+        <MudTh />
+    }
+    @if (Expandable || ((Context?.Table?.MultiSelection ?? false) && !IgnoreCheckbox))
+    {
+        <MudTh>
+            @if (Expandable)
+            {
+                <div class="ml-4 mr-5"></div>
+            }
+            @if (Checkable)
+            {
+                <MudCheckBox @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" Class="mud-table-cell-checkbox" AriaLabel="@Localizer[LanguageResource.MudTable_SelectAllRows]" />
+            }
+        </MudTh>
+    }
+    @ChildContent
+    @if (Context.DisplayApplyButtonAtEnd(IgnoreEditable) || Context.DisplayEditButtonAtEnd(IgnoreEditable))
+    {
+        <MudTh />
+    }
 </tr>

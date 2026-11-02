@@ -1,0 +1,8 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+
+<div role="group" @attributes="UserAttributes" class="@Classname" style="@Style">
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+</div>

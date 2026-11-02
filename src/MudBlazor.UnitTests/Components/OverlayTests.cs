@@ -432,4 +432,29 @@ public class OverlayTests : BunitTest
                 It.IsAny<object[]>()),
             Times.Never);
     }
+
+    /// <summary>
+    /// An overlay without content is hidden from assistive technology.
+    /// </summary>
+    [Test]
+    public void ShouldBeHiddenFromAssistiveTechnologies_WhenDecorative()
+    {
+        var providerComp = Context.Render<MudPopoverProvider>();
+        Context.Render<MudOverlay>(parameters => parameters.Add(p => p.Visible, true));
+
+        providerComp.Find("div.mud-overlay").GetAttribute("aria-hidden").Should().Be("true");
+    }
+
+    /// <summary>
+    /// An overlay with content stays exposed to assistive technology.
+    /// </summary>
+    [Test]
+    public void ShouldStayExposed_WhenItHasContent()
+    {
+        var comp = Context.Render<MudOverlay>(parameters => parameters
+            .Add(p => p.Visible, true)
+            .AddChildContent("<span>Loading</span>"));
+
+        comp.Find("div.mud-overlay").HasAttribute("aria-hidden").Should().BeFalse();
+    }
 }

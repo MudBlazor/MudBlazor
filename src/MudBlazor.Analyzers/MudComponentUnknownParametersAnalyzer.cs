@@ -82,6 +82,8 @@ namespace MudBlazor.Analyzers
             private readonly INamedTypeSymbol? _renderTreeBuilderSymbol;
             private readonly INamedTypeSymbol? _mudComponentBaseType;
             private readonly ImmutableHashSet<string> _allowedAttributes;
+            private readonly ParameterMigrationResolver _migrations;
+            private readonly Func<ITypeSymbol, ComponentDescriptor> _createComponentDescriptor;
 
             public AnalyzerContext(Compilation compilation, AllowedAttributePattern allowedAttributePattern, string allowedAttributes)
             {
@@ -94,6 +96,8 @@ namespace MudBlazor.Analyzers
                 _parameterSymbol = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.ParameterAttribute");
                 _renderTreeBuilderSymbol = compilation.GetBestTypeByMetadataName("Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder");
                 _mudComponentBaseType = compilation.GetBestTypeByMetadataName("MudBlazor.MudComponentBase");
+                _migrations = new ParameterMigrationResolver(compilation);
+                _createComponentDescriptor = componentType => ComponentDescriptor.GetComponentDescriptor(componentType, _parameterSymbol, _migrations);
             }
 
             public bool IsValid => _componentBaseSymbol is not null && _parameterSymbol is not null && _renderTreeBuilderSymbol is not null && _mudComponentBaseType is not null;
@@ -133,7 +137,9 @@ namespace MudBlazor.Analyzers
                                     if (componentType.IsOrInheritFrom(_mudComponentBaseType))
                                     {
                                         currentComponent = componentType;
-                                        currentComponentDescriptor = _componentDescriptors.GetOrAdd(currentComponent, ComponentDescriptor.GetComponentDescriptor(componentType, _parameterSymbol));
+                                        // Every construction of a generic component declares the same parameters, so they share one descriptor.
+                                        // This matters for inferred type arguments, where each Razor helper constructs the component over its own type parameter.
+                                        currentComponentDescriptor = _componentDescriptors.GetOrAdd(componentType.OriginalDefinition, _createComponentDescriptor);
                                     }
                                 }
                                 else if (string.Equals(targetMethod.Name, "CloseComponent", StringComparison.Ordinal))
@@ -154,8 +160,7 @@ namespace MudBlazor.Analyzers
                             }
                             else if (string.Equals(targetMethod.ContainingType.MetadataName, "TypeInference", StringComparison.Ordinal))
                             {
-                                var methods = context.FilterTree.GetRoot().DescendantNodes().OfType<MethodDeclarationSyntax>();
-                                var method = methods?.Where(x => x.Identifier.ValueText == targetMethod.MetadataName).SingleOrDefault();
+                                var method = GetDeclarationInFilterTree(context, targetMethod);
 
                                 if (method is not null)
                                 {
@@ -170,6 +175,23 @@ namespace MudBlazor.Analyzers
                         }
                     }
                 }
+            }
+
+            /// <summary>
+            /// Finds the declaration of a type-inference helper in the tree being analyzed.
+            /// </summary>
+            /// <remarks>
+            /// Razor generates each helper in the same file as the markup that calls it, so a declaration in another tree is not followed.
+            /// </remarks>
+            private static MethodDeclarationSyntax? GetDeclarationInFilterTree(OperationAnalysisContext context, IMethodSymbol method)
+            {
+                foreach (var reference in method.OriginalDefinition.DeclaringSyntaxReferences)
+                {
+                    if (reference.SyntaxTree == context.FilterTree && reference.GetSyntax(context.CancellationToken) is MethodDeclarationSyntax declaration)
+                        return declaration;
+                }
+
+                return null;
             }
 
             private void ValidateAttribute(OperationAnalysisContext context, IInvocationOperation invocation,
@@ -188,7 +210,9 @@ namespace MudBlazor.Analyzers
                     case AllowedAttributePattern.Any:
                         return;
                     default:
-                        Report(AttributeDescriptor, context, invocation, attributeName, componentDescriptor, className, _allowedAttributePattern.ToString());
+                        // Enrichment happens only once the existing rules have already decided to report, so it can change the wording of a warning but never whether one is raised.
+                        componentDescriptor.MigrationHints.TryGetValue(attributeName, out var migrationHint);
+                        Report(AttributeDescriptor, context, invocation, attributeName, componentDescriptor, className, _allowedAttributePattern.ToString(), migrationHint);
                         return;
                 }
             }
@@ -211,7 +235,7 @@ namespace MudBlazor.Analyzers
             }
 
             private static void Report(DiagnosticDescriptor diagnosticDescriptor, OperationAnalysisContext context, IInvocationOperation invocation,
-                string attributeName, ComponentDescriptor componentDescriptor, string className, string pattern)
+                string attributeName, ComponentDescriptor componentDescriptor, string className, string pattern, LocalizableString? migrationHint)
             {
                 var location = invocation.Syntax.GetLocation();
                 var mappedLocation = location;
@@ -233,7 +257,7 @@ namespace MudBlazor.Analyzers
                             new KeyValuePair<string, string?>(ClassNamePropertyKey, className)
                         }),
                         messageArgs:
-                        [attributeName, componentDescriptor.TagName, pattern, location.GetLineSpan().Span]));
+                        [attributeName, componentDescriptor.TagName, pattern, location.GetLineSpan().Span, migrationHint ?? (object)string.Empty]));
             }
 
         }

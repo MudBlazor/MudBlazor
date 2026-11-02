@@ -1,0 +1,23 @@
+{
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "rules": {
+        "no-debugger": "error",
+        "no-unused-vars": ["error", {
+            // Allow marking unused variables with an underscore, like in C#
+            "varsIgnorePattern": "^_",
+            "argsIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
+        }],
+        "no-var": "error",
+        "prefer-const": "error"
+    },
+    "overrides": [
+        {
+            // The license banner is a comment on purpose, so the bundler keeps it at the top of MudBlazor.min.js.
+            "files": ["MudBlazor/TScripts/mudAAAlicense.ts"],
+            "rules": {
+                "unicorn/no-empty-file": "off"
+            }
+        }
+    ]
+}

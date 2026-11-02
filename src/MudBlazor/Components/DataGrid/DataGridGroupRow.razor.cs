@@ -106,11 +106,35 @@ namespace MudBlazor
             base.OnParametersSet();
         }
 
+        // A forwarded click ends at a grid-owned callback whose receiver already renders the grid, which redraws every group row, so a level of nesting must not add a render of its own.
+        // The delegates are cached because AsNonRenderingEventHandler allocates a receiver on every call.
+        private Func<(MouseEventArgs args, T item, int index), Task>? _rowClickForwarder;
+        private Func<(MouseEventArgs args, T item, int index), Task>? _contextRowClickForwarder;
+
+        // The row always carries a click listener, so this forwarder is always needed.
+        private EventCallback<(MouseEventArgs args, T item, int index)> GetRowClickCallback()
+            => EventCallback.Factory.Create(
+                this,
+                _rowClickForwarder ??= this.AsNonRenderingEventHandler<(MouseEventArgs args, T item, int index)>(
+                    args => RowClick.InvokeAsync(args)));
+
+        // DataGridVirtualizeRow gates its context-menu listener on the same condition, so without a grid-level handler this forwarder could never fire.
+        private EventCallback<(MouseEventArgs args, T item, int index)> GetContextRowClickCallback()
+            => DataGrid.RowContextMenuClick.HasDelegate
+                ? EventCallback.Factory.Create(
+                    this,
+                    _contextRowClickForwarder ??= this.AsNonRenderingEventHandler<(MouseEventArgs args, T item, int index)>(
+                        args => ContextRowClick.InvokeAsync(args)))
+                : default;
+
         internal void GroupExpandClick()
         {
             _expanded = !_expanded;
+
+            // Only this row renders after the click, so its definition must carry the new state to the group template and the class and style functions.
+            GroupDefinition.Expanded = _expanded;
             if (Items != null)
-                DataGrid.ToggleGroupExpand(GroupDefinition.Title, GroupDefinition.KeyPath, _expanded);
+                DataGrid.SetGroupExpanded(GroupDefinition.Title, GroupDefinition.KeyPath, _expanded);
         }
     }
 }

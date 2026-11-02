@@ -190,6 +190,26 @@ namespace MudBlazor
         [Category(CategoryTypes.Dialog.Behavior)]
         public DefaultFocus? DefaultFocus { get; set; }
 
+        /// <summary>
+        /// The accessible name announced for this dialog.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which names the dialog by its title bar, or by the title text when the header is hidden. Set this when the header is hidden and no title is available, such as an inline dialog with <see cref="DialogOptions.NoHeader"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public string? AriaLabel { get; set; }
+
+        /// <summary>
+        /// The id of the element that names this dialog.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. Takes precedence over <see cref="AriaLabel"/> and the title bar. Point it at a heading inside <see cref="DialogContent"/> when a custom header replaces the title bar.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Behavior)]
+        public string? AriaLabelledBy { get; set; }
+
         private bool IsInline => IsNested || DialogInstance is null;
 
         /// <summary>
@@ -228,17 +248,21 @@ namespace MudBlazor
                     [nameof(ActionsClass)] = ActionsClass,
                     [nameof(ContentStyle)] = ContentStyle,
                     [nameof(DefaultFocus)] = DefaultFocus,
+                    [nameof(AriaLabel)] = AriaLabel,
+                    [nameof(AriaLabelledBy)] = AriaLabelledBy,
                 };
 #pragma warning restore CS0618 // Type or member is obsolete
 
-                _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
+                var reference = _reference = await DialogService.ShowAsync<MudDialog>(title, parameters, options ?? Options);
 
                 await _visibleState.SetValueAsync(true);
 
                 // Do not await this!
-                _reference.Result.ContinueWith(t =>
+                reference.Result.ContinueWith(t =>
                 {
-                    return InvokeAsync(() => _visibleState.SetValueAsync(false));
+                    return InvokeAsync(() => ReferenceEquals(_reference, reference)
+                        ? _visibleState.SetValueAsync(false)
+                        : Task.CompletedTask);
                 }).CatchAndLog();
             }
             finally
@@ -254,14 +278,17 @@ namespace MudBlazor
         /// <param name="result">The optional data to include.</param>
         public async Task CloseAsync(DialogResult? result = null)
         {
-            if (!IsInline || _reference is null)
+            var reference = _reference;
+            if (!IsInline || reference is null)
             {
                 return;
             }
 
-            await _visibleState.SetValueAsync(false);
-            _reference.Close(result);
+            // Clear the reference before raising VisibleChanged.
+            // Outside an event handler the parent re-renders synchronously, and OnAfterRenderAsync would otherwise re-enter this method and close without the result.
             _reference = null;
+            await _visibleState.SetValueAsync(false);
+            reference.Close(result);
         }
 
         /// <inheritdoc/>

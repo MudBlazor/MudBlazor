@@ -21,6 +21,7 @@ namespace MudBlazor
 
         protected string HeaderClassname => new CssBuilder("mud-table-row")
             .AddClass(HeaderClass)
+            .AddClass(GroupDefinition?.GroupHeaderClass)
             .AddClass($"mud-table-row-group-indented-{GroupDefinition?.Level - 1}",
                 (GroupDefinition?.Indentation ?? false) && GroupDefinition?.Level > 1)
             .Build();

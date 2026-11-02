@@ -1,5 +1,8 @@
 blank_issues_enabled: true
 contact_links:
+  - name: Question
+    url: https://github.com/MudBlazor/MudBlazor/discussions/new?category=q-a
+    about: Ask how to do something
   - name: GitHub Discussions
     url: https://github.com/MudBlazor/MudBlazor/discussions
     about: Discuss this on GitHub
