@@ -111,6 +111,11 @@ internal sealed class MudSelectContext<T>
     /// <returns></returns>
     public bool IsItemSelected(MudSelectItem<T> item)
     {
+        if (_select.CascadesSelection)
+        {
+            return GetCheckedState(item) == true;
+        }
+
         var comparer = _select.Comparer ?? EqualityComparer<T?>.Default;
         if (!_select.MultiSelection)
         {
@@ -207,6 +212,195 @@ internal sealed class MudSelectContext<T>
         }
 
         return create ? _shadowChildren[parent] = new List<MudSelectItem<T>>() : null;
+    }
+
+    private IReadOnlyCollection<T?>? _checkedLeavesSource;
+    private HashSet<T?>? _checkedLeaves;
+
+    /// <summary>
+    /// Gets whether the item is partly checked because some, but not all, of its enabled descendants are checked.
+    /// </summary>
+    public bool IsItemIndeterminate(MudSelectItem<T> item) => _select.CascadesSelection && GetCheckedState(item) is null;
+
+    /// <summary>
+    /// Gets <c>true</c> when the item is checked, <c>false</c> when it is not, and <c>null</c> when only some of its enabled descendants are checked.
+    /// </summary>
+    /// <remarks>
+    /// A parent is checked when all of its enabled descendants are, so it does not matter whether the selected values hold the parent or its descendants.
+    /// </remarks>
+    private bool? GetCheckedState(MudSelectItem<T> item)
+    {
+        var leaves = GetCheckedLeaves();
+        var descendants = GetSelectableLeaves(item);
+        if (descendants.Count == 0)
+        {
+            return leaves.Contains(item.Value);
+        }
+
+        var checkedCount = descendants.Count(x => leaves.Contains(x.Value));
+        return checkedCount == 0 ? false : checkedCount == descendants.Count ? true : null;
+    }
+
+    /// <summary>
+    /// Gets the selected values with every selected parent replaced by its enabled descendants.
+    /// </summary>
+    /// <remarks>
+    /// Rows ask for this once each, so the result is kept until the selection is replaced.
+    /// </remarks>
+    private HashSet<T?> GetCheckedLeaves()
+    {
+        var source = _select.GetSelectedValues();
+        if (_checkedLeaves is null || !ReferenceEquals(source, _checkedLeavesSource))
+        {
+            _checkedLeavesSource = source;
+            _checkedLeaves = ExpandToLeaves(source ?? []);
+        }
+
+        return _checkedLeaves;
+    }
+
+    /// <summary>
+    /// Replaces each selected parent with its enabled descendants, so the result lists checked items one by one.
+    /// </summary>
+    public HashSet<T?> ExpandToLeaves(IEnumerable<T?> values)
+    {
+        var result = new HashSet<T?>(_select.Comparer ?? EqualityComparer<T?>.Default);
+        foreach (var value in values)
+        {
+            var descendants = _shadowLookup.TryGetValue(value, out var shadow) ? GetSelectableLeaves(shadow) : [];
+            if (descendants.Count == 0)
+            {
+                result.Add(value);
+                continue;
+            }
+
+            result.UnionWith(descendants.Select(x => x.Value));
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Finds the hidden copy of an item, which knows the whole tree.
+    /// </summary>
+    public bool TryGetShadowItem(T? value, out MudSelectItem<T> item) => _shadowLookup.TryGetValue(value, out item!);
+
+    /// <summary>
+    /// Gets the enabled items below the given one that have no enabled items of their own below them.
+    /// </summary>
+    /// <remarks>
+    /// These are the items that checking a parent actually checks.
+    /// An item whose children are all disabled counts as one of them, because there is nothing left to cascade to.
+    /// </remarks>
+    public List<MudSelectItem<T>> GetSelectableLeaves(MudSelectItem<T> item)
+    {
+        var leaves = new List<MudSelectItem<T>>();
+        if (_shadowLookup.TryGetValue(item.Value, out var shadow))
+        {
+            Collect(shadow);
+        }
+
+        return leaves;
+
+        void Collect(MudSelectItem<T> node)
+        {
+            if (!_shadowChildren.TryGetValue(node, out var children))
+            {
+                return;
+            }
+
+            foreach (var child in children)
+            {
+                var before = leaves.Count;
+                Collect(child);
+                if (leaves.Count == before && !child.Disabled)
+                {
+                    leaves.Add(child);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets the enabled items that are checked one by one: those with no enabled items below them.
+    /// </summary>
+    public IEnumerable<MudSelectItem<T>> GetAllSelectableLeaves()
+    {
+        var leaves = new List<MudSelectItem<T>>();
+        foreach (var root in _shadowRoots)
+        {
+            var below = GetSelectableLeaves(root);
+            if (below.Count > 0)
+            {
+                leaves.AddRange(below);
+            }
+            else if (!root.Disabled)
+            {
+                leaves.Add(root);
+            }
+        }
+
+        return leaves;
+    }
+
+    /// <summary>
+    /// Converts a set of individually checked items into the form the strategy reports.
+    /// </summary>
+    /// <param name="leaves">The checked items, listed one by one.</param>
+    /// <param name="strategy">How the checked items should be reported.</param>
+    public HashSet<T?> ApplyStrategy(HashSet<T?> leaves, CheckedStrategy strategy)
+    {
+        var comparer = _select.Comparer ?? EqualityComparer<T?>.Default;
+        var result = new HashSet<T?>(leaves, comparer);
+        if (strategy != CheckedStrategy.Parent)
+        {
+            return result;
+        }
+
+        result.Clear();
+        foreach (var root in _shadowRoots)
+        {
+            Visit(root);
+        }
+
+        // A disabled item cannot be cascaded to, so it is kept as its own entry even when its parent is reported.
+        foreach (var value in leaves)
+        {
+            if (_shadowLookup.TryGetValue(value, out var shadow) && shadow.Disabled)
+            {
+                result.Add(value);
+            }
+        }
+
+        return result;
+
+        void Visit(MudSelectItem<T> node)
+        {
+            var below = GetSelectableLeaves(node);
+            if (below.Count == 0)
+            {
+                if (leaves.Contains(node.Value))
+                {
+                    result.Add(node.Value);
+                }
+
+                return;
+            }
+
+            if (below.All(x => leaves.Contains(x.Value)))
+            {
+                result.Add(node.Value);
+                return;
+            }
+
+            if (_shadowChildren.TryGetValue(node, out var children))
+            {
+                foreach (var child in children)
+                {
+                    Visit(child);
+                }
+            }
+        }
     }
 
     /// <summary>

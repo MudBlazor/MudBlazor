@@ -2715,6 +2715,7 @@ namespace MudBlazor.UnitTests.Components
 
             await TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-toggle")!.ClickAsync();
             select.Instance.ReadValue.Should().BeNull();
+            select.Instance.GetState(x => x.Open).Should().BeTrue("expanding must not close the popup");
 
             await TreeRow(comp, "Electronics").ClickAsync();
             select.Instance.ReadValue.Should().Be("electronics");
@@ -2878,6 +2879,353 @@ namespace MudBlazor.UnitTests.Components
 
             TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-toggle")!.ClassList.Should().NotContain("mud-select-item-toggle-start");
             TreeRow(comp, "Electronics").QuerySelector(".mud-select-item-branch").Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// With ExpandOnClick and single selection, clicking a parent only toggles it, and only leaves can be chosen.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_ExpandOnClick_SingleSelectionOnlyExpandsParents()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters.Add(x => x.ExpandOnClick, true));
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+
+            TreeRows(comp).Should().Equal("Electronics", "Phones", "Laptops", "Books");
+            select.Instance.ReadValue.Should().BeNull("a parent is never selected by clicking it");
+            select.Instance.GetState(x => x.Open).Should().BeTrue();
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+            TreeRows(comp).Should().Equal("Electronics", "Books");
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+            await TreeRow(comp, "Laptops").ClickAsync();
+            select.Instance.ReadValue.Should().Be("laptops");
+            select.Instance.GetState(x => x.Open).Should().BeFalse("choosing a leaf closes the popup");
+        }
+
+        /// <summary>
+        /// With ExpandOnClick and multi-selection, clicking a parent checks it and expands it without collapsing it later.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_ExpandOnClick_MultiSelectionChecksAndExpandsParents()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.ExpandOnClick, true));
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["electronics"]);
+            TreeRows(comp).Should().Equal("Electronics", "Phones", "Laptops", "Books");
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEmpty();
+            TreeRows(comp).Should().Equal("Electronics", "Phones", "Laptops", "Books");
+        }
+
+        /// <summary>
+        /// With ExpandOnClick and single selection, Enter and arrow navigation expand a parent but never select it.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_ExpandOnClick_KeysNeverSelectParent()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters.Add(x => x.ExpandOnClick, true));
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+
+            await PressAsync(select, keys, "ArrowDown");
+            ActiveRow(comp).Should().Be("Electronics");
+            select.Instance.ReadValue.Should().BeNull("arrowing onto a parent must not select it");
+
+            await PressAsync(select, keys, "Enter");
+
+            TreeRows(comp).Should().Equal("Electronics", "Phones", "Laptops", "Books");
+            select.Instance.ReadValue.Should().BeNull();
+            select.Instance.GetState(x => x.Open).Should().BeTrue();
+
+            await PressAsync(select, keys, "Enter");
+            TreeRows(comp).Should().Equal("Electronics", "Books");
+        }
+
+        /// <summary>
+        /// Without ExpandOnClick a parent row selects and only its chevron toggles it.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_ExpandOnClickOff_ClickSelectsWithoutExpanding()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters.Add(x => x.MultiSelection, true));
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["electronics"]);
+            TreeRows(comp).Should().Equal("Electronics", "Books");
+        }
+
+        /// <summary>
+        /// Names the checkbox state of a tree row, ignoring the chevron that can sit in the same row.
+        /// </summary>
+        private static string TreeCheckbox(IRenderedComponent<SelectNestedTest> comp, string text)
+            => CheckboxState(TreeRow(comp, text).QuerySelector("svg")!);
+
+        private static async Task<IRenderedComponent<SelectNestedTest>> OpenCheckedTreeAsync(BunitContext context, CheckedStrategy strategy, IReadOnlyCollection<string?>? selected = null)
+        {
+            context.AddKeyInterceptorService();
+            var comp = context.Render<SelectNestedTest>(parameters =>
+            {
+                parameters.Add(x => x.MultiSelection, true).Add(x => x.InitiallyExpanded, true).Add(x => x.CheckedStrategy, strategy);
+                if (selected is not null)
+                {
+                    parameters.Add(x => x.SelectedValues, selected);
+                }
+            });
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+            return comp;
+        }
+
+        /// <summary>
+        /// With the Child strategy, checking a parent checks its enabled descendants and reports only those, never the parent.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_CheckedStrategyChild_ParentChecksEnabledDescendants()
+        {
+            var comp = await OpenCheckedTreeAsync(Context, CheckedStrategy.Child);
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["smartphones", "laptops"]);
+            TreeCheckbox(comp, "Electronics").Should().Be("checked");
+            TreeCheckbox(comp, "Phones").Should().Be("checked");
+            TreeCheckbox(comp, "Smartphones").Should().Be("checked");
+            TreeCheckbox(comp, "Feature phones").Should().Be("unchecked", "a disabled item is never checked by its parent");
+            TreeCheckbox(comp, "Books").Should().Be("unchecked");
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEmpty();
+            TreeCheckbox(comp, "Electronics").Should().Be("unchecked");
+        }
+
+        /// <summary>
+        /// A parent shows as indeterminate while only some of its enabled descendants are checked, and as checked once all are.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_CheckedStrategyChild_ParentIsIndeterminateWhenPartlyChecked()
+        {
+            var comp = await OpenCheckedTreeAsync(Context, CheckedStrategy.Child);
+
+            await TreeRow(comp, "Smartphones").ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["smartphones"]);
+            TreeCheckbox(comp, "Phones").Should().Be("checked", "its only enabled descendant is checked");
+            TreeCheckbox(comp, "Electronics").Should().Be("indeterminate");
+
+            await TreeRow(comp, "Laptops").ClickAsync();
+
+            TreeCheckbox(comp, "Electronics").Should().Be("checked");
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["smartphones", "laptops"]);
+        }
+
+        /// <summary>
+        /// With the Parent strategy, fully checked descendants collapse into their topmost parent, and unchecking one splits it again.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_CheckedStrategyParent_ReportsTopmostFullyCheckedParents()
+        {
+            var comp = await OpenCheckedTreeAsync(Context, CheckedStrategy.Parent);
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["electronics"]);
+            TreeCheckbox(comp, "Smartphones").Should().Be("checked", "descendants of a reported parent are checked too");
+
+            await TreeRow(comp, "Laptops").ClickAsync();
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["phones"]);
+            TreeCheckbox(comp, "Electronics").Should().Be("indeterminate");
+
+            await TreeRow(comp, "Laptops").ClickAsync();
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["electronics"]);
+        }
+
+        /// <summary>
+        /// Select all follows the strategy: leaves for Child, and the topmost parents for Parent.
+        /// </summary>
+        [TestCase(CheckedStrategy.Child, new[] { "smartphones", "laptops", "books" })]
+        [TestCase(CheckedStrategy.Parent, new[] { "electronics", "books" })]
+        public async Task SelectNested_CheckedStrategy_SelectAllFollowsStrategy(CheckedStrategy strategy, string[] expected)
+        {
+            var comp = await OpenCheckedTreeAsync(Context, strategy);
+
+            await comp.FindAll(".mud-list-item").First().ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(expected);
+            CheckboxState(comp.FindAll(".mud-list-item").First()).Should().Be("checked");
+
+            await comp.FindAll(".mud-list-item").First().ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A selection supplied by the caller in either form is understood: a reported parent checks its descendants.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_CheckedStrategyParent_SuppliedParentChecksDescendants()
+        {
+            var comp = await OpenCheckedTreeAsync(Context, CheckedStrategy.Parent, ["electronics"]);
+
+            TreeCheckbox(comp, "Electronics").Should().Be("checked");
+            TreeCheckbox(comp, "Phones").Should().Be("checked");
+            TreeCheckbox(comp, "Smartphones").Should().Be("checked");
+            TreeCheckbox(comp, "Laptops").Should().Be("checked");
+            TreeCheckbox(comp, "Books").Should().Be("unchecked");
+        }
+
+        /// <summary>
+        /// The default strategy keeps items independent: checking a parent checks nothing else.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_CheckedStrategyAll_KeepsItemsIndependent()
+        {
+            var comp = await OpenCheckedTreeAsync(Context, CheckedStrategy.All);
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["electronics"]);
+            TreeCheckbox(comp, "Phones").Should().Be("unchecked");
+        }
+
+        /// <summary>
+        /// Removing the last sibling makes the previous one the last, so its connector closes instead of continuing.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_RemovingLastSibling_ClosesPreviousConnector()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters.Add(x => x.InitiallyExpanded, true));
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+            Guides(comp, "Phones").Should().Equal("0:elbow");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowLaptops, false));
+
+            TreeRows(comp).Should().Equal("Electronics", "Phones", "Smartphones", "Feature phones", "Books");
+            Guides(comp, "Phones").Should().Equal("0:last");
+            Guides(comp, "Smartphones").Should().Equal("1:elbow");
+        }
+
+        /// <summary>
+        /// Home and End move the highlight to the first and last visible rows of the tree.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_HomeAndEnd_MoveToFirstAndLastVisibleRow()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.InitiallyExpanded, true));
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+
+            await PressAsync(select, keys, "End");
+            ActiveRow(comp).Should().Be("Books");
+
+            await PressAsync(select, keys, "Home");
+            ActiveRow(comp).Should().Be("Electronics");
+        }
+
+        /// <summary>
+        /// In right-to-left layouts the arrow keys swap: Left opens a branch and Right closes it.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_RightToLeft_SwapsExpandAndCollapseKeys()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedTest>(parameters => parameters
+                .Add(x => x.MultiSelection, true)
+                .AddCascadingValue("RightToLeft", true));
+            var select = comp.FindComponent<MudSelect<string>>();
+            await comp.InvokeAsync(() => select.Instance.OpenMenu());
+            await comp.WaitForAssertionAsync(() => ActiveRow(comp).Should().Be("Electronics"));
+
+            await PressAsync(select, keys, "ArrowRight");
+            // The key that expands in left-to-right layouts must do nothing here.
+            TreeRows(comp).Should().Equal("Electronics", "Books");
+
+            await PressAsync(select, keys, "ArrowLeft");
+            TreeRows(comp).Should().Equal("Electronics", "Phones", "Laptops", "Books");
+
+            await PressAsync(select, keys, "ArrowRight");
+            TreeRows(comp).Should().Equal("Electronics", "Books");
+        }
+
+        /// <summary>
+        /// A bound Expanded value opens the branch, follows later changes from the parent and reports user toggles.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_BoundExpanded_FollowsParentAndReportsUserChanges()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedExpandedTest>(parameters => parameters.Add(x => x.ElectronicsExpanded, true));
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+            string[] Rows() => comp.FindAll("[role=treeitem]").Select(x => x.TextContent.Trim()).ToArray();
+            IElement Toggle() => comp.FindAll("[role=treeitem]").First().QuerySelector(".mud-select-item-toggle")!;
+            Rows().Should().Equal("Electronics", "Phones", "Laptops", "Books");
+
+            await Toggle().ClickAsync();
+
+            Rows().Should().Equal("Electronics", "Books");
+            comp.Instance.ElectronicsExpanded.Should().BeFalse();
+            comp.Instance.ChangeCount.Should().Be(1);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ElectronicsExpanded, true));
+
+            Rows().Should().Equal("Electronics", "Phones", "Laptops", "Books");
+        }
+
+        /// <summary>
+        /// The expand and collapse icons can be replaced per item and follow the expanded state.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_CustomExpandIcons_FollowExpandedState()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectNestedExpandedTest>();
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+            string ToggleHtml() => comp.FindAll("[role=treeitem]").First().QuerySelector(".mud-select-item-toggle")!.InnerHtml;
+
+            // Compare the drawing paths, since the icon markup is serialized differently from the constants.
+            const string addPath = "M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z";
+            const string removePath = "M19 13H5v-2h14v2z";
+            ToggleHtml().Should().Contain(addPath).And.NotContain(removePath);
+            ToggleHtml().Should().Contain("mud-primary-text");
+
+            await comp.FindAll("[role=treeitem]").First().QuerySelector(".mud-select-item-toggle")!.ClickAsync();
+
+            ToggleHtml().Should().Contain(removePath).And.NotContain(addPath);
+        }
+
+        /// <summary>
+        /// A select without nested items keeps list semantics and gets none of the tree markup.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_FlatSelect_StaysAList()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<SelectTest1>();
+            await comp.InvokeAsync(() => comp.FindComponent<MudSelect<string>>().Instance.OpenMenu());
+
+            comp.Find("[role=combobox]").GetAttribute("aria-haspopup").Should().Be("listbox");
+            comp.FindAll("[role=tree]").Should().BeEmpty();
+            comp.FindAll("[role=treeitem]").Should().BeEmpty();
+            comp.FindAll(".mud-select-item-tree, .mud-select-item-toggle, .mud-select-item-guide").Should().BeEmpty();
         }
 
         /// <summary>

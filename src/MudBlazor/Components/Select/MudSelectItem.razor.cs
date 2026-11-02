@@ -320,6 +320,11 @@ namespace MudBlazor
         internal bool Selected { get; set; }
 
         /// <summary>
+        /// Whether some, but not all, of the items below this one are checked, when parents cascade their selection.
+        /// </summary>
+        internal bool Indeterminate { get; set; }
+
+        /// <summary>
         /// The icon to display whether this item is selected.
         /// </summary>
         /// <remarks>
@@ -331,6 +336,11 @@ namespace MudBlazor
             {
                 if (_context is not { MultiSelection: true } context)
                     return null;
+                if (Indeterminate && MudSelect is { } select)
+                {
+                    return select.IndeterminateIcon;
+                }
+
                 return Selected ? context.CheckedIcon : context.UncheckedIcon;
             }
         }
@@ -397,6 +407,7 @@ namespace MudBlazor
                 // Register as a visible item (adds to _items, _valueLookup, and _shadowLookup)
                 var isSelected = _context.RegisterItem(this);
                 Selected = isSelected;
+                Indeterminate = _context.IsItemIndeterminate(this);
 
                 _selectionSubscription = _context.SubscribeToSelectionChanges(OnSelectionChangedAsync);
 
@@ -420,9 +431,20 @@ namespace MudBlazor
         private Task OnSelectionChangedAsync(IReadOnlyCollection<T?> selectedValues)
         {
             var oldSelected = Selected;
-            Selected = selectedValues.Contains(Value);
+            var oldIndeterminate = Indeterminate;
+            if (_context?.MultiSelection == true && MudSelect?.CascadesSelection == true)
+            {
+                // A parent is checked by its descendants, so membership in the selected values is not enough.
+                Selected = _context.IsItemSelected(this);
+                Indeterminate = _context.IsItemIndeterminate(this);
+            }
+            else
+            {
+                Selected = selectedValues.Contains(Value);
+                Indeterminate = false;
+            }
 
-            if (oldSelected != Selected)
+            if (oldSelected != Selected || oldIndeterminate != Indeterminate)
             {
                 // Avoid await InvokeAsync(StateHasChanged) due to a MAUI dispatcher bug:
                 // https://github.com/MudBlazor/MudBlazor/issues/13009
@@ -450,6 +472,7 @@ namespace MudBlazor
             {
                 //Update selected value when updated without new item creation
                 Selected = _context.IsItemSelected(this);
+                Indeterminate = _context.IsItemIndeterminate(this);
             }
         }
 
@@ -460,7 +483,7 @@ namespace MudBlazor
         {
             if (MudSelect is not null)
             {
-                await MudSelect.SelectOption(Value);
+                await MudSelect.ActivateItemAsync(this);
             }
         }
 

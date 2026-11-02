@@ -360,6 +360,63 @@ namespace MudBlazor
         public bool InitiallyExpanded { get; set; }
 
         /// <summary>
+        /// Expands and collapses an item with a <see cref="MudSelectItem{T}.NestedList"/> when its row is clicked, not only its chevron.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// With single selection, clicking a parent only expands or collapses it, so only items without children can be selected.
+        /// With <see cref="MultiSelection"/>, clicking a parent toggles its checkbox and expands it.
+        /// Pressing Enter on a highlighted parent does the same as clicking it.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public bool ExpandOnClick { get; set; }
+
+        /// <summary>
+        /// Which checked items are reported in <see cref="SelectedValues"/> when <see cref="MultiSelection"/> is used with nested items.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="MudBlazor.CheckedStrategy.All"/>, where every item is checked on its own.
+        /// <see cref="MudBlazor.CheckedStrategy.Child"/> and <see cref="MudBlazor.CheckedStrategy.Parent"/> make checking a parent check its enabled descendants,
+        /// show a parent as indeterminate while only some of them are checked, and report either only the items without children or only the topmost fully checked parents.
+        /// Disabled items are never checked by a parent.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.ListBehavior)]
+        public CheckedStrategy CheckedStrategy { get; set; } = CheckedStrategy.All;
+
+        /// <summary>
+        /// Whether checking a parent checks its descendants, which the <see cref="CheckedStrategy"/> asks for.
+        /// </summary>
+        internal bool CascadesSelection => MultiSelection && CheckedStrategy != CheckedStrategy.All && _context.HasNestedItems;
+
+        /// <summary>
+        /// Whether choosing this item expands it instead of selecting it.
+        /// </summary>
+        private bool OnlyExpands(MudSelectItem<T> item) => ExpandOnClick && !MultiSelection && item.HasNestedItems;
+
+        /// <summary>
+        /// Handles the user choosing an item with the pointer or Enter.
+        /// </summary>
+        internal async Task ActivateItemAsync(MudSelectItem<T> item)
+        {
+            if (!ExpandOnClick || !item.HasNestedItems)
+            {
+                await SelectOption(item.Value);
+                return;
+            }
+
+            if (MultiSelection)
+            {
+                await SelectOption(item.Value);
+                await item.SetExpandedAsync(true);
+                return;
+            }
+
+            await item.SetExpandedAsync(!item.IsExpanded);
+        }
+
+        /// <summary>
         /// The side of each row where the expand and collapse icon of a nested item is shown.
         /// </summary>
         /// <remarks>
@@ -668,8 +725,11 @@ namespace MudBlazor
 
             if (MultiSelection)
             {
-                // Toggle selection
-                if (!_selectedValues.Add(value))
+                if (CascadesSelection)
+                {
+                    _selectedValues = ToggleCascading(value);
+                }
+                else if (!_selectedValues.Add(value))
                 {
                     _selectedValues.Remove(value);
                 }
@@ -1102,16 +1162,46 @@ namespace MudBlazor
             return InvokeAsync(StateHasChanged);
         }
 
+        /// <summary>
+        /// Toggles an item the way <see cref="CheckedStrategy"/> asks for, and returns the new selected values.
+        /// </summary>
+        /// <remarks>
+        /// A parent that is not fully checked becomes fully checked, otherwise all of its enabled descendants are cleared.
+        /// </remarks>
+        private HashSet<T?> ToggleCascading(T? value)
+        {
+            var leaves = _context.ExpandToLeaves(_selectedValues);
+            var targets = _context.TryGetShadowItem(value, out var item) ? _context.GetSelectableLeaves(item) : [];
+            if (targets.Count == 0)
+            {
+                if (!leaves.Add(value))
+                {
+                    leaves.Remove(value);
+                }
+            }
+            else if (targets.All(x => leaves.Contains(x.Value)))
+            {
+                leaves.ExceptWith(targets.Select(x => x.Value));
+            }
+            else
+            {
+                leaves.UnionWith(targets.Select(x => x.Value));
+            }
+
+            return new HashSet<T?>(_context.ApplyStrategy(leaves, CheckedStrategy), Comparer);
+        }
+
         private string ResolvedSelectAllText() => string.IsNullOrEmpty(SelectAllText) ? Localizer[LanguageResource.MudSelect_SelectAll] : SelectAllText;
 
         private void UpdateSelectAllChecked()
         {
             if (MultiSelection && SelectAll)
             {
-                var enabledValues = new HashSet<T?>(_context.AllItems
-                    .Where(x => !x.Disabled && HasNonNullValue(x.Value))
+                // When parents cascade, only the items checked one by one count, since a parent is checked by its descendants.
+                var enabledValues = new HashSet<T?>((CascadesSelection ? _context.GetAllSelectableLeaves() : _context.AllItems.Where(x => !x.Disabled))
+                    .Where(x => HasNonNullValue(x.Value))
                     .Select(x => x.Value), Comparer);
-                var selectedEnabledValuesCount = _selectedValues.Count(enabledValues.Contains);
+                var selectedEnabledValuesCount = (CascadesSelection ? _context.ExpandToLeaves(_selectedValues) : _selectedValues).Count(enabledValues.Contains);
 
                 if (selectedEnabledValuesCount == 0)
                 {
@@ -1161,9 +1251,13 @@ namespace MudBlazor
 
             if (selectAll)
             {
-                selectedValues.UnionWith(_context.AllItems
-                    .Where(x => !x.Disabled && HasNonNullValue(x.Value))
+                selectedValues.UnionWith((CascadesSelection ? _context.GetAllSelectableLeaves() : _context.AllItems.Where(x => !x.Disabled))
+                    .Where(x => HasNonNullValue(x.Value))
                     .Select(x => x.Value));
+                if (CascadesSelection)
+                {
+                    selectedValues = new HashSet<T?>(_context.ApplyStrategy(selectedValues, CheckedStrategy), Comparer);
+                }
             }
             else if (selectedValues.Count == 0)
             {
@@ -1256,7 +1350,7 @@ namespace MudBlazor
                 {
                     // When SelectionOnEnter is true, we only update the visual highlight during navigation.
                     // When false (default), the value is immediately updated as the user moves through the list.
-                    if (!SelectionOnEnter && !item.Disabled)
+                    if (!SelectionOnEnter && !item.Disabled && !OnlyExpands(item))
                     {
                         _selectedValues.Clear();
                         _selectedValues.Add(item.Value);
@@ -1411,7 +1505,7 @@ namespace MudBlazor
 
         private async Task SelectAndHighlightItemAsync(MudSelectItem<T> item)
         {
-            if (!MultiSelection)
+            if (!MultiSelection && !OnlyExpands(item))
             {
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
@@ -1437,7 +1531,7 @@ namespace MudBlazor
                 return;
             }
 
-            if (!MultiSelection)
+            if (!MultiSelection && !OnlyExpands(item))
             {
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
@@ -1511,6 +1605,13 @@ namespace MudBlazor
             if (_openState.Value && index >= 0 && Items[index].Disabled)
             {
                 // Only disabled branches can be highlighted, and they open with the arrow keys instead.
+                return;
+            }
+
+            if (_openState.Value && index >= 0 && Items[index].HasNestedItems && ExpandOnClick)
+            {
+                await ActivateItemAsync(Items[index]);
+                await _elementReference.SetText(ReadText);
                 return;
             }
 

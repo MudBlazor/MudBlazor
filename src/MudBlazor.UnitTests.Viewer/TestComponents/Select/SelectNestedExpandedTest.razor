@@ -1,0 +1,27 @@
+﻿<MudPopoverProvider />
+
+<MudSelect T="string" @bind-Value="Value" Label="Category">
+    <MudSelectItem Value="@("electronics")" @bind-Expanded="ElectronicsExpanded" @bind-Expanded:after="CountChange"
+                   ExpandLessIcon="@Icons.Material.Filled.Remove" ExpandMoreIcon="@Icons.Material.Filled.Add" ExpandIconColor="Color.Primary">
+        <ChildContent>Electronics</ChildContent>
+        <NestedList>
+            <MudSelectItem Value="@("phones")">Phones</MudSelectItem>
+            <MudSelectItem Value="@("laptops")">Laptops</MudSelectItem>
+        </NestedList>
+    </MudSelectItem>
+    <MudSelectItem Value="@("books")">Books</MudSelectItem>
+</MudSelect>
+
+@code {
+    public static string __description__ = "A select whose first branch binds Expanded and uses custom expand icons.";
+
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public bool ElectronicsExpanded { get; set; }
+
+    /// <summary>
+    /// How many times the select reported a change of <see cref="ElectronicsExpanded"/>.
+    /// </summary>
+    public int ChangeCount { get; private set; }
+
+    private void CountChange() => ChangeCount++;
+}

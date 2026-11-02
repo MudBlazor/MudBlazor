@@ -170,13 +170,41 @@
                 <DocsPageSection>
                     <SectionHeader Title="Multi-selection">
                         <Description>
-                            Items are selected independently, so selecting a parent does not select its children.
+                            Items are selected independently by default, so selecting a parent does not select its children. See Checked strategy below to change this.
                             <CodeInline>SelectAll</CodeInline> covers every enabled item, including those in collapsed branches.
                             Set <CodeInline>InitiallyExpanded</CodeInline> to open every branch the first time the list is shown, or bind <CodeInline>Expanded</CodeInline> on an item to control it.
                         </Description>
                     </SectionHeader>
                     <SectionContent ShowCode="false" Code="@nameof(SelectNestedMultiExample)">
                         <SelectNestedMultiExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Expand on click">
+                        <Description>
+                            By default only the chevron expands an item.
+                            Set <CodeInline>ExpandOnClick</CodeInline> to also expand and collapse it when its row is clicked.
+                            With single selection a click on a parent only expands or collapses it, so only items without children can be chosen, and Enter on a highlighted parent does the same.
+                            With <CodeInline>MultiSelection</CodeInline> a click on a parent toggles its checkbox and expands it.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(SelectNestedExpandOnClickExample)">
+                        <SelectNestedExpandOnClickExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Checked strategy">
+                        <Description>
+                            <CodeInline>CheckedStrategy</CodeInline> decides which checked items are reported in <CodeInline>SelectedValues</CodeInline> with <CodeInline>MultiSelection</CodeInline>.
+                            <CodeInline>All</CodeInline> is the default and keeps every item independent, so checking a parent checks nothing else.
+                            <CodeInline>Child</CodeInline> and <CodeInline>Parent</CodeInline> make checking a parent check its enabled descendants, and a parent shows as indeterminate while only some of them are checked.
+                            <CodeInline>Child</CodeInline> reports only items without children.
+                            <CodeInline>Parent</CodeInline> reports the topmost parents whose enabled descendants are all checked, so checking every fruit reports <CodeInline>Fruit</CodeInline> instead of each one.
+                            Disabled items are never checked by a parent, and either form is accepted when you supply <CodeInline>SelectedValues</CodeInline>.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(SelectNestedCheckedStrategyExample)">
+                        <SelectNestedCheckedStrategyExample />
                     </SectionContent>
                 </DocsPageSection>
                 <DocsPageSection>
