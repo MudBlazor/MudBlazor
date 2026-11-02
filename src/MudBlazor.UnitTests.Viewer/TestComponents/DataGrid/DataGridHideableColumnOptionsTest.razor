@@ -1,0 +1,18 @@
+﻿
+<MudPopoverProvider />
+
+<MudDataGrid T="Model" Items="@_items" Hideable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Sortable="false" Filterable="false" Groupable="false" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private IEnumerable<Model> _items = new List<Model>()
+    {
+        new Model("Sam"),
+        new Model("Alicia")
+    };
+
+    public record Model(string Name);
+}

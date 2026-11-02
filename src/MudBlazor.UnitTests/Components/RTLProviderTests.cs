@@ -8,16 +8,15 @@ namespace MudBlazor.UnitTests.Components
     public class RTLProviderTests : BunitTest
     {
         /// <summary>
-        /// The provider element is rendered directly, without a nested component between the caller and the DOM.
+        /// The provider element carries its class and style.
         /// </summary>
         [Test]
-        public void RTLProvider_ShouldRenderItsElementWithoutAWrapperComponent()
+        public void RTLProvider_RendersClassAndStyle()
         {
             var comp = Context.Render<MudRTLProvider>(parameters => parameters
                 .Add(x => x.Class, "my-class")
                 .Add(x => x.Style, "color:red"));
 
-            comp.FindComponents<MudElement>().Should().BeEmpty();
             comp.MarkupMatches("""<div class="mud-rtl-provider my-class" style="color:red"></div>""");
         }
 

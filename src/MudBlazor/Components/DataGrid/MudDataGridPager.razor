@@ -8,10 +8,10 @@
     <div class="mud-table-pagination-spacer"></div>
     @if (PageSizeSelector)
     {
-        <MudText Typo="Typo.body2" Class="mud-table-pagination-caption">
+        <MudText Typo="Typo.body2" Class="mud-table-pagination-caption" id="@_rowsPerPageLabelId">
             @RowsPerPageString
         </MudText>
-        <MudSelect T="int" ValueChanged="@SetRowsPerPageAsync" Value="@(DataGrid?.RowsPerPage ?? 0)" Class="mud-table-pagination-select" Underline="false" Dense="true" Disabled="@Disabled" SelectionOnEnter="true">
+        <MudSelect T="int" ValueChanged="@SetRowsPerPageAsync" Value="@(DataGrid?.RowsPerPage ?? 0)" Class="mud-table-pagination-select" Underline="false" Dense="true" Disabled="@Disabled" SelectionOnEnter="true" aria-labelledby="@_rowsPerPageLabelId">
             @foreach (int pageSize in PageSizeOptions)
             {
                 if (pageSize == int.MaxValue)

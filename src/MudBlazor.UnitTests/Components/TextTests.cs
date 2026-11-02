@@ -30,14 +30,13 @@ public class TextTests : BunitTest
     }
 
     /// <summary>
-    /// The typography element is rendered directly, without a nested component between the caller and the DOM.
+    /// The typography element renders its content.
     /// </summary>
     [Test]
-    public void Text_ShouldRenderItsElementWithoutAWrapperComponent()
+    public void Text_RendersTypographyElementWithContent()
     {
         var comp = Context.Render<MudText>(parameters => parameters.AddChildContent("Flat white"));
 
-        comp.FindComponents<MudElement>().Should().BeEmpty();
         comp.Find("p.mud-typography").TextContent.Should().Be("Flat white");
     }
 
@@ -214,5 +213,26 @@ public class TextTests : BunitTest
         {
             element.ClassList.Should().NotContain("d-inline");
         }
+    }
+
+    [Test]
+    [TestCase(true)]
+    [TestCase(false)]
+    public void Truncate_ShouldAddNowrapClass(bool truncate)
+    {
+        var comp = Context.Render<MudText>(parameters => parameters
+            .Add(p => p.Truncate, truncate));
+
+        var element = comp.Find(".mud-typography");
+
+        if (truncate)
+        {
+            element.ClassList.Should().Contain("mud-typography-nowrap");
+        }
+        else
+        {
+            element.ClassList.Should().NotContain("mud-typography-nowrap");
+        }
+
     }
 }

@@ -14,19 +14,17 @@ extern alias MudBlazorAnalyzer;
 internal static class AnalyzerCompilationFactory
 {
     private static readonly ImmutableArray<MetadataReference> _metadataReferences = CreateMetadataReferences();
+    private static readonly ImmutableArray<MetadataReference> _frameworkReferences = [.. _metadataReferences.Where(x => !string.Equals(Path.GetFileName(x.Display), "MudBlazor.dll", StringComparison.OrdinalIgnoreCase))];
 
     internal static async Task<ImmutableArray<Diagnostic>> GetDiagnosticsAsync(
         string source,
         MudBlazorAnalyzer::MudBlazor.Analyzers.AllowedAttributePattern allowedAttributePattern,
         string customAllowedAttributes = "",
-        string sourcePath = "AttributeTest.razor.g.cs")
+        string sourcePath = "AttributeTest.razor.g.cs",
+        ImmutableDictionary<string, ReportDiagnostic>? specificDiagnosticOptions = null,
+        bool referenceMudBlazor = true)
     {
-        var syntaxTree = CSharpSyntaxTree.ParseText(SourceText.From(source, Encoding.UTF8), path: sourcePath);
-        var compilation = CSharpCompilation.Create(
-            assemblyName: "MudBlazor.UnitTests.Analyzers.Generated",
-            syntaxTrees: [syntaxTree],
-            references: _metadataReferences,
-            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+        var compilation = CreateCompilation(source, sourcePath, specificDiagnosticOptions, referenceMudBlazor);
 
         var compilationDiagnostics = compilation.GetDiagnostics()
             .Where(x => x.Severity is DiagnosticSeverity.Error)
@@ -39,6 +37,27 @@ internal static class AnalyzerCompilationFactory
 
         var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer], analyzerOptions);
         return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Compiles <paramref name="source"/> against the framework and, unless <paramref name="referenceMudBlazor"/> is false, the real MudBlazor assembly.
+    /// </summary>
+    internal static CSharpCompilation CreateCompilation(
+        string source,
+        string sourcePath = "AttributeTest.razor.g.cs",
+        ImmutableDictionary<string, ReportDiagnostic>? specificDiagnosticOptions = null,
+        bool referenceMudBlazor = true)
+    {
+        var syntaxTree = CSharpSyntaxTree.ParseText(SourceText.From(source, Encoding.UTF8), path: sourcePath);
+        var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+        if (specificDiagnosticOptions is not null)
+            compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(specificDiagnosticOptions);
+
+        return CSharpCompilation.Create(
+            assemblyName: "MudBlazor.UnitTests.Analyzers.Generated",
+            syntaxTrees: [syntaxTree],
+            references: referenceMudBlazor ? _metadataReferences : _frameworkReferences,
+            options: compilationOptions);
     }
 
     private static ImmutableArray<MetadataReference> CreateMetadataReferences()

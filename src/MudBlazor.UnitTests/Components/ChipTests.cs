@@ -122,10 +122,13 @@ namespace MudBlazor.UnitTests.Components
             chip.GetAttribute("rel").Should().Be(expectedRel);
         }
 
+        /// <summary>
+        /// A chip with OnClick and no usable Href renders as a button.
+        /// </summary>
         [Test]
         [Combinatorial]
         public void Chip_ShouldRenderButtonAndNotAnchorIfOnClickSet(
-            [Values(null, "", "https://example.com")] string href,
+            [Values(null, "", " ")] string href,
             [Values(null, "", "ASDF", "_blank")] string target,
             [Values(null, "", "noopener", "nofollow")] string rel)
         {
@@ -145,6 +148,26 @@ namespace MudBlazor.UnitTests.Components
             chip.GetAttribute("href").Should().BeNull();
             chip.GetAttribute("target").Should().BeNull();
             chip.GetAttribute("rel").Should().BeNull();
+        }
+
+        /// <summary>
+        /// Href takes precedence over OnClick, so the chip renders as a link and the browser handles the click.
+        /// </summary>
+        [Test]
+        public async Task Chip_HrefWithOnClick_ShouldRenderAnchorAndNotRaiseOnClick()
+        {
+            var clicked = false;
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(p => p.Href, "https://example.com")
+                .Add(p => p.OnClick, () => clicked = true));
+
+            var chip = comp.Find(".mud-chip");
+            chip.TagName.Should().Be("A");
+            chip.GetAttribute("href").Should().Be("https://example.com");
+            chip.HasAttribute("type").Should().BeFalse();
+            var act = async () => await comp.Find(".mud-chip").ClickAsync();
+            await act.Should().ThrowAsync<MissingEventHandlerException>();
+            clicked.Should().BeFalse();
         }
 
         [Test]
@@ -251,6 +274,46 @@ namespace MudBlazor.UnitTests.Components
             chip.HasAttribute("role").Should().BeFalse();
             chip.HasAttribute("aria-disabled").Should().BeFalse();
             chip.HasAttribute("aria-pressed").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A class or style supplied through UserAttributes keeps winning over the computed ones, as it did through the MudElement boundary.
+        /// </summary>
+        [Test]
+        public void Chip_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(x => x.Text, "Chip")
+                .Add(x => x.Style, "color:blue")
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    ["class"] = "user-class",
+                    ["style"] = "color:red",
+                }));
+
+            var chip = comp.Find(".mud-chip-container > *");
+            chip.GetAttribute("class").Should().Be("user-class");
+            chip.GetAttribute("style").Should().Be("color:red");
+        }
+
+        /// <summary>
+        /// A chip that is not a button has no click handler, so clicking it does not throw and does not raise OnClick.
+        /// </summary>
+        [Test]
+        public async Task Chip_Disabled_HasNoClickHandler()
+        {
+            var clicked = false;
+            var comp = Context.Render<MudChip<string>>(parameters => parameters
+                .Add(x => x.Text, "Chip")
+                .Add(x => x.Disabled, true)
+                .Add(x => x.OnClick, () => clicked = true));
+
+            var chip = comp.Find(".mud-chip");
+            chip.GetAttribute("role").Should().Be("button");
+            chip.GetAttribute("aria-disabled").Should().Be("true");
+            var act = async () => await chip.ClickAsync();
+            await act.Should().ThrowAsync<MissingEventHandlerException>();
+            clicked.Should().BeFalse();
         }
     }
 }

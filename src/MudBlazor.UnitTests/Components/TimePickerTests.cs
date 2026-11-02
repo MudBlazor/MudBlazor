@@ -450,6 +450,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain(comp.Instance.ClearIcon);
         }
 
+        /// <summary>
+        /// The clock prevents the browser context menu, so it must register its own contextmenu listener.
+        /// Until .NET 10, Blazor ignores a handler-less preventDefault unless some other contextmenu listener exists on the page.
+        /// </summary>
+        [Test]
+        public async Task StaticClock_RegistersContextMenuListener()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static));
+            var clock = comp.Find(".mud-picker-time-clock-mask");
+
+            clock.HasAttribute("blazor:oncontextmenu").Should().BeTrue();
+
+            var contextMenu = async () => await clock.ContextMenuAsync(new MouseEventArgs { Button = 2 });
+
+            await contextMenu.Should().NotThrowAsync();
+        }
+
         [Test]
         public async Task StaticReadOnly_ShouldNotChangeTime()
         {

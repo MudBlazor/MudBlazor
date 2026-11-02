@@ -2,4 +2,20 @@
 @using MudBlazor.Utilities
 @inherits MudComponentBase
 
-<hr @attributes="UserAttributes" class="@Classname" style="@Style"/>
+@if (HasContent)
+{
+    <div role="separator"
+         aria-orientation="@(Vertical ? "vertical" : null)"
+         aria-labelledby="@_labelId"
+         @attributes="UserAttributes"
+         class="@WrapperClassname"
+         style="@Style">
+        <hr class="@Classname" aria-hidden="true"/>
+        <span class="mud-divider-with-content-text" id="@_labelId">@ChildContent</span>
+        <hr class="@Classname" aria-hidden="true"/>
+    </div>
+}
+else
+{
+    <hr @attributes="UserAttributes" class="@Classname" style="@Style" />
+}

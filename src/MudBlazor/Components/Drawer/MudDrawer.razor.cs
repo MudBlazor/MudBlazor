@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -447,6 +448,16 @@ namespace MudBlazor
         internal bool IsFixed => Fixed && DrawerContainer is MudLayout;
 
         internal Breakpoint NormalizedBreakpoint => NormalizeBreakpoint(Breakpoint);
+
+        private EventCallback<PointerEventArgs> PointerEnterCallback =>
+            EffectiveVariant == DrawerVariant.Mini && OpenMiniOnHover
+                ? EventCallback.Factory.Create<PointerEventArgs>(this, this.AsNonRenderingEventHandler(OnPointerEnterAsync))
+                : default;
+
+        private EventCallback<PointerEventArgs> PointerLeaveCallback =>
+            EffectiveVariant == DrawerVariant.Mini && (OpenMiniOnHover || _closeOnPointerLeave)
+                ? EventCallback.Factory.Create<PointerEventArgs>(this, this.AsNonRenderingEventHandler(OnPointerLeaveAsync))
+                : default;
 
         private async Task OnPointerEnterAsync()
         {

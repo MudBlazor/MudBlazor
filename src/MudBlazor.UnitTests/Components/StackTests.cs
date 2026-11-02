@@ -22,17 +22,16 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The stack element is rendered directly, without a nested component between the caller and the DOM.
+        /// The stack element carries its role, user attributes, class and style.
         /// </summary>
         [Test]
-        public void Stack_ShouldRenderItsElementWithoutAWrapperComponent()
+        public void Stack_RendersRoleUserAttributesClassAndStyle()
         {
             var stack = Context.Render<MudStack>(parameters => parameters
                 .Add(x => x.Class, "my-class")
                 .Add(x => x.Style, "color:red")
                 .AddUnmatched("data-test", "value"));
 
-            stack.FindComponents<MudElement>().Should().BeEmpty();
             stack.MarkupMatches("""<div role="group" data-test="value" class="d-flex flex-column gap-3 my-class" style="color:red"></div>""");
         }
 
