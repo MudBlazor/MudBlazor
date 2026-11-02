@@ -180,6 +180,19 @@
                     </SectionContent>
                 </DocsPageSection>
                 <DocsPageSection>
+                    <SectionHeader Title="Appearance and disabled items">
+                        <Description>
+                            The chevron comes before the text by default.
+                            Set <CodeInline>ExpandIconPlacement</CodeInline> to <CodeInline>End</CodeInline> to move it to the end of the row.
+                            <CodeInline>TreeLines</CodeInline> draws connectors between items and their parents and is on by default, so set it to <CodeInline>false</CodeInline> for a plainer list.
+                            A disabled item cannot be selected, but if it has a <CodeInline>NestedList</CodeInline> it still expands and collapses so its children can be chosen.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(SelectNestedAppearanceExample)">
+                        <SelectNestedAppearanceExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
                     <SectionHeader Title="Keyboard">
                         <Description>
                             The list follows the WAI-ARIA tree pattern.
