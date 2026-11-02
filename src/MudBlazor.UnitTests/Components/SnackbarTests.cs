@@ -49,6 +49,26 @@ namespace MudBlazor.UnitTests.Components
             _provider.Find("div.mud-snackbar-content-message").TrimmedText().Should().Be("Boom, big reveal. Im a pickle!");
         }
 
+        /// <summary>
+        /// Only warnings and errors are alerts; other messages are announced politely through the container's status region.
+        /// </summary>
+        [TestCase(Severity.Normal, null)]
+        [TestCase(Severity.Info, null)]
+        [TestCase(Severity.Success, null)]
+        [TestCase(Severity.Warning, "alert")]
+        [TestCase(Severity.Error, "alert")]
+        public async Task RoleMatchesSeverity(Severity severity, string role)
+        {
+            await _provider.InvokeAsync(() => _service.Add("Saved", severity));
+
+            var container = _provider.Find("#mud-snackbar-container");
+            container.GetAttribute("role").Should().Be("status");
+            container.GetAttribute("aria-atomic").Should().Be("false");
+            var snackbar = _provider.Find("#mud-snackbar-container > div");
+            snackbar.GetAttribute("role").Should().Be(role);
+            snackbar.HasAttribute("aria-live").Should().BeFalse();
+        }
+
         [Test]
         public async Task SimpleTestWithHtmlInMessageMarkupString()
         {
