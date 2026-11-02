@@ -74,6 +74,8 @@ namespace MudBlazor
         private readonly ParameterState<IReadOnlyCollection<T>?> _selectedValuesState;
 
         private HashSet<T> _selection;
+        // Whether _selection is the collection last published through SelectedValues, which the application can hold on to.
+        private bool _selectionPublished;
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
         private readonly TreeViewProjection<T> _projection = new();
         // ServerData load state belongs to the backing node object, not the rendered component instance.
@@ -805,8 +807,14 @@ namespace MudBlazor
                 {
                     EnsureProjection();
                     var row = _projection.FindRow(clickedRow.RowKey) ?? clickedRow;
-                    // The selection can be the collection last published through SelectedValues, so the toggle works on a copy.
-                    _selection = new HashSet<T>(_selection, Comparer);
+                    // The selection can be the collection last published through SelectedValues, so the toggle then works on a copy.
+                    // Copying on every click would cost time proportional to the selection, which can hold every value in the tree.
+                    if (_selectionPublished)
+                    {
+                        _selection = new HashSet<T>(_selection, Comparer);
+                        _selectionPublished = false;
+                    }
+
                     var newlySelected = _projection.ToggleSubtreeSelection(row, _selection, AutoSelectParent);
                     var shouldRefresh = ExpandAncestors(newlySelected);
                     await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
@@ -1034,6 +1042,7 @@ namespace MudBlazor
             }
 
             _selection = newSelection;
+            _selectionPublished = true;
             var shouldRefresh = IsVirtualized && ApplyVirtualizedSelection(newSelection);
             await _selectedValuesState.SetValueAsync(newSelection);
             await UpdateItemsAsync(synchronizeVirtualized: false);
@@ -1094,6 +1103,7 @@ namespace MudBlazor
                 if (result.SelectionChanged)
                 {
                     _selection = new HashSet<T>(result.SelectedValues, Comparer);
+                    _selectionPublished = false;
                     await _selectedValuesState.SetValueAsync(_selection.ToList());
                 }
             }

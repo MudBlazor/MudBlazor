@@ -1814,6 +1814,50 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies that clicks after the tree published a filtered selection leave the published collection unchanged.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ClickAfterFilteredSelection_KeepsPublishedCollection()
+        {
+            var (items, _) = CreateTrackedHierarchy();
+            var raised = new List<IReadOnlyCollection<string>>();
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.SelectedValuesChanged, values => raised.Add(values))
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<string>()));
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedValues, ["Other", "Missing"])));
+            var published = raised.Should().ContainSingle().Subject;
+
+            await FindTreeItem(comp, "Collapsed").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+            await FindTreeItem(comp, "Other").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            published.Should().BeEquivalentTo(["Other"]);
+            raised.Should().HaveCount(3);
+            raised[1].Should().BeEquivalentTo(["Other", "Collapsed", "Tracked"]);
+            raised[2].Should().BeEquivalentTo(["Collapsed", "Tracked"]);
+        }
+
+        /// <summary>
+        /// Verifies that an in-place items change made inside the bound selection callback is shown by the render that callback queues.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_InPlaceChangeInsideSelectedValuesCallback_IsShown()
+        {
+            var (items, _) = CreateTrackedHierarchy();
+            var comp = Context.Render<TreeViewVirtualizedInPlaceCallbackTest>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.InsideSelectedValuesChanged, values => ((List<ITreeItemData<string>>)items).Add(new TreeItemData<string> { Value = "Added", Text = "Added" })));
+
+            await FindTreeItem(comp, "Other").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            GetVirtualizedValues(comp).Should().Equal("Other", "Collapsed", "Added");
+        }
+
+        /// <summary>
         /// Verifies that a selection change arriving in the same parent render as an in-place change to the items moves the backing selection from an item which is not rendered to the new one.
         /// </summary>
         [Test]
