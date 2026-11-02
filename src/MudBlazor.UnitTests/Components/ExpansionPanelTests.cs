@@ -374,6 +374,29 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The header exposes button semantics, its expanded and disabled state, and the content it controls.
+        /// </summary>
+        [Test]
+        public async Task MudExpansionPanel_HeaderExposesButtonState()
+        {
+            var comp = Context.Render<MudExpansionPanel>(parameters => parameters.Add(p => p.Text, "Shipping"));
+
+            var header = comp.Find(".mud-expand-panel-header");
+            header.GetAttribute("role").Should().Be("button");
+            header.GetAttribute("aria-expanded").Should().Be("false");
+            header.HasAttribute("aria-disabled").Should().BeFalse();
+            var controls = header.GetAttribute("aria-controls");
+            controls.Should().NotBeNullOrEmpty();
+            comp.Find(".mud-collapse-container").Id.Should().Be(controls);
+
+            await comp.Find(".mud-expand-panel-header").ClickAsync();
+            comp.Find(".mud-expand-panel-header").GetAttribute("aria-expanded").Should().Be("true");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Disabled, true));
+            comp.Find(".mud-expand-panel-header").GetAttribute("aria-disabled").Should().Be("true");
+        }
+
+        /// <summary>
         /// Tests that content is rendered even when collapsed when KeepContentAlive is true.
         /// </summary>
         [Test]
