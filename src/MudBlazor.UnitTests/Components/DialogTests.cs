@@ -438,6 +438,23 @@ namespace MudBlazor.UnitTests.Components
             textField.ReadText.Should().Be("new_test");
         }
 
+        /// <summary>
+        /// A dialog that receives a reference-type parameter renders once when opened, so forwarding renders to the container cannot loop.
+        /// </summary>
+        [Test]
+        public async Task DialogWithReferenceParameter_DoesNotRenderLoop()
+        {
+            var comp = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            var parameters = new DialogParameters<DialogWithModelParameter> { { x => x.Model, ["a", "b"] } };
+            IDialogReference dialogReference = null;
+
+            await comp.InvokeAsync(async () => dialogReference = await service.ShowAsync<DialogWithModelParameter>(string.Empty, parameters));
+
+            comp.Find(".model-count").TrimmedText().Should().Be("2");
+            ((DialogWithModelParameter)dialogReference.Dialog).RenderCount.Should().Be(1, "the container re-render that MudDialog forwards must not re-render the dialog content");
+        }
+
         [Test]
         public async Task PassingEventCallbackToDialogViaParameters()
         {
