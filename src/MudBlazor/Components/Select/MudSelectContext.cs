@@ -399,9 +399,10 @@ internal sealed class MudSelectContext<T>
         }
 
         // A disabled item cannot be cascaded to, so it is kept as its own entry even when its parent is reported.
+        // A value without a matching item is kept as well, as it is for the other strategies.
         foreach (var value in leaves)
         {
-            if (_shadowLookup.TryGetValue(value, out var shadow) && shadow.Disabled)
+            if (!_shadowLookup.TryGetValue(value, out var shadow) || shadow.Disabled)
             {
                 result.Add(value);
             }

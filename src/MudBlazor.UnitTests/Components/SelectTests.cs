@@ -3090,6 +3090,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// With the Parent strategy, a selected value that has no matching item survives toggling a parent.
+        /// </summary>
+        [Test]
+        public async Task SelectNested_CheckedStrategyParent_KeepsValuesWithoutItems()
+        {
+            var comp = await OpenCheckedTreeAsync(Context, CheckedStrategy.Parent, ["unknown"]);
+
+            await TreeRow(comp, "Electronics").ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["electronics", "unknown"]);
+        }
+
+        /// <summary>
         /// The default strategy keeps items independent: checking a parent checks nothing else.
         /// </summary>
         [Test]
