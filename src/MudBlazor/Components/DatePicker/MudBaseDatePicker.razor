@@ -72,6 +72,10 @@
                                 }
                             </div>
                         }
+                        else if (GetMonthStart(tempMonth) == calendar.MaxSupportedDateTime)
+                        {
+                            // This column would show a month after the last supported month, so it stays empty.
+                        }
                         else if (CurrentView == OpenTo.Date || tempMonth != 0)
                         {
                             <div class="@GetCalendarHeaderClasses(displayMonth)">
