@@ -600,6 +600,32 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.PickerMonth.Should().Be(new DateTime(2026, 9, 1));
         }
 
+        /// <summary>
+        /// Moves the open month view to another column when that column's header is clicked (#6270).
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_MonthViewOpen_ClickThirdHeader_MovesMonthsToThirdColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 3)
+                .Add(p => p.StartMonth, new DateTime(2024, 1, 1)));
+
+            await comp.FindAll("button.mud-button-month")[1].ClickAsync();
+            await comp.FindAll("div.mud-picker-calendar-container")[2].QuerySelector("button.mud-button-month")!.ClickAsync();
+
+            var columns = comp.FindAll("div.mud-picker-calendar-container");
+            columns[1].QuerySelector("div.mud-picker-month-container").Should().BeNull();
+            columns[1].QuerySelector("button.mud-button-month")!.TextContent.Trim().Should().Be("2024 February");
+            columns[2].QuerySelector("div.mud-picker-month-container").Should().NotBeNull();
+
+            await comp.FindAll("button.mud-picker-month")[3].ClickAsync();
+
+            comp.FindAll("button.mud-button-month").Select(header => header.TextContent.Trim()).Should().Equal("2024 February", "2024 March", "2024 April");
+            comp.Instance.PickerMonth.Should().Be(new DateTime(2024, 2, 1));
+        }
+
         [Test]
         public async Task DatePickerStaticWithPickerActionsDayClick()
         {
