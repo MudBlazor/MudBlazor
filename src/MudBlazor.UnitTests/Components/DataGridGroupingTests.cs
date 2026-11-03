@@ -15,6 +15,20 @@ namespace MudBlazor.UnitTests.Components
     public class DataGridGroupingTests : BunitTest
     {
         /// <summary>
+        /// A grouped grid with ServerData and a pager renders the loaded rows grouped right away, so it builds each cell once instead of first rendering the rows flat.
+        /// </summary>
+        [Test]
+        public async Task DataGridGroupedServerDataWithPagerBuildsCellsOnce()
+        {
+            var comp = Context.Render<DataGridGroupedServerPagerTest>();
+
+            await comp.InvokeAsync(comp.Instance.Gate.SetResult);
+
+            comp.WaitForAssertion(() => comp.FindAll("tbody .mud-datagrid-group").Count.Should().Be(2));
+            comp.Instance.CellsCreated.Should().Be(3);
+        }
+
+        /// <summary>
         /// A row click inside a nested group must render each cell once; every DataGridGroupRow level used to add a pass of its own.
         /// </summary>
         [Test]

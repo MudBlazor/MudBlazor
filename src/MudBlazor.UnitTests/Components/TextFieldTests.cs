@@ -397,6 +397,45 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A telephone field puts mud-ltr on the input slot, not the outer container, so the label still follows RTL (issue #12126).
+        /// </summary>
+        [Test]
+        public void TelephoneInput_Should_ApplyLtrClassToInputSlot()
+        {
+            var comp = Context.Render<TextFieldShrinkLabelTest>();
+            var noMask = comp.FindComponents<MudTextField<string>>()[0];
+
+            noMask.Find(".mud-input").ClassList.Should().NotContain("mud-ltr");
+            noMask.Find("input").ClassList.Should().Contain("mud-ltr");
+        }
+
+        /// <summary>
+        /// An email field puts mud-ltr on the input slot, not the outer container, so the label still follows RTL (issue #12126).
+        /// </summary>
+        [Test]
+        public void EmailInput_Should_ApplyLtrClassToInputSlot()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.InputType, InputType.Email));
+
+            comp.Find(".mud-input").ClassList.Should().NotContain("mud-ltr");
+            comp.Find("input").ClassList.Should().Contain("mud-ltr");
+        }
+
+        /// <summary>
+        /// A masked telephone field puts mud-ltr on the input slot, not the outer container, so the label still follows RTL (issue #12126).
+        /// </summary>
+        [Test]
+        public void TelephoneInputWithMask_Should_ApplyLtrClassToInputSlot()
+        {
+            var comp = Context.Render<TextFieldShrinkLabelTest>();
+            var masked = comp.FindComponents<MudTextField<string>>()[1];
+
+            masked.Find(".mud-input").ClassList.Should().NotContain("mud-ltr");
+            masked.Find("input").ClassList.Should().Contain("mud-ltr");
+        }
+
+        /// <summary>
         /// A glue class to make it easy to define validation rules for single values using FluentValidation
         /// </summary>
         /// <typeparam name="T"></typeparam>

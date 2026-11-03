@@ -106,8 +106,10 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// <summary>
     /// The horizontal start space for the chart.
     /// </summary>
-    protected double HorizontalStartSpace => Math.Max(HorizontalStartSpaceBuffer + Math.Ceiling(YAxisLabelSize?.Width ?? DefaultYAxisLabelWidth), MinHorizontalStartSpace)
-        + (!string.IsNullOrWhiteSpace(ChartOptions?.YAxisTitle) ? YAxisTitleSpace : 0);
+    protected double HorizontalStartSpace => IsOverlayChart && SharedData?.HorizontalStartSpace is { } horizontalStartSpace
+        ? horizontalStartSpace
+        : Math.Max(HorizontalStartSpaceBuffer + Math.Ceiling(YAxisLabelSize?.Width ?? DefaultYAxisLabelWidth), MinHorizontalStartSpace)
+            + (!string.IsNullOrWhiteSpace(ChartOptions?.YAxisTitle) ? YAxisTitleSpace : 0);
     /// <summary>
     /// The horizontal end space for the chart.
     /// </summary>
@@ -231,6 +233,11 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     {
         if (OverlayChart is IMudAxisChart<T> overlay)
         {
+            if (SharedData is { } sharedData)
+            {
+                SharedData = sharedData with { HorizontalStartSpace = HorizontalStartSpace };
+            }
+
             overlay.SharedData = SharedData;
             overlay.RebuildChart();
             StateHasChanged();

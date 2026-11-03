@@ -330,6 +330,9 @@ namespace MudBlazor
         /// </summary>
         public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
 
+        // Full-width rows must not span past the header, because `table-layout: fixed` would divide the width across the extra columns.
+        internal int VisibleColumnSpan => Math.Max(1, RenderedColumns.Where(column => !column.HiddenState.Value).Sum(column => column.HeaderColSpan));
+
         internal T? _editingItem;
 
         internal T? _editingSourceItem;
@@ -1164,6 +1167,16 @@ namespace MudBlazor
         public RenderFragment? ToolBarContent { get; set; }
 
         /// <summary>
+        /// Allows the toolbar's content to wrap onto multiple lines.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. See <see cref="MudToolBar.WrapContent"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        public bool ToolBarWrapContent { get; set; }
+
+        /// <summary>
         /// Shows a horizontal scrollbar.
         /// </summary>
         /// <remarks>
@@ -1362,6 +1375,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// This property can be bound (<c>@bind-SelectedItems</c>) to initially select rows.  Use <see cref="SelectedItem"/> when <see cref="MultiSelection"/> is <c>false</c>.
+        /// To change the selection from code, assign a new set.  A change is detected by reference, so editing the bound set in place, such as calling <c>Clear()</c>, does not update the grid.
         /// </remarks>
         [Parameter, ParameterState]
         public HashSet<T>? SelectedItems { get; set; }
@@ -1577,6 +1591,7 @@ namespace MudBlazor
                     items = items.Where(QuickFilter);
                 }
 
+                // The server data functions receive the filter and sort definitions, so their items arrive already filtered and sorted.
                 if (!HasServerData)
                 {
                     foreach (var filterDefinition in FilterDefinitions)
@@ -1587,9 +1602,11 @@ namespace MudBlazor
                         });
                         items = items.Where(filterFunc);
                     }
+
+                    items = Sort(items);
                 }
 
-                _currentRenderFilteredItemsCache = Sort(items).ToList(); // To list to ensure evaluation only once per render
+                _currentRenderFilteredItemsCache = items.ToList(); // To list to ensure evaluation only once per render
                 unchecked { FilteringRunCount++; }
                 GroupItems(noStateChange: true);
                 return _currentRenderFilteredItemsCache;
@@ -1823,10 +1840,24 @@ namespace MudBlazor
                     };
 
                     // Cancel any prior request
-                    CancelServerDataToken();
+                    var token = CancelServerDataToken();
 
-                    Debug.Assert(_serverDataCancellationTokenSource is not null);
-                    _serverData = await VirtualizeServerData(state, _serverDataCancellationTokenSource.Token);
+                    GridData<T> serverData;
+                    try
+                    {
+                        serverData = await VirtualizeServerData(state, token);
+                    }
+                    catch (Exception) when (token.IsCancellationRequested)
+                    {
+                        // A newer load cancelled this one, and it owns the data and the loading state.
+                        return;
+                    }
+
+                    // Loads can finish out of order, so data from a load that a newer one replaced is stale (#13943).
+                    if (token.IsCancellationRequested)
+                        return;
+
+                    _serverData = serverData;
                     _currentRenderFilteredItemsCache = null;
 
                     Loading = false;
@@ -1847,15 +1878,36 @@ namespace MudBlazor
                 };
 
                 // Cancel any prior request
-                CancelServerDataToken();
+                var token = CancelServerDataToken();
 
                 Debug.Assert(ServerData is not null);
-                Debug.Assert(_serverDataCancellationTokenSource is not null);
-                _serverData = await ServerData(state, _serverDataCancellationTokenSource.Token);
+                GridData<T> serverData;
+                try
+                {
+                    serverData = await ServerData(state, token);
+                }
+                catch (Exception) when (token.IsCancellationRequested)
+                {
+                    // A newer load cancelled this one, and it owns the data and the loading state.
+                    // Data sources often report the cancellation as their own exception type, so the type does not matter.
+                    return;
+                }
+
+                // Loads can finish out of order, so data from a load that a newer one replaced is stale (#13943).
+                if (token.IsCancellationRequested)
+                    return;
+
+                _serverData = serverData;
                 _currentRenderFilteredItemsCache = null;
 
-                if (CurrentPage * RowsPerPage > _serverData.TotalItems)
+                if (CurrentPage * RowsPerPage >= _serverData.TotalItems)
+                {
                     CurrentPage = 0;
+
+                    // The reset started a load for the first page, so that load ends the loading state and updates the pager.
+                    if (token.IsCancellationRequested)
+                        return;
+                }
 
                 Loading = false;
                 PagerStateHasChangedEvent?.Invoke();
@@ -1873,8 +1925,10 @@ namespace MudBlazor
                 }
             }
 
-            StateHasChanged();
+            // Group before rendering: with a pager, CurrentPageItems takes the server items directly instead of FilteredItems, which would group them.
+            // Rendering first showed the rows ungrouped, and the next render rebuilt every row under its group.
             GroupItems();
+            StateHasChanged();
         }
 
         internal void AddColumn(Column<T> column)
@@ -1916,18 +1970,28 @@ namespace MudBlazor
             }
         }
 
-        internal void CancelServerDataToken()
+        internal CancellationToken CancelServerDataToken()
         {
+            // Swap in a fresh source before cancelling so the next load never observes the cancelled one.
+            // Cancelling can resume a superseded load whose caller starts another load and replaces this source, so its token is read first.
+            var next = new CancellationTokenSource();
+            var token = next.Token;
+            var previous = _serverDataCancellationTokenSource;
+            _serverDataCancellationTokenSource = next;
             try
             {
-                _serverDataCancellationTokenSource?.Cancel();
-                _serverDataCancellationTokenSource?.Dispose();
+                previous?.Cancel();
             }
-            catch { /*ignored*/ }
+            catch
+            {
+                /*ignored*/
+            }
             finally
             {
-                _serverDataCancellationTokenSource = new CancellationTokenSource();
+                previous?.Dispose();
             }
+
+            return token;
         }
 
         internal void RemoveColumn(Column<T> column)
@@ -2102,6 +2166,11 @@ namespace MudBlazor
             CleanupIncompleteFilters();
             StateHasChanged();
             return Task.CompletedTask;
+        }
+
+        private Task OnFiltersPanelKeyDownAsync(KeyboardEventArgs args)
+        {
+            return args.Key == "Escape" ? CloseFilterAsync() : Task.CompletedTask;
         }
 
         /// <summary>
@@ -3315,7 +3384,20 @@ namespace MudBlazor
 
         protected virtual void Dispose(bool disposing)
         {
-            _serverDataCancellationTokenSource?.Dispose();
+            // Cancel a load still in flight so its data source can stop and its result is discarded.
+            var source = _serverDataCancellationTokenSource;
+            try
+            {
+                source?.Cancel();
+            }
+            catch
+            {
+                /*ignored*/
+            }
+            finally
+            {
+                source?.Dispose();
+            }
         }
 
         private sealed class EmptyGrouping<TKey, TElement> : IGrouping<TKey, TElement>

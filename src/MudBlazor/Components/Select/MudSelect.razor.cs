@@ -662,6 +662,9 @@ namespace MudBlazor
                 if (comparer.Equals(ReadValue, value))
                 {
                     await UpdateSelectedValuesStateAsync(comparer);
+
+                    // CloseMenu(false) does not render, and a key interceptor callback is not a UI event that renders afterwards, so the list would stay visible.
+                    await InvokeAsync(StateHasChanged);
                     return;
                 }
 

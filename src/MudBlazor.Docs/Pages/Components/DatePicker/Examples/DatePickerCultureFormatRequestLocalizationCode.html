@@ -1,0 +1,22 @@
+<div class="mud-codeblock">
+<div class="csharp"><pre>
+<span class="keyword">using</span> System.Globalization;
+<span class="keyword">using</span> Microsoft.AspNetCore.Localization;
+
+<span class="keyword">var</span> <span class="localVar">cultures</span> = <span class="keyword">new</span>[] { <span class="string">"en-US"</span>, <span class="string">"de-DE"</span>, <span class="string">"fr-FR"</span> }
+    .<span class="function">Select</span>(<span class="localVar">name</span> =>
+    {
+        <span class="keyword">var</span> <span class="localVar">culture</span> = (<span class="class">CultureInfo</span>)<span class="class">CultureInfo</span>.<span class="function">GetCultureInfo</span>(<span class="localVar">name</span>).<span class="function">Clone</span>();
+        <span class="localVar">culture</span>.DateTimeFormat.ShortDatePattern = <span class="string">"dd'/'MM'/'yyyy"</span>;
+        <span class="keyword">return</span> <span class="localVar">culture</span>;
+    })
+    .<span class="function">ToList</span>();
+
+<span class="localVar">app</span>.<span class="function">UseRequestLocalization</span>(<span class="keyword">new</span> <span class="class">RequestLocalizationOptions</span>
+{
+    DefaultRequestCulture = <span class="keyword">new</span> <span class="class">RequestCulture</span>(<span class="localVar">cultures</span>[<span class="number">0</span>]),
+    SupportedCultures = <span class="localVar">cultures</span>,
+    SupportedUICultures = <span class="localVar">cultures</span>,
+});
+</pre></div>
+</div>

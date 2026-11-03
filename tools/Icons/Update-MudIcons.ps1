@@ -71,7 +71,8 @@ foreach ($fam in $familyMap.GetEnumerator()) {
     }
 
     ## All icons under this family will be recorded here
-    $nextIcons[$famName] = @{}
+    ## Case-sensitive, since names like AddChart and Addchart are separate icons
+    $nextIcons[$famName] = [System.Collections.Generic.Dictionary[string, string]]::new([StringComparer]::Ordinal)
 }
 
 ## Split the names on spaces and underscores
@@ -194,8 +195,20 @@ $allTotalTime = [datetime]::Now - $allStartTime
 Write-Host "Generated [$($familyMap.Count)] families of icons in [$($allTotalTime.TotalSeconds)] seconds."
 
 ## Again, for posterity
+## Sorted so it can be copied over prev-icons.json and diff only real changes
+$sortedIcons = [ordered]@{}
+foreach ($famName in ($nextIcons.Keys | Sort-Object)) {
+    $famIcons = $nextIcons[$famName]
+    $iconVars = [string[]]$famIcons.Keys
+    [Array]::Sort($iconVars, [StringComparer]::Ordinal)
+    $sortedFamIcons = [System.Collections.Specialized.OrderedDictionary]::new([StringComparer]::Ordinal)
+    foreach ($iconVar in $iconVars) {
+        $sortedFamIcons[$iconVar] = $famIcons[$iconVar]
+    }
+    $sortedIcons[$famName] = $sortedFamIcons
+}
 $nextIconsCache = Join-Path -Path $DefaultOut -ChildPath next-icons.json
-Set-Content -Path $nextIconsCache -Value (ConvertTo-Json $nextIcons)
+Set-Content -Path $nextIconsCache -Value (ConvertTo-Json $sortedIcons)
 
 ## For reference, we'll compare to previous snapshot of icons
 $prevIconsFile = Join-Path -Path $PWD -ChildPath prev-icons.json

@@ -1,0 +1,18 @@
+﻿@attribute [ViewerHidden]
+
+<MudDialog>
+    <DialogContent>
+        <MudText Class="model-count">@Model.Count</MudText>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    private int _renders;
+
+    [Parameter]
+    public List<string> Model { get; set; } = [];
+
+    public int RenderCount => _renders;
+
+    protected override void OnAfterRender(bool firstRender) => _renders++;
+}

@@ -41,7 +41,7 @@
     }
     @if (Expandable || Checkable)
     {
-        <td class="@($"mud-table-cell {Context?.Table?.CellClass}")">
+        <td class="@($"mud-table-cell mud-table-cell-fit {Context?.Table?.CellClass}")">
             <div class="d-flex" style="@ActionsStylename">
                 @if (Checkable)
                 {

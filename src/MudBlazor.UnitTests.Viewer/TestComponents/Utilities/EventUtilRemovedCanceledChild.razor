@@ -1,0 +1,18 @@
+﻿@attribute [ViewerHidden]
+
+<button @onclick="this.AsNonRenderingEventHandler(SaveAsync)">Save</button>
+
+@code {
+    /// <summary>
+    /// Asks the parent to remove this component.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnRemove { get; set; }
+
+    private async Task SaveAsync()
+    {
+        await OnRemove.InvokeAsync();
+        await Task.Yield();
+        throw new OperationCanceledException();
+    }
+}

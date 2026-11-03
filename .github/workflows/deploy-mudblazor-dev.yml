@@ -7,7 +7,8 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # Queue every run instead of cancelling the running or pending one, because a cancelled run marks its commit as failed.
+  queue: max
 
 jobs:
   deploy-web-app:

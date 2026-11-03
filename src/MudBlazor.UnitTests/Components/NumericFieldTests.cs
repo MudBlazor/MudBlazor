@@ -9,6 +9,8 @@ using Bunit;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Web.HtmlRendering;
+using Microsoft.Extensions.Logging.Abstractions;
 using MudBlazor.Extensions;
 using MudBlazor.UnitTests.Dummy;
 using MudBlazor.UnitTests.TestComponents.NumericField;
@@ -1532,6 +1534,192 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.Value.Should().Be(123.45M));
             numericField.Instance.ReadText.Should().Be("123.45");
             numericField.Instance.GetState(x => x.Culture).Name.Should().Be("");
+        }
+
+        /// <summary>
+        /// A field without a Culture under a comma-decimal UI culture renders its first frame with the invariant dot decimal separator.
+        /// </summary>
+        [Test]
+        [SetCulture("de-DE")]
+        [SetUICulture("de-DE")]
+        public void NumericField_DefaultCommaDecimalCulture_FirstRender_UsesInvariantText()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(p => p.Value, 1.5));
+
+            comp.Instance.ReadText.Should().Be("1.5");
+            comp.Find("input").GetAttribute("value").Should().Be("1.5");
+            comp.Instance.GetState(x => x.Culture).Should().BeSameAs(CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Blurring a field without a Culture under a comma-decimal UI culture without typing keeps its value instead of re-parsing "1,5" as 15.
+        /// </summary>
+        [Test]
+        [SetCulture("de-DE")]
+        [SetUICulture("de-DE")]
+        public async Task NumericField_DefaultCommaDecimalCulture_BlurWithoutTyping_KeepsValue()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(p => p.Value, 1.5));
+
+            await comp.Find("input").BlurAsync(new FocusEventArgs());
+
+            comp.Instance.ReadValue.Should().Be(1.5);
+            comp.Instance.ReadText.Should().Be("1.5");
+            comp.Find("input").GetAttribute("value").Should().Be("1.5");
+        }
+
+        /// <summary>
+        /// Typing a dot decimal into a field without a Culture under a comma-decimal UI culture parses it with the invariant culture.
+        /// </summary>
+        [Test]
+        [SetCulture("de-DE")]
+        [SetUICulture("de-DE")]
+        public async Task NumericField_DefaultCommaDecimalCulture_ParsesTypedDotDecimal()
+        {
+            var comp = Context.Render<MudNumericField<double>>();
+
+            await comp.Find("input").ChangeAsync("12.5");
+            await comp.Find("input").BlurAsync(new FocusEventArgs());
+
+            comp.Instance.ReadValue.Should().Be(12.5);
+            comp.Instance.ReadText.Should().Be("12.5");
+        }
+
+        /// <summary>
+        /// Stepping a field without a Culture under a comma-decimal UI culture keeps the invariant dot decimal separator before and after the step.
+        /// </summary>
+        [Test]
+        [SetCulture("de-DE")]
+        [SetUICulture("de-DE")]
+        public async Task NumericField_DefaultCommaDecimalCulture_ArrowUp_KeepsInvariantFormatting()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(p => p.Value, 1.5));
+
+            comp.Instance.ReadText.Should().Be("1.5");
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" });
+
+            comp.Instance.ReadValue.Should().Be(2.5);
+            comp.Instance.ReadText.Should().Be("2.5");
+        }
+
+        /// <summary>
+        /// A ColorPicker-style alpha field without a Culture under a comma-decimal UI culture keeps 0.5 on blur instead of clamping a re-parsed 5 to 1.
+        /// </summary>
+        [Test]
+        [SetCulture("de-DE")]
+        [SetUICulture("de-DE")]
+        public async Task NumericField_DefaultCommaDecimalCulture_AlphaField_BlurWithoutTyping_KeepsValue()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(p => p.Value, 0.5)
+                .Add(p => p.Min, 0)
+                .Add(p => p.Max, 1)
+                .Add(p => p.Step, 0.01));
+
+            await comp.Find("input").BlurAsync(new FocusEventArgs());
+
+            comp.Instance.ReadValue.Should().Be(0.5);
+            comp.Instance.ReadText.Should().Be("0.5");
+        }
+
+        /// <summary>
+        /// A field without a Culture under the en-US UI culture keeps its dot-decimal formatting, parsing, and stepping.
+        /// </summary>
+        [Test]
+        [SetCulture("en-US")]
+        [SetUICulture("en-US")]
+        public Task NumericField_DefaultDotDecimalCulture_BehaviorUnchanged() => AssertDotDecimalDefaultCultureBehavior();
+
+        /// <summary>
+        /// A field without a Culture under the invariant UI culture keeps its dot-decimal formatting, parsing, and stepping.
+        /// </summary>
+        [Test]
+        public Task NumericField_DefaultInvariantCulture_BehaviorUnchanged() => AssertDotDecimalDefaultCultureBehavior();
+
+        /// <summary>
+        /// Asserts that a field without a Culture formats, survives a blur without typing, parses typed text, and steps with a dot decimal separator.
+        /// </summary>
+        private async Task AssertDotDecimalDefaultCultureBehavior()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(p => p.Value, 1.5));
+
+            comp.Instance.ReadText.Should().Be("1.5");
+
+            await comp.Find("input").BlurAsync(new FocusEventArgs());
+            comp.Instance.ReadValue.Should().Be(1.5);
+            comp.Instance.ReadText.Should().Be("1.5");
+
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "ArrowUp", Type = "keydown" });
+            comp.Instance.ReadValue.Should().Be(2.5);
+            comp.Instance.ReadText.Should().Be("2.5");
+
+            await comp.Find("input").ChangeAsync("12.5");
+            await comp.Find("input").BlurAsync(new FocusEventArgs());
+            comp.Instance.ReadValue.Should().Be(12.5);
+            comp.Instance.ReadText.Should().Be("12.5");
+        }
+
+        /// <summary>
+        /// A Culture supplied by the parent after the first render replaces the invariant default.
+        /// </summary>
+        [Test]
+        [SetCulture("de-DE")]
+        [SetUICulture("de-DE")]
+        public async Task NumericField_DefaultCommaDecimalCulture_CultureSetLater_Wins()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(p => p.Value, 1.5));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.GetCultureInfo("de-DE")));
+
+            comp.Instance.GetState(x => x.Culture).Name.Should().Be("de-DE");
+            comp.Instance.ReadText.Should().Be("1,5");
+        }
+
+        /// <summary>
+        /// A Format without a Culture keeps the UI culture, so the invariant default only applies to fully unconfigured fields.
+        /// </summary>
+        [Test]
+        [SetCulture("de-DE")]
+        [SetUICulture("de-DE")]
+        public void NumericField_DefaultCommaDecimalCulture_FormatWithoutCulture_UsesUiCulture()
+        {
+            var comp = Context.Render<MudNumericField<double>>(parameters => parameters
+                .Add(p => p.Value, 1.5)
+                .Add(p => p.Format, "F2"));
+
+            comp.Instance.GetState(x => x.Culture).Name.Should().Be("de-DE");
+            comp.Instance.ReadText.Should().Be("1,50");
+        }
+
+        /// <summary>
+        /// A static server render of a field without a Culture under a comma-decimal UI culture emits invariant text, because the culture is chosen before the first render.
+        /// </summary>
+        [Test]
+        [SetCulture("de-DE")]
+        [SetUICulture("de-DE")]
+        public async Task NumericField_DefaultCommaDecimalCulture_StaticRender_UsesInvariantText()
+        {
+            await using var htmlRenderer = new HtmlRenderer(Context.Services, NullLoggerFactory.Instance);
+
+            var html = await htmlRenderer.Dispatcher.InvokeAsync(async () =>
+            {
+                var output = await htmlRenderer.RenderComponentAsync<MudNumericField<double>>(ParameterView.FromDictionary(new Dictionary<string, object>
+                {
+                    [nameof(MudNumericField<double>.Value)] = 1.5,
+                }));
+
+                return output.ToHtmlString();
+            });
+
+            html.Should().Contain("value=\"1.5\"");
+            html.Should().NotContain("value=\"1,5\"");
         }
 
         [Test]

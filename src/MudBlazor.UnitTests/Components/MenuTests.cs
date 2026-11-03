@@ -164,7 +164,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Regression guard for https://github.com/MudBlazor/MudBlazor/issues/13141.
             // The automatic viewport-overflow scrollbar (and an explicit MaxHeight) only work if
-            // mudPopover.js can reach the menu's .mud-list by descending single-child wrappers from
+            // mudPopover.ts can reach the menu's .mud-list by descending single-child wrappers from
             // the popover content node, and if that wrapper carries the class the SCSS max-height
             // inheritance chain targets. The v9 keyboard/focus wrapper silently broke both, with no
             // test catching it.
@@ -174,14 +174,14 @@ namespace MudBlazor.UnitTests.Components
 
             var popover = comp.FindAll("div.mud-popover").Single(p => p.QuerySelector(".mud-menu-list") is not null);
 
-            // Mirror the descent in mudPopover.js: walk down through single-child wrappers to the list.
+            // Mirror the descent in mudPopover.ts: walk down through single-child wrappers to the list.
             var node = popover.FirstElementChild;
             while (node is not null && !node.ClassList.Contains("mud-list") && node.ChildElementCount == 1)
             {
                 node = node.FirstElementChild;
             }
 
-            node.Should().NotBeNull("mudPopover.js locates the scrollable menu list by descending single-child wrappers from the popover");
+            node.Should().NotBeNull("mudPopover.ts locates the scrollable menu list by descending single-child wrappers from the popover");
             node!.ClassList.Should().Contain("mud-list");
 
             // The list's wrapper must keep the class the SCSS max-height inheritance chain targets.

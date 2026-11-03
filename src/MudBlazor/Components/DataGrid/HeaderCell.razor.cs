@@ -715,6 +715,11 @@ namespace MudBlazor
             return Task.CompletedTask;
         }
 
+        private Task OnFilterMenuKeyDownAsync(KeyboardEventArgs args)
+        {
+            return args.Key == "Escape" ? CloseFilterAsync() : Task.CompletedTask;
+        }
+
         private async Task CheckedChangedAsync(bool value)
         {
             if (DataGrid is not null)

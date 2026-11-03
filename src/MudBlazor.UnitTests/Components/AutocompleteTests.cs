@@ -1394,6 +1394,450 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A search that ignores its token and finishes after a newer one does not replace the newer search's results (#13943).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_OlderSearchFinishingLast_DoesNotReplaceNewerResults()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searches = 0;
+            var first = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var second = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) => ++searches == 1 ? first.Task : second.Task));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().Be(1));
+
+            await comp.Find("input").InputAsync("Apple Pie");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().Be(2));
+
+            second.SetResult(["Apple Pie"]);
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple Pie"));
+
+            first.SetResult(["Apple", "Apple Cider", "Apple Pie"]);
+            await comp.InvokeAsync(() => first.Task);
+
+            provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple Pie");
+        }
+
+        /// <summary>
+        /// A search still running when the text drops below MinCharacters does not reopen the menu when it finishes (#13943).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_SearchFinishingAfterTextDropsBelowMinCharacters_KeepsMenuClosed()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var searchStarted = false;
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.MinCharacters, 3)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    searchStarted = true;
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searchStarted.Should().BeTrue());
+
+            await comp.Find("input").InputAsync("Ap");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.InvokeAsync(() => { });
+
+            search.SetResult(["Apple"]);
+            await comp.InvokeAsync(() => search.Task);
+
+            provider.FindAll("div.mud-popover-open").Should().BeEmpty();
+            provider.FindAll("div.mud-list-item").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Dropping the text below MinCharacters while a search runs clears the progress indicator, and the search finishing later does not bring it back (#13943).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_TextDropsBelowMinCharacters_ClearsProgressIndicator()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.MinCharacters, 3)
+                .Add(x => x.ShowProgressIndicator, true)
+                .Add(x => x.SearchFunc, (_, _) => search.Task));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().Contain("mud-autocomplete--with-progress"));
+
+            await comp.Find("input").InputAsync("Ap");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress"));
+
+            search.SetResult(["Apple"]);
+            await comp.InvokeAsync(() => search.Task);
+
+            comp.Find("div.mud-autocomplete").ClassList.Should().NotContain("mud-autocomplete--with-progress");
+            provider.FindAll("div.mud-popover-open").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A search paused in an awaiting ReturnedItemsCountChanged handler does not overwrite a newer search that finishes meanwhile (#13943).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task Autocomplete_OlderSearchResumingAfterReturnedItemsCountChanged_DoesNotReplaceNewerResults()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searches = new List<TaskCompletionSource<IEnumerable<string>>>();
+            var firstCountReported = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var releaseFirstCount = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var countReports = 0;
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    searches.Add(search);
+                    return search.Task;
+                })
+                .Add(x => x.ReturnedItemsCountChanged, async (int _) =>
+                {
+                    if (++countReports != 1)
+                        return;
+
+                    firstCountReported.TrySetResult(true);
+                    await releaseFirstCount.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().HaveCount(1));
+            searches[0].SetResult(["Apple", "Apple Cider", "Apple Pie"]);
+            await firstCountReported.Task.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            await comp.Find("input").InputAsync("Apple Pie");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().HaveCount(2));
+            searches[1].SetResult(["Apple Pie"]);
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple Pie"));
+
+            releaseFirstCount.SetResult(true);
+            await comp.InvokeAsync(() => releaseFirstCount.Task);
+
+            provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple Pie");
+        }
+
+        /// <summary>
+        /// A search that ignores its token and finishes after a closing key does not reopen the menu.
+        /// </summary>
+        [TestCase("Escape", false, true)]
+        [TestCase("ArrowUp", true, false)]
+        public async Task Autocomplete_SearchFinishingAfterClosingKey_KeepsMenuClosed(string key, bool altKey, bool onKeyUp)
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var searchStarted = false;
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    searchStarted = true;
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searchStarted.Should().BeTrue());
+
+            var args = new KeyboardEventArgs { Key = key, AltKey = altKey };
+            if (onKeyUp)
+            {
+                await comp.Find("input").KeyUpAsync(args);
+            }
+            else
+            {
+                await comp.Find("input").KeyDownAsync(args);
+            }
+
+            search.SetResult(["Apple"]);
+            await comp.InvokeAsync(() => search.Task);
+
+            comp.Instance.Open.Should().BeFalse();
+            provider.FindAll("div.mud-popover-open").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A search that Escape cancels does not reopen the menu or report a result count, whether cancelling resumes it inline or later.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Autocomplete_SearchCancelledByEscape_DoesNotReopenMenu(bool resumesInline)
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searchStarted = false;
+            var openChanges = new List<bool>();
+            var returnedCounts = new List<int>();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.NoItemsTemplate, builder => builder.AddContent(0, "No matches"))
+                .Add(x => x.OpenChanged, open => openChanges.Add(open))
+                .Add(x => x.ReturnedItemsCountChanged, count => returnedCounts.Add(count))
+                .Add(x => x.SearchFunc, (_, token) =>
+                {
+                    searchStarted = true;
+                    // Without RunContinuationsAsynchronously, cancelling the token resumes the search inside Cancel().
+                    var search = new TaskCompletionSource<IEnumerable<string>>(resumesInline ? TaskCreationOptions.None : TaskCreationOptions.RunContinuationsAsynchronously);
+                    token.Register(() => search.TrySetCanceled(token));
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searchStarted.Should().BeTrue());
+
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Escape" });
+            await comp.InvokeAsync(() => { });
+
+            openChanges.Should().BeEmpty();
+            returnedCounts.Should().BeEmpty();
+            comp.Instance.Open.Should().BeFalse();
+            provider.FindAll(".mud-autocomplete-no-items").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Clicking the input after Escape abandoned a search starts a new search and opens the menu with its results.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_ClickAfterEscapeDuringSearch_OpensMenu()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searches = new List<TaskCompletionSource<IEnumerable<string>>>();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    searches.Add(search);
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().ContainSingle());
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Escape" });
+
+            var clickTask = comp.Find("div.mud-input-control").MouseDownAsync(new MouseEventArgs());
+            await comp.WaitForAssertionAsync(() => searches.Should().HaveCount(2));
+            searches[1].SetResult(["Apple"]);
+            await clickTask;
+
+            comp.Instance.Open.Should().BeTrue();
+            provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple");
+        }
+
+        /// <summary>
+        /// Escape removes the progress indicator of the search it abandons.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_EscapeDuringSearch_RemovesProgressIndicator()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.ShowProgressIndicator, true)
+                .Add(x => x.SearchFunc, (_, _) => search.Task));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".progress-indicator-circular").Should().ContainSingle());
+
+            await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Escape" });
+
+            comp.FindAll(".progress-indicator-circular").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A SearchFunc that closes the menu before it returns does not leave the progress indicator showing.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_SearchFuncClosingMenu_DoesNotShowProgressIndicator()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var searchStarted = false;
+            IRenderedComponent<MudAutocomplete<string>> comp = null;
+            comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.ShowProgressIndicator, true)
+                .Add(x => x.SearchFunc, async (_, _) =>
+                {
+                    searchStarted = true;
+                    await comp.Instance.CloseMenuAsync();
+                    return await search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searchStarted.Should().BeTrue());
+
+            comp.FindAll(".progress-indicator-circular").Should().BeEmpty();
+
+            search.SetResult(["Apple"]);
+            await comp.InvokeAsync(() => search.Task);
+
+            comp.Instance.Open.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Selecting a result while a newer search is still running keeps the menu closed when that search finishes.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Autocomplete_SelectingWhileNewerSearchRuns_KeepsMenuClosed(bool click)
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searches = new List<TaskCompletionSource<IEnumerable<string>>>();
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    searches.Add(search);
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("Ap");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().ContainSingle());
+            searches[0].SetResult(["Apple", "Apricot"]);
+            await comp.WaitForAssertionAsync(() => comp.Instance.Open.Should().BeTrue());
+
+            await comp.Find("input").InputAsync("Apr");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().HaveCount(2));
+
+            if (click)
+            {
+                await ListItem(provider, "Apple").ClickAsync();
+            }
+            else
+            {
+                await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            }
+
+            searches[1].SetResult(["Apricot"]);
+            await comp.InvokeAsync(() => searches[1].Task);
+
+            comp.Instance.ReadValue.Should().Be("Apple");
+            comp.Instance.Open.Should().BeFalse();
+            provider.FindAll("div.mud-popover-open").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Clearing while a search is still running keeps the menu closed when that search finishes.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Autocomplete_ClearingWhileSearchRuns_KeepsMenuClosed(bool clearButton)
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var searchStarted = false;
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.Clearable, true)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    searchStarted = true;
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("App");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searchStarted.Should().BeTrue());
+
+            if (clearButton)
+            {
+                await comp.Find("button.mud-input-clear-button").ClickAsync();
+            }
+            else
+            {
+                await comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Backspace", CtrlKey = true, ShiftKey = true });
+            }
+
+            search.SetResult(["Apple"]);
+            await comp.InvokeAsync(() => search.Task);
+
+            comp.Instance.ReadText.Should().BeNullOrEmpty();
+            comp.Instance.Open.Should().BeFalse();
+            provider.FindAll("div.mud-popover-open").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A debounce still pending when a selection or clear starts does not search or reopen the menu while ValueChanged runs.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Autocomplete_SelectOrClear_CancelsPendingDebounce(bool clear)
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var searches = new List<TaskCompletionSource<IEnumerable<string>>>();
+            var valueChanged = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.Value, "Banana")
+                .Add(x => x.ValueChanged, (string _) => valueChanged.Task)
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+                    searches.Add(search);
+                    return search.Task;
+                }));
+
+            await comp.Find("input").InputAsync("Ap");
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => searches.Should().ContainSingle());
+            searches[0].SetResult(["Apple", "Apricot"]);
+            await comp.WaitForAssertionAsync(() => comp.Instance.Open.Should().BeTrue());
+
+            // Typing arms the debounce again, and the key lands before it fires.
+            await comp.Find("input").InputAsync("Apr");
+            var keyTask = clear
+                ? comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Backspace", CtrlKey = true, ShiftKey = true })
+                : comp.Find("input").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            timeProvider.Advance(TimeSpan.FromMilliseconds(100));
+            valueChanged.SetResult();
+            await keyTask;
+
+            foreach (var search in searches.Skip(1))
+            {
+                search.SetResult(["Apricot"]);
+            }
+            await comp.InvokeAsync(() => { });
+
+            comp.Instance.Open.Should().BeFalse();
+            provider.FindAll("div.mud-popover-open").Should().BeEmpty();
+            searches.Should().ContainSingle();
+        }
+
+        /// <summary>
         /// FullWidth adds the full-width class to the autocomplete.
         /// </summary>
         [Test]
