@@ -174,8 +174,8 @@ namespace MudBlazor
             if (GetReadOnlyState())
                 return;
             await FocusAsync();
-            PickerMonth = month;
             var nextView = GetNextView();
+            PickerMonth = nextView == OpenTo.Date ? GetFirstMonthKeepingColumn(month) : month;
             if (nextView == null)
             {
                 var culture = GetCulture();
