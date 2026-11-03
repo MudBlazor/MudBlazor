@@ -42,7 +42,11 @@
 
         <DocsPageSection>
             <SectionHeader Title="Orientation and Position">
-                <Description><CodeInline>TimelineOrientation</CodeInline> can determine which direction the timeline should go, and <CodeInline>TimelinePosition</CodeInline> sets the lines position.</Description>
+                <Description>
+                    <CodeInline>TimelineOrientation</CodeInline> sets the direction of the timeline, and <CodeInline>TimelinePosition</CodeInline> sets where the line sits.
+                    For start, end, top, and bottom, the line stays at the edge unless an item provides <CodeInline>ItemOpposite</CodeInline>.
+                    When it does, that content stays on the other side of the line and the line moves to the center.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TimelineOrientationPositionExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TimelineOrientationPositionExample />
@@ -51,11 +55,35 @@
 
         <DocsPageSection>
             <SectionHeader Title="Opposite">
-                <Description>Using <CodeInline>ItemOpposite</CodeInline> places content on the other side of the line. In alternate mode the side changes per item. For start, end, top, and bottom it stays on the other side of the line.</Description>
+                <Description>
+                    Using <CodeInline>ItemOpposite</CodeInline> places content on the other side of the line.
+                    In alternate mode the side changes per item.
+                    For start, end, top, and bottom it stays on the other side of the line, and the line moves to the center when any of that timeline's own items provide opposite content.
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
+                        Behavior change: <CodeInline>ItemOpposite</CodeInline> was previously hidden for start, end, top, and bottom.
+                        It is now shown, and the line is centered when the timeline's own items include opposite content.
+                        Timelines with no opposite content keep the line at the edge.
+                        Opposite content on a nested timeline leaves the outer line where it is.
+                    </MudAlert>
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TimelineOppositeExample)" ShowCode="false" Block="true" FullWidth="true">
                 <TimelineOppositeExample />
             </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Start, End, Top, and Bottom">
+                        <Description>
+                            With <CodeInline>TimelinePosition.Start</CodeInline> the time stays on the other side of a centered line.
+                            End, top, and bottom do the same for their own direction.
+                            The orientation example above includes the same content and can switch position.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent Code="@nameof(TimelineOppositeStartExample)" Block="true" FullWidth="true">
+                        <TimelineOppositeStartExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
         </DocsPageSection>
 
         <DocsPageSection>

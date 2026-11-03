@@ -156,22 +156,24 @@
       flex-direction: row;
     }
   }
-  /* Both Start & End. Opposite content is omitted from the layout unless an item provides it. */
+  /* Both Start and End.
+     Opposite content is omitted from the layout unless a direct item provides it.
+     Child combinators ignore opposite content inside a nested timeline. */
   &.mud-timeline-position {
     &-start, &-end {
-      &:not(:has(.mud-timeline-item-opposite)) {
-        .mud-timeline-item-content {
+      &:not(:has(> .mud-timeline-item > .mud-timeline-item-opposite)) {
+        > .mud-timeline-item > .mud-timeline-item-content {
           max-width: calc(100% - 96px);
         }
       }
 
-      &:has(.mud-timeline-item-opposite) {
+      &:has(> .mud-timeline-item > .mud-timeline-item-opposite) {
         &::before {
           left: calc(50% - 1px);
           right: auto;
         }
 
-        .mud-timeline-item:not(.mud-timeline-item-has-opposite)::after {
+        > .mud-timeline-item:not(.mud-timeline-item-has-opposite)::after {
           content: "";
           flex: 1 1 auto;
           max-width: calc(50% - 48px);
@@ -179,18 +181,18 @@
       }
     }
 
-    &-start:has(.mud-timeline-item-opposite) {
-      .mud-timeline-item-opposite {
+    &-start:has(> .mud-timeline-item > .mud-timeline-item-opposite) {
+      > .mud-timeline-item > .mud-timeline-item-opposite {
         text-align: end;
       }
     }
 
-    &-end:has(.mud-timeline-item-opposite) {
-      .mud-timeline-item-content {
+    &-end:has(> .mud-timeline-item > .mud-timeline-item-opposite) {
+      > .mud-timeline-item > .mud-timeline-item-content {
         text-align: end;
       }
 
-      .mud-timeline-item-opposite {
+      > .mud-timeline-item > .mud-timeline-item-opposite {
         text-align: start;
       }
     }
@@ -310,30 +312,32 @@
       flex-direction: column;
     }
   }
-  /* Both Top & Bottom. Opposite content is omitted from the layout unless an item provides it. */
+  /* Both Top and Bottom.
+     Opposite content is omitted from the layout unless a direct item provides it.
+     Child combinators ignore opposite content inside a nested timeline. */
   &.mud-timeline-position {
     &-top, &-bottom {
-      &:not(:has(.mud-timeline-item-opposite)) {
-        .mud-timeline-item-content {
+      &:not(:has(> .mud-timeline-item > .mud-timeline-item-opposite)) {
+        > .mud-timeline-item > .mud-timeline-item-content {
           max-height: calc(100% - 96px);
         }
       }
 
-      &:has(.mud-timeline-item-opposite) {
+      &:has(> .mud-timeline-item > .mud-timeline-item-opposite) {
         &::before {
           top: auto;
           bottom: calc(50% - 1px);
         }
 
-        .mud-timeline-item-content,
-        .mud-timeline-item-opposite {
+        > .mud-timeline-item > .mud-timeline-item-content,
+        > .mud-timeline-item > .mud-timeline-item-opposite {
           flex: 1 1 auto;
           align-self: stretch;
           max-height: calc(50% - 48px);
           text-align: center;
         }
 
-        .mud-timeline-item:not(.mud-timeline-item-has-opposite)::after {
+        > .mud-timeline-item:not(.mud-timeline-item-has-opposite)::after {
           content: "";
           flex: 1 1 auto;
           max-height: calc(50% - 48px);

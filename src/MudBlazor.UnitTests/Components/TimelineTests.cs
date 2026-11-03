@@ -292,5 +292,58 @@ namespace MudBlazor.UnitTests.Components
             timelineItem.ClassList.Should().NotContain("mud-timeline-item-has-opposite");
             timelineItem.QuerySelector(".mud-timeline-item-opposite").Should().BeNull();
         }
+
+        /// <summary>
+        /// Opposite content inside a nested timeline stays on the inner item and does not mark the outer timeline's own items (#14098).
+        /// </summary>
+        [TestCase(TimelineOrientation.Vertical, TimelinePosition.Start, "mud-timeline-position-start")]
+        [TestCase(TimelineOrientation.Horizontal, TimelinePosition.Top, "mud-timeline-position-top")]
+        public void ItemOpposite_NestedTimeline_LeavesOuterItemsUnmarked(TimelineOrientation orientation, TimelinePosition position, string positionClass)
+        {
+            var comp = Context.Render<MudTimeline>(parameters => parameters
+                .Add(p => p.TimelineOrientation, orientation)
+                .Add(p => p.TimelinePosition, position)
+                .AddChildContent<MudTimelineItem>(item => item
+                    .Add(p => p.ItemContent, NestedTimelineWithOpposite)));
+
+            var timelines = comp.FindAll(".mud-timeline");
+            timelines.Count.Should().Be(2);
+
+            var outer = timelines[0];
+            outer.ClassList.Should().Contain(positionClass);
+
+            var outerItems = outer.Children
+                .Where(child => child.ClassList.Contains("mud-timeline-item"))
+                .ToList();
+            outerItems.Should().ContainSingle();
+            var outerItem = outerItems[0];
+            outerItem.ClassList.Should().NotContain("mud-timeline-item-has-opposite");
+            outerItem.Children.Should().NotContain(child => child.ClassList.Contains("mud-timeline-item-opposite"));
+
+            var outerContent = outerItem.Children.Single(child => child.ClassList.Contains("mud-timeline-item-content"));
+            outerContent.Contains(timelines[1]).Should().BeTrue();
+
+            var nestedItem = timelines[1].Children.Single(child => child.ClassList.Contains("mud-timeline-item"));
+            nestedItem.ClassList.Should().Contain("mud-timeline-item-has-opposite");
+            nestedItem.Children
+                .Single(child => child.ClassList.Contains("mud-timeline-item-opposite"))
+                .TextContent.Should().Be("13:37");
+        }
+
+        /// <summary>
+        /// A nested timeline whose own item provides opposite content.
+        /// </summary>
+        private static RenderFragment NestedTimelineWithOpposite => builder =>
+        {
+            builder.OpenComponent<MudTimeline>(0);
+            builder.AddComponentParameter(1, nameof(MudTimeline.ChildContent), (RenderFragment)(inner =>
+            {
+                inner.OpenComponent<MudTimelineItem>(0);
+                inner.AddComponentParameter(1, nameof(MudTimelineItem.ItemOpposite), (RenderFragment)(content => content.AddContent(0, "13:37")));
+                inner.AddComponentParameter(2, nameof(MudTimelineItem.ItemContent), (RenderFragment)(content => content.AddContent(0, "Nested")));
+                inner.CloseComponent();
+            }));
+            builder.CloseComponent();
+        };
     }
 }
