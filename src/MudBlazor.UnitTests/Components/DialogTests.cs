@@ -1204,6 +1204,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Changing a dialog's own <see cref="MudDialog.Options"/> while it is open updates whether navigation closes it (#13608).
+        /// </summary>
+        [Test]
+        public async Task DialogsOwnCloseOnNavigation_ChangedWhileOpen_ShouldApplyOnNavigation()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
+
+            await provider.InvokeAsync(async () => await service.ShowAsync<DialogWithOwnOptions>());
+            await provider.FindComponent<DialogWithOwnOptions>().SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Defaults, new DialogOptions { CloseOnNavigation = true }));
+
+            await provider.InvokeAsync(() => navigationManager.NavigateTo("/other-page"));
+
+            provider.FindAll("div.mud-dialog-container").Should().BeEmpty();
+        }
+
+        /// <summary>
         /// DefaultFocus passed in the dialog options reaches the focus trap.
         /// </summary>
         [Test]

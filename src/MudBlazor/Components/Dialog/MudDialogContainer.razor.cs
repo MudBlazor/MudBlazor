@@ -25,6 +25,7 @@ namespace MudBlazor
     {
         private bool _disposed;
         private MudDialog? _dialog;
+        private DialogOptions? _referenceDialogDefaults;
         private ElementReference _dialogContainerReference;
         private readonly ParameterState<DialogOptions> _dialogOptionsState;
         private readonly ParameterState<string?> _titleState;
@@ -446,12 +447,7 @@ namespace MudBlazor
         void IMudDialogInstanceInternal.Register(MudDialog dialog)
         {
             _dialog = dialog;
-            if (dialog.Options is not null)
-            {
-                // The provider reads CloseOnNavigation from the reference, so it needs the dialog's defaults merged in too.
-                Parent.SetOptions(Id, GetDialogOptionsOrDefault);
-            }
-
+            SyncDialogDefaultsToReference();
             Class = dialog.Class;
             Style = dialog.Style;
             TitleContent = dialog.TitleContent;
@@ -459,7 +455,25 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        void IMudDialogInstance.StateHasChanged() => StateHasChanged();
+        void IMudDialogInstance.StateHasChanged()
+        {
+            // The registered MudDialog calls this after each render, so it also picks up Options changed while open.
+            SyncDialogDefaultsToReference();
+            StateHasChanged();
+        }
+
+        // The provider reads CloseOnNavigation from the reference, so it needs the dialog's defaults merged in too.
+        private void SyncDialogDefaultsToReference()
+        {
+            var dialogDefaults = _dialog?.Options;
+            if (ReferenceEquals(dialogDefaults, _referenceDialogDefaults))
+            {
+                return;
+            }
+
+            _referenceDialogDefaults = dialogDefaults;
+            Parent.SetOptions(Id, GetDialogOptionsOrDefault);
+        }
 
         /// <inheritdoc />
         void IMudDialogInstance.CancelAll()
