@@ -5085,6 +5085,59 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("There are no records to view.");
         }
 
+        /// <summary>
+        /// Full-width rows span the displayed columns so that `table-layout: fixed` keeps the column widths (#11460).
+        /// </summary>
+        [Test]
+        public void FullWidthRowsSpanDisplayedColumns()
+        {
+            DataGridColumnSpanTest.Model[] items = [new("Sam", 56, "Oslo")];
+            var comp = Context.Render<DataGridColumnSpanTest>();
+
+            comp.Find("th.mud-table-empty-row").GetAttribute("colspan").Should().Be("3");
+
+            comp.Render(p => p.Add(x => x.HideAge, true));
+            comp.Find("th.mud-table-empty-row").GetAttribute("colspan").Should().Be("2");
+
+            comp.Render(p => p.Add(x => x.NameHeaderColSpan, 2));
+            comp.Find("th.mud-table-empty-row").GetAttribute("colspan").Should().Be("3");
+
+            comp.Render(p => p.Add(x => x.Loading, true));
+            comp.Find("th.mud-table-loading").GetAttribute("colspan").Should().Be("3");
+
+            comp.Render(p => p
+                .Add(x => x.Loading, false)
+                .Add(x => x.NameHeaderColSpan, 1)
+                .Add(x => x.Virtualize, true));
+            comp.WaitForAssertion(() => comp.Find("th.mud-table-empty-row").GetAttribute("colspan").Should().Be("2"));
+
+            comp.Render(p => p
+                .Add(x => x.Virtualize, false)
+                .Add(x => x.Items, items)
+                .Add(x => x.ShowChildRows, true));
+            comp.Find("td.mud-table-child-content").GetAttribute("colspan").Should().Be("2");
+
+            comp.Render(p => p.Add(x => x.Grouped, true));
+            comp.WaitForAssertion(() => comp.Find("td.mud-datagrid-group").GetAttribute("colspan").Should().Be("2"));
+        }
+
+        /// <summary>
+        /// The filters and columns panel rows span the displayed columns when a column is hidden (#11460).
+        /// </summary>
+        [Test]
+        public async Task PanelRowsSpanDisplayedColumns()
+        {
+            var comp = Context.Render<DataGridColumnSpanTest>(p => p.Add(x => x.HideAge, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnSpanTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+            comp.Find("th.mud-filter-panel-cell").GetAttribute("colspan").Should().Be("2");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ToggleFiltersMenu());
+            await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
+            comp.Find("th.mud-filter-panel-cell").GetAttribute("colspan").Should().Be("2");
+        }
+
         [Test]
         public void DataGridNoRecordsContentVirtualize()
         {
