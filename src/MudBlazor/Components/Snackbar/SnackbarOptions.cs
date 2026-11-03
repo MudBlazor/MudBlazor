@@ -76,7 +76,7 @@ namespace MudBlazor
         /// The custom icon to display for the snackbar.
         /// </summary>
         /// <remarks>
-        /// Defaults to the icon matching the <see cref="Severity"/>.  Setting this to <c>null</c> restores that default.
+        /// Defaults to the icon matching the <see cref="Severity"/>.  Setting this to <c>null</c> restores that default.  Use <see cref="CommonSnackbarOptions.HideIcon"/> to hide the icon.
         /// </remarks>
         [AllowNull]
         public string Icon
