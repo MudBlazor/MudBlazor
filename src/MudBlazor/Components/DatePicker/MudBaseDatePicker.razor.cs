@@ -373,12 +373,8 @@ namespace MudBlazor
 
             var monthStart = new DateTime(year, startMonth, 1, 0, 0, 0, 0, calendar, DateTimeKind.Utc);
 
-            // Handle explicit max boundary
-            if (_picker_month.HasValue &&
-                calendar.GetYear(_picker_month.Value) == 9999 &&
-                calendar.GetMonth(_picker_month.Value) ==
-                calendar.GetMonthsInYear(9999) &&
-                month >= 1)
+            // Months after the last supported month can't be represented, so they start at the max boundary.
+            if (month > 0 && calendar.AddMonths(calendar.MaxSupportedDateTime.StartOfMonth(culture), -month) < monthStart)
             {
                 return calendar.MaxSupportedDateTime;
             }

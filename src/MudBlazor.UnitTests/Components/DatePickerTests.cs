@@ -677,6 +677,63 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.PickerMonth.Should().Be(new DateTime(1, 3, 1));
         }
 
+        /// <summary>
+        /// With several months displayed, starting on the last supported month leaves the later columns empty instead of throwing.
+        /// </summary>
+        [Test]
+        public void DisplayMonths_StartAtLastSupportedMonth_LeavesLaterColumnsEmpty()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 3)
+                .Add(p => p.StartMonth, new DateTime(9999, 12, 1)));
+
+            comp.FindAll("div.mud-picker-calendar-container").Should().HaveCount(3);
+            comp.FindAll("button.mud-button-month").Select(header => header.TextContent.Trim()).Should().Equal("9999 December");
+            comp.FindAll("div.mud-picker-calendar-container")[2].ChildElementCount.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Moving to the next month while a later column would pass the last supported month does not throw.
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_NextMonthNearLastSupportedMonth_ShowsRemainingMonths()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 3)
+                .Add(p => p.StartMonth, new DateTime(9999, 10, 1)));
+
+            await comp.FindAll("button.mud-picker-nav-button-next").Last().ClickAsync();
+
+            comp.Instance.PickerMonth.Should().Be(new DateTime(9999, 11, 1));
+            comp.FindAll("button.mud-button-month").Select(header => header.TextContent.Trim()).Should().Equal("9999 November", "9999 December");
+        }
+
+        /// <summary>
+        /// Picking December 9999 from the month view in the second column keeps it there without throwing.
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_ClickSecondHeader_SelectLastSupportedMonth_KeepsMonthInSecondColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 3)
+                .Add(p => p.MaxDate, DateTime.MaxValue)
+                .Add(p => p.StartMonth, new DateTime(2024, 1, 1)));
+
+            await comp.FindAll("button.mud-button-month")[1].ClickAsync();
+            await comp.FindAll("div.mud-picker-calendar-container")[1].QuerySelector("button.mud-picker-calendar-header-transition")!.ClickAsync();
+            await comp.FindAll("div.mud-picker-year").First(year => year.TextContent.Trim() == "9999").ClickAsync();
+            await comp.FindAll("button.mud-picker-month")[11].ClickAsync();
+
+            comp.Instance.PickerMonth.Should().Be(new DateTime(9999, 11, 1));
+            comp.FindAll("button.mud-button-month").Select(header => header.TextContent.Trim()).Should().Equal("9999 November", "9999 December");
+        }
+
         [Test]
         public async Task DatePickerStaticWithPickerActionsDayClick()
         {
