@@ -54,7 +54,7 @@
                aria-describedby="@GetAriaDescribedByString()"
                aria-invalid="@HasErrors.ToString().ToLowerInvariant()"
                aria-required="@Required.ToString().ToLowerInvariant()"
-               @attributes="UserAttributes"
+               @attributes="GetInputElementUserAttributes()"
                id="@InputElementId"
                type="@InputTypeString"
                @bind:event="@(Immediate ? "oninput" : "onchange")"

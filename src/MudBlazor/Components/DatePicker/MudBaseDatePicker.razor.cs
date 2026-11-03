@@ -13,6 +13,8 @@ namespace MudBlazor
     {
         private readonly string _mudPickerCalendarContentElementId;
         private readonly ParameterState<string?> _dateFormatState;
+        internal readonly ParameterState<DateTime?> MinDateState;
+        internal readonly ParameterState<DateTime?> MaxDateState;
 
         protected MudBaseDatePicker()
         {
@@ -23,6 +25,12 @@ namespace MudBlazor
             _dateFormatState = registerScope.RegisterParameter<string?>(nameof(DateFormat))
                 .WithParameter(() => DateFormat)
                 .WithChangeHandler(DateFormatChangedAsync);
+            MinDateState = registerScope.RegisterParameter<DateTime?>(nameof(MinDate))
+                .WithParameter(() => MinDate)
+                .WithChangeHandler(OnDateLimitsChanged);
+            MaxDateState = registerScope.RegisterParameter<DateTime?>(nameof(MaxDate))
+                .WithParameter(() => MaxDate)
+                .WithChangeHandler(OnDateLimitsChanged);
         }
 
         [Inject]
@@ -37,14 +45,14 @@ namespace MudBlazor
         /// <summary>
         /// The maximum selectable date.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
         public DateTime? MaxDate { get; set; }
 
         /// <summary>
         /// The minimum selectable date.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
         public DateTime? MinDate { get; set; }
 
@@ -61,6 +69,10 @@ namespace MudBlazor
         /// <summary>
         /// The format for selected dates.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which uses the <see cref="DateTimeFormatInfo.ShortDatePattern"/> of <see cref="MudFormComponent{T, U}.Culture"/>.
+        /// A <c>/</c> in the format is replaced by the culture's date separator; use <c>'/'</c> for a literal slash.
+        /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? DateFormat { get; set; }
@@ -74,6 +86,18 @@ namespace MudBlazor
         }
 
         private Task DateFormatChangedAsync(ParameterChangedEventArgs<string?> args) => DateFormatChangedAsync(args.Value);
+
+        /// <summary>
+        /// Occurs when <see cref="MinDate"/> or <see cref="MaxDate"/> has changed.
+        /// </summary>
+        internal virtual void OnDateLimitsChanged()
+        {
+        }
+
+        /// <summary>
+        /// Whether a range has a first date and is waiting for its second.
+        /// </summary>
+        internal virtual bool IsRangeSelectionPending => false;
 
         /// <summary>
         /// The day representing the first day of the week.
@@ -281,7 +305,9 @@ namespace MudBlazor
             await base.OnPickerOpenedAsync();
             if (Editable && Text != null)
             {
-                var dateTime = ConvertGet(Text);
+                // Opening only moves the calendar, so convert without ConvertGet, which records a conversion error and marks the picker as touched.
+                // A range picker's text holds both dates and never converts to one, so opening it flagged a valid range as invalid.
+                var dateTime = GetConverter().TryConvertBack(Text).Value;
                 if (dateTime.HasValue)
                 {
                     var culture = GetCulture();
@@ -474,8 +500,8 @@ namespace MudBlazor
 
         protected virtual bool IsDayDisabled(DateTime date)
         {
-            return date < MinDate ||
-                   date > MaxDate ||
+            return date < MinDateState.Value ||
+                   date > MaxDateState.Value ||
                    IsDateDisabledFunc(date);
         }
 
@@ -576,14 +602,14 @@ namespace MudBlazor
             var calendar = culture.Calendar;
             if (!FixDay.HasValue)
             {
-                return month.EndOfMonth(culture) < MinDate || month > MaxDate;
+                return month.EndOfMonth(culture) < MinDateState.Value || month > MaxDateState.Value;
             }
             if (calendar.GetDaysInMonth(calendar.GetYear(month), calendar.GetMonth(month)) < FixDay!.Value)
             {
                 return true;
             }
             var day = new DateTime(month.Year, month.Month, FixDay!.Value);
-            return day < MinDate || day > MaxDate || IsDateDisabledFunc(day);
+            return day < MinDateState.Value || day > MaxDateState.Value || IsDateDisabledFunc(day);
         }
 
         /// <summary>
@@ -712,15 +738,14 @@ namespace MudBlazor
             var dateTime = date ?? GetMonthStart(0);
             var id = $"{_componentId}{calendar.GetYear(dateTime)}";
             await ScrollManager.ScrollToYearAsync(id);
-            StateHasChanged();
         }
 
         protected int GetMinYear()
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            if (MinDate.HasValue)
-                return calendar.GetYear(MinDate.Value);
+            if (MinDateState.Value is { } minDate)
+                return calendar.GetYear(minDate);
             return calendar.GetYear(TimeProvider.GetLocalNow().Date) - 100;
         }
 
@@ -728,8 +753,8 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            if (MaxDate.HasValue)
-                return calendar.GetYear(MaxDate.Value);
+            if (MaxDateState.Value is { } maxDate)
+                return calendar.GetYear(maxDate);
             return calendar.GetYear(TimeProvider.GetLocalNow().Date) + 100;
         }
 
@@ -827,23 +852,34 @@ namespace MudBlazor
             AdornmentAriaLabel ??= Localizer[Resources.LanguageResource.MudBaseDatePicker_Open];
             CurrentView = OpenTo;
 
-            if (HighlightedDate is null)
-            {
-                var culture = GetCulture();
-                var calendar = culture.Calendar;
-                var today = TimeProvider.GetLocalNow().Date;
-
-                var year = FixYear ?? calendar.GetYear(today);
-                var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);
-                var day = FixDay ?? 1;
-
-                if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date))
-                {
-                    HighlightedDate = date;
-                }
-            }
+            HighlightedDate ??= GetInitialHighlightedDate();
 
             _picker_month ??= GetCalendarStartOfMonth();
+        }
+
+        private DateTime? GetInitialHighlightedDate()
+        {
+            var culture = GetCulture();
+            var calendar = culture.Calendar;
+            var today = TimeProvider.GetLocalNow().Date;
+
+            var year = FixYear ?? calendar.GetYear(today);
+            var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);
+            var day = FixDay ?? 1;
+
+            return DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date)
+                ? date
+                : null;
+        }
+
+        /// <summary>
+        /// Returns the calendar to where an empty picker starts, after a reset has cleared the value.
+        /// </summary>
+        private protected void ResetCalendarToStart()
+        {
+            // The start month can come from the highlighted day, which carries FixYear and FixMonth, so restore it rather than keep a highlight left over from the cleared value or keyboard navigation.
+            HighlightedDate = GetInitialHighlightedDate();
+            PickerMonth = GetCalendarStartOfMonth();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -907,6 +943,17 @@ namespace MudBlazor
         private ValueTask HandleMouseoverOnPickerCalendarDayButton(int tempId)
         {
             return JsApiService.UpdateStyleProperty(_mudPickerCalendarContentElementId, "--selected-day", tempId);
+        }
+
+        private async Task HandleDayButtonClickAsync(DateTime day, int tempId)
+        {
+            await OnDayClickedAsync(day);
+
+            // A day picked by keyboard gets no pointerover, so a range started that way would preview from a stale or initial hover position.
+            if (IsRangeSelectionPending)
+            {
+                await HandleMouseoverOnPickerCalendarDayButton(tempId);
+            }
         }
     }
 }

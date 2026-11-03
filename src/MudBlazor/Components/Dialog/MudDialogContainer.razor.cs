@@ -437,6 +437,11 @@ namespace MudBlazor
         /// <inheritdoc />
         void IMudDialogInstance.Cancel() => ((IMudDialogInstance)this).Close(DialogResult.Cancel());
 
+        // Read from the registered MudDialog on every render so later changes to its Style and TitleContent show up.
+        private string? CurrentStyle => _dialog is null ? Style : _dialog.Style;
+
+        private RenderFragment? CurrentTitleContent => _dialog is null ? TitleContent : _dialog.TitleContent;
+
         /// <inheritdoc />
         void IMudDialogInstanceInternal.Register(MudDialog dialog)
         {

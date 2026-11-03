@@ -123,6 +123,11 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 }
 
 
+// Shrinks the expand/select column to its content instead of sharing leftover width.
+.mud-table-cell-fit {
+  width: 0;
+}
+
 .mud-table-cell {
   display: table-cell;
   padding: 16px;

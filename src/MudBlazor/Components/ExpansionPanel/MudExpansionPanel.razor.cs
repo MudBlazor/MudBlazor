@@ -17,6 +17,7 @@ namespace MudBlazor
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
         internal readonly ParameterState<bool> _expandedState;
+        private readonly string _contentId = Identifier.Create("expansion-panel");
 
         [CascadingParameter]
         private MudExpansionPanels? Parent { get; set; }
@@ -65,6 +66,8 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  When set, overrides the <see cref="Text"/> property.
+        /// The header is exposed as a button, so this content becomes its accessible name.
+        /// Put interactive controls in the panel content rather than here, since a control inside a button is not reliably reachable by assistive technology.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]

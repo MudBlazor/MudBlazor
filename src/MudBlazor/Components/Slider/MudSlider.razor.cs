@@ -16,6 +16,7 @@ namespace MudBlazor
         private bool _nullableValueResetToDefault = false;
         private readonly ParameterState<T> _valueState;
         private readonly ParameterState<T?> _nullableValueState;
+        private readonly string _labelId = Identifier.Create("slider-label");
 
         public MudSlider()
         {
@@ -29,6 +30,11 @@ namespace MudBlazor
                 .WithEventCallback(() => NullableValueChanged)
                 .WithChangeHandler(OnNullableValueParameterChangedAsync);
         }
+
+        private string? AriaLabelledBy =>
+            ChildContent is null || UserAttributes.ContainsKey("aria-label") || UserAttributes.ContainsKey("aria-labelledby")
+                ? null
+                : _labelId;
 
         protected string Classname =>
             new CssBuilder("mud-slider")

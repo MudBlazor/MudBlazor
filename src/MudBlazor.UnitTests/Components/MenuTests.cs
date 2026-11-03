@@ -48,6 +48,22 @@ namespace MudBlazor.UnitTests.Components
             await contextMenu.Should().NotThrowAsync();
         }
 
+        /// <summary>
+        /// A right-click menu with ActivatorContent prevents the browser context menu, so it must register its own contextmenu listener.
+        /// Until .NET 10, Blazor ignores a handler-less preventDefault unless some other contextmenu listener exists on the page.
+        /// </summary>
+        [Test]
+        public async Task Menu_RightClickActivationWithActivatorContent_RegistersContextMenuListener()
+        {
+            var comp = Context.Render<MudMenu>(parameters => parameters
+                .Add(p => p.ActivationEvent, MouseEvent.RightClick)
+                .Add(p => p.ActivatorContent, _ => builder => builder.AddContent(0, "Activator")));
+
+            await comp.Find("div.mud-menu").ContextMenuAsync(new MouseEventArgs { Button = 2 });
+
+            comp.Instance.Open.Should().BeFalse("the activator content, not the menu root, decides when the menu opens");
+        }
+
         [Test]
         public async Task OpenMenu_ClickFirstItem_CheckClosed()
         {
@@ -148,7 +164,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Regression guard for https://github.com/MudBlazor/MudBlazor/issues/13141.
             // The automatic viewport-overflow scrollbar (and an explicit MaxHeight) only work if
-            // mudPopover.js can reach the menu's .mud-list by descending single-child wrappers from
+            // mudPopover.ts can reach the menu's .mud-list by descending single-child wrappers from
             // the popover content node, and if that wrapper carries the class the SCSS max-height
             // inheritance chain targets. The v9 keyboard/focus wrapper silently broke both, with no
             // test catching it.
@@ -158,14 +174,14 @@ namespace MudBlazor.UnitTests.Components
 
             var popover = comp.FindAll("div.mud-popover").Single(p => p.QuerySelector(".mud-menu-list") is not null);
 
-            // Mirror the descent in mudPopover.js: walk down through single-child wrappers to the list.
+            // Mirror the descent in mudPopover.ts: walk down through single-child wrappers to the list.
             var node = popover.FirstElementChild;
             while (node is not null && !node.ClassList.Contains("mud-list") && node.ChildElementCount == 1)
             {
                 node = node.FirstElementChild;
             }
 
-            node.Should().NotBeNull("mudPopover.js locates the scrollable menu list by descending single-child wrappers from the popover");
+            node.Should().NotBeNull("mudPopover.ts locates the scrollable menu list by descending single-child wrappers from the popover");
             node!.ClassList.Should().Contain("mud-list");
 
             // The list's wrapper must keep the class the SCSS max-height inheritance chain targets.
