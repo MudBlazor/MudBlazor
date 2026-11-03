@@ -65,6 +65,78 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// <c>RowHref</c> renders a real link in the first cell of each row, so the browser handles
+        /// navigation, new tabs and middle clicks.
+        /// </summary>
+        [Test]
+        public void TableRowHref_RendersLinkInFirstCellOnly()
+        {
+            var comp = Context.Render<TableRowHrefTest>();
+            var rows = comp.FindAll("tbody tr");
+
+            rows[0].ClassList.Should().Contain("mud-table-row-link");
+            var links = rows[0].QuerySelectorAll("a.mud-table-row-link-anchor");
+            links.Should().ContainSingle();
+            links[0].GetAttribute("href").Should().Be("/people/1");
+            links[0].TextContent.Trim().Should().Be("Ada");
+            links[0].ParentElement!.GetAttribute("data-label").Should().Be("Name");
+            links[0].HasAttribute("target").Should().BeFalse();
+
+            rows[1].QuerySelector("a.mud-table-row-link-anchor")!.GetAttribute("href").Should().Be("/people/2");
+        }
+
+        /// <summary>
+        /// A row whose <c>RowHref</c> result is <c>null</c> renders without a link.
+        /// </summary>
+        [Test]
+        public void TableRowHref_NullHrefRendersPlainRow()
+        {
+            var comp = Context.Render<TableRowHrefTest>();
+            var row = comp.FindAll("tbody tr")[2];
+
+            row.ClassList.Should().NotContain("mud-table-row-link");
+            row.QuerySelector("a.mud-table-row-link-anchor").Should().BeNull();
+        }
+
+        /// <summary>
+        /// Without <c>RowHref</c> the table renders exactly as before.
+        /// </summary>
+        [Test]
+        public void TableRowHref_NotSet_RendersNoLinks()
+        {
+            var comp = Context.Render<TableRowHrefTest>(parameters => parameters.Add(p => p.RowHref, null));
+
+            comp.FindAll("a.mud-table-row-link-anchor").Should().BeEmpty();
+            comp.FindAll("tr.mud-table-row-link").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// <c>RowTarget</c> is applied to the link, and <c>_blank</c> gets <c>rel="noopener"</c>.
+        /// </summary>
+        [Test]
+        public void TableRowHref_RowTargetBlank_AddsNoopener()
+        {
+            var comp = Context.Render<TableRowHrefTest>(parameters => parameters.Add(p => p.RowTarget, "_blank"));
+            var link = comp.Find("a.mud-table-row-link-anchor");
+
+            link.GetAttribute("target").Should().Be("_blank");
+            link.GetAttribute("rel").Should().Be("noopener");
+        }
+
+        /// <summary>
+        /// Linked rows still raise <c>OnRowClick</c> when clicked.
+        /// </summary>
+        [Test]
+        public async Task TableRowHref_RowClickStillFires()
+        {
+            var comp = Context.Render<TableRowHrefTest>();
+
+            await comp.FindAll("tbody tr")[1].ClickAsync();
+
+            comp.Find("p.clicked").TextContent.Trim().Should().Be("Grace");
+        }
+
+        /// <summary>
         /// Check if the OnRowMouseEnter and OnRowMouseLeave event callbacks are fired as intended
         /// </summary>
         [Test]

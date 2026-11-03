@@ -37,6 +37,20 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Row Links">
+                <Description>
+                    Set <CodeInline>RowHref</CodeInline> to turn each row into a link. The first cell renders a real link that covers the whole row,
+                    so people can open a row in a new tab with Ctrl/Cmd+click or a middle click, and copy its address. Return <CodeInline>null</CodeInline>
+                    for rows that shouldn't link. Use <CodeInline>RowTarget</CodeInline> to choose where the link opens.
+                    Buttons and other controls inside the row keep working, and the link text comes from the first cell, so make that cell describe the row.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableRowHrefExample)" Block="true" FullWidth="true">
+                <TableRowHrefExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Hover Events">
                 <Description>
                     <CodeInline>OnRowMouseEnter</CodeInline> is triggered when the row starts being hovered (onpointerenter event).

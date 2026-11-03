@@ -7,7 +7,7 @@ namespace MudBlazor
     /// <summary>
     /// A cell within a <see cref="MudTr" />, <see cref="MudTHeadRow"/>, or <see cref="MudTFootRow"/> row component.
     /// </summary>
-    public partial class MudTd : MudComponentBase
+    public partial class MudTd : MudComponentBase, IDisposable
     {
         protected string Classname =>
             new CssBuilder("mud-table-cell")
@@ -21,6 +21,32 @@ namespace MudBlazor
         /// </summary>
         [CascadingParameter]
         public TableContext? Context { get; set; }
+
+        /// <summary>
+        /// The data row containing this cell, when it is a cell of a <see cref="MudTr"/>.
+        /// </summary>
+        [CascadingParameter]
+        private MudTr? Row { get; set; }
+
+        /// <summary>
+        /// The row URL when this cell hosts the row link: the first cell of a linked row in the same table.
+        /// </summary>
+        private string? LinkHref
+        {
+            get
+            {
+                // A nested table's cells must not pick up the outer row's link
+                if (Row is null || !ReferenceEquals(Row.Context?.Table, Context?.Table))
+                {
+                    return null;
+                }
+
+                var href = Row.Href;
+                return href is not null && Row.ClaimLinkCell(this) ? href : null;
+            }
+        }
+
+        private string? LinkRel => Row?.LinkTarget == "_blank" ? "noopener" : null;
 
         /// <summary>
         /// The content within this cell.
@@ -47,5 +73,26 @@ namespace MudBlazor
         /// Suppresses the browser's default context menu when a custom <c>@oncontextmenu</c> handler is supplied via <see cref="MudComponentBase.UserAttributes"/>.
         /// </summary>
         protected bool PreventContextMenuDefault => UserAttributes is not null && UserAttributes.ContainsKey("oncontextmenu");
+
+        /// <summary>
+        /// Releases resources used by this cell.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this cell.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Row?.ReleaseLinkCell(this);
+            }
+        }
     }
 }

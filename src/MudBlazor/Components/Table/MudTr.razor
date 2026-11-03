@@ -50,7 +50,9 @@
             </div>
         </td>
     }
-    @ChildContent
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
     @if (Context?.Table?.Editable == true && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtEnd() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true))
     {
         @* Add datalabel as a placeholder to avoid jumps on small viewports *@

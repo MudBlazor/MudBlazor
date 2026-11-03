@@ -1,0 +1,35 @@
+﻿<MudTable T="Person" Items="_people" RowHref="@RowHref" RowTarget="@RowTarget" OnRowClick="@(args => _clicked.Add(args.Item!.Name))">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Role</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Role">@context.Role</MudTd>
+        <MudTd DataLabel="Actions"><MudButton Class="row-action">Archive</MudButton></MudTd>
+    </RowTemplate>
+</MudTable>
+
+<p class="clicked">@string.Join(",", _clicked)</p>
+
+@code {
+    public static string __description__ = "Rows link to RowHref; rows where it returns null stay plain rows.";
+
+    public record Person(int Id, string Name, string Role);
+
+    private readonly Person[] _people =
+    [
+        new(1, "Ada", "Engineer"),
+        new(2, "Grace", "Admiral"),
+        new(3, "Linus", "Maintainer"),
+    ];
+
+    private readonly List<string> _clicked = [];
+
+    [Parameter]
+    public Func<Person, string?>? RowHref { get; set; } = person => person.Id == 3 ? null : $"/people/{person.Id}";
+
+    [Parameter]
+    public string? RowTarget { get; set; }
+}

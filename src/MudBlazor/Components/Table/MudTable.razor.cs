@@ -338,6 +338,33 @@ namespace MudBlazor
         public Func<T, int, string>? RowStyleFunc { get; set; }
 
         /// <summary>
+        /// The function which returns the URL a row links to.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  When the function returns a URL, the first cell of the row renders a link that covers
+        /// the whole row, so the browser handles navigation, opening in a new tab (Ctrl/Cmd+click or middle click) and copying
+        /// the link.  Return <c>null</c> to keep a row unlinked.  <see cref="OnRowClick"/> is still raised when a linked row is
+        /// clicked.  Use <see cref="RowTarget"/> to control where the URL is opened.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
+        public Func<T, string?>? RowHref { get; set; }
+
+        /// <summary>
+        /// The target to open row URLs in when <see cref="RowHref"/> is set.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which opens the URL in the current tab.  <c>_blank</c> adds <c>rel="noopener"</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
+        public string? RowTarget { get; set; }
+
+        internal override string? GetRowHref(object? item) => RowHref is not null && item is T typedItem ? RowHref(typedItem) : null;
+
+        internal override string? RowLinkTarget => RowTarget;
+
+        /// <summary>
         /// The currently selected item when <c>MultiSelection</c> is <c>false</c>.
         /// </summary>
         /// <remarks>

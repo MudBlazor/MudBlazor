@@ -14,10 +14,12 @@ namespace MudBlazor
         private bool _hasBeenCanceled;
         private bool _hasBeenCommitted;
         private bool _hasBeenClickedFirstTime;
+        private MudTd? _linkCell;
 
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class)
             .AddClass(DisabledClass, Disabled)
+            .AddClass("mud-table-row-link", Href is not null)
             .Build();
 
         protected string ActionsStylename => new StyleBuilder()
@@ -128,6 +130,46 @@ namespace MudBlazor
                     _checked = value;
                     CheckedChanged.InvokeAsync(value);
                 }
+            }
+        }
+
+        /// <summary>
+        /// The URL this row links to, from <see cref="MudTable{T}.RowHref"/>.
+        /// </summary>
+        /// <remarks>
+        /// <c>null</c> while the row is disabled or being edited, so a link never covers inputs or disabled content.
+        /// </remarks>
+        internal string? Href
+        {
+            get
+            {
+                var table = Context?.Table;
+                if (table is null || Disabled || (table.Editable && ReferenceEquals(table._editingItem, Item)))
+                {
+                    return null;
+                }
+
+                var href = table.GetRowHref(Item);
+                return string.IsNullOrWhiteSpace(href) ? null : href;
+            }
+        }
+
+        internal string? LinkTarget => Context?.Table?.RowLinkTarget;
+
+        /// <summary>
+        /// Lets the first cell rendered in this row host the row link, so the row renders a single link.
+        /// </summary>
+        internal bool ClaimLinkCell(MudTd cell)
+        {
+            _linkCell ??= cell;
+            return ReferenceEquals(_linkCell, cell);
+        }
+
+        internal void ReleaseLinkCell(MudTd cell)
+        {
+            if (ReferenceEquals(_linkCell, cell))
+            {
+                _linkCell = null;
             }
         }
 

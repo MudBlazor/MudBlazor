@@ -805,6 +805,10 @@ namespace MudBlazor
 
         internal abstract Task InvokeServerLoadFunc();
 
+        internal virtual string? GetRowHref(object? item) => null;
+
+        internal virtual string? RowLinkTarget => null;
+
         internal abstract Task FireRowClickEventAsync(MouseEventArgs args, MudTr mudTr, object? item);
 
         internal abstract Task FireRowMouseEnterEventAsync(PointerEventArgs args, MudTr mudTr, object? item);

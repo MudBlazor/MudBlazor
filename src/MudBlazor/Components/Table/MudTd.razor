@@ -1,6 +1,14 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
+@implements IDisposable
 
 <td data-label="@DataLabel" style="@Style" class="@Classname" @attributes="@UserAttributes" @oncontextmenu:preventDefault="PreventContextMenuDefault">
-    @ChildContent
+    @if (LinkHref is { } href)
+    {
+        <a class="mud-table-row-link-anchor" href="@href" target="@Row?.LinkTarget" rel="@LinkRel">@ChildContent</a>
+    }
+    else
+    {
+        @ChildContent
+    }
 </td>
