@@ -59,6 +59,20 @@ export const mudpopoverHelper = {
     baseTooltipZIndex: Number.parseInt(getComputedStyle(document.documentElement)
         .getPropertyValue('--mud-zindex-tooltip')) || 1600,
 
+    getBodyZoom: function (): number {
+        const zoom = window.getComputedStyle(document.body).zoom;
+        if (!zoom || zoom === 'normal') {
+            return 1;
+        }
+
+        const value = Number.parseFloat(zoom);
+        if (!Number.isFinite(value) || value <= 0) {
+            return 1;
+        }
+
+        return zoom.endsWith('%') ? value / 100 : value;
+    },
+
     // static set of replacement values
     flipClassReplacements: {
         'top': {
@@ -308,6 +322,7 @@ export const mudpopoverHelper = {
             const isFlipAlways = classList.contains('mud-popover-overflow-flip-always');
             const zIndexAuto = popoverNodeStyle.getPropertyValue('z-index') === 'auto';
             const classListArray = Array.from(classList);
+            const bodyZoom = window.mudpopoverHelper.getBodyZoom();
 
             if (isPositionOverride) {
                 const attrY = popoverContentNode.getAttribute('data-pc-y');
@@ -321,8 +336,8 @@ export const mudpopoverHelper = {
                 boundingRect = {
                     left: positionleft - scrollLeft,
                     top: positiontop - scrollTop,
-                    right: positionleft + 1,
-                    bottom: positiontop + 1,
+                    right: positionleft - scrollLeft + 1,
+                    bottom: positiontop - scrollTop + 1,
                     width: 1,
                     height: 1
                 };
@@ -341,10 +356,10 @@ export const mudpopoverHelper = {
             styleOf(popoverContentNode)['max-width'] = 'none';
             styleOf(popoverContentNode)['min-width'] = 'none';
             if (isRelativeWidth) {
-                styleOf(popoverContentNode)['max-width'] = (boundingRect.width) + 'px';
+                styleOf(popoverContentNode)['max-width'] = (boundingRect.width / bodyZoom) + 'px';
             }
             else if (isAdaptiveWidth) {
-                styleOf(popoverContentNode)['min-width'] = (boundingRect.width) + 'px';
+                styleOf(popoverContentNode)['min-width'] = (boundingRect.width / bodyZoom) + 'px';
             }
 
             // flipping logic
@@ -381,8 +396,8 @@ export const mudpopoverHelper = {
 
                 // flip routine off transform origin, sets selector to an axis to flip on if needed
                 if (!selector) {
-                    const popoverHeight = popoverContentNode.offsetHeight;
-                    const popoverWidth = popoverContentNode.offsetWidth;
+                    const popoverHeight = popoverContentNode.offsetHeight * bodyZoom;
+                    const popoverWidth = popoverContentNode.offsetWidth * bodyZoom;
                     // For mud-popover-top-left
 
                     if (classList.contains('mud-popover-top-left')) {
@@ -617,8 +632,8 @@ export const mudpopoverHelper = {
                         let shouldClamp = false;
 
                         if (isFlippedUpward) {
-                            availableHeight = anchorY - overflowPadding - popoverNode.offsetHeight;
-                            shouldClamp = availableHeight < popoverContentNode.offsetHeight;
+                            availableHeight = anchorY - overflowPadding - (popoverNode.offsetHeight * bodyZoom);
+                            shouldClamp = availableHeight < (popoverContentNode.offsetHeight * bodyZoom);
                             if (shouldClamp) {
                                 top = overflowPadding;
                                 offsetY = 0;
@@ -627,7 +642,7 @@ export const mudpopoverHelper = {
                             // Measure the space above the anchor, so an anchor near the viewport bottom doesn't shrink the list (#13998).
                             // Without room for the minimum height it falls through, rather than pushing a short list above the viewport.
                             availableHeight = anchorY - minTop;
-                            shouldClamp = popoverContentNode.offsetHeight > availableHeight;
+                            shouldClamp = (popoverContentNode.offsetHeight * bodyZoom) > availableHeight;
                             if (shouldClamp) {
                                 top = minTop;
                                 offsetY = 0;
@@ -636,13 +651,13 @@ export const mudpopoverHelper = {
                             // Space from popover top down to bottom of screen
                             const popoverTopEdge = top + offsetY;
                             availableHeight = window.innerHeight - popoverTopEdge - overflowPadding;
-                            shouldClamp = popoverContentNode.offsetHeight > availableHeight;
+                            shouldClamp = (popoverContentNode.offsetHeight * bodyZoom) > availableHeight;
                         }
 
                         if (shouldClamp) {
                             const newMaxHeight = Math.max(availableHeight, minVisibleHeight);
-                            popoverContentNode.style.maxHeight = `${newMaxHeight}px`;
-                            listChild!.style.maxHeight = `${newMaxHeight}px`;
+                            popoverContentNode.style.maxHeight = `${newMaxHeight / bodyZoom}px`;
+                            listChild!.style.maxHeight = `${newMaxHeight / bodyZoom}px`;
                             popoverContentNode.mudHeight = "setmaxheight";
                             if (popoverContentNode.mudScrollTop) {
                                 listChild!.scrollTop = popoverContentNode.mudScrollTop;
@@ -656,13 +671,15 @@ export const mudpopoverHelper = {
             if (isPositionFixed) {
                 styleOf(popoverContentNode)['position'] = 'fixed';
             }
-            else if (!classList.contains('mud-popover-fixed')) {
-                offsetX += window.scrollX;
-                offsetY += window.scrollY;
+            let scrollX = 0;
+            let scrollY = 0;
+            if (!isPositionFixed && !classList.contains('mud-popover-fixed')) {
+                scrollX = window.scrollX;
+                scrollY = window.scrollY;
             }
 
-            styleOf(popoverContentNode)['left'] = (left + offsetX) + 'px';
-            styleOf(popoverContentNode)['top'] = (top + offsetY) + 'px';
+            styleOf(popoverContentNode)['left'] = ((left + offsetX + scrollX) / bodyZoom) + 'px';
+            styleOf(popoverContentNode)['top'] = ((top + offsetY + scrollY) / bodyZoom) + 'px';
 
             // update z-index by sending the calling popover to update z-index,
             // and the parentnode of the calling popover (not content parent)
