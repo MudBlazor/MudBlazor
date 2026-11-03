@@ -19,7 +19,7 @@ namespace MudBlazor
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class)
             .AddClass(DisabledClass, Disabled)
-            .AddClass("mud-table-row-link", Href is not null)
+            .AddClass("mud-table-row-link", Link is not null)
             .Build();
 
         protected string ActionsStylename => new StyleBuilder()
@@ -134,7 +134,12 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// The URL this row links to, from <see cref="MudTable{T}.RowHref"/>.
+        /// A row link: the URL from <see cref="MudTable{T}.RowHref"/> and the target from <see cref="MudTable{T}.RowTarget"/>.
+        /// </summary>
+        internal readonly record struct RowLink(string Href, string? Target);
+
+        /// <summary>
+        /// The link this row renders, or <c>null</c> when it isn't linked.
         /// </summary>
         /// <remarks>
         /// <c>null</c> while the row is disabled or being edited, so a link never covers inputs or disabled content.
@@ -142,7 +147,7 @@ namespace MudBlazor
         /// <see cref="TableEditTrigger.RowClick"/>, or toggling the checkbox with <see cref="MudTableBase.SelectOnRowClick"/>),
         /// so a click never both edits or selects the row and navigates away.
         /// </remarks>
-        internal string? Href
+        internal RowLink? Link
         {
             get
             {
@@ -153,7 +158,7 @@ namespace MudBlazor
                 }
 
                 var href = table.GetRowHref(Item);
-                return string.IsNullOrWhiteSpace(href) ? null : href;
+                return string.IsNullOrWhiteSpace(href) ? null : new RowLink(href, table.RowLinkTarget);
             }
         }
 
@@ -161,8 +166,6 @@ namespace MudBlazor
         private bool RowClickHasAction(MudTableBase table) =>
             (Editable && table.EditTrigger == TableEditTrigger.RowClick) ||
             table is { MultiSelection: true, SelectionChangeable: true, SelectOnRowClick: true, Editable: false };
-
-        internal string? LinkTarget => Context?.Table?.RowLinkTarget;
 
         /// <summary>
         /// Lets the first cell rendered in this row host the row link, so the row renders a single link.

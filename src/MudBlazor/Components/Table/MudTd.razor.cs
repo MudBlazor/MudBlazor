@@ -29,24 +29,22 @@ namespace MudBlazor
         private MudTr? Row { get; set; }
 
         /// <summary>
-        /// The row URL when this cell hosts the row link: the first cell of a linked row in the same table.
+        /// The row link when this cell hosts it: the first cell of a linked row in the same table.
         /// </summary>
-        private string? LinkHref
+        private MudTr.RowLink? HostedLink
         {
             get
             {
-                // A nested table's cells must not pick up the outer row's link
-                if (Row is null || !ReferenceEquals(Row.Context?.Table, Context?.Table))
+                // Header and footer cells of a table nested in a row would otherwise see the outer row
+                if (Row is null || !ReferenceEquals(Row.Context, Context))
                 {
                     return null;
                 }
 
-                var href = Row.Href;
-                return href is not null && Row.ClaimLinkCell(this) ? href : null;
+                var link = Row.Link;
+                return link is not null && Row.ClaimLinkCell(this) ? link : null;
             }
         }
-
-        private string? LinkRel => Row?.LinkTarget == "_blank" ? "noopener" : null;
 
         private readonly string _linkCellId = Identifier.Create("mud-table-cell");
 
@@ -82,24 +80,8 @@ namespace MudBlazor
         protected bool PreventContextMenuDefault => UserAttributes is not null && UserAttributes.ContainsKey("oncontextmenu");
 
         /// <summary>
-        /// Releases resources used by this cell.
+        /// Lets the row hand its link to another cell when this one is removed, for example when a column is hidden.
         /// </summary>
-        public void Dispose()
-        {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases resources used by this cell.
-        /// </summary>
-        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                Row?.ReleaseLinkCell(this);
-            }
-        }
+        void IDisposable.Dispose() => Row?.ReleaseLinkCell(this);
     }
 }

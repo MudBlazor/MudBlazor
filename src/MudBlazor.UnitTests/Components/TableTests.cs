@@ -149,7 +149,20 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<TableRowHrefTest>(parameters => parameters.Add(p => p.Nested, true));
 
             comp.FindAll(".inner-table a.mud-table-row-link-anchor").Should().BeEmpty();
+            comp.Find(".inner-footer").QuerySelector("a").Should().BeNull();
             comp.FindAll("a.mud-table-row-link-anchor").Should().HaveCount(2);
+        }
+
+        /// <summary>
+        /// Footer cells aren't part of a data row, so they never render a row link.
+        /// </summary>
+        [Test]
+        public void TableRowHref_FooterCellsDontLink()
+        {
+            var comp = Context.Render<TableRowHrefTest>();
+
+            comp.Find(".outer-footer").QuerySelector("a").Should().BeNull();
+            comp.Find(".outer-footer").HasAttribute("id").Should().BeFalse();
         }
 
         /// <summary>

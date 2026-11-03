@@ -29,10 +29,16 @@
                     <RowTemplate Context="inner">
                         <MudTd>@inner</MudTd>
                     </RowTemplate>
+                    <FooterContent>
+                        <MudTd Class="inner-footer">inner footer</MudTd>
+                    </FooterContent>
                 </MudTable>
             }
         </MudTd>
     </RowTemplate>
+    <FooterContent>
+        <MudTd Class="outer-footer" colspan="3">@_people.Length people</MudTd>
+    </FooterContent>
 </MudTable>
 
 <p class="clicked">@string.Join(",", _clicked)</p>
