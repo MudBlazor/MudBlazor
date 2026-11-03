@@ -1119,6 +1119,9 @@ namespace MudBlazor.UnitTests.Components
             dialogInstance.Instance.Options.CloseButton.Should().BeTrue();
         }
 
+        /// <summary>
+        /// A dialog shown without options uses its own <see cref="MudDialog.Options"/> as defaults (#13608).
+        /// </summary>
         [Test]
         public async Task ShowAsync_WithoutOptions_ShouldUseTheDialogsOwnOptions()
         {
@@ -1139,6 +1142,9 @@ namespace MudBlazor.UnitTests.Components
             dialogInstance.Markup.Should().Contain("mud-dialog-fullscreen");
         }
 
+        /// <summary>
+        /// Options passed to ShowAsync override the dialog's own <see cref="MudDialog.Options"/> one property at a time (#13608).
+        /// </summary>
         [Test]
         public async Task ShowAsync_WithOptions_ShouldLayerThemOverTheDialogsOwnOptionsPerProperty()
         {
@@ -1156,6 +1162,60 @@ namespace MudBlazor.UnitTests.Components
             effective.MaxWidth.Should().Be(MaxWidth.Small);
             effective.FullScreen.Should().BeTrue();
             effective.CloseButton.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// An inline dialog layers the options passed to its ShowAsync over its own <see cref="MudDialog.Options"/> (#13608).
+        /// </summary>
+        [Test]
+        public async Task InlineShowAsync_WithOptions_ShouldLayerThemOverTheDialogsOwnOptionsPerProperty()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var dialog = Context.Render<MudDialog>(parameters => parameters
+                .Add(p => p.Options, DialogWithOwnOptions.DialogDefaults)
+                .Add(p => p.DialogContent, "Inline content"));
+
+            await dialog.InvokeAsync(() => dialog.Instance.ShowAsync("Inline", new DialogOptions { MaxWidth = MaxWidth.Small }));
+
+            var effective = ((IMudDialogInstance)provider.FindComponent<MudDialogContainer>().Instance).Options;
+            effective.MaxWidth.Should().Be(MaxWidth.Small);
+            effective.FullScreen.Should().BeTrue();
+            effective.CloseButton.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// A dialog whose own <see cref="MudDialog.Options"/> set CloseOnNavigation to false stays open on navigation (#13608).
+        /// </summary>
+        [Test]
+        public async Task ShowAsync_DialogsOwnCloseOnNavigation_ShouldKeepItOpenOnNavigation()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+            var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
+
+            await provider.InvokeAsync(async () => await service.ShowAsync<DialogWithOwnOptions>());
+            await provider.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>());
+            provider.FindAll("div.mud-dialog-container").Count.Should().Be(2);
+
+            await provider.InvokeAsync(() => navigationManager.NavigateTo("/other-page"));
+
+            provider.FindAll("div.mud-dialog-container").Count.Should().Be(1);
+            provider.Markup.Should().Contain("Dialog that carries its own default options");
+        }
+
+        /// <summary>
+        /// DefaultFocus passed in the dialog options reaches the focus trap.
+        /// </summary>
+        [Test]
+        public async Task ShowAsync_OptionsDefaultFocus_ShouldReachTheFocusTrap()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await provider.InvokeAsync(async () => await service.ShowAsync<DialogWithOwnOptions>(
+                "Focus", new DialogOptions { DefaultFocus = DefaultFocus.LastChild }));
+
+            provider.FindComponent<MudFocusTrap>().Instance.DefaultFocus.Should().Be(DefaultFocus.LastChild);
         }
 
         [Test]

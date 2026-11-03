@@ -1,4 +1,6 @@
-﻿<MudDialog Options="@DialogDefaults">
+﻿@attribute [ViewerHidden]
+
+<MudDialog Options="@DialogDefaults">
     <DialogContent>
         <MudText>Dialog that carries its own default options</MudText>
     </DialogContent>
@@ -9,6 +11,7 @@
     {
         FullScreen = true,
         MaxWidth = MaxWidth.ExtraLarge,
-        CloseButton = true
+        CloseButton = true,
+        CloseOnNavigation = false
     };
 }

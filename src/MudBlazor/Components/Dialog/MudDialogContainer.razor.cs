@@ -404,7 +404,7 @@ namespace MudBlazor
         async Task IMudDialogInstance.SetOptionsAsync(DialogOptions options)
         {
             await _dialogOptionsState.SetValueAsync(options);
-            Parent.SetOptions(Id, options);
+            Parent.SetOptions(Id, GetDialogOptionsOrDefault);
             await InvokeAsync(StateHasChanged);
         }
 
@@ -446,6 +446,12 @@ namespace MudBlazor
         void IMudDialogInstanceInternal.Register(MudDialog dialog)
         {
             _dialog = dialog;
+            if (dialog.Options is not null)
+            {
+                // The provider reads CloseOnNavigation from the reference, so it needs the dialog's defaults merged in too.
+                Parent.SetOptions(Id, GetDialogOptionsOrDefault);
+            }
+
             Class = dialog.Class;
             Style = dialog.Style;
             TitleContent = dialog.TitleContent;
