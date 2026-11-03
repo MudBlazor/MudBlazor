@@ -527,6 +527,79 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Date?.Date.Should().Be(new DateTime(DateTime.Now.Year, 4, 23));
         }
 
+        /// <summary>
+        /// Opens the month view in the column whose header was clicked when several months are shown (#6270).
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_ClickSecondHeader_ShowsMonthsInSecondColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 2)
+                .Add(p => p.StartMonth, new DateTime(2024, 1, 1)));
+
+            await comp.FindAll("button.mud-button-month")[1].ClickAsync();
+
+            var columns = comp.FindAll("div.mud-picker-calendar-container");
+            columns[0].QuerySelector("div.mud-picker-month-container").Should().BeNull();
+            columns[0].QuerySelector("button.mud-button-month")!.TextContent.Trim().Should().Be("2024 January");
+            columns[1].QuerySelector("div.mud-picker-month-container").Should().NotBeNull();
+            columns[1].QuerySelector("div.mud-picker-calendar-header")!.ClassList.Should().NotContain("mud-picker-calendar-header-1");
+            comp.FindAll("div.mud-picker-calendar-header-1").Should().ContainSingle();
+        }
+
+        /// <summary>
+        /// Keeps the selected month in the column where the month view was opened (#6270).
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_ClickSecondHeader_SelectMonth_KeepsMonthInSecondColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 2)
+                .Add(p => p.StartMonth, new DateTime(2024, 1, 1)));
+
+            await comp.FindAll("button.mud-button-month")[1].ClickAsync();
+            await comp.FindAll("button.mud-picker-month")[5].ClickAsync();
+
+            comp.Instance.PickerMonth.Should().Be(new DateTime(2024, 5, 1));
+            var headers = comp.FindAll("button.mud-button-month");
+            headers.Select(header => header.TextContent.Trim()).Should().Equal("2024 May", "2024 June");
+
+            // Opening the month view from the first header still uses the first column.
+            await headers[0].ClickAsync();
+            comp.FindAll("div.mud-picker-calendar-container")[0].QuerySelector("div.mud-picker-month-container").Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// Shows the year view in the same column and keeps the selected month there after picking a year (#6270).
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_ClickSecondHeader_ClickYear_ShowsYearsInSecondColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 3)
+                .Add(p => p.StartMonth, new DateTime(2024, 1, 1)));
+
+            await comp.FindAll("button.mud-button-month")[1].ClickAsync();
+            await comp.FindAll("div.mud-picker-calendar-container")[1].QuerySelector("button.mud-picker-calendar-header-transition")!.ClickAsync();
+
+            var columns = comp.FindAll("div.mud-picker-calendar-container");
+            columns[0].QuerySelector("div.mud-picker-year-container").Should().BeNull();
+            columns[1].QuerySelector("div.mud-picker-year-container").Should().NotBeNull();
+            columns[2].QuerySelector("button.mud-button-month")!.TextContent.Trim().Should().Be("2024 March");
+
+            await comp.FindAll("div.mud-picker-year").First(year => year.TextContent.Trim() == "2026").ClickAsync();
+            await comp.FindAll("button.mud-picker-month")[9].ClickAsync();
+
+            comp.FindAll("button.mud-button-month").Select(header => header.TextContent.Trim()).Should().Equal("2026 September", "2026 October", "2026 November");
+            comp.Instance.PickerMonth.Should().Be(new DateTime(2026, 9, 1));
+        }
+
         [Test]
         public async Task DatePickerStaticWithPickerActionsDayClick()
         {

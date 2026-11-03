@@ -133,6 +133,8 @@ namespace MudBlazor
 
         private DateTime? _picker_month;
 
+        private int _monthViewColumn;
+
         /// <summary>
         /// Represents the currently selected date
         /// </summary>
@@ -324,6 +326,7 @@ namespace MudBlazor
                 OpenTo = OpenTo.Month;
             }
             CurrentView = OpenTo;
+            _monthViewColumn = 0;
             if (CurrentView == OpenTo.Year)
                 _scrollToYearAfterRender = true;
         }
@@ -554,8 +557,8 @@ namespace MudBlazor
         /// <param name="month"></param>
         protected virtual Task OnMonthSelectedAsync(DateTime month)
         {
-            PickerMonth = month;
             var nextView = GetNextView();
+            PickerMonth = nextView == OpenTo.Date ? GetFirstMonthKeepingColumn(month) : month;
             if (nextView != null)
             {
                 CurrentView = (OpenTo)nextView;
@@ -586,9 +589,28 @@ namespace MudBlazor
         /// </summary>
         protected virtual void OnMonthClicked(int month)
         {
+            // Outside the date view, `month` is relative to the column that already shows the month or year view.
+            _monthViewColumn = CurrentView == OpenTo.Date ? month : _monthViewColumn + month;
             CurrentView = OpenTo.Month;
             _picker_month = _picker_month?.AddMonths(month);
             StateHasChanged();
+        }
+
+        /// <summary>
+        /// Gets the first displayed month that keeps <paramref name="month"/> in the column where the month view was opened.
+        /// </summary>
+        /// <param name="month">The month the user selected.</param>
+        private protected DateTime GetFirstMonthKeepingColumn(DateTime month)
+        {
+            var column = _monthViewColumn;
+            _monthViewColumn = 0;
+            var calendar = GetCulture().Calendar;
+            if (column <= 0 || calendar.AddMonths(calendar.MinSupportedDateTime, column) > month)
+            {
+                return month;
+            }
+
+            return calendar.AddMonths(month, -column);
         }
 
         /// <summary>
@@ -713,6 +735,7 @@ namespace MudBlazor
 
         private void GoToSelectedYear()
         {
+            _monthViewColumn = 0;
             PickerMonth = HighlightedDate;
             OnYearClick();
         }
