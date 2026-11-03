@@ -48,6 +48,13 @@ namespace MudBlazor
 
         private string? LinkRel => Row?.LinkTarget == "_blank" ? "noopener" : null;
 
+        private readonly string _linkCellId = Identifier.Create("mud-table-cell");
+
+        /// <summary>
+        /// The id of this cell, which the row link uses as its accessible name.
+        /// </summary>
+        private string LinkLabelId => GetEffectiveElementId(_linkCellId);
+
         /// <summary>
         /// The content within this cell.
         /// </summary>

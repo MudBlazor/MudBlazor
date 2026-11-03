@@ -381,7 +381,7 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   cursor: pointer;
 }
 
-// RowHref: a real <a> in the first cell, stretched over the whole row so the browser
+// RowHref: a real, empty <a> in the first cell, stretched over the whole row so the browser
 // handles clicks, new tabs and middle clicks. Interactive cell content sits above it.
 .mud-table-row-link {
   position: relative;
@@ -398,9 +398,6 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 }
 
 .mud-table-row-link-anchor {
-  color: inherit;
-  text-decoration: none;
-
   &::after {
     content: "";
     position: absolute;

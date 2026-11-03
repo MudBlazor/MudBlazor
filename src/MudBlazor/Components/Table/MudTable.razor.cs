@@ -343,8 +343,11 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.  When the function returns a URL, the first cell of the row renders a link that covers
         /// the whole row, so the browser handles navigation, opening in a new tab (Ctrl/Cmd+click or middle click) and copying
-        /// the link.  Return <c>null</c> to keep a row unlinked.  <see cref="OnRowClick"/> is still raised when a linked row is
-        /// clicked.  Use <see cref="RowTarget"/> to control where the URL is opened.
+        /// the link.  The link is named after the first cell's content.  Return <c>null</c> to keep a row unlinked.
+        /// <see cref="OnRowClick"/> is still raised when a linked row is clicked.  Use <see cref="RowTarget"/> to control where
+        /// the URL is opened.  No link is rendered for disabled rows, the row being edited, or when a row click already edits or
+        /// selects the row (<see cref="RowEditingTemplate"/> with <see cref="TableEditTrigger.RowClick"/>, or
+        /// <see cref="MudTableBase.MultiSelection"/> with <see cref="MudTableBase.SelectOnRowClick"/>).
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Rows)]

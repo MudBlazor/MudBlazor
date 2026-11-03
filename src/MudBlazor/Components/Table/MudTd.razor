@@ -2,13 +2,13 @@
 @inherits MudComponentBase
 @implements IDisposable
 
-<td data-label="@DataLabel" style="@Style" class="@Classname" @attributes="@UserAttributes" @oncontextmenu:preventDefault="PreventContextMenuDefault">
-    @if (LinkHref is { } href)
+@{ var href = LinkHref; }
+@* id comes after the splat so it always matches the link's aria-labelledby, even when a consumer passes id="@null". *@
+<td data-label="@DataLabel" style="@Style" class="@Classname" @attributes="@UserAttributes" id="@(href is null ? UserAttributes.GetValueOrDefault("id") : LinkLabelId)" @oncontextmenu:preventDefault="PreventContextMenuDefault">
+    @if (href is not null)
     {
-        <a class="mud-table-row-link-anchor" href="@href" target="@Row?.LinkTarget" rel="@LinkRel">@ChildContent</a>
+        @* Empty on purpose: the cell content stays outside the link, so controls in it are never nested in an <a>. *@
+        <a class="mud-table-row-link-anchor" href="@href" target="@Row?.LinkTarget" rel="@LinkRel" aria-labelledby="@LinkLabelId"></a>
     }
-    else
-    {
-        @ChildContent
-    }
+    @ChildContent
 </td>

@@ -138,13 +138,16 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// <c>null</c> while the row is disabled or being edited, so a link never covers inputs or disabled content.
+        /// Also <c>null</c> when clicking the row already has a built-in action (editing with
+        /// <see cref="TableEditTrigger.RowClick"/>, or toggling the checkbox with <see cref="MudTableBase.SelectOnRowClick"/>),
+        /// so a click never both edits or selects the row and navigates away.
         /// </remarks>
         internal string? Href
         {
             get
             {
                 var table = Context?.Table;
-                if (table is null || Disabled || (table.Editable && ReferenceEquals(table._editingItem, Item)))
+                if (table is null || Disabled || (table.Editable && ReferenceEquals(table._editingItem, Item)) || RowClickHasAction(table))
                 {
                     return null;
                 }
@@ -153,6 +156,11 @@ namespace MudBlazor
                 return string.IsNullOrWhiteSpace(href) ? null : href;
             }
         }
+
+        // Mirrors the row-click behavior in OnRowClickedAsync and StartEditingItem.
+        private bool RowClickHasAction(MudTableBase table) =>
+            (Editable && table.EditTrigger == TableEditTrigger.RowClick) ||
+            table is { MultiSelection: true, SelectionChangeable: true, SelectOnRowClick: true, Editable: false };
 
         internal string? LinkTarget => Context?.Table?.RowLinkTarget;
 

@@ -78,11 +78,140 @@ namespace MudBlazor.UnitTests.Components
             var links = rows[0].QuerySelectorAll("a.mud-table-row-link-anchor");
             links.Should().ContainSingle();
             links[0].GetAttribute("href").Should().Be("/people/1");
-            links[0].TextContent.Trim().Should().Be("Ada");
             links[0].ParentElement!.GetAttribute("data-label").Should().Be("Name");
             links[0].HasAttribute("target").Should().BeFalse();
 
             rows[1].QuerySelector("a.mud-table-row-link-anchor")!.GetAttribute("href").Should().Be("/people/2");
+        }
+
+        /// <summary>
+        /// The row link is empty and named by its cell, so the cell's content (including controls) is never nested in the link.
+        /// </summary>
+        [Test]
+        public void TableRowHref_LinkIsEmptyAndLabelledByCell()
+        {
+            var comp = Context.Render<TableRowHrefTest>(parameters => parameters.Add(p => p.ButtonInFirstCell, true));
+            var cell = comp.FindAll("tbody tr")[0].QuerySelector("td[data-label='Name']")!;
+            var link = cell.QuerySelector("a.mud-table-row-link-anchor")!;
+
+            link.ChildNodes.Should().BeEmpty();
+            link.GetAttribute("aria-labelledby").Should().Be(cell.Id).And.NotBeNullOrEmpty();
+            cell.TextContent.Should().Contain("Ada");
+            cell.QuerySelector("button.first-cell-action")!.Closest("a").Should().BeNull();
+        }
+
+        /// <summary>
+        /// A consumer-supplied <c>id</c> on the cell is kept and used to name the row link.
+        /// </summary>
+        [Test]
+        public void TableRowHref_UsesCellIdForLinkName()
+        {
+            var comp = Context.Render<TableRowHrefTest>(parameters => parameters.Add(p => p.FirstCellId, "person-name"));
+            var cell = comp.FindAll("tbody tr")[0].QuerySelector("td[data-label='Name']")!;
+
+            cell.Id.Should().Be("person-name");
+            cell.QuerySelector("a.mud-table-row-link-anchor")!.GetAttribute("aria-labelledby").Should().Be("person-name");
+        }
+
+        /// <summary>
+        /// Cells without a row link don't get a generated <c>id</c>.
+        /// </summary>
+        [Test]
+        public void TableRowHref_UnlinkedCellsHaveNoGeneratedId()
+        {
+            var comp = Context.Render<TableRowHrefTest>();
+
+            comp.FindAll("tbody tr")[0].QuerySelector("td[data-label='Role']")!.HasAttribute("id").Should().BeFalse();
+            comp.FindAll("tbody tr")[2].QuerySelector("td[data-label='Name']")!.HasAttribute("id").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// When the first column is removed, the next cell takes over the row link.
+        /// </summary>
+        [Test]
+        public void TableRowHref_HiddenFirstColumn_MovesLinkToNextCell()
+        {
+            var comp = Context.Render<TableRowHrefTest>();
+
+            comp.Render(parameters => parameters.Add(p => p.ShowName, false));
+
+            var links = comp.FindAll("tbody tr")[0].QuerySelectorAll("a.mud-table-row-link-anchor");
+            links.Should().ContainSingle();
+            links[0].ParentElement!.GetAttribute("data-label").Should().Be("Role");
+        }
+
+        /// <summary>
+        /// Cells of a table nested inside a linked row don't render the outer row's link.
+        /// </summary>
+        [Test]
+        public void TableRowHref_NestedTableCellsDontLink()
+        {
+            var comp = Context.Render<TableRowHrefTest>(parameters => parameters.Add(p => p.Nested, true));
+
+            comp.FindAll(".inner-table a.mud-table-row-link-anchor").Should().BeEmpty();
+            comp.FindAll("a.mud-table-row-link-anchor").Should().HaveCount(2);
+        }
+
+        /// <summary>
+        /// Disabled rows don't render a link.
+        /// </summary>
+        [Test]
+        public void TableRowHref_DisabledRow_RendersNoLink()
+        {
+            var comp = Context.Render<TableRowHrefTest>(parameters => parameters
+                .Add(p => p.RowDisabledFunc, (Func<TableRowHrefTest.Person, bool>)(person => person.Id == 1)));
+            var rows = comp.FindAll("tbody tr");
+
+            rows[0].QuerySelector("a.mud-table-row-link-anchor").Should().BeNull();
+            rows[1].QuerySelector("a.mud-table-row-link-anchor").Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// When a row click starts editing, rows don't link, so a click never both edits and navigates.
+        /// </summary>
+        [Test]
+        public void TableRowHref_EditableWithRowClickTrigger_RendersNoLinks()
+        {
+            var comp = Context.Render<TableRowHrefTest>(parameters => parameters.Add(p => p.Editable, true));
+
+            comp.FindAll("a.mud-table-row-link-anchor").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// With the edit button trigger a row click doesn't edit, so rows link again.
+        /// </summary>
+        [Test]
+        public void TableRowHref_EditableWithEditButtonTrigger_RendersLinks()
+        {
+            var comp = Context.Render<TableRowHrefTest>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.EditTrigger, TableEditTrigger.EditButton));
+
+            comp.FindAll("a.mud-table-row-link-anchor").Should().HaveCount(2);
+        }
+
+        /// <summary>
+        /// When a row click toggles selection, rows don't link, so a click never both selects and navigates.
+        /// </summary>
+        [Test]
+        public void TableRowHref_SelectOnRowClick_RendersNoLinks()
+        {
+            var comp = Context.Render<TableRowHrefTest>(parameters => parameters.Add(p => p.MultiSelection, true));
+
+            comp.FindAll("a.mud-table-row-link-anchor").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Multi-selection without <c>SelectOnRowClick</c> keeps row links, since only the checkbox selects.
+        /// </summary>
+        [Test]
+        public void TableRowHref_MultiSelectionWithoutSelectOnRowClick_RendersLinks()
+        {
+            var comp = Context.Render<TableRowHrefTest>(parameters => parameters
+                .Add(p => p.MultiSelection, true)
+                .Add(p => p.SelectOnRowClick, false));
+
+            comp.FindAll("a.mud-table-row-link-anchor").Should().HaveCount(2);
         }
 
         /// <summary>
