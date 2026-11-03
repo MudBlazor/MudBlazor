@@ -136,6 +136,27 @@ namespace MudBlazor
         private int _monthViewColumn;
 
         /// <summary>
+        /// The column that shows the month or year view, or <c>0</c> in the date view.
+        /// </summary>
+        /// <remarks>
+        /// The columns to the left of the view show earlier months.
+        /// The first column is used instead when one of them would show the first supported month or earlier, because its date grid starts before that month and the date math would go out of range.
+        /// </remarks>
+        private int MonthViewColumn
+        {
+            get
+            {
+                if (CurrentView == OpenTo.Date || _monthViewColumn <= 0 || !_picker_month.HasValue)
+                {
+                    return 0;
+                }
+
+                var calendar = GetCulture().Calendar;
+                return calendar.AddMonths(calendar.MinSupportedDateTime, _monthViewColumn + 1) > _picker_month.Value ? 0 : _monthViewColumn;
+            }
+        }
+
+        /// <summary>
         /// Represents the currently selected date
         /// </summary>
         /// <remarks>
@@ -520,7 +541,7 @@ namespace MudBlazor
         /// Adjacent-month days are always hidden when <see cref="ShowAdjacentMonthDays"/> is disabled.
         /// When it is enabled in a multi-month layout (e.g. <see cref="MudDateRangePicker"/>), boundary days that belong to a month already rendered in a neighboring panel are hidden so the same date is not displayed twice across panels.
         /// </remarks>
-        /// <param name="month">The panel offset from the first displayed month.</param>
+        /// <param name="month">The month offset the panel is rendered with. In the month and year views it is relative to the column that shows the view.</param>
         /// <param name="day">The day being rendered.</param>
         protected bool IsHiddenAdjacentMonthDay(int month, DateTime day)
         {
@@ -534,14 +555,17 @@ namespace MudBlazor
                 return true;
             }
 
+            // `month` is an offset from the month shown in the month or year view, so the panel position also needs that view's column.
+            var column = month + MonthViewColumn;
+
             // Previous-month day: hide it when the previous month is shown in the panel to the left.
             if (day < GetMonthStart(month))
             {
-                return month > 0;
+                return column > 0;
             }
 
             // Next-month day: hide it when the next month is shown in the panel to the right.
-            return month < DisplayMonths - 1;
+            return column < DisplayMonths - 1;
         }
 
         protected abstract string GetDayClasses(int month, DateTime day);
@@ -590,7 +614,7 @@ namespace MudBlazor
         protected virtual void OnMonthClicked(int month)
         {
             // Outside the date view, `month` is relative to the column that already shows the month or year view.
-            _monthViewColumn = CurrentView == OpenTo.Date ? month : _monthViewColumn + month;
+            _monthViewColumn = MonthViewColumn + month;
             CurrentView = OpenTo.Month;
             _picker_month = _picker_month?.AddMonths(month);
             StateHasChanged();
@@ -602,7 +626,7 @@ namespace MudBlazor
         /// <param name="month">The month the user selected.</param>
         private protected DateTime GetFirstMonthKeepingColumn(DateTime month)
         {
-            var column = _monthViewColumn;
+            var column = MonthViewColumn;
             _monthViewColumn = 0;
             var calendar = GetCulture().Calendar;
             if (column <= 0 || calendar.AddMonths(calendar.MinSupportedDateTime, column) > month)

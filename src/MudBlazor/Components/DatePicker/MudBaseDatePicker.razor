@@ -26,12 +26,8 @@
                 }
                 @for (int displayMonth = 0; displayMonth < DisplayMonths; ++displayMonth)
                 {
-                    int tempMonth = displayMonth; //without local variable month names are wrong
                     // The month and year views open in the column whose header was clicked, so offsets are relative to that column.
-                    if (CurrentView != OpenTo.Date)
-                    {
-                        tempMonth -= _monthViewColumn;
-                    }
+                    int tempMonth = displayMonth - MonthViewColumn; //without local variable month names are wrong
 
                     <div class="mud-picker-calendar-container">
                         @if (tempMonth == 0 && CurrentView == OpenTo.Year)
