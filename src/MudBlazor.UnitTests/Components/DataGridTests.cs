@@ -5121,6 +5121,23 @@ namespace MudBlazor.UnitTests.Components
             comp.WaitForAssertion(() => comp.Find("td.mud-datagrid-group").GetAttribute("colspan").Should().Be("2"));
         }
 
+        /// <summary>
+        /// The filters and columns panel rows span the displayed columns when a column is hidden (#11460).
+        /// </summary>
+        [Test]
+        public async Task PanelRowsSpanDisplayedColumns()
+        {
+            var comp = Context.Render<DataGridColumnSpanTest>(p => p.Add(x => x.HideAge, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnSpanTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+            comp.Find("th.mud-filter-panel-cell").GetAttribute("colspan").Should().Be("2");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ToggleFiltersMenu());
+            await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
+            comp.Find("th.mud-filter-panel-cell").GetAttribute("colspan").Should().Be("2");
+        }
+
         [Test]
         public void DataGridNoRecordsContentVirtualize()
         {

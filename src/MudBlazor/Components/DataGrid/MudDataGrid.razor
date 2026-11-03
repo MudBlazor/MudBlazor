@@ -60,7 +60,7 @@
                                 {
                                     <MudOverlay @bind-Visible="@_filtersMenuVisible" AutoClose OnClosed="@OnFiltersPanelClosed"></MudOverlay>
                                     <tr class="mud-table-row" style="visibility: collapse; opacity: 0;overflow: hidden;">
-                                        <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
+                                        <th colspan="@VisibleColumnSpan" class="mud-table-cell mud-filter-panel-cell">
                                             <MudPopover UserAttributes="@FiltersPositionAttributes" Open="@_filtersMenuVisible" Paper="true" Class="filters-panel pa-2 mud-popover-position-override" OverflowBehavior="OverflowBehavior.FlipOnOpen" AnchorOrigin="Origin.TopLeft"
                                                         TransformOrigin="Origin.TopLeft" Elevation="4" Style="width:700px;max-width:700px;" MaxHeight="400">
                                                 @* Escape from any control in the panel bubbles here, so one handler covers built-in and templated filters.
@@ -94,7 +94,7 @@
                                 {
                                     <MudOverlay @bind-Visible="_columnsPanelVisible" AutoClose></MudOverlay>
                                     <tr class="mud-table-row" style="visibility: collapse; opacity: 0; overflow: hidden;">
-                                        <th colspan="@RenderedColumns.Count" class="mud-table-cell mud-filter-panel-cell">
+                                        <th colspan="@VisibleColumnSpan" class="mud-table-cell mud-filter-panel-cell">
                                             <MudPopover UserAttributes="@ColumnsPanelPositionAttributes" Open="@_columnsPanelVisible" Paper="true" Class="@ColumnsPanelClassname" OverflowBehavior="OverflowBehavior.FlipOnOpen"
                                                         AnchorOrigin="Origin.TopLeft"
                                                         TransformOrigin="Origin.TopLeft" Elevation="4"
