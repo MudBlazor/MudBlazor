@@ -268,6 +268,17 @@ namespace MudBlazor.UnitTests.Components
             _provider.FindComponents<MudIcon>().Select(i => i.Instance.Icon).Should().Contain(customIcon);
         }
 
+        /// <summary>
+        /// Setting the icon to null shows the severity's default icon (#7118).
+        /// </summary>
+        [Test]
+        public async Task NullIconFallsBackToSeverityDefault()
+        {
+            await _provider.InvokeAsync(() => _service.Add("Boom, big reveal. Im a pickle!", Severity.Error, c => c.Icon = null));
+
+            _provider.FindComponents<MudIcon>().Select(i => i.Instance.Icon).Should().Contain(Icons.Material.Filled.ErrorOutline);
+        }
+
         [Test]
         public async Task GlobalSeverityIconOverrideIsApplied()
         {
