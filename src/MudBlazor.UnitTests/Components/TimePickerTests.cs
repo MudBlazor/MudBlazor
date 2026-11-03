@@ -875,6 +875,73 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A typed time outside MinTime and MaxTime keeps the current value and shows an error until an allowed time is entered.
+        /// </summary>
+        [Test]
+        public async Task Editable_TypedDisabledTime_ShowsErrorAndKeepsValue()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Time, new TimeSpan(10, 0, 0))
+                .Add(p => p.MinTime, new TimeSpan(9, 30, 0))
+                .Add(p => p.MaxTime, new TimeSpan(17, 45, 0)));
+
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "20:00" });
+
+            comp.Instance.Time.Should().Be(new TimeSpan(10, 0, 0));
+            comp.Instance.Text.Should().Be("20:00");
+            comp.Instance.HasErrors.Should().BeTrue();
+            comp.Instance.GetErrorText().Should().Be("Time is not allowed");
+
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "11:00" });
+
+            comp.Instance.Time.Should().Be(new TimeSpan(11, 0, 0));
+            comp.Instance.HasErrors.Should().BeFalse();
+            comp.Instance.GetErrorText().Should().BeNull();
+        }
+
+        /// <summary>
+        /// Typing the current value back after a disabled time clears the error.
+        /// </summary>
+        [Test]
+        public async Task Editable_TypedDisabledTime_ThenCurrentValue_ClearsError()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Time, new TimeSpan(10, 0, 0))
+                .Add(p => p.IsTimeDisabledFunc, time => time.Hours == 12));
+
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "12:15" });
+            comp.Instance.HasErrors.Should().BeTrue();
+
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "10:00" });
+
+            comp.Instance.Time.Should().Be(new TimeSpan(10, 0, 0));
+            comp.Instance.HasErrors.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Setting Time from code after a disabled typed time clears the error and shows the new value.
+        /// </summary>
+        [Test]
+        public async Task Editable_TypedDisabledTime_ThenTimeSetFromCode_ClearsError()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Time, new TimeSpan(10, 0, 0))
+                .Add(p => p.MaxTime, new TimeSpan(17, 45, 0)));
+
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "20:00" });
+            comp.Instance.HasErrors.Should().BeTrue();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Time, new TimeSpan(10, 0, 0)));
+            await comp.InvokeAsync(() => comp.Instance.SubmitAsync());
+
+            comp.Instance.HasErrors.Should().BeFalse();
+            comp.Instance.Text.Should().Be("10:00");
+        }
+
+        /// <summary>
         /// Moving to the first allowed minute of an hour respects MinuteSelectionStep.
         /// </summary>
         [Test]

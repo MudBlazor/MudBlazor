@@ -193,6 +193,13 @@ namespace MudBlazor
         /// <param name="suppressInteraction">When <c>true</c>, the change is treated as programmatic and does not mark the picker touched or fire <c>FieldChanged</c>.</param>
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue, bool suppressInteraction = false)
         {
+            // A committed value replaces any disabled time that was typed, even when the value itself does not change.
+            var replacesDisabledText = updateValue && _typedTimeDisabled;
+            if (updateValue)
+            {
+                _typedTimeDisabled = false;
+            }
+
             // Text that fails to convert leaves the value null, so a null assignment looks like a no-op and the bad text would stick.
             // Run it anyway while text remains, as MudDatePicker does.
             if (_value != time || (time is null && !string.IsNullOrEmpty(Text)))
@@ -217,15 +224,70 @@ namespace MudBlazor
                     FieldChanged(_value);
                 }
             }
+            else if (replacesDisabledText)
+            {
+                await SetTextAsync(ConvertSet(_value), false);
+                await BeginValidateAsync();
+            }
         }
 
         /// <inheritdoc />
-        protected override Task StringValueChangedAsync(string? value)
+        protected override async Task StringValueChangedAsync(string? value)
         {
             Touched = true;
+            var wasDisabled = _typedTimeDisabled;
+            var time = ConvertGet(value);
+
+            // A typed time the clock would refuse is not committed: the text stays so the user can correct it, and validation reports it.
+            _typedTimeDisabled = time is { } typed && IsTimeDisabled(typed.Hours, typed.Minutes);
+            if (_typedTimeDisabled)
+            {
+                await BeginValidateAsync();
+                return;
+            }
 
             // Update the time property (without updating back the Value property)
-            return SetTimeAsync(ConvertGet(value), false);
+            await SetTimeAsync(time, false);
+
+            // When the value did not change, SetTimeAsync skips validation, so clear the previous error here.
+            if (wasDisabled)
+            {
+                await BeginValidateAsync();
+            }
+        }
+
+        /// <inheritdoc />
+        protected override async Task ValidateValue()
+        {
+            await base.ValidateValue();
+
+            if (_typedTimeDisabled)
+            {
+                _typedTimeErrorShown = true;
+                ValidationErrors = [.. ValidationErrors, Localizer[LanguageResource.MudTimePicker_TimeNotAllowed]];
+                await ErrorState.SetValueAsync(true);
+                await ErrorTextState.SetValueAsync(ValidationErrors[0]);
+            }
+            else if (_typedTimeErrorShown)
+            {
+                // The base class only rewrites Error/ErrorText when it has its own validation source, so clear the error this component published.
+                _typedTimeErrorShown = false;
+                var message = Localizer[LanguageResource.MudTimePicker_TimeNotAllowed];
+                ValidationErrors = ValidationErrors.Where(error => error != message).ToList();
+                await ErrorState.SetValueAsync(ValidationErrors.Count > 0);
+                await ErrorTextState.SetValueAsync(ValidationErrors.FirstOrDefault());
+            }
+
+            Form?.Update(this);
+        }
+
+        /// <inheritdoc />
+        public override Task ResetValidationAsync()
+        {
+            _typedTimeDisabled = false;
+            _typedTimeErrorShown = false;
+
+            return base.ResetValidationAsync();
         }
 
         /// <inheritdoc />
@@ -401,6 +463,16 @@ namespace MudBlazor
                 .AddClass("mud-time-picker-dial-out", _currentView != OpenTo.Minutes)
                 .AddClass("mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
                 .Build();
+
+        /// <summary>
+        /// <c>true</c> while the input holds a typed time that <see cref="MinTime"/>, <see cref="MaxTime"/> or <see cref="IsTimeDisabledFunc"/> rejects.
+        /// </summary>
+        private bool _typedTimeDisabled;
+
+        /// <summary>
+        /// <c>true</c> while the error for a disabled typed time is shown, so it can be cleared once the time is corrected.
+        /// </summary>
+        private bool _typedTimeErrorShown;
 
         private bool IsAm => _timeSet.Hour is >= 00 and < 12; // AM is 00:00 to 11:59.
         private bool IsPm => _timeSet.Hour is >= 12 and < 24; // PM is 12:00 to 23:59.
