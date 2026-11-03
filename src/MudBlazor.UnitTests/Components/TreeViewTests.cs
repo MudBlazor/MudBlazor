@@ -162,6 +162,67 @@ namespace MudBlazor.UnitTests.Components
             GetSelectedValue().Should().Be(4);
         }
 
+        // S1 parity: a visible valueless folder whose only children are hidden must keep a working checkbox when virtualized.
+        // The projection reports hidden selectable descendants through HasSelectableValues, so the row is selectable even though no child renders.
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_MultiSelection_VisibleValuelessParentWithHiddenSelectableChildren_CheckboxMatchesStandardMode(bool virtualize)
+        {
+            var comp = Context.Render<TreeViewHiddenChildrenParityTest>(self => self.Add(x => x.Virtualize, virtualize));
+            var folder = comp.Find("li.folder");
+            var folderCheckbox = folder.QuerySelector("label.mud-checkbox");
+            folderCheckbox.ClassList.Contains("mud-readonly").Should().BeFalse($"the folder's subtree offers values ({(virtualize ? "virtualized" : "standard")})");
+
+            await folder.QuerySelector("input.mud-checkbox-input").ChangeAsync(true);
+            comp.Find("p.selected-values").TrimmedText().Should().Be("1,2");
+            comp.Find("p.child-1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.child-2-selected").TrimmedText().Should().Be("True");
+
+            await folder.QuerySelector("input.mud-checkbox-input").ChangeAsync(false);
+            comp.Find("p.selected-values").TrimmedText().Should().BeEmpty();
+            comp.Find("p.child-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.child-2-selected").TrimmedText().Should().Be("False");
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_MultiSelection_VisibleValuelessParentWithHiddenSelectableChildren_CheckboxStaysKeyboardOperable(bool virtualize)
+        {
+            var comp = Context.Render<TreeViewHiddenChildrenParityTest>(self => self.Add(x => x.Virtualize, virtualize));
+            var folderInput = comp.Find("li.folder input.mud-checkbox-input");
+
+            folderInput.KeyDown(new KeyboardEventArgs { Key = " ", Type = "keydown" });
+            comp.Find("p.selected-values").TrimmedText().Should().Be("1,2");
+
+            folderInput.KeyDown(new KeyboardEventArgs { Key = " ", Type = "keydown" });
+            comp.Find("p.selected-values").TrimmedText().Should().BeEmpty();
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void TreeView_MultiSelection_ValuelessLeafWithoutChildren_RemainsReadOnly(bool virtualize)
+        {
+            var comp = Context.Render<TreeViewHiddenChildrenParityTest>(self => self.Add(x => x.Virtualize, virtualize));
+            comp.Find("li.leaf label.mud-checkbox").ClassList.Should().Contain("mud-readonly");
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_MultiSelection_ReadOnlyParentWithHiddenSelectableChildren_CheckboxStaysReadOnly(bool virtualize)
+        {
+            var comp = Context.Render<TreeViewHiddenChildrenParityTest>(self => self.Add(x => x.Virtualize, virtualize)
+                    .Add(x => x.ReadOnly, true));
+            var folderCheckbox = comp.Find("li.folder label.mud-checkbox");
+            folderCheckbox.ClassList.Should().Contain("mud-readonly");
+
+            await comp.Find("li.folder div.mud-treeview-item-checkbox").ClickAsync();
+            comp.Find("p.selected-values").TrimmedText().Should().BeEmpty();
+        }
+
         [Test]
         [TestCase("item1")]
         [TestCase("item1.1")]

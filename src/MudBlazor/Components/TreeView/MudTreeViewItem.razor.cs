@@ -662,7 +662,11 @@ namespace MudBlazor
         // A leaf without a value has nothing to select, so a click changes nothing in the tree.
         // The checkbox would still move to its next state on its own and show a selection that doesn't exist.
         // A parent stays clickable because its children may have values to select.
-        private bool GetCheckBoxReadOnly() => GetReadOnly() || (GetValue() is null && !HasChildren());
+        private bool GetCheckBoxReadOnly() => GetReadOnly() || (GetValue() is null && !HasSelectableSubtree());
+
+        // Checkbox eligibility follows what the row can select, not what it renders: the virtualized projection
+        // reports selectable descendants even when every child is hidden, while standard mode keeps using its children.
+        private bool HasSelectableSubtree() => IsVirtualizedItem ? CurrentItemContext!.HasSelectableValues : HasChildren();
 
         private bool GetExpandOnClick() => MudTreeRoot?.ExpandOnClick == true;
 
