@@ -46,7 +46,7 @@ namespace MudBlazor
         /// The maximum selectable date.
         /// </summary>
         /// <remarks>
-        /// In a <see cref="MudDatePicker"/> with <see cref="MudPicker{T}.Editable"/> enabled, a typed date after this limit is refused and the text goes back to the last valid date.
+        /// In a <see cref="MudDatePicker"/> with <see cref="MudPicker{T}.Editable"/> enabled, a typed date after this limit is refused: <see cref="MudDatePicker.Date"/> keeps its last valid value and a validation error is shown.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
@@ -56,7 +56,7 @@ namespace MudBlazor
         /// The minimum selectable date.
         /// </summary>
         /// <remarks>
-        /// In a <see cref="MudDatePicker"/> with <see cref="MudPicker{T}.Editable"/> enabled, a typed date before this limit is refused and the text goes back to the last valid date.
+        /// In a <see cref="MudDatePicker"/> with <see cref="MudPicker{T}.Editable"/> enabled, a typed date before this limit is refused: <see cref="MudDatePicker.Date"/> keeps its last valid value and a validation error is shown.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]

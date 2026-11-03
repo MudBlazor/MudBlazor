@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Resources;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -13,6 +14,11 @@ namespace MudBlazor
     public class MudDatePicker : MudBaseDatePicker
     {
         private DateTime? _selectedDate;
+        private bool _typedDateOutOfRange;
+        private bool _outOfRangeErrorShown;
+
+        [Inject]
+        private InternalMudLocalizer Localizer { get; set; } = null!;
 
         /// <summary>
         /// Occurs when the <see cref="Date"/> has changed.
@@ -42,6 +48,14 @@ namespace MudBlazor
 
         protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate, bool suppressInteraction = false)
         {
+            // A new date from the user or the code supersedes a refused typed date: its error must go even when the date itself is unchanged.
+            var clearOutOfRange = _typedDateOutOfRange && (!suppressInteraction || _value != date);
+            if (clearOutOfRange)
+            {
+                _typedDateOutOfRange = false;
+                forceUpdate = true;
+            }
+
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
             {
                 date = DateTime.SpecifyKind(date.Value, _value.Value.Kind);
@@ -110,8 +124,50 @@ namespace MudBlazor
             {
                 // If the field is quickly cleared after an error: just reset and resubmit.
                 ResetConverterErrors();
+                if (clearOutOfRange && updateValue)
+                {
+                    // The typed text of the refused date is still in the field.
+                    await SetTextAsync(ConvertSet(_value), false);
+                }
                 await BeginValidateAsync();
             }
+        }
+
+        /// <inheritdoc />
+        protected override async Task ValidateValue()
+        {
+            await base.ValidateValue();
+
+            var message = Localizer[LanguageResource.MudDatePicker_DateOutOfRange];
+            if (_typedDateOutOfRange)
+            {
+                _outOfRangeErrorShown = true;
+                ValidationErrors = [.. ValidationErrors.Where(e => e != message), message];
+            }
+            else if (_outOfRangeErrorShown)
+            {
+                // The base validation leaves the error state alone when the picker has no validation source, so withdraw our own error here.
+                _outOfRangeErrorShown = false;
+                ValidationErrors = [.. ValidationErrors.Where(e => e != message)];
+            }
+            else
+            {
+                return;
+            }
+
+            await ErrorState.SetValueAsync(ValidationErrors.Count > 0);
+            await ErrorTextState.SetValueAsync(ValidationErrors.FirstOrDefault());
+            // The base validation already told the form about the state without this error.
+            Form?.Update(this);
+            StateHasChanged();
+        }
+
+        /// <inheritdoc />
+        public override Task ResetValidationAsync()
+        {
+            _typedDateOutOfRange = false;
+            _outOfRangeErrorShown = false;
+            return base.ResetValidationAsync();
         }
 
         protected override Task DateFormatChangedAsync(string? newFormat)
@@ -127,20 +183,16 @@ namespace MudBlazor
             var date = ConvertGet(value);
 
             // A typed date outside MinDate/MaxDate is refused like a disabled calendar day (#3461):
-            // keep the last valid date and put its text back.
+            // Date keeps its last valid value, the typed text stays in the field and ValidateValue reports the error.
             if (date is not null && (date.Value.Date < MinDateState.Value || date.Value.Date > MaxDateState.Value))
             {
-                await SetTextAsync(ConvertSet(_value), false);
-                // The input still holds the typed text and does not see a parameter change, so push the restored text into it.
-                if (_inputReference is not null)
-                {
-                    await _inputReference.SetTextAsync(Text);
-                }
-
+                _typedDateOutOfRange = true;
                 // ConvertGet already cleared the conversion error: recompute the error state (and the form's) before leaving.
                 await BeginValidateAsync();
                 return;
             }
+
+            _typedDateOutOfRange = false;
 
             // Update the date property (without updating back the Value property)
             // If the date had a conversion error and is now null or empty forceUpdate is true
