@@ -50,6 +50,11 @@
             </div>
         </td>
     }
+    @{
+        // Each render pass re-decides which cell hosts the row link, so the first cell rendered
+        // (the leftmost one) always wins, even after a leading column is shown again.
+        ResetLinkCell();
+    }
     <CascadingValue Value="this" IsFixed="true">
         @ChildContent
     </CascadingValue>

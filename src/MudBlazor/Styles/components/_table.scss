@@ -390,11 +390,15 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
     outline: 2px solid var(--mud-palette-primary);
     outline-offset: -2px;
   }
+}
 
-  .mud-table-cell :is(a:not(.mud-table-row-link-anchor), button, input, select, textarea, label, [tabindex]:not([tabindex="-1"])) {
-    position: relative;
-    z-index: 1;
-  }
+// Raise interactive cell content above the stretched link. :where() keeps this at zero
+// specificity, so components that position their own inputs or labels absolutely
+// (checkboxes, radios, switches, floating labels) keep their positioning; those
+// already sit above the link with their own z-index.
+:where(.mud-table-row-link .mud-table-cell) :where(a:not(.mud-table-row-link-anchor), button, input, select, textarea, label, [tabindex]:not([tabindex="-1"])) {
+  position: relative;
+  z-index: 1;
 }
 
 .mud-table-row-link-anchor {

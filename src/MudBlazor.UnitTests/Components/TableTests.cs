@@ -141,6 +141,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// When the first column is shown again, the link moves back to it and is named after it again.
+        /// </summary>
+        [Test]
+        public void TableRowHref_ReshownFirstColumn_MovesLinkBack()
+        {
+            var comp = Context.Render<TableRowHrefTest>();
+
+            comp.Render(parameters => parameters.Add(p => p.ShowName, false));
+            comp.Render(parameters => parameters.Add(p => p.ShowName, true));
+
+            var row = comp.FindAll("tbody tr")[0];
+            var links = row.QuerySelectorAll("a.mud-table-row-link-anchor");
+            links.Should().ContainSingle();
+            var cell = links[0].ParentElement!;
+            cell.GetAttribute("data-label").Should().Be("Name");
+            links[0].GetAttribute("aria-labelledby").Should().Be(cell.Id);
+            row.QuerySelector("td[data-label='Role']")!.HasAttribute("id").Should().BeFalse();
+        }
+
+        /// <summary>
         /// Cells of a table nested inside a linked row don't render the outer row's link.
         /// </summary>
         [Test]

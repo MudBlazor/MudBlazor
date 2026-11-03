@@ -176,6 +176,8 @@ namespace MudBlazor
             return ReferenceEquals(_linkCell, cell);
         }
 
+        private void ResetLinkCell() => _linkCell = null;
+
         internal void ReleaseLinkCell(MudTd cell)
         {
             if (ReferenceEquals(_linkCell, cell))
