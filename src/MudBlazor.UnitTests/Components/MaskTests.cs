@@ -1296,5 +1296,40 @@ namespace MudBlazor.UnitTests.Components
             input.GetAttribute("aria-invalid").Should().Be("false");
             input.HasAttribute("required").Should().BeTrue();
         }
+
+        /// <summary>Verifies the JS blur fallback clears focus so later renders stop re-applying the caret (#13274).</summary>
+        [Test]
+        public async Task Mask_JsBlurFallbackShouldStopReapplyingCaretOnRender()
+        {
+            Context.AddKeyInterceptorService();
+            var comp = Context.Render<MudMask>(parameters => parameters.Add(p => p.Mask, new PatternMask("0000")));
+
+            Context.JSInterop.VerifyInvoke("mudElementRef.addOnBlurEvent", 1);
+
+            await comp.InvokeAsync(() => comp.Instance.OnFocused(new FocusEventArgs()));
+            await comp.InvokeAsync(comp.Instance.CallOnBlurredAsync);
+
+            var selectRangeCalls = Context.JSInterop.Invocations["mudElementRef.selectRange"].Count();
+            await comp.InvokeAsync(() => comp.Instance.OnCaretPositionChanged(0));
+            comp.Render();
+            Context.JSInterop.Invocations["mudElementRef.selectRange"].Count().Should().Be(selectRangeCalls);
+        }
+
+        /// <summary>Verifies the JS blur fallback does not raise a second blur when the native blur already ran.</summary>
+        [Test]
+        public async Task Mask_JsBlurFallbackShouldNotProcessBlurTwiceWhenNativeBlurRunsFirst()
+        {
+            Context.AddKeyInterceptorService();
+            var blurCount = 0;
+            var comp = Context.Render<MudMask>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000"))
+                .Add(p => p.OnBlur, _ => blurCount++));
+
+            await comp.InvokeAsync(() => comp.Instance.OnFocused(new FocusEventArgs()));
+            await comp.Find("input").BlurAsync();
+            await comp.InvokeAsync(comp.Instance.CallOnBlurredAsync);
+
+            blurCount.Should().Be(1);
+        }
     }
 }
