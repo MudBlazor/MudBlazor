@@ -10,7 +10,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a cell displayed at the bottom of a column.
+    /// The footer cell displayed at the bottom of a <see cref="MudDataGrid{T}"/> column, typically showing totals or aggregate values.
     /// </summary>
     /// <typeparam name="T">The kind of data managed by this footer.</typeparam>
     public partial class FooterCell<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
@@ -38,6 +38,24 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public IEnumerable<T>? CurrentItems { get; set; }
+
+        /// <summary>
+        /// The rows of the group this footer cell belongs to.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which scopes the footer to the whole grid.  It is set for the footer rendered underneath a single group of rows.
+        /// </remarks>
+        [Parameter]
+        public IEnumerable<T>? GroupItems { get; set; }
+
+        // Set in OnInitialized() so it can't be null.
+        private FooterContext<T> _footerContext = null!;
+
+        protected override void OnInitialized()
+        {
+            Debug.Assert(DataGrid is not null);
+            _footerContext = new FooterContext<T>(DataGrid) { GroupItemsFunc = () => GroupItems };
+        }
 
         private string Classname =>
             new CssBuilder(Column?.FooterClassname)

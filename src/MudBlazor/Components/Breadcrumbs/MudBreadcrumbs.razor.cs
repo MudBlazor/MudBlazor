@@ -5,7 +5,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a series of links used to show the user's current location.
+    /// Breadcrumbs show a navigation trail of links marking the user's current location within a page hierarchy.
     /// </summary>
     /// <seealso cref="BreadcrumbItem" />
     /// <seealso cref="BreadcrumbLink" />
@@ -16,6 +16,17 @@ namespace MudBlazor
             .AddClass("mud-typography-body1")
             .AddClass(Class)
             .Build();
+
+        /// <summary>
+        /// The accessible name of the breadcrumb navigation landmark.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which uses the localized <c>Breadcrumb</c> label.
+        /// Use distinct labels when displaying multiple breadcrumb trails.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Breadcrumbs.Behavior)]
+        public string? AriaLabel { get; set; }
 
         /// <summary>
         /// The list of items to display.
@@ -75,6 +86,11 @@ namespace MudBlazor
         /// Defaults to <c>true</c>.
         /// </remarks>
         public bool Collapsed { get; private set; } = true;
+
+        /// <summary>
+        /// Whether <paramref name="item"/> is the last item in the trail and therefore represents the current page.
+        /// </summary>
+        internal bool IsLastItem(BreadcrumbItem? item) => Items is { Count: > 0 } && ReferenceEquals(Items[^1], item);
 
         internal static string GetItemClassname(BreadcrumbItem item)
         {

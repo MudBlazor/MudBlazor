@@ -4,15 +4,11 @@
 
 @inject InternalMudLocalizer Localizer
 
-@{
-#pragma warning disable CS0618 // Type or member is obsolete
-}
-
-<nav @attributes="UserAttributes"
+<nav aria-label="@Title"
+     @attributes="UserAttributes"
      class="@Classname"
      disabled="@_navigationContext.Disabled"
-     style="@Style"
-     aria-label="@Title">
+     style="@Style">
     <button @onclick="ExpandedToggleAsync"
             tabindex="@ButtonTabIndex"
             class="@ButtonClassname"
@@ -33,7 +29,7 @@
                 @Title
             }
         </div>
-        @if (!HideExpandIcon && !string.IsNullOrEmpty(ExpandIcon))
+        @if (!HideExpandIcon)
         {
             <MudIcon Disabled="@Disabled" Icon="@ExpandIcon" Class="@ExpandIconClassname" />
         }
@@ -43,7 +39,7 @@
                  MaxHeight="@MaxHeight"
                  Class="mud-navgroup-collapse">
         <CascadingValue Value="@_navigationContext">
-            <MudNavMenu>
+            <MudNavMenu role="none">
                 @ChildContent
             </MudNavMenu>
         </CascadingValue>

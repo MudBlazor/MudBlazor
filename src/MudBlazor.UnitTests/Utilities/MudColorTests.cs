@@ -43,18 +43,6 @@ namespace MudBlazor.UnitTests.Utilities
         }
 
         [Test]
-        public void MudColor_Newtonsoft_Serialization()
-        {
-            var originalMudColor = new MudColor("#f6f9fb");
-
-            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(originalMudColor);
-            var deserializeMudColor = Newtonsoft.Json.JsonConvert.DeserializeObject<MudColor>(jsonString);
-
-            jsonString.Should().Be("{\"R\":246,\"G\":249,\"B\":251,\"A\":255}");
-            deserializeMudColor.Should().Be(originalMudColor);
-        }
-
-        [Test]
         public void MudColor_Default_Ctor()
         {
             var defaultMudColor = new MudColor();

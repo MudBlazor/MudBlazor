@@ -8,7 +8,7 @@
 @code{
 
     protected override RenderFragment InputContent=>
-        @<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" Error="@ErrorState.Value"
+        @<MudInputControl Label="@Label" Variant="@Variant" HelperText="@HelperText" Error="@ErrorState.Value" ErrorId="@ErrorIdState.Value"
                           ErrorText="@ErrorTextState.Value" Disabled="@GetDisabledState()" Margin="@Margin" Required="@Required"
                           @onclick="async () => { if (!Editable) await ToggleStateAsync(); }" ForId="@FieldId">
                <InputContent>
@@ -30,6 +30,7 @@
                                   Required="@Required"
                                   RequiredError="@RequiredError"
                                   Error="@ErrorState.Value"
+                                  ErrorId="@ErrorIdState.Value"
                                   ErrorText="@ErrorTextState.Value"
                                   Margin="@Margin"
                                   AdornmentAriaLabel="@AdornmentAriaLabel"

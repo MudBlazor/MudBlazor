@@ -45,20 +45,20 @@
 
     private readonly Func<TestObject, object> _groupBy = x => x.Category;
 
-	public void RefreshList()
-	{
-		_fruits = _fruits.Select(x => new TestObject(x.Name, x.Category)).ToList();
-	}
+    public void RefreshList()
+    {
+        _fruits = _fruits.Select(x => new TestObject(x.Name, x.Category)).ToList();
+    }
 
-	public Task ExpandAllGroups()
-	{
-		return _dataGrid.ExpandAllGroupsAsync();
-	}
+    public Task ExpandAllGroups()
+    {
+        return _dataGrid.ExpandAllGroupsAsync();
+    }
 
-	public Task CollapseAllGroups()
-	{
-		return _dataGrid.CollapseAllGroupsAsync();
-	}
+    public Task CollapseAllGroups()
+    {
+        return _dataGrid.CollapseAllGroupsAsync();
+    }
 
     public record TestObject(string Name, string Category);
 }

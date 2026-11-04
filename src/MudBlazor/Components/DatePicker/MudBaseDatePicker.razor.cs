@@ -7,12 +7,14 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a base class for designing date picker components.
+    /// Base class for MudBlazor date pickers such as <see cref="MudDatePicker"/> and <see cref="MudDateRangePicker"/>.
     /// </summary>
     public abstract partial class MudBaseDatePicker : MudPicker<DateTime?>
     {
         private readonly string _mudPickerCalendarContentElementId;
         private readonly ParameterState<string?> _dateFormatState;
+        internal readonly ParameterState<DateTime?> MinDateState;
+        internal readonly ParameterState<DateTime?> MaxDateState;
 
         protected MudBaseDatePicker()
         {
@@ -23,6 +25,12 @@ namespace MudBlazor
             _dateFormatState = registerScope.RegisterParameter<string?>(nameof(DateFormat))
                 .WithParameter(() => DateFormat)
                 .WithChangeHandler(DateFormatChangedAsync);
+            MinDateState = registerScope.RegisterParameter<DateTime?>(nameof(MinDate))
+                .WithParameter(() => MinDate)
+                .WithChangeHandler(OnDateLimitsChanged);
+            MaxDateState = registerScope.RegisterParameter<DateTime?>(nameof(MaxDate))
+                .WithParameter(() => MaxDate)
+                .WithChangeHandler(OnDateLimitsChanged);
         }
 
         [Inject]
@@ -37,14 +45,14 @@ namespace MudBlazor
         /// <summary>
         /// The maximum selectable date.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
         public DateTime? MaxDate { get; set; }
 
         /// <summary>
         /// The minimum selectable date.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Validation)]
         public DateTime? MinDate { get; set; }
 
@@ -61,6 +69,10 @@ namespace MudBlazor
         /// <summary>
         /// The format for selected dates.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which uses the <see cref="DateTimeFormatInfo.ShortDatePattern"/> of <see cref="MudFormComponent{T, U}.Culture"/>.
+        /// A <c>/</c> in the format is replaced by the culture's date separator; use <c>'/'</c> for a literal slash.
+        /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public string? DateFormat { get; set; }
@@ -74,6 +86,18 @@ namespace MudBlazor
         }
 
         private Task DateFormatChangedAsync(ParameterChangedEventArgs<string?> args) => DateFormatChangedAsync(args.Value);
+
+        /// <summary>
+        /// Occurs when <see cref="MinDate"/> or <see cref="MaxDate"/> has changed.
+        /// </summary>
+        internal virtual void OnDateLimitsChanged()
+        {
+        }
+
+        /// <summary>
+        /// Whether a range has a first date and is waiting for its second.
+        /// </summary>
+        internal virtual bool IsRangeSelectionPending => false;
 
         /// <summary>
         /// The day representing the first day of the week.
@@ -108,6 +132,29 @@ namespace MudBlazor
         }
 
         private DateTime? _picker_month;
+
+        private int _monthViewColumn;
+
+        /// <summary>
+        /// The column that shows the month or year view, or <c>0</c> in the date view.
+        /// </summary>
+        /// <remarks>
+        /// The columns to the left of the view show earlier months.
+        /// The first column is used instead when one of them would show the first supported month or earlier, because its date grid starts before that month and the date math would go out of range.
+        /// </remarks>
+        private int MonthViewColumn
+        {
+            get
+            {
+                if (CurrentView == OpenTo.Date || _monthViewColumn <= 0 || !_picker_month.HasValue)
+                {
+                    return 0;
+                }
+
+                var calendar = GetCulture().Calendar;
+                return calendar.AddMonths(calendar.MinSupportedDateTime, _monthViewColumn + 1) > _picker_month.Value ? 0 : _monthViewColumn;
+            }
+        }
 
         /// <summary>
         /// Represents the currently selected date
@@ -171,6 +218,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
         public bool ShowWeekNumbers { get; set; }
+
+        /// <summary>
+        /// Shows the days from the previous and next month when they appear in the current calendar grid.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.PickerBehavior)]
+        public bool ShowAdjacentMonthDays { get; set; }
 
         /// <summary>
         /// The format of the selected date in the title.
@@ -271,7 +328,9 @@ namespace MudBlazor
             await base.OnPickerOpenedAsync();
             if (Editable && Text != null)
             {
-                var dateTime = ConvertGet(Text);
+                // Opening only moves the calendar, so convert without ConvertGet, which records a conversion error and marks the picker as touched.
+                // A range picker's text holds both dates and never converts to one, so opening it flagged a valid range as invalid.
+                var dateTime = GetConverter().TryConvertBack(Text).Value;
                 if (dateTime.HasValue)
                 {
                     var culture = GetCulture();
@@ -288,6 +347,7 @@ namespace MudBlazor
                 OpenTo = OpenTo.Month;
             }
             CurrentView = OpenTo;
+            _monthViewColumn = 0;
             if (CurrentView == OpenTo.Year)
                 _scrollToYearAfterRender = true;
         }
@@ -313,12 +373,8 @@ namespace MudBlazor
 
             var monthStart = new DateTime(year, startMonth, 1, 0, 0, 0, 0, calendar, DateTimeKind.Utc);
 
-            // Handle explicit max boundary
-            if (_picker_month.HasValue &&
-                calendar.GetYear(_picker_month.Value) == 9999 &&
-                calendar.GetMonth(_picker_month.Value) ==
-                calendar.GetMonthsInYear(9999) &&
-                month >= 1)
+            // Months after the last supported month can't be represented, so they start at the max boundary.
+            if (month > 0 && calendar.AddMonths(calendar.MaxSupportedDateTime.StartOfMonth(culture), -month) < monthStart)
             {
                 return calendar.MaxSupportedDateTime;
             }
@@ -464,9 +520,48 @@ namespace MudBlazor
 
         protected virtual bool IsDayDisabled(DateTime date)
         {
-            return date < MinDate ||
-                   date > MaxDate ||
+            return date < MinDateState.Value ||
+                   date > MaxDateState.Value ||
                    IsDateDisabledFunc(date);
+        }
+
+        protected bool IsAdjacentMonthDay(int month, DateTime day)
+        {
+            return day < GetMonthStart(month) || day > GetMonthEnd(month);
+        }
+
+        /// <summary>
+        /// Determines whether a day from an adjacent month should be hidden in the calendar grid.
+        /// </summary>
+        /// <remarks>
+        /// Adjacent-month days are always hidden when <see cref="ShowAdjacentMonthDays"/> is disabled.
+        /// When it is enabled in a multi-month layout (e.g. <see cref="MudDateRangePicker"/>), boundary days that belong to a month already rendered in a neighboring panel are hidden so the same date is not displayed twice across panels.
+        /// </remarks>
+        /// <param name="month">The month offset the panel is rendered with. In the month and year views it is relative to the column that shows the view.</param>
+        /// <param name="day">The day being rendered.</param>
+        protected bool IsHiddenAdjacentMonthDay(int month, DateTime day)
+        {
+            if (!IsAdjacentMonthDay(month, day))
+            {
+                return false;
+            }
+
+            if (!ShowAdjacentMonthDays)
+            {
+                return true;
+            }
+
+            // `month` is an offset from the month shown in the month or year view, so the panel position also needs that view's column.
+            var column = month + MonthViewColumn;
+
+            // Previous-month day: hide it when the previous month is shown in the panel to the left.
+            if (day < GetMonthStart(month))
+            {
+                return column > 0;
+            }
+
+            // Next-month day: hide it when the next month is shown in the panel to the right.
+            return column < DisplayMonths - 1;
         }
 
         protected abstract string GetDayClasses(int month, DateTime day);
@@ -482,8 +577,8 @@ namespace MudBlazor
         /// <param name="month"></param>
         protected virtual Task OnMonthSelectedAsync(DateTime month)
         {
-            PickerMonth = month;
             var nextView = GetNextView();
+            PickerMonth = nextView == OpenTo.Date ? GetFirstMonthKeepingColumn(month) : month;
             if (nextView != null)
             {
                 CurrentView = (OpenTo)nextView;
@@ -514,9 +609,28 @@ namespace MudBlazor
         /// </summary>
         protected virtual void OnMonthClicked(int month)
         {
+            // Outside the date view, `month` is relative to the column that already shows the month or year view.
+            _monthViewColumn = MonthViewColumn + month;
             CurrentView = OpenTo.Month;
             _picker_month = _picker_month?.AddMonths(month);
             StateHasChanged();
+        }
+
+        /// <summary>
+        /// Gets the first displayed month that keeps <paramref name="month"/> in the column where the month view was opened.
+        /// </summary>
+        /// <param name="month">The month the user selected.</param>
+        private protected DateTime GetFirstMonthKeepingColumn(DateTime month)
+        {
+            var column = MonthViewColumn;
+            _monthViewColumn = 0;
+            var calendar = GetCulture().Calendar;
+            if (column <= 0 || calendar.AddMonths(calendar.MinSupportedDateTime, column) > month)
+            {
+                return month;
+            }
+
+            return calendar.AddMonths(month, -column);
         }
 
         /// <summary>
@@ -530,14 +644,14 @@ namespace MudBlazor
             var calendar = culture.Calendar;
             if (!FixDay.HasValue)
             {
-                return month.EndOfMonth(culture) < MinDate || month > MaxDate;
+                return month.EndOfMonth(culture) < MinDateState.Value || month > MaxDateState.Value;
             }
             if (calendar.GetDaysInMonth(calendar.GetYear(month), calendar.GetMonth(month)) < FixDay!.Value)
             {
                 return true;
             }
             var day = new DateTime(month.Year, month.Month, FixDay!.Value);
-            return day < MinDate || day > MaxDate || IsDateDisabledFunc(day);
+            return day < MinDateState.Value || day > MaxDateState.Value || IsDateDisabledFunc(day);
         }
 
         /// <summary>
@@ -641,6 +755,7 @@ namespace MudBlazor
 
         private void GoToSelectedYear()
         {
+            _monthViewColumn = 0;
             PickerMonth = HighlightedDate;
             OnYearClick();
         }
@@ -666,15 +781,14 @@ namespace MudBlazor
             var dateTime = date ?? GetMonthStart(0);
             var id = $"{_componentId}{calendar.GetYear(dateTime)}";
             await ScrollManager.ScrollToYearAsync(id);
-            StateHasChanged();
         }
 
         protected int GetMinYear()
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            if (MinDate.HasValue)
-                return calendar.GetYear(MinDate.Value);
+            if (MinDateState.Value is { } minDate)
+                return calendar.GetYear(minDate);
             return calendar.GetYear(TimeProvider.GetLocalNow().Date) - 100;
         }
 
@@ -682,8 +796,8 @@ namespace MudBlazor
         {
             var culture = GetCulture();
             var calendar = culture.Calendar;
-            if (MaxDate.HasValue)
-                return calendar.GetYear(MaxDate.Value);
+            if (MaxDateState.Value is { } maxDate)
+                return calendar.GetYear(maxDate);
             return calendar.GetYear(TimeProvider.GetLocalNow().Date) + 100;
         }
 
@@ -781,11 +895,13 @@ namespace MudBlazor
             AdornmentAriaLabel ??= Localizer[Resources.LanguageResource.MudBaseDatePicker_Open];
             CurrentView = OpenTo;
 
-            if (HighlightedDate is not null)
-            {
-                return;
-            }
+            HighlightedDate ??= GetInitialHighlightedDate();
 
+            _picker_month ??= GetCalendarStartOfMonth();
+        }
+
+        private DateTime? GetInitialHighlightedDate()
+        {
             var culture = GetCulture();
             var calendar = culture.Calendar;
             var today = TimeProvider.GetLocalNow().Date;
@@ -794,20 +910,24 @@ namespace MudBlazor
             var month = FixMonth ?? (year == calendar.GetYear(today) ? calendar.GetMonth(today) : 1);
             var day = FixDay ?? 1;
 
-            if (DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date))
-            {
-                HighlightedDate = date;
-            }
+            return DateTime.TryParseExact($"{year}-{month}-{day}", "yyyy-M-d", GetCulture(), DateTimeStyles.None, out var date)
+                ? date
+                : null;
+        }
+
+        /// <summary>
+        /// Returns the calendar to where an empty picker starts, after a reset has cleared the value.
+        /// </summary>
+        private protected void ResetCalendarToStart()
+        {
+            // The start month can come from the highlighted day, which carries FixYear and FixMonth, so restore it rather than keep a highlight left over from the cleared value or keyboard navigation.
+            HighlightedDate = GetInitialHighlightedDate();
+            PickerMonth = GetCalendarStartOfMonth();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
-
-            if (firstRender)
-            {
-                _picker_month ??= GetCalendarStartOfMonth();
-            }
 
             if (firstRender && CurrentView == OpenTo.Year)
             {
@@ -866,6 +986,17 @@ namespace MudBlazor
         private ValueTask HandleMouseoverOnPickerCalendarDayButton(int tempId)
         {
             return JsApiService.UpdateStyleProperty(_mudPickerCalendarContentElementId, "--selected-day", tempId);
+        }
+
+        private async Task HandleDayButtonClickAsync(DateTime day, int tempId)
+        {
+            await OnDayClickedAsync(day);
+
+            // A day picked by keyboard gets no pointerover, so a range started that way would preview from a stale or initial hover position.
+            if (IsRangeSelectionPending)
+            {
+                await HandleMouseoverOnPickerCalendarDayButton(tempId);
+            }
         }
     }
 }

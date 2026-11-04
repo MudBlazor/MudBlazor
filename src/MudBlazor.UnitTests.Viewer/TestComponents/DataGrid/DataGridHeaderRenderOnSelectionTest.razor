@@ -1,0 +1,35 @@
+﻿<MudDataGrid T="Item" Items="@_items" MultiSelection="true" SelectOnRowClick="true">
+    <Columns>
+        <SelectColumn T="Item" />
+        <PropertyColumn Property="x => x.Name">
+            <HeaderTemplate>
+                @{ HeaderRenders++; }
+                <span>Name</span>
+            </HeaderTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Used to verify header cells render once per selection change";
+
+    public int HeaderRenders { get; set; }
+
+    private readonly List<Item> _items = new()
+    {
+        new Item("A"),
+        new Item("B"),
+        new Item("C"),
+        new Item("D")
+    };
+
+    public class Item
+    {
+        public Item(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+}

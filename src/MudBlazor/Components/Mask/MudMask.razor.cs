@@ -35,12 +35,11 @@ namespace MudBlazor
                 .AddClass($"mud-input-{Variant.ToStringFast(true)}")
                 .AddClass($"mud-input-{Variant.ToStringFast(true)}-with-label", !string.IsNullOrEmpty(Label))
                 .AddClass($"mud-input-adorned-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
-                .AddClass($"mud-input-margin-{Margin.ToStringFast(true)}", () => Margin != Margin.None)
-                .AddClass("mud-input-underline", () => Underline && Variant != Variant.Outlined)
-                .AddClass("mud-shrink", () => !string.IsNullOrEmpty(ReadText) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel)
+                .AddClass($"mud-input-margin-{Margin.ToStringFast(true)}", Margin != Margin.None)
+                .AddClass("mud-input-underline", Underline && Variant != Variant.Outlined)
+                .AddClass("mud-shrink", !string.IsNullOrEmpty(ReadText) || Adornment == Adornment.Start || !string.IsNullOrWhiteSpace(Placeholder) || ShrinkLabel)
                 .AddClass("mud-disabled", GetDisabledState())
                 .AddClass("mud-input-error", HasErrors)
-                .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
                 .AddClass($"mud-typography-{Typo.ToStringFast(true)}")
                 .AddClass(Class)
                 .Build();
@@ -50,7 +49,8 @@ namespace MudBlazor
                 .AddClass("mud-input-root")
                 .AddClass($"mud-input-root-{Variant.ToStringFast(true)}")
                 .AddClass($"mud-input-root-adorned-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
-                .AddClass($"mud-input-root-margin-{Margin.ToStringFast(true)}", () => Margin != Margin.None)
+                .AddClass($"mud-input-root-margin-{Margin.ToStringFast(true)}", Margin != Margin.None)
+                .AddClass("mud-ltr", GetInputType() == InputType.Email || GetInputType() == InputType.Telephone)
                 .AddClass(Class)
                 .Build();
 
@@ -59,7 +59,6 @@ namespace MudBlazor
                 .AddClass($"mud-input-adornment-{Adornment.ToStringFast(true)}", Adornment != Adornment.None)
                 .AddClass($"mud-text", !string.IsNullOrEmpty(AdornmentText))
                 .AddClass($"mud-input-root-filled-shrink", Variant == Variant.Filled)
-                .AddClass(Class)
                 .Build();
 
         protected string ClearButtonClassname =>
@@ -308,19 +307,16 @@ namespace MudBlazor
                 return;
             var text = ConvertSet(ReadValue);
             var cleanText = Mask.GetCleanText();
-            if (string.IsNullOrEmpty(cleanText) && string.IsNullOrEmpty(text))
-                return;
-
-            if (cleanText != text)
-            {
-                var maskText = Mask.Text;
+            if (!IsSameText(cleanText, text))
                 Mask.SetText(text);
-                if (maskText == Mask.Text)
-                    return;
-            }
 
-            if (ReadText != Mask.Text)
+            // Refresh whenever the displayed text disagrees with the mask, not only when the mask itself just changed.
+            // MudTextField shares this mask instance and applies the incoming value to it first, so a value cleared from code left the mask empty while our own text, and with it the rendered input, stayed on the old value (#12822).
+            if (!IsSameText(ReadText, Mask.Text))
                 await UpdateAsync();
+
+            static bool IsSameText(string? first, string? second)
+                => first == second || (string.IsNullOrEmpty(first) && string.IsNullOrEmpty(second));
         }
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
@@ -366,9 +362,12 @@ namespace MudBlazor
         /// <summary>
         /// Sets the cursor to this input.
         /// </summary>
-        public override ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override ValueTask FocusAsync(bool preventScroll)
         {
-            return _elementReference.FocusAsync();
+            return _elementReference.FocusAsync(preventScroll);
         }
 
         /// <summary>
@@ -524,7 +523,7 @@ namespace MudBlazor
             await JsApiService.CopyToClipboardAsync(text ?? string.Empty);
         }
 
-        [GeneratedRegex(@"^.$")]
+        [GeneratedRegex(@"^.$", RegexOptions.None, RegexDefaults.MatchTimeoutMilliseconds)]
         private static partial Regex ValidCharacterRegularExpression();
     }
 }

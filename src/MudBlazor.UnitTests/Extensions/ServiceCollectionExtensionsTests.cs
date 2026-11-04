@@ -403,6 +403,28 @@ public class ServiceCollectionExtensionsTests
         localizationEnumInterceptor.Should().NotBeNull();
     }
 
+    /// <summary>
+    /// Every form component injects the localizer, and the default interceptor builds a resource reader, so one instance must serve the whole scope (#13519).
+    /// </summary>
+    [Test]
+    public void AddMudLocalization_ShouldRegisterOneLocalizerPerScope()
+    {
+        // Arrange
+        var services = new ServiceCollection()
+            .AddLogging()
+            .AddSingleton<IJSRuntime, MockJsRuntime>();
+
+        // Act
+        services.AddMudLocalization();
+        using var serviceProvider = services.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
+        var first = scope.ServiceProvider.GetRequiredService<InternalMudLocalizer>();
+        var second = scope.ServiceProvider.GetRequiredService<InternalMudLocalizer>();
+
+        // Assert
+        first.Should().BeSameAs(second);
+    }
+
     [Test]
     public void AddMudServices_ShouldRegisterAllServices()
     {

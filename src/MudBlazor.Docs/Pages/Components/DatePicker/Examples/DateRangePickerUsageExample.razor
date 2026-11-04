@@ -7,6 +7,7 @@
     <MudDateRangePicker Label="Clearable" @bind-DateRange="_dateRange" Clearable="true" />
     <MudDateRangePicker Label="Range picker format" HelperText="For custom cultures" DateFormat="dd/MM/yyyy" TitleDateFormat="dddd, dd. MMMM" @bind-DateRange="_dateRange" />
     <MudDateRangePicker Label="Custom start month" StartMonth="@DateTime.Now.AddMonths(-1)" @bind-DateRange="_dateRange" />
+    <MudDateRangePicker Label="Show adjacent month days" ShowAdjacentMonthDays="true" @bind-DateRange="_dateRange" />
     <MudDateRangePicker @ref="_picker" Label="With action buttons" @bind-DateRange="_dateRange" AutoClose="@_autoClose">
         <PickerActions>
             <MudButton Class="mr-auto align-self-start" OnClick="@(() => _picker.ClearAsync())">Clear</MudButton>

@@ -60,20 +60,60 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The expand/collapse icon shows by default, is hidden when ExpandIcon is empty, and is still hidden by the obsolete HideExpandIcon flag.
+        /// The nav landmark takes its accessible name from Title, which a caller must be able to override.
         /// </summary>
         [Test]
-        public void NavGroup_ExpandIconVisibility_FollowsExpandIconAndHideExpandIcon()
+        public void NavGroup_Should_LetUserAttributesOverrideAriaLabel()
         {
-            Context.Render<MudNavGroup>().Markup.Should().Contain("mud-nav-link-expand-icon");
+            var comp = Context.Render<MudNavGroup>(parameters => parameters
+                .Add(p => p.Title, "Reports")
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-label", "Quarterly reports" } }));
 
-            Context.Render<MudNavGroup>(parameters => parameters.Add(p => p.ExpandIcon, string.Empty))
-                .Markup.Should().NotContain("mud-nav-link-expand-icon");
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Quarterly reports");
+        }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-            Context.Render<MudNavGroup>(parameters => parameters.Add(p => p.HideExpandIcon, true))
-                .Markup.Should().NotContain("mud-nav-link-expand-icon");
-#pragma warning restore CS0618 // Type or member is obsolete
+        /// <summary>
+        /// Title still names the landmark when the caller does not supply an aria-label.
+        /// </summary>
+        [Test]
+        public void NavGroup_Should_UseTitleAsAriaLabel()
+        {
+            var comp = Context.Render<MudNavGroup>(parameters => parameters
+                .Add(p => p.Title, "Reports"));
+
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Reports");
+        }
+        /// <summary>
+        /// Keep the group named without creating an unnamed nested navigation landmark (#13980).
+        /// </summary>
+        [Test]
+        public void NavGroup_NestedMenu_DoesNotCreateUnnamedLandmark()
+        {
+            Context.AddFakeTimeProvider();
+            var comp = Context.Render<MudNavGroup>(parameters => parameters
+                .Add(p => p.Title, "Catalogue")
+                .Add(p => p.Expanded, true));
+
+            var group = comp.Find("nav.mud-nav-group");
+            group.GetAttribute("aria-label").Should().Be("Catalogue");
+
+            var submenu = comp.Find("nav.mud-navmenu");
+            submenu.GetAttribute("role").Should().Be("none");
+
+            var controls = comp.Find("nav.mud-nav-group > button").GetAttribute("aria-controls");
+            submenu.GetAttribute("id").Should().Be(controls);
+        }
+
+        /// <summary>
+        /// A top-level MudNavMenu must remain a native navigation landmark (#13980).
+        /// </summary>
+        [Test]
+        public void NavMenu_TopLevel_RemainsNavigationLandmark()
+        {
+            Context.AddFakeTimeProvider();
+            var comp = Context.Render<MudNavMenu>();
+
+            comp.Find("nav.mud-navmenu").HasAttribute("role").Should().BeFalse();
         }
     }
 }

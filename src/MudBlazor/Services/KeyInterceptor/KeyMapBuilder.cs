@@ -4,6 +4,7 @@
 
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Utilities;
 
 namespace MudBlazor.Services;
 
@@ -28,7 +29,7 @@ public sealed class KeyMapBuilder
         {
             try
             {
-                return new Regex(key.Substring(1, key.Length - 2), RegexOptions.None, TimeSpan.FromMilliseconds(250));
+                return new Regex(key.Substring(1, key.Length - 2), RegexOptions.None, RegexDefaults.MatchTimeout);
             }
             catch
             {

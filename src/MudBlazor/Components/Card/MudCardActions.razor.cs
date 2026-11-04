@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a set of buttons displayed as part of a <see cref="MudCard"/>.
+    /// The action bar of a <see cref="MudCard"/>, typically holding buttons that trigger the card's related actions.
     /// </summary>
     /// <seealso cref="MudCard" />
     /// <seealso cref="MudCardContent" />

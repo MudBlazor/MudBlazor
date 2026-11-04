@@ -1,15 +1,13 @@
 ﻿@namespace MudBlazor
 @using Microsoft.AspNetCore.Components.Routing
-@using MudBlazor.Resources
 @inherits MudComponentBase
-@inject InternalMudLocalizer Localizer
 
 <div class="@GetPanelClass()" @attributes="UserAttributes">
     @if (_sections.Count > 1)
     {
-        <MudNavMenu Class="pl-4" aria-label="@Localizer[LanguageResource.MudPageContentNavigation_NavMenu]">
+        <MudNavMenu Class="pl-4" aria-label="@ResolvedHeadline()">
             <MudText Typo="Typo.subtitle1" Class="title" GutterBottom="true">
-                @Headline
+                @ResolvedHeadline()
             </MudText>
 
             @foreach (var docSection in _sections.OrderBy(x => x.LevelSortingValue))

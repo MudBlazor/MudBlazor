@@ -118,14 +118,15 @@ public class ScrollManagerTests
     }
 
     [Test]
-    public async Task LockScrollAsync_PropagatesJsRuntimeError()
+    public async Task LockScrollAsync_SwallowsJsRuntimeError()
     {
-        // lockScroll must surface failures; only the unlock/dispose paths swallow them.
+        // Lock runs eagerly on overlay/dialog open, so a missing or disconnected script must degrade instead of tearing down the circuit.
+        // This mirrors UnlockScrollAsync; the pair are symmetric.
         SetupThrowingInvocation("mudScrollManager.lockScroll", new JSDisconnectedException("disconnected"));
 
         var act = async () => await _service.LockScrollAsync("#dialog", "locked");
 
-        await act.Should().ThrowAsync<JSDisconnectedException>();
+        await act.Should().NotThrowAsync();
     }
 
     [Test]

@@ -71,6 +71,7 @@
 
   &.mud-switch-disabled {
     color: var(--mud-palette-gray-default) !important;
+    cursor: default;
 
     & + .mud-switch-track {
       opacity: 0.12 !important;

@@ -10,7 +10,7 @@ using MudBlazor.Interfaces;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents the validation logic for a <see cref="MudDataGrid{T}"/> row.
+    /// Validates the input fields of a <see cref="MudDataGrid{T}"/> row during inline or form editing.
     /// </summary>
     public class DataGridRowValidator : IForm
     {

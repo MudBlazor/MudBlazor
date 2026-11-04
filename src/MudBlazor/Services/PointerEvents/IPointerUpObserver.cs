@@ -6,7 +6,7 @@ namespace MudBlazor;
 
 
 /// <summary>
-/// Represents an observer that observes and responds to pointer up events.
+/// Receives pointer-up events for an element tracked by the <see cref="IPointerEventsNoneService"/>.
 /// </summary>
 public interface IPointerUpObserver
 {

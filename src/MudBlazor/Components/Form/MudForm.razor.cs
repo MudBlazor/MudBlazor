@@ -268,7 +268,7 @@ namespace MudBlazor
         {
             // The form is valid when no control has an error and every required control holds a value.
             // A required field is satisfied by having a value, not by being touched.
-            var noErrors = _formControls.All(x => x.HasErrors == false);
+            var noErrors = _formControls.All(x => !x.HasErrors);
             var requiredAllHaveValue = _formControls.Where(x => x.Required).All(x => x.HasValue());
             return noErrors && requiredAllHaveValue;
         }

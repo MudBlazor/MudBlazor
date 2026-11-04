@@ -25,6 +25,7 @@ namespace MudBlazor
     {
         private bool _disposed;
         private MudDialog? _dialog;
+        private DialogOptions? _referenceDialogDefaults;
         private ElementReference _dialogContainerReference;
         private readonly ParameterState<DialogOptions> _dialogOptionsState;
         private readonly ParameterState<string?> _titleState;
@@ -187,6 +188,37 @@ namespace MudBlazor
                 await RefocusDialogAsync();
         }
 
+        /// <summary>
+        /// The element that names the dialog: an explicit <see cref="MudDialog.AriaLabelledBy"/>, else the title bar when it is shown and no <see cref="MudDialog.AriaLabel"/> replaces it.
+        /// </summary>
+        private string? GetAriaLabelledBy()
+        {
+            if (!string.IsNullOrWhiteSpace(_dialog?.AriaLabelledBy))
+            {
+                return _dialog.AriaLabelledBy;
+            }
+
+            return GetHideHeader() || !string.IsNullOrWhiteSpace(_dialog?.AriaLabel) ? null : $"_{Id:N}_title";
+        }
+
+        /// <summary>
+        /// The text that names the dialog when no element does: an explicit <see cref="MudDialog.AriaLabel"/>, else the title while the header is hidden.
+        /// </summary>
+        private string? GetAriaLabel()
+        {
+            if (!string.IsNullOrWhiteSpace(_dialog?.AriaLabelledBy))
+            {
+                return null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(_dialog?.AriaLabel))
+            {
+                return _dialog.AriaLabel;
+            }
+
+            return GetHideHeader() && !string.IsNullOrWhiteSpace(_titleState.Value) ? _titleState.Value : null;
+        }
+
         private bool GetHideHeader()
         {
             if (GetDialogOptionsOrDefault.NoHeader.HasValue)
@@ -302,7 +334,42 @@ namespace MudBlazor
 
         private string? GetBackgroundClass() => GetDialogOptionsOrDefault.BackgroundClass ?? GlobalDialogOptions.BackgroundClass;
 
-        private DialogOptions GetDialogOptionsOrDefault => _dialogOptionsState.Value ?? DialogOptions.Default;
+        /// <summary>
+        /// The options in effect for this dialog: the values passed to
+        /// <see cref="DialogService.ShowAsync(Type, string, DialogOptions)"/> layered over the
+        /// <see cref="MudDialog.Options"/> of the dialog being shown, one property at a time.
+        /// </summary>
+        /// <remarks>
+        /// A dialog that does not set <see cref="MudDialog.Options"/> keeps the instance it was
+        /// shown with, so only dialogs that declare their own defaults pay for the merge.
+        /// </remarks>
+        private DialogOptions GetDialogOptionsOrDefault
+        {
+            get
+            {
+                var options = _dialogOptionsState.Value ?? DialogOptions.Default;
+                var dialogDefaults = _dialog?.Options;
+                if (dialogDefaults is null)
+                {
+                    return options;
+                }
+
+                return options with
+                {
+                    Position = options.Position ?? dialogDefaults.Position,
+                    MaxWidth = options.MaxWidth ?? dialogDefaults.MaxWidth,
+                    BackdropClick = options.BackdropClick ?? dialogDefaults.BackdropClick,
+                    CloseOnEscapeKey = options.CloseOnEscapeKey ?? dialogDefaults.CloseOnEscapeKey,
+                    CloseOnNavigation = options.CloseOnNavigation ?? dialogDefaults.CloseOnNavigation,
+                    NoHeader = options.NoHeader ?? dialogDefaults.NoHeader,
+                    CloseButton = options.CloseButton ?? dialogDefaults.CloseButton,
+                    FullScreen = options.FullScreen ?? dialogDefaults.FullScreen,
+                    FullWidth = options.FullWidth ?? dialogDefaults.FullWidth,
+                    BackgroundClass = options.BackgroundClass ?? dialogDefaults.BackgroundClass,
+                    DefaultFocus = options.DefaultFocus ?? dialogDefaults.DefaultFocus
+                };
+            }
+        }
 
         protected virtual async ValueTask DisposeAsyncCore()
         {
@@ -338,7 +405,7 @@ namespace MudBlazor
         async Task IMudDialogInstance.SetOptionsAsync(DialogOptions options)
         {
             await _dialogOptionsState.SetValueAsync(options);
-            Parent.SetOptions(Id, options);
+            Parent.SetOptions(Id, GetDialogOptionsOrDefault);
             await InvokeAsync(StateHasChanged);
         }
 
@@ -371,10 +438,16 @@ namespace MudBlazor
         /// <inheritdoc />
         void IMudDialogInstance.Cancel() => ((IMudDialogInstance)this).Close(DialogResult.Cancel());
 
+        // Read from the registered MudDialog on every render so later changes to its Style and TitleContent show up.
+        private string? CurrentStyle => _dialog is null ? Style : _dialog.Style;
+
+        private RenderFragment? CurrentTitleContent => _dialog is null ? TitleContent : _dialog.TitleContent;
+
         /// <inheritdoc />
         void IMudDialogInstanceInternal.Register(MudDialog dialog)
         {
             _dialog = dialog;
+            SyncDialogDefaultsToReference();
             Class = dialog.Class;
             Style = dialog.Style;
             TitleContent = dialog.TitleContent;
@@ -382,7 +455,25 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        void IMudDialogInstance.StateHasChanged() => StateHasChanged();
+        void IMudDialogInstance.StateHasChanged()
+        {
+            // The registered MudDialog calls this after each render, so it also picks up Options changed while open.
+            SyncDialogDefaultsToReference();
+            StateHasChanged();
+        }
+
+        // The provider reads CloseOnNavigation from the reference, so it needs the dialog's defaults merged in too.
+        private void SyncDialogDefaultsToReference()
+        {
+            var dialogDefaults = _dialog?.Options;
+            if (ReferenceEquals(dialogDefaults, _referenceDialogDefaults))
+            {
+                return;
+            }
+
+            _referenceDialogDefaults = dialogDefaults;
+            Parent.SetOptions(Id, GetDialogOptionsOrDefault);
+        }
 
         /// <inheritdoc />
         void IMudDialogInstance.CancelAll()

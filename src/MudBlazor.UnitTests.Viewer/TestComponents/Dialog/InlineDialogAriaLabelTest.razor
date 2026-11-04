@@ -1,0 +1,24 @@
+﻿<MudButton OnClick="() => _visible = true">Open</MudButton>
+
+<MudDialog @bind-Visible="_visible" Options="_options" AriaLabel="@AriaLabel" AriaLabelledBy="@AriaLabelledBy">
+    <DialogContent>
+        <MudText id="custom-heading" Typo="Typo.h6">Remove this item?</MudText>
+        <MudText>This cannot be undone.</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => _visible = false">Keep</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public static string __description__ = "An inline dialog without a header that is named through AriaLabel or AriaLabelledBy.";
+
+    [Parameter]
+    public string? AriaLabel { get; set; }
+
+    [Parameter]
+    public string? AriaLabelledBy { get; set; }
+
+    private bool _visible;
+    private readonly DialogOptions _options = new() { NoHeader = true };
+}

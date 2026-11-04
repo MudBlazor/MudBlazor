@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text.RegularExpressions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
@@ -259,6 +260,6 @@ public partial class DateMask : PatternMask
         }
     }
 
-    [GeneratedRegex(@"^\d+$")]
+    [GeneratedRegex(@"^\d+$", RegexOptions.None, RegexDefaults.MatchTimeoutMilliseconds)]
     private static partial Regex ValidDigitRegularExpression();
 }

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents the current state of a header in a <see cref="MudDataGrid{T}"/>.
+    /// Header state and actions passed to a <see cref="MudDataGrid{T}"/> header template, exposing the displayed items and select-all command.
     /// </summary>
     /// <typeparam name="T">The kind of item being managed.</typeparam>
     public class HeaderContext<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
@@ -41,28 +41,7 @@ namespace MudBlazor
         /// <summary>
         /// Indicates whether all items are currently selected.
         /// </summary>
-        public bool? IsAllSelected
-        {
-            get
-            {
-                if (_dataGrid.Selection is not null && (Items?.Any() ?? false))
-                {
-                    if (_dataGrid.Selection.Count == Items.Count())
-                    {
-                        return true;
-                    }
-
-                    if (_dataGrid.Selection.Count == 0)
-                    {
-                        return false;
-                    }
-
-                    return null;
-                }
-
-                return false;
-            }
-        }
+        public bool? IsAllSelected => _dataGrid.GetSelectionState(Items);
 
         /// <summary>
         /// Creates a new instance.
@@ -79,7 +58,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Represents the behaviors allowed for a <see cref="MudDataGrid{T}"/> header.
+        /// Select-all delegate for a <see cref="MudDataGrid{T}"/> header, exposed through <see cref="HeaderContext{T}"/>.
         /// </summary>
         public class HeaderActions
         {

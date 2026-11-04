@@ -9,11 +9,14 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a column in a <see cref="MudDataGrid{T}"/> which can be expanded to show additional information.
+/// Adds an expand or collapse button to each <see cref="MudDataGrid{T}"/> row, revealing nested detail content when expanded.
 /// </summary>
 /// <typeparam name="T">The kind of item managed by the column.</typeparam>
-/// <seealso cref="Column{T}"/>
-/// <seealso cref="MudDataGrid{T}"/>
+/// <seealso cref="Column{T}" />
+/// <seealso cref="MudDataGrid{T}" />
+/// <seealso cref="PropertyColumn{T, TProperty}" />
+/// <seealso cref="SelectColumn{T}" />
+/// <seealso cref="TemplateColumn{T}" />
 public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
 {
     /// <summary>
@@ -133,6 +136,42 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// </summary>
     [Parameter]
     public RenderFragment<CellContext<T>>? CellTemplate { get; set; }
+
+    /// <summary>
+    /// The CSS classes applied to this column's value cells.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
+    /// </remarks>
+    [Parameter]
+    public string? CellClass { get; set; }
+
+    /// <summary>
+    /// The function which calculates CSS classes for this column's value cells.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
+    /// </remarks>
+    [Parameter]
+    public Func<T, string>? CellClassFunc { get; set; }
+
+    /// <summary>
+    /// The CSS styles applied to this column's value cells.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    public string? CellStyle { get; set; }
+
+    /// <summary>
+    /// The function which calculates CSS styles for this column's value cells.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    public Func<T, string>? CellStyleFunc { get; set; }
 
     /// <summary>
     /// The function which determines whether the row should be initially expanded.

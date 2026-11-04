@@ -4,7 +4,7 @@ namespace MudBlazor
 {
 #pragma warning disable IDE1006 // must being with upper case
     /// <summary>
-    /// Represents the breakpoints for responsive design.
+    /// Pixel width thresholds for the responsive breakpoints (xs, sm, md, lg, xl, and xxl) used to adapt layouts to screen size.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class Breakpoints

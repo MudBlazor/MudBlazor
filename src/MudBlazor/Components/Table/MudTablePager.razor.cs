@@ -9,10 +9,15 @@ namespace MudBlazor
 {
 
     /// <summary>
-    /// A component which changes pages and page size for a <see cref="MudTable{T}"/>.
+    /// Pagination controls for a <see cref="MudTable{T}"/> that navigate between pages and change the number of rows shown per page.
     /// </summary>
+    /// <seealso cref="MudDataGridPager{T}" />
+    /// <seealso cref="MudTable{T}" />
+    /// <seealso cref="MudTableBase" />
     public partial class MudTablePager : MudComponentBase, IDisposable
     {
+        private readonly string _rowsPerPageLabelId = Identifier.Create("tablepager-rows-per-page");
+
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
                 .AddClass("mud-tablepager-left", !RightToLeft)

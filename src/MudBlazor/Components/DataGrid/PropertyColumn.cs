@@ -12,10 +12,13 @@ using MudBlazor.Utilities.Expressions;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a column in a <see cref="MudDataGrid{T}"/> associated with an object's property.
+    /// Binds a <see cref="MudDataGrid{T}"/> column to an object property, with automatic sorting, filtering, and formatting of its values.
     /// </summary>
     /// <typeparam name="T">The type of object represented by each row in the data grid.</typeparam>
     /// <typeparam name="TProperty">The type of the property whose values are displayed in the column's cells.</typeparam>
+    /// <seealso cref="Column{T}" />
+    /// <seealso cref="MudDataGrid{T}" />
+    /// <seealso cref="TemplateColumn{T}" />
     public partial class PropertyColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T, TProperty> : Column<T>
     {
         private readonly Guid _id = Guid.NewGuid();

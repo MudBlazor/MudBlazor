@@ -14,10 +14,13 @@ namespace MudBlazor
     /// </summary>
     /// <seealso cref="MudNavLink"/>
     /// <seealso cref="MudNavMenu"/>
-    public partial class MudNavGroup : MudComponentBase
+    public partial class MudNavGroup : MudComponentBase, IDisposable
     {
         private readonly ParameterState<bool> _expandedState;
         private NavigationContext _navigationContext = new(false, true);
+
+        [CascadingParameter]
+        private MudNavMenu? ParentMenu { get; set; }
 
         public MudNavGroup()
         {
@@ -37,6 +40,7 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            ParentMenu?.RegisterGroup(this);
             UpdateNavigationContext();
         }
 
@@ -152,7 +156,6 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Obsolete("Set ExpandIcon to an empty string to hide the expand/collapse icon instead. This property will be removed in v10.")]
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
         public bool HideExpandIcon { get; set; }
@@ -171,11 +174,11 @@ namespace MudBlazor
         /// The icon for expanding and collapsing this group.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.  Set to <c>null</c> or an empty string to hide the expand/collapse icon.
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.  Only shows when <see cref="HideExpandIcon"/> is <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.NavMenu.Appearance)]
-        public string? ExpandIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
+        public string ExpandIcon { get; set; } = Icons.Material.Filled.ArrowDropDown;
 
         /// <summary>
         /// The content within this group.
@@ -193,11 +196,37 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
+        /// <summary>
+        /// Toggles the expanded state of this group (expand or collapse) and updates the navigation context.
+        /// When expanded, notifies the parent menu so it can collapse other groups if exclusive expansion is enabled.
+        /// </summary>
         private async Task ExpandedToggleAsync()
         {
             await _expandedState.SetValueAsync(!_expandedState.Value);
             UpdateNavigationContext();
+            if (_expandedState.Value && ParentMenu is not null)
+            {
+                await ParentMenu.NotifyGroupExpandedAsync(this);
+            }
         }
+
+        /// <summary>
+        /// Collapse this group programmatically.
+        /// </summary>
+        internal async Task CollapseAsync()
+        {
+            if (!_expandedState.Value)
+            {
+                return;
+            }
+
+            await _expandedState.SetValueAsync(false);
+            UpdateNavigationContext();
+            await InvokeAsync(StateHasChanged);
+        }
+
+        public void Dispose()
+            => ParentMenu?.UnregisterGroup(this);
 
         private void UpdateNavigationContext()
             => _navigationContext = _navigationContext with

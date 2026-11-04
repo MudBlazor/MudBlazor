@@ -5,7 +5,7 @@
 namespace MudBlazor.Utilities.Clone;
 
 /// <summary>
-/// Represents an interface for resolving deep copy operations for objects of type <typeparamref name="T"/>.
+/// Deep-copies objects of type <typeparamref name="T"/> using a pluggable clone strategy.
 /// </summary>
 /// <remarks>
 /// Please ensure that it implements deep copy logic for all nested objects, not just shallow copies.

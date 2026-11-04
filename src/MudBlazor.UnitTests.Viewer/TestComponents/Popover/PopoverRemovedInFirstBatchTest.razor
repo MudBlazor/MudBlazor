@@ -1,0 +1,17 @@
+﻿@if (_show)
+{
+    <MudPopover>Removed before its first render</MudPopover>
+    <PopoverBatchTrigger Initialized="Hide" />
+}
+
+@code {
+    public static string __description__ = "A popover that the render batch creating it removes again, so it is disposed before its first OnAfterRender";
+
+    private bool _show = true;
+
+    private void Hide()
+    {
+        _show = false;
+        StateHasChanged();
+    }
+}

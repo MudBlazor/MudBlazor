@@ -6,9 +6,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a picker for dates.
+    /// Selects a single date from a calendar shown in a drop-down, dialog, or inline.
     /// </summary>
-    /// <seealso cref="MudDateRangePicker"/>
+    /// <seealso cref="MudDateRangePicker" />
+    /// <seealso cref="MudTimePicker" />
     public class MudDatePicker : MudBaseDatePicker
     {
         private DateTime? _selectedDate;
@@ -65,7 +66,13 @@ namespace MudBlazor
             // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
             // will be null. We need to check if the text has been set my the user and if so handle tha validation
             // without this the UI doesn't display a validation error correctly
-            if (_value != date || (date is null && Text != null))
+            // Empty text is not user input that failed to convert, so it must not re-enter this branch.
+            // A clear-button click empties the text before ClearAsync runs, so re-entering would overwrite Text with null once the debounce window above had closed.
+            // That would leave the observable result dependent on the wall clock.
+            // Only the user can produce text the converter rejects, so the programmatic parameter write is excluded too.
+            // Blazor runs the Date setter on every render, even when the parent supplies the same value, so leaving it in
+            // let any unrelated re-render mid-typing (a form's bound Errors, for instance) wipe the half-typed date (#13887).
+            if (_value != date || (date is null && !suppressInteraction && !string.IsNullOrEmpty(Text)))
             {
                 if (!suppressInteraction)
                 {
@@ -135,7 +142,8 @@ namespace MudBlazor
         {
             var b = new CssBuilder("mud-day");
             b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
-            if (day < GetMonthStart(month) || day > GetMonthEnd(month))
+            b.AddClass("mud-adjacent-month", IsAdjacentMonthDay(month, day));
+            if (IsHiddenAdjacentMonthDay(month, day))
                 return b.AddClass("mud-hidden").Build();
             if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToStringFast(true)}").Build();
@@ -174,8 +182,8 @@ namespace MudBlazor
             if (GetReadOnlyState())
                 return;
             await FocusAsync();
-            PickerMonth = month;
             var nextView = GetNextView();
+            PickerMonth = nextView == OpenTo.Date ? GetFirstMonthKeepingColumn(month) : month;
             if (nextView == null)
             {
                 var culture = GetCulture();
@@ -287,6 +295,16 @@ namespace MudBlazor
             {
                 await CloseAsync(false);
             }
+        }
+
+        protected override async Task ResetValueAsync()
+        {
+            // The base reset raises DateChanged only through the input field, which a static picker doesn't have, so clear through ClearAsync first.
+            await ClearAsync();
+            // The base reset still clears the input field, even inside the debounce window that ClearAsync is subject to, and puts Touched back to false.
+            await base.ResetValueAsync();
+            // Clearing keeps the month the user was looking at, but a reset should reopen the calendar where an empty picker starts.
+            ResetCalendarToStart();
         }
 
         protected override string GetTitleDateString()
@@ -409,7 +427,7 @@ namespace MudBlazor
 
                     break;
                 case "ArrowDown":
-                    if (Open == false && Editable == false)
+                    if (!Open && !Editable)
                     {
                         Open = true;
                     }

@@ -10,7 +10,7 @@ runs:
   using: "composite"
   steps:
     - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
 
     # We try to restore from our 'format-check' job cache if available because it contains all dependencies
     - name: Cache NuGet packages
@@ -25,6 +25,13 @@ runs:
         # We use the hash of 'Directory.Build.props' because the version is defined there
         key: ${{ github.repository }}-bun-binary-${{ hashFiles('**/Directory.Build.props') }}
         path: ./tools/BunDotNet
+
+    - name: Cache Bun packages
+      uses: actions/cache@v6
+      with:
+        # The build installs from 'src/bun.lock', so the resolved package set changes only when it does
+        key: ${{ github.repository }}-bun-packages-${{ hashFiles('src/bun.lock') }}
+        path: ~/.bun/install/cache
 
     - name: Restore NuGet packages
       shell: bash

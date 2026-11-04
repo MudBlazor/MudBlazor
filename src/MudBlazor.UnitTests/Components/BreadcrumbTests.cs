@@ -1,6 +1,10 @@
 ﻿using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
+using Moq;
+using MudBlazor.Resources;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -54,6 +58,83 @@ namespace MudBlazor.UnitTests.Components
             }));
 
             comp.Find("nav").GetAttribute("aria-label").Should().Be("Breadcrumb");
+        }
+
+        /// <summary>
+        /// Issue #13974: separate trails can have distinct navigation landmark names.
+        /// </summary>
+        [Test]
+        public void MudBreadcrumbs_AriaLabel_ShouldNameEachNavigationLandmark()
+        {
+            var items = new List<BreadcrumbItem> { new("Home", "/"), new("Books", "/books") };
+            var catalog = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.AriaLabel, "Catalog breadcrumb"));
+            var account = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.AriaLabel, "Account breadcrumb"));
+
+            catalog.Find("nav").GetAttribute("aria-label").Should().Be("Catalog breadcrumb");
+            account.Find("nav").GetAttribute("aria-label").Should().Be("Account breadcrumb");
+            catalog.Find("ol").HasAttribute("aria-label").Should().BeFalse();
+            account.Find("ol").HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Issue #13974: changing a label updates the landmark and null restores the localized default.
+        /// </summary>
+        [Test]
+        public async Task MudBreadcrumbs_AriaLabel_ShouldUpdateAndRestoreLocalizedDefault()
+        {
+            var interceptor = new Mock<ILocalizationInterceptor>();
+            interceptor.Setup(x => x.Handle(LanguageResource.MudBreadcrumbs_Label))
+                .Returns(new LocalizedString(LanguageResource.MudBreadcrumbs_Label, "Fil d’Ariane"));
+            Context.Services.AddSingleton(new InternalMudLocalizer(interceptor.Object));
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, new List<BreadcrumbItem> { new("Home", "/"), new("Books", "/books") }));
+
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Fil d’Ariane");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.AriaLabel, "Catalog breadcrumb"));
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Catalog breadcrumb");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.AriaLabel, "Book navigation"));
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Book navigation");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.AriaLabel, null));
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Fil d’Ariane");
+        }
+
+        /// <summary>
+        /// Issue #13974: naming the navigation preserves caller attributes and styling on the ordered list.
+        /// </summary>
+        [Test]
+        public void MudBreadcrumbs_AriaLabel_ShouldPreserveOrderedListAttributes()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, new List<BreadcrumbItem> { new("Home", "/"), new("Books", "/books") })
+                .Add(x => x.AriaLabel, "Catalog breadcrumb")
+                .Add(x => x.Class, "catalog-trail")
+                .Add(x => x.Style, "margin-top: 8px;")
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    ["data-trail"] = "catalog",
+                    ["aria-label"] = "Catalog list",
+                    ["title"] = "Book hierarchy"
+                }));
+
+            var nav = comp.Find("nav");
+            nav.GetAttribute("aria-label").Should().Be("Catalog breadcrumb");
+            nav.HasAttribute("data-trail").Should().BeFalse();
+            nav.HasAttribute("title").Should().BeFalse();
+            nav.HasAttribute("class").Should().BeFalse();
+            nav.HasAttribute("style").Should().BeFalse();
+            var list = comp.Find("ol");
+            list.GetAttribute("data-trail").Should().Be("catalog");
+            list.GetAttribute("aria-label").Should().Be("Catalog list");
+            list.GetAttribute("title").Should().Be("Book hierarchy");
+            list.ClassList.Should().Contain("catalog-trail");
+            list.GetAttribute("style").Should().Be("margin-top: 8px;");
         }
 
         [Test]
@@ -303,6 +384,106 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.Instance.Collapsed.Should().BeFalse());
 
             await comp.WaitForAssertionAsync(() => MudBreadcrumbs.GetItemClassname(comp.Instance.Items[1]).Should().Be("mud-breadcrumb-item"));
+        }
+
+        /// <summary>
+        /// The last breadcrumb is marked as the current page.
+        /// </summary>
+        [Test]
+        public void MudBreadcrumbs_ShouldMarkLastItemAsCurrentPage()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>
+            {
+                new("Link 1", "link1"),
+                new("Link 2", "link2"),
+                new("Link 3", "link3", disabled: true)
+            }));
+
+            var links = comp.FindAll("li.mud-breadcrumb-item > a");
+            links[0].HasAttribute("aria-current").Should().BeFalse();
+            links[1].HasAttribute("aria-current").Should().BeFalse();
+            links[2].GetAttribute("aria-current").Should().Be("page");
+        }
+
+        /// <summary>
+        /// A collapsed trail still marks its last item as the current page.
+        /// </summary>
+        [Test]
+        public void MudBreadcrumbs_Collapsed_ShouldMarkLastItemAsCurrentPage()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.MaxItems, (byte)2)
+                .Add(x => x.Items, new List<BreadcrumbItem>
+                {
+                    new("Link 1", "link1"),
+                    new("Link 2", "link2"),
+                    new("Link 3", "link3")
+                }));
+
+            var links = comp.FindAll("li.mud-breadcrumb-item > a");
+            links.Count.Should().Be(2);
+            links[0].HasAttribute("aria-current").Should().BeFalse();
+            links[1].GetAttribute("aria-current").Should().Be("page");
+        }
+
+        /// <summary>
+        /// Changing the separator after the first render updates every separator in the trail.
+        /// </summary>
+        [Test]
+        public async Task MudBreadcrumbs_SeparatorChanged_ShouldUpdateSeparators()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, new List<BreadcrumbItem> { new("Link 1", "link1"), new("Link 2", "link2"), new("Link 3", "link3") })
+                .Add(x => x.Separator, "/"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Separator, ">"));
+
+            comp.FindAll("li.mud-breadcrumb-separator").Select(x => x.TextContent.Trim()).Should().Equal(">", ">");
+        }
+
+        /// <summary>
+        /// Replacing the separator template after the first render updates every separator in the trail.
+        /// </summary>
+        [Test]
+        public async Task MudBreadcrumbs_SeparatorTemplateChanged_ShouldUpdateSeparators()
+        {
+            RenderFragment Template(string text) => builder => builder.AddContent(0, text);
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, new List<BreadcrumbItem> { new("Link 1", "link1"), new("Link 2", "link2") })
+                .Add(x => x.SeparatorTemplate, Template("first")));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SeparatorTemplate, Template("second")));
+
+            comp.Find("li.mud-breadcrumb-separator").TextContent.Trim().Should().Be("second");
+        }
+
+        /// <summary>
+        /// A link rendered outside a breadcrumb trail has no current page to report.
+        /// </summary>
+        [Test]
+        public void BreadcrumbLink_WithoutParent_ShouldNotClaimCurrentPage()
+        {
+            var comp = Context.Render<BreadcrumbLink>(parameters => parameters.Add(x => x.Item, new BreadcrumbItem("Link", "link")));
+
+            comp.Find("a").HasAttribute("aria-current").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Only the last of the supplied items counts as the current page.
+        /// </summary>
+        [Test]
+        public void MudBreadcrumbs_IsLastItem_ShouldOnlyMatchTheLastItem()
+        {
+            var first = new BreadcrumbItem("First", "first");
+            var last = new BreadcrumbItem("Last", "last");
+
+            Context.Render<MudBreadcrumbs>().Instance.IsLastItem(last).Should().BeFalse();
+            Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem>())).Instance.IsLastItem(last).Should().BeFalse();
+
+            var breadcrumbs = Context.Render<MudBreadcrumbs>(parameters => parameters.Add(x => x.Items, new List<BreadcrumbItem> { first, last })).Instance;
+            breadcrumbs.IsLastItem(first).Should().BeFalse();
+            breadcrumbs.IsLastItem(last).Should().BeTrue();
+            breadcrumbs.IsLastItem(null).Should().BeFalse();
         }
     }
 }

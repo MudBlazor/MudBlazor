@@ -5,7 +5,7 @@
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents the default options for a line chart.
+/// Default line and area chart options such as stroke width, data markers, interpolation, and per-series display overrides.
 /// </summary>
 public abstract class DefaultAxisLineChartOptions : DefaultAxisChartOptions, IAxisLineChartOptions
 {
@@ -50,6 +50,14 @@ public abstract class DefaultAxisLineChartOptions : DefaultAxisChartOptions, IAx
     /// Defaults to <see cref="InterpolationOption.Straight"/>.
     /// </remarks>
     public InterpolationOption InterpolationOption { get; set; } = InterpolationOption.Straight;
+
+    /// <summary>
+    /// When <c>true</c>, lines connect across null data points instead of showing gaps.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool ConnectNullPoints { get; set; }
 
     /// <summary>
     /// Optional per-series display overrides.

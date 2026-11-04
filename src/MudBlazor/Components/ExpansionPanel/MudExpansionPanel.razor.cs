@@ -7,16 +7,17 @@ namespace MudBlazor
 {
 
     /// <summary>
-    /// A component which can be expanded to show more content or collapsed to show only its header.
+    /// Accordion-style collapsible panel within a <see cref="MudExpansionPanels"/> group that expands to reveal content or collapses to show only its header.
     /// </summary>
     /// <remarks>
     /// This component is always inside a <see cref="MudExpansionPanels"/> component.
     /// </remarks>
-    /// <seealso cref="MudExpansionPanels"/>
-    /// <seealso cref="MudCollapse"/>
+    /// <seealso cref="MudCollapse" />
+    /// <seealso cref="MudExpansionPanels" />
     public partial class MudExpansionPanel : MudComponentBase, IDisposable
     {
         internal readonly ParameterState<bool> _expandedState;
+        private readonly string _contentId = Identifier.Create("expansion-panel");
 
         [CascadingParameter]
         private MudExpansionPanels? Parent { get; set; }
@@ -25,7 +26,6 @@ namespace MudBlazor
             new CssBuilder("mud-expand-panel")
                 .AddClass("mud-panel-expanded", _expandedState.Value)
                 .AddClass("mud-panel-next-expanded", NextPanelExpanded)
-                .AddClass("mud-disabled", Disabled)
                 .AddClass($"mud-elevation-{Parent?.Elevation.ToString()}")
                 .AddClass($"mud-expand-panel-border", Parent?.Outlined == true)
                 .AddClass(Class)
@@ -34,6 +34,7 @@ namespace MudBlazor
         protected string HeaderClassname =>
             new CssBuilder("mud-expand-panel-header")
                 .AddClass("mud-expand-panel-header-gutters", Gutters && Parent?.Gutters != false)
+                .AddClass("mud-disabled", Disabled)
                 .AddClass(HeaderClass)
                 .Build();
 
@@ -65,6 +66,8 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.  When set, overrides the <see cref="Text"/> property.
+        /// The header is exposed as a button, so this content becomes its accessible name.
+        /// Put interactive controls in the panel content rather than here, since a control inside a button is not reliably reachable by assistive technology.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Behavior)]
@@ -86,7 +89,6 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Obsolete("Set Icon to an empty string to hide the expand icon instead. This property will be removed in v10.")]
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
         public bool HideIcon { get; set; }
@@ -95,11 +97,11 @@ namespace MudBlazor
         /// The icon for expanding this panel.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.  Set to <c>null</c> or an empty string to hide the icon.
+        /// Defaults to <see cref="Icons.Material.Filled.ExpandMore"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public string? Icon { get; set; } = Icons.Material.Filled.ExpandMore;
+        public string Icon { get; set; } = Icons.Material.Filled.ExpandMore;
 
         /// <summary>
         /// Removes vertical padding from the panel.

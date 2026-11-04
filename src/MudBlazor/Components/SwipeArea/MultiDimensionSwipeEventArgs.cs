@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Details of a two-axis swipe gesture raised by <see cref="MudSwipeArea"/>.
+/// </summary>
 public class MultiDimensionSwipeEventArgs
 {
     /// <summary>

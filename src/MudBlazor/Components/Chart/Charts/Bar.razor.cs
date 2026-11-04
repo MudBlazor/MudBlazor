@@ -20,6 +20,7 @@ namespace MudBlazor.Charts
         public override RenderFragment? OverlayContent { get; set; }
 
         private readonly List<SvgPath> _bars = [];
+        private readonly List<SvgText> _valueLabels = [];
         private SvgPath? _hoveredBar;
 
         private double _barGroupWidth;
@@ -28,6 +29,8 @@ namespace MudBlazor.Charts
 
         private const double MinBarWidth = 6;
         private const double BarWidthFactor = 0.25;
+        private const double ValueLabelOffset = 5;
+        private const double ValueLabelFontSize = 12;
 
         protected override void OnInitialized()
         {
@@ -101,7 +104,7 @@ namespace MudBlazor.Charts
             var yAxisTicks = ChartOptions?.YAxisTicks;
             gridYUnits = T.CreateSaturating(yAxisTicks is > 0 ? yAxisTicks.Value : 20);
 
-            var allValues = Series.SelectMany(series => series.Data.Values).ToArray();
+            var allValues = Series.SelectMany(series => series.Data).ToArray();
             if (allValues.Length != 0)
             {
                 var minY = allValues.Min();
@@ -125,7 +128,7 @@ namespace MudBlazor.Charts
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
 
-                numVerticalLines = Series.Max(series => series.Data.Values.Count);
+                numVerticalLines = Series.Max(series => series.Data.Count);
             }
             else
             {
@@ -165,6 +168,7 @@ namespace MudBlazor.Charts
         private void GenerateBars(int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace, int numVerticalLines)
         {
             _bars.Clear();
+            _valueLabels.Clear();
 
             var barGroupPositions = CalculateBarGroupPositions(horizontalSpace, numVerticalLines);
 
@@ -173,7 +177,7 @@ namespace MudBlazor.Charts
                 var series = Series[i];
                 var data = series.Data;
 
-                for (var j = 0; j < data.Values.Count && j < barGroupPositions.Length; j++)
+                for (var j = 0; j < data.Count && j < barGroupPositions.Length; j++)
                 {
                     var dataValue = data.GetValue(j);
 
@@ -194,6 +198,21 @@ namespace MudBlazor.Charts
                         LabelY = dataValue <= T.Zero ? gridValueY : gridValue
                     };
                     _bars.Add(bar);
+
+                    if (ChartOptions!.ShowValues && series.Visible)
+                    {
+                        // Positive values render above the bar, negative values below it.
+                        var labelY = dataValue < T.Zero
+                            ? gridValue + ValueLabelOffset + ValueLabelFontSize
+                            : gridValue - ValueLabelOffset;
+
+                        _valueLabels.Add(new SvgText
+                        {
+                            X = gridValueX,
+                            Y = labelY,
+                            Value = BuildYAxisValueString(dataValue),
+                        });
+                    }
                 }
             }
         }

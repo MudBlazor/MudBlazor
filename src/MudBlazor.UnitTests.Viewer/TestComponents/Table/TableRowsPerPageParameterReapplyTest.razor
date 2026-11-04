@@ -1,0 +1,10 @@
+﻿<MudTable T="int" @ref="Table" Items="_items" RowsPerPage="100">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<MudButton OnClick="Rerender" Variant="Variant.Outlined">Rerender</MudButton>

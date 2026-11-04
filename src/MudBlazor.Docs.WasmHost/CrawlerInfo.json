@@ -1109,7 +1109,7 @@
   {
     "pattern": "SeznamBot",
     "addition_date": "2012/03/14",
-    "instances": [	
+    "instances": [
       "Mozilla/5.0 (compatible; SeznamBot/3.2-test1-1; +http://napoveda.seznam.cz/en/seznambot-intro/)",
       "Mozilla/5.0 (compatible; SeznamBot/3.2-test1; +http://napoveda.seznam.cz/en/seznambot-intro/)",
       "Mozilla/5.0 (compatible; SeznamBot/3.2-test2; +http://napoveda.seznam.cz/en/seznambot-intro/)",
@@ -4685,14 +4685,14 @@
       "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko; compatible; Cookiebot/1.0; +http://cookiebot.com/) Chrome/97.0.4692.71 Safari/537.36"
     ]
   },
-	{
-		"pattern": "trovitBot",
-		"addition_date": "2022/06/08",
-		"url": "http://www.trovit.com/bot.html",
-		"instances": [
+  {
+    "pattern": "trovitBot",
+    "addition_date": "2022/06/08",
+    "url": "http://www.trovit.com/bot.html",
+    "instances": [
             "Mozilla/5.0 (compatible; trovitBot 1.0; +http://www.trovit.com/bot.html)"
         ]
-	},
+  },
   {
     "pattern": "seostar\\.co",
     "addition_date": "2022/08/04",
@@ -4875,7 +4875,7 @@
     "addition_date": "2023/08/24",
     "instances": [
       "Mozilla/5.0 (compatible; Linespider/1.1; +https://lin.ee/4dwXkTH)",
-	    "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Linespider/1.1; +https://lin.ee/4dwXkTH) Chrome/W.X.Y.Z Safari/537.36"
+      "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Linespider/1.1; +https://lin.ee/4dwXkTH) Chrome/W.X.Y.Z Safari/537.36"
     ],
     "url": "https://help2.line.me/linesearchbot/web/?contentId=50006055&lang=en"
   },
