@@ -574,7 +574,7 @@ namespace MudBlazor
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
-                DataGrid.HideColumnsPanel();
+                DataGrid.HideColumnsPanelIfVisible();
                 DataGrid.DropContainerHasChanged();
             }
         }
@@ -597,7 +597,7 @@ namespace MudBlazor
             {
                 _filtersMenuPosition = (args.PageY, args.PageX);
                 _filtersMenuVisible = true;
-                DataGrid.HideColumnsPanel();
+                DataGrid.HideColumnsPanelIfVisible();
                 DataGrid.DropContainerHasChanged();
             }
         }
@@ -713,6 +713,11 @@ namespace MudBlazor
             StateHasChanged();
             DataGrid.DropContainerHasChanged();
             return Task.CompletedTask;
+        }
+
+        private Task OnFilterMenuKeyDownAsync(KeyboardEventArgs args)
+        {
+            return args.Key == "Escape" ? CloseFilterAsync() : Task.CompletedTask;
         }
 
         private async Task CheckedChangedAsync(bool value)

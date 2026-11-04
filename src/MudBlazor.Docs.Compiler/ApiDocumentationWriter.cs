@@ -235,6 +235,11 @@ public partial class ApiDocumentationWriter : StringWriter
             {
                 WriteLineIndented($"PropertiesInternal[\"{property.Key}\"].ChangeEvent = Event(\"{property.ChangeEvent.Key}\");");
             }
+            // An external event is built before any loader runs, so its link back to this property is set here.
+            if (property.ChangeEvent is { DeclaringDocumentedType: null } externalEvent && externalEvent.Property == property)
+            {
+                WriteLineIndented($"EventsInternal[\"{externalEvent.Key}\"].Property = PropertiesInternal[\"{property.Key}\"];");
+            }
         }
         foreach (var method in type.Methods.Values.Where(member => member.DeclaringDocumentedType == type))
         {
@@ -250,6 +255,11 @@ public partial class ApiDocumentationWriter : StringWriter
             if (documentedEvent.Property != null)
             {
                 WriteLineIndented($"EventsInternal[\"{documentedEvent.Key}\"].Property = Property(\"{documentedEvent.Property.Key}\");");
+            }
+            // An external property is built before any loader runs, so its link back to this event is set here.
+            if (documentedEvent.Property is { DeclaringDocumentedType: null } externalProperty && externalProperty.ChangeEvent == documentedEvent)
+            {
+                WriteLineIndented($"PropertiesInternal[\"{externalProperty.Key}\"].ChangeEvent = EventsInternal[\"{documentedEvent.Key}\"];");
             }
         }
 
@@ -340,6 +350,18 @@ public partial class ApiDocumentationWriter : StringWriter
         {
             WriteEvent(documentedEvent);
             WriteLineIndented($"EventsInternal[\"{documentedEvent.Key}\"].DeclaringTypeName = \"{documentedEvent.DeclaringType?.Name}\";");
+        }
+
+        // Bindable pairs, such as Text and TextChanged inherited from MudPicker<DateTime?>.
+        // Both sides are built by now, so they are linked directly.
+        // A pair whose other side belongs to a documented type is linked by that type's loader instead.
+        foreach (var property in properties.Where(property => property.ChangeEvent is { DeclaringDocumentedType: null }))
+        {
+            WriteLineIndented($"PropertiesInternal[\"{property.Key}\"].ChangeEvent = EventsInternal[\"{property.ChangeEvent!.Key}\"];");
+        }
+        foreach (var documentedEvent in events.Where(documentedEvent => documentedEvent.Property is { DeclaringDocumentedType: null }))
+        {
+            WriteLineIndented($"EventsInternal[\"{documentedEvent.Key}\"].Property = PropertiesInternal[\"{documentedEvent.Property!.Key}\"];");
         }
 
         StatementForm = false;

@@ -15,6 +15,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Accessible Names">
+                <Description>
+                    Use <CodeInline>AriaLabel</CodeInline> to give each breadcrumb navigation landmark a meaningful, distinct name when a page contains multiple trails.
+                    When <CodeInline>AriaLabel</CodeInline> is <CodeInline>null</CodeInline>, the localized <CodeInline>Breadcrumb</CodeInline> label is used.
+                    <CodeInline>UserAttributes</CodeInline>, including <CodeInline>aria-label</CodeInline>, apply to the inner ordered list.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(BreadcrumbsAriaLabelExample)" ShowCode="true">
+                <BreadcrumbsAriaLabelExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Custom Separator">
                 <Description></Description>
             </SectionHeader>

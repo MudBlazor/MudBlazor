@@ -486,8 +486,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FormFieldChangedSubTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
-            var input = () => comp.Find("input");
-            await input().InputAsync("test");
+            // Debounce commits and validation re-render off the test thread, which can replace the input's event handler between a Find and the event dispatch.
+            // Looking up the input and dispatching on the renderer makes the two atomic.
+            Task InputAsync(string text) => comp.InvokeAsync(() => comp.Find("input").InputAsync(text));
+            await InputAsync("test");
             // trigger validation
             await Task.Delay(comp.Instance.DebounceInterval);
             // imitate "typing in progress" by extending the debounce interval until the async validation terminates
@@ -497,7 +499,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                await input().InputAsync(currentText);
+                await InputAsync(currentText);
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
@@ -2071,6 +2073,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.ResetAsync());
             datePicker.Date.Should().BeNull();
             datePicker.Text.Should().BeNullOrEmpty();
+            datePicker.Touched.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
 
             // input a date
             await datePickerComp.Find("input").ChangeAsync(testDateString);
@@ -2080,6 +2084,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("button.reset").ClickAsync();
             datePicker.Date.Should().BeNull();
             datePicker.Text.Should().BeNullOrEmpty();
+            datePicker.Touched.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
         }
 
         /// <summary>
@@ -2105,6 +2111,8 @@ namespace MudBlazor.UnitTests.Components
             // call reset directly
             await comp.InvokeAsync(() => form.ResetAsync());
             dateRangePicker.DateRange.Should().BeNull();
+            dateRangePicker.Touched.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
 
             // input a date
             await dateRangePickerComp.FindAll("input")[0].ChangeAsync(testStartDate.ToShortDateString());
@@ -2114,6 +2122,8 @@ namespace MudBlazor.UnitTests.Components
             // hit reset button
             await comp.Find("button.reset").ClickAsync();
             dateRangePicker.DateRange.Should().BeNull();
+            dateRangePicker.Touched.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
         }
 
         /// <summary>
