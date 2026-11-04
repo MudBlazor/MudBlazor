@@ -1142,6 +1142,25 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Text that fails to convert in the start input shows the error even when it is the first edit and the end input is empty (#14126).
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_InvalidStartText_WithEmptyEnd_ShowsConversionError()
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.Editable, true));
+            var picker = comp.Instance;
+
+            await comp.FindAll("input")[0].ChangeAsync("22/22/1996");
+
+            picker.DateRange.Should().BeNull();
+            picker.ConversionError.Should().BeTrue();
+            picker.GetState(x => x.Error).Should().BeTrue();
+            comp.Markup.Should().Contain(picker.ConversionErrorMessage);
+        }
+
+        /// <summary>
         /// Emptying the input that held text which failed to convert clears the conversion error, as <see cref="MudDatePicker"/> does (#14126).
         /// </summary>
         [Test]
