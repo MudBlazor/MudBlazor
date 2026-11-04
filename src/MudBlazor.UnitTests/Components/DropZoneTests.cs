@@ -210,26 +210,34 @@ namespace MudBlazor.UnitTests.Components
         }
 
 
-/// <summary>
-/// Verifies that the drop zone tracks the active drag state for issue #14132.
-/// </summary>
-[Test]
-public async Task DropZone_TransactionClassTracksDrag_14132()
-{
-    var comp = Context.Render<DropZoneBasicTest>();
 
-    var zone = comp.Find(".first-drop-zone");
+        /// <summary>
+        /// Verifies that the drop zone tracks the active drag state for issue #14132.
+        /// </summary>
+        [Test]
+        public async Task DropZone_TransactionClassTracksDrag_14132()
+        {
+            var comp = Context.Render<DropZoneBasicTest>();
+            var zone = comp.Find(".first-drop-zone");
 
+            // Before dragging
+            zone.ClassList.Should().NotContain("mud-drop-zone-transaction-active");
 
-    var item = zone.Children[1];
-    await item.DragStartAsync(new DragEventArgs());
+            var item = zone.Children[1];
+            await item.DragStartAsync(new DragEventArgs());
 
+            // During dragging
+            zone = comp.Find(".first-drop-zone");
+            zone.ClassList.Should().Contain("mud-drop-zone-transaction-active");
 
-    zone = comp.Find(".first-drop-zone");
-    item = zone.Children[1];
-    await item.DragEndAsync(new DragEventArgs());
+            item = zone.Children[1];
+            await item.DragEndAsync(new DragEventArgs());
 
-}
+            // After dragging
+            zone = comp.Find(".first-drop-zone");
+            zone.ClassList.Should().NotContain("mud-drop-zone-transaction-active");
+        }
+
 
 
         [Test]
