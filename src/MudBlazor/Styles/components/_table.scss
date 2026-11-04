@@ -701,6 +701,11 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
       height: 0;
       padding: 0;
       margin: 0;
+
+      // A row link hosted in a hidden cell still has to cover the row.
+      .mud-table-row-link-anchor {
+        visibility: visible;
+      }
     }
 
     .mud-table-pagination {
