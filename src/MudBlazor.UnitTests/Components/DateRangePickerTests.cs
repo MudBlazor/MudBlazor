@@ -2212,6 +2212,29 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".mud-button-month").TextContent.Trim().Should().Be(expectedMonthName);
         }
 
+        /// <summary>
+        /// A range that a derived component assigns in its constructor is shown even though it never arrives through the parameters.
+        /// </summary>
+        [Test]
+        public void DateRangePicker_RangeAssignedInDerivedConstructor_IsShown()
+        {
+            var comp = Context.Render<PresetRangePicker>();
+
+            comp.Instance.DateRange.Should().Be(PresetRangePicker.Preset);
+            ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be(PresetRangePicker.Preset.Start.Value.ToShortDateString());
+            ((IHtmlInputElement)comp.FindAll("input")[1]).Value.Should().Be(PresetRangePicker.Preset.End.Value.ToShortDateString());
+        }
+
+        private sealed class PresetRangePicker : MudDateRangePicker
+        {
+            public static readonly DateRange Preset = new(new DateTime(2020, 10, 26), new DateTime(2020, 10, 30));
+
+            public PresetRangePicker()
+            {
+                DateRange = Preset;
+            }
+        }
+
         private sealed class DateRangePickerImpl : MudDateRangePicker
         {
             public DateTime StartOfMonth() => GetCalendarStartOfMonth();

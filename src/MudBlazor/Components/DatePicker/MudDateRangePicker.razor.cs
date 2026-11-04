@@ -180,6 +180,19 @@ namespace MudBlazor
             }
         }
 
+        /// <inheritdoc />
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+
+            // The change handler only runs for values that arrive through the parameters, so a range the component already carries, such as one a derived constructor assigns, would never be shown.
+            // A range that did arrive that way is applied here first, and the handler then finds nothing left to do.
+            if (_dateRange is null && _dateRangeParameter is not null && await UpdateDateRangeDisplayAsync(_dateRangeParameter, updateValue: true, suppressInteraction: true))
+            {
+                await BeginValidateAsync();
+            }
+        }
+
         // Applies a date range to the picker's display state (normalization, text, highlighted date, picker month,
         // disabled-date filtering). Returns true when the value was accepted and actually changed, false when it was
         // unchanged or rejected (e.g. it contains a disabled date). This method never raises DateRangeChanged.
