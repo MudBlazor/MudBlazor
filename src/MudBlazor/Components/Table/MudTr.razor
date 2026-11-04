@@ -4,6 +4,8 @@
 @inherits MudComponentBase
 @inject InternalMudLocalizer Localizer
 
+@{ ResolveLink(); }
+
 <tr id="@RowId" class="@Classname" @onclick="@OnRowClickedAsync" @onpointerenter="@RowMouseEnterEventCallback" @onpointerleave="@RowMouseLeaveEventCallback" style="@Style"
     @attributes="@UserAttributes" @oncontextmenu:preventDefault="PreventContextMenuDefault" aria-disabled="@Disabled.ToString().ToLowerInvariant()">
     @if (Context?.Table?.Editable == true && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtStart() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true))
@@ -50,7 +52,17 @@
             </div>
         </td>
     }
-    @ChildContent
+    @if (Context?.Table?.HasRowLinks == true)
+    {
+        @* Lets the cells find this row, so the first one can host the row link. *@
+        <CascadingValue Value="this" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
+    }
+    else
+    {
+        @ChildContent
+    }
     @if (Context?.Table?.Editable == true && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtEnd() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true))
     {
         @* Add datalabel as a placeholder to avoid jumps on small viewports *@

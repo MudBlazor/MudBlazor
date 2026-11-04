@@ -381,6 +381,37 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
   cursor: pointer;
 }
 
+// RowHref: a real, empty <a> in the first cell, stretched over the whole row so the browser handles clicks, new tabs and middle clicks.
+// Interactive cell content sits above it.
+.mud-table-row-link {
+  position: relative;
+
+  &:has(.mud-table-row-link-anchor:focus-visible) {
+    outline: 2px solid var(--mud-palette-primary);
+    outline-offset: -2px;
+  }
+}
+
+// Raise interactive cell content above the stretched link.
+// :where() keeps this at zero specificity, so components that position their own inputs or labels absolutely (checkboxes, radios, switches, floating labels) keep their positioning.
+// Those already sit above the link with their own z-index.
+:where(.mud-table-row-link .mud-table-cell) :where(a:not(.mud-table-row-link-anchor), button, input, select, textarea, label, [tabindex]:not([tabindex="-1"])) {
+  position: relative;
+  z-index: 1;
+}
+
+.mud-table-row-link-anchor {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
 .mud-table-row-disabled {
   color: var(--mud-palette-text-disabled);
   cursor: default;
@@ -669,6 +700,11 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
       height: 0;
       padding: 0;
       margin: 0;
+
+      // A row link hosted in a hidden cell still has to cover the row.
+      .mud-table-row-link-anchor {
+        visibility: visible;
+      }
     }
 
     .mud-table-pagination {

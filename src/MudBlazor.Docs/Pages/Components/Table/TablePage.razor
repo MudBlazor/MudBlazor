@@ -37,6 +37,22 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Row Links">
+                <Description>
+                    Set <CodeInline>RowHref</CodeInline> to make each row a real link, so Ctrl/Cmd+click, middle click and "Copy link address" work.
+                    Return <CodeInline>null</CodeInline> for rows that shouldn't link, and use <CodeInline>RowTarget</CodeInline> to choose where links open.
+                    The link is named after the first cell, so make that cell describe the row.
+                    Buttons and inputs in the row keep working.
+                    Other content sits under the link, so its text can't be selected and plain elements with click handlers don't receive clicks.
+                    Rows aren't linked when a row click already edits them (<CodeInline>TableEditTrigger.RowClick</CodeInline>) or selects them (<CodeInline>SelectOnRowClick</CodeInline>).
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(TableRowHrefExample)" ShowCode="false" Block="true" FullWidth="true">
+                <TableRowHrefExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Hover Events">
                 <Description>
                     <CodeInline>OnRowMouseEnter</CodeInline> is triggered when the row starts being hovered (onpointerenter event).
