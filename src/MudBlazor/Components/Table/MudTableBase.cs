@@ -805,6 +805,8 @@ namespace MudBlazor
 
         internal abstract Task InvokeServerLoadFunc();
 
+        internal abstract bool HasRowLinks { get; }
+
         internal abstract string? GetRowHref(object? item);
 
         internal abstract string? RowLinkTarget { get; }

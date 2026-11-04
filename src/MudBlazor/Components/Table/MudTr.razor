@@ -55,9 +55,17 @@
         // (the leftmost one) always wins, even after a leading column is shown again.
         ResetLinkCell();
     }
-    <CascadingValue Value="this" IsFixed="true">
+    @if (Context?.Table?.HasRowLinks == true)
+    {
+        @* Lets the cells find this row, so the first one can host the row link. *@
+        <CascadingValue Value="this" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
+    }
+    else
+    {
         @ChildContent
-    </CascadingValue>
+    }
     @if (Context?.Table?.Editable == true && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtEnd() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtEnd() == true))
     {
         @* Add datalabel as a placeholder to avoid jumps on small viewports *@

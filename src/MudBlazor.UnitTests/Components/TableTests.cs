@@ -270,6 +270,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll("a.mud-table-row-link-anchor").Should().BeEmpty();
             comp.FindAll("tr.mud-table-row-link").Should().BeEmpty();
+            comp.FindComponents<CascadingValue<MudTr>>().Should().BeEmpty();
         }
 
         /// <summary>

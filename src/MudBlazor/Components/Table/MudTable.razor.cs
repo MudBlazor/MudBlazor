@@ -363,6 +363,8 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Rows)]
         public string? RowTarget { get; set; }
 
+        internal override bool HasRowLinks => RowHref is not null;
+
         internal override string? GetRowHref(object? item) => RowHref is not null && item is T typedItem ? RowHref(typedItem) : null;
 
         internal override string? RowLinkTarget => RowTarget;
