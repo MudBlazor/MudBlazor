@@ -39,12 +39,12 @@
         <DocsPageSection>
             <SectionHeader Title="Row Links">
                 <Description>
-                    Set <CodeInline>RowHref</CodeInline> to turn each row into a link. The first cell renders a real link that covers the whole row,
-                    so people can open a row in a new tab with Ctrl/Cmd+click or a middle click, and copy its address. Return <CodeInline>null</CodeInline>
-                    for rows that shouldn't link. Use <CodeInline>RowTarget</CodeInline> to choose where the link opens.
-                    Buttons and other controls inside the row keep working. The link is named after the first cell, so make that cell describe the row.
-                    Row links aren't rendered while a row click already edits the row (a <CodeInline>RowEditingTemplate</CodeInline> with <CodeInline>TableEditTrigger.RowClick</CodeInline>)
-                    or toggles its checkbox (<CodeInline>MultiSelection</CodeInline> with <CodeInline>SelectOnRowClick</CodeInline>).
+                    Set <CodeInline>RowHref</CodeInline> to make each row a real link, so Ctrl/Cmd+click, middle click and "Copy link address" work.
+                    Return <CodeInline>null</CodeInline> for rows that shouldn't link, and use <CodeInline>RowTarget</CodeInline> to choose where links open.
+                    The link is named after the first cell, so make that cell describe the row.
+                    Buttons and inputs in the row keep working.
+                    Other content sits under the link, so its text can't be selected and plain elements with click handlers don't receive clicks.
+                    Rows aren't linked when a row click already edits them (<CodeInline>TableEditTrigger.RowClick</CodeInline>) or selects them (<CodeInline>SelectOnRowClick</CodeInline>).
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(TableRowHrefExample)" ShowCode="false" Block="true" FullWidth="true">
