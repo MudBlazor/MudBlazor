@@ -65,8 +65,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// <c>RowHref</c> renders a real link in the first cell of each row, so the browser handles
-        /// navigation, new tabs and middle clicks.
+        /// <c>RowHref</c> renders a real link in the first cell of each row, so the browser handles navigation, new tabs and middle clicks.
         /// </summary>
         [Test]
         public void TableRowHref_RendersLinkInFirstCellOnly()
