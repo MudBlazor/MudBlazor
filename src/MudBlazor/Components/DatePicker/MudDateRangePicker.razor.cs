@@ -212,6 +212,12 @@ namespace MudBlazor
 
                 async Task ApplyRangeTextAsync(Range<string>? rangeText, int edit)
                 {
+                    // Emptying both inputs skips ParseDateRangeValue, so the error recorded for the earlier text would otherwise stay through the validation below.
+                    if (rangeText is null)
+                    {
+                        ResetConverterErrors();
+                    }
+
                     // The range goes first so it lands before any consumer callback can yield, as it did before Text was written here at all.
                     await SetDateRangeAsync(rangeText is null ? null : ParseDateRangeValue(rangeText.Start, rangeText.End), false);
 

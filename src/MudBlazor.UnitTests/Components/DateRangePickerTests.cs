@@ -1142,6 +1142,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Emptying the input that held text which failed to convert clears the conversion error, as <see cref="MudDatePicker"/> does (#14126).
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_InvalidText_EmptyingBothInputs_ClearsConversionError()
+        {
+            var comp = Context.Render<MudForm>(parameters => parameters
+                .AddChildContent<MudDateRangePicker>(pickerParameters => pickerParameters
+                    .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                    .Add(p => p.Editable, true)));
+            var form = comp.Instance;
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
+
+            await comp.FindAll("input")[0].ChangeAsync("22/22/1996");
+            picker.ConversionError.Should().BeTrue();
+
+            await comp.FindAll("input")[0].ChangeAsync("");
+            await comp.InvokeAsync(form.ValidateAsync);
+
+            picker.ConversionError.Should().BeFalse();
+            picker.GetState(x => x.Error).Should().BeFalse();
+            form.IsValid.Should().BeTrue();
+        }
+
+        /// <summary>
         /// A form holding a range picker with text that fails to convert is invalid until the text converts (#14126).
         /// </summary>
         [Test]
