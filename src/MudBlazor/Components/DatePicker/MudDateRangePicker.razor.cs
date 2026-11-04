@@ -396,12 +396,20 @@ namespace MudBlazor
 
         private DateRange? ParseDateRangeValue(string? value)
         {
-            return DateRange.TryParse(value, GetConverter(), out var dateRange) ? dateRange : null;
+            return RangeUtility.Split(value, out var start, out var end) ? ParseDateRangeValue(start, end) : null;
         }
 
         private DateRange? ParseDateRangeValue(string? start, string? end)
         {
-            return DateRange.TryParse(start, end, GetConverter(), out var dateRange) ? dateRange : null;
+            // ConvertGet records the conversion error, so text that is not a date shows the converter's error as MudDatePicker does.
+            var startDate = ConvertGet(start);
+            if (ConversionError)
+            {
+                return null;
+            }
+
+            var endDate = ConvertGet(end);
+            return ConversionError ? null : new DateRange(startDate, endDate);
         }
 
         protected override Task OnPickerClosedAsync()
