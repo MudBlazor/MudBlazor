@@ -14,12 +14,13 @@ namespace MudBlazor
         private bool _hasBeenCanceled;
         private bool _hasBeenCommitted;
         private bool _hasBeenClickedFirstTime;
+        private RowLink? _link;
         private MudTd? _linkCell;
 
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class)
             .AddClass(DisabledClass, Disabled)
-            .AddClass("mud-table-row-link", Link is not null)
+            .AddClass("mud-table-row-link", _link is not null)
             .Build();
 
         protected string ActionsStylename => new StyleBuilder()
@@ -139,26 +140,28 @@ namespace MudBlazor
         internal readonly record struct RowLink(string Href, string? Target);
 
         /// <summary>
-        /// The link this row renders, or <c>null</c> when it isn't linked.
+        /// Works out this row's link for the current render and lets the first cell rendered claim it.
         /// </summary>
         /// <remarks>
-        /// <c>null</c> while the row is disabled or being edited, so a link never covers inputs or disabled content.
-        /// Also <c>null</c> when clicking the row already has a built-in action (editing with
-        /// <see cref="TableEditTrigger.RowClick"/>, or toggling the checkbox with <see cref="MudTableBase.SelectOnRowClick"/>),
-        /// so a click never both edits or selects the row and navigates away.
+        /// No link while the row is disabled or being edited, so it never covers inputs or disabled content.
+        /// No link either when a row click already edits or selects the row, so a click never does both and navigates away.
+        /// Clearing the claim on every render keeps the link on the leftmost cell when columns are hidden or shown again.
         /// </remarks>
-        internal RowLink? Link
+        private void ResolveLink()
         {
-            get
-            {
-                var table = Context?.Table;
-                if (table is null || Disabled || (table.Editable && ReferenceEquals(table._editingItem, Item)) || RowClickHasAction(table))
-                {
-                    return null;
-                }
+            _linkCell = null;
+            _link = null;
 
-                var href = table.GetRowHref(Item);
-                return string.IsNullOrWhiteSpace(href) ? null : new RowLink(href, table.RowLinkTarget);
+            var table = Context?.Table;
+            if (table is null || Disabled || (table.Editable && ReferenceEquals(table._editingItem, Item)) || RowClickHasAction(table))
+            {
+                return;
+            }
+
+            var href = table.GetRowHref(Item);
+            if (!string.IsNullOrWhiteSpace(href))
+            {
+                _link = new RowLink(href, table.RowLinkTarget);
             }
         }
 
@@ -168,22 +171,18 @@ namespace MudBlazor
             table is { MultiSelection: true, SelectionChangeable: true, SelectOnRowClick: true, Editable: false };
 
         /// <summary>
-        /// Lets the first cell rendered in this row host the row link, so the row renders a single link.
+        /// Returns the row link when <paramref name="cell"/> is the first cell rendered in this row, so the row renders one link.
         /// </summary>
-        internal bool ClaimLinkCell(MudTd cell)
+        internal RowLink? ClaimLink(MudTd cell)
         {
-            _linkCell ??= cell;
-            return ReferenceEquals(_linkCell, cell);
-        }
-
-        private void ResetLinkCell() => _linkCell = null;
-
-        internal void ReleaseLinkCell(MudTd cell)
-        {
-            if (ReferenceEquals(_linkCell, cell))
+            // Cells of a table nested in this row see this row too, but belong to the other table.
+            if (_link is null || !ReferenceEquals(cell.Context, Context))
             {
-                _linkCell = null;
+                return null;
             }
+
+            _linkCell ??= cell;
+            return ReferenceEquals(_linkCell, cell) ? _link : null;
         }
 
         /// <summary>

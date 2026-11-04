@@ -4,6 +4,8 @@
 @inherits MudComponentBase
 @inject InternalMudLocalizer Localizer
 
+@{ ResolveLink(); }
+
 <tr id="@RowId" class="@Classname" @onclick="@OnRowClickedAsync" @onpointerenter="@RowMouseEnterEventCallback" @onpointerleave="@RowMouseLeaveEventCallback" style="@Style"
     @attributes="@UserAttributes" @oncontextmenu:preventDefault="PreventContextMenuDefault" aria-disabled="@Disabled.ToString().ToLowerInvariant()">
     @if (Context?.Table?.Editable == true && ((Context?.Table.EditButtonPosition.DisplayEditButtonAtStart() == true && Context?.Table.EditTrigger == TableEditTrigger.EditButton) || Context?.Table.ApplyButtonPosition.DisplayApplyButtonAtStart() == true))
@@ -49,11 +51,6 @@
                 }
             </div>
         </td>
-    }
-    @{
-        // Each render pass re-decides which cell hosts the row link, so the first cell rendered
-        // (the leftmost one) always wins, even after a leading column is shown again.
-        ResetLinkCell();
     }
     @if (Context?.Table?.HasRowLinks == true)
     {

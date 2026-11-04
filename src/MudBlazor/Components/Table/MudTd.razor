@@ -1,8 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
-@implements IDisposable
 
-@{ var link = HostedLink; }
+@{ var link = Row?.ClaimLink(this); }
 @* id comes after the splat so it always matches the link's aria-labelledby, even when a consumer passes id="@null". *@
 <td data-label="@DataLabel" style="@Style" class="@Classname" @attributes="@UserAttributes" id="@(link is null ? UserAttributes.GetValueOrDefault("id") : LinkLabelId)" @oncontextmenu:preventDefault="PreventContextMenuDefault">
     @if (link is { } rowLink)
