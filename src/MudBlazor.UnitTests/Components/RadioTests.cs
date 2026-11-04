@@ -30,6 +30,31 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-radio-group.some-input-class").Should().ContainSingle();
         }
 
+        /// <summary>
+        /// The label and child content use body1 typography and take the error color while the radio has errors.
+        /// </summary>
+        [Test]
+        public async Task Radio_LabelAndChildContent_TakeErrorColor()
+        {
+            var comp = Context.Render<MudRadio<string>>(parameters => parameters
+                .Add(p => p.Value, "a")
+                .Add(p => p.Label, "Option A")
+                .AddChildContent("Details"));
+
+            comp.FindAll("label.mud-radio span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, true));
+
+            comp.FindAll("label.mud-radio span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1 mud-error-text");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, false));
+
+            comp.FindAll("label.mud-radio span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1");
+        }
+
         [Test]
         public void Radio_AriaLabel()
         {

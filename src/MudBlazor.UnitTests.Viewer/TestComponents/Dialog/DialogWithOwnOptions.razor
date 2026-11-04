@@ -1,0 +1,20 @@
+﻿@attribute [ViewerHidden]
+
+<MudDialog Options="@Defaults">
+    <DialogContent>
+        <MudText>Dialog that carries its own default options</MudText>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public DialogOptions Defaults { get; set; } = DialogDefaults;
+
+    public static readonly DialogOptions DialogDefaults = new()
+    {
+        FullScreen = true,
+        MaxWidth = MaxWidth.ExtraLarge,
+        CloseButton = true,
+        CloseOnNavigation = false
+    };
+}

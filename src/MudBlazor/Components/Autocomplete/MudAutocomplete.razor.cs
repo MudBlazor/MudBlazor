@@ -30,6 +30,7 @@ namespace MudBlazor
         private MudInput<string> _elementReference = null!;
         private CancellationTokenSource? _cancellationTokenSrc;
         private Task? _currentSearchTask;
+        private int _searchVersion;
         private ITimer? _debounceTimer;
         private T[]? _items;
         private bool[] _itemDisabled = [];
@@ -61,6 +62,7 @@ namespace MudBlazor
                 .AddClass("mud-autocomplete")
                 .AddClass("mud-width-full", FullWidth)
                 .AddClass("mud-autocomplete--with-progress", ShowProgressIndicator && IsLoading)
+                .AddClass(OuterClass)
                 .Build();
 
         protected string CircularProgressClassname =>
@@ -74,6 +76,15 @@ namespace MudBlazor
                 .AddClass(ListItemClass)
                 .Build();
 
+        /// <summary>
+        /// The CSS classes applied to the outer <c>div</c>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.  Multiple classes must be separated by spaces.
+        /// </remarks>
+        [Category(CategoryTypes.FormComponent.Appearance)]
+        [Parameter]
+        public string? OuterClass { get; set; }
         /// <summary>
         /// Input's classnames, separated by space.
         /// </summary>
@@ -566,6 +577,11 @@ namespace MudBlazor
             _isProcessingValue = true;
             try
             {
+                // A search still running for the typed text must not reopen the menu after the selection.
+                AbandonSearch();
+                // A pending debounce must stop before ValueChanged is awaited, because it can fire while an async handler runs.
+                _debounceTimer?.Dispose();
+
                 // #1 needs to close before SetValueAndUpdateTextAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
                 // #2 Use "Open" field instead of property to prevent raising multiple OpenChanged events while selecting item.
                 _open = false;
@@ -684,6 +700,19 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Stops a running search from replacing the items or reopening the menu when it finishes.
+        /// </summary>
+        private void AbandonSearch()
+        {
+            // Bump the version before cancelling, because a search that observes its token can resume inside Cancel().
+            // The abandoned search returns before it clears the opening and loading state, so clear them here.
+            _searchVersion++;
+            _opening = false;
+            _currentSearchTask = null;
+            CancelToken();
+        }
+
         private Task SetReturnedItemsCountAsync(int value)
         {
             _returnedItemsCount = value;
@@ -711,7 +740,7 @@ namespace MudBlazor
         /// </summary>
         public async Task CloseMenuAsync()
         {
-            CancelToken();
+            AbandonSearch();
             _debounceTimer?.Dispose();
             Open = false; // Before restoring position and triggering changes, make sure that we close the popover
             StateHasChanged();
@@ -729,6 +758,8 @@ namespace MudBlazor
         {
             if (MinCharacters > 0 && (string.IsNullOrWhiteSpace(ReadText) || ReadText.Length < MinCharacters))
             {
+                // A search still running for longer text must not reopen the menu when it finishes.
+                AbandonSearch();
                 Open = false;
                 StateHasChanged();
                 return;
@@ -737,6 +768,7 @@ namespace MudBlazor
             _opening = true;
 
             var searchedItems = Array.Empty<T>();
+            var searchVersion = ++_searchVersion;
             CancelToken();
 
             var wasFocused = _isFocused;
@@ -755,7 +787,11 @@ namespace MudBlazor
                 var searchText = searchingWhileSelected ? string.Empty : ReadText;
                 var searchTask = SearchFunc?.Invoke(searchText, _cancellationTokenSrc.Token);
 
-                _currentSearchTask = searchTask;
+                // SearchFunc can abandon its own search before returning, such as by closing the menu, and an abandoned search must not show as loading.
+                if (searchVersion == _searchVersion)
+                {
+                    _currentSearchTask = searchTask;
+                }
 
                 StateHasChanged();
                 searchedItems = searchTask switch
@@ -777,7 +813,20 @@ namespace MudBlazor
                 Logger.LogWarning("The search function failed to return results: " + e.Message);
             }
 
+            // Searches can finish out of order, so a search that a newer one replaced must not touch the items or the popover.
+            // The newer search owns them (#13943).
+            if (searchVersion != _searchVersion)
+            {
+                return;
+            }
+
             await SetReturnedItemsCountAsync(searchedItems.Length);
+
+            // The consumer's ReturnedItemsCountChanged handler can yield, letting a newer search start and finish first.
+            if (searchVersion != _searchVersion)
+            {
+                return;
+            }
 
             if (MaxItems.HasValue)
             {
@@ -878,6 +927,9 @@ namespace MudBlazor
             try
             {
                 _isCleared = true;
+                AbandonSearch();
+                // A pending debounce must stop before the awaits below, or it can search the cleared text and reopen the menu.
+                _debounceTimer?.Dispose();
                 Open = false;
 
                 await SetTextAndUpdateValueAsync(string.Empty, updateValue: false);
@@ -1033,7 +1085,7 @@ namespace MudBlazor
         /// <param name="index">The index of the item to scroll to. If it's out of range then nothing will happen.</param>
         private ValueTask SelectItemAsync(int index)
         {
-            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any() || index < 0 || index > _enabledItemIndices.Count - 1)
+            if (_items == null || _items.Length == 0 || !_enabledItemIndices.Any() || index < 0 || index >= _items.Length)
                 return ValueTask.CompletedTask;
 
             _selectedListItemIndex = index;
@@ -1201,6 +1253,12 @@ namespace MudBlazor
 
             // These lines prevent the menu from opening when OpenOnFocus is true, which is the default.
             _debounceTimer?.Dispose();
+            if (!Open)
+            {
+                // An open menu searches again below.
+                // Abandoning its search here would show it empty, or with NoItemsTemplate, until then.
+                AbandonSearch();
+            }
             if (_items?.Length > 0)
                 _items = [];
             await SetValueAndUpdateTextAsync(default, false);

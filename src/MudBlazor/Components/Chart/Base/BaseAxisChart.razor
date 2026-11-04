@@ -1,4 +1,5 @@
 ﻿@namespace MudBlazor.Charts
+@using System.Globalization
 
 @inherits MudComponentBase
 
@@ -55,7 +56,7 @@
             var x = verticalLineValue.X.ToStr();
             var y = verticalLineValue.Y.ToStr();
             var rotationValue = ChartOptions?.XAxisLabelRotation ?? 0;
-            var rotation = (-rotationValue).ToString();
+            var rotation = (-rotationValue).ToString(CultureInfo.InvariantCulture);
             var textAnchor = Math.Sign(rotationValue) switch
             {
                 1 => "end",

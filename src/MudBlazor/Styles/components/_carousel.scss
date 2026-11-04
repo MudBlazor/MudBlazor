@@ -18,6 +18,12 @@
   transform: rotate(180deg) !important;
 }
 
+.mud-carousel-custom-button {
+  &:focus-visible {
+    outline: auto;
+  }
+}
+
 .mud-carousel-item {
   position: absolute;
   left: 0px;

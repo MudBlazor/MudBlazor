@@ -24,6 +24,15 @@
                 {
                     <MudNumericField T="double?" Culture="@Column.Culture" Value="@valueNumber" ValueChanged="@NumberValueChangedAsync" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(!DataGrid.HasServerData ? 0 : 500.0)" />
                 }
+                else if (fieldType.IsEnum && @operator == FilterOperator.Enum.IsAnyOf)
+                {
+                    <MudSelect T="Enum" MultiSelection="true" SelectedValues="@valueEnums" SelectedValuesChanged="@EnumValuesChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">
+                        @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
+                        {
+                            <MudSelectItem T="Enum" Value="@item">@Localizer[item]</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
                 else if (fieldType.IsEnum)
                 {
                     <MudSelect T="Enum" Value="@valueEnum" ValueChanged="@EnumValueChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">

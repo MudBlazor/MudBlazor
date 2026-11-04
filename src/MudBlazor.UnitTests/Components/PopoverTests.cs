@@ -1,7 +1,13 @@
 ﻿using System;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Time.Testing;
+using Microsoft.JSInterop;
+using Moq;
+using MudBlazor.UnitTests.Services.Popover.Mocks;
 using MudBlazor.UnitTests.TestComponents.Popover;
 using NUnit.Framework;
 
@@ -395,6 +401,63 @@ namespace MudBlazor.UnitTests.Components
                 await comp.Instance.Open();
                 await comp.Instance.Close();
             }
+        }
+
+        /// <summary>
+        /// A popover that is disposed before its first render, such as a tooltip in a row that the next render batch replaces, is still removed from an initialized popover service.
+        /// </summary>
+        [Test]
+        public async Task MudPopover_DisposedBeforeFirstRender_IsRemovedFromInitializedService()
+        {
+            var service = new PopoverService(NullLogger<PopoverService>.Instance, Mock.Of<IJSRuntime>(), new FakeTimeProvider());
+            // Another popover has rendered, so the service is initialized.
+            await service.UpdatePopoverAsync(new PopoverMock());
+            var popover = new UnrenderedPopover(service);
+            await service.CreatePopoverAsync(popover);
+
+            await popover.DisposeAsync();
+
+            service.IsInitialized.Should().BeTrue();
+            service.ActivePopovers.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// In an interactive renderer, a popover that the render batch creating it removes again is destroyed, also before any popover initialized the service.
+        /// </summary>
+        [Test]
+        public void MudPopover_RemovedInItsFirstBatch_IsDestroyedWhenInteractive()
+        {
+            Context.SetRendererInfo(new RendererInfo("Server", isInteractive: true));
+            var service = Context.Services.GetRequiredService<IPopoverService>();
+
+            var comp = Context.Render<PopoverRemovedInFirstBatchTest>();
+
+            comp.Markup.Should().BeEmpty("the popover must be gone before the batch ends");
+            comp.WaitForAssertion(() => service.ActivePopovers.Should().BeEmpty());
+        }
+
+        /// <summary>
+        /// While prerendering, disposing a popover that never rendered does not initialize the popover service, so it makes no JS calls.
+        /// </summary>
+        [Test]
+        public void MudPopover_RemovedInItsFirstBatch_MakesNoJSCallsWhenPrerendering()
+        {
+            Context.SetRendererInfo(new RendererInfo("Static", isInteractive: false));
+            var service = Context.Services.GetRequiredService<IPopoverService>();
+
+            var comp = Context.Render<PopoverRemovedInFirstBatchTest>();
+
+            comp.Markup.Should().BeEmpty("the popover must be gone before the batch ends");
+            service.IsInitialized.Should().BeFalse();
+            Context.JSInterop.Invocations.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A <see cref="MudPopover"/> as the renderer creates it but before its first render, with the service injected directly.
+        /// </summary>
+        private sealed class UnrenderedPopover : MudPopover
+        {
+            public UnrenderedPopover(IPopoverService popoverService) => PopoverService = popoverService;
         }
     }
 }
