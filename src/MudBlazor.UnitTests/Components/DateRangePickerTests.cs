@@ -1141,10 +1141,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A deliberate null assignment must still clear text that failed to convert, even after the binding echo preserved it.
+        /// Later parent renders that pass the same null keep text that failed to convert, and ClearAsync still clears it.
         /// </summary>
         [Test]
-        public async Task DateRangePicker_ExplicitNull_ShouldClearInvalidText_AfterTheEchoPreservedIt()
+        public async Task DateRangePicker_RepeatedNullFromParent_KeepsInvalidText()
         {
             var start = new DateTime(2020, 10, 26);
             var end = new DateTime(2020, 10, 30);
@@ -1156,14 +1156,14 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[1].ChangeAsync(end.ToShortDateString());
             await comp.FindAll("input")[0].ChangeAsync("INVALID");
 
-            // The binding hands the resulting null straight back, which must leave the edit alone.
+            // The binding echo and any later parent render, such as a form's validity changing, pass the same null.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, null));
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, null));
 
             ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be("INVALID");
             ((IHtmlInputElement)comp.FindAll("input")[1]).Value.Should().Be(end.ToShortDateString());
 
-            // Assigning null again is the consumer deliberately clearing, which is the only way out of a conversion error.
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, null));
+            await comp.InvokeAsync(() => comp.Instance.ClearAsync());
 
             comp.Instance.Text.Should().BeNull();
             ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().BeEmpty();
@@ -1171,10 +1171,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Setting DateRange to null clears text that failed to convert, which is the only way out of the conversion error.
+        /// ClearAsync clears text that failed to convert even though the range is already null.
         /// </summary>
         [Test]
-        public async Task DateRangePicker_ShouldClearInvalidText_WhenDateRangeSetNull()
+        public async Task DateRangePicker_ClearAsync_ShouldClearInvalidText()
         {
             const string Invalid = "INVALID_RANGE";
             var comp = Context.Render<MudDateRangePicker>();
@@ -1184,7 +1184,7 @@ namespace MudBlazor.UnitTests.Components
             picker.DateRange.Should().BeNull();
             picker.Text.Should().Be(Invalid);
 
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DateRange, null));
+            await comp.InvokeAsync(() => picker.ClearAsync());
 
             picker.DateRange.Should().BeNull();
             picker.Text.Should().BeNull();
