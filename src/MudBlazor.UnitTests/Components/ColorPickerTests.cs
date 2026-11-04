@@ -355,6 +355,34 @@ namespace MudBlazor.UnitTests.Components
             await CheckColorRelatedValues(comp, selectorX, selectorY, expectedColor, mode);
         }
 
+        /// <summary>
+        /// Blurring the channel inputs under a comma-decimal UI culture keeps the color instead of re-parsing "0,5" as 5 and clamping it.
+        /// </summary>
+        [Test]
+        [SetCulture("de-DE")]
+        [SetUICulture("de-DE")]
+        [TestCase(ColorPickerMode.RGB)]
+        [TestCase(ColorPickerMode.HSL)]
+        public async Task ChannelInputs_BlurWithoutTyping_CommaDecimalCulture_KeepsColor(ColorPickerMode mode)
+        {
+            var color = new MudColor("#594ae280");
+            var comp = Context.Render<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ColorValue, color);
+                p.Add(x => x.ColorPickerMode, mode);
+            });
+
+            for (var i = 0; i < 4; i++)
+            {
+                await GetColorInput(comp, i).BlurAsync(new FocusEventArgs());
+            }
+
+            comp.Instance.ColorValue.Should().Be(color);
+
+            // The channel inputs default to invariant text, so fractional channels show a dot.
+            GetColorInputs(comp).Select(x => x.Value).Should().OnlyContain(x => !x.Contains(','));
+        }
+
         [Test]
         public void ColorPickerOpenButtonDefaultAriaLabel()
         {
@@ -1593,7 +1621,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void StableHue_WhenColorSpectrumClicked()
+        public async Task StableHue_WhenColorSpectrumClicked()
         {
             var comp = Context.Render<MudColorPicker>(p =>
             {
@@ -1602,15 +1630,14 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Value, _defaultColor);
             });
 
-            var overlay = comp.Find(CssSelector);
-
             var expectedHue = _defaultColor.H;
 
             for (var x = 0; x < 312; x += 5)
             {
                 for (var y = 0; y < 250; y += 5)
                 {
-                    overlay.PointerDown(new PointerEventArgs { OffsetX = x, OffsetY = y });
+                    // Each click re-renders the picker, so re-query the overlay instead of dispatching on a detached element.
+                    await comp.Find(CssSelector).PointerDownAsync(new PointerEventArgs { OffsetX = x, OffsetY = y });
 
                     comp.Instance.ReadValue.H.Should().Be(expectedHue);
                 }

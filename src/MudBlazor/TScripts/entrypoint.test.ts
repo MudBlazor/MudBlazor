@@ -9,49 +9,49 @@ test("window is defined", () => {
 // When a script is ported to TypeScript, keep (or update) its entry here so a missing
 // export is caught immediately instead of surfacing as a runtime interop failure.
 const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
-    // mudDragAndDrop.js
+    // mudDragAndDrop.ts
     ["mudDragAndDrop", "object"],
-    // mudElementReference.js
+    // mudElementReference.ts
     ["mudElementRef", "object"],
-    // mudExitPrompt.js
+    // mudExitPrompt.ts
     ["mudExitPrompt", "object"],
-    // mudFileUpload.js
+    // mudFileUpload.ts
     ["mudFileUpload", "object"],
-    // mudHelpers.js
+    // mudHelpers.ts
     ["getTabbableElements", "function"],
     ["serializeParameter", "function"],
     ["mudGetSvgBBox", "function"],
     ["hasDefinedParentHeight", "function"],
     ["mudObserveElementSize", "function"],
-    // mudHotkeyListener.js
+    // mudHotkeyListener.ts
     ["mudHotkeyListener", "object"],
-    // mudInput.js
+    // mudInput.ts
     ["mudInput", "object"],
-    // mudInputSizing.js
+    // mudInputSizing.ts
     ["mudInputSizing", "object"],
-    // mudJsEvent.js
+    // mudJsEvent.ts
     ["mudJsEvent", "object"],
-    // mudKeyInterceptor.js
+    // mudKeyInterceptor.ts
     ["mudKeyInterceptor", "object"],
-    // mudPointerEventsNone.js
+    // mudPointerEventsNone.ts
     ["mudPointerEventsNone", "object"],
-    // mudPointerCapture.js
+    // mudPointerCapture.ts
     ["mudPointerCapture", "object"],
-    // mudPopover.js
+    // mudPopover.ts
     ["mudpopoverHelper", "object"],
     ["mudPopover", "object"],
-    // mudResizeListener.js
+    // mudResizeListener.ts
     ["mudResizeListener", "object"],
     ["mudResizeListenerFactory", "object"],
-    // mudResizeObserver.js
+    // mudResizeObserver.ts
     ["mudResizeObserver", "object"],
-    // mudScrollListener.js
+    // mudScrollListener.ts
     ["mudScrollListener", "object"],
-    // mudScrollManager.js
+    // mudScrollManager.ts
     ["mudScrollManager", "object"],
-    // mudScrollSpy.js
+    // mudScrollSpy.ts
     ["mudScrollSpy", "object"],
-    // mudSplitPanel.js
+    // mudSplitPanel.ts
     ["mudSplitPanel", "function"],
     ["splitPanels", "object"],
     ["mudSplitPanel_update", "function"],
@@ -59,11 +59,11 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["mudSplitPanel_getDividerPosition", "function"],
     ["mudSplitPanel_setDividerPosition", "function"],
     ["mudSplitPanel_destroy", "function"],
-    // mudTableCell.js
+    // mudTableCell.ts
     ["mudTableCell", "object"],
-    // mudThemeProvider.js
+    // mudThemeProvider.ts
     ["mudThemeProvider", "object"],
-    // mudTimePicker.js
+    // mudTimePicker.ts
     ["mudTimePicker", "object"],
     // MudWindow.ts
     ["mudWindow", "object"],
@@ -71,8 +71,19 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
 
 describe("legacy script globals", () => {
     test.each(expectedWindowGlobals)("window.%s is a %s", (name, type) => {
-        let globalValue = (window as unknown as Record<string, unknown>)[name];
+        const globalValue = (window as unknown as Record<string, unknown>)[name];
         expect(globalValue).not.toBeNull();
         expect(typeof globalValue).toBe(type);
     });
+});
+
+// Scripts without a window global register document listeners from entrypoint.ts instead.
+test("ripple handlers are registered", () => {
+    document.body.innerHTML = `<button class="mud-ripple"></button>`;
+    const button = document.querySelector("button")!;
+
+    button.dispatchEvent(new PointerEvent("pointerdown", { button: 0, pointerId: 1, bubbles: true }));
+
+    expect(button.querySelector(".mud-ripple-effect")).not.toBeNull();
+    document.body.replaceChildren();
 });

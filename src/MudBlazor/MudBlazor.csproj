@@ -103,14 +103,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <JsAssetInputs Include="TScripts/**/*.js" />
+    <!-- No scripts are JavaScript any more; this input reruns build.mts when one is added, so its check rejects it. -->
+    <JsAssetInputs Include="TScripts/**/*.js;TScripts/**/*.cjs;TScripts/**/*.mjs;TScripts/**/*.jsx" />
     <TsAssetInputs Include="TScripts/**/*.ts" />
     <ScssAssetInputs Include="Styles/**/*.scss" />
     <BuildScriptInputs Include="build.mts" />
     <BuildScriptInputs Include="bunfig.toml" />
     <BuildScriptInputs Include="test-setup.ts" />
     <BuildScriptInputs Include="tsconfig.json" />
-    <BuildScriptInputs Include="../eslint.config.ts" />
+    <BuildScriptInputs Include="../.oxlintrc.json" />
     <BuildScriptInputs Include="../tsconfig.json" />
     <WebAssetInputs Include="@(JsAssetInputs);@(TsAssetInputs);@(ScssAssetInputs);@(BuildScriptInputs);@(BunToolchainInputs)" />
     <UpToDateCheckInput Include="@(WebAssetInputs)" />

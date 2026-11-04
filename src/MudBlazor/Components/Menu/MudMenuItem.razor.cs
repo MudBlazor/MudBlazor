@@ -164,6 +164,8 @@ namespace MudBlazor
 
         protected Typo GetTypo() => GetDense() ? Typo.body2 : Typo.body1;
 
+        private string TextClassname => GetDense() ? "mud-typography mud-typography-body2 mud-menu-item-text" : "mud-typography mud-typography-body1 mud-menu-item-text";
+
         /// <summary>
         /// Enables right-to-left layout.
         /// </summary>

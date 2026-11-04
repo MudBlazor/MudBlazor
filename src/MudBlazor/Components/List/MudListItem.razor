@@ -65,7 +65,7 @@
         }
 
         <div class="mud-list-item-text@(Inset ? " mud-list-item-text-inset" : string.Empty)">
-            <MudText Typo="@TextTypo">
+            <p class="@TextClassname">
                 @if (ChildContent != null)
                 {
                     @ChildContent
@@ -76,12 +76,12 @@
                     @if (!string.IsNullOrEmpty(SecondaryText))
                     {
                         <br />
-                        <MudText Class="mud-list-item-secondary-text" Typo="Typo.subtitle2">
+                        <p class="mud-typography mud-typography-subtitle2 mud-list-item-secondary-text">
                             @SecondaryText
-                        </MudText>
+                        </p>
                     }
                 }
-            </MudText>
+            </p>
         </div>
 
         @if (NestedList != null)

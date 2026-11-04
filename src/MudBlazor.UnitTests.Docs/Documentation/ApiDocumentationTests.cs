@@ -94,4 +94,28 @@ public sealed class ApiDocumentationTests
 
         member.Should().BeSameAs(type.Events["CloseIconClicked"], "A member should not be built twice");
     }
+
+    /// <summary>
+    /// Links a bindable property and its change event in both directions, wherever the pair is declared.
+    /// </summary>
+    /// <remarks>
+    /// <c>MudPicker`1</c> declares the pair itself.
+    /// The date and time pickers inherit it from a closed generic base such as <c>MudPicker&lt;DateTime?&gt;</c>, which is not a documented type.
+    /// <c>MudColorPicker</c> declares its own <c>Text</c> but inherits <c>TextChanged</c> from <c>MudPicker&lt;MudColor&gt;</c>.
+    /// </remarks>
+    [TestCase("MudBlazor.MudPicker`1")]
+    [TestCase("MudBlazor.MudDatePicker")]
+    [TestCase("MudBlazor.MudDateRangePicker")]
+    [TestCase("MudBlazor.MudTimePicker")]
+    [TestCase("MudBlazor.MudColorPicker")]
+    public void GetType_BindableText_LinksPropertyAndChangeEvent(string typeKey)
+    {
+        var type = ApiDocumentation.GetType(typeKey);
+
+        var property = type.Properties["Text"];
+        var changeEvent = type.Events["TextChanged"];
+
+        property.ChangeEvent.Should().BeSameAs(changeEvent, "Text should be bindable through TextChanged");
+        changeEvent.Property.Should().BeSameAs(property, "TextChanged should bind Text");
+    }
 }

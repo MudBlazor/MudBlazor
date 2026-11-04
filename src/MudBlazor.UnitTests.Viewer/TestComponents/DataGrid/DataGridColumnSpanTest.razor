@@ -1,0 +1,28 @@
+<MudDataGrid T="Model" Items="@Items" Loading="@Loading" Virtualize="@Virtualize" Groupable="@Grouped">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Grouping="@Grouped" HeaderColSpan="@NameHeaderColSpan" />
+        <PropertyColumn Property="x => x.Age" Hidden="@HideAge" />
+        <PropertyColumn Property="x => x.City" />
+    </Columns>
+    <ChildRowContent>
+        @if (ShowChildRows)
+        {
+            <span>@context.Item.Name details</span>
+        }
+    </ChildRowContent>
+    <NoRecordsContent>
+        <span>No records</span>
+    </NoRecordsContent>
+</MudDataGrid>
+
+@code {
+    [Parameter] public IEnumerable<Model> Items { get; set; } = [];
+    [Parameter] public bool Loading { get; set; }
+    [Parameter] public bool Virtualize { get; set; }
+    [Parameter] public bool Grouped { get; set; }
+    [Parameter] public bool HideAge { get; set; }
+    [Parameter] public bool ShowChildRows { get; set; }
+    [Parameter] public int NameHeaderColSpan { get; set; } = 1;
+
+    public record Model(string Name, int Age, string City);
+}
