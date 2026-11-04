@@ -490,6 +490,9 @@ namespace MudBlazor.UnitTests.Components
             picker.Time.Should().Be(initialTime);
         }
 
+        /// <summary>
+        /// A Time assigned by the parent is applied without raising TimeChanged (#10834).
+        /// </summary>
         [Test]
         public async Task TimeChanged_ShouldNotFire_WhenTimeSetFromParent()
         {
@@ -497,14 +500,15 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudTimePicker>(parameters => parameters
                 .Add(p => p.TimeChanged, (TimeSpan? _) => eventCount++));
 
-            // Assigning Time from a parent is programmatic, not user interaction; it must update the value
-            // without raising TimeChanged (#10834, follow-up to #13428).
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Time, new TimeSpan(9, 15, 0)));
 
             comp.Instance.Time.Should().Be(new TimeSpan(9, 15, 0));
             eventCount.Should().Be(0);
         }
 
+        /// <summary>
+        /// A time the user picks on the clock still raises TimeChanged, and the initial parameter does not (#10834).
+        /// </summary>
         [Test]
         public async Task TimeChanged_ShouldFire_WhenUserPicksTime()
         {
@@ -512,11 +516,10 @@ namespace MudBlazor.UnitTests.Components
             TimeSpan? changed = null;
             var comp = Context.Render<MudTimePicker>(parameters => parameters
                 .Add(p => p.PickerVariant, PickerVariant.Static)
-                .Add(p => p.Time, new TimeSpan(10, 30, 0)) // parent init must NOT count as a change
+                .Add(p => p.Time, new TimeSpan(10, 30, 0))
                 .Add(p => p.TimeChanged, (TimeSpan? t) => { eventCount++; changed = t; }));
             var picker = comp.Instance;
 
-            // A user clock pick followed by a commit is the user-driven path that MUST notify the parent.
             await comp.InvokeAsync(() => picker.SelectTimeFromStick(5, false));
             await comp.InvokeAsync(picker.SubmitAsync);
 

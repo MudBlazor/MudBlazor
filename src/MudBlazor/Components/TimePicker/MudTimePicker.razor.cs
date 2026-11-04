@@ -140,11 +140,8 @@ namespace MudBlazor
         public TimeSpan? Time
         {
             get => _value;
-            // Programmatic parameter assignment; pass suppression AND notify: false explicitly so they cannot
-            // leak across the awaits inside SetTimeAsync into a concurrent user clock pick on Blazor Server
-            // (PR #13328 review). notify: false stops TimeChanged from firing on a parent/programmatic assignment
-            // - echoing back an event the parent never triggered is the feedback loop reported in #10834
-            // (follow-up to #13428).
+            // A parent assignment is not user interaction, and the parent already knows the value, so TimeChanged is not raised (#10834).
+            // Both are arguments rather than instance flags so they cannot leak across the awaits into a concurrent user pick on Blazor Server.
             set => SetTimeAsync(value, updateValue: true, suppressInteraction: true, notify: false).CatchAndLog();
         }
 
@@ -160,7 +157,7 @@ namespace MudBlazor
         /// <param name="time">The new value to set.</param>
         /// <param name="updateValue">When <c>true</c>, the <c>Text</c> will also be updated.</param>
         /// <param name="suppressInteraction">When <c>true</c>, the change is treated as programmatic and does not mark the picker touched or fire <c>FieldChanged</c>.</param>
-        /// <param name="notify">When <c>false</c>, <c>TimeChanged</c> is not raised (used for programmatic/parent assignments; see <see cref="Time"/>).</param>
+        /// <param name="notify">When <c>false</c>, <c>TimeChanged</c> is not raised, as for a parameter assignment.</param>
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue, bool suppressInteraction = false, bool notify = true)
         {
             // Text that fails to convert leaves the value null, so a null assignment looks like a no-op and the bad text would stick.
@@ -180,8 +177,6 @@ namespace MudBlazor
                 }
 
                 UpdateTimeSetFromTime();
-                // Programmatic/parent assignments pass notify: false and must not raise TimeChanged (#10834);
-                // genuine user changes keep the default notify: true.
                 if (notify)
                 {
                     await TimeChanged.InvokeAsync(_value);

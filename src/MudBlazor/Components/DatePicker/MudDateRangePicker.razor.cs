@@ -122,14 +122,8 @@ namespace MudBlazor
         public DateRange? DateRange
         {
             get => _dateRange;
-            // DateRange is managed by MudBlazor's ParameterState framework (see _dateRangeState in the constructor).
-            // Blazor stores the assigned parameter value here (raw); the state's change handler
-            // (OnDateRangeParameterChangedAsync) reflects a programmatic/parent assignment in the display WITHOUT
-            // raising DateRangeChanged (#10834). A genuine user selection instead writes through
-            // _dateRangeState.SetValueAsync, which DOES raise DateRangeChanged. The getter keeps returning the
-            // processed value (_dateRange) so normalization and disabled-date filtering remain observable through
-            // the public API. Because assignment no longer starts async work here, the earlier suppression race
-            // (PR #13328) can no longer occur through this setter.
+            // The getter returns the applied range, so normalization and the disabled-date check stay visible to callers.
+            // The setter only stores the raw value, and _dateRangeState applies it when it changes, so a parent assignment never raises DateRangeChanged (#10834).
             set => _dateRangeParameter = value;
         }
 
@@ -143,9 +137,7 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool AllowDisabledDatesInRange { get; set; } = false;
 
-        // Internal value change (user calendar selection, clear, or text edit): update the display AND notify the
-        // parent through DateRangeChanged (two-way binding write-back). Programmatic/parent assignments instead flow
-        // through the ParameterState change handler (OnDateRangeParameterChangedAsync), which never notifies.
+        // Applies a range the user chose, typed or cleared, and tells the parent.
         protected async Task SetDateRangeAsync(DateRange? range, bool updateValue, bool suppressInteraction = false)
         {
             if (!await UpdateDateRangeDisplayAsync(range, updateValue, suppressInteraction))
@@ -153,13 +145,10 @@ namespace MudBlazor
                 return;
             }
 
-            // Keep the raw parameter mirror aligned with the internally selected value so that change detection in
-            // SetParametersAsync compares a subsequent programmatic assignment against what the user actually sees
-            // (otherwise a parent could re-assign the pre-change value and it would be missed as "unchanged").
+            // Change detection compares the next parent assignment with this field, so it has to hold what the user sees.
+            // Otherwise a parent assigning the range it had before the user's change would look unchanged and be ignored.
             _dateRangeParameter = _dateRange;
 
-            // Writing through the state raises DateRangeChanged and keeps the tracked ParameterState value in sync,
-            // so a later programmatic assignment of the same value is still detected as "unchanged".
             await _dateRangeState.SetValueAsync(_dateRange);
             await BeginValidateAsync();
             if (!suppressInteraction)
@@ -168,10 +157,7 @@ namespace MudBlazor
             }
         }
 
-        // Runs when DateRange is assigned programmatically (from a parent) via the ParameterState framework.
-        // It reflects the new value in the display but must NOT raise DateRangeChanged: echoing back an event the
-        // parent never triggered is exactly the bug reported in #10834. suppressInteraction mirrors the previous
-        // behavior where a parameter assignment was never treated as user interaction.
+        // A parent assignment is not user interaction, and the parent already knows the value, so DateRangeChanged is not raised (#10834).
         private async Task OnDateRangeParameterChangedAsync(ParameterChangedEventArgs<DateRange?> args)
         {
             if (await UpdateDateRangeDisplayAsync(args.Value, updateValue: true, suppressInteraction: true))
@@ -193,9 +179,7 @@ namespace MudBlazor
             }
         }
 
-        // Applies a date range to the picker's display state (normalization, text, highlighted date, picker month,
-        // disabled-date filtering). Returns true when the value was accepted and actually changed, false when it was
-        // unchanged or rejected (e.g. it contains a disabled date). This method never raises DateRangeChanged.
+        // Returns false when the range is unchanged or rejected for containing a disabled date, so callers skip validation and notification.
         private async Task<bool> UpdateDateRangeDisplayAsync(DateRange? range, bool updateValue, bool suppressInteraction)
         {
             // Normalize the DateRange before exception is thrown

@@ -28,11 +28,8 @@ namespace MudBlazor
         public DateTime? Date
         {
             get => _value;
-            // Assigning Date from the parameter is programmatic, not user interaction. Pass suppression AND
-            // notify: false as explicit arguments (NOT instance flags) so they cannot leak across the awaits
-            // inside SetDateAsync into a concurrent user calendar pick on Blazor Server (PR #13328 review).
-            // notify: false stops DateChanged from firing on a parent/programmatic assignment - echoing back an
-            // event the parent never triggered is the feedback loop reported in #10834 (follow-up to #13428).
+            // A parent assignment is not user interaction, and the parent already knows the value, so DateChanged is not raised (#10834).
+            // Both are arguments rather than instance flags so they cannot leak across the awaits into a concurrent user pick on Blazor Server.
             set => SetDateAsync(value, updateValue: true, forceUpdate: false, suppressInteraction: true, notify: false).CatchAndLog();
         }
 
@@ -101,9 +98,6 @@ namespace MudBlazor
                     await SetTextAsync(ConvertSet(_value), false);
                 }
 
-                // Programmatic/parent assignments pass notify: false and must not raise DateChanged (#10834);
-                // genuine user changes keep the default notify: true. The display update above still runs either
-                // way, so a parent assignment (even null, to clear stale invalid text) is fully reflected.
                 if (notify)
                 {
                     await DateChanged.InvokeAsync(_value);

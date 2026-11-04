@@ -1227,11 +1227,12 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.Date, today));
 
             comp.Instance.Date.Should().Be(today);
-            // A programmatic/parent assignment updates the value but must NOT raise DateChanged (#10834,
-            // follow-up to #13428): the parent set the value, so echoing an event back to it is the bug.
-            wasEventCallbackCalled.Should().BeFalse();
+            wasEventCallbackCalled.Should().BeFalse("a parent assignment does not raise DateChanged (#10834)");
         }
 
+        /// <summary>
+        /// A Date assigned by the parent is applied without raising DateChanged (#10834).
+        /// </summary>
         [Test]
         public async Task DateChanged_ShouldNotFire_WhenDateSetFromParent()
         {
@@ -1239,8 +1240,6 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudDatePicker>(parameters => parameters
                 .Add(x => x.DateChanged, (DateTime? _) => eventCount++));
 
-            // Assigning Date from a parent is programmatic, not user interaction; it must update the display
-            // without raising DateChanged (#10834, follow-up to #13428).
             var date = new DateTime(2022, 3, 14);
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.Date, date));
 
