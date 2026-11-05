@@ -96,6 +96,46 @@ namespace MudBlazor
         [Parameter]
         public string AllItemsText { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Shows clickable page numbers between the navigation buttons.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.  When <c>true</c>, a user can jump directly to a page by clicking its number.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Pagination)]
+        public bool ShowPageButtons { get; set; }
+
+        /// <summary>
+        /// The display variant of the pagination buttons.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Variant.Text"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Pagination)]
+        public Variant PaginationVariant { get; set; } = Variant.Text;
+
+        /// <summary>
+        /// The size of the pagination buttons.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Pagination)]
+        public Size PaginationSize { get; set; } = Size.Medium;
+
+        /// <summary>
+        /// The color of the selected page button.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Color.Primary"/>.  Only has a visible effect when <see cref="ShowPageButtons"/> is <c>true</c>, because the navigation buttons are not colored.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Pagination)]
+        public Color PaginationColor { get; set; } = Color.Primary;
+
         private string Info
         {
             get
@@ -120,13 +160,21 @@ namespace MudBlazor
             }
         }
 
-        private bool BackButtonsDisabled => Disabled || DataGrid is { CurrentPage: 0 };
+        // MudPagination is one-based, while the grid's CurrentPage is zero-based.
+        private int CurrentPageNumber => (DataGrid?.CurrentPage ?? 0) + 1;
 
-        private bool ForwardButtonsDisabled => Disabled || (DataGrid != null && (DataGrid.CurrentPage + 1) * DataGrid.RowsPerPage >= DataGrid.GetFilteredItemsCount());
+        private int PageCount => DataGrid is null
+            ? 1
+            : Math.Max(1, (int)Math.Ceiling(DataGrid.GetFilteredItemsCount() / (double)DataGrid.RowsPerPage));
 
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
                 .AddClass(Class)
+                .Build();
+
+        private string PaginationClassname =>
+            new CssBuilder()
+                .AddClass("mud-table-pagination-icon-buttons", !ShowPageButtons)
                 .Build();
 
         private async Task SetRowsPerPageAsync(int size)

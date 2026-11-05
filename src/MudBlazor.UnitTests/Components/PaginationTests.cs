@@ -71,6 +71,26 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies a caller can replace the default aria-label of each control button.
+        /// </summary>
+        [Test]
+        public void PaginationControlButtonAriaLabelsCanBeReplaced()
+        {
+            var comp = Context.Render<MudPagination>(parameters => parameters
+                .Add(x => x.ShowFirstButton, true)
+                .Add(x => x.ShowLastButton, true)
+                .Add(x => x.ShowPageButtons, false)
+                .Add(x => x.FirstButtonAriaLabel, "Start")
+                .Add(x => x.PreviousButtonAriaLabel, "Back")
+                .Add(x => x.NextButtonAriaLabel, "Forward")
+                .Add(x => x.LastButtonAriaLabel, "End"));
+
+            var labels = comp.FindAll("button").Select(button => button.GetAttribute("aria-label"));
+
+            labels.Should().Equal("Start", "Back", "Forward", "End");
+        }
+
+        /// <summary>
         /// Tests the aria-labels for the page buttons. . . note the index's aren't sequential because there are elements of "..."
         /// </summary>
         /// <param name="index">The index of the control button. first page button has index 2.</param>
