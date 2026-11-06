@@ -419,6 +419,27 @@ namespace MudBlazor.UnitTests.Components
             Filling().GetAttribute("style").Should().Be($"width:80%;");
         }
 
+        /// <summary>
+        /// Input text sets int and decimal values, which are parsed through a double (#14134).
+        /// </summary>
+        [Test]
+        public async Task InputSetsIntAndDecimalValues()
+        {
+            var intValue = 0;
+            var intSlider = Context.Render<MudSlider<int>>(x => x
+                .Add(p => p.Max, 360)
+                .Add(p => p.ValueChanged, value => intValue = value));
+            await intSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "181" });
+            intValue.Should().Be(181);
+
+            var decimalValue = 0m;
+            var decimalSlider = Context.Render<MudSlider<decimal>>(x => x
+                .Add(p => p.Step, 0.1m)
+                .Add(p => p.ValueChanged, value => decimalValue = value));
+            await decimalSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "0.3" });
+            decimalValue.Should().Be(0.3m);
+        }
+
         [Test]
         [TestCase(null)]
         [TestCase(0.0)]

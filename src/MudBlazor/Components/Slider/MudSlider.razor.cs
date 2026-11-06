@@ -269,10 +269,13 @@ namespace MudBlazor
 
         private string GetValueText => _valueState.Value.ToString(null, CultureInfo.InvariantCulture);
 
+        // Blazor names MudSlider<T> only as a type argument, so Mono full AOT on iOS runs it as shared generic code, which can't call T.TryParse.
+        // A range input's value is a JavaScript number, so a double holds it exactly.
         private async Task SetValueTextAsync(string? text)
         {
-            if (T.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var result))
+            if (double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var number))
             {
+                var result = T.CreateSaturating(number);
                 await _valueState.SetValueAsync(result);
                 await _nullableValueState.SetValueAsync(result);
             }
