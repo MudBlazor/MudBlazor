@@ -420,10 +420,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Input text sets int and decimal values without T.TryParse, keeping every decimal digit (#14134).
+        /// Input text sets int, decimal and long values without T.TryParse, keeping every digit (#14134).
         /// </summary>
         [Test]
-        public async Task InputSetsIntAndDecimalValues()
+        public async Task InputSetsExactValues()
         {
             var intValue = 0;
             var intSlider = Context.Render<MudSlider<int>>(x => x
@@ -448,6 +448,16 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ValueChanged, value => largeValue = value));
             await largeSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "1234567890123456" });
             largeValue.Should().Be(1234567890123456m);
+
+            // A double would read this as 1000000000000000128, so the slider's maximum would publish Max + 28.
+            var longValue = 0L;
+            var longSlider = Context.Render<MudSlider<long>>(x => x
+                .Add(p => p.Min, 1000000000000000000L)
+                .Add(p => p.Max, 1000000000000000100L)
+                .Add(p => p.Step, 100L)
+                .Add(p => p.ValueChanged, value => longValue = value));
+            await longSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "1000000000000000100" });
+            longValue.Should().Be(1000000000000000100L);
         }
 
         /// <summary>
