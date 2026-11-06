@@ -270,28 +270,23 @@ namespace MudBlazor
         private string GetValueText => _valueState.Value.ToString(null, CultureInfo.InvariantCulture);
 
         // Blazor names MudSlider<T> only as a type argument, so Mono full AOT on iOS runs it as shared generic code, which can't call T.TryParse.
-        // A range input's value is a JavaScript number, so floating-point types parse it as a double without loss.
-        // Other types parse it as a decimal, which keeps every digit of a long, ulong or decimal where a double keeps about 15.
+        // A range input's value is a JavaScript number, so a double holds anything the browser sends.
+        // Other types try a decimal first, which keeps every digit of a long, ulong or decimal where a double keeps about 15.
         private async Task SetValueTextAsync(string? text)
         {
+            var isFloatingPoint = typeof(T) == typeof(double) || typeof(T) == typeof(float) || typeof(T) == typeof(Half);
             T result;
-            if (typeof(T) == typeof(double) || typeof(T) == typeof(float) || typeof(T) == typeof(Half))
+            if (!isFloatingPoint && decimal.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var exact))
             {
-                if (!double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var number))
-                {
-                    return;
-                }
-
+                result = T.CreateSaturating(exact);
+            }
+            else if (double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var number))
+            {
                 result = T.CreateSaturating(number);
             }
             else
             {
-                if (!decimal.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var number))
-                {
-                    return;
-                }
-
-                result = T.CreateSaturating(number);
+                return;
             }
 
             await _valueState.SetValueAsync(result);

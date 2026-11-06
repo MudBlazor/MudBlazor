@@ -461,6 +461,22 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Input beyond decimal's range falls back to a double, so an Int128 slider still reaches its maximum.
+        /// </summary>
+        [Test]
+        public async Task InputBeyondDecimalRangeSetsValue()
+        {
+            // The browser holds the maximum as a double and sends it as "1e+30".
+            var max = Int128.CreateSaturating(1e30);
+            var value = Int128.Zero;
+            var slider = Context.Render<MudSlider<Int128>>(x => x
+                .Add(p => p.Max, max)
+                .Add(p => p.ValueChanged, v => value = v));
+            await slider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "1e+30" });
+            value.Should().Be(max);
+        }
+
+        /// <summary>
         /// Input text that isn't a number leaves int and decimal values unchanged.
         /// </summary>
         [Test]
