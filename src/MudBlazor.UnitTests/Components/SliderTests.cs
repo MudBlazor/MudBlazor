@@ -450,6 +450,29 @@ namespace MudBlazor.UnitTests.Components
             largeValue.Should().Be(1234567890123456m);
         }
 
+        /// <summary>
+        /// Input text that isn't a number leaves int and decimal values unchanged.
+        /// </summary>
+        [Test]
+        public async Task InputIgnoresUnparsableText()
+        {
+            var intChanged = false;
+            var intSlider = Context.Render<MudSlider<int>>(x => x
+                .Add(p => p.Value, 5)
+                .Add(p => p.ValueChanged, _ => intChanged = true));
+            await intSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "abc" });
+            intChanged.Should().BeFalse();
+            intSlider.Find(".mud-slider-input").GetAttribute("value").Should().Be("5");
+
+            var decimalChanged = false;
+            var decimalSlider = Context.Render<MudSlider<decimal>>(x => x
+                .Add(p => p.Value, 5m)
+                .Add(p => p.ValueChanged, _ => decimalChanged = true));
+            await decimalSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "abc" });
+            decimalChanged.Should().BeFalse();
+            decimalSlider.Find(".mud-slider-input").GetAttribute("value").Should().Be("5");
+        }
+
         [Test]
         [TestCase(null)]
         [TestCase(0.0)]
