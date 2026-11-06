@@ -239,9 +239,15 @@ internal sealed class TreeViewProjection<T>
         var selectionChanged = multiSelection
             ? !currentSelection.SetEquals(reconciledSelection)
             : !_comparer.Equals(selectedValue, reconciledValue);
-        var addedValues = multiSelection
-            ? touchedValues.Where(value => reconciledSelection.Contains(value) && !currentSelection.Contains(value)).ToList()
-            : selectionChanged && reconciledValue is not null ? [reconciledValue] : [];
+        List<T> addedValues = [];
+        if (multiSelection)
+        {
+            addedValues.AddRange(touchedValues.Where(value => reconciledSelection.Contains(value) && !currentSelection.Contains(value)));
+        }
+        else if (selectionChanged && reconciledValue is not null)
+        {
+            addedValues.Add(reconciledValue);
+        }
 
         return new TreeViewSelectionResult<T>(
             reconciledValue,
@@ -330,12 +336,13 @@ internal sealed class TreeViewProjection<T>
 
         void Select(T value, bool selected)
         {
-            if (selected ? selection.Add(value) : selection.Remove(value))
+            if (!selected)
             {
-                if (selected)
-                {
-                    newlySelected.Add(value);
-                }
+                selection.Remove(value);
+            }
+            else if (selection.Add(value))
+            {
+                newlySelected.Add(value);
             }
 
             SetSelected(value, selected);

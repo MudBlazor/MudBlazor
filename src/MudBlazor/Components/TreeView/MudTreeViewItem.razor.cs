@@ -591,14 +591,12 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-            if (IsVirtualizedItem && MudTreeRoot is not null && CurrentItemData is not null)
+            // The rendered row honors both permissions through GetCanExpand, but items which are not rendered can only follow Expandable.
+            // A leaf has nothing to expand, so the common CanExpand="@context.HasChildren" template is not reported.
+            if (IsVirtualizedItem && !CanExpand && MudTreeRoot is not null && CurrentItemData is { Expandable: true } itemData
+                && (itemData.HasChildren || MudTreeRoot.ServerData is not null))
             {
-                // The rendered row honors both permissions through GetCanExpand, but items which are not rendered can only follow Expandable.
-                // A leaf has nothing to expand, so the common CanExpand="@context.HasChildren" template is not reported.
-                if (!CanExpand && CurrentItemData.Expandable && (CurrentItemData.HasChildren || MudTreeRoot.ServerData is not null))
-                {
-                    MudTreeRoot.LogConflictingExpansionPermission();
-                }
+                MudTreeRoot.LogConflictingExpansionPermission();
             }
 
             if (Text == null && Value == null && MudTreeRoot?.ServerData != null)

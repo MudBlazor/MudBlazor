@@ -744,11 +744,8 @@ namespace MudBlazor
 
             _hasLoggedConflictingExpansionPermission = true;
             Logger.LogWarning(
-                "{Component} has a virtualized item whose {CanExpand} is false while the backing item's {Expandable} is true. The rendered item cannot be expanded from its row, but tree-wide expansion and items which are not rendered follow {Expandable}. Bind {CanExpand} to {Expandable} so both agree.",
+                "{Component} has a virtualized item whose {CanExpand} is false while the backing item's {Expandable} is true. Its row cannot be expanded, but tree-wide expansion and items which are not rendered still treat it as expandable. Bind the parameter to the backing property so both agree.",
                 nameof(MudTreeView<T>),
-                nameof(MudTreeViewItem<T>.CanExpand),
-                nameof(ITreeItemData<T>.Expandable),
-                nameof(ITreeItemData<T>.Expandable),
                 nameof(MudTreeViewItem<T>.CanExpand),
                 nameof(ITreeItemData<T>.Expandable));
         }
