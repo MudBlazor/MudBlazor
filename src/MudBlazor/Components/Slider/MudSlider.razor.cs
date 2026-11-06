@@ -271,14 +271,30 @@ namespace MudBlazor
 
         // Blazor names MudSlider<T> only as a type argument, so Mono full AOT on iOS runs it as shared generic code, which can't call T.TryParse.
         // A range input's value is a JavaScript number, so a double holds it exactly.
+        // Decimal parses directly because converting a double to decimal keeps only 15 significant digits.
         private async Task SetValueTextAsync(string? text)
         {
-            if (double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var number))
+            T result;
+            if (typeof(T) == typeof(decimal))
             {
-                var result = T.CreateSaturating(number);
-                await _valueState.SetValueAsync(result);
-                await _nullableValueState.SetValueAsync(result);
+                if (!decimal.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var decimalValue))
+                {
+                    return;
+                }
+
+                result = (T)(object)decimalValue;
             }
+            else if (double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var number))
+            {
+                result = T.CreateSaturating(number);
+            }
+            else
+            {
+                return;
+            }
+
+            await _valueState.SetValueAsync(result);
+            await _nullableValueState.SetValueAsync(result);
         }
 
         private Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T> arg)

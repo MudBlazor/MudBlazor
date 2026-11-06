@@ -420,7 +420,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Input text sets int and decimal values, which are parsed through a double (#14134).
+        /// Input text sets int and decimal values without T.TryParse, keeping every decimal digit (#14134).
         /// </summary>
         [Test]
         public async Task InputSetsIntAndDecimalValues()
@@ -438,6 +438,16 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.ValueChanged, value => decimalValue = value));
             await decimalSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "0.3" });
             decimalValue.Should().Be(0.3m);
+
+            // A double would round this 16-digit value to 1234567890123460, above Max.
+            var largeValue = 0m;
+            var largeSlider = Context.Render<MudSlider<decimal>>(x => x
+                .Add(p => p.Min, 1234567890123450m)
+                .Add(p => p.Max, 1234567890123456m)
+                .Add(p => p.Step, 1m)
+                .Add(p => p.ValueChanged, value => largeValue = value));
+            await largeSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "1234567890123456" });
+            largeValue.Should().Be(1234567890123456m);
         }
 
         [Test]
