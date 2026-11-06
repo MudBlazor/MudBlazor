@@ -439,7 +439,7 @@ namespace MudBlazor.UnitTests.Components
             await decimalSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "0.3" });
             decimalValue.Should().Be(0.3m);
 
-            // A double would round this 16-digit value to 1234567890123460, above Max.
+            // Converting a double to decimal keeps only 15 significant digits, so this 16-digit value would become 1234567890123460.
             var largeValue = 0m;
             var largeSlider = Context.Render<MudSlider<decimal>>(x => x
                 .Add(p => p.Min, 1234567890123450m)
