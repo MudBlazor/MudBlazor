@@ -1,0 +1,9 @@
+﻿@mixin width($breakpoint) {
+    @each $precessor in ("","max-","min-") {
+        @each $name,$value in ( "auto": auto,"25":25%,"50":50%,"75":75%,"100":100%,"25vw":25vw,"50vw":50vw,"75vw":75vw,"100vw":100vw ) {
+            .w-#{$precessor}#{$breakpoint}#{$name} {
+                #{$precessor}width: #{$value} !important;
+            }
+        }
+    }
+}
