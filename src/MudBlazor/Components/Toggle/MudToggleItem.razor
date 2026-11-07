@@ -1,6 +1,12 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
+@* Text is obsolete (removed in v10, #12556) but still rendered here for v9 back-compat.
+   The suppression is deliberately left open: Razor emits the typed-attribute type-inference
+   helpers after the component class, so a restore at the end of the markup comes too early. *@
+@{
+#pragma warning disable CS0618
+}
 
 <MudButton role="checkbox"
            aria-checked="@(Selected.ToString().ToLowerInvariant())"

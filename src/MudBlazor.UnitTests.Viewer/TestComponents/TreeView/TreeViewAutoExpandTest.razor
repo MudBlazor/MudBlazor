@@ -14,11 +14,11 @@
     <MudButton Class="expand-all" Color="Color.Primary" OnClick="@(() => _treeView.ExpandAllAsync())" Variant="Variant.Filled">Expand All</MudButton>
     <MudButton Class="collapse-all" Color="Color.Dark" OnClick="@(() => _treeView.CollapseAllAsync())" Variant="Variant.Filled">Collapse All</MudButton>
     <MudChipSet T="string" @bind-SelectedValue="SelectedValue" Color="Color.Primary" Variant="Variant.Text" SelectionMode="@SelectionMode.ToggleSelection">
-        <MudChip Text="config" />
-        <MudChip Text="launch.json" />
-        <MudChip Text="tasks.json" />
-        <MudChip Text="images" />
-        <MudChip Text="logo.png" />
+        <MudChip Value='"config"' />
+        <MudChip Value='"launch.json"' />
+        <MudChip Value='"tasks.json"' />
+        <MudChip Value='"images"' />
+        <MudChip Value='"logo.png"' />
     </MudChipSet>
     <MudSwitch @bind-Value="AutoExpand" Color="Color.Primary">AutoExpand</MudSwitch>
 </MudStack>

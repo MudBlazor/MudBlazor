@@ -22,7 +22,7 @@
                         {
                             <MudChip T="string"
                                      Color="Color.Dark"
-                                     Text="@file"
+                                     Value="@file"
                                      CloseIcon="@Icons.Material.Outlined.Close"
                                      OnClose="@(async () => await context.RemoveFileAsync(file))"
                                      tabindex="-1" />
