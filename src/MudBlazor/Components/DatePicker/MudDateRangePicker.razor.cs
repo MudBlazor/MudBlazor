@@ -16,12 +16,13 @@ namespace MudBlazor
         private readonly ParameterState<int?> _minDaysState;
         private readonly ParameterState<int?> _maxDaysState;
         private readonly ParameterState<bool> _allowDisabledDatesInCountState;
+        private readonly ParameterState<DateRange?> _dateRangeState;
         private DateTime? _firstDate, _secondDate;
         private (DateTime Start, DateTime End)? _earlierValidDates, _laterValidDates;
         private DateRange? _dateRange;
+        private DateRange? _dateRangeParameter;
         private Range<string>? _rangeText;
         private int _rangeTextEdit;
-        private int _echoPendingForEdit = -1;
 
         /// <summary>
         /// Creates a new instance.
@@ -38,6 +39,10 @@ namespace MudBlazor
             _allowDisabledDatesInCountState = registerScope.RegisterParameter<bool>(nameof(AllowDisabledDatesInCount))
                 .WithParameter(() => AllowDisabledDatesInCount)
                 .WithChangeHandler(RecalculateValidDays);
+            _dateRangeState = registerScope.RegisterParameter<DateRange?>(nameof(DateRange))
+                .WithParameter(() => _dateRangeParameter)
+                .WithEventCallback(() => DateRangeChanged)
+                .WithChangeHandler(OnDateRangeParameterChangedAsync);
 
             DisplayMonths = 2;
         }
@@ -117,9 +122,9 @@ namespace MudBlazor
         public DateRange? DateRange
         {
             get => _dateRange;
-            // Programmatic parameter assignment; pass suppression explicitly so it cannot leak across the
-            // awaits inside SetDateRangeAsync into a concurrent user calendar pick on Blazor Server (PR #13328 review).
-            set => SetDateRangeAsync(value, updateValue: true, suppressInteraction: true).CatchAndLog();
+            // The getter returns the applied range, so normalization and the disabled-date check stay visible to callers.
+            // The setter only stores the raw value, and _dateRangeState applies it when it changes, so a parent assignment never raises DateRangeChanged (#10834).
+            set => _dateRangeParameter = value;
         }
 
         /// <summary>
@@ -132,68 +137,105 @@ namespace MudBlazor
         [Category(CategoryTypes.FormComponent.Validation)]
         public bool AllowDisabledDatesInRange { get; set; } = false;
 
+        // Applies a range the user chose, typed or cleared, and tells the parent.
         protected async Task SetDateRangeAsync(DateRange? range, bool updateValue, bool suppressInteraction = false)
+        {
+            if (!await UpdateDateRangeDisplayAsync(range, updateValue, suppressInteraction))
+            {
+                return;
+            }
+
+            // Change detection compares the next parent assignment with this field, so it has to hold what the user sees.
+            // Otherwise a parent assigning the range it had before the user's change would look unchanged and be ignored.
+            _dateRangeParameter = _dateRange;
+
+            await _dateRangeState.SetValueAsync(_dateRange);
+            await BeginValidateAsync();
+            if (!suppressInteraction)
+            {
+                FieldChanged(_value);
+            }
+        }
+
+        // A parent assignment is not user interaction, and the parent already knows the value, so DateRangeChanged is not raised (#10834).
+        private async Task OnDateRangeParameterChangedAsync(ParameterChangedEventArgs<DateRange?> args)
+        {
+            if (await UpdateDateRangeDisplayAsync(args.Value, updateValue: true, suppressInteraction: true))
+            {
+                await BeginValidateAsync();
+            }
+        }
+
+        /// <inheritdoc />
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+
+            // The change handler only runs for values that arrive through the parameters, so a range the component already carries, such as one a derived constructor assigns, would never be shown.
+            // A range that did arrive that way is applied here first, and the handler then finds nothing left to do.
+            if (_dateRange is null && _dateRangeParameter is not null && await UpdateDateRangeDisplayAsync(_dateRangeParameter, updateValue: true, suppressInteraction: true))
+            {
+                await BeginValidateAsync();
+            }
+        }
+
+        // Returns false when the range is unchanged or rejected for containing a disabled date, so callers skip validation and notification.
+        private async Task<bool> UpdateDateRangeDisplayAsync(DateRange? range, bool updateValue, bool suppressInteraction)
         {
             // Normalize the DateRange before exception is thrown
             range = NormalizeDateRange(range);
 
             // Text that fails to convert leaves the range null, so a null assignment looks like a no-op and the bad text would stick.
-            // Run it anyway while text remains, as MudDatePicker does, except for the null a two-way binding hands straight back from the edit that produced it.
-            // Only the assignment right after that edit can be the echo, so consuming the marker leaves a later deliberate null free to clear.
-            var isEditEcho = _echoPendingForEdit == _rangeTextEdit;
-            _echoPendingForEdit = -1;
-
-            if (_dateRange != range || (range is null && !string.IsNullOrEmpty(Text) && !isEditEcho))
+            // Run it anyway while text remains, as MudDatePicker does.
+            // A parent render that hands back the same null never gets here, because the change handler only runs when the parameter changes.
+            if (_dateRange == range && !(range is null && !string.IsNullOrEmpty(Text)))
             {
-                // Count the days up front so the walk never steps past the end, which would throw when the end is the last supported day.
-                var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && range.Start.Value <= range.End.Value && Enumerable
-                    .Range(0, (range.End.Value - range.Start.Value).Days + 1)
-                    .Select(index => range.Start.Value.AddDays(index))
-                    .Any(date => IsDateDisabledFunc(date.Date));
+                return false;
+            }
 
-                if (doesRangeContainDisabledDates)
+            // Count the days up front so the walk never steps past the end, which would throw when the end is the last supported day.
+            var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && range.Start.Value <= range.End.Value && Enumerable
+                .Range(0, (range.End.Value - range.Start.Value).Days + 1)
+                .Select(index => range.Start.Value.AddDays(index))
+                .Any(date => IsDateDisabledFunc(date.Date));
+
+            if (doesRangeContainDisabledDates)
+            {
+                _rangeText = null;
+                await SetTextAsync(null, false);
+                return false;
+            }
+
+            if (!suppressInteraction)
+            {
+                Touched = true;
+            }
+
+            if (range?.Start is not null && StartMonth == null)
+                PickerMonth = new DateTime(GetCulture().Calendar.GetYear(range.Start.Value), GetCulture().Calendar.GetMonth(range.Start.Value), 1, GetCulture().Calendar);
+
+            _dateRange = range;
+            _value = range?.End;
+            HighlightedDate = range?.Start;
+
+            if (updateValue)
+            {
+                ResetConverterErrors();
+                if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
                 {
                     _rangeText = null;
                     await SetTextAsync(null, false);
-                    return;
                 }
-
-                if (!suppressInteraction)
+                else
                 {
-                    Touched = true;
-                }
-
-                if (range?.Start is not null && StartMonth == null)
-                    PickerMonth = new DateTime(GetCulture().Calendar.GetYear(range.Start.Value), GetCulture().Calendar.GetMonth(range.Start.Value), 1, GetCulture().Calendar);
-
-                _dateRange = range;
-                _value = range?.End;
-                HighlightedDate = range?.Start;
-
-                if (updateValue)
-                {
-                    ResetConverterErrors();
-                    if (_dateRange == null || (_dateRange.Start == null && _dateRange.End == null))
-                    {
-                        _rangeText = null;
-                        await SetTextAsync(null, false);
-                    }
-                    else
-                    {
-                        _rangeText = new Range<string>(
-                            ConvertSet(_dateRange.Start),
-                            ConvertSet(_dateRange.End));
-                        await SetTextAsync(_dateRange.ToString(GetConverter()), false);
-                    }
-                }
-
-                await DateRangeChanged.InvokeAsync(_dateRange);
-                await BeginValidateAsync();
-                if (!suppressInteraction)
-                {
-                    FieldChanged(_value);
+                    _rangeText = new Range<string>(
+                        ConvertSet(_dateRange.Start),
+                        ConvertSet(_dateRange.End));
+                    await SetTextAsync(_dateRange.ToString(GetConverter()), false);
                 }
             }
+
+            return true;
         }
 
         private Range<string>? RangeText
@@ -223,11 +265,6 @@ namespace MudBlazor
                     }
 
                     await SetTextAsync(rangeText is null ? null : RangeUtility.Join(rangeText.Start, rangeText.End), callback: false);
-
-                    if (_dateRange is null && DateRangeChanged.HasDelegate)
-                    {
-                        _echoPendingForEdit = edit;
-                    }
                 }
             }
         }

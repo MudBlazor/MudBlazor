@@ -1227,7 +1227,24 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.Date, today));
 
             comp.Instance.Date.Should().Be(today);
-            wasEventCallbackCalled.Should().BeTrue();
+            wasEventCallbackCalled.Should().BeFalse("a parent assignment does not raise DateChanged (#10834)");
+        }
+
+        /// <summary>
+        /// A Date assigned by the parent is applied without raising DateChanged (#10834).
+        /// </summary>
+        [Test]
+        public async Task DateChanged_ShouldNotFire_WhenDateSetFromParent()
+        {
+            var eventCount = 0;
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(x => x.DateChanged, (DateTime? _) => eventCount++));
+
+            var date = new DateTime(2022, 3, 14);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.Date, date));
+
+            comp.Instance.Date.Should().Be(date);
+            eventCount.Should().Be(0);
         }
 
         [Test]
