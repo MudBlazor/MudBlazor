@@ -25,6 +25,72 @@ type ReferenceElement = HTMLElement & {
     _mudBlurHandler?: (e: FocusEvent) => void;
 };
 
+type InputModality = "unknown" | "keyboard" | "pointer";
+
+// Input types that do not take typed text, so browsers already match :focus-visible only for keyboard focus.
+const nonTextInputTypes = new Set(["button", "checkbox", "radio", "range", "color", "file", "submit", "reset", "image"]);
+const modifierKeys = new Set(["Control", "Alt", "AltGraph", "Meta", "Shift", "OS"]);
+
+let inputModality: InputModality = "unknown";
+// The input that moved focus to each element, so typing after a click does not turn it into keyboard focus.
+let focusModality = new WeakMap<Element, InputModality>();
+// The element that had focus when the window lost it; the browser focuses it again when the window regains focus.
+let windowBlurredFrom: Element | null = null;
+
+/**
+ * Records whether the last user input was a key press or a pointer press, and which of them moved focus to each element.
+ * Shortcut chords such as Ctrl+Tab or Alt+Tab switch browser tabs or windows and do not count as keyboard input.
+ */
+function trackInputModality() {
+    document.addEventListener("keydown", e => {
+        if (e.metaKey || e.altKey || e.ctrlKey || modifierKeys.has(e.key)) {
+            return;
+        }
+        inputModality = "keyboard";
+    }, true);
+    document.addEventListener("pointerdown", () => {
+        inputModality = "pointer";
+    }, true);
+    // Capture runs before Blazor's bubbling focusin handler, so the record exists before a component asks isFocusVisible.
+    document.addEventListener("focusin", e => {
+        const target = e.target as Element;
+        // Returning to the tab focuses the same element again; it keeps the input that focused it originally.
+        if (target !== windowBlurredFrom) {
+            focusModality.set(target, inputModality);
+        }
+        windowBlurredFrom = null;
+    }, true);
+    window.addEventListener("blur", e => {
+        // Only the window's own blur, not an element's blur seen while it travels to the target.
+        if (e.target === e.currentTarget) {
+            windowBlurredFrom = document.activeElement;
+        }
+    });
+}
+
+if (typeof document !== "undefined") {
+    trackInputModality();
+}
+
+/**
+ * Forgets the last input and every recorded focus so tests start from the state of a freshly loaded page.
+ */
+export function resetInputModality() {
+    inputModality = "unknown";
+    focusModality = new WeakMap();
+    windowBlurredFrom = null;
+}
+
+function isTextEntry(element: Element) {
+    if (element instanceof HTMLTextAreaElement) {
+        return true;
+    }
+    if (element instanceof HTMLInputElement) {
+        return !nonTextInputTypes.has(element.type.toLowerCase());
+    }
+    return element instanceof HTMLElement && element.isContentEditable;
+}
+
 /**
  * Shared ElementReference interop surface for focus, selection, and DOM metrics.
  * Centralizes browser-specific behavior used by components and extension helpers.
@@ -119,6 +185,24 @@ export default class MudElementReference {
         {
             // Store on the container instance so restoration survives intermediate re-renders.
             element['mudblazor_savedFocus'] = document.activeElement;
+        }
+    }
+
+    /**
+     * Returns whether the focused element shows a keyboard focus indicator.
+     * Browsers re-focus an element when its tab regains focus, and dialogs restore focus by script; only :focus-visible separates keyboard focus from those.
+     * Text inputs match :focus-visible for any focus, so for them the input that moved focus there decides: focus after a pointer press is not keyboard focus.
+     */
+    isFocusVisible() {
+        try {
+            const element = document.activeElement;
+            if (!element?.matches(':focus-visible')) {
+                return false;
+            }
+            return !(focusModality.get(element) === "pointer" && isTextEntry(element));
+        } catch (_) {
+            // Browsers without :focus-visible keep treating every focus as keyboard focus.
+            return true;
         }
     }
 

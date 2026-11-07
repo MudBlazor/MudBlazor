@@ -25,6 +25,7 @@ exports[`window API surface is unchanged 1`] = `
     "focusFirst": "function(1)",
     "focusLast": "function(1)",
     "getBoundingClientRect": "function(1)",
+    "isFocusVisible": "function(0)",
     "listenerId": "number",
     "removeDefaultPreventingHandler": "function(3)",
     "removeDefaultPreventingHandlers": "function(3)",
