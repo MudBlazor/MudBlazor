@@ -1105,6 +1105,112 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Text that fails to convert in either half reports the converter's error, as <see cref="MudDatePicker"/> does (#14126).
+        /// </summary>
+        [TestCase(0)]
+        [TestCase(1)]
+        public async Task DateRangePicker_InvalidText_ShowsConversionError(int invalidInput)
+        {
+            var start = new DateTime(2020, 10, 26);
+            var end = new DateTime(2020, 10, 30);
+            DateRange bound = null;
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.Editable, true)
+                .Bind(x => x.DateRange, bound, value => bound = value));
+            var picker = comp.Instance;
+
+            await comp.FindAll("input")[0].ChangeAsync(start.ToString("d", CultureInfo.InvariantCulture));
+            await comp.FindAll("input")[1].ChangeAsync(end.ToString("d", CultureInfo.InvariantCulture));
+            await comp.FindAll("input")[invalidInput].ChangeAsync("22/22/1996");
+
+            picker.DateRange.Should().BeNull();
+            picker.ConversionError.Should().BeTrue();
+            picker.GetState(x => x.Error).Should().BeTrue();
+            comp.Markup.Should().Contain(picker.ConversionErrorMessage);
+
+            // The two-way binding hands the null range back while the user is still in the field, which must not clear the error.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DateRange, null));
+            picker.ConversionError.Should().BeTrue();
+
+            var valid = invalidInput == 0 ? start : end;
+            await comp.FindAll("input")[invalidInput].ChangeAsync(valid.ToString("d", CultureInfo.InvariantCulture));
+
+            picker.DateRange.Should().Be(new DateRange(start, end));
+            picker.ConversionError.Should().BeFalse();
+            picker.GetState(x => x.Error).Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Text that fails to convert in the start input shows the error even when it is the first edit and the end input is empty (#14126).
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_InvalidStartText_WithEmptyEnd_ShowsConversionError()
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.Editable, true));
+            var picker = comp.Instance;
+
+            await comp.FindAll("input")[0].ChangeAsync("22/22/1996");
+
+            picker.DateRange.Should().BeNull();
+            picker.ConversionError.Should().BeTrue();
+            picker.GetState(x => x.Error).Should().BeTrue();
+            comp.Markup.Should().Contain(picker.ConversionErrorMessage);
+        }
+
+        /// <summary>
+        /// Emptying the input that held text which failed to convert clears the conversion error, as <see cref="MudDatePicker"/> does (#14126).
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_InvalidText_EmptyingBothInputs_ClearsConversionError()
+        {
+            var comp = Context.Render<MudForm>(parameters => parameters
+                .AddChildContent<MudDateRangePicker>(pickerParameters => pickerParameters
+                    .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                    .Add(p => p.Editable, true)));
+            var form = comp.Instance;
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
+
+            await comp.FindAll("input")[0].ChangeAsync("22/22/1996");
+            picker.ConversionError.Should().BeTrue();
+
+            await comp.FindAll("input")[0].ChangeAsync("");
+            await comp.InvokeAsync(form.ValidateAsync);
+
+            picker.ConversionError.Should().BeFalse();
+            picker.GetState(x => x.Error).Should().BeFalse();
+            form.IsValid.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// A form holding a range picker with text that fails to convert is invalid until the text converts (#14126).
+        /// </summary>
+        [Test]
+        public async Task DateRangePicker_InvalidText_MakesFormInvalid()
+        {
+            var comp = Context.Render<MudForm>(parameters => parameters
+                .AddChildContent<MudDateRangePicker>(pickerParameters => pickerParameters
+                    .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                    .Add(p => p.Editable, true)));
+            var form = comp.Instance;
+            var picker = comp.FindComponent<MudDateRangePicker>().Instance;
+
+            await comp.FindAll("input")[0].ChangeAsync("22/22/1996");
+            await comp.InvokeAsync(form.ValidateAsync);
+
+            form.IsValid.Should().BeFalse();
+            form.Errors.Should().Contain(picker.ConversionErrorMessage);
+
+            await comp.FindAll("input")[0].ChangeAsync(new DateTime(2020, 10, 26).ToString("d", CultureInfo.InvariantCulture));
+            await comp.InvokeAsync(form.ValidateAsync);
+
+            form.IsValid.Should().BeTrue();
+            form.Errors.Should().BeEmpty();
+        }
+
+        /// <summary>
         /// A deliberate null assignment must still clear text that failed to convert, even after the binding echo preserved it.
         /// </summary>
         [Test]
