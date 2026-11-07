@@ -130,6 +130,40 @@ namespace MudBlazor
         public string TimeFormat { get; set; } = string.Empty;
 
         /// <summary>
+        /// The earliest time that can be selected.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c> (no lower limit).<br />
+        /// Earlier times are disabled on the clock and skipped by keyboard navigation.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public TimeSpan? MinTime { get; set; }
+
+        /// <summary>
+        /// The latest time that can be selected.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c> (no upper limit).<br />
+        /// Later times are disabled on the clock and skipped by keyboard navigation.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public TimeSpan? MaxTime { get; set; }
+
+        /// <summary>
+        /// The function used to disable one or more times.
+        /// </summary>
+        /// <remarks>
+        /// When set, a time will be disabled if the function returns <c>true</c>.<br />
+        /// The function receives whole minutes, for example <c>09:30:00</c>.
+        /// An hour is disabled when all of its minutes are disabled.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.FormComponent.Validation)]
+        public Func<TimeSpan, bool> IsTimeDisabledFunc { get; set; } = _ => false;
+
+        /// <summary>
         /// The currently selected time.
         /// </summary>
         /// <remarks>
@@ -159,6 +193,13 @@ namespace MudBlazor
         /// <param name="suppressInteraction">When <c>true</c>, the change is treated as programmatic and does not mark the picker touched or fire <c>FieldChanged</c>.</param>
         protected async Task SetTimeAsync(TimeSpan? time, bool updateValue, bool suppressInteraction = false)
         {
+            // A committed value replaces any disabled time that was typed, even when the value itself does not change.
+            var replacesDisabledText = updateValue && _typedTimeDisabled;
+            if (updateValue)
+            {
+                _typedTimeDisabled = false;
+            }
+
             // Text that fails to convert leaves the value null, so a null assignment looks like a no-op and the bad text would stick.
             // Run it anyway while text remains, as MudDatePicker does.
             if (_value != time || (time is null && !string.IsNullOrEmpty(Text)))
@@ -183,15 +224,70 @@ namespace MudBlazor
                     FieldChanged(_value);
                 }
             }
+            else if (replacesDisabledText)
+            {
+                await SetTextAsync(ConvertSet(_value), false);
+                await BeginValidateAsync();
+            }
         }
 
         /// <inheritdoc />
-        protected override Task StringValueChangedAsync(string? value)
+        protected override async Task StringValueChangedAsync(string? value)
         {
             Touched = true;
+            var wasDisabled = _typedTimeDisabled;
+            var time = ConvertGet(value);
+
+            // A typed time the clock would refuse is not committed: the text stays so the user can correct it, and validation reports it.
+            _typedTimeDisabled = time is { } typed && IsTimeDisabled(typed.Hours, typed.Minutes);
+            if (_typedTimeDisabled)
+            {
+                await BeginValidateAsync();
+                return;
+            }
 
             // Update the time property (without updating back the Value property)
-            return SetTimeAsync(ConvertGet(value), false);
+            await SetTimeAsync(time, false);
+
+            // When the value did not change, SetTimeAsync skips validation, so clear the previous error here.
+            if (wasDisabled)
+            {
+                await BeginValidateAsync();
+            }
+        }
+
+        /// <inheritdoc />
+        protected override async Task ValidateValue()
+        {
+            await base.ValidateValue();
+
+            if (_typedTimeDisabled)
+            {
+                _typedTimeErrorShown = true;
+                ValidationErrors = [.. ValidationErrors, Localizer[LanguageResource.MudTimePicker_TimeNotAllowed]];
+                await ErrorState.SetValueAsync(true);
+                await ErrorTextState.SetValueAsync(ValidationErrors[0]);
+            }
+            else if (_typedTimeErrorShown)
+            {
+                // The base class only rewrites Error/ErrorText when it has its own validation source, so clear the error this component published.
+                _typedTimeErrorShown = false;
+                var message = Localizer[LanguageResource.MudTimePicker_TimeNotAllowed];
+                ValidationErrors = ValidationErrors.Where(error => error != message).ToList();
+                await ErrorState.SetValueAsync(ValidationErrors.Count > 0);
+                await ErrorTextState.SetValueAsync(ValidationErrors.FirstOrDefault());
+            }
+
+            Form?.Update(this);
+        }
+
+        /// <inheritdoc />
+        public override Task ResetValidationAsync()
+        {
+            _typedTimeDisabled = false;
+            _typedTimeErrorShown = false;
+
+            return base.ResetValidationAsync();
         }
 
         /// <inheritdoc />
@@ -213,6 +309,20 @@ namespace MudBlazor
         {
             if (GetReadOnlyState())
             {
+                return Task.CompletedTask;
+            }
+
+            // While the clock points at a disabled time (for example after an AM/PM switch), there is nothing valid to commit.
+            // Keep the last valid value instead of clearing it, and move the clock back to it so reopening shows that value.
+            if (TimeIntermediate is null && IsTimeDisabled(_timeSet.Hour, _timeSet.Minute))
+            {
+                if (Time is { } keptTime)
+                {
+                    _timeSet.Hour = keptTime.Hours;
+                    _timeSet.Minute = keptTime.Minutes;
+                    TimeIntermediate = keptTime;
+                }
+
                 return Task.CompletedTask;
             }
 
@@ -266,6 +376,14 @@ namespace MudBlazor
         {
             if (GetReadOnlyState())
                 return Task.CompletedTask;
+
+            // A disabled time is shown as no selection rather than kept, so the user picks a valid time on the clock.
+            if (IsTimeDisabled(_timeSet.Hour, _timeSet.Minute))
+            {
+                TimeIntermediate = null;
+                return Task.CompletedTask;
+            }
+
             TimeIntermediate = new TimeSpan(_timeSet.Hour, _timeSet.Minute, 0);
             if ((PickerVariant == PickerVariant.Static && PickerActions == null) || (PickerActions != null && AutoClose))
             {
@@ -346,6 +464,16 @@ namespace MudBlazor
                 .AddClass("mud-time-picker-dial-hidden", _currentView != OpenTo.Minutes)
                 .Build();
 
+        /// <summary>
+        /// <c>true</c> while the input holds a typed time that <see cref="MinTime"/>, <see cref="MaxTime"/> or <see cref="IsTimeDisabledFunc"/> rejects.
+        /// </summary>
+        private bool _typedTimeDisabled;
+
+        /// <summary>
+        /// <c>true</c> while the error for a disabled typed time is shown, so it can be cleared once the time is corrected.
+        /// </summary>
+        private bool _typedTimeErrorShown;
+
         private bool IsAm => _timeSet.Hour is >= 00 and < 12; // AM is 00:00 to 11:59.
         private bool IsPm => _timeSet.Hour is >= 12 and < 24; // PM is 12:00 to 23:59.
 
@@ -373,6 +501,11 @@ namespace MudBlazor
         {
             if (_currentView == OpenTo.Hours)
             {
+                if (IsHourDisabled(HourAmPm(value)))
+                {
+                    return "mud-clock-number mud-disabled";
+                }
+
                 var h = _timeSet.Hour;
 
                 if (AmPm)
@@ -389,12 +522,65 @@ namespace MudBlazor
                     return $"mud-clock-number mud-theme-{Color.ToStringFast(true)}";
                 }
             }
-            else if (_currentView == OpenTo.Minutes && _timeSet.Minute == value)
+            else if (_currentView == OpenTo.Minutes)
             {
-                return $"mud-clock-number mud-theme-{Color.ToStringFast(true)}";
+                if (IsTimeDisabled(_timeSet.Hour, value))
+                {
+                    return "mud-clock-number mud-disabled";
+                }
+
+                if (_timeSet.Minute == value)
+                {
+                    return $"mud-clock-number mud-theme-{Color.ToStringFast(true)}";
+                }
             }
 
             return "mud-clock-number";
+        }
+
+        private bool IsTimeDisabled(int hour, int minute)
+        {
+            var time = new TimeSpan(hour, minute, 0);
+
+            return time < MinTime || time > MaxTime || IsTimeDisabledFunc(time);
+        }
+
+        private bool IsHourDisabled(int hour) => GetFirstEnabledMinute(hour) is null;
+
+        private int? GetFirstEnabledMinute(int hour)
+        {
+            // Only minutes on the MinuteSelectionStep grid can be picked, so an hour counts as enabled only if one of them is allowed.
+            var step = MinuteSelectionStep is > 1 and < 60 ? MinuteSelectionStep : 1;
+            for (var minute = 0; minute < 60; minute += step)
+            {
+                if (!IsTimeDisabled(hour, minute))
+                {
+                    return minute;
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Moves the clock to an enabled hour, keeping the minute when it is allowed in that hour.
+        /// </summary>
+        /// <returns><c>false</c> when the hour is disabled and nothing changed.</returns>
+        private bool TrySelectHour(int hour)
+        {
+            var firstEnabledMinute = GetFirstEnabledMinute(hour);
+            if (firstEnabledMinute is null)
+            {
+                return false;
+            }
+
+            _timeSet.Hour = hour;
+            if (IsTimeDisabled(hour, _timeSet.Minute))
+            {
+                _timeSet.Minute = firstEnabledMinute.Value;
+            }
+
+            return true;
         }
 
         private double GetDeg()
@@ -521,17 +707,26 @@ namespace MudBlazor
             PointerMoving = pointerMoving;
 
             // Update the .NET properties from the JavaScript events.
+            // Disabled sticks are ignored so the hand stays on the last enabled value while dragging.
+            var changed = false;
             if (_currentView == OpenTo.Minutes)
             {
                 var minute = RoundToStepInterval(value);
-                _timeSet.Minute = minute;
+                if (!IsTimeDisabled(_timeSet.Hour, minute))
+                {
+                    _timeSet.Minute = minute;
+                    changed = true;
+                }
             }
             else if (_currentView == OpenTo.Hours)
             {
-                _timeSet.Hour = HourAmPm(value);
+                changed = TrySelectHour(HourAmPm(value));
             }
 
-            await UpdateTimeAsync();
+            if (changed)
+            {
+                await UpdateTimeAsync();
+            }
 
             // Manually update because the event won't do it from JavaScript.
             StateHasChanged();
@@ -550,12 +745,15 @@ namespace MudBlazor
             // The pointer is up and not moving so animations can be enabled again.
             PointerMoving = false;
 
-            // Clicking a stick will submit the time.
+            // Clicking a stick will submit the time, unless that stick is disabled.
             if (_currentView == OpenTo.Minutes)
             {
-                await SubmitAndCloseAsync();
+                if (!IsTimeDisabled(_timeSet.Hour, RoundToStepInterval(value)))
+                {
+                    await SubmitAndCloseAsync();
+                }
             }
-            else if (_currentView == OpenTo.Hours)
+            else if (_currentView == OpenTo.Hours && !IsHourDisabled(HourAmPm(value)))
             {
                 if (TimeEditMode == TimeEditMode.Normal)
                 {
@@ -649,25 +847,11 @@ namespace MudBlazor
                     {
                         if (args.CtrlKey)
                         {
-                            await ChangeHourAsync(1);
-                        }
-                        else if (args.ShiftKey)
-                        {
-                            if (_timeSet.Minute > 55)
-                            {
-                                await ChangeHourAsync(1);
-                            }
-
-                            await ChangeMinuteAsync(5);
+                            await StepHoursAsync(1);
                         }
                         else
                         {
-                            if (_timeSet.Minute == 59)
-                            {
-                                await ChangeHourAsync(1);
-                            }
-
-                            await ChangeMinuteAsync(1);
+                            await StepMinutesAsync(args.ShiftKey ? 5 : 1);
                         }
                     }
 
@@ -677,25 +861,11 @@ namespace MudBlazor
                     {
                         if (args.CtrlKey)
                         {
-                            await ChangeHourAsync(-1);
-                        }
-                        else if (args.ShiftKey)
-                        {
-                            if (_timeSet.Minute < 5)
-                            {
-                                await ChangeHourAsync(-1);
-                            }
-
-                            await ChangeMinuteAsync(-5);
+                            await StepHoursAsync(-1);
                         }
                         else
                         {
-                            if (_timeSet.Minute == 0)
-                            {
-                                await ChangeHourAsync(-1);
-                            }
-
-                            await ChangeMinuteAsync(-1);
+                            await StepMinutesAsync(args.ShiftKey ? -5 : -1);
                         }
                     }
 
@@ -709,13 +879,9 @@ namespace MudBlazor
                     {
                         Open = false;
                     }
-                    else if (args.ShiftKey)
-                    {
-                        await ChangeHourAsync(5);
-                    }
                     else
                     {
-                        await ChangeHourAsync(1);
+                        await StepHoursAsync(args.ShiftKey ? 5 : 1);
                     }
 
                     break;
@@ -724,13 +890,9 @@ namespace MudBlazor
                     {
                         Open = true;
                     }
-                    else if (args.ShiftKey)
-                    {
-                        await ChangeHourAsync(-5);
-                    }
                     else
                     {
-                        await ChangeHourAsync(-1);
+                        await StepHoursAsync(args.ShiftKey ? -5 : -1);
                     }
 
                     break;
@@ -790,6 +952,56 @@ namespace MudBlazor
                 Culture = GetCulture,
                 Format = GetFormat
             };
+        }
+
+        /// <summary>
+        /// Moves the clock by a number of minutes for keyboard navigation, carrying into the hour and skipping disabled times.
+        /// </summary>
+        private Task StepMinutesAsync(int minutes)
+        {
+            const int MinutesPerDay = 24 * 60;
+            var direction = Math.Sign(minutes);
+            var target = (_timeSet.Hour * 60) + _timeSet.Minute + minutes;
+
+            // Keep moving in the same direction past disabled times, giving up after a full day.
+            for (var i = 0; i < MinutesPerDay; i++)
+            {
+                target = ((target % MinutesPerDay) + MinutesPerDay) % MinutesPerDay;
+                if (!IsTimeDisabled(target / 60, target % 60))
+                {
+                    _currentView = OpenTo.Minutes;
+                    _timeSet.Hour = target / 60;
+                    _timeSet.Minute = target % 60;
+                    return UpdateTimeAsync();
+                }
+
+                target += direction;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Moves the clock by a number of hours for keyboard navigation, skipping disabled hours.
+        /// </summary>
+        private Task StepHoursAsync(int hours)
+        {
+            var direction = Math.Sign(hours);
+            var target = _timeSet.Hour + hours;
+
+            for (var i = 0; i < 24; i++)
+            {
+                target = ((target % 24) + 24) % 24;
+                if (TrySelectHour(target))
+                {
+                    _currentView = OpenTo.Hours;
+                    return UpdateTimeAsync();
+                }
+
+                target += direction;
+            }
+
+            return Task.CompletedTask;
         }
 
         protected Task ChangeMinuteAsync(int minute)
