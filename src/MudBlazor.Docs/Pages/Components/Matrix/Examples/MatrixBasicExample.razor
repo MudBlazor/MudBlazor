@@ -1,0 +1,28 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudMatrixCSSTemp />
+
+<MudMatrix TemplateColumns="200px auto 100px">
+    <MudMatrixItem>A</MudMatrixItem>
+    <MudMatrixItem>B</MudMatrixItem>
+    <MudMatrixItem>C</MudMatrixItem>
+    <MudMatrixItem>D</MudMatrixItem>
+    <MudMatrixItem>E</MudMatrixItem>
+</MudMatrix>
+
+@code{
+
+    MatrixConfiguration _configuration =
+    new MatrixConfiguration
+    {
+        Gap = "3px",
+        TemplateRows = "template content"
+    };
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _configuration.AddGrid(Guid.NewGuid().ToString());
+        Console.WriteLine(_configuration.BuildConfiguration());
+    }
+}
