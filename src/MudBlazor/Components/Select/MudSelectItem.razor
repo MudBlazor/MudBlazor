@@ -4,8 +4,42 @@
 
 @if (!HideContent)
 {
-    <MudListItem @attributes="GetUserAttributes()" Value="@ItemId" id="@ItemId" OnClick="this.AsNonRenderingEventHandler(OnClickHandleAsync)" OnClickPreventDefault="true" Icon="@CheckBoxIcon" Disabled="@Disabled" KeyboardEnabled="false" Class="@GetCssClasses()" Style="@Style">
-        @if (ChildContent is not null)
+    <MudListItem @attributes="GetUserAttributes()" Value="@ItemId" id="@ItemId" OnClick="this.AsNonRenderingEventHandler(OnClickHandleAsync)" OnClickPreventDefault="true" Icon="@CheckBoxIcon" Disabled="@Disabled" KeyboardEnabled="false" Class="@GetCssClasses()" Style="@GetStyle()">
+        @foreach (var guide in GetGuides())
+        {
+            <span class="@guide.CssClass" style="--mud-select-guide-column: @guide.Column" aria-hidden="true"></span>
+        }
+        @if (HasNestedItems && ExpandIconAtStart)
+        {
+            @ToggleButton
+            @RenderItemContent
+        }
+        else if (HasNestedItems)
+        {
+            <span class="mud-select-item-branch">
+                <span class="mud-select-item-branch-text">@RenderItemContent</span>
+                @ToggleButton
+            </span>
+        }
+        else
+        {
+            @RenderItemContent
+        }
+    </MudListItem>
+}
+
+@* The hidden copy always renders the whole tree so collapsed items can still resolve their value and text. *@
+@if (HasNestedItems && (HideContent || _expandedState.Value))
+{
+    <CascadingValue Value="@this" Name="ParentSelectItem" IsFixed="true">
+        @NestedList
+    </CascadingValue>
+}
+
+@code {
+    private RenderFragment RenderItemContent => __builder =>
+    {
+        if (ChildContent is not null)
         {
             @ChildContent
         }
@@ -13,5 +47,12 @@
         {
             @DisplayString
         }
-    </MudListItem>
+    };
+
+    private RenderFragment ToggleButton => __builder =>
+    {
+        <span class="@ToggleCssClass" role="presentation" @onclick="ToggleExpandedAsync" @onclick:stopPropagation @onmousedown:stopPropagation>
+            <MudIcon Icon="@(_expandedState.Value ? ExpandLessIcon : ExpandMoreIcon)" Color="@ExpandIconColor" />
+        </span>
+    };
 }
