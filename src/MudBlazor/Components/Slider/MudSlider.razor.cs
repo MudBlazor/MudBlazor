@@ -269,13 +269,29 @@ namespace MudBlazor
 
         private string GetValueText => _valueState.Value.ToString(null, CultureInfo.InvariantCulture);
 
+        // Blazor names MudSlider<T> only as a type argument, so Mono full AOT on iOS runs it as shared generic code, which can't call T.TryParse.
+        // A range input's value is a JavaScript number, so a double holds anything the browser sends.
+        // Other types try a decimal first, which keeps every digit of a long, ulong or decimal where a double keeps about 15.
+        // Go back to T.TryParse once Mono fixes this (https://github.com/dotnet/runtime/issues/137120) or every supported .NET runs iOS on CoreCLR, as .NET 11 does.
         private async Task SetValueTextAsync(string? text)
         {
-            if (T.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var result))
+            var isFloatingPoint = typeof(T) == typeof(double) || typeof(T) == typeof(float) || typeof(T) == typeof(Half);
+            T result;
+            if (!isFloatingPoint && decimal.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var exact))
             {
-                await _valueState.SetValueAsync(result);
-                await _nullableValueState.SetValueAsync(result);
+                result = T.CreateSaturating(exact);
             }
+            else if (double.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out var number))
+            {
+                result = T.CreateSaturating(number);
+            }
+            else
+            {
+                return;
+            }
+
+            await _valueState.SetValueAsync(result);
+            await _nullableValueState.SetValueAsync(result);
         }
 
         private Task OnValueParameterChangedAsync(ParameterChangedEventArgs<T> arg)
