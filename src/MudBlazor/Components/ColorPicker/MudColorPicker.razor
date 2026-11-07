@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @using MudBlazor.Resources
 @using MudBlazor.Utilities
 @inherits MudPicker<MudColor>
@@ -91,9 +91,12 @@
                         <div class="mud-picker-color-grid">
                             @foreach (var item in _gridList)
                             {
-                                <div class="@GetColorDotClass(item)"
+                                <div role="button"
+                                     tabindex="0"
+                                     class="@GetColorDotClass(item)"
                                      style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
                                      @onclick="@GetSelectPaletteColorCallback(item)"
+                                     @onkeydown="@((e) => HandleSwatchKeyDownAsync(e, item))"
                                      aria-label="@item.ToString(MudColorOutputFormats.HexA)"></div>
                             }
                         </div>
@@ -110,8 +113,11 @@
                             <div class="mud-picker-color-controls-row">
                                 @if (ShowPreview)
                                 {
-                                    <div class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple"
+                                    <div role="button"
+                                         tabindex="0"
+                                         class="mud-picker-color-dot mud-picker-color-dot-current mud-ripple"
                                          @onclick="ToggleCollection"
+                                         @onkeydown="HandlePreviewKeyDownAsync"
                                          aria-label="@(_collectionOpen ? @Localizer[LanguageResource.MudColorPicker_HideSwatches] : @Localizer[LanguageResource.MudColorPicker_ShowSwatches])">
                                         <div class="mud-picker-color-fill" style="@($"background: {ValueOrDefault.ToString(MudColorOutputFormats.RGBA)};")"></div>
                                     </div>
@@ -150,9 +156,12 @@
                                     <div class="mud-picker-color-collection">
                                         @foreach (var item in Palette.Take(5))
                                         {
-                                            <div class="@GetColorDotClass(item)"
+                                            <div role="button"
+                                                 tabindex="0"
+                                                 class="@GetColorDotClass(item)"
                                                  style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
                                                  @onclick="@GetSelectPaletteColorCallback(item)"
+                                                 @onkeydown="@((e) => HandleSwatchKeyDownAsync(e, item))"
                                                  aria-label="@item.ToString(MudColorOutputFormats.HexA)"></div>
                                         }
                                     </div>
@@ -171,6 +180,7 @@
                                                              ValueChanged="@SetRedAsync"
                                                              Class="mud-picker-color-inputfield"
                                                              HelperText="R"
+                                                             aria-label="@Localizer[LanguageResource.MudColorPicker_Red]"
                                                              Min="0"
                                                              Max="255"
                                                              Variant="Variant.Outlined"
@@ -181,6 +191,7 @@
                                                              ValueChanged="@SetGreenAsync"
                                                              Class="mud-picker-color-inputfield"
                                                              HelperText="G"
+                                                             aria-label="@Localizer[LanguageResource.MudColorPicker_Green]"
                                                              Min="0"
                                                              Max="255"
                                                              Variant="Variant.Outlined"
@@ -191,6 +202,7 @@
                                                              ValueChanged="@SetBlueAsync"
                                                              Class="mud-picker-color-inputfield"
                                                              HelperText="B"
+                                                             aria-label="@Localizer[LanguageResource.MudColorPicker_Blue]"
                                                              Min="0"
                                                              Max="255"
                                                              Variant="Variant.Outlined"
@@ -203,6 +215,7 @@
                                                              ValueChanged="@SetHueAsync"
                                                              Class="mud-picker-color-inputfield"
                                                              HelperText="H"
+                                                             aria-label="@Localizer[LanguageResource.MudColorPicker_Hue]"
                                                              Step="1"
                                                              Min="0"
                                                              Max="360"
@@ -214,6 +227,7 @@
                                                              ValueChanged="@SetSaturationAsync"
                                                              Class="mud-picker-color-inputfield"
                                                              HelperText="S"
+                                                             aria-label="@Localizer[LanguageResource.MudColorPicker_Saturation]"
                                                              Step="0.01"
                                                              Min="0"
                                                              Max="100"
@@ -225,6 +239,7 @@
                                                              ValueChanged="@SetLightnessAsync"
                                                              Class="mud-picker-color-inputfield"
                                                              HelperText="L"
+                                                             aria-label="@Localizer[LanguageResource.MudColorPicker_Lightness]"
                                                              Step="0.01"
                                                              Min="0"
                                                              Max="100"
@@ -241,6 +256,7 @@
                                                           Variant="Variant.Outlined"
                                                           MaxLength="@GetHexColorInputMaxLength()"
                                                           HelperText="HEX"
+                                                          aria-label="@Localizer[LanguageResource.MudColorPicker_Hex]"
                                                           Required="@Required" />
                                             break;
                                     }
@@ -252,6 +268,7 @@
                                                          ValueChanged="@SetAlphaAsync"
                                                          Class="mud-picker-color-inputfield input-field-alpha"
                                                          HelperText="A"
+                                                         aria-label="@Localizer[LanguageResource.MudColorPicker_Alpha]"
                                                          Min="0"
                                                          Max="1"
                                                          Step="0.01"
@@ -281,9 +298,12 @@
                         <div class="mud-picker-color-view-collection">
                             @foreach (var item in Palette)
                             {
-                                <div class="@GetColorDotClass(item)"
+                                <div role="button"
+                                     tabindex="0"
+                                     class="@GetColorDotClass(item)"
                                      style="@($"background: {item.ToString(MudColorOutputFormats.RGBA)};")"
                                      @onclick="@GetSelectPaletteColorCallback(item)"
+                                     @onkeydown="@((e) => HandleSwatchKeyDownAsync(e, item))"
                                      aria-label="@item.ToString(MudColorOutputFormats.HexA)"></div>
                             }
                         </div>

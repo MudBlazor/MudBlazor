@@ -1,4 +1,4 @@
-﻿#pragma warning disable IDE1006 // leading underscore
+#pragma warning disable IDE1006 // leading underscore
 
 using System.Globalization;
 using AngleSharp.Dom;
@@ -2022,6 +2022,63 @@ namespace MudBlazor.UnitTests.Components
             picker.GetState(x => x.Text).Should().BeNull();
             textChanges.Should().Equal(["#180f6fff", null]); // the initial color, then the clear
             comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+        }
+
+        [Test]
+        public void ColorPicker_SwatchesAndPreview_ShouldHaveRoleButtonAndTabIndex()
+        {
+            var comp = Context.Render<MudColorPicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.ColorPickerView, ColorPickerView.Grid)
+                .Add(x => x.ShowPreview, true));
+
+            var swatches = comp.FindAll(".mud-picker-color-grid .mud-picker-color-dot");
+            swatches.Should().NotBeEmpty();
+            foreach (var swatch in swatches)
+            {
+                swatch.GetAttribute("role").Should().Be("button");
+                swatch.GetAttribute("tabindex").Should().Be("0");
+            }
+
+            var preview = comp.Find(".mud-picker-color-dot-current");
+            preview.GetAttribute("role").Should().Be("button");
+            preview.GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        public async Task ColorPicker_SwatchKeyboard_ShouldSelectColor()
+        {
+            MudColor selectedColor = null;
+            var comp = Context.Render<MudColorPicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.ColorPickerView, ColorPickerView.Grid)
+                .Add(x => x.ValueChanged, color => selectedColor = color));
+
+            var firstSwatch = comp.Find(".mud-picker-color-grid .mud-picker-color-dot");
+            var expectedHex = firstSwatch.GetAttribute("aria-label");
+
+            await firstSwatch.KeyDownAsync(new Microsoft.AspNetCore.Components.Web.KeyboardEventArgs { Key = "Enter" });
+
+            selectedColor.Should().NotBeNull();
+            selectedColor.Value.Should().Be(expectedHex);
+            firstSwatch.ClassList.Should().Contain("selected");
+        }
+
+        [Test]
+        [TestCase(ColorPickerMode.RGB, new[] { "Red", "Green", "Blue", "Alpha" })]
+        [TestCase(ColorPickerMode.HSL, new[] { "Hue", "Saturation", "Lightness", "Alpha" })]
+        [TestCase(ColorPickerMode.HEX, new[] { "Hex" })]
+        public void ColorPicker_ChannelInputs_ShouldHaveAriaLabel(ColorPickerMode mode, string[] expectedLabels)
+        {
+            var comp = Context.Render<MudColorPicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.ColorPickerMode, mode)
+                .Add(x => x.ShowAlpha, true));
+
+            var inputs = comp.FindAll($"{_colorInputCssSelector} input");
+            var labels = inputs.Select(i => i.GetAttribute("aria-label")).ToArray();
+
+            labels.Should().Equal(expectedLabels);
         }
     }
 }
