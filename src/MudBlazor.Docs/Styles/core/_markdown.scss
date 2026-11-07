@@ -18,7 +18,56 @@
   }
 }
 
+/*
+  Syntax palette.
+
+  These tokens must respond to the theme, and they cannot be derived from
+  --mud-palette-* because those aren't tuned for text-on-code-pane contrast.
+  The code pane sits on --mud-palette-background-gray, which is #F5F5F5 in
+  light and #27272F in dark; no single colour reaches 4.5:1 on both, so the
+  pair has to be chosen per theme.
+
+  MudThemeProvider emits --mud-native-html-color-scheme on :root but adds no
+  dark class, so we feed it to color-scheme (scoped to the pane, to avoid
+  changing the native canvas site-wide) and branch with light-dark().
+
+  Each token declares its light value first as a fallback: browsers without
+  light-dark() drop the second declaration and keep the light palette.
+
+  Every pair below is >= 4.5:1 on its own background.
+*/
 .mud-codeblock {
+  color-scheme: var(--mud-native-html-color-scheme, light);
+
+  --docs-syntax-delimiter: #6C6C74;
+  --docs-syntax-delimiter: light-dark(#6C6C74, #9A9AA6);
+  --docs-syntax-element: #5A3FD1;
+  --docs-syntax-element: light-dark(#5A3FD1, #AFA3FF);
+  --docs-syntax-attribute: #8B2FBF;
+  --docs-syntax-attribute: light-dark(#8B2FBF, #DBA0F2);
+  --docs-syntax-operator: #63636B;
+  --docs-syntax-operator: light-dark(#63636B, #9A9AA6);
+  --docs-syntax-value: #B3145A;
+  --docs-syntax-value: light-dark(#B3145A, #FF8FB3);
+  --docs-syntax-link: #1A5FBF;
+  --docs-syntax-link: light-dark(#1A5FBF, #7FC0FF);
+  --docs-syntax-enum: #0F7B44;
+  --docs-syntax-enum: light-dark(#0F7B44, #5CD79B);
+  --docs-syntax-plain: #2C2A38;
+  --docs-syntax-plain: light-dark(#2C2A38, #E4E1EC);
+  --docs-syntax-keyword: #1462BE;
+  --docs-syntax-keyword: light-dark(#1462BE, #79BDFF);
+  --docs-syntax-comment: #4A7A3C;
+  --docs-syntax-comment: light-dark(#4A7A3C, #8FC97F);
+  --docs-syntax-string: #9A5518;
+  --docs-syntax-string: light-dark(#9A5518, #E3A972);
+  --docs-syntax-function: #8A5A00;
+  --docs-syntax-function: light-dark(#8A5A00, #E0BC6A);
+  --docs-syntax-class: #0A6E78;
+  --docs-syntax-class: light-dark(#0A6E78, #5FD3D8);
+  --docs-syntax-number: #6B5A00;
+  --docs-syntax-number: light-dark(#6B5A00, #CFC06A);
+
   & .html, .codearea {
     mark {
       font-weight: 600;
@@ -31,96 +80,99 @@
     }
 
     & .htmlTagDelimiter {
-      color: #979797;
+      color: var(--docs-syntax-delimiter);
     }
 
     & .htmlElementName {
-      color: var(--mud-palette-primary);
+      color: var(--docs-syntax-element);
       font-weight: 600;
     }
 
     & .htmlAttributeName {
-      color: #8323d8;
+      color: var(--docs-syntax-attribute);
     }
 
     & .htmlOperator, .quot {
-      color: #737373;
+      color: var(--docs-syntax-operator);
     }
 
     & .htmlAttributeValue {
-      color: #ff4081;
+      color: var(--docs-syntax-value);
     }
 
     & .htmlLink {
-      color: #ff4081;
+      color: var(--docs-syntax-link);
       text-decoration: underline;
     }
 
+    /*
+      The background-color chips these four used to carry were
+      var(--mud-palette-gray-light) — #BDBDBD in BOTH themes, because
+      PaletteDark never overrides GrayLight. Enum names rendered at 1.19:1
+      and keywords at 1.66:1 in light and dark alike. The chip is gone; the
+      colours are keyed to the pane instead.
+    */
     & .enum {
-      color: #00c853;
-      background-color: var(--mud-palette-gray-light);
+      color: var(--docs-syntax-enum);
     }
 
     & .enumValue, .sharpVariable {
-      color: var(--mud-palette-text-primary);
-      background-color: var(--mud-palette-gray-light);
+      color: var(--docs-syntax-plain);
     }
 
     & .keyword {
-      color: #2196f3;
-      background-color: var(--mud-palette-gray-light);
+      color: var(--docs-syntax-keyword);
     }
 
     & .atSign {
-      color: var(--mud-palette-text-primary);
-      background-color: var(--mud-palette-gray-light);
+      color: var(--docs-syntax-plain);
     }
 
     & .comment {
-      color: #57a64a;
+      color: var(--docs-syntax-comment);
     }
   }
 
   & .csharp {
     & .atSign {
-      color: var(--mud-palette-text-primary);
-      background-color: var(--mud-palette-gray-light);
+      color: var(--docs-syntax-plain);
     }
 
     & .keyword {
-      color: var(--mud-palette-primary);
+      color: var(--docs-syntax-keyword);
     }
 
     & .string {
-      color: #e68c32;
+      color: var(--docs-syntax-string);
     }
 
     & .function {
-      color: #ff9800;
+      color: var(--docs-syntax-function);
     }
 
     & .class {
-      color: #1ec8a5;
+      color: var(--docs-syntax-class);
     }
 
     & .localVar {
-      color: #2196f3;
+      color: var(--docs-syntax-keyword);
     }
 
     & .interface {
-      color: #ff4081;
+      color: var(--docs-syntax-value);
     }
 
+    /* #b0d7a3 and #b4eb8f were dark-theme greens applied on the light pane. */
     & .number {
-      color: #b0d7a3;
+      color: var(--docs-syntax-number);
     }
 
     & .enum {
-      color: #b4eb8f;
+      color: var(--docs-syntax-enum);
     }
 
     & .comment {
-      color: #57a64a;
+      color: var(--docs-syntax-comment);
     }
   }
 }
