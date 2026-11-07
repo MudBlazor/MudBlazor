@@ -1776,6 +1776,185 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => datePicker.PickerMonth.Should().Be(new DateTime(2020, 10, 01)));
         }
 
+        private const string OutOfRangeMessage = "Date is outside the allowed range.";
+
+        private IRenderedComponent<MudDatePicker> RenderRangedEditablePicker()
+            => Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Culture, new CultureInfo("en-US"))
+                .Add(p => p.MinDate, new DateTime(2020, 3, 1))
+                .Add(p => p.MaxDate, new DateTime(2020, 9, 30))
+                .Add(p => p.Date, new DateTime(2020, 6, 15)));
+
+        /// <summary>
+        /// A typed date outside <see cref="MudBaseDatePicker.MinDate"/> / <see cref="MudBaseDatePicker.MaxDate"/> is refused, like the disabled calendar days: https://github.com/MudBlazor/MudBlazor/issues/3461.
+        /// The last valid date is kept, the typed text stays in the field and a validation error is shown.
+        /// </summary>
+        [Test]
+        [TestCase("01/01/2020")]
+        [TestCase("12/31/2020")]
+        public async Task DatePicker_Editable_TypedDateOutsideMinMax_IsRefused(string typed)
+        {
+            var comp = RenderRangedEditablePicker();
+
+            await comp.Find("input").ChangeAsync(typed);
+
+            comp.Instance.Date.Should().Be(new DateTime(2020, 6, 15));
+            comp.Find("input").GetAttribute("value").Should().Be(typed);
+            comp.Instance.HasErrors.Should().BeTrue();
+            comp.Instance.GetErrorText().Should().Be(OutOfRangeMessage);
+        }
+
+        /// <summary>
+        /// After a conversion error ("abc"), an out-of-range date shows the out-of-range error, not a blank field without error.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_Editable_TypedDateOutsideMinMax_AfterConversionError_ShowsOutOfRangeError()
+        {
+            var comp = RenderRangedEditablePicker();
+
+            await comp.Find("input").ChangeAsync("abc");
+            comp.Instance.HasErrors.Should().BeTrue();
+            comp.Instance.GetErrorText().Should().NotBe(OutOfRangeMessage);
+
+            await comp.Find("input").ChangeAsync("01/01/2020");
+
+            comp.Instance.ConversionError.Should().BeFalse();
+            comp.Instance.HasErrors.Should().BeTrue();
+            comp.Instance.GetErrorText().Should().Be(OutOfRangeMessage);
+            comp.Find("input").GetAttribute("value").Should().Be("01/01/2020");
+            // "abc" already cleared Date, and the refused date leaves it alone.
+            comp.Instance.Date.Should().BeNull();
+        }
+
+        /// <summary>
+        /// A valid date typed after an out-of-range one clears the error and is accepted.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_Editable_TypedDateOutsideMinMax_ThenValidDate_ClearsError()
+        {
+            var comp = RenderRangedEditablePicker();
+
+            await comp.Find("input").ChangeAsync("01/01/2020");
+            comp.Instance.HasErrors.Should().BeTrue();
+
+            await comp.Find("input").ChangeAsync("07/04/2020");
+
+            comp.Instance.HasErrors.Should().BeFalse();
+            comp.Instance.GetErrorText().Should().BeNullOrEmpty();
+            comp.Instance.Date.Should().Be(new DateTime(2020, 7, 4));
+        }
+
+        /// <summary>
+        /// Clearing the text after an out-of-range date clears the error.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_Editable_TypedDateOutsideMinMax_ThenEmptyText_ClearsError()
+        {
+            var comp = RenderRangedEditablePicker();
+
+            await comp.Find("input").ChangeAsync("01/01/2020");
+            comp.Instance.HasErrors.Should().BeTrue();
+
+            await comp.Find("input").ChangeAsync("");
+
+            comp.Instance.HasErrors.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Picking a date in the calendar, even the one still held in Date, clears the out-of-range error and the typed text.
+        /// </summary>
+        [Test]
+        [TestCase("15")]
+        [TestCase("10")]
+        public async Task DatePicker_Editable_TypedDateOutsideMinMax_ThenCalendarPick_ClearsError(string day)
+        {
+            var comp = Context.Render<SimpleMudDatePickerTest>(parameters => parameters
+                .Add(p => p.MinDate, new DateTime(2020, 3, 1))
+                .Add(p => p.MaxDate, new DateTime(2020, 9, 30))
+                .Add(p => p.Date, new DateTime(2020, 6, 15)));
+            var datePickerComponent = comp.FindComponent<MudDatePicker>();
+            await datePickerComponent.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Editable, true));
+            var datePicker = datePickerComponent.Instance;
+
+            await comp.Find("input").ChangeAsync("02/01/2020");
+            datePicker.HasErrors.Should().BeTrue();
+
+            // The calendar opens on the typed month, which is out of range: go to June.
+            await comp.InvokeAsync(datePicker.OpenAsync);
+            for (var i = 0; i < 4; i++)
+            {
+                await comp.Find("button.mud-picker-nav-button-next").ClickAsync();
+            }
+            await comp.FindAll("button.mud-picker-calendar-day").First(x => x.TrimmedText() == day).ClickAsync();
+
+            datePicker.HasErrors.Should().BeFalse();
+            datePicker.Date.Should().Be(new DateTime(2020, 6, int.Parse(day)));
+            datePicker.Text.Should().Be($"6/{day}/2020");
+        }
+
+        /// <summary>
+        /// Clearing with the code after an out-of-range date clears the error.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_Editable_TypedDateOutsideMinMax_ThenClearAsync_ClearsError()
+        {
+            var comp = RenderRangedEditablePicker();
+
+            await comp.Find("input").ChangeAsync("01/01/2020");
+            comp.Instance.HasErrors.Should().BeTrue();
+
+            await comp.InvokeAsync(() => comp.Instance.ClearAsync());
+
+            comp.Instance.HasErrors.Should().BeFalse();
+            comp.Instance.Date.Should().BeNull();
+        }
+
+        /// <summary>
+        /// An enclosing form becomes invalid with an out-of-range typed date, and valid again with a valid one.
+        /// </summary>
+        [Test]
+        public async Task DatePicker_Editable_TypedDateOutsideMinMax_MakesFormInvalidThenValid()
+        {
+            var comp = Context.Render<MudForm>(parameters => parameters
+                .Add(f => f.ValidationDelay, 0)
+                .AddChildContent<MudDatePicker>(p => p
+                    .Add(x => x.Editable, true)
+                    .Add(x => x.Culture, new CultureInfo("en-US"))
+                    .Add(x => x.MinDate, new DateTime(2020, 3, 1))
+                    .Add(x => x.MaxDate, new DateTime(2020, 9, 30))
+                    .Add(x => x.Date, new DateTime(2020, 6, 15))));
+            var form = comp.Instance;
+
+            await comp.Find("input").ChangeAsync("01/01/2020");
+            form.IsValid.Should().BeFalse();
+            form.Errors.Should().Contain(OutOfRangeMessage);
+
+            await comp.Find("input").ChangeAsync("07/04/2020");
+            form.IsValid.Should().BeTrue();
+            form.Errors.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Typed dates on the boundaries of the range, and inside it, are still accepted.
+        /// </summary>
+        [Test]
+        [TestCase("03/01/2020")]
+        [TestCase("09/30/2020")]
+        [TestCase("07/04/2020")]
+        public async Task DatePicker_Editable_TypedDateInsideMinMax_IsAccepted(string typed)
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.Culture, new CultureInfo("en-US"))
+                .Add(p => p.MinDate, new DateTime(2020, 3, 1))
+                .Add(p => p.MaxDate, new DateTime(2020, 9, 30)));
+
+            await comp.Find("input").ChangeAsync(typed);
+
+            comp.Instance.Date.Should().Be(DateTime.Parse(typed, new CultureInfo("en-US")));
+        }
+
         /// <summary>
         /// Reopening an editable picker returns the calendar to the month of the typed date, even after navigating away from it.
         /// </summary>
