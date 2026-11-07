@@ -25,4 +25,15 @@ export default class MudFileUpload {
             element.click();
         }
     }
+
+    /**
+     * Retrieves the relative path paths from a folder upload input element.
+     */
+    getRelativePaths(id: string): string[] {
+        const element = document.getElementById(id) as HTMLInputElement | null;
+        if (!element || !element.files) {
+            return [];
+        }
+        return Array.from(element.files).map(file => file.webkitRelativePath || "");
+    }
 }

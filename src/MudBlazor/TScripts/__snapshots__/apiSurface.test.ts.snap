@@ -45,6 +45,7 @@ exports[`window API surface is unchanged 1`] = `
     "setText": "function(2)",
   },
   "mudFileUpload": {
+    "getRelativePaths": "function(1)",
     "openFilePicker": "function(1)",
   },
   "mudGetSvgBBox": "function(1)",
@@ -63,6 +64,7 @@ exports[`window API surface is unchanged 1`] = `
     "_clampPosition": "function(2)",
     "_insertText": "function(4)",
     "getCaretPosition": "function(1)",
+    "getFolderPaths": "function(1)",
     "insertAtCurrentCaretPosition": "function(2)",
     "insertAtPosition": "function(3)",
     "resetValue": "function(1)",
