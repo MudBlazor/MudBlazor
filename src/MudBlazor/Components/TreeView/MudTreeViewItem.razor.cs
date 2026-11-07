@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Globalization;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
@@ -18,13 +19,17 @@ namespace MudBlazor
     /// <seealso cref="MudTreeViewItemToggleButton"/>
     public partial class MudTreeViewItem<T> : MudComponentBase, IDisposable
     {
-        private bool _isServerLoaded;
+        // Server-load state for items which are not bound to a backing data item (ChildContent trees).
+        private readonly TreeViewServerLoadEntry _localServerLoad = new();
         private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
         private readonly ParameterState<IReadOnlyCollection<ITreeItemData<T>>?> _itemsState;
         private readonly DefaultConverter<T?> _converter = new();
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
         private readonly string _checkboxTextId = Identifier.Create("treeviewitem-label");
+        private bool? _renderedCheckBoxState;
+        private bool _hasRenderedCheckBoxState;
+        private bool _isDisposed;
 
         public MudTreeViewItem()
         {
@@ -45,14 +50,21 @@ namespace MudBlazor
             new CssBuilder("mud-treeview-item")
                 .AddClass("mud-treeview-select-none", GetExpandOnDoubleClick)
                 .AddClass("mud-treeview-item-disabled", GetDisabled())
+                .AddClass("mud-treeview-item-virtualized", IsVirtualizedItem)
                 .AddClass(Class)
+                .Build();
+
+        protected string Stylename =>
+            new StyleBuilder()
+                .AddStyle("--mud-treeview-item-depth", (CurrentItemContext?.Depth ?? 0).ToString(CultureInfo.InvariantCulture), IsVirtualizedItem)
+                .AddStyle(Style)
                 .Build();
 
         protected string ContentClassname =>
             new CssBuilder("mud-treeview-item-content")
                 .AddClass("cursor-pointer", !GetDisabled() && (!GetReadOnly() || (GetExpandOnClick() && HasChildren())))
                 .AddClass("mud-ripple", GetRipple() && !GetDisabled() && !GetExpandOnDoubleClick() && (!GetReadOnly() || (GetExpandOnClick() && HasChildren())))
-                .AddClass("mud-treeview-item-selected", !GetDisabled() && !MultiSelection && _selectedState)
+                .AddClass("mud-treeview-item-selected", !GetDisabled() && !MultiSelection && IsSelected())
                 .Build();
 
         public string TextClassname =>
@@ -70,7 +82,13 @@ namespace MudBlazor
 
         // When the item comes from ItemTemplate, this links the component instance to its backing node object.
         [CascadingParameter(Name = MudTreeViewCascadingValues.ItemData)]
-        private ITreeItemData<T>? CurrentItemData { get; set; }
+        internal ITreeItemData<T>? CurrentItemData { get; set; }
+
+        // Set only when the item is rendered as a row of a virtualized tree.
+        [CascadingParameter(Name = MudTreeViewCascadingValues.ItemContext)]
+        internal TreeViewItemContext<T>? CurrentItemContext { get; set; }
+
+        private bool IsVirtualizedItem => CurrentItemContext is not null;
 
         /// <summary>
         /// The value associated with this item.
@@ -148,6 +166,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.
+        /// Ignored for a row of a virtualized tree, which reads <see cref="TreeItemData{T}.Visible"/> from the backing data instead.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Appearance)]
@@ -178,6 +197,10 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>. A value of <c>false</c> is typically used for lazy-loaded items via <see cref="MudTreeView{T}.ServerData" />.
+        /// In virtualized trees, items which are not rendered follow the backing item's <see cref="ITreeItemData{T}.Expandable"/>, so bind this parameter to it to keep both in agreement.
+        /// A rendered item can only be expanded from its own row when both allow it, and a disagreement is logged as a warning.
+        /// Tree-wide expansion through <see cref="MudTreeView{T}.ExpandAllAsync"/> and <see cref="MudTreeView{T}.AutoExpand"/> follows <see cref="ITreeItemData{T}.Expandable"/>.
+        /// Filtering preserves standard TreeView behavior and expands visible/matching paths.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.TreeView.Behavior)]
@@ -345,6 +368,9 @@ namespace MudBlazor
         /// <summary>
         /// Occurs when <see cref="Selected"/> has changed.
         /// </summary>
+        /// <remarks>
+        /// In a virtualized tree only rendered rows raise this event, so use <see cref="MudTreeView{T}.SelectedValuesChanged"/> for the complete selection.
+        /// </remarks>
         [Parameter]
         public EventCallback<bool> SelectedChanged { get; set; }
 
@@ -366,27 +392,37 @@ namespace MudBlazor
 
         private string IndeterminateIcon => MudTreeRoot?.IndeterminateIcon ?? Icons.Material.Filled.IndeterminateCheckBox;
 
-        private bool _loading;
-
-        private bool? _renderedCheckBoxState;
-
-        private bool _hasRenderedCheckBoxState;
-
         private bool HasChildren()
         {
+            if (IsVirtualizedItem)
+            {
+                // Loading is refused for backing items which are not expandable, so no expand button is offered for them either.
+                return CurrentItemContext!.HasVisibleChildren
+                    || (MudTreeRoot?.ServerData != null && GetCanExpand() && !GetServerDataLoaded() && GetItems().Count == 0);
+            }
+
             return ChildContent != null
                 || (MudTreeRoot != null && GetItems().Count != 0)
-                || (MudTreeRoot?.ServerData != null && CanExpand && !GetServerDataLoaded() && GetItems().Count == 0);
+                || (MudTreeRoot?.ServerData != null && GetCanExpand() && !GetServerDataLoaded() && GetItems().Count == 0);
         }
 
         private bool AreChildrenVisible() => _itemsState.Value is null || _itemsState.Value.Any(i => i.Visible);
 
         private IReadOnlyCollection<ITreeItemData<T>> GetItems()
         {
+            if (IsVirtualizedItem)
+            {
+                return CurrentItemData?.Children ?? Array.Empty<ITreeItemData<T>>();
+            }
+
             if (_itemsState.Value == null)
                 return Array.Empty<ITreeItemData<T>>();
             return _itemsState.Value!;
         }
+
+        private bool GetExpanded() => IsVirtualizedItem && CurrentItemData is not null
+            ? CurrentItemData.Expanded
+            : _expandedState.Value;
 
         internal T? GetValue()
         {
@@ -401,26 +437,24 @@ namespace MudBlazor
 
         private bool GetDisabled() => Disabled || MudTreeRoot?.Disabled == true;
 
-        private bool GetServerDataLoaded()
-        {
-            if (CurrentItemData is not null && MudTreeRoot is not null)
-            {
-                return MudTreeRoot.GetServerDataLoaded(CurrentItemData);
-            }
+        private bool GetCanExpand() => CanExpand && (!IsVirtualizedItem || CurrentItemData?.Expandable != false);
 
-            return _isServerLoaded;
+        /// <summary>
+        /// Returns the server-load state of this item.
+        /// </summary>
+        /// <remarks>
+        /// Items bound to a backing data item share state through the tree so that it survives re-rendering and mode switches.
+        /// </remarks>
+        private TreeViewServerLoadEntry GetServerLoadEntry()
+        {
+            return CurrentItemData is not null && MudTreeRoot is not null
+                ? MudTreeRoot.GetServerLoadEntry(CurrentItemData)
+                : _localServerLoad;
         }
 
-        private void SetServerDataLoaded(bool isLoaded)
-        {
-            if (CurrentItemData is not null && MudTreeRoot is not null)
-            {
-                MudTreeRoot.SetServerDataLoaded(CurrentItemData, isLoaded);
-                return;
-            }
+        private bool GetServerDataLoaded() => GetServerLoadEntry().IsLoaded;
 
-            _isServerLoaded = isLoaded;
-        }
+        private bool GetServerDataLoading() => GetServerLoadEntry().IsLoading;
 
         /// <summary>
         /// Gets the tri-state checkbox value, remembering what was rendered.
@@ -440,6 +474,11 @@ namespace MudBlazor
 
         private bool? ComputeCheckBoxStateTriState()
         {
+            if (IsVirtualizedItem)
+            {
+                return CurrentItemContext!.HasSelectableValues ? CurrentItemContext.CheckState : false;
+            }
+
             // Items without a value can never be selected, so only items with a value count towards the state.
             var hasValue = GetValue() is not null;
             var hasSelectedDescendant = hasValue && _selectedState.Value;
@@ -495,7 +534,20 @@ namespace MudBlazor
         /// </summary>
         public async Task ExpandAllAsync()
         {
-            if (!CanExpand || _childItems.Count == 0)
+            if (!GetCanExpand())
+            {
+                return;
+            }
+            if (IsVirtualizedItem && CurrentItemData is not null)
+            {
+                // A virtualized row has no child components, so its backing data is expanded and re-projected instead.
+                if (TreeViewHierarchy<T>.ExpandAll([CurrentItemData]))
+                {
+                    MudTreeRoot?.RefreshProjection();
+                }
+                return;
+            }
+            if (_childItems.Count == 0)
             {
                 return;
             }
@@ -515,6 +567,14 @@ namespace MudBlazor
         /// </summary>
         public async Task CollapseAllAsync()
         {
+            if (IsVirtualizedItem && CurrentItemData is not null)
+            {
+                if (TreeViewHierarchy<T>.CollapseAll([CurrentItemData]))
+                {
+                    MudTreeRoot?.RefreshProjection();
+                }
+                return;
+            }
             if (_expandedState)
             {
                 await _expandedState.SetValueAsync(false);
@@ -530,6 +590,14 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
+
+            // The rendered row honors both permissions through GetCanExpand, but items which are not rendered can only follow Expandable.
+            // A leaf has nothing to expand, so the common CanExpand="@context.HasChildren" template is not reported.
+            if (IsVirtualizedItem && !CanExpand && MudTreeRoot is not null && CurrentItemData is { Expandable: true } itemData
+                && (itemData.HasChildren || MudTreeRoot.ServerData is not null))
+            {
+                MudTreeRoot.LogConflictingExpansionPermission();
+            }
 
             if (Text == null && Value == null && MudTreeRoot?.ServerData != null)
                 throw new InvalidOperationException(
@@ -567,6 +635,13 @@ namespace MudBlazor
             {
                 return Task.CompletedTask;
             }
+
+            // Virtualized rows mirror the backing item; selection changes on the data are reconciled by the tree.
+            if (IsVirtualizedItem && CurrentItemData?.Selected == arg.Value)
+            {
+                return Task.CompletedTask;
+            }
+
             var value = GetValue();
             if (value is null)
             {
@@ -585,7 +660,11 @@ namespace MudBlazor
         // A leaf without a value has nothing to select, so a click changes nothing in the tree.
         // The checkbox would still move to its next state on its own and show a selection that doesn't exist.
         // A parent stays clickable because its children may have values to select.
-        private bool GetCheckBoxReadOnly() => GetReadOnly() || (GetValue() is null && !HasChildren());
+        private bool GetCheckBoxReadOnly() => GetReadOnly() || (GetValue() is null && !HasSelectableSubtree());
+
+        // Checkbox eligibility follows what the row can select, not what it renders: the virtualized projection
+        // reports selectable descendants even when every child is hidden, while standard mode keeps using its children.
+        private bool HasSelectableSubtree() => IsVirtualizedItem ? CurrentItemContext!.HasSelectableValues : HasChildren();
 
         private bool GetExpandOnClick() => MudTreeRoot?.ExpandOnClick == true;
 
@@ -600,8 +679,7 @@ namespace MudBlazor
             // note: when both click and doubleClick are enabled, doubleClick wins
             if (HasChildren() && GetExpandOnClick() && !GetExpandOnDoubleClick())
             {
-                await _expandedState.SetValueAsync(!_expandedState);
-                await TryInvokeServerLoadFunc();
+                await SetExpandedAsync(!GetExpanded());
             }
             if (GetDisabled())
             {
@@ -626,8 +704,7 @@ namespace MudBlazor
         {
             if (HasChildren() && GetExpandOnDoubleClick())
             {
-                await _expandedState.SetValueAsync(!_expandedState);
-                await TryInvokeServerLoadFunc();
+                await SetExpandedAsync(!GetExpanded());
             }
             if (GetDisabled())
             {
@@ -645,25 +722,64 @@ namespace MudBlazor
 
         private async Task OnItemExpanded(bool expanded)
         {
-            if (_expandedState != expanded)
+            if (GetExpanded() != expanded)
             {
-                await _expandedState.SetValueAsync(expanded);
-                await TryInvokeServerLoadFunc();
+                await SetExpandedAsync(expanded);
             }
         }
+
+        private async Task SetExpandedAsync(bool expanded)
+        {
+            if (IsVirtualizedItem && expanded && !GetCanExpand())
+            {
+                return;
+            }
+
+            if (IsVirtualizedItem && CurrentItemData is not null)
+            {
+                CurrentItemData.Expanded = expanded;
+                // Splicing the projection before ExpandedChanged runs lets the parent render it causes update the rows without re-projecting, and the parent render still re-projects once when the change cannot be spliced.
+                MudTreeRoot?.ToggleProjection(CurrentItemContext, expanded);
+            }
+
+            await _expandedState.SetValueAsync(expanded);
+            await TryInvokeServerLoadFunc();
+            if (!IsVirtualizedItem)
+            {
+                MudTreeRoot?.RefreshProjection();
+            }
+        }
+
+        internal bool IsSelected() => IsVirtualizedItem ? CurrentItemContext?.IsSelected == true : _selectedState.Value;
 
         /// <summary>
         /// Clears the children under this item.
         /// </summary>
         public async Task ReloadAsync()
         {
-            SetServerDataLoaded(false);
-
+            var version = GetServerLoadEntry().Reset();
             if (_itemsState.Value is not null)
             {
                 await _itemsState.SetValueAsync(Array.Empty<ITreeItemData<T>>());
+                // A newer reload may have started while the items callback ran, and the children it loaded must not be wiped by this one.
+                if (GetServerLoadEntry().Version != version)
+                {
+                    return;
+                }
             }
-            await TryInvokeServerLoadFunc();
+
+            // Only clear the backing children when a load will actually run to replace them.
+            // The children count is deliberately not part of this check, because clearing them is
+            // what lets TryInvokeServerLoadFunc past its own "already has children" guard.
+            if (MudTreeRoot is { ServerData: not null } treeRoot
+                && GetCanExpand()
+                && CurrentItemData is not null)
+            {
+                CurrentItemData.Children = Array.Empty<ITreeItemData<T>>();
+                treeRoot.RefreshProjection();
+            }
+
+            await TryInvokeServerLoadFunc(version);
 
             if (Parent != null)
             {
@@ -681,13 +797,13 @@ namespace MudBlazor
 
         internal IReadOnlyCollection<MudTreeViewItem<T>> ChildItems => _childItems;
 
-        private bool HasIcon => (_expandedState && (!string.IsNullOrWhiteSpace(IconExpanded) || !string.IsNullOrWhiteSpace(Icon))) || (!_expandedState && !string.IsNullOrWhiteSpace(Icon));
+        private bool HasIcon => (GetExpanded() && (!string.IsNullOrWhiteSpace(IconExpanded) || !string.IsNullOrWhiteSpace(Icon))) || (!GetExpanded() && !string.IsNullOrWhiteSpace(Icon));
 
-        private string? GetIcon() => _expandedState && !string.IsNullOrWhiteSpace(IconExpanded) ? IconExpanded : Icon;
+        private string? GetIcon() => GetExpanded() && !string.IsNullOrWhiteSpace(IconExpanded) ? IconExpanded : Icon;
 
         internal IEnumerable<MudTreeViewItem<T>> GetSelectedItems()
         {
-            if (_selectedState)
+            if (IsSelected())
             {
                 yield return this;
             }
@@ -701,25 +817,71 @@ namespace MudBlazor
             }
         }
 
-        internal async Task TryInvokeServerLoadFunc()
+        internal Task TryInvokeServerLoadFunc() => TryInvokeServerLoadFunc(reservedVersion: null);
+
+        /// <summary>
+        /// Loads children through <see cref="MudTreeView{T}.ServerData"/> unless the item already has children or a load is in progress.
+        /// </summary>
+        /// <param name="reservedVersion">A generation reserved by <see cref="ReloadAsync"/>; the load is skipped when a newer request superseded it.</param>
+        /// <remarks>
+        /// The result is written to the backing data item when there is one, so it is visible to both renderers.
+        /// A completion whose generation was superseded by a reload is discarded, including its failure.
+        /// </remarks>
+        private async Task TryInvokeServerLoadFunc(long? reservedVersion)
         {
-            if (GetItems().Count != 0 || !CanExpand || MudTreeRoot?.ServerData == null)
+            var treeRoot = MudTreeRoot;
+            var dataItem = CurrentItemData;
+            if (treeRoot?.ServerData is null
+                || !GetCanExpand()
+                || GetItems().Count != 0)
+            {
                 return;
-            _loading = true;
+            }
+
+            var entry = GetServerLoadEntry();
+            if (entry.IsLoading || (reservedVersion is { } reserved && reserved != entry.Version))
+            {
+                return;
+            }
+
+            var version = reservedVersion ?? ++entry.Version;
+            entry.IsLoading = true;
+            entry.IsLoaded = false;
             StateHasChanged();
+            treeRoot.RefreshProjection();
+
             var loaded = false;
             try
             {
-                var items = await MudTreeRoot.ServerData(GetValue());
+                var items = await treeRoot.ServerData(GetValue());
+                if (version != entry.Version || treeRoot.IsDisposed)
+                {
+                    return;
+                }
+
+                if (dataItem is not null)
+                {
+                    dataItem.Children = items;
+                }
+
                 await _itemsState.SetValueAsync(items);
                 loaded = true;
             }
+            catch (Exception) when (version != entry.Version || treeRoot.IsDisposed)
+            {
+                // A reload or disposal superseded this request.
+                // Its result and failure no longer belong to the item.
+            }
             finally
             {
-                _loading = false;
-                SetServerDataLoaded(loaded);
-
-                StateHasChanged();
+                if (version == entry.Version)
+                {
+                    entry.IsLoading = false;
+                    entry.IsLoaded = loaded;
+                    StateHasChanged();
+                    // A standard tree only needs a render from the root when this item was disposed while the load was pending, because its replacement has to pick up the loaded children.
+                    treeRoot.RefreshProjection(alwaysRender: _isDisposed);
+                }
             }
         }
 
@@ -743,6 +905,7 @@ namespace MudBlazor
         /// The tree walks every item whenever the selection changes, and it does so once per item while the tree mounts.
         /// Rendering unconditionally therefore rebuilt every item twice just to mount, and rebuilt the whole tree when a single item was clicked.
         /// Multi-selection also renders when the tri-state checkbox no longer matches what was rendered, because that value is derived from the sub-items and can go stale without this item's own state changing.
+        /// A virtualized row always renders, because its selection and checkbox state come from the projection which was rebuilt for the same change.
         /// </remarks>
         /// <param name="selectedValues">The values that are currently selected.</param>
         /// <param name="forceRender">
@@ -757,12 +920,17 @@ namespace MudBlazor
             {
                 return (false, false);
             }
-            var value = GetValue();
+            // A virtualized row's selection belongs to its backing item, whose value can change in place before the row receives it as a parameter.
+            var value = IsVirtualizedItem && CurrentItemData is not null ? TreeViewHierarchy<T>.GetItemValue(CurrentItemData) : GetValue();
             var selected = value is not null && selectedValues.Contains(value);
-            var wasSelected = _selectedState.Value;
+            var wasSelected = IsSelected();
             var selectedBecameTrue = selected && !wasSelected;
+            if (IsVirtualizedItem && CurrentItemData is not null)
+            {
+                CurrentItemData.Selected = selected;
+            }
             await _selectedState.SetValueAsync(selected);
-            var changed = selected != wasSelected;
+            var changed = selected != wasSelected || IsVirtualizedItem;
             // since the tree view doesn't know our children we need to take care of updating them
             bool childSelectedBecameTrue = false;
             foreach (var child in _childItems)
@@ -771,7 +939,7 @@ namespace MudBlazor
                 childSelectedBecameTrue = childSelectedBecameTrue || becameTrue;
                 changed = changed || childChanged;
             }
-            if (GetAutoExpand() && CanExpand && childSelectedBecameTrue && !_expandedState)
+            if (GetAutoExpand() && GetCanExpand() && childSelectedBecameTrue && !_expandedState)
             {
                 await _expandedState.SetValueAsync(true);
                 changed = true;
@@ -788,6 +956,7 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            _isDisposed = true;
             MudTreeRoot?.RemoveChild(this);
             Parent?.RemoveChild(this);
         }
@@ -811,7 +980,7 @@ namespace MudBlazor
             }
             // in non-tri-state mode we need to fake the checked status. the actual status of the checkbox is irrelevant,
             // only _selectedState.Value matters!
-            return _selectedState ? CheckedIcon : UncheckedIcon;
+            return IsSelected() ? CheckedIcon : UncheckedIcon;
         }
     }
 }
