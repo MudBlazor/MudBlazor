@@ -272,6 +272,7 @@ namespace MudBlazor
         // Blazor names MudSlider<T> only as a type argument, so Mono full AOT on iOS runs it as shared generic code, which can't call T.TryParse.
         // A range input's value is a JavaScript number, so a double holds anything the browser sends.
         // Other types try a decimal first, which keeps every digit of a long, ulong or decimal where a double keeps about 15.
+        // Go back to T.TryParse once Mono fixes this (https://github.com/dotnet/runtime/issues/137120) or every supported .NET runs iOS on CoreCLR, as .NET 11 does.
         private async Task SetValueTextAsync(string? text)
         {
             var isFloatingPoint = typeof(T) == typeof(double) || typeof(T) == typeof(float) || typeof(T) == typeof(Half);
