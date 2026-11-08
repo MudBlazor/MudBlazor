@@ -446,6 +446,41 @@ public class TreeViewProjectionTests
     }
 
     /// <summary>
+    /// Including descendants handles shared items independently of root order and evaluates each filter once (#10906).
+    /// </summary>
+    [TestCase(false)]
+    [TestCase(true)]
+    public async Task FilterIncludesChildren_HandlesSharedDescendants(bool matchingRootFirst)
+    {
+        var leaf = new TreeItemData<string> { Value = "Leaf" };
+        var shared = new TreeItemData<string> { Value = "Shared", Children = [leaf] };
+        var matching = new TreeItemData<string> { Value = "Match", Children = [shared] };
+        var other = new TreeItemData<string> { Value = "Other", Children = [shared] };
+        ITreeItemData<string>[] roots = matchingRootFirst ? [matching, other] : [other, matching];
+        var calls = new List<ITreeItemData<string>>();
+
+        var changed = await TreeViewHierarchy<string>.FilterAsync(roots, Filter, includeChildren: true);
+
+        changed.Should().BeTrue();
+        matching.Visible.Should().BeTrue();
+        shared.Visible.Should().BeTrue();
+        shared.Expanded.Should().BeTrue();
+        leaf.Visible.Should().BeTrue();
+        other.Visible.Should().BeFalse();
+        calls.Should().HaveCount(4).And.OnlyHaveUniqueItems();
+
+        calls.Clear();
+        (await TreeViewHierarchy<string>.FilterAsync(roots, Filter, includeChildren: true)).Should().BeFalse();
+        calls.Should().HaveCount(4).And.OnlyHaveUniqueItems();
+
+        Task<bool> Filter(ITreeItemData<string> item)
+        {
+            calls.Add(item);
+            return Task.FromResult(item.Value == "Match");
+        }
+    }
+
+    /// <summary>
     /// Verifies that hierarchy traversals visit a repeated reference once.
     /// </summary>
     [Test]

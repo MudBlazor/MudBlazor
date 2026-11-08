@@ -738,6 +738,80 @@ namespace MudBlazor.UnitTests.Components
             categoriesNode.Children.Should().Contain(e => e.Text.Equals("Social") && e.Visible);
         }
 
+        /// <summary>
+        /// Filtering includes descendants only when requested and keeps unrelated branches hidden (#10906).
+        /// </summary>
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public async Task FilterIncludesChildren_ControlsMatchingSubtrees(bool virtualize, bool includeChildren)
+        {
+            Context.AddFakeTimeProvider();
+            var grandchild = new TreeItemData<string> { Value = "Grandchild" };
+            var branch = new TreeItemData<string> { Value = "Branch", Children = [grandchild] };
+            var sibling = new TreeItemData<string> { Value = "Sibling" };
+            var root = new TreeItemData<string> { Value = "Root", Children = [branch, sibling] };
+            var other = new TreeItemData<string> { Value = "Other" };
+            ITreeItemData<string>[] items = [root, other];
+            var search = "Root";
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.Virtualize, virtualize)
+                .Add(x => x.Height, "400px")
+                .Add(x => x.FilterIncludesChildren, includeChildren)
+                .Add(x => x.FilterFunc, item => Task.FromResult(item.Value == search))
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.Visible), item.Visible);
+                    builder.CloseComponent();
+                }));
+
+            await ApplyFilter();
+            AssertVisible(includeChildren ? ["Root", "Branch", "Grandchild", "Sibling"] : ["Root"]);
+
+            search = "Branch";
+            await ApplyFilter();
+            AssertVisible(includeChildren ? ["Root", "Branch", "Grandchild"] : ["Root", "Branch"]);
+
+            search = "Grandchild";
+            await ApplyFilter();
+            AssertVisible("Root", "Branch", "Grandchild");
+
+            search = "Missing";
+            await ApplyFilter();
+            AssertVisible();
+
+            search = "Root";
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.FilterIncludesChildren, !includeChildren));
+            AssertVisible(!includeChildren ? ["Root", "Branch", "Grandchild", "Sibling"] : ["Root"]);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.FilterFunc, null));
+            await ApplyFilter();
+            GetDataItems(items).Should().OnlyContain(item => item.Visible);
+
+            async Task ApplyFilter()
+            {
+                await comp.InvokeAsync(comp.Instance.FilterAsync);
+                await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Items, items));
+            }
+
+            void AssertVisible(params string[] values)
+            {
+                GetDataItems(items).Where(item => item.Visible).Select(item => item.Value).Should().Equal(values);
+                GetDataItems(items).Should().OnlyContain(item => item.Expanded == item.Visible);
+                if (virtualize)
+                {
+                    GetVirtualizedValues(comp).Should().Equal(values);
+                }
+                comp.FindAll(".mud-treeview-item-label").Select(element => element.TextContent).Should().Equal(values);
+            }
+        }
+
         [Test]
         public void InitialValueOfTreeViewItemSelected_Should_InfluenceSelectedValue_MultiSelection()
         {

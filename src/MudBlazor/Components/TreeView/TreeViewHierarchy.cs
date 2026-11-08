@@ -86,24 +86,40 @@ internal static class TreeViewHierarchy<T>
     /// <summary>
     /// Filters the hierarchy in post-order: an item is visible and expanded when it or any descendant matches.
     /// </summary>
+    /// <param name="items">The hierarchy to filter.</param>
+    /// <param name="filter">Determines whether an item matches.</param>
+    /// <param name="includeChildren">Whether to also show and expand all descendants of matching items.</param>
     /// <returns>Whether any visibility or expansion changed.</returns>
     public static async Task<bool> FilterAsync(
         IReadOnlyCollection<ITreeItemData<T>>? items,
-        Func<ITreeItemData<T>, Task<bool>> filter)
+        Func<ITreeItemData<T>, Task<bool>> filter,
+        bool includeChildren = false)
     {
         ArgumentNullException.ThrowIfNull(filter);
 
         var changed = false;
         var visited = new HashSet<ITreeItemData<T>>(ReferenceEqualityComparer.Instance);
+        var matchingItems = includeChildren ? new List<ITreeItemData<T>>() : null;
+        var originalStates = includeChildren
+            ? new Dictionary<ITreeItemData<T>, (bool Visible, bool Expanded)>(ReferenceEqualityComparer.Instance)
+            : null;
         foreach (var item in items ?? [])
         {
             var result = await FilterItemAsync(item, filter, visited);
             changed = result.Changed || changed;
         }
 
-        return changed;
+        if (matchingItems is null)
+        {
+            return changed;
+        }
 
-        static async Task<(bool Visible, bool Changed)> FilterItemAsync(
+        // Include descendants only after filtering every root, so a shared descendant's visibility cannot make an unrelated parent match depending on traversal order.
+        Visit(matchingItems, item => item.Visible = item.Expanded = true);
+        // Compare final states because filtering may temporarily hide a descendant before including it again.
+        return originalStates!.Any(entry => entry.Key.Visible != entry.Value.Visible || entry.Key.Expanded != entry.Value.Expanded);
+
+        async Task<(bool Visible, bool Changed)> FilterItemAsync(
             ITreeItemData<T> item,
             Func<ITreeItemData<T>, Task<bool>> filter,
             HashSet<ITreeItemData<T>> visited)
@@ -113,6 +129,7 @@ internal static class TreeViewHierarchy<T>
                 return (item.Visible, false);
             }
 
+            originalStates?.Add(item, (item.Visible, item.Expanded));
             var hasVisibleChild = false;
             var itemChanged = false;
             if (item.HasChildren)
@@ -125,7 +142,12 @@ internal static class TreeViewHierarchy<T>
                 }
             }
 
-            var visible = await filter(item) || hasVisibleChild;
+            var matches = await filter(item);
+            if (matches)
+            {
+                matchingItems?.Add(item);
+            }
+            var visible = matches || hasVisibleChild;
             itemChanged = item.Visible != visible || item.Expanded != visible || itemChanged;
             item.Visible = visible;
             item.Expanded = visible;
