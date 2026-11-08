@@ -680,5 +680,22 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find(".mud-slider").ClassList.Should().NotContain("mud-slider-pressed");
         }
+
+        /// <summary>
+        /// A release without a press and a repeated touch press leave the pressed state unchanged (#11760).
+        /// </summary>
+        [Test]
+        public async Task RepeatedPointerEventsKeepPressedState()
+        {
+            var comp = Context.Render<MudSlider<double>>(x => x.Add(p => p.ValueLabel, true));
+            var touch = new PointerEventArgs { PointerType = "touch" };
+
+            await comp.Find(".mud-slider-input").TriggerEventAsync("onpointerup", touch);
+            comp.Find(".mud-slider").ClassList.Should().NotContain("mud-slider-pressed");
+
+            await comp.Find(".mud-slider-input").TriggerEventAsync("onpointerdown", touch);
+            await comp.Find(".mud-slider-input").TriggerEventAsync("onpointerdown", touch);
+            comp.Find(".mud-slider").ClassList.Should().Contain("mud-slider-pressed");
+        }
     }
 }
