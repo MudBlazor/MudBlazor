@@ -897,7 +897,7 @@ namespace MudBlazor
         /// Controls how cell values are edited.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DataGridEditMode.Cell"/>.  Only works when <see cref="ReadOnly"/> is <c>false</c>.
+        /// Defaults to <c>null</c>.  Only works when <see cref="ReadOnly"/> is <c>false</c>.
         /// </remarks>
         [Parameter]
         public DataGridEditMode? EditMode { get; set; }

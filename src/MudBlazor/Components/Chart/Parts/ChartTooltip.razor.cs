@@ -84,7 +84,7 @@ public partial class ChartTooltip : ComponentBase
     /// The color of the <see cref="Title"/> and <see cref="Subtitle"/>.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>"unset"</c>.
+    /// Defaults to <c>"white"</c>.
     /// </remarks>
     [Parameter]
     public string FontColor { get; set; } = "white";
@@ -111,7 +111,7 @@ public partial class ChartTooltip : ComponentBase
     /// How to align the tooltip in respect to the given x coordinates.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>ChartTooltipRelativePositionX.Center</c>.
+    /// Defaults to <c>ChartTooltipAnchorPositionX.Center</c>.
     /// </remarks>
     [Parameter]
     public ChartTooltipAnchorPositionX AnchorPositionX { get; set; } = ChartTooltipAnchorPositionX.Center;

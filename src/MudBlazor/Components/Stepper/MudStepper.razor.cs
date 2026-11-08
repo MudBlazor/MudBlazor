@@ -286,7 +286,7 @@ public partial class MudStepper : MudComponentBase
     /// Displays a ripple effect when a step is clicked.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.  Only applies when <see cref="NonLinear"/> is <c>true</c>. 
+    /// Defaults to <c>true</c>.  Only applies when <see cref="NonLinear"/> is <c>true</c>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]

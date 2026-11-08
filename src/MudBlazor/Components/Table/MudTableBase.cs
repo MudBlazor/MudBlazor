@@ -114,7 +114,7 @@ namespace MudBlazor
         /// Shows borders around the table.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
@@ -231,7 +231,10 @@ namespace MudBlazor
         /// The maximum rows to display per page.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  When set, rows beyond this number will overflow into separate pages.  Requires a <see cref="MudTablePager"/> in the <see cref="PagerContent"/>.
+        /// Defaults to <c>10</c> before pager initialization.
+        /// If no page size has been set, <see cref="MudTablePager"/> initializes it from the first <see cref="MudTablePager.PageSizeOptions"/> entry, or <c>0</c> when the list is empty.
+        /// When set, rows beyond this number will overflow into separate pages.
+        /// Requires a <see cref="MudTablePager"/> in the <see cref="PagerContent"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Pagination)]
