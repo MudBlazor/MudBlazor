@@ -4,6 +4,7 @@ using AngleSharp.Html.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Slider;
 using NUnit.Framework;
 
@@ -647,6 +648,37 @@ namespace MudBlazor.UnitTests.Components
                 .AddUnmatched("aria-labelledby", "external-label"));
 
             comp.Find("input.mud-slider-input").GetAttribute("aria-labelledby").Should().Be("external-label");
+        }
+
+        /// <summary>
+        /// A touch or pen press marks the slider as pressed until it is released or cancelled, so the value label can show without <c>:active</c> (#11760).
+        /// </summary>
+        [TestCase("touch", "onpointerup")]
+        [TestCase("touch", "onpointercancel")]
+        [TestCase("pen", "onpointerup")]
+        public async Task TouchPressMarksSliderAsPressed(string pointerType, string releaseEvent)
+        {
+            var comp = Context.Render<MudSlider<double>>(x => x.Add(p => p.ValueLabel, true));
+            comp.Find(".mud-slider").ClassList.Should().NotContain("mud-slider-pressed");
+
+            await comp.Find(".mud-slider-input").TriggerEventAsync("onpointerdown", new PointerEventArgs { PointerType = pointerType });
+            comp.Find(".mud-slider").ClassList.Should().Contain("mud-slider-pressed");
+
+            await comp.Find(".mud-slider-input").TriggerEventAsync(releaseEvent, new PointerEventArgs { PointerType = pointerType });
+            comp.Find(".mud-slider").ClassList.Should().NotContain("mud-slider-pressed");
+        }
+
+        /// <summary>
+        /// A mouse press does not mark the slider as pressed, because <c>:active</c> already covers it and the release can happen outside the input (#11760).
+        /// </summary>
+        [Test]
+        public async Task MousePressDoesNotMarkSliderAsPressed()
+        {
+            var comp = Context.Render<MudSlider<double>>(x => x.Add(p => p.ValueLabel, true));
+
+            await comp.Find(".mud-slider-input").TriggerEventAsync("onpointerdown", new PointerEventArgs { PointerType = "mouse" });
+
+            comp.Find(".mud-slider").ClassList.Should().NotContain("mud-slider-pressed");
         }
     }
 }
