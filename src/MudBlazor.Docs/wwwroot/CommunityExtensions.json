@@ -111,5 +111,13 @@
     "Link": "https://mudkeyboard.pages.dev",
     "GitHubUserPath": "sardar97",
     "GitHubRepoPath": "mudkeyboard"
+  },
+  {
+    "Category": "Style",
+    "Name": "MudShadcn",
+    "Description": "Makes every MudBlazor component look like shadcn/ui. It is a MudTheme and one stylesheet with no new components, so you keep writing normal MudBlazor. Light and dark mode, charts included.",
+    "Link": "https://mudshadcn.pages.dev",
+    "GitHubUserPath": "sardar97",
+    "GitHubRepoPath": "MudShadcn"
   }
 ]
