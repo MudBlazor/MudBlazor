@@ -324,6 +324,22 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Expand Row on Click">
+                <Description>
+                    To expand a row's detail by clicking anywhere on the row, handle <CodeInline>RowClick</CodeInline> and call <CodeInline>ToggleHierarchyVisibilityAsync</CodeInline> with the clicked item.
+                    A second click on the same row collapses it, unless <CodeInline>ExpandSingleRow</CodeInline> is enabled: then the toggle closes the other rows and keeps the clicked row open, just like the expand button.
+                    When <CodeInline>SelectOnRowClick</CodeInline> is enabled, which is the default, the same click also selects the row.
+                    <br><br>
+                    Keep the <CodeInline>HierarchyColumn</CodeInline> button, because a row click can't be reached by keyboard and the button can.
+                    <CodeInline>ToggleHierarchyVisibilityAsync</CodeInline> doesn't check <CodeInline>ButtonDisabledFunc</CodeInline>, so if some rows shouldn't expand, check that in your handler.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridRowClickExpandExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridRowClickExpandExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Row Detail Renderer">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to create hierarchical layouts. To do that the <CodeInline>HierarchyColumn</CodeInline> has to be added in the <CodeInline>Columns</CodeInline> definitions.
