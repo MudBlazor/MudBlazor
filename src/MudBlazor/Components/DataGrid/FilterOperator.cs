@@ -263,7 +263,16 @@ namespace MudBlazor
             public const string NotEqual = "not equals";
         }
 
-        internal static string[] GetOperatorByDataType(Type? type)
+        /// <summary>
+        /// Returns the built-in filter operators for the specified data type.
+        /// </summary>
+        /// <param name="type">The data type of the column to filter.</param>
+        /// <returns>The supported operators, or an empty array if <paramref name="type"/> is <see langword="null"/> or unsupported.</returns>
+        /// <remarks>
+        /// Use this method to populate operator choices in a custom filter template.
+        /// Nullable value types return the same operators as their underlying types.
+        /// </remarks>
+        public static string[] GetOperatorByDataType(Type? type)
         {
             var fieldType = FieldType.Identify(type);
             return GetOperatorByDataType(fieldType);
