@@ -58,6 +58,9 @@ namespace MudBlazor
             registerScope.RegisterParameter<bool>(nameof(Ripple))
                 .WithParameter(() => Ripple)
                 .WithChangeHandler(OnParameterChangedAsync);
+            _filterIncludesChildrenState = registerScope.RegisterParameter<bool>(nameof(FilterIncludesChildren))
+                .WithParameter(() => FilterIncludesChildren)
+                .WithChangeHandler(FilterAsync);
             registerScope.RegisterParameter<string>(nameof(CheckedIcon))
                 .WithParameter(() => CheckedIcon)
                 .WithChangeHandler(OnParameterChangedAsync);
@@ -72,6 +75,7 @@ namespace MudBlazor
 
         private readonly ParameterState<T?> _selectedValueState;
         private readonly ParameterState<IReadOnlyCollection<T>?> _selectedValuesState;
+        private readonly ParameterState<bool> _filterIncludesChildrenState;
 
         private HashSet<T> _selection;
         // Whether _selection is the collection last published through SelectedValues, which the application can hold on to.
@@ -313,6 +317,17 @@ namespace MudBlazor
         public Func<ITreeItemData<T>, Task<bool>>? FilterFunc { get; set; }
 
         /// <summary>
+        /// Keeps the descendants of items matching <see cref="FilterFunc"/> visible.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When enabled, filtering includes and expands all loaded descendants of a matching item.
+        /// Changing this parameter reapplies the current filter.
+        /// </remarks>
+        [Parameter, ParameterState]
+        [Category(CategoryTypes.TreeView.Behavior)]
+        public bool FilterIncludesChildren { get; set; }
+
+        /// <summary>
         /// Shows a ripple effect when an item is clicked.
         /// </summary>
         /// <remarks>
@@ -552,65 +567,12 @@ namespace MudBlazor
                 return;
             }
 
-            if (IsVirtualized)
+            var changed = FilterFunc is null
+                ? TreeViewHierarchy<T>.ResetFilter(Items)
+                : await TreeViewHierarchy<T>.FilterAsync(Items, FilterFunc, _filterIncludesChildrenState.Value);
+            if (IsVirtualized && changed)
             {
-                var changed = FilterFunc is null
-                    ? TreeViewHierarchy<T>.ResetFilter(Items)
-                    : await TreeViewHierarchy<T>.FilterAsync(Items, FilterFunc);
-                if (changed)
-                {
-                    RefreshProjection();
-                }
-                return;
-            }
-
-            if (FilterFunc is null)
-            {
-                ResetFilter(Items);
-                return;
-            }
-
-            await TraverseFilterAsync(Items);
-        }
-
-        /// <summary>
-        /// The internal filter logic that traverses the tree recursively and applies the <see cref="FilterFunc"/> to every item to set the <see cref="MudTreeViewItem{T}.Visible"/> property
-        /// </summary>
-        /// <param name="items">The hierarchical tree structure to traverse</param>
-        /// <returns>A task to represent the asynchronous operation.</returns>
-        private async Task TraverseFilterAsync(IEnumerable<ITreeItemData<T>> items)
-        {
-            foreach (var item in items)
-            {
-                if (item.HasChildren)
-                {
-                    /* Recursively traverse the tree. Since HasChildren performs the null check on the children we can use the null-forgiving operator here.
-                     * Same goes for the FilterFunc which is checked for null in the public Filter function that invokes this function.
-                     */
-                    await TraverseFilterAsync(item.Children);
-                    item.Expanded = item.Visible = await FilterFunc!(item) || item.Children.Any(c => c.Visible);
-                }
-                else
-                {
-                    item.Expanded = item.Visible = await FilterFunc!(item);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Resets the filter, so that all <see cref="MudTreeViewItem{T}.Visible"/> are set to true and the entire tree is visible.
-        /// </summary>
-        /// <param name="items">The items to reset</param>
-        private static void ResetFilter(IEnumerable<ITreeItemData<T>> items)
-        {
-            foreach (var item in items)
-            {
-                if (item.HasChildren)
-                {
-                    ResetFilter(item.Children);
-                }
-
-                item.Visible = true;
+                RefreshProjection();
             }
         }
 
