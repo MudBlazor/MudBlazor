@@ -53,6 +53,7 @@ Reproductions:
 
 Primary labels (always assign the single best fit to any open thread that lacks one, regardless of author):
 `bug`, `enhancement`, `docs`, `build`, `tests`, `refactor`, `new component`, `question`, `accessibility`, `localization`, `security`, `performance`
+- `invalid` is a primary label that only a maintainer sets (Invalid Threads). A thread that has it doesn't lack a primary label, so don't add one.
 - When changing an existing primary label, post a comment citing the new information that triggered the change. Never post a comment whose only content announces or explains your own labeling actions.
 
 Environment Labels (apply at most one per category):
