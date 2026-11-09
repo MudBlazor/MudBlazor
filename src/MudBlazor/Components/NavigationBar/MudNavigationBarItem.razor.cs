@@ -26,7 +26,7 @@ namespace MudBlazor
                 .AddClass("mud-hoverable", Parent?.GetState(x => x.Hover) == true)
                 .AddClass("mud-nav-bar-item-selected", _isSelected)
                 .AddClass("mud-nav-bar-item-underline", Parent?.GetState(x => x.Underline) == true && _isSelected)
-                .AddClass($"mud-nav-bar-item-color-{Parent?.GetState(x => x.Color).ToStringFast()}",Parent?.GetState(x => x.Underline) == true && _isSelected)
+                .AddClass($"mud-nav-bar-item-color-{Parent?.GetState(x => x.Color).ToStringFast()}", Parent?.GetState(x => x.Underline) == true && _isSelected)
                 .AddClass(SelectedClass ?? Parent?.GetState(x => x.SelectedClass), _isSelected)
                 .AddClass(Class)
                 .Build();
