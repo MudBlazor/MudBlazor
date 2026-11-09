@@ -40,7 +40,11 @@
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in HorizontalValues)
         {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToStr()}' y='{horizontalLineValue.Y.ToStr()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value}</text>")
+            // A label with no text draws nothing, so don't put a node in the document for it.
+            if (!string.IsNullOrEmpty(horizontalLineValue.Value))
+            {
+                @((MarkupString)$"<text x='{horizontalLineValue.X.ToStr()}' y='{horizontalLineValue.Y.ToStr()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value}</text>")
+            }
         }
     </g>
     @if (YAxisTitle is not null)
@@ -53,6 +57,12 @@
         @for (var i = 0; i < VerticalValues.Count; i++)
         {
             var verticalLineValue = VerticalValues[i];
+
+            if (string.IsNullOrEmpty(verticalLineValue.Value))
+            {
+                continue;
+            }
+
             var x = verticalLineValue.X.ToStr();
             var y = verticalLineValue.Y.ToStr();
             var rotationValue = ChartOptions?.XAxisLabelRotation ?? 0;
