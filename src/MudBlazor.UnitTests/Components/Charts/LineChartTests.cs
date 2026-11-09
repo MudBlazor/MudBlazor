@@ -594,5 +594,29 @@ namespace MudBlazor.UnitTests.Charts
             // An empty label paints nothing, so it has no business taking up a node.
             comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C");
         }
+
+        [Test]
+        public void LineChartXAxisLabelIntervalThinsLabelsOnly()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30, 40, 50 } }
+            };
+            string[] xAxisLabels = { "A", "B", "C", "D", "E" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    XAxisLabelInterval = 2
+                }));
+
+            var axisLabels = comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).ToArray();
+
+            axisLabels.Should().Equal("A", "", "C", "", "E");
+        }
     }
 }

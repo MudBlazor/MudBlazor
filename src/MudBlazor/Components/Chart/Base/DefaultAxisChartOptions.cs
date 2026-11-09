@@ -85,6 +85,21 @@ public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartO
     public int XAxisLabelRotation { get; set; }
 
     /// <summary>
+    /// Draws every nth label on the X-axis, leaving the ones in between blank.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>1</c>, which labels every point. Raise it when there are more points than the axis has
+    /// room for. Only the axis is thinned out, so tooltips still carry every point's own label.
+    /// </remarks>
+    public int XAxisLabelInterval
+    {
+        get => _xAxisLabelInterval;
+        set => _xAxisLabelInterval = Math.Max(1, value);
+    }
+
+    private int _xAxisLabelInterval = 1;
+
+    /// <summary>
     /// The title of the X-axis.
     /// </summary>
     public string? XAxisTitle { get; set; }

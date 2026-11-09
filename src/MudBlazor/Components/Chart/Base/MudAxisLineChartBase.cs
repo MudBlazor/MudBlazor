@@ -105,6 +105,8 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             return;
         }
 
+        var labelInterval = Math.Max(1, ChartOptions?.XAxisLabelInterval ?? 1);
+
         for (var i = 0; i < numVerticalLines; i++)
         {
             var x = startOffset + HorizontalStartSpace + (i * horizontalSpace);
@@ -121,7 +123,8 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             };
             VerticalLines.Add(line);
 
-            var xLabels = GetVerticalGridLineLabel(i);
+            // Only the axis skips labels; the tooltip reads its own label for the point and is left alone.
+            var xLabels = i % labelInterval == 0 ? GetVerticalGridLineLabel(i) : string.Empty;
 
             var lineValue = new SvgText
             {
