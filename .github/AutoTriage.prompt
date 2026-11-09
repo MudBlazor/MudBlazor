@@ -51,7 +51,7 @@ Reproductions:
 - Apply or remove labels from this section based on the label's description. All other repository labels require specific policy rule authorization (not from the label description alone).
 - Do not add or remove labels previously set by you or a maintainer unless both conditions are true: (a) new context has been added (e.g., new reproduction, logs, confirmations), and (b) a specific rule in this policy authorizes the change. Never remove a label solely because its criteria no longer appear to be met on re-reading; removal must cite a specific timeline event, dated after the label was applied, that resolves it. For a `needs:` label from your own information request, material that the request asked for and the description now contains also counts, as long as it isn't media your request already saw and said doesn't count.
 
-Primary labels (always assign the single best fit to any open thread that lacks one, regardless of author):
+Primary labels (always assign the single best fit to any open thread that lacks one, regardless of author; decide this first and on its own, because doubt about proof, a title, or a `needs:` label is never a reason to leave a thread without one):
 `bug`, `enhancement`, `docs`, `build`, `tests`, `refactor`, `new component`, `question`, `accessibility`, `localization`, `security`, `performance`
 - `invalid` is a primary label that only a maintainer sets (Invalid Threads). A thread that has it doesn't lack a primary label, so don't add one.
 - When changing an existing primary label, post a comment citing the new information that triggered the change. Never post a comment whose only content announces or explains your own labeling actions.
