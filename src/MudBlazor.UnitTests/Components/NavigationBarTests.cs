@@ -341,5 +341,84 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => comp.Instance.GetSelectedItemId().Should().BeNull());
         }
+
+        /// <summary>
+        /// Verifies that the current navigation destination is exposed to assistive technology.
+        /// </summary>
+        [Test]
+        public void NavigationBarItem_WhenHrefSelected_ExposesAriaCurrentPage()
+        {
+            var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
+
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "First");
+                    item.Add(x => x.Href, "first");
+                });
+
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Second");
+                    item.Add(x => x.Href, "second");
+                });
+            });
+
+            navigationManager.NavigateTo("first");
+
+            comp.WaitForAssertion(() =>
+            {
+                var items = comp.FindAll(".mud-nav-bar-item");
+
+                items[0].GetAttribute("aria-current").Should().Be("page");
+                items[1].HasAttribute("aria-current").Should().BeFalse();
+            });
+
+            navigationManager.NavigateTo("second");
+
+            comp.WaitForAssertion(() =>
+            {
+                var items = comp.FindAll(".mud-nav-bar-item");
+
+                items[0].HasAttribute("aria-current").Should().BeFalse();
+                items[1].GetAttribute("aria-current").Should().Be("page");
+            });
+        }
+
+        /// <summary>
+        /// Verifies that the selected button item exposes its current state.
+        /// </summary>
+        [Test]
+        public void NavigationBarItem_WhenButtonSelected_ExposesAriaCurrent()
+        {
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(
+                    item => item.Add(x => x.Text, "First"));
+
+                builder.AddChildContent<MudNavigationBarItem>(
+                    item => item.Add(x => x.Text, "Second"));
+            });
+
+            var items = comp.FindAll(".mud-nav-bar-item");
+
+            items[0].HasAttribute("aria-current").Should().BeFalse();
+            items[1].HasAttribute("aria-current").Should().BeFalse();
+
+            items[0].Click();
+
+            items = comp.FindAll(".mud-nav-bar-item");
+
+            items[0].GetAttribute("aria-current").Should().Be("true");
+            items[1].HasAttribute("aria-current").Should().BeFalse();
+
+            items[1].Click();
+
+            items = comp.FindAll(".mud-nav-bar-item");
+
+            items[0].HasAttribute("aria-current").Should().BeFalse();
+            items[1].GetAttribute("aria-current").Should().Be("true");
+        }
     }
 }

@@ -2,7 +2,7 @@
 @using MudBlazor.Extensions
 @inherits MudComponentBase
 
-<div @ref="_elementReference" class="@Classname" style="@Style" @attributes="@UserAttributes" tabindex="@(Disabled ? "-1" : "0")" @onclick="HandleClickAsync" @onkeydown="@HandleKeyDownAsync" role="@(string.IsNullOrEmpty(Href) ? "button" : "link")" aria-disabled="@(Disabled ? "true" : null)">
+<div @ref="_elementReference" class="@Classname" style="@Style" @attributes="@UserAttributes" tabindex="@(Disabled ? "-1" : "0")" @onclick="HandleClickAsync" @onkeydown="@HandleKeyDownAsync" role="@(string.IsNullOrEmpty(Href) ? "button" : "link")" aria-disabled="@(Disabled ? "true" : null)" aria-current="@(_isSelected ? (string.IsNullOrEmpty(Href) ? "true" : "page") : null)">
     <MudBadge Class="@BadgeClassname" Dot="@BadgeParameters.Dot" Content="@BadgeParameters.Content" Overlap="@BadgeParameters.Overlap" Visible="@(BadgeParameters.Dot || BadgeParameters.Content != null)" Color="@BadgeParameters.Color">
         @if (Icon != null)
         {
