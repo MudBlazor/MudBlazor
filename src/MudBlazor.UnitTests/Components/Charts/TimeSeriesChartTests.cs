@@ -479,5 +479,30 @@ namespace MudBlazor.UnitTests.Charts
             chartSeries[2].Visible.Should().BeTrue("Pressure Visible property should be true after showing");
             comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(1, "Pressure series path should be visible");
         }
+
+        /// <summary>
+        /// Data markers are drawn as rings, and when tooltips are turned off.
+        /// </summary>
+        [Test]
+        public void TimeSeriesChartDataMarkersAreRingsAndRenderWithoutTooltips()
+        {
+            SetupBBoxInterop();
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(new DateTime(2000, 1, 1)))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions
+                {
+                    TimeLabelSpacing = TimeSpan.FromHours(1),
+                    ShowDataMarkers = true,
+                    ShowToolTips = false
+                }));
+
+            // The hoverable circles are rendered either way, so only the visible markers are counted.
+            var markers = comp.FindAll("circle.mud-chart-point").Where(x => x.GetAttribute("opacity") is null).ToList();
+
+            markers.Should().HaveCount(4);
+            markers.Should().OnlyContain(x => x.GetAttribute("fill") == "none");
+        }
     }
 }

@@ -594,5 +594,90 @@ namespace MudBlazor.UnitTests.Charts
             // An empty label paints nothing, so it has no business taking up a node.
             comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C");
         }
+
+        /// <summary>
+        /// Data markers are drawn when tooltips are turned off.
+        /// </summary>
+        [Test]
+        public void LineChartDataMarkersRenderWithoutTooltips()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    ShowDataMarkers = true,
+                    ShowToolTips = false
+                }));
+
+            // Markers are built from the same data points as tooltips, so they used to vanish with them.
+            // The hoverable circles are rendered either way, so only the visible markers are counted.
+            comp.FindAll("circle.mud-chart-point")
+                .Where(x => x.GetAttribute("opacity") is null)
+                .Should().HaveCount(3);
+        }
+
+        /// <summary>
+        /// Data markers are drawn when tooltips are turned off and the line is interpolated.
+        /// </summary>
+        [Test]
+        [TestCaseSource("GetInterpolationOptions")]
+        public void LineChartDataMarkersRenderWithoutTooltipsWhenInterpolated(InterpolationOption opt)
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30, 25 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    InterpolationOption = opt,
+                    ShowDataMarkers = true,
+                    ShowToolTips = false
+                }));
+
+            // The interpolated builder collects its data points at its own gates, which the straight one does not go through.
+            comp.FindAll("circle.mud-chart-point")
+                .Where(x => x.GetAttribute("opacity") is null)
+                .Should().HaveCount(4);
+        }
+        /// <summary>
+        /// Data markers are drawn as rings rather than filled discs.
+        /// </summary>
+        [Test]
+        public void LineChartDataMarkersAreNotFilled()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    ShowDataMarkers = true
+                }));
+
+            // An unset fill falls back to SVG's initial black, which paints every marker as a solid dot.
+            comp.FindAll("circle.mud-chart-point")
+                .Where(x => x.GetAttribute("opacity") is null)
+                .Should().OnlyContain(x => x.GetAttribute("fill") == "none");
+        }
     }
 }
