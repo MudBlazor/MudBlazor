@@ -29,9 +29,14 @@ namespace MudBlazor
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
+        [Inject]
+        private IScrollManager ScrollManager { get; set; } = null!;
+
+        private readonly string _tableContainerId = Identifier.Create("mud-data-grid-container");
         private MudForm? _editForm;
         internal int? _rowsPerPage;
         private int _currentPage = 0;
+        private bool _scrollToTopPending;
         internal bool _groupInitialExpanded = true;
         internal MudVirtualize<IndexBag<T>>? _mudVirtualize;
         private bool _isFirstRendered = false;
@@ -1351,7 +1356,10 @@ namespace MudBlazor
                 CurrentPageChanged.InvokeAsync(_currentPage);
 
                 if (_isFirstRendered)
+                {
+                    _scrollToTopPending = true;
                     InvokeAsync(InvokeServerLoadFunc);
+                }
             }
         }
 
@@ -1360,6 +1368,18 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<int> CurrentPageChanged { get; set; }
+
+        /// <summary>
+        /// Scrolls the rows back to the top when another page is shown.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// Applies when the rows scroll inside this grid, for instance with a <see cref="Height"/>.
+        /// The rows are scrolled when <see cref="CurrentPage"/> or <see cref="RowsPerPage"/> changes after the first render.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Pagination)]
+        public bool ScrollToTopOnPageChange { get; set; }
 
         /// <summary>
         /// Prevents values from being edited.
@@ -1691,6 +1711,15 @@ namespace MudBlazor
             else
             {
                 PagerStateHasChangedEvent?.Invoke();
+
+                // The rows of the new page are rendered now, so the container can be scrolled.
+                if (_scrollToTopPending)
+                {
+                    _scrollToTopPending = false;
+
+                    if (ScrollToTopOnPageChange)
+                        await ScrollManager.ScrollToTopAsync($"#{_tableContainerId}");
+                }
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -2711,6 +2740,9 @@ namespace MudBlazor
             }
 
             await RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
+
+            if (_isFirstRendered)
+                _scrollToTopPending = true;
 
             StateHasChanged();
 

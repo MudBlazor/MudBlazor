@@ -444,6 +444,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Scroll to Top on Page Change">
+                <Description>
+                    When the rows scroll inside the grid, for instance with a <CodeInline>Height</CodeInline>, the scroll position stays where it was when another page is shown.
+                    Set <CodeInline>ScrollToTopOnPageChange</CodeInline> to <CodeInline>true</CodeInline> to start each page from its first row.
+                    The rows are also scrolled back when <CodeInline>RowsPerPage</CodeInline> changes.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridScrollToTopExample)" Block="true" FullWidth="true">
+                <DataGridScrollToTopExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Virtualization">
                 <Description>
                     The items in the <CodeInline>&lt;MudDataGrid></CodeInline> can be virtualized to provide better rendering performance. Setting the <CodeInline>Virtualize</CodeInline> property

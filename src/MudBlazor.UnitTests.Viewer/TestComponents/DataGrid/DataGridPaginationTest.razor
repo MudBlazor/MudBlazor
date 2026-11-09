@@ -1,6 +1,6 @@
 ﻿
 
-<MudDataGrid Items="@_items">
+<MudDataGrid Items="@_items" ScrollToTopOnPageChange="@ScrollToTopOnPageChange">
     <Columns>
         <PropertyColumn Property="x => x.Name" />
     </Columns>
@@ -12,6 +12,9 @@
 @code {
     [Parameter]
     public bool PageSizeDropDown { get; set; } = true;
+
+    [Parameter]
+    public bool ScrollToTopOnPageChange { get; set; }
 
     private List<Item> _items = new List<Item>();
 

@@ -1333,6 +1333,62 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// With ScrollToTopOnPageChange, changing the page or the rows per page scrolls the grid's container to its top (#11212).
+        /// </summary>
+        [Test]
+        public async Task DataGridScrollToTopOnPageChange()
+        {
+            var comp = Context.Render<DataGridPaginationTest>(self => self.Add(x => x.ScrollToTopOnPageChange, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+            var container = dataGrid.Find(".mud-table-container");
+            container.Id.Should().NotBeNullOrEmpty();
+
+            // The first render doesn't scroll.
+            ScrollToCalls().Should().BeEmpty();
+
+            // Next page.
+            await dataGrid.FindAll(".mud-table-pagination-actions button")[2].ClickAsync();
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("10");
+            ScrollToCalls().Should().ContainSingle()
+                .Which.Arguments[0].Should().Be($"#{container.Id}");
+
+            // Programmatic navigation.
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
+            ScrollToCalls().Should().HaveCount(2);
+
+            // Rows per page.
+            await comp.InvokeAsync(() => dataGrid.Instance.SetRowsPerPageAsync(4));
+            ScrollToCalls().Should().HaveCount(3);
+            ScrollToCalls().Should().AllSatisfy(x => x.Arguments[0].Should().Be($"#{container.Id}"));
+
+            // A render without a page change doesn't scroll.
+            comp.Render();
+            ScrollToCalls().Should().HaveCount(3);
+        }
+
+        /// <summary>
+        /// Without ScrollToTopOnPageChange, changing the page doesn't scroll the grid.
+        /// </summary>
+        [Test]
+        public async Task DataGridDoesNotScrollToTopOnPageChangeByDefault()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+
+            await dataGrid.FindAll(".mud-table-pagination-actions button")[2].ClickAsync();
+            await comp.InvokeAsync(() => dataGrid.Instance.SetRowsPerPageAsync(4));
+
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("0");
+            ScrollToCalls().Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Returns the calls made to the scroll manager's <c>scrollTo</c>, which <see cref="IScrollManager.ScrollToTopAsync"/> invokes.
+        /// </summary>
+        private List<Bunit.JSRuntimeInvocation> ScrollToCalls()
+            => Context.JSInterop.Invocations.Where(x => x.Identifier == "mudScrollManager.scrollTo").ToList();
+
+        /// <summary>
         /// Tests that the "All" data grid pager option shows all items
         /// </summary>
         [Test]
