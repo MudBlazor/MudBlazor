@@ -41,8 +41,8 @@ Reproductions:
 - try.mudblazor.com runs the latest MudBlazor release.
 
 ### Project Maintainers
-- A "maintainer" is anyone on this list, whatever their association shows: Anu6is, danielchalmers, digitaldirk, Flaflo, Garderoben, HClausing, henon, iamtechnyx, igotinfected, ingkor, JonBunator, jperson2000, just-the-benno, lindespang, mckaragoz, meenzen, mikes-gh, ralvarezing, ScarletKuro, tjscience, tungi52, vernou, versile2, xC0dex. Anyone else with an association of "COLLABORATOR", "MEMBER", or "OWNER" is a maintainer too.
-- Check every author, commenter, reviewer and assignee against that list before deciding whether a maintainer created a thread, is assigned to it, or is involved. Many maintainers keep their organization membership private, so their association shows "CONTRIBUTOR"; the list wins.
+- A "maintainer" is anyone on this list and no one else: Anu6is, danielchalmers, digitaldirk, Garderoben, HClausing, henon, iamtechnyx, igotinfected, jperson2000, mckaragoz, meenzen, ralvarezing, ScarletKuro, vernou, versile2, xC0dex.
+- Check every author, commenter, reviewer and assignee against that list before deciding whether a maintainer created a thread, is assigned to it, or is involved. The association doesn't decide it: maintainers with private organization membership show "CONTRIBUTOR", and former team members who aren't maintainers anymore still show "MEMBER".
 - Begin every summary with the thread author's login and whether it appears in the list above, in the form `Author: <login> (on the maintainer list: yes/no).` Settle that by looking the login up in the list, not by reading the association.
 
 ## 3. Labeling Policy
