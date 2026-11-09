@@ -45,7 +45,7 @@ Reproductions:
 ## 3. Terms
 
 ### Maintainers
-- A "maintainer" is anyone on this list and no one else: Anu6is, danielchalmers, digitaldirk, Garderoben, HClausing, henon, iamtechnyx, igotinfected, jperson2000, mckaragoz, meenzen, ralvarezing, ScarletKuro, vernou, versile2, xC0dex.
+- A "maintainer" is anyone on this list and no one else: Anu6is, danielchalmers, digitaldirk, Garderoben, HClausing, henon, iamtechnyx, igotinfected, jperson2000, mckaragoz, meenzen, ralvarezing, ScarletKuro, SimonCropp, vernou, versile2, xC0dex.
 - Check every author, commenter, reviewer and assignee against that list before deciding whether a maintainer created a thread, is assigned to it, or is involved. The association doesn't decide it: maintainers with private organization membership show "CONTRIBUTOR", and former team members who aren't maintainers anymore still show "MEMBER".
 - Begin every summary by copying the maintainer list, then say whether the thread author's login is in it, in the form `Maintainers: <the list above, copied in full>. Author: <login> (a listed maintainer).` or `Maintainers: <the list above, copied in full>. Author: <login> (not a listed maintainer).` Settle that from the list you just copied. The association, an existing label, and the summary inside one of your own earlier comments can each be wrong about it, so never take the answer from them.
 - A maintainer is "involved" in a thread when one is its author or an assignee, or has commented on, reviewed, or reopened it after the original post. Requesting a review, changing labels, or renaming the thread doesn't make a maintainer involved.
@@ -68,6 +68,7 @@ Reproductions:
 ### Primary Label
 Always assign the single best fit to any open thread that lacks one, regardless of author. Decide this first and on its own, because doubt about proof, a title, or a `needs:` label is never a reason to leave a thread without one:
 `bug`, `enhancement`, `docs`, `build`, `tests`, `refactor`, `new component`, `question`, `accessibility`, `localization`, `security`, `performance`
+- `invalid` is a primary label that only a maintainer sets (Invalid, below). A thread that has it doesn't lack a primary label, so don't add one.
 - Apply `question` when the initial post is phrased as a question or is purely a usage/help/discussion topic with no clear defect or feature request. Do not apply it retroactively just because someone later provided an answer. If a concrete proposal emerges, remove `question` and switch to a different primary label.
 - When changing an existing primary label, post a comment citing the new information that triggered the change.
 
@@ -119,6 +120,7 @@ These rules apply to an open issue when a comment says it duplicates a specific 
 - When a maintainer says it is a duplicate, add `duplicate`.
 - For every other claim, meaning a duplicate claim from someone who isn't a maintainer or a fixed claim from anyone, add `needs: info`, which leaves the reporter to confirm or object. Don't add it when a comment in the thread already disputes that claim, or when a maintainer removed `needs: info` after the same claim was made before.
 - Remove that `needs: info` when a later comment from anyone disputes the claim, for example by saying the problem still happens on a named version.
+- A later comment that agrees with the claim, even from the reporter, doesn't remove that `needs: info`: the label is what lets the issue close through inactivity.
 
 ### Invalid
 - `invalid` is a maintainer's decision. Never add or remove it, and never close a thread because it looks invalid, whether the reason would be spam, an empty or unintelligible report, missing proof, or content you suspect is fabricated.
@@ -152,7 +154,7 @@ Never edit a title when:
     - If a new helper component mainly supports an existing component workflow, keep the existing component as prefix (e.g. prefer `MudDropZone: Add custom drag handle support` over `MudDragHandle: Add new component`).
     - Use the new component name as prefix only when it is standalone (independent usage/docs/examples or broad cross-component impact).
     - Use up to 3 component prefixes (e.g. `MudSelect, MudAutocomplete: ...`); if more than 3 components are affected, or the prefix is >=40 characters, use a broader group prefix (e.g. `Inputs:`, `Charts:`, `Pickers:`).
-  - A component prefix is the component's class name with exact spelling and capitalization, `Mud` included: `MudDataGrid:`, `MudDialog:`, `MudSnackbar:`, never `DataGrid:`, `Dialog:`, or `Snackbar:`. Group prefixes such as `Charts:` have no `Mud`. A title with no prefix, or with a component prefix that lacks `Mud`, breaks the required shape, so rename it.
+  - A component prefix is the component's `Mud` name, spelled and capitalized as the library spells it: `MudDataGrid:`, `MudDialog:`, `MudSnackbar:`, never `DataGrid:`, `Dialog:`, or `Snackbar:`. Group prefixes such as `Charts:` have no `Mud`. A title with no prefix, or with a component prefix that lacks `Mud`, breaks the required shape, so rename it.
   - Keep it short: 72 characters at most, prefix included. Leave out articles (`a`, `an`, `the`) and trailing qualifiers that the prefix or the rest of the title already implies, such as `inside a MudDialog` after `MudDialog:`.
   - Say what changes for someone using the component rather than how the code does it, when the description states that effect: `MudAutocomplete: Ignore stale search results`, not `MudAutocomplete: Add cancellation token check to search callback`. Write `Fix crash when…`, not `Don't crash when…`.
   - Reject vague suffixes (e.g. `adjustments`, `updates`, `changes`, `improvements`, `fixes`, `refactor` without saying what changed).
@@ -197,7 +199,7 @@ What counts on a pull request:
 - You may add up to three optional suggestions prefaced with "It may help to include…" when they are directly relevant to this issue type.
 - Keep the tone friendly, neutral, and collaborative; the goal is to accelerate maintainer review, not to flood the thread.
 - Add the matching `needs:` label(s) with the request.
-- Ask every author for proof the same way, with the section 11 wording, which states the by-hand rule to everyone. Never say or suggest in a comment that this contribution, its description, or its media was made by AI. Say only what is missing; explain why something already posted doesn't cover it only when the reason is its form or hosting (for example, it is a still image, or it has to be downloaded to watch).
+- Ask every author for proof the same way, with the section 11 wording, which states the by-hand rule to everyone. Never say or suggest in a comment that this contribution, its description, or its media was made by AI. Say only what is missing; explain why something already posted doesn't cover it only when the reason is its form or hosting (for example, it is a still image, or it has to be downloaded to watch), or the author's own statement that a tool, agent, or script made it.
 - For proof requests and follow-ups, post the matching section 11 template as written when there is one, adding at most the name of media already posted (next rule). Don't add your own explanation of what that media shows or lacks.
 - When the thread already has media that doesn't count, name it in the request (for example "the two screenshots in the description"), so later runs can tell new material from what was already there.
 
@@ -263,7 +265,7 @@ For threads with the `question` label and no `stale` label:
 - The events on that list never restart the timer and never remove `stale`.
 - Measure inactivity from the latest qualifying activity, or creation if none. A maintainer removing `stale` restarts the timer the same way, so measure from that removal if nothing qualifying came after it.
 - Find activity in the timeline events and their dates, not in the metadata's `updated_at`, which also changes for events that aren't activity.
-- Find the date of the latest qualifying activity, and of when `stale` was last added if the thread has it. For the 18-month and 36-month checks, compare calendar dates instead of counting days: name the date 18 or 36 months before the current UTC date, and the thread is past the threshold only if its latest qualifying activity is on or before that date. Count days only for the 14, 28, and 84 day checks.
+- Find the date of the latest qualifying activity, and of when `stale` was last added if the thread has it, then count the days to the current UTC timestamp.
 
 ### When a Thread Is Due
 An issue is due when ANY condition holds:
