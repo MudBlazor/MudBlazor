@@ -2,8 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Blazored.LocalStorage;
-
 namespace MudBlazor.Docs.Services.UserPreferences
 {
     public interface IUserPreferencesService
@@ -23,22 +21,22 @@ namespace MudBlazor.Docs.Services.UserPreferences
 
     public class UserPreferencesService : IUserPreferencesService
     {
-        private readonly ILocalStorageService _localStorage;
+        private readonly IBrowserStorage _browserStorage;
         private const string Key = "userPreferences";
 
-        public UserPreferencesService(ILocalStorageService localStorage)
+        public UserPreferencesService(IBrowserStorage browserStorage)
         {
-            _localStorage = localStorage;
+            _browserStorage = browserStorage;
         }
 
         public async Task SaveUserPreferences(UserPreferences userPreferences)
         {
-            await _localStorage.SetItemAsync(Key, userPreferences);
+            await _browserStorage.SetAsync(Key, userPreferences);
         }
 
         public async Task<UserPreferences> LoadUserPreferences()
         {
-            return await _localStorage.GetItemAsync<UserPreferences>(Key);
+            return await _browserStorage.GetAsync<UserPreferences>(Key);
         }
     }
 }
