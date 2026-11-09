@@ -101,7 +101,6 @@
   fill: var(--mud-palette-text-primary);
 }
 
-// Gridlines used to carry their grey in the markup, which left them invisible on a dark surface.
 .mud-charts-gridlines-yaxis path,
 .mud-charts-gridlines-xaxis-lines path {
   stroke: var(--mud-palette-lines-default);
