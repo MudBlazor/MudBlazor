@@ -51,7 +51,7 @@ jobs:
             gh api --paginate "repos/$REPO/pulls/$PR/comments" --jq '.[] | select(.user.login == "mudbot[bot]") | "\(.path):\(.original_line) \(.body | split("\n")[0])"'
           } > earlier-findings.md
           touch "$RUNNER_TEMP/reviewed"
-          echo "key=ai-code-review-$PR-$patch-$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "patch=$patch" >> "$GITHUB_OUTPUT"
           echo "run=true" >> "$GITHUB_OUTPUT"
 
       # Claude reads untrusted content, so it gets read-only file tools and no GitHub token.
@@ -109,10 +109,11 @@ jobs:
               await github.rest.pulls.dismissReview({ ...context.repo, pull_number: pr.number, review_id: r.id, message: 'A later push has unresolved findings.' });
             }
 
-      # Saved last, so a failed run can be re-run. Only the key matters.
+      # A failed review may have been paid for, so it counts toward the cap.
+      # Its key never matches the unchanged-diff skip, so the run can be re-run.
       - name: Record the review
-        if: ${{ steps.pr.outputs.run }}
+        if: ${{ always() && steps.claude.outcome != 'skipped' }}
         uses: actions/cache/save@v6
         with:
           path: ${{ runner.temp }}/reviewed
-          key: ${{ steps.pr.outputs.key }}
+          key: ai-code-review-${{ github.event.pull_request.number }}-${{ job.status == 'success' && steps.pr.outputs.patch || 'failed' }}-${{ github.run_id }}-${{ github.run_attempt }}
