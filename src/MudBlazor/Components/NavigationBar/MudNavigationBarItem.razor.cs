@@ -106,7 +106,6 @@ namespace MudBlazor
         {
             await base.OnInitializedAsync();
             Parent?.Register(this);
-            await HandleHrefSelectedAsync(Parent?._currentLocation);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -137,33 +136,6 @@ namespace MudBlazor
         /// </summary>
         public ValueTask BlurAsync() => _elementReference.MudBlurAsync();
 
-        protected internal async Task HandleHrefSelectedAsync(string? location)
-        {
-            if (Parent == null)
-            {
-                await SetSelectedAsync(false);
-            }
-
-            if (!string.IsNullOrEmpty(Href))
-            {
-                await SetSelectedAsync(CompareHrefRoute(Href, location));
-            }
-        }
-
-        protected bool CompareHrefRoute(string href, string? location)
-        {
-            if (Parent?.CustomHrefComparisonFunc != null)
-            {
-                return Parent.CustomHrefComparisonFunc.Invoke(location, Href);
-            }
-
-            if (href.Contains('#'))
-            {
-                href = href.Substring(0, href.IndexOf('#'));
-            }
-            return location?.StartsWith(href) ?? false;
-        }
-
         protected internal Task SetSelectedAsync(bool selected)
         {
             if (_isSelected == selected)
@@ -188,7 +160,8 @@ namespace MudBlazor
         {
             if (Disabled)
                 return;
-            if (args.Key == "Enter" || args.Key == "NumpadEnter")
+
+            if (args.Key is "Enter" or "NumpadEnter" || (string.IsNullOrEmpty(Href) && args.Key is " " or "Spacebar"))
             {
                 await HandleClickAsync(new MouseEventArgs());
             }

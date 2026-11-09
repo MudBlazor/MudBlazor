@@ -125,8 +125,11 @@ namespace MudBlazor
         public Typo Typo { get; set; } = Typo.subtitle2;
 
         /// <summary>
-        /// The custom comparison function to determine if the navigation location matches with href. The given parameters are the location and href in order.
+        /// Determines whether the current location matches an item's Href.
         /// </summary>
+        /// <remarks>
+        /// The first argument is the base-relative location, including its query string and fragment. The second argument is the item's Href.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Behavior)]
         public Func<string?, string?, bool>? CustomHrefComparisonFunc { get; set; }
@@ -161,6 +164,12 @@ namespace MudBlazor
         protected internal void Register(MudNavigationBarItem item)
         {
             _items.Add(item);
+
+            if (!string.IsNullOrEmpty(item.Href) && MatchesHref(item, _currentLocation ?? string.Empty))
+            {
+                _ = InvokeAsync(() => SelectItemAsync(item));
+            }
+
             StateHasChanged();
         }
 
@@ -259,15 +268,17 @@ namespace MudBlazor
         {
             var previous = _items.FirstOrDefault(x => x._isSelected);
 
-            if (ReferenceEquals(previous, selectedItem))
-                return;
+            var selectionChanged = !ReferenceEquals(previous, selectedItem);
 
             foreach (var item in _items)
             {
                 await item.SetSelectedAsync(ReferenceEquals(item, selectedItem));
             }
 
-            await OnSelectionChange.InvokeAsync(selectedItem?.Id ?? selectedItem?.Text);
+            if (selectionChanged)
+            {
+                await OnSelectionChange.InvokeAsync(selectedItem?.Id ?? selectedItem?.Text);
+            }
         }
 
         protected internal async Task DeselectAllAsync()
@@ -292,7 +303,8 @@ namespace MudBlazor
         {
             _ = InvokeAsync(async () =>
             {
-                await UpdateSelectionFromLocationAsync(args.Location);
+                _currentLocation = NavigationManager.ToBaseRelativePath(args.Location);
+                await UpdateSelectionFromLocationAsync(_currentLocation);
             });
         }
 
@@ -337,12 +349,14 @@ namespace MudBlazor
             var targetPath = target.AbsolutePath.TrimEnd('/');
             var currentPath = current.AbsolutePath.TrimEnd('/');
 
-            var pathMatches =
-                string.Equals(targetPath, currentPath, StringComparison.OrdinalIgnoreCase) ||
-                (targetPath.Length > 0 && currentPath.StartsWith(targetPath + "/", StringComparison.OrdinalIgnoreCase));
+            if (targetPath.Length == 0)
+                targetPath = "/";
 
-            if (!pathMatches)
-                return false;
+            if (currentPath.Length == 0)
+                currentPath = "/";
+
+            var pathMatches = string.Equals(targetPath, currentPath, StringComparison.OrdinalIgnoreCase) ||
+                (targetPath != "/" && currentPath.StartsWith(targetPath + "/", StringComparison.OrdinalIgnoreCase));
 
             return string.IsNullOrEmpty(target.Fragment) || string.Equals(target.Fragment, current.Fragment, StringComparison.Ordinal);
         }
