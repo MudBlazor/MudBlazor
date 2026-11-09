@@ -498,8 +498,8 @@ namespace MudBlazor.UnitTests.Charts
                     ShowToolTips = false
                 }));
 
-            // The hoverable circles are rendered either way, so only the visible markers are counted.
-            var markers = comp.FindAll("circle.mud-chart-point").Where(x => x.GetAttribute("opacity") is null).ToList();
+            // With tooltips off the hover targets are left out, so each point is drawn exactly once.
+            var markers = comp.FindAll("circle.mud-chart-point");
 
             markers.Should().HaveCount(4);
             markers.Should().OnlyContain(x => x.GetAttribute("fill") == "none");

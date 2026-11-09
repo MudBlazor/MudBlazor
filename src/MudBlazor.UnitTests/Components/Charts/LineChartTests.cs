@@ -618,10 +618,7 @@ namespace MudBlazor.UnitTests.Charts
                 }));
 
             // Markers are built from the same data points as tooltips, so they used to vanish with them.
-            // The hoverable circles are rendered either way, so only the visible markers are counted.
-            comp.FindAll("circle.mud-chart-point")
-                .Where(x => x.GetAttribute("opacity") is null)
-                .Should().HaveCount(3);
+            comp.FindAll("circle.mud-chart-point").Should().HaveCount(3);
         }
 
         /// <summary>
@@ -649,10 +646,48 @@ namespace MudBlazor.UnitTests.Charts
                 }));
 
             // The interpolated builder collects its data points at its own gates, which the straight one does not go through.
-            comp.FindAll("circle.mud-chart-point")
-                .Where(x => x.GetAttribute("opacity") is null)
-                .Should().HaveCount(4);
+            comp.FindAll("circle.mud-chart-point").Should().HaveCount(4);
         }
+
+        /// <summary>
+        /// The invisible hover targets are only drawn when tooltips are on.
+        /// </summary>
+        [Test]
+        public void LineChartHoverTargetsOnlyRenderWithTooltips()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } }
+            };
+
+            var withTooltips = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    ShowDataMarkers = true
+                }));
+
+            // Each point gets a marker, and a larger invisible circle over it to catch the hover.
+            withTooltips.FindAll("circle.mud-chart-point[opacity]").Should().HaveCount(3);
+
+            var withoutTooltips = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    ShowDataMarkers = true,
+                    ShowToolTips = false
+                }));
+
+            // There is no tooltip for it to open, and it would still swallow the hover and flip the chart's overflow.
+            withoutTooltips.FindAll("circle.mud-chart-point[opacity]").Should().BeEmpty();
+        }
+
         /// <summary>
         /// Data markers are drawn as rings rather than filled discs.
         /// </summary>
