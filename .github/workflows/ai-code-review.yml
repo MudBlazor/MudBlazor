@@ -127,7 +127,9 @@ jobs:
               }
               const inline = findings.filter(f => anchors.has(`${f.path}:${f.line}`));
               const body = [summary, ...findings.filter(f => !inline.includes(f)).map(f => `${f.body}\n\n\`${f.path}:${f.line}\``)].join('\n\n---\n\n');
-              await github.rest.pulls.createReview({ ...review, body, event: 'COMMENT', comments: inline.map(({ path, line, body }) => ({ path, line, side: 'RIGHT', body })) });
+              // A push between the job starting and the diff fetch can still get the review rejected.
+              await github.rest.pulls.createReview({ ...review, body, event: 'COMMENT', comments: inline.map(({ path, line, body }) => ({ path, line, side: 'RIGHT', body })) })
+                .catch(() => github.rest.pulls.createReview({ ...review, event: 'COMMENT', body: [summary, ...findings.map(f => `${f.body}\n\n\`${f.path}:${f.line}\``)].join('\n\n---\n\n') }));
             }
             for (const r of mine.filter(r => r.state === 'APPROVED')) {
               await github.rest.pulls.dismissReview({ ...context.repo, pull_number: pr.number, review_id: r.id, message: 'A later push has unresolved findings.' });
