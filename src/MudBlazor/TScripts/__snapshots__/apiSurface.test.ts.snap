@@ -48,6 +48,7 @@ exports[`window API surface is unchanged 1`] = `
   "mudFileUpload": {
     "openFilePicker": "function(1)",
   },
+  "mudFontsReady": "function(0)",
   "mudGetSvgBBox": "function(1)",
   "mudHotkeyListener": {
     "_EVENT_TYPE": "string",

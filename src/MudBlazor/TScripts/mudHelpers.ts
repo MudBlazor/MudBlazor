@@ -113,6 +113,14 @@ export function mudGetSvgBBox(svgElement: SVGGraphicsElement | null | undefined)
 }
 
 /**
+ * Resolves once the fonts the document is already loading have settled.
+ * Text measured before a web font swaps in can be the wrong size, even though it says the same thing.
+ */
+export async function mudFontsReady() {
+    await document.fonts?.ready;
+}
+
+/**
  * Returns whether or not the element has a parent with a defined height,
  * either via explicit height or constrained layout context.
  */

@@ -560,4 +560,125 @@ public class ChartSizingTests : BunitTest
 
         comp.Find("svg.mud-chart-sankey").GetAttribute("viewBox").Should().Be("0 0 640.5 320.5");
     }
+
+    /// <summary>
+    /// The axis labels are measured on first render and then only when their text changes.
+    /// </summary>
+    [Test]
+    public async Task AxisLabels_AreOnlyMeasuredWhenTheyChange()
+    {
+        var series = new List<ChartSeries<double>>
+        {
+            new() { Data = new double[] { 12, 14, 11 } }
+        };
+
+        Context.JSInterop.Setup<ElementSize>("mudObserveElementSize", _ => true)
+            .SetResult(new ElementSize { Width = 700, Height = 350, Timestamp = 1 });
+
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true)
+            .SetResult(new ElementSize { Width = 50, Height = 20 });
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.ChartSeries, series)
+            .Add(p => p.ChartLabels, ["Jan", "Feb", "Mar"])
+            .Add(p => p.ChartOptions, new LineChartOptions()));
+
+        var measurements = Context.JSInterop.Invocations["mudGetSvgBBox"].Count;
+        measurements.Should().BeGreaterThan(0);
+
+        // Rendering again over the same labels can't have moved them, so there is nothing to ask the browser.
+        await comp.SetParametersAndRenderAsync(parameters => parameters
+            .Add(p => p.ChartOptions, new LineChartOptions { LineStrokeWidth = 8 }));
+
+        Context.JSInterop.Invocations["mudGetSvgBBox"].Count.Should().Be(measurements);
+
+        // Swapping a label for another of the same length still has to be measured.
+        // The comparison is on the labels themselves, not on anything that could stand in for them.
+        await comp.SetParametersAndRenderAsync(parameters => parameters
+            .Add(p => p.ChartLabels, ["Jan", "Feb", "Apr"]));
+
+        var afterSwap = Context.JSInterop.Invocations["mudGetSvgBBox"].Count;
+        afterSwap.Should().BeGreaterThan(measurements);
+
+        // A longer label takes up more room, so it does have to be measured.
+        await comp.SetParametersAndRenderAsync(parameters => parameters
+            .Add(p => p.ChartLabels, ["January", "February", "March"]));
+
+        Context.JSInterop.Invocations["mudGetSvgBBox"].Count.Should().BeGreaterThan(afterSwap);
+    }
+
+    /// <summary>
+    /// The axis labels are measured again once the document's fonts have settled.
+    /// </summary>
+    [Test]
+    public async Task AxisLabels_AreMeasuredAgainOnceFontsSettle()
+    {
+        var series = new List<ChartSeries<double>>
+        {
+            new() { Data = new double[] { 12, 14, 11 } }
+        };
+
+        Context.JSInterop.Setup<ElementSize>("mudObserveElementSize", _ => true)
+            .SetResult(new ElementSize { Width = 700, Height = 350, Timestamp = 1 });
+
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true)
+            .SetResult(new ElementSize { Width = 50, Height = 20 });
+
+        // Hold the fonts open so the first measurement is the one a chart gets before any web font has swapped in.
+        var fonts = Context.JSInterop.SetupVoid("mudFontsReady");
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.ChartSeries, series)
+            .Add(p => p.ChartLabels, ["Jan", "Feb", "Mar"])
+            .Add(p => p.ChartOptions, new LineChartOptions()));
+
+        var beforeFonts = Context.JSInterop.Invocations["mudGetSvgBBox"].Count;
+        beforeFonts.Should().BeGreaterThan(0);
+
+        // A font swapping in doesn't change a label.
+        // Without this the chart would keep the size it measured against whatever font the browser had at the time.
+        await comp.InvokeAsync(fonts.SetVoidResult);
+
+        comp.WaitForAssertion(() =>
+            Context.JSInterop.Invocations["mudGetSvgBBox"].Count.Should().BeGreaterThan(beforeFonts));
+    }
+
+    /// <summary>
+    /// A chart first laid out while hidden measures its axis labels again once it has a box.
+    /// </summary>
+    [Test]
+    public async Task AxisLabels_AreMeasuredAgainAfterZeroSizedFirstPass()
+    {
+        var series = new List<ChartSeries<double>>
+        {
+            new() { Data = new double[] { 12, 14, 11 } }
+        };
+
+        Context.JSInterop.Setup<ElementSize>("mudObserveElementSize", _ => true)
+            .SetResult(new ElementSize { Width = 700, Height = 350, Timestamp = 1 });
+
+        // A chart first laid out inside something hidden has no box, so every bounding box comes back empty.
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true)
+            .SetResult(new ElementSize { Width = 0, Height = 0 });
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.ChartSeries, series)
+            .Add(p => p.ChartLabels, ["Jan", "Feb", "Mar"])
+            .Add(p => p.ChartOptions, new LineChartOptions()));
+
+        var whileHidden = Context.JSInterop.Invocations["mudGetSvgBBox"].Count;
+
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true)
+            .SetResult(new ElementSize { Width = 50, Height = 20 });
+
+        // Being shown doesn't change a label.
+        // Without the empty measurement being left unrecorded the chart would keep laying itself out as though the labels took up no room.
+        await comp.SetParametersAndRenderAsync(parameters => parameters
+            .Add(p => p.ChartOptions, new LineChartOptions { LineStrokeWidth = 8 }));
+
+        Context.JSInterop.Invocations["mudGetSvgBBox"].Count.Should().BeGreaterThan(whileHidden);
+    }
 }

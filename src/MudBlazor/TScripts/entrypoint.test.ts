@@ -21,6 +21,7 @@ const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
     ["getTabbableElements", "function"],
     ["serializeParameter", "function"],
     ["mudGetSvgBBox", "function"],
+    ["mudFontsReady", "function"],
     ["hasDefinedParentHeight", "function"],
     ["mudObserveElementSize", "function"],
     // mudHotkeyListener.ts

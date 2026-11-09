@@ -5,7 +5,7 @@ import MudDragAndDrop from "./mudDragAndDrop";
 import MudElementReference from "./mudElementReference";
 import MudExitPrompt from "./mudExitPrompt";
 import MudFileUpload from "./mudFileUpload";
-import { getTabbableElements, hasDefinedParentHeight, mudGetSvgBBox, mudObserveElementSize, serializeParameter } from "./mudHelpers";
+import { getTabbableElements, hasDefinedParentHeight, mudFontsReady, mudGetSvgBBox, mudObserveElementSize, serializeParameter } from "./mudHelpers";
 import MudHotkeyListener from "./mudHotkeyListener";
 import MudInput from "./mudInput";
 import MudInputSizing from "./mudInputSizing";
@@ -40,6 +40,7 @@ declare global {
         mudElementRef: MudElementReference;
         mudExitPrompt: MudExitPrompt;
         mudFileUpload: MudFileUpload;
+        mudFontsReady: typeof mudFontsReady;
         mudGetSvgBBox: typeof mudGetSvgBBox;
         mudHotkeyListener: MudHotkeyListener;
         mudInput: MudInput;
@@ -81,6 +82,7 @@ if (!window.mudExitPrompt) {
     window.mudExitPrompt = new MudExitPrompt();
 }
 window.mudFileUpload = new MudFileUpload();
+window.mudFontsReady = mudFontsReady;
 window.mudGetSvgBBox = mudGetSvgBBox;
 if (!window.mudHotkeyListener) {
     window.mudHotkeyListener = new MudHotkeyListener();

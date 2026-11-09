@@ -30,6 +30,9 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     private ElementReference? _yAxisGroupElementReference;
     private ElementSize? _lastYAxisLabelSize;
     private ElementSize? _lastXAxisLabelSize;
+    private double? _lastMeasuredRotation;
+    private string?[]? _lastMeasuredYLabels;
+    private string?[]? _lastMeasuredXLabels;
 
     /// <summary>
     /// The size of the Y-axis labels.
@@ -251,10 +254,29 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
         if (firstRender)
         {
             await ElementRefChanged.InvokeAsync(_svgRef);
+
+            // A web font swapping in changes what the same labels take up, and nothing renders the chart to notice.
+            // So the measurement is thrown away once the fonts have settled, without holding up this first one.
+            _ = RemeasureOnceFontsSettleAsync();
+        }
+
+        // Measuring costs a round trip to the browser per axis, and settling on a layout takes several renders.
+        // What the labels take up only depends on their text.
+        // So skip the measurement while that hasn't changed.
+        if (!HaveLabelsChanged())
+        {
+            return;
         }
 
         var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
         var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
+
+        // Labels laid out in a hidden container measure nothing at all, which is not their size: it means the chart has no box yet.
+        // Leaving that unrecorded is what gets them measured again once it does.
+        if (WasMeasured(yAxisLabelSize?.Width, HorizontalValues.Count) && WasMeasured(xAxisLabelSize?.Height, VerticalValues.Count))
+        {
+            RecordMeasuredLabels();
+        }
 
         var axisChanged = false;
 
@@ -292,5 +314,58 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
         {
             await AxisChanged.InvokeAsync();
         }
+    }
+
+    private async Task RemeasureOnceFontsSettleAsync()
+    {
+        try
+        {
+            await JsRuntime.InvokeVoidAsync("mudFontsReady");
+        }
+        catch (Exception ex) when (ex is JSDisconnectedException or ObjectDisposedException or TaskCanceledException)
+        {
+            // The chart went away before the fonts did, so there is nothing left to measure.
+            return;
+        }
+
+        _lastMeasuredYLabels = null;
+        _lastMeasuredXLabels = null;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private static bool WasMeasured(double? size, int labelCount) => size is null || labelCount == 0 || size > 0;
+
+    // The labels are compared as they are rather than through a hash of them.
+    // So two different sets of labels can never be taken for each other and leave a measurement that was needed undone.
+    private bool HaveLabelsChanged() =>
+        (ChartOptions?.XAxisLabelRotation ?? 0) != _lastMeasuredRotation
+        || HasChanged(_lastMeasuredYLabels, HorizontalValues)
+        || HasChanged(_lastMeasuredXLabels, VerticalValues);
+
+    private static bool HasChanged(string?[]? measured, IList<SvgText> values)
+    {
+        if (measured is null || measured.Length != values.Count)
+        {
+            return true;
+        }
+
+        for (var i = 0; i < measured.Length; i++)
+        {
+            if (!string.Equals(measured[i], values[i].Value, StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void RecordMeasuredLabels()
+    {
+        // Rotation decides how tall the X-axis labels stand, so it belongs in the comparison too.
+        _lastMeasuredRotation = ChartOptions?.XAxisLabelRotation ?? 0;
+        _lastMeasuredYLabels = [.. HorizontalValues.Select(x => x.Value)];
+        _lastMeasuredXLabels = [.. VerticalValues.Select(x => x.Value)];
     }
 }
