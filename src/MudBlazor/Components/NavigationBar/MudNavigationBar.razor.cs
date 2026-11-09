@@ -358,7 +358,7 @@ namespace MudBlazor
             var pathMatches = string.Equals(targetPath, currentPath, StringComparison.OrdinalIgnoreCase) ||
                 (targetPath != "/" && currentPath.StartsWith(targetPath + "/", StringComparison.OrdinalIgnoreCase));
 
-            return string.IsNullOrEmpty(target.Fragment) || string.Equals(target.Fragment, current.Fragment, StringComparison.Ordinal);
+            return pathMatches && (string.IsNullOrEmpty(target.Fragment) || string.Equals(target.Fragment, current.Fragment, StringComparison.Ordinal));
         }
     }
 }

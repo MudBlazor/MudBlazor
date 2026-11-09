@@ -16,8 +16,11 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class NavigationBarTests : BunitTest
     {
+        /// <summary>
+        /// Verifies that navigation items render with their initial parameters.
+        /// </summary>
         [Test]
-        public void NavigationBar_InitialStateText()
+        public void NavigationBar_WhenRendered_InitializesItems()
         {
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
@@ -38,8 +41,11 @@ namespace MudBlazor.UnitTests.Components
             items[2].Markup.Should().NotContain("mud-disabled");
         }
 
+        /// <summary>
+        /// Verifies that clicking enabled items updates the selection.
+        /// </summary>
         [Test]
-        public void NavigationBar_ClickTest()
+        public void NavigationBarItem_WhenClicked_UpdatesSelection()
         {
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
@@ -64,8 +70,11 @@ namespace MudBlazor.UnitTests.Components
             items[2].Instance._isSelected.Should().BeTrue();
         }
 
+        /// <summary>
+        /// Verifies that Enter activates navigation items.
+        /// </summary>
         [Test]
-        public async Task NavigationBar_FocusandKeyTest()
+        public async Task NavigationBarItem_WhenEnterPressed_UpdatesSelection()
         {
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
@@ -113,8 +122,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
-                builder.AddChildContent<MudNavigationBarItem>(
-                    item => item.Add(x => x.Text, "First"));
+                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "First"));
 
                 builder.AddChildContent<MudNavigationBarItem>(item =>
                 {
@@ -122,8 +130,7 @@ namespace MudBlazor.UnitTests.Components
                     item.Add(x => x.Disabled, true);
                 });
 
-                builder.AddChildContent<MudNavigationBarItem>(
-                    item => item.Add(x => x.Text, "Last"));
+                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "Last"));
             });
 
             await comp.InvokeAsync(() => comp.Instance.NavigateAdjacentAsync(1));
@@ -147,11 +154,9 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
-                builder.AddChildContent<MudNavigationBarItem>(
-                    item => item.Add(x => x.Text, "First"));
+                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "First"));
 
-                builder.AddChildContent<MudNavigationBarItem>(
-                    item => item.Add(x => x.Text, "Second"));
+                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "Second"));
             });
 
             var items = comp.FindAll(".mud-nav-bar-item");
@@ -169,8 +174,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
-                builder.AddChildContent<MudNavigationBarItem>(
-                    item => item.Add(x => x.Text, "First"));
+                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "First"));
             });
 
             comp.Find(".mud-nav-bar-item").Click();
@@ -180,8 +184,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Instance.ResetAsync());
 
             comp.Instance.GetSelectedItemId().Should().BeNull();
-            comp.Find(".mud-nav-bar-item")
-                .ClassList.Should().NotContain("mud-nav-bar-item-selected");
+            comp.Find(".mud-nav-bar-item").ClassList.Should().NotContain("mud-nav-bar-item-selected");
         }
 
         /// <summary>
@@ -194,12 +197,9 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
-                builder.Add(x => x.OnSelectionChange,
-                    EventCallback.Factory.Create<string?>(
-                        this, value => selections.Add(value)));
+                builder.Add(x => x.OnSelectionChange, EventCallback.Factory.Create<string?>(this, value => selections.Add(value)));
 
-                builder.AddChildContent<MudNavigationBarItem>(
-                    item => item.Add(x => x.Text, "First"));
+                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "First"));
             });
 
             var item = comp.Find(".mud-nav-bar-item");
@@ -207,8 +207,7 @@ namespace MudBlazor.UnitTests.Components
             item.Click();
             item.Click();
 
-            selections.Should().ContainSingle()
-                .Which.Should().Be("First");
+            selections.Should().ContainSingle().Which.Should().Be("First");
         }
 
         /// <summary>
@@ -217,8 +216,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NavigateAdjacentAsync_WhenTargetHasHref_Navigates()
         {
-            var navigationManager =
-                Context.Services.GetRequiredService<NavigationManager>();
+            var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
 
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
@@ -250,8 +248,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void NavigationBar_WhenLocationChanges_UsesBaseRelativeLocation()
         {
-            var navigationManager =
-                Context.Services.GetRequiredService<NavigationManager>();
+            var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
 
             var receivedLocations = new List<string?>();
 
@@ -280,6 +277,69 @@ namespace MudBlazor.UnitTests.Components
             });
 
             receivedLocations.Should().NotContain(location => location != null && location.StartsWith("http", StringComparison.OrdinalIgnoreCase));
+        }
+
+        /// <summary>
+        /// Verifies that disabled items expose their state and are excluded from tab navigation.
+        /// </summary>
+        [Test]
+        public void NavigationBarItem_WhenDisabled_IsNotKeyboardFocusable()
+        {
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Enabled");
+                });
+
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Disabled");
+                    item.Add(x => x.Disabled, true);
+                });
+            });
+
+            var items = comp.FindAll(".mud-nav-bar-item");
+
+            items[0].GetAttribute("tabindex").Should().Be("0");
+            items[1].GetAttribute("tabindex").Should().Be("-1");
+
+            items[1].GetAttribute("aria-disabled").Should().Be("true");
+            items[1].GetAttribute("role").Should().Be("button");
+
+            items[1].Click();
+            items[1].KeyDown(new KeyboardEventArgs { Key = "Enter" });
+
+            comp.Instance.GetSelectedItemId().Should().BeNull();
+        }
+
+        /// <summary>
+        /// Verifies that an Href without a fragment does not match a different path.
+        /// </summary>
+        [Test]
+        public void NavigationBar_WhenHrefDoesNotMatch_DoesNotSelectItem()
+        {
+            var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
+            navigationManager.NavigateTo("other");
+
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "First");
+                    item.Add(x => x.Href, "first");
+                });
+            });
+
+            comp.Instance.GetSelectedItemId().Should().BeNull();
+
+            navigationManager.NavigateTo("first");
+
+            comp.WaitForAssertion(() => comp.Instance.GetSelectedItemId().Should().Be("First"));
+
+            navigationManager.NavigateTo("other");
+
+            comp.WaitForAssertion(() => comp.Instance.GetSelectedItemId().Should().BeNull());
         }
     }
 }
