@@ -17,8 +17,6 @@ namespace MudBlazor
     /// </summary>
     public partial class MudNavigationBar : MudComponentBase, IAsyncDisposable
     {
-
-        #region Fields & Parameter State
         public MudNavigationBar()
         {
             using var registerScope = CreateRegisterScope();
@@ -59,7 +57,7 @@ namespace MudBlazor
 
         protected string Classname =>
             new CssBuilder("mud-nav-bar mud-nav-bar-fixed")
-                .AddClass("mud-nav-bar-dense", Dense)
+                .AddClass("mud-nav-bar-dense", _dense.Value)
                 .AddClass(Class)
                 .Build();
 
@@ -68,22 +66,17 @@ namespace MudBlazor
                 .AddClass(FabClass)
                 .Build();
 
-        protected string Stylename => new StyleBuilder()
-            .AddStyle("grid-template-columns", $"repeat({_items.Count}, minmax(0, 1fr))")
-            .AddStyle(Style)
-            .Build();
-        #endregion
+        protected string? Stylename => Style;
 
-        #region Parameters
         /// <summary>
         /// The CSS classes that applies on selected items if set.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
         public string? SelectedClass { get; set; }
 
         /// <summary>
-        /// The CSS classes that applies on selected items if set.
+        /// Additional CSS classes applied to the floating action button container.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
@@ -92,42 +85,42 @@ namespace MudBlazor
         /// <summary>
         /// Shows a ripple effect when the user clicks on the navigation item.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
         public bool Ripple { get; set; } = true;
 
         /// <summary>
         /// If true, changes background color slightly on hover.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
         public bool Hover { get; set; } = true;
 
         /// <summary>
         /// Whether to underline the selected navigation item.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
-        public bool Underline { get; set; } = true;
+        public bool Underline { get; set; }
 
         /// <summary>
         /// If true, the navigation bar will have less height.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
         public bool Dense { get; set; }
 
         /// <summary>
         /// The color of the selected navigation item.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
         public Color Color { get; set; } = Color.Primary;
 
         /// <summary>
         /// The typography option of the item text.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
         public Typo Typo { get; set; } = Typo.subtitle2;
 
@@ -158,12 +151,10 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public RenderFragment? FabContent { get; set; }
-        #endregion
 
-        #region Lifecycle
         protected override void OnInitialized()
         {
-            NavigationManager.LocationChanged += OnLocationChangedAsync;
+            NavigationManager.LocationChanged += OnLocationChanged;
             _currentLocation = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         }
 
@@ -179,43 +170,55 @@ namespace MudBlazor
             StateHasChanged();
         }
 
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
         public ValueTask DisposeAsync()
         {
-            NavigationManager.LocationChanged -= OnLocationChangedAsync;
+            NavigationManager.LocationChanged -= OnLocationChanged;
             return ValueTask.CompletedTask;
         }
-        #endregion
 
-        #region Public Methods
         /// <summary>
-        /// Navigates next or previous item with defined value.
+        /// Navigates to an adjacent enabled navigation item.
         /// </summary>
-        /// <param name="adjacentValue">The integer value that </param>
-        /// <returns></returns>
+        /// <param name="adjacentValue">
+        /// The relative offset from the currently selected item.
+        /// A positive value moves forward; a negative value moves backward.
+        /// </param>
         public async Task NavigateAdjacentAsync(int adjacentValue)
         {
-            var item = _items.FirstOrDefault(x => x._isSelected);
-            if (item == null)
-            {
-                await DeselectAllAsync();
-                await _items[0].SetSelectedAsync(true);
-            }
-            else if (item.Disabled)
-            {
-                await NavigateAdjacentAsync(adjacentValue > 0 ? 1 : -1);
+            if (_items.Count == 0 || adjacentValue == 0)
                 return;
-            }
-            else
+
+            var selectedIndex = _items.FindIndex(x => x._isSelected);
+
+            if (selectedIndex < 0)
             {
-                var index = _items.IndexOf(item) + adjacentValue;
-                if (index < 0 || index >= _items.Count)
-                {
-                    return;
-                }
-                var relatedItem = _items[index];
-                await DeselectAllAsync();
-                await relatedItem.SetSelectedAsync(true);
+                selectedIndex = adjacentValue > 0 ? -1 : _items.Count;
             }
+
+            var direction = Math.Sign(adjacentValue);
+            var remaining = Math.Abs((long)adjacentValue);
+            var targetIndex = selectedIndex;
+
+            while (remaining > 0)
+            {
+                do
+                {
+                    targetIndex += direction;
+
+                    if (targetIndex < 0 || targetIndex >= _items.Count)
+                        return;
+                }
+                while (_items[targetIndex].Disabled);
+
+                remaining--;
+            }
+
+            var target = _items[targetIndex];
+
+            await ActivateItemAsync(target);
         }
 
         /// <summary>
@@ -232,9 +235,9 @@ namespace MudBlazor
         /// Clears the selection.
         /// </summary>
         /// <returns></returns>
-        public async Task ResetAsync()
+        public Task ResetAsync()
         {
-            await DeselectAllAsync();
+            return SelectItemAsync(null);
         }
 
         /// <summary>
@@ -246,12 +249,25 @@ namespace MudBlazor
         /// Obtains blur for component.
         /// </summary>
         public ValueTask BlurAsync() => _elementReference.MudBlurAsync();
-        #endregion
 
-        #region Protected || Internal Methods
         protected internal void Navigate(string url, bool forceLoad = false)
         {
             NavigationManager.NavigateTo(url, forceLoad);
+        }
+
+        protected internal async Task SelectItemAsync(MudNavigationBarItem? selectedItem)
+        {
+            var previous = _items.FirstOrDefault(x => x._isSelected);
+
+            if (ReferenceEquals(previous, selectedItem))
+                return;
+
+            foreach (var item in _items)
+            {
+                await item.SetSelectedAsync(ReferenceEquals(item, selectedItem));
+            }
+
+            await OnSelectionChange.InvokeAsync(selectedItem?.Id ?? selectedItem?.Text);
         }
 
         protected internal async Task DeselectAllAsync()
@@ -272,15 +288,63 @@ namespace MudBlazor
             StateHasChanged();
         }
 
-        protected async void OnLocationChangedAsync(object? sender, LocationChangedEventArgs args)
+        private void OnLocationChanged(object? sender, LocationChangedEventArgs args)
         {
-            _currentLocation = NavigationManager.ToBaseRelativePath(args.Location);
-            foreach (var item in _items)
+            _ = InvokeAsync(async () =>
             {
-                await item.HandleHrefSelectedAsync(_currentLocation);
-            }
+                await UpdateSelectionFromLocationAsync(args.Location);
+            });
         }
-        #endregion
 
+        protected internal async Task ActivateItemAsync(MudNavigationBarItem item)
+        {
+            if (item.Disabled || !_items.Contains(item))
+                return;
+
+            if (!string.IsNullOrEmpty(item.Href))
+            {
+                NavigationManager.NavigateTo(item.Href);
+                return;
+            }
+
+            await SelectItemAsync(item);
+        }
+
+        private async Task UpdateSelectionFromLocationAsync(string location)
+        {
+            if (!_items.Any(x => !string.IsNullOrEmpty(x.Href)))
+                return;
+
+            var matchedItem = _items.FirstOrDefault(item => MatchesHref(item, location));
+            await SelectItemAsync(matchedItem);
+        }
+
+        private bool MatchesHref(MudNavigationBarItem item, string location)
+        {
+            if (string.IsNullOrEmpty(item.Href) || item.Disabled)
+                return false;
+
+            if (CustomHrefComparisonFunc is not null)
+                return CustomHrefComparisonFunc(location, item.Href);
+
+            var target = NavigationManager.ToAbsoluteUri(item.Href);
+            var current = NavigationManager.ToAbsoluteUri(location);
+
+            if (!string.Equals(target.Scheme, current.Scheme, StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(target.Authority, current.Authority, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            var targetPath = target.AbsolutePath.TrimEnd('/');
+            var currentPath = current.AbsolutePath.TrimEnd('/');
+
+            var pathMatches =
+                string.Equals(targetPath, currentPath, StringComparison.OrdinalIgnoreCase) ||
+                (targetPath.Length > 0 && currentPath.StartsWith(targetPath + "/", StringComparison.OrdinalIgnoreCase));
+
+            if (!pathMatches)
+                return false;
+
+            return string.IsNullOrEmpty(target.Fragment) || string.Equals(target.Fragment, current.Fragment, StringComparison.Ordinal);
+        }
     }
 }

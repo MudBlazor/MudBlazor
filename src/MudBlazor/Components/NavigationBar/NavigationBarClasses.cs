@@ -5,8 +5,50 @@
 namespace MudBlazor
 {
 #nullable enable
-    public readonly record struct NavigationBarBadgeParameters(bool Dot, object? Content, bool Overlap, Color Color)
+
+    /// <summary>
+    /// Defines badge settings for a navigation bar item.
+    /// </summary>
+    /// <remarks>
+    /// By default, badges overlap their content and use the Error color.
+    /// </remarks>
+    public readonly record struct NavigationBarBadgeParameters
     {
-        public NavigationBarBadgeParameters() : this(false, null, true, Color.Error) { }
+        /// <summary>
+        /// Shows the badge as a dot.
+        /// </summary>
+        public bool Dot { get; init; }
+
+        /// <summary>
+        /// The content displayed by the badge.
+        /// </summary>
+        public object? Content { get; init; }
+
+        /// <summary>
+        /// Places the badge over its content.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        public bool Overlap { get; init; }
+
+        /// <summary>
+        /// The color of the badge.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="MudBlazor.Color.Error"/>.
+        /// </remarks>
+        public Color Color { get; init; }
+
+        /// <summary>
+        /// Creates badge settings with the default values.
+        /// </summary>
+        public NavigationBarBadgeParameters()
+        {
+            Dot = false;
+            Content = null;
+            Overlap = true;
+            Color = Color.Error;
+        }
     }
 }

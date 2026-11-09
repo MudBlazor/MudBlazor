@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -15,36 +16,33 @@ namespace MudBlazor
     /// </summary>
     public partial class MudNavigationBarItem : MudComponentBase, IAsyncDisposable
     {
-        #region Fields
         protected internal bool _isSelected;
         private ElementReference _elementReference;
 
         protected string Classname =>
             new CssBuilder("mud-nav-bar-item")
-                .AddClass("mud-ripple", Parent?.Ripple == true && !Disabled)
+                .AddClass("mud-ripple", Parent?.GetState(x => x.Ripple) == true && !Disabled)
                 .AddClass("mud-disabled", Disabled)
-                .AddClass("mud-hoverable", Parent?.Hover)
-                .AddClass($"mud-nav-bar-item-selected {SelectedClass ?? Parent?.SelectedClass}", _isSelected)
+                .AddClass("mud-hoverable", Parent?.GetState(x => x.Hover) == true)
+                .AddClass("mud-nav-bar-item-selected", _isSelected)
+                .AddClass("mud-nav-bar-item-underline", Parent?.GetState(x => x.Underline) == true && _isSelected)
+                .AddClass($"mud-nav-bar-item-color-{Parent?.GetState(x => x.Color).ToStringFast()}",Parent?.GetState(x => x.Underline) == true && _isSelected)
+                .AddClass(SelectedClass ?? Parent?.GetState(x => x.SelectedClass), _isSelected)
                 .AddClass(Class)
                 .Build();
 
-        protected string BadgeClassname =>
-            new CssBuilder("mud-nav-bar-item-badge")
-                .AddClass($"border-solid border-b-2 mud-border-{Parent?.Color.ToStringFast() ?? "primary"}", Parent?.Underline == true && _isSelected)
-                .AddClass("mud-disabled", Disabled)
-                .Build();
-        #endregion
+        protected string BadgeClassname => "mud-nav-bar-item-badge";
 
-        #region Grouped Parameters
         /// <summary>
         /// The grouped parameter that contains the badge parameters.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public NavigationBarBadgeParameters BadgeParameters { get; set; } = new();
-        #endregion
 
-        #region Parameters
+        /// <summary>
+        /// The navigation bar containing this item.
+        /// </summary>
         [CascadingParameter]
         public MudNavigationBar? Parent { get; set; }
 
@@ -103,12 +101,10 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Behavior)]
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
-        #endregion
 
-        #region Lifecycle
         protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
+            await base.OnInitializedAsync();
             Parent?.Register(this);
             await HandleHrefSelectedAsync(Parent?._currentLocation);
         }
@@ -121,15 +117,16 @@ namespace MudBlazor
             }
         }
 
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
         public ValueTask DisposeAsync()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
             return ValueTask.CompletedTask;
         }
-        #endregion
 
-        #region Public Methods
         /// <summary>
         /// Obtains focus for component.
         /// </summary>
@@ -139,9 +136,7 @@ namespace MudBlazor
         /// Obtains blur for component.
         /// </summary>
         public ValueTask BlurAsync() => _elementReference.MudBlurAsync();
-        #endregion
 
-        #region SelectionLogic
         protected internal async Task HandleHrefSelectedAsync(string? location)
         {
             if (Parent == null)
@@ -169,37 +164,26 @@ namespace MudBlazor
             return location?.StartsWith(href) ?? false;
         }
 
-        protected internal async Task SetSelectedAsync(bool selected)
+        protected internal Task SetSelectedAsync(bool selected)
         {
-            bool callChange = _isSelected != selected;
-            _isSelected = selected;
-            if (callChange && Parent != null)
-            {
-                await Parent.OnSelectionChange.InvokeAsync(Id ?? Text);
-            }
-            StateHasChanged();
-        }
-        #endregion
+            if (_isSelected == selected)
+                return Task.CompletedTask;
 
-        #region Protected Methods
+            _isSelected = selected;
+            StateHasChanged();
+
+            return Task.CompletedTask;
+        }
+
         protected async Task HandleClickAsync(MouseEventArgs args)
         {
-            if (Disabled || Parent == null)
+            if (Disabled || Parent is null)
                 return;
 
-            if (!string.IsNullOrEmpty(Href))
-            {
-                await Parent.DeselectAllAsync();
-                await HandleHrefSelectedAsync(Href);
-                Parent?.Navigate(Href);
-            }
-            else
-            {
-                await Parent.DeselectAllAsync();
-                await SetSelectedAsync(true);
-            }
+            await Parent.ActivateItemAsync(this);
             await OnClick.InvokeAsync(args);
         }
+
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs args)
         {
             if (Disabled)
@@ -212,17 +196,16 @@ namespace MudBlazor
 
         protected Color GetColor()
         {
-            if (Disabled)
+            if (Disabled || !_isSelected)
                 return Color.Inherit;
 
-            if (!_isSelected)
-                return Color.Inherit;
-
-            if (string.IsNullOrEmpty(SelectedClass) && string.IsNullOrEmpty(Parent?.SelectedClass))
-                return Parent?.Color ?? Color.Primary;
+            if (string.IsNullOrEmpty(SelectedClass) &&
+                string.IsNullOrEmpty(Parent?.GetState(x => x.SelectedClass)))
+            {
+                return Parent?.GetState(x => x.Color) ?? Color.Primary;
+            }
 
             return Color.Inherit;
         }
-        #endregion
     }
 }

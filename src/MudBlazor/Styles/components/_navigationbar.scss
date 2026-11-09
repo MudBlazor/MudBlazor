@@ -1,7 +1,6 @@
 .mud-nav-bar {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  /*overflow: hidden;*/
+  display: flex;
+  align-items: stretch;
   z-index: var(--mud-zindex-appbar);
   background-color: var(--mud-palette-background);
   height: var(--mud-appbar-height);
@@ -24,19 +23,70 @@
 
 .mud-nav-bar-fab {
   position: fixed;
-  right: 8px;
+  inset-inline-end: 8px;
   bottom: 4.5rem;
   z-index: var(--mud-zindex-appbar);
 }
 
 .mud-nav-bar-item {
   display: flex;
+  flex: 1 1 0;
+  min-width: 0;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  &.mud-hoverable:hover:not(.mud-disabled), &:focus:not(.mud-disabled) {
+  &.mud-hoverable:hover:not(.mud-disabled),
+  &:focus-visible:not(.mud-disabled) {
     background-color: var(--mud-palette-action-default-hover);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--mud-palette-primary);
+    outline-offset: -2px;
+  }
+
+  &.mud-nav-bar-item-underline {
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+  }
+
+  &.mud-disabled {
+    .mud-nav-bar-item-content .mud-typography {
+      color: var(--mud-palette-text-secondary);
+    }
+  }
+
+  &.mud-nav-bar-item-underline {
+    border-bottom: 2px solid var(--mud-palette-primary);
+
+    &.mud-nav-bar-item-color-secondary {
+      border-bottom-color: var(--mud-palette-secondary);
+    }
+
+    &.mud-nav-bar-item-color-tertiary {
+      border-bottom-color: var(--mud-palette-tertiary);
+    }
+
+    &.mud-nav-bar-item-color-info {
+      border-bottom-color: var(--mud-palette-info);
+    }
+
+    &.mud-nav-bar-item-color-success {
+      border-bottom-color: var(--mud-palette-success);
+    }
+
+    &.mud-nav-bar-item-color-warning {
+      border-bottom-color: var(--mud-palette-warning);
+    }
+
+    &.mud-nav-bar-item-color-error {
+      border-bottom-color: var(--mud-palette-error);
+    }
   }
 }
 
@@ -45,7 +95,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-bottom: 2px solid transparent;
 }
 
 .mud-nav-bar-item-content {
