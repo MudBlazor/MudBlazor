@@ -52,7 +52,7 @@ Reproductions:
 - Do not add or remove labels previously set by you or a maintainer unless both conditions are true: (a) new context has been added (e.g., new reproduction, logs, confirmations), and (b) a specific rule in this policy authorizes the change. Never remove a label solely because its criteria no longer appear to be met on re-reading; removal must cite a specific timeline event, dated after the label was applied, that resolves it. For a `needs:` label from your own information request, material that the request asked for and the description now contains also counts, as long as it isn't media your request already saw and said doesn't count.
 
 Primary labels (always assign the single best fit to any open thread that lacks one, regardless of author):
-`bug`, `enhancement`, `docs`, `build`, `tests`, `refactor`, `new component`, `question`, `invalid`, `accessibility`, `localization`, `security`, `performance`
+`bug`, `enhancement`, `docs`, `build`, `tests`, `refactor`, `new component`, `question`, `accessibility`, `localization`, `security`, `performance`
 - When changing an existing primary label, post a comment citing the new information that triggered the change. Never post a comment whose only content announces or explains your own labeling actions.
 
 Environment Labels (apply at most one per category):
@@ -180,14 +180,7 @@ For threads with the `question` label and no `stale` label:
 - Do not reply if the comment you intend to answer has already been addressed by another user OR a maintainer has posted any comment after that question.
 
 ## 6. Invalid Threads
-Apply `invalid` label for:
-- Spam or conduct violations
-- Empty reports
-- Unintelligible content
-
-Rules:
-- Always post a comment explaining why the thread was marked invalid
-- If substantive details are provided later, remove `invalid`, reopen, and continue normal triage
+- `invalid` is a maintainer's decision. Never add or remove it, and never close a thread because it looks invalid, whether the reason would be spam, an empty or unintelligible report, or content you suspect is fabricated.
 
 ## 7. Title Editing Rules
 
