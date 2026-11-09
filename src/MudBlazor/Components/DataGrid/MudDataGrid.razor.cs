@@ -1712,12 +1712,13 @@ namespace MudBlazor
             {
                 PagerStateHasChangedEvent?.Invoke();
 
-                // The rows of the new page are rendered now, so the container can be scrolled.
-                if (_scrollToTopPending)
+                // A server load renders the old rows as loading first, so the scroll waits for the render that shows the new page.
+                if (_scrollToTopPending && !Loading)
                 {
                     _scrollToTopPending = false;
 
-                    if (ScrollToTopOnPageChange)
+                    // Without a container, ScrollToTopAsync would find no element and scroll the document instead.
+                    if (ScrollToTopOnPageChange && (Items != null || HasServerData))
                         await ScrollManager.ScrollToTopAsync($"#{_tableContainerId}");
                 }
             }

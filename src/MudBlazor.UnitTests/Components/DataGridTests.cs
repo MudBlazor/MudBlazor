@@ -1367,6 +1367,45 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// With ServerData, the scroll waits for the render that shows the loaded page, not the loading render of the old rows.
+        /// </summary>
+        [Test]
+        public async Task DataGridScrollToTopOnPageChangeWaitsForServerData()
+        {
+            var comp = Context.Render<DataGridServerScrollToTopTest>();
+            await comp.InvokeAsync(comp.Instance.Gate.SetResult);
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body td").TextContent.Trim().Should().Be("Item 0"));
+            ScrollToCalls().Should().BeEmpty();
+
+            var gate = comp.Instance.Gate;
+            await comp.FindAll(".mud-table-pagination-actions button")[2].ClickAsync();
+
+            // The second page is still loading.
+            comp.FindComponent<MudDataGrid<DataGridServerScrollToTopTest.Item>>().Instance.Loading.Should().BeTrue();
+            ScrollToCalls().Should().BeEmpty();
+
+            await comp.InvokeAsync(gate.SetResult);
+            comp.WaitForAssertion(() => comp.Find(".mud-table-body td").TextContent.Trim().Should().Be("Item 10"));
+            ScrollToCalls().Should().ContainSingle()
+                .Which.Arguments[0].Should().Be($"#{comp.Find(".mud-table-container").Id}");
+        }
+
+        /// <summary>
+        /// Without Items or ServerData the grid renders no container, so a page change doesn't scroll, which would scroll the document instead.
+        /// </summary>
+        [Test]
+        public async Task DataGridScrollToTopOnPageChangeWithoutContainer()
+        {
+            var comp = Context.Render<MudDataGrid<DataGridPaginationTest.Item>>(self => self.Add(x => x.ScrollToTopOnPageChange, true));
+            comp.FindAll(".mud-table-container").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(self => self.Add(x => x.CurrentPage, 1));
+
+            comp.Instance.CurrentPage.Should().Be(1);
+            ScrollToCalls().Should().BeEmpty();
+        }
+
+        /// <summary>
         /// Without ScrollToTopOnPageChange, changing the page doesn't scroll the grid.
         /// </summary>
         [Test]
