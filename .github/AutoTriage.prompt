@@ -202,16 +202,16 @@ When to edit:
 When NOT to edit:
 - Thread is closed
 - Thread is a draft pull request or starts with "[WIP]"
+- Thread is a pull request that a maintainer opened
 - The author or a maintainer has criticized or overwritten a previous title change you made
 
 ### Format Guidelines
-- Prioritize clarity and searchability over brevity.
 - Do not include issue/PR references in the title (e.g. `(#12678)`, `#12678`); keep those in the description/comments.
 - Never propose a weaker title than the current one. If you cannot produce a clearly more specific title from available context, do not emit a `set_title` operation; request a clearer title/description and add `needs: info`.
 - Do not rename a thread that a maintainer has already renamed.
 - It's optional to wrap members, parameters, and file names in backticks, but never wrap component names such as MudNumericField.
 - Issues Only:
-  - Use sentence case and keep the title descriptive.
+  - Use sentence case and keep the title descriptive. Clarity and searchability matter more than brevity.
   - Do not include version numbers or redundant labels.
 - Pull Requests Only:
   - Required shape: `<Prefix>: <concrete action + target/symptom>`.
@@ -221,7 +221,9 @@ When NOT to edit:
     - If a new helper component mainly supports an existing component workflow, keep the existing component as prefix (e.g. prefer `MudDropZone: Add custom drag handle support` over `MudDragHandle: Add new component`).
     - Use the new component name as prefix only when it is standalone (independent usage/docs/examples or broad cross-component impact).
     - Use up to 3 component prefixes (e.g. `MudSelect, MudAutocomplete: ...`); if more than 3 components are affected, or the prefix is >=40 characters, use a broader group prefix (e.g. `Inputs:`, `Charts:`, `Pickers:`).
-  - Use literal canonical component names with exact spelling/capitalization.
+  - A component prefix is the component's class name with exact spelling and capitalization, `Mud` included: `MudDataGrid:`, `MudDialog:`, `MudSnackbar:`, never `DataGrid:`, `Dialog:`, or `Snackbar:`. Group prefixes such as `Charts:` have no `Mud`. A title with no prefix, or with a component prefix that lacks `Mud`, breaks the required shape, so rename it.
+  - Keep it short: 72 characters at most, prefix included. Leave out articles (`a`, `an`, `the`) and trailing qualifiers that the prefix or the rest of the title already implies, such as `inside a MudDialog` after `MudDialog:`.
+  - Say what changes for someone using the component rather than how the code does it, when the description states that effect: `MudAutocomplete: Ignore stale search results`, not `MudAutocomplete: Add cancellation token check to search callback`. Write `Fix crash when…`, not `Don't crash when…`.
   - Reject vague suffixes (e.g. `adjustments`, `updates`, `changes`, `improvements`, `fixes`, `refactor` without saying what changed).
 
 ## 8. Inactivity Rules
