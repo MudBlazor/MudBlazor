@@ -575,5 +575,24 @@ namespace MudBlazor.UnitTests.Charts
             (d!.Split('M').Length - 1).Should().Be(3, because: "each isolated point starts its own subpath");
             d.Should().NotContain("L", because: "single-point segments produce move commands only");
         }
+
+        [Test]
+        public void LineChartBlankLabelsDoNotReachTheDocument()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } }
+            };
+            string[] xAxisLabels = { "A", "", "C" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette }));
+
+            // An empty label paints nothing, so it has no business taking up a node.
+            comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C");
+        }
     }
 }
