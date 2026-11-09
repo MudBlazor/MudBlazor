@@ -1,5 +1,4 @@
 ﻿using Blazor.Analytics;
-using Blazored.LocalStorage;
 using BytexDigital.Blazor.Components.CookieConsent;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Docs.Pages.Consent.Prompt;
@@ -42,7 +41,7 @@ namespace MudBlazor.Docs.Extensions
             services.AddSingleton<IApiLinkService, ApiLinkService>();
             services.AddSingleton<IMenuService, MenuService>();
             services.AddScoped<IDocsNavigationService, DocsNavigationService>();
-            services.AddBlazoredLocalStorage();
+            services.AddScoped<IBrowserStorage, BrowserStorage>();
             services.AddScoped<IUserPreferencesService, UserPreferencesService>();
             services.AddScoped<INotificationService, InMemoryNotificationService>();
             services.AddSingleton<IPeriodicTableService, PeriodicTableService>();

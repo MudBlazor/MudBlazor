@@ -2,27 +2,18 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Blazored.LocalStorage;
 using MudBlazor.Docs.NotificationContent;
 
 namespace MudBlazor.Docs.Services.Notifications;
 
-public class InMemoryNotificationService(ILocalStorageService localStorageService) : INotificationService
+public class InMemoryNotificationService(IBrowserStorage browserStorage) : INotificationService
 {
     private const string LocalStorageKey = "__notficationTimestamp";
 
     private readonly List<NotificationMessage> _messages = [];
 
-    private async Task<DateTime> GetLastReadTimestamp()
-    {
-        if (!await localStorageService.ContainKeyAsync(LocalStorageKey))
-        {
-            return DateTime.MinValue;
-        }
-
-        var timestamp = await localStorageService.GetItemAsync<DateTime>(LocalStorageKey);
-        return timestamp;
-    }
+    // A missing timestamp reads as DateTime.MinValue, so every notification counts as unread.
+    private ValueTask<DateTime> GetLastReadTimestamp() => browserStorage.GetAsync<DateTime>(LocalStorageKey);
 
     public async Task<bool> AreNewNotificationsAvailable()
     {
@@ -34,7 +25,7 @@ public class InMemoryNotificationService(ILocalStorageService localStorageServic
 
     public async Task MarkNotificationsAsRead()
     {
-        await localStorageService.SetItemAsync(LocalStorageKey, DateTime.UtcNow.Date);
+        await browserStorage.SetAsync(LocalStorageKey, DateTime.UtcNow.Date);
     }
 
     public async Task MarkNotificationsAsRead(string id)
@@ -42,10 +33,10 @@ public class InMemoryNotificationService(ILocalStorageService localStorageServic
         var message = await GetMessageById(id);
         if (message == null) { return; }
 
-        var timestamp = await localStorageService.GetItemAsync<DateTime>(LocalStorageKey);
+        var timestamp = await GetLastReadTimestamp();
         if (message.PublishDate > timestamp)
         {
-            await localStorageService.SetItemAsync(LocalStorageKey, message.PublishDate);
+            await browserStorage.SetAsync(LocalStorageKey, message.PublishDate);
         }
 
     }
