@@ -103,6 +103,7 @@ These rules apply to an open issue when a comment says it duplicates a specific 
 - When a maintainer says it is a duplicate, add `duplicate`.
 - For every other claim, meaning a duplicate claim from someone who isn't a maintainer or a fixed claim from anyone, add `needs: info`, which leaves the reporter to confirm or object. Don't add it when a comment in the thread already disputes that claim, or when a maintainer removed `needs: info` after the same claim was made before.
 - Remove that `needs: info` when a later comment from anyone disputes the claim, for example by saying the problem still happens on a named version.
+- A later comment that agrees with the claim, even from the reporter, doesn't remove that `needs: info`: the label is what lets the issue close through inactivity.
 
 ## 4. Missing Information Handling
 Purpose: Capture essential details early on open threads so maintainers can act quickly. Covers low-signal reports (link-only, screenshot/video-only, missing PR rationale, unsubstantiated enhancements). Does not interfere once a maintainer engages.
