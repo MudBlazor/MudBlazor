@@ -56,6 +56,19 @@ test("scrollToListItem aligns the item with the top of its list", () => {
     expect(document.getElementById("list")!.scrollTop).toBe(240);
 });
 
+test("resetScrollTop scrolls an element to its top and keeps its horizontal position", () => {
+    document.body.innerHTML = `<div id="grid"></div>`;
+    const grid = document.getElementById("grid")!;
+    grid.scrollTop = 120;
+    grid.scrollLeft = 80;
+
+    scrollManager.resetScrollTop(grid);
+    scrollManager.resetScrollTop(null);
+
+    expect(grid.scrollTop).toBe(0);
+    expect(grid.scrollLeft).toBe(80);
+});
+
 test("scrollTo scrolls the matching element, or the document element as a fallback", () => {
     document.body.innerHTML = `<div id="panel"></div>`;
     const panel = document.getElementById("panel")!;

@@ -1340,30 +1340,31 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<DataGridPaginationTest>(self => self.Add(x => x.ScrollToTopOnPageChange, true));
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
-            var container = dataGrid.Find(".mud-table-container");
-            container.Id.Should().NotBeNullOrEmpty();
 
             // The first render doesn't scroll.
-            ScrollToCalls().Should().BeEmpty();
+            ResetScrollTopCalls().Should().BeEmpty();
 
             // Next page.
             await dataGrid.FindAll(".mud-table-pagination-actions button")[2].ClickAsync();
             dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("10");
-            ScrollToCalls().Should().ContainSingle()
-                .Which.Arguments[0].Should().Be($"#{container.Id}");
+            ResetScrollTopCalls().Should().ContainSingle()
+                .Which.Arguments[0].Should().BeOfType<ElementReference>()
+                .Which.Id.Should().NotBeNullOrEmpty();
 
             // Programmatic navigation.
             await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(Page.First));
-            ScrollToCalls().Should().HaveCount(2);
+            ResetScrollTopCalls().Should().HaveCount(2);
 
             // Rows per page.
             await comp.InvokeAsync(() => dataGrid.Instance.SetRowsPerPageAsync(4));
-            ScrollToCalls().Should().HaveCount(3);
-            ScrollToCalls().Should().AllSatisfy(x => x.Arguments[0].Should().Be($"#{container.Id}"));
+            ResetScrollTopCalls().Should().HaveCount(3);
 
             // A render without a page change doesn't scroll.
             comp.Render();
-            ScrollToCalls().Should().HaveCount(3);
+            ResetScrollTopCalls().Should().HaveCount(3);
+
+            // Only the vertical position is reset: scrollTo, which also sets the horizontal position, isn't used.
+            Context.JSInterop.Invocations.Should().NotContain(x => x.Identifier == "mudScrollManager.scrollTo");
         }
 
         /// <summary>
@@ -1375,19 +1376,18 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<DataGridServerScrollToTopTest>();
             await comp.InvokeAsync(comp.Instance.Gate.SetResult);
             comp.WaitForAssertion(() => comp.Find(".mud-table-body td").TextContent.Trim().Should().Be("Item 0"));
-            ScrollToCalls().Should().BeEmpty();
+            ResetScrollTopCalls().Should().BeEmpty();
 
             var gate = comp.Instance.Gate;
             await comp.FindAll(".mud-table-pagination-actions button")[2].ClickAsync();
 
             // The second page is still loading.
             comp.FindComponent<MudDataGrid<DataGridServerScrollToTopTest.Item>>().Instance.Loading.Should().BeTrue();
-            ScrollToCalls().Should().BeEmpty();
+            ResetScrollTopCalls().Should().BeEmpty();
 
             await comp.InvokeAsync(gate.SetResult);
             comp.WaitForAssertion(() => comp.Find(".mud-table-body td").TextContent.Trim().Should().Be("Item 10"));
-            ScrollToCalls().Should().ContainSingle()
-                .Which.Arguments[0].Should().Be($"#{comp.Find(".mud-table-container").Id}");
+            ResetScrollTopCalls().Should().ContainSingle();
         }
 
         /// <summary>
@@ -1402,7 +1402,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(self => self.Add(x => x.CurrentPage, 1));
 
             comp.Instance.CurrentPage.Should().Be(1);
-            ScrollToCalls().Should().BeEmpty();
+            ResetScrollTopCalls().Should().BeEmpty();
         }
 
         /// <summary>
@@ -1418,14 +1418,14 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => dataGrid.Instance.SetRowsPerPageAsync(4));
 
             dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("0");
-            ScrollToCalls().Should().BeEmpty();
+            ResetScrollTopCalls().Should().BeEmpty();
         }
 
         /// <summary>
-        /// Returns the calls made to the scroll manager's <c>scrollTo</c>, which <see cref="IScrollManager.ScrollToTopAsync"/> invokes.
+        /// Returns the calls made to the scroll manager's <c>resetScrollTop</c>, which the grid invokes to scroll its rows to the top.
         /// </summary>
-        private List<Bunit.JSRuntimeInvocation> ScrollToCalls()
-            => Context.JSInterop.Invocations.Where(x => x.Identifier == "mudScrollManager.scrollTo").ToList();
+        private List<Bunit.JSRuntimeInvocation> ResetScrollTopCalls()
+            => Context.JSInterop.Invocations.Where(x => x.Identifier == "mudScrollManager.resetScrollTop").ToList();
 
         /// <summary>
         /// Tests that the "All" data grid pager option shows all items

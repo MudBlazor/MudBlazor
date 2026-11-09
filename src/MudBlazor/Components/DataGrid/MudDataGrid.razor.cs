@@ -10,6 +10,8 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
+using Microsoft.JSInterop;
+using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
@@ -30,9 +32,8 @@ namespace MudBlazor
     public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         [Inject]
-        private IScrollManager ScrollManager { get; set; } = null!;
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
-        private readonly string _tableContainerId = Identifier.Create("mud-data-grid-container");
         private MudForm? _editForm;
         internal int? _rowsPerPage;
         private int _currentPage = 0;
@@ -1717,9 +1718,10 @@ namespace MudBlazor
                 {
                     _scrollToTopPending = false;
 
-                    // Without a container, ScrollToTopAsync would find no element and scroll the document instead.
+                    // Only the vertical position is reset: the container also scrolls sideways when the columns are wider than the grid.
+                    // Without Items or ServerData the container isn't rendered.
                     if (ScrollToTopOnPageChange && (Items != null || HasServerData))
-                        await ScrollManager.ScrollToTopAsync($"#{_tableContainerId}");
+                        await JsRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.resetScrollTop", _gridElement);
                 }
             }
 
