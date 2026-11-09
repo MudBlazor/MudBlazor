@@ -11,6 +11,7 @@ public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartO
 {
     private int _yAxisTicks = 20;
     private int _maxNumYAxisTicks = 20;
+    private int _xAxisLabelInterval = 1;
 
     /// <summary>
     /// The spacing between vertical tick marks.
@@ -88,16 +89,16 @@ public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartO
     /// Draws every nth label on the X-axis, leaving the ones in between blank.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>1</c>, which labels every point. Raise it when there are more points than the axis has
-    /// room for. Only the axis is thinned out, so tooltips still carry every point's own label.
+    /// Defaults to <c>1</c>, which labels every point.
+    /// Raise it when there are more points than the axis has room for.
+    /// Only the axis is thinned out, so a tooltip still carries its own point's label.
+    /// Values below <c>1</c> are treated as <c>1</c>.
     /// </remarks>
     public int XAxisLabelInterval
     {
         get => _xAxisLabelInterval;
         set => _xAxisLabelInterval = Math.Max(1, value);
     }
-
-    private int _xAxisLabelInterval = 1;
 
     /// <summary>
     /// The title of the X-axis.
