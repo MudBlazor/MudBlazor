@@ -107,7 +107,6 @@
                     builder.OpenElement(seq++, "circle");
                     builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
                     builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
-                    // Without this the marker takes SVG's initial fill, which paints every data point solid black.
                     builder.AddAttribute(seq++, "fill", "none");
                     builder.AddAttribute(seq++, "stroke", color);
                     builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
