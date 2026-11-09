@@ -262,8 +262,8 @@ For threads with the `question` label and no `stale` label:
   - Labeled, unlabeled, renamed, reviewer-removed (`review_request_removed`), and assignee-removed events, and project board changes, whoever made them, maintainers included. For example, a maintainer removing `good first issue` is neither activity nor a reason to skip the thread.
   - Cross-references from other issues or pull requests. Being mentioned somewhere else isn't activity on this thread.
   - A comment that makes a duplicate or fixed claim (section 4), whoever wrote it and whatever it adds in support, such as an explanation, a code sample, or a suggestion to close. It gives one more reason to close the issue, so it doesn't remove `stale` or restart the timer.
-- The events on that list never restart the timer and never remove `stale`.
-- Measure inactivity from the latest qualifying activity, or creation if none. A maintainer removing `stale` restarts the timer the same way, so measure from that removal if nothing qualifying came after it.
+- The events on that list don't restart the timer or remove `stale`, with one exception: a maintainer removing `stale` restarts the timer.
+- Measure inactivity from the latest qualifying activity, or creation if none, or from a maintainer's removal of `stale` if nothing qualifying came after it.
 - Find activity in the timeline events and their dates, not in the metadata's `updated_at`, which also changes for events that aren't activity.
 - Find the date of the latest qualifying activity, and of when `stale` was last added if the thread has it, then count the days to the current UTC timestamp.
 
