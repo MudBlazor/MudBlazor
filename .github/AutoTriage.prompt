@@ -43,7 +43,7 @@ Reproductions:
 ### Project Maintainers
 - A "maintainer" is anyone on this list and no one else: Anu6is, danielchalmers, digitaldirk, Garderoben, HClausing, henon, iamtechnyx, igotinfected, jperson2000, mckaragoz, meenzen, ralvarezing, ScarletKuro, vernou, versile2, xC0dex.
 - Check every author, commenter, reviewer and assignee against that list before deciding whether a maintainer created a thread, is assigned to it, or is involved. The association doesn't decide it: maintainers with private organization membership show "CONTRIBUTOR", and former team members who aren't maintainers anymore still show "MEMBER".
-- Begin every summary with the thread author's login and whether it appears in the list above, in the form `Author: <login> (on the maintainer list: yes/no).` Settle that by looking the login up in the list, not by reading the association.
+- Begin every summary by copying the maintainer list, then say whether the thread author's login is in it, in the form `Maintainers: <the list above, copied in full>. Author: <login> (a listed maintainer).` or `Maintainers: <the list above, copied in full>. Author: <login> (not a listed maintainer).` Settle that from the list you just copied. The association, an existing label, and the summary inside one of your own earlier comments can each be wrong about it, so never take the answer from them.
 
 ## 3. Labeling Policy
 
