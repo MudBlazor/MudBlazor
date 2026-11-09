@@ -12,19 +12,19 @@
 
     <MudDivider />
 
-    <MudTabs PanelClass="pa-4">
+    <MudTabs TabPanelsClass="pa-4">
         <MudTabPanel Text="General Options">
             <MudStack>
                 <MudSelect @bind-Value="@_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
                     @foreach (var item in Enum.GetValues<Color>())
                     {
-                        <MudSelectItem Value="@item">@item.ToDescriptionString()</MudSelectItem>
+                        <MudSelectItem Value="@item">@item.ToStringFast()</MudSelectItem>
                     }
                 </MudSelect>
                 <MudSelect @bind-Value="@_typo" Label="Typo" Variant="Variant.Outlined" Margin="Margin.Dense">
                     @foreach (var item in Enum.GetValues<Typo>())
                     {
-                        <MudSelectItem Value="@item">@item.ToDescriptionString()</MudSelectItem>
+                        <MudSelectItem Value="@item">@item.ToStringFast()</MudSelectItem>
                     }
                 </MudSelect>
                 <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap">
@@ -45,7 +45,7 @@
                 <MudSelect @bind-Value="@_badgeColor" Label="Badge Color" Variant="Variant.Outlined" Margin="Margin.Dense">
                     @foreach (var item in Enum.GetValues<Color>())
                     {
-                        <MudSelectItem Value="@item">@item.ToDescriptionString()</MudSelectItem>
+                        <MudSelectItem Value="@item">@item.ToStringFast()</MudSelectItem>
                     }
                 </MudSelect>
                 <MudTextField @bind-Value="@_badgeContent" Label="Badge Content" Variant="Variant.Outlined" MaxLength="3" Margin="Margin.Dense" Immediate="true" />

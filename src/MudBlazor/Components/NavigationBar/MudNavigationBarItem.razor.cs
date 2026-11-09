@@ -30,7 +30,7 @@ namespace MudBlazor
 
         protected string BadgeClassname =>
             new CssBuilder("mud-nav-bar-item-badge")
-                .AddClass($"border-solid border-b-2 mud-border-{Parent?.Color.ToDescriptionString() ?? "primary"}", Parent?.Underline == true && _isSelected)
+                .AddClass($"border-solid border-b-2 mud-border-{Parent?.Color.ToStringFast() ?? "primary"}", Parent?.Underline == true && _isSelected)
                 .AddClass("mud-disabled", Disabled)
                 .Build();
         #endregion

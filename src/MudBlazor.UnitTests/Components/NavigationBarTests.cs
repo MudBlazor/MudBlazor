@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Bunit;
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using NUnit.Framework;
 
@@ -15,7 +15,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void NavigationBar_InitialStateText()
         {
-            var comp = Context.RenderComponent<MudNavigationBar>(builder =>
+            var comp = Context.Render<MudNavigationBar>(builder =>
             {
                 builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "a"));
                 builder.AddChildContent<MudNavigationBarItem>(item =>
@@ -37,7 +37,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void NavigationBar_ClickTest()
         {
-            var comp = Context.RenderComponent<MudNavigationBar>(builder =>
+            var comp = Context.Render<MudNavigationBar>(builder =>
             {
                 builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "a"));
                 builder.AddChildContent<MudNavigationBarItem>(item =>
@@ -63,7 +63,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task NavigationBar_FocusandKeyTest()
         {
-            var comp = Context.RenderComponent<MudNavigationBar>(builder =>
+            var comp = Context.Render<MudNavigationBar>(builder =>
             {
                 builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "a"));
                 builder.AddChildContent<MudNavigationBarItem>(item =>
