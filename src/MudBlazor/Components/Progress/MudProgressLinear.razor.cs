@@ -59,7 +59,7 @@ namespace MudBlazor
         /// The size of this component.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.
+        /// Defaults to <see cref="Size.Small"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]

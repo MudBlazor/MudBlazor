@@ -254,7 +254,7 @@ namespace MudBlazor
         /// The function used to disable one or more dates.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.<br />
+        /// Defaults to a function that always returns <c>false</c>.<br />
         /// When set, a date will be disabled if the function returns <c>true</c>.
         /// </remarks>
         [Parameter]
