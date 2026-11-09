@@ -23,7 +23,7 @@
             <g class="mud-charts-gridlines-yaxis">
                 @foreach (var horizontalLine in HorizontalLines)
                 {
-                    <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
+                    <path stroke-width="0.3" d="@horizontalLine.Data"></path>
                 }
             </g>
         }
@@ -32,7 +32,7 @@
             <g class="mud-charts-gridlines-xaxis-lines">
                 @foreach (var verticalLine in VerticalLines)
                 {
-                    <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
+                    <path stroke-width="0.3" d="@verticalLine.Data"></path>
                 }
             </g>
         }
