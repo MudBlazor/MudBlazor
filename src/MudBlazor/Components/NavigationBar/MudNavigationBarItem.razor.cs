@@ -75,8 +75,11 @@ namespace MudBlazor
         public string? Icon { get; set; }
 
         /// <summary>
-        /// The text of the navigation item.
+        /// The text displayed for the navigation item.
         /// </summary>
+        /// <remarks>
+        /// For icon-only items, provide an accessible name using <c>aria-label</c> or <c>aria-labelledby</c>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public string? Text { get; set; }

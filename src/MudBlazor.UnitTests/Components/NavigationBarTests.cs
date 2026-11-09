@@ -44,30 +44,40 @@ namespace MudBlazor.UnitTests.Components
         /// <summary>
         /// Verifies that clicking enabled items updates the selection.
         /// </summary>
+        /// <summary>
+        /// Verifies that clicking enabled items updates the selection while disabled items are ignored.
+        /// </summary>
         [Test]
-        public void NavigationBarItem_WhenClicked_UpdatesSelection()
+        public async Task NavigationBarItem_WhenClicked_UpdatesSelection()
         {
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
-                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "a"));
+                builder.AddChildContent<MudNavigationBarItem>(
+                    item => item.Add(x => x.Text, "a"));
+
                 builder.AddChildContent<MudNavigationBarItem>(item =>
                 {
                     item.Add(x => x.Text, "b");
                     item.Add(x => x.Disabled, true);
                 });
-                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "c"));
+
+                builder.AddChildContent<MudNavigationBarItem>(
+                    item => item.Add(x => x.Text, "c"));
             });
-            var items = comp.FindComponents<MudNavigationBarItem>();
-            var clickableItems = comp.FindAll("div.mud-nav-bar-item");
-            items[0].Instance._isSelected.Should().BeFalse();
-            clickableItems[0].Click();
-            items[0].Instance._isSelected.Should().BeTrue();
-            clickableItems[1].Click();
-            items[0].Instance._isSelected.Should().BeTrue();
-            items[1].Instance._isSelected.Should().BeFalse();
-            clickableItems[2].Click();
-            items[0].Instance._isSelected.Should().BeFalse();
-            items[2].Instance._isSelected.Should().BeTrue();
+
+            comp.Instance.GetSelectedItemId().Should().BeNull();
+
+            await comp.FindAll(".mud-nav-bar-item")[0].ClickAsync();
+
+            comp.Instance.GetSelectedItemId().Should().Be("a");
+
+            await comp.FindAll(".mud-nav-bar-item")[1].ClickAsync();
+
+            comp.Instance.GetSelectedItemId().Should().Be("a");
+
+            await comp.FindAll(".mud-nav-bar-item")[2].ClickAsync();
+
+            comp.Instance.GetSelectedItemId().Should().Be("c");
         }
 
         /// <summary>
