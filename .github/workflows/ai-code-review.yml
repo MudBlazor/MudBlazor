@@ -10,7 +10,8 @@ permissions:
   contents: read
   pull-requests: read
 
-# Never cancel a running review: it's already paid for and counts toward the cap.
+# Never cancel a running review: it's already paid for.
+# A push that arrives meanwhile waits here, then skips if its diff matches the review that just ran.
 concurrency:
   group: ai-code-review-${{ github.event.pull_request.number }}
   cancel-in-progress: false
@@ -31,22 +32,26 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
-          CREATED: ${{ github.event.pull_request.created_at }}
-          BRANCH: ${{ github.event.pull_request.head.ref }}
-          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
           TITLE: ${{ github.event.pull_request.title }}
           BODY: ${{ github.event.pull_request.body }}
         run: |
-          # Cap paid reviews per pull request; a failed run may have paid for one too.
-          reviews=$(gh api --paginate -X GET "repos/$REPO/actions/workflows/ai-code-review.yml/runs" -f event=pull_request_target -f branch="$BRANCH" -f per_page=100 \
-            | jq -n --arg repo "$HEAD_REPO" --arg since "$CREATED" '[inputs.workflow_runs[] | select(.head_repository.full_name == $repo and .created_at >= $since and (.conclusion == "success" or .conclusion == "failure"))] | length')
-          if [ "$reviews" -ge 10 ]; then echo "::notice::Skipped: this pull request has had 10 reviews."; exit 0; fi
-          { printf '# %s\n\n%s\n\n~~~diff\n' "$TITLE" "$BODY"; gh pr diff "$PR" --repo "$REPO"; echo '~~~'; } > pull-request.md
+          gh pr diff "$PR" --repo "$REPO" > "$RUNNER_TEMP/pr.diff"
+          # The patch ID ignores line numbers and whitespace, so rebasing a stack doesn't change it.
+          patch=$(git patch-id --stable < "$RUNNER_TEMP/pr.diff" | cut -d' ' -f1)
+          # Each review saves a cache key, listed oldest first; GitHub evicts them after 7 days.
+          # Pull request code can save caches too, but only under refs/pull/.
+          reviewed=$(gh api -X GET "repos/$REPO/actions/caches" -f key="ai-code-review-$PR-" -f sort=created_at -f direction=asc -f per_page=100 \
+            --jq '.actions_caches[] | select(.ref | startswith("refs/heads/")) | .key')
+          if [[ "$(tail -n 1 <<< "$reviewed")" == "ai-code-review-$PR-$patch-"* ]]; then echo "::notice::Skipped: the diff hasn't changed since the last review."; exit 0; fi
+          if [ "$(grep -c . <<< "$reviewed")" -ge 5 ]; then echo "::notice::Skipped: this pull request has had 5 reviews."; exit 0; fi
+          { printf '# %s\n\n%s\n\n~~~diff\n' "$TITLE" "$BODY"; cat "$RUNNER_TEMP/pr.diff"; echo '~~~'; } > pull-request.md
           # Kept apart so the pull request text can't pose as earlier findings.
           {
             gh api --paginate "repos/$REPO/pulls/$PR/reviews" --jq '.[] | select(.user.login == "mudbot[bot]") | .body'
             gh api --paginate "repos/$REPO/pulls/$PR/comments" --jq '.[] | select(.user.login == "mudbot[bot]") | "\(.path):\(.original_line) \(.body | split("\n")[0])"'
           } > earlier-findings.md
+          touch "$RUNNER_TEMP/reviewed"
+          echo "key=ai-code-review-$PR-$patch-$GITHUB_RUN_ID" >> "$GITHUB_OUTPUT"
           echo "run=true" >> "$GITHUB_OUTPUT"
 
       # Claude reads untrusted content, so it gets read-only file tools and no GitHub token.
@@ -103,3 +108,11 @@ jobs:
             for (const r of mine.filter(r => r.state === 'APPROVED')) {
               await github.rest.pulls.dismissReview({ ...context.repo, pull_number: pr.number, review_id: r.id, message: 'A later push has unresolved findings.' });
             }
+
+      # Saved last, so a failed run can be re-run. Only the key matters.
+      - name: Record the review
+        if: ${{ steps.pr.outputs.run }}
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ runner.temp }}/reviewed
+          key: ${{ steps.pr.outputs.key }}
