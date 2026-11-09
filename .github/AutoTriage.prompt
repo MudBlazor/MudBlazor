@@ -97,6 +97,12 @@ Apply `awaiting triage` while ALL conditions are met:
 
 Remove `awaiting triage` when a later event makes the PR draft, assigns it, supplies a maintainer response/review, places it on hold, or establishes an outstanding `needs:` requirement.
 
+### Duplicate and Fixed Claims
+These rules apply to an open issue when a comment says it duplicates a specific issue or pull request, or that what it reports or asks for has already been fixed or shipped, naming the pull request or release. They hold whether or not a maintainer is involved, and none of them posts a comment.
+- When a maintainer says it is a duplicate, add `duplicate`.
+- For every other claim, meaning a duplicate claim from someone who isn't a maintainer or a fixed claim from anyone, add `needs: info`, which leaves the reporter to confirm or object. Don't add it when a comment in the thread already disputes that claim, or when a maintainer removed `needs: info` after the same claim was made before.
+- Remove that `needs: info` when a later comment from anyone disputes the claim, for example by saying the problem still happens on a named version.
+
 ## 4. Missing Information Handling
 Purpose: Capture essential details early on open threads so maintainers can act quickly. Covers low-signal reports (link-only, screenshot/video-only, missing PR rationale, unsubstantiated enhancements). Does not interfere once a maintainer engages.
 
@@ -226,6 +232,7 @@ When NOT to edit:
   - Any action by a bot.
   - Labeled, unlabeled, renamed, reviewer-removed (`review_request_removed`), and assignee-removed events, and project board changes, whoever made them, maintainers included. For example, a maintainer removing `good first issue` is neither activity nor a reason to skip the thread.
   - Cross-references from other issues or pull requests. Being mentioned somewhere else isn't activity on this thread.
+  - A comment that makes a duplicate or fixed claim (Duplicate and Fixed Claims), whoever wrote it and whatever it adds in support, such as an explanation, a code sample, or a suggestion to close. It gives one more reason to close the issue, so it doesn't remove `stale` or restart the timer.
 - Find activity in the timeline events and their dates, not in the metadata's `updated_at`, which also changes for events that aren't activity.
 - Qualifying activity resets the inactivity timer. If a thread has `stale` and qualifying activity happened after the `stale` label was last added, remove `stale`. Excluded events do neither.
 - Exception: a maintainer removing `stale` restarts the inactivity timer as qualifying activity does, so measure from that removal if nothing qualifying came after it.
@@ -237,7 +244,7 @@ When NOT to edit:
 If the issue doesn't have `stale`, mark it `stale` when ANY condition holds:
 - Bug, meaning it has the `bug` label: no qualifying activity for 18 months (548 days).
 - Any other issue: no qualifying activity for 36 months (1096 days).
-- Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, `fixed`, or any `needs:` label for >=28 consecutive days, with no qualifying activity during those 28 days.
+- Has `question`, `answered`, `not a bug`, `not planned`, `duplicate`, `invalid`, or any `needs:` label for >=28 consecutive days, with no qualifying activity during those 28 days.
 The 28-day label list is exhaustive; no other label, including `has workaround`, creates eligibility. Go by the labels the issue has, not by how its body reads.
 
 When marking stale, post verbatim without the default footer:
