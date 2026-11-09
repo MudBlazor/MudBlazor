@@ -3,12 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Specifies how items in a flex container are stretched along the main axis.
 /// </summary>
+[EnumExtensions]
 public enum StretchItems
 {
     /// <summary>

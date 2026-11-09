@@ -1,3 +1,4 @@
 * text=auto eol=lf
 *.sln text eol=crlf
+*.slnx text eol=crlf
 *.png -text

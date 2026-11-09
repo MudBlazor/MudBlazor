@@ -6,7 +6,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor.Extensions;
 
-#nullable enable
 internal static class ResizeOptionsExtensions
 {
     /// <summary>

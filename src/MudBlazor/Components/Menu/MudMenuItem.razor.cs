@@ -1,16 +1,23 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A choice displayed as part of a list within a <see cref="MudMenu"/> component.
     /// </summary>
     /// <seealso cref="MudMenu" />
     public partial class MudMenuItem : MudComponentBase
     {
+        private readonly Action<ElementReference> _captureElementReference;
+
+        public MudMenuItem()
+        {
+            _captureElementReference = reference => ElementReference = reference;
+        }
+
         [Inject]
         protected NavigationManager UriHelper { get; set; } = null!;
 
@@ -116,42 +123,89 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+        /// <summary>
+        /// Hides the submenu arrow if the item is being populated from the activator content. 
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Menu.Behavior)]
+        public bool HideSubMenuArrow { get; set; }
+
+        public ElementReference ElementReference { get; private set; }
+
         protected string GetHtmlTag() => string.IsNullOrEmpty(Href) ? "div" : "a";
 
-        protected bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
+        /// <summary>
+        /// Opens the row element with its attributes; the Razor file renders the content and closes it.
+        /// </summary>
+        /// <remarks>
+        /// The tag is chosen at runtime, so the element is opened by name rather than written as markup.
+        /// class and style come before the splat so a class or style supplied through <see cref="MudComponentBase.UserAttributes"/> still wins, which is the precedence the MudElement boundary gave them.
+        /// </remarks>
+        private void OpenRow(RenderTreeBuilder builder)
+        {
+            builder.OpenElement(0, GetHtmlTag());
+            builder.AddAttribute(1, "class", Classname);
+            builder.AddAttribute(2, "style", Style);
+            builder.AddAttribute(3, "href", Href);
+            builder.AddAttribute(4, "target", Target);
+            builder.AddAttribute(5, "role", "menuitem");
+            builder.AddMultipleAttributes(6, UserAttributes!);
+            builder.AddAttribute(7, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnClickHandlerAsync));
+            builder.AddAttribute(8, "tabindex", GetDisabled() ? "-1" : "0");
+            builder.AddAttribute(9, "aria-disabled", GetDisabled() ? "true" : "false");
+            builder.AddEventStopPropagationAttribute(10, "onclick", true);
+            builder.AddEventPreventDefaultAttribute(11, "onclick", GetDisabled());
+            builder.AddElementReferenceCapture(12, _captureElementReference);
+        }
+
+        protected internal bool GetDisabled() => Disabled || ParentMenu?.Disabled == true;
 
         protected bool GetDense() => ParentMenu?.GetDense() == true;
 
         protected Typo GetTypo() => GetDense() ? Typo.body2 : Typo.body1;
+
+        private string TextClassname => GetDense() ? "mud-typography mud-typography-body2 mud-menu-item-text" : "mud-typography mud-typography-body1 mud-menu-item-text";
+
+        /// <summary>
+        /// Enables right-to-left layout.
+        /// </summary>
+        [CascadingParameter(Name = "RightToLeft")]
+        public bool RightToLeft { get; set; }
 
         /// <summary>
         /// The menu item is acting as the activator for a sub menu.
         /// </summary>
         protected bool ActivatesSubMenu => Class?.Contains("mud-menu-sub-menu-activator") == true;
 
-        protected async Task OnClickHandlerAsync(MouseEventArgs ev)
+        protected internal async Task OnClickHandlerAsync(MouseEventArgs ev)
         {
             if (GetDisabled())
             {
                 return;
             }
 
-            if (AutoClose && ParentMenu is not null)
+            // Invoke the user's handler first, before navigating or closing the menu.
+            if (OnClick.HasDelegate)
             {
-                await ParentMenu.CloseAllMenusAsync();
+                await OnClick.InvokeAsync(ev);
             }
 
-            // Manual navigation is only required when the target is empty and a
-            // forced reload is necessary; all other scenarios are managed by the HTML anchor.
+            // Manual navigation is only required when the target is empty and a forced reload is necessary; all other scenarios are managed by the HTML anchor.
             if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
             {
                 UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
 
-            if (OnClick.HasDelegate)
+            if (AutoClose && ParentMenu is not null)
             {
-                await OnClick.InvokeAsync(ev);
+                await ParentMenu.CloseAllMenusAsync();
             }
+        }
+
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            ParentMenu?.RegisterItem(this);
         }
     }
 }

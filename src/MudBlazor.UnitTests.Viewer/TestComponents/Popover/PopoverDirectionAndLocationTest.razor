@@ -71,7 +71,7 @@
     {
         var align = string.Empty;
         var justify = string.Empty;
-        var pos = _transformOrigin.ToDescriptionString().Split("-");
+        var pos = _transformOrigin.ToStringFast(true).Split("-");
 
         align = pos[0] switch
         {

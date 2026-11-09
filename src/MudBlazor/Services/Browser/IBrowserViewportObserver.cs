@@ -6,9 +6,8 @@ using MudBlazor.Services;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Represents an observer for browser viewport updates.
+/// Receives notifications when the browser window size or <see cref="Breakpoint"/> changes after subscribing to the <see cref="IBrowserViewportService"/>.
 /// </summary>
 public interface IBrowserViewportObserver
 {

@@ -3,6 +3,7 @@
 @inherits MudComponentBase
 
 <div role="progressbar"
+     aria-busy="@((Indeterminate || _valueState.Value < _maxState.Value).ToString().ToLowerInvariant())"
      aria-valuenow="@_valueState.Value.ToInvariantString()"
      aria-valuemin="@_minState.Value.ToInvariantString()"
      aria-valuemax="@_maxState.Value.ToInvariantString()"
@@ -10,7 +11,7 @@
      class="@Classname" 
      style="@Style" 
      @attributes="UserAttributes">
-    <div class="mud-progress-linear-bars">
+    <div class="@BarsClassname">
         @if (Indeterminate)
         {
             <div class="mud-progress-linear-bar"></div>

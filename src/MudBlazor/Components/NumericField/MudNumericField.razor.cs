@@ -7,11 +7,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Extensions;
 using MudBlazor.Services;
-using MudBlazor.State;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
@@ -23,29 +22,24 @@ namespace MudBlazor
         private T? _step;
         private T? _max;
         private T? _min;
-        private T? _minDefault;
-        private T? _maxDefault;
-        private T? _stepDefault;
+        private readonly T? _minDefault;
+        private readonly T? _maxDefault;
+        private readonly T? _stepDefault;
         private bool _maxHasValue = false;
         private bool _minHasValue = false;
         private bool _stepHasValue = false;
-        private bool _cultureHasValue = false;
+        private bool _cultureParameterSpecified;
         private MudInput<string> _elementReference = null!;
-        private string _elementId = Identifier.Create("numericField");
+        private readonly string _elementId = Identifier.Create("numericField");
+        private const string DefaultKeyFilterPattern = @"[0-9,.\-]";
 
-        private Comparer _comparer = new(CultureInfo.InvariantCulture);
-        private readonly ParameterState<CultureInfo> _cultureInfo;
+        private readonly Comparer<T> _comparer = Comparer<T>.Default;
 
         [Inject]
         private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         public MudNumericField()
         {
-            using var registerScope = CreateRegisterScope();
-            _cultureInfo = registerScope.RegisterParameter<CultureInfo>(nameof(Culture))
-                .WithParameter(() => Culture)
-                .WithChangeHandler((x) => _cultureHasValue = x.Value is not null);
-
             Validation = new Func<T, Task<bool>>(ValidateInput);
             #region parameters default depending on T
 
@@ -139,32 +133,76 @@ namespace MudBlazor
                 .AddClass(Class)
                 .Build();
 
-        private bool IsNumberMode => InputMode == InputMode.numeric || InputMode == InputMode.@decimal;
-        private bool IsFormatted => Pattern is not null || Format is not null || _cultureHasValue;
-
-        protected override void OnAfterRender(bool firstRender)
+        private Dictionary<string, object?> InputAttributes
         {
-            base.OnAfterRender(firstRender);
-
-            if (!firstRender)
+            get
             {
-                return;
+                var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase)
+                {
+                    ["role"] = "spinbutton"
+                };
+
+                if (TryFormatAriaValue(ReadValue, out var ariaValueNow))
+                {
+                    attributes["aria-valuenow"] = ariaValueNow;
+                }
+
+                if (_minHasValue && TryFormatAriaValue(_min, out var ariaValueMin))
+                {
+                    attributes["aria-valuemin"] = ariaValueMin;
+                }
+
+                if (_maxHasValue && TryFormatAriaValue(_max, out var ariaValueMax))
+                {
+                    attributes["aria-valuemax"] = ariaValueMax;
+                }
+
+                if (!string.IsNullOrWhiteSpace(ReadText) &&
+                    (!attributes.TryGetValue("aria-valuenow", out var currentAriaValue) || !string.Equals(ReadText, currentAriaValue?.ToString(), StringComparison.Ordinal)))
+                {
+                    attributes["aria-valuetext"] = ReadText;
+                }
+
+                return attributes;
             }
+        }
 
-            // Overrides the browser's culture since <input type="number"> does not consider culture.
-            // If a specific Culture, Pattern, or Format is defined, <input type="text"> will be used 
-            // with the corresponding attributes applied.
-            if (!IsFormatted)
+        private bool UsesManagedFormatting =>
+            Pattern is not null ||
+            GetFormat() is not null ||
+            _cultureParameterSpecified;
+
+        private string EffectiveKeyFilterPattern => (Pattern ?? DefaultKeyFilterPattern).TrimEnd('*');
+
+        private string? EffectivePattern
+        {
+            get
             {
-                SetCulture(CultureInfo.InvariantCulture);
+                if (Pattern is null)
+                {
+                    return null;
+                }
+
+                var trimmed = Pattern.TrimEnd('*');
+                if (trimmed.Length == 0)
+                {
+                    return trimmed;
+                }
+
+                return trimmed[^1] is '+' or '?' or '}' or '$'
+                    ? trimmed
+                    : trimmed + "*";
             }
         }
 
         /// <inheritdoc />
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
         [ExcludeFromCodeCoverage]
-        public override ValueTask FocusAsync()
+        internal override ValueTask FocusAsync(bool preventScroll)
         {
-            return _elementReference.FocusAsync();
+            return _elementReference.FocusAsync(preventScroll);
         }
 
         /// <inheritdoc />
@@ -189,25 +227,45 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        protected override Task SetValueAsync(T? value, bool updateText = true, bool force = false)
+        protected override Task SetValueAndUpdateTextAsync(T? value, bool updateText = true, bool force = false)
         {
             (value, var valueChanged) = ConstrainBoundaries(value);
-            return base.SetValueAsync(value, valueChanged || updateText, force);
+            return base.SetValueAndUpdateTextAsync(value, valueChanged || updateText, force);
         }
 
         /// <inheritdoc />
         protected internal override async Task OnBlurredAsync(FocusEventArgs obj)
         {
             await base.OnBlurredAsync(obj);
-            await UpdateValuePropertyAsync(true); //Required to set the value after a blur before the debounce period has elapsed
+
+            if (Immediate || DebounceInterval > 0)
+            {
+                await UpdateValuePropertyAsync(true); //Required to set the value after a blur before the debounce period has elapsed
+            }
+            else
+            {
+                // For non-immediate, non-debounced inputs, browser onchange timing can race with blur handlers.
+                // Parse current text only when it is not already the formatted representation of the current value.
+                var formattedValueText = ConvertSet(ReadValue);
+                if (!string.Equals(ReadText, formattedValueText, StringComparison.Ordinal))
+                {
+                    await UpdateValuePropertyAsync(true);
+                }
+            }
+
             await UpdateTextPropertyAsync(false); //Required to update the string formatting after a blur before the debounce period has elapsed
+
+            if (UsesManagedFormatting && DebounceInterval <= 0 && !ConversionError)
+            {
+                await _elementReference.SetText(ReadText, updateValue: false);
+            }
         }
 
         protected async Task<bool> ValidateInput(T? value)
         {
             (value, var valueChanged) = ConstrainBoundaries(value);
             if (valueChanged)
-                await SetValueAsync(value, true);
+                await SetValueAndUpdateTextAsync(value, true);
             return true; //Don't show errors
         }
 
@@ -239,33 +297,75 @@ namespace MudBlazor
                 var nextValue = GetNextValue(factor) ?? Num.To<T>(0);
 
                 // validate that the data type is a value type before we compare them
-                if (typeof(T).IsValueType && Value is not null)
+                if (typeof(T).IsValueType && ReadValue is not null)
                 {
-                    if (factor > 0 && _comparer.Compare(nextValue, Value) < 0)
+                    if (factor > 0 && _comparer.Compare(nextValue, ReadValue) < 0)
                         nextValue = Max;
-                    else if (factor < 0 && _comparer.Compare(nextValue, Value) > 0)
+                    else if (factor < 0 && _comparer.Compare(nextValue, ReadValue) > 0)
                         nextValue = Min;
                 }
 
-                await SetValueAsync(ConstrainBoundaries(nextValue).value);
-                await _elementReference.SetText(Text);
+                await SetValueAndUpdateTextAsync(ConstrainBoundaries(nextValue).value);
+                await _elementReference.SetText(ReadText);
             }
             catch (OverflowException)
             {
                 // if next value overflows the primitive type, lets set it to Min or Max depending on if factor is positive or negative
-                await SetValueAsync(factor > 0 ? Max : Min, true);
+                await SetValueAndUpdateTextAsync(factor > 0 ? Max : Min, true);
             }
         }
 
         private T? GetNextValue(double factor)
         {
             if (typeof(T) == typeof(decimal) || typeof(T) == typeof(decimal?))
-                return (T)(object)Convert.ToDecimal(FromDecimal(Value) + (FromDecimal(Step) * (decimal)factor));
+                return (T)(object)Convert.ToDecimal(FromDecimal(ReadValue) + (FromDecimal(Step) * (decimal)factor));
             if (typeof(T) == typeof(long) || typeof(T) == typeof(long?))
-                return (T)(object)Convert.ToInt64(FromInt64(Value) + (FromInt64(Step) * factor));
+                return (T)(object)Convert.ToInt64(FromInt64(ReadValue) + (FromInt64(Step) * factor));
             if (typeof(T) == typeof(ulong) || typeof(T) == typeof(ulong?))
-                return (T)(object)Convert.ToUInt64(FromUInt64(Value) + (FromUInt64(Step) * factor));
-            return Num.To<T>(Num.From(Value) + (Num.From(Step) * factor));
+                return (T)(object)Convert.ToUInt64(FromUInt64(ReadValue) + (FromUInt64(Step) * factor));
+            // double/float do their arithmetic in decimal to avoid IEEE 754 precision errors (e.g. 0.1 + 0.2 -> 0.30000000000000004).
+            // Values that don't convert to decimal losslessly (out of range, more significant digits than the conversion keeps, or below decimal's epsilon) fall through to the double arithmetic below.
+            if ((typeof(T) == typeof(double) || typeof(T) == typeof(double?) || typeof(T) == typeof(float) || typeof(T) == typeof(float?))
+                && TryToDecimal(ReadValue, out var currentDecimal) && TryToDecimal(Step, out var stepDecimal))
+            {
+                try
+                {
+                    var nextDecimal = currentDecimal + (stepDecimal * (decimal)factor);
+                    // Decimal preserves zero's sign, so canonicalize it before converting back to float or double.
+                    if (nextDecimal == decimal.Zero)
+                        nextDecimal = decimal.Zero;
+                    return Num.To<T>((double)nextDecimal);
+                }
+                catch (OverflowException)
+                {
+                    // The sum exceeds decimal's range even though both operands fit; fall through to the double arithmetic below.
+                }
+            }
+            return Num.To<T>(Num.From(ReadValue) + (Num.From(Step) * factor));
+
+            static bool TryToDecimal(T? value, out decimal result)
+            {
+                result = default;
+                if (Num.From(value) is not { } d || d < (double)decimal.MinValue || d > (double)decimal.MaxValue)
+                    return false;
+                try
+                {
+                    // Convert from the value's own type: a float widened to double first would re-expose the binary noise the decimal step is meant to remove (float 0.01 stepping would show 0.16000001).
+                    if (value is float f)
+                    {
+                        result = (decimal)f;
+                        // Reject lossy conversions: a value that comes back from decimal even slightly lower than it went in would trip the overflow clamp in Change and jump to Max.
+                        return (float)result == f;
+                    }
+                    result = (decimal)d;
+                    return (double)result == d;
+                }
+                catch (OverflowException)
+                {
+                    // The doubles nearest decimal.MinValue/MaxValue pass the range check but round outside decimal's range.
+                    return false;
+                }
+            }
         }
 
         /// <summary>
@@ -315,78 +415,53 @@ namespace MudBlazor
                     new("ArrowDown", preventDown: "key+none"),
                      // prevent dead keys like ^ ` ´ etc
                     new("Dead", preventDown: "key+any"),
+                    // keep the default numeric input constrained even though the field now renders as type="text"
+                    new($"/^(?!{EffectiveKeyFilterPattern}).$/", preventDown: "key+none|key+shift|key+alt"),
                 };
-
-                if (Pattern != null)
-                {
-                    //prevent inputs that do not match the pattern
-                    keyOptions.Add(new($"/^(?!{Pattern.TrimEnd('*')}).$/", preventDown: "key+none|key+shift|key+alt"));
-                }
 
                 var options = new KeyInterceptorOptions("mud-input-slot", keyOptions.ToArray());
 
-                await KeyInterceptorService.SubscribeAsync(_elementId, options, KeyObserver.KeyDownIgnore(), KeyObserver.KeyUpIgnore());
+                await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
+                    .When(CanHandleKeys, builder => builder
+                        .OnKeyDown("ArrowUp", Increment)
+                        .OnKeyDown("ArrowDown", Decrement)));
             }
 
             await base.OnAfterRenderAsync(firstRender);
         }
 
-        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
+        protected override async Task OnInitializedAsync()
         {
-            if (GetDisabledState() || GetReadOnlyState())
-                return;
-
-            switch (obj.Key)
+            // Numeric fields default to an invariant text representation unless Culture, Pattern, or Format is supplied explicitly.
+            // Switch before the base input converts the initial value, so the first render already shows invariant text.
+            // Switching after the first render left culture-formatted text that the next blur re-parsed invariantly, turning "1,5" into 15.
+            if (!UsesManagedFormatting && !ReferenceEquals(GetCulture(), CultureInfo.InvariantCulture))
             {
-                case "ArrowUp":
-                    await Increment();
-                    break;
-                case "ArrowDown":
-                    await Decrement();
-                    break;
+                await SetCultureAsync(CultureInfo.InvariantCulture);
             }
 
+            await base.OnInitializedAsync();
+        }
+
+        private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();
+
+        protected async Task HandleKeyDownAsync(KeyboardEventArgs obj)
+        {
+            // Track focus like MudBaseInput.InvokeKeyDownAsync (which MudTextField uses) so the
+            // "preserve user text while editing" guard in SetParametersAsync engages while typing.
+            // Without this, the wrapper's _isFocused stays false and the value->text resync reformats
+            // mid-typing on Blazor Server (#13266/#13002 family).
+            _isFocused = true;
+            await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
             await OnKeyDown.InvokeAsync(obj);
         }
 
         protected Task HandleKeyUpAsync(KeyboardEventArgs obj)
         {
-            if (GetDisabledState() || GetReadOnlyState())
-                return Task.CompletedTask;
+            _isFocused = true;
 
             return OnKeyUp.InvokeAsync(obj);
         }
-
-        protected async Task OnMouseWheelAsync(WheelEventArgs obj)
-        {
-            if (!obj.ShiftKey || GetDisabledState() || GetReadOnlyState())
-                return;
-            if (obj.DeltaY < 0)
-            {
-                if (InvertMouseWheel == false)
-                    await Increment();
-                else
-                    await Decrement();
-            }
-            else if (obj.DeltaY > 0)
-            {
-                if (InvertMouseWheel == false)
-                    await Decrement();
-                else
-                    await Increment();
-            }
-        }
-
-        /// <summary>
-        /// Reverses the mouse wheel direction.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.  
-        /// When <c>true</c>, moving the mouse wheel up will decrease the value, and down will increase the value.
-        /// </remarks>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool InvertMouseWheel { get; set; } = false;
 
         /// <summary>
         /// The minimum allowed value.
@@ -474,20 +549,37 @@ namespace MudBlazor
         private string GetCounterText() => Counter switch
         {
             null => string.Empty,
-            0 => string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}",
-            _ => (string.IsNullOrEmpty(Text) ? "0" : $"{Text.Length}") + $" / {Counter}"
+            0 => string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}",
+            _ => (string.IsNullOrEmpty(ReadText) ? "0" : $"{ReadText.Length}") + $" / {Counter}"
         };
 
-        private Task OnInputValueChanged(string text)
+        private async Task OnInputValueChanged(string text)
         {
-            return SetTextAsync(text);
+            await SetTextAndUpdateValueAsync(text);
+
+            // Keep formatted text in sync with the value when using managed formatting, but only for a
+            // committed change (onchange), never for live typing (oninput). When Immediate is true this
+            // callback runs on every keystroke; reformatting then would rewrite the text mid-typing and
+            // jump the caret to the end, making multi-digit or decimal entry impossible (e.g. typing
+            // "1234" with Format="F3" collapses to "1.000", and "1." loses its trailing characters).
+            // The parsed value stays correct while typing; the text is reformatted on blur instead
+            // (see OnBlurredAsync). This matches the non-Immediate behavior and pre-v9.1 formatting.
+            if (!Immediate && UsesManagedFormatting && DebounceInterval <= 0 && !ConversionError)
+            {
+                var formattedText = ConvertSet(ReadValue);
+                if (!string.Equals(ReadText, formattedText, StringComparison.Ordinal))
+                {
+                    await SetTextCoreAsync(formattedText);
+                    await _elementReference.SetText(formattedText, updateValue: false);
+                }
+            }
         }
 
         //avoids the format to use scientific notation for large or small number in floating points types, while covering all options
         //https://stackoverflow.com/questions/1546113/double-to-string-conversion-without-scientific-notation
         private const string TagFormat = "0.###################################################################################################################################################################################################################################################################################################################################################";
 
-        private static string? FormatParam(T value)
+        private static string? FormatParam(T? value)
         {
             if (value is IFormattable f)
                 return f.ToString(TagFormat, CultureInfo.InvariantCulture.NumberFormat);
@@ -499,6 +591,19 @@ namespace MudBlazor
         private static long FromInt64(T? v) => Convert.ToInt64((long?)(object?)v);
 
         private static ulong FromUInt64(T? v) => Convert.ToUInt64((ulong?)(object?)v);
+
+        private static bool TryFormatAriaValue(T? value, [NotNullWhen(true)] out string? ariaValue)
+        {
+            ariaValue = FormatParam(value);
+            return !string.IsNullOrWhiteSpace(ariaValue);
+        }
+
+        /// <inheritdoc />
+        public override async Task SetParametersAsync(ParameterView parameters)
+        {
+            _cultureParameterSpecified = parameters.Contains<CultureInfo>(nameof(Culture));
+            await base.SetParametersAsync(parameters);
+        }
 
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()

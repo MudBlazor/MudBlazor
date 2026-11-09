@@ -4,7 +4,6 @@
 *@
 
 @{
-#nullable enable
 #pragma warning disable IL2111
 }
 
@@ -14,8 +13,7 @@
 @inject InternalMudLocalizer Localizer
 
 @_css
-<div role="alert"
-     aria-live="polite"
+<div role="@Role"
      class="@SnackbarClass"
      style="@AnimationStyle"
      @onclick="this.AsNonRenderingEventHandler(SnackbarClicked)"

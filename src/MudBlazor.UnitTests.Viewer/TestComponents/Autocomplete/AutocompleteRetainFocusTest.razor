@@ -12,7 +12,7 @@
                  SearchFunc="Search"
                  Class="mt-18"
                  Clearable="true" />
-<MudText>@($"Text: {_autocomp1?.Text} Value: {_autocomp1?.Value} Local Value: {_messageBoxValue}")</MudText>
+<MudText>@($"Text: {_autocomp1?.ReadText} Value: {_autocomp1?.Value} Local Value: {_messageBoxValue}")</MudText>
 
 <MudSelect T="string" @ref="_select1"
            Value="_dialogValue"
@@ -25,7 +25,7 @@
         <MudSelectItem Value="@state" />
     }
 </MudSelect>
-<MudText>@($"Text: {_select1?.Text} Value: {_select1?.Value} Local Value: {_dialogValue}")</MudText>
+<MudText>@($"Text: {_select1?.ReadText} Value: {_select1?.Value} Local Value: {_dialogValue}")</MudText>
 <MudAutocomplete @ref="_workaroundAutocomplete"
                     T="string"
                     Value="_workaroundValue"
@@ -35,7 +35,7 @@
                     Class="mt-18"
                     Clearable="true"
                     OpenOnFocus="false" />
-<MudText>@($"Text: {_workaroundAutocomplete?.Text} Value: {_workaroundAutocomplete?.Value} Local Value: {_workaroundValue}")</MudText>
+<MudText>@($"Text: {_workaroundAutocomplete?.ReadText} Value: {_workaroundAutocomplete?.Value} Local Value: {_workaroundValue}")</MudText>
 <MudMessageBox @ref="_msgBox"
                 Title="Warning"
                 CancelText="Cancel">

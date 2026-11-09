@@ -39,14 +39,14 @@
             case 0:
                 if (_step1Complete != true) 
                 {
-                    await DialogService.ShowMessageBox("Error", "You have not flipped the switch in step 1");
+                    await DialogService.ShowMessageBoxAsync("Error", "You have not flipped the switch in step 1");
                     arg.Cancel = true;
                 }
                 break;
             case 1:
                 if ((_step2TextInput?.Length ?? 0) == 0) 
                 {
-                    await DialogService.ShowMessageBox("Error", "You have not entered text in step 2");
+                    await DialogService.ShowMessageBoxAsync("Error", "You have not entered text in step 2");
                     arg.Cancel = true;
                 }
                 break;
@@ -59,14 +59,14 @@
             case 1:
                 if (_step1Complete != true) 
                 {
-                    await DialogService.ShowMessageBox("Error", "Finish step 1 first");
+                    await DialogService.ShowMessageBoxAsync("Error", "Finish step 1 first");
                     arg.Cancel = true;
                 }
                 break;
             case 2:
                 if (_step1Complete != true || (_step2TextInput?.Length ?? 0) == 0) 
                 {
-                    await DialogService.ShowMessageBox("Error", "Finish step 1 and 2 first");
+                    await DialogService.ShowMessageBoxAsync("Error", "Finish step 1 and 2 first");
                     arg.Cancel = true;
                 }
                 break;

@@ -3,11 +3,12 @@ using Microsoft.Extensions.Localization;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// The <see cref="InternalMudLocalizer"/> service forwards translations to the <see cref="ILocalizationInterceptor"/> service.
-/// By default, the <see cref="DefaultLocalizationInterceptor"/> is used, though custom implementations can be provided.
+/// Internal localization entry point that delegates translation work to configured interceptors.
 /// </summary>
+/// <remarks>
+/// Components access localization through this class so they can be decoupled from specific resource providers. By default it uses <see cref="DefaultLocalizationInterceptor"/>, but applications can plug in custom interceptors.
+/// </remarks>
 internal sealed class InternalMudLocalizer
 {
     private readonly ILocalizationInterceptor _interceptor;
@@ -42,8 +43,12 @@ internal sealed class InternalMudLocalizer
     /// </summary>
     /// <param name="key">The name of the string resource.</param>
     /// <param name="arguments">The list of arguments to be passed to the string resource.</param>
-    /// <returns>The string resource as a <see cref="LocalizedString" />.</returns>
-    public LocalizedString this[string key, params object[] arguments] => _interceptor.Handle(key, arguments);
+    /// <returns>The localized string resource.</returns>
+    /// <remarks>
+    /// Returns <see cref="string" /> rather than <see cref="LocalizedString" /> so components can pass the result straight to a parameter or attribute.
+    /// Blazor compares parameters by value only for known-immutable types, so a freshly allocated <see cref="LocalizedString" /> would read as changed on every render and rebuild the child.
+    /// </remarks>
+    public string this[string key, params object[] arguments] => _interceptor.Handle(key, arguments).Value;
 
     /// <summary>
     /// Localizes the specified enumeration value.

@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Indicates the size of a component.
 /// </summary>
+[EnumExtensions]
 public enum Size
 {
     /// <summary>

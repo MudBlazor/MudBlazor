@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Factory interface for creating instances of <see cref="IScrollSpy"/>.
 /// </summary>

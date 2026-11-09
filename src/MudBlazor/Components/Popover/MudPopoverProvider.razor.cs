@@ -7,7 +7,6 @@ using MudBlazor.Interfaces;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A required component which manages all MudBlazor popovers.
@@ -20,7 +19,7 @@ namespace MudBlazor
     /// <seealso cref="MudSnackbarProvider"/>
     public partial class MudPopoverProvider : IDisposable, IPopoverObserver
     {
-        private bool _isConnectedToService = false;
+        private bool _isConnectedToService;
 
         [Inject]
         internal IPopoverService PopoverService { get; set; } = null!;
@@ -47,7 +46,7 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override void OnInitialized()
         {
-            if (Enabled == false)
+            if (!Enabled)
             {
                 return;
             }

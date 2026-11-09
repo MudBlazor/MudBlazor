@@ -1,0 +1,24 @@
+﻿<MudTabs TabButtonsClass="mud-tabs-button-class" TabPanelsClass="mud-tabs-panel-class" @bind-ActivePanelIndex="@SelectedTab" @ref="Tabs">
+    <MudTabPanel Class="mud-tab-panel-button-class-1" PanelClass="mud-tab-panel-panel-class-1">
+        <ChildContent>
+            <MudText>Tab content one</MudText>
+        </ChildContent>
+        <TabContent>
+            Item One
+        </TabContent>
+    </MudTabPanel>
+    <MudTabPanel Class="mud-tab-panel-button-class-2" PanelClass="mud-tab-panel-panel-class-2">
+        <ChildContent>
+            <MudText>Tab content two</MudText>
+        </ChildContent>
+        <TabContent>
+            Item Two
+        </TabContent>
+    </MudTabPanel>
+</MudTabs>
+
+@code {
+    public static int SelectedTab { get; set; } = 1;
+
+    public MudTabs Tabs { get; set; } = null!;
+}

@@ -2,18 +2,23 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Represents the grouping information for columns in a <see cref="MudDataGrid{T}"/>.
+/// One level of row grouping in a <see cref="MudDataGrid{T}"/>, holding the grouped items, key path, expansion state, and any nested subgroup.
 /// </summary>
-/// <typeparam name="T"></typeparam>
-public class GroupDefinition<T>
+/// <typeparam name="T">The type of item being grouped.</typeparam>
+public class GroupDefinition<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
 {
     private GroupDefinition<T>? _innerGroup;
+
+    /// <summary>
+    /// The <see cref="MudDataGrid{T}"/> which contains this group definition.
+    /// </summary>
+    public required MudDataGrid<T> DataGrid { get; init; }
 
     /// <summary>
     /// The LINQ definition of the grouping.
@@ -21,12 +26,18 @@ public class GroupDefinition<T>
     public required IGrouping<object?, T> Grouping { get; set; }
 
     /// <summary>
+    /// List of keys representing the path of this group across all grouping levels.
+    /// Each item in the list corresponds to a grouping level.
+    /// </summary>
+    public required GroupKeyPath KeyPath { get; init; }
+
+    /// <summary>
     /// The function which selects items for this group.
     /// </summary>
     /// <remarks>
     /// Typically used during a LINQ <c>GroupBy()</c> call to group items.
     /// </remarks>
-    public Func<T, object> Selector { get; set; } = default!;
+    public Func<T, object?>? Selector { get; set; } = default!;
 
     /// <summary>
     /// Expands this group.
@@ -44,7 +55,7 @@ public class GroupDefinition<T>
     /// <summary>
     /// The title of the grouped column
     /// </summary>
-    public string Title { get; set; } = string.Empty;
+    public string? Title { get; set; } = string.Empty;
 
     /// <summary>
     /// The group definition within this definition.

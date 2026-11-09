@@ -3,12 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
 /// Indicates the types of selections allowed.
 /// </summary>
+[EnumExtensions]
 public enum SelectionMode
 {
     /// <summary>

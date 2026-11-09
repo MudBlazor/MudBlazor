@@ -8,7 +8,6 @@ using System.Linq;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A definition of a group within a <see cref="MudTable{T}"/>.
@@ -43,6 +42,14 @@ namespace MudBlazor
         /// The label for this group.
         /// </summary>
         public string? GroupName { get; set; }
+
+        /// <summary>
+        /// The CSS classes applied to the header row of this group.
+        /// </summary>
+        /// <remarks>
+        /// Applies only to this grouping level.  Nested groups use their own <see cref="GroupHeaderClass"/> value.
+        /// </remarks>
+        public string? GroupHeaderClass { get; set; }
 
         /// <summary>
         /// The function which selects items for this group.

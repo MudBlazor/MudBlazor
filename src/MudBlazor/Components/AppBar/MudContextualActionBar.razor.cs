@@ -7,7 +7,6 @@ using MudBlazor.State;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// A contextual app bar.

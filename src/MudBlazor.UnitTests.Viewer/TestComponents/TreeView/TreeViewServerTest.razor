@@ -3,8 +3,7 @@
         <MudTreeViewItem 
             Text="@context.Text"
             Value="@context.Value"
-            Items="@context.Children"
-            ItemsChanged="@(new Action<IReadOnlyCollection<TreeItemData<string?>>?>(items =>  OnItemsLoaded(context, items)))"
+            @bind-Items="context.Children"
             Icon="@context.Icon"
             CanExpand="@context.Expandable"
             Expanded="@context.Expanded"
@@ -15,6 +14,7 @@
 @code {
 
     private readonly List<TreeItemData<string?>> _treeItems = [];
+    public IReadOnlyList<TreeItemData<string?>> TreeItems => _treeItems;
     private int _idCounter = 1;
     protected override void OnInitialized()
     {
@@ -42,10 +42,4 @@
         });
     }
 
-    private void OnItemsLoaded(TreeItemData<string?> treeItemData, IReadOnlyCollection<TreeItemData<string?>>? children)
-    {
-        // here we store the server-loaded children in the treeItemData so that they are available in the InitialTreeItems
-        // if you don't do this you loose already loaded children on next render update
-        treeItemData.Children = children?.ToList();
-    }
 }

@@ -12,7 +12,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A location which can participate in a drag-and-drop operation.
@@ -26,9 +25,14 @@ namespace MudBlazor
         private bool _canDrop = false;
         private bool _dragInProgress = false;
         private bool _disposedValue = false;
-        private string _id = MudBlazor.Identifier.Create();
+        private readonly string _id = MudBlazor.Identifier.Create();
 
-        private Dictionary<T, int> _indices = new();
+        // The id actually rendered on the drop-zone div: a consumer-supplied id (splatted after the explicit id, so it
+        // wins) overrides _id. mudDragAndDrop.initDropZone does document.getElementById on this value with no null guard,
+        // so it must target the rendered id or it throws when the consumer sets a custom id.
+        private string ResolvedElementId => GetEffectiveElementId(_id);
+
+        private readonly Dictionary<T, int> _indices = new();
 
         [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
@@ -63,7 +67,7 @@ namespace MudBlazor
         public RenderFragment<T>? ItemRenderer { get; set; }
 
         /// <summary>
-        /// The function which determines whether an item can be dropped within this drop zone.
+        /// The function which determines whether an item is within this <see cref="MudDropZone{T}"/> .
         /// </summary>
         /// <remarks>
         /// When set, overrides the <see cref="MudDropContainer{T}.ItemsSelector"/> function.
@@ -491,7 +495,7 @@ namespace MudBlazor
         {
             if (firstRender)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudDragAndDrop.initDropZone", _id.ToString());
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudDragAndDrop.initDropZone", ResolvedElementId);
             }
 
             await base.OnAfterRenderAsync(firstRender);

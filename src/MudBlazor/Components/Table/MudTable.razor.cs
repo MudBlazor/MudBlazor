@@ -1,24 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Extensions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
-    // note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
+
+    // Note: the MudTable code is split. Everything depending on the type parameter T of MudTable<T> is here in MudTable<T>
 
     /// <summary>
-    /// A sortable, filterable table with multiselection and pagination.
+    /// A sortable, filterable table with multiselection, pagination, responsive layout, and child rows.
     /// </summary>
     /// <typeparam name="T">The type of item displayed in this table.</typeparam>
     public partial class MudTable<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] T> : MudTableBase, IDisposable
     {
+        [Inject]
+        private IJSRuntime JSRuntime { get; set; } = null!;
+        [Inject]
+        private IScrollManager ScrollManager { get; set; } = null!;
+
+        private readonly string _tableId = Identifier.Create("mudtable_");
         private T? _selectedItem;
         private IEnumerable<T>? _items;
         private IEnumerable<T>? _preEditSort;
@@ -26,13 +29,24 @@ namespace MudBlazor
         private TableGroupDefinition<T>? _groupBy;
         private bool _currentRenderFilteredItemsCached;
         private CancellationTokenSource? _cancellationTokenSrc;
-        private TableData<T> _serverData = new() { TotalItems = 0, Items = Array.Empty<T>() };
+        private TableData<T> _serverData = new() { TotalItems = 0, Items = [] };
 
         [MemberNotNullWhen(true, nameof(_preEditSort))]
         private bool HasPreEditSort => _preEditSort is not null;
 
         [MemberNotNullWhen(true, nameof(ServerData))]
         internal override bool HasServerData => ServerData is not null;
+
+        /// <summary>
+        /// Determines if the table is currently operating with active virtualization.
+        /// Virtualization is considered active if Virtualize is true and a Height is specified.
+        /// </summary>
+        protected bool IsVirtualized => Virtualize && !string.IsNullOrEmpty(Height);
+
+        protected string TableClassname =>
+            new CssBuilder("mud-table-root")
+                .AddClass(TableClass)
+                .Build();
 
         /// <summary>
         /// The columns for each row in this table.
@@ -58,7 +72,7 @@ namespace MudBlazor
         /// The columns for each row when a row is being edited.
         /// </summary>
         /// <remarks>
-        /// Use <see cref="MudTd"/> to define columns, and <c>context</c> to access item properties for each column.  Typically looks similar to rows in <see cref="RowTemplate"/> but with edit components.
+        /// Use <see cref="MudTd"/> to define columns, and <c>context</c> to access item properties for each column. Typically looks similar to rows in <see cref="RowTemplate"/> but with edit components.
         /// </remarks>        
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
@@ -68,11 +82,37 @@ namespace MudBlazor
         /// The function which determines if a row can be edited.
         /// </summary>
         /// <remarks>
-        /// Make the function return <c>true</c> to allow editing, and <c>false</c> to prevent it.  When no value is set, all rows are considered editable.
+        /// Make the function return <c>true</c> to allow editing, and <c>false</c> to prevent it. When no value is set, all rows are considered editable.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Editing)]
         public Func<T, bool>? RowEditableFunc { get; set; }
+
+        /// <summary>
+        /// The function which determines if a row is disabled.
+        /// A disabled row ignores mouse events and uses <c>--mud-palette-text-disabled</c> as color.
+        /// </summary>
+        /// <remarks>
+        /// Make the function return <c>true</c> to diable the corresponding row. When no value is set, all rows are considered enabled.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Behavior)]
+        public Func<T, bool>? RowDisabledFunc { get; set; }
+
+        /// <summary>
+        /// The class to use for disabled rows.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>mud-table-row-disabled</c>
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string DisabledRowClass { get; set; } = "mud-table-row-disabled";
+
+        private bool IsRowDisabled(T item)
+        {
+            return RowDisabledFunc != null && RowDisabledFunc(item);
+        }
 
         private bool IsItemEditable(T item)
         {
@@ -90,13 +130,12 @@ namespace MudBlazor
         }
 
         #region Code for column based approach
-
         /// <summary>
         /// The columns for each row in this table.
         /// </summary>
         [Parameter]
         [Category(CategoryTypes.Table.Behavior)]
-        public RenderFragment<T>? Columns { get; set; }
+        public RenderFragment<T?>? Columns { get; set; }
 
         // Workaround because "where T : new()" didn't work with Blazor components
         // T must have a default constructor, otherwise we cannot show headers when Items collection
@@ -122,7 +161,6 @@ namespace MudBlazor
                 Loading = true;
             }
         }
-
         #endregion
 
         /// <summary>
@@ -136,11 +174,33 @@ namespace MudBlazor
         public RenderFragment? NoRecordsContent { get; set; }
 
         /// <summary>
-        /// The content shown while table data is loading and the table has no rows.
+        /// The content shown while <c>Loading</c> is <c>true</c> and the table has no rows.
         /// </summary>
+        /// <remarks>
+        /// Rendered as a single table row containing one cell that spans the table width.
+        /// Use this for simple messages or placeholders (for example "Loading…").<br/>
+        /// This content is displayed in addition to the table's loading animation.<br/>
+        /// For multi-row or multi-column loading layouts, use <see cref="LoadingContentBody"/> instead.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Data)]
         public RenderFragment? LoadingContent { get; set; }
+
+        /// <summary>
+        /// The content shown while <c>Loading</c> is <c>true</c> and the table has no rows.
+        /// </summary>
+        /// <remarks>
+        /// Rendered directly into the table body at the top.
+        /// You must supply valid table row/cell markup (for example <c>&lt;MudTr&gt;</c> and <c>&lt;MudTd&gt;</c>).
+        /// If you place plain text or non-table markup here most browsers will ignore it.
+        /// Use this when you need to produce arbitrary rows and columns while the table is loading.<br/>
+        /// This content is displayed in addition to the table's loading animation.<br/>
+        /// For a single row column loading layout or text, use <see cref="LoadingContent"/> instead.<br/>
+        /// This value is optional, and will override <see cref="LoadingContent"/> if not <c>null</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Data)]
+        public RenderFragment? LoadingContentBody { get; set; }
 
         /// <summary>
         /// Shows a horizontal scroll bar if the content exceeds the maximum width.
@@ -167,11 +227,16 @@ namespace MudBlazor
             get => _items;
             set
             {
-                if (_items == value)
+                if (ReferenceEquals(_items, value))
+                {
                     return;
+                }
+
                 _items = value;
                 if (Context?.PagerStateHasChanged != null)
+                {
                     InvokeAsync(Context.PagerStateHasChanged);
+                }
             }
         }
 
@@ -183,7 +248,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Filtering)]
-        public Func<T, bool>? Filter { get; set; } = null;
+        public Func<T, bool>? Filter { get; set; }
 
         /// <summary>
         /// Occurs when a row has been clicked.
@@ -191,15 +256,19 @@ namespace MudBlazor
         [Parameter]
         public EventCallback<TableRowClickEventArgs<T>> OnRowClick { get; set; }
 
-        internal override async Task FireRowClickEventAsync(MouseEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowClickEventAsync(MouseEventArgs args, MudTr mudTr, object? item)
         {
-            var item = default(T);
+            var typedItem = default(T);
             try
             {
-                item = (T?)o;
+                typedItem = (T?)item;
             }
-            catch (Exception) { /*ignore*/}
-            await OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>(args, row, item));
+            catch (Exception)
+            {
+                /*ignore*/
+            }
+
+            await OnRowClick.InvokeAsync(new TableRowClickEventArgs<T>(args, mudTr, typedItem));
         }
 
         /// <summary>
@@ -210,15 +279,19 @@ namespace MudBlazor
 
         internal override bool HasRowMouseEnterEventHandler => OnRowMouseEnter.HasDelegate;
 
-        internal override async Task FireRowMouseEnterEventAsync(PointerEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowMouseEnterEventAsync(PointerEventArgs args, MudTr mudTr, object? item)
         {
-            var item = default(T);
+            var typedItem = default(T);
             try
             {
-                item = (T?)o;
+                typedItem = (T?)item;
             }
-            catch (Exception) { /*ignore*/}
-            await OnRowMouseEnter.InvokeAsync(new TableRowHoverEventArgs<T>(args, row, item));
+            catch (Exception)
+            {
+                /*ignore*/
+            }
+
+            await OnRowMouseEnter.InvokeAsync(new TableRowHoverEventArgs<T>(args, mudTr, typedItem));
         }
 
         /// <summary>
@@ -229,15 +302,19 @@ namespace MudBlazor
 
         internal override bool HasRowMouseLeaveEventHandler => OnRowMouseLeave.HasDelegate;
 
-        internal override async Task FireRowMouseLeaveEventAsync(PointerEventArgs args, MudTr row, object? o)
+        internal override async Task FireRowMouseLeaveEventAsync(PointerEventArgs args, MudTr mudTr, object? item)
         {
-            var item = default(T);
+            var typedItem = default(T);
             try
             {
-                item = (T?)o;
+                typedItem = (T?)item;
             }
-            catch (Exception) { /*ignore*/}
-            await OnRowMouseLeave.InvokeAsync(new TableRowHoverEventArgs<T>(args, row, item));
+            catch (Exception)
+            {
+                /*ignore*/
+            }
+
+            await OnRowMouseLeave.InvokeAsync(new TableRowHoverEventArgs<T>(args, mudTr, typedItem));
         }
 
         /// <summary>
@@ -261,6 +338,39 @@ namespace MudBlazor
         public Func<T, int, string>? RowStyleFunc { get; set; }
 
         /// <summary>
+        /// The function which returns the URL a row links to.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// When the function returns a URL, the first cell of the row renders a link that covers the whole row, so the browser handles navigation, opening in a new tab (Ctrl/Cmd+click or middle click) and copying the link.
+        /// The link is named after the first cell's content.
+        /// Return <c>null</c> to keep a row unlinked.
+        /// <see cref="OnRowClick"/> is still raised when a linked row is clicked.
+        /// Use <see cref="RowTarget"/> to control where the URL is opened.
+        /// No link is rendered for disabled rows, the row being edited, or when a row click already edits or selects the row (<see cref="RowEditingTemplate"/> with <see cref="TableEditTrigger.RowClick"/>, or <see cref="MudTableBase.MultiSelection"/> with <see cref="MudTableBase.SelectOnRowClick"/>).
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
+        public Func<T, string?>? RowHref { get; set; }
+
+        /// <summary>
+        /// The target to open row URLs in when <see cref="RowHref"/> is set.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which opens the URL in the current tab.
+        /// <c>_blank</c> adds <c>rel="noopener"</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
+        public string? RowTarget { get; set; }
+
+        internal override bool HasRowLinks => RowHref is not null;
+
+        internal override string? GetRowHref(object? item) => RowHref is not null && item is T typedItem ? RowHref(typedItem) : null;
+
+        internal override string? RowLinkTarget => RowTarget;
+
+        /// <summary>
         /// The currently selected item when <c>MultiSelection</c> is <c>false</c>.
         /// </summary>
         /// <remarks>
@@ -274,9 +384,15 @@ namespace MudBlazor
             set
             {
                 if (_comparer != null && _comparer.Equals(SelectedItem, value))
+                {
                     return;
+                }
+
                 if (EqualityComparer<T>.Default.Equals(SelectedItem, value))
+                {
                     return;
+                }
+
                 _selectedItem = value;
                 SelectedItemChanged.InvokeAsync(value);
             }
@@ -304,25 +420,35 @@ namespace MudBlazor
             get
             {
                 if (!MultiSelection)
-                    if (_selectedItem is null)
-                        return new HashSet<T>(Array.Empty<T>(), _comparer);
-                    else
-                        return new HashSet<T>(new T[] { _selectedItem }, _comparer);
+                {
+                    return _selectedItem is null
+                        ? new HashSet<T>([], _comparer)
+                        : new HashSet<T>([_selectedItem], _comparer);
+                }
 
                 return Context.Selection;
             }
             set
             {
                 if (value == Context.Selection)
+                {
                     return;
+                }
+
                 if (value == null)
                 {
                     if (Context.Selection.Count == 0)
+                    {
                         return;
+                    }
+
                     Context.Selection = new HashSet<T>(_comparer);
                 }
                 else
+                {
                     Context.Selection = value;
+                }
+
                 SelectedItemsChanged.InvokeAsync(Context.Selection);
                 InvokeAsync(StateHasChanged);
             }
@@ -330,10 +456,13 @@ namespace MudBlazor
 
         /// <summary>
         /// Checks if the row is selected.
-        /// If there is set a Comparer, uses the comparer, otherwise uses a direct contains
+        /// Uses a hash set lookup when the selection comparer matches the table comparer.
+        /// Otherwise, uses the table comparer to check each selected item.
         /// </summary>
-        protected bool IsCheckedRow(T item)
-            => _comparer is not null ? Context.Selection.Any(x => _comparer.Equals(x, item)) : Context.Selection.Contains(item);
+        protected bool IsCheckedRow(T item) =>
+            _comparer is null || ReferenceEquals(Context.Selection.Comparer, _comparer)
+                ? Context.Selection.Contains(item)
+                : Context.Selection.Any(x => _comparer.Equals(x, item));
 
         /// <summary>
         /// The comparer used to determine selected items.
@@ -345,8 +474,13 @@ namespace MudBlazor
             get => _comparer;
             set
             {
-                if (value == _comparer) return;
+                if (ReferenceEquals(value, _comparer))
+                {
+                    return;
+                }
+
                 _comparer = value;
+
                 // Apply comparer and (selected values are refreshed in the Context.Comparer setter)
                 Context.Comparer = _comparer;
             }
@@ -375,10 +509,16 @@ namespace MudBlazor
             set
             {
                 _groupBy = value;
-                if (_groupBy != null)
-                    _groupBy.Context = Context;
+                _groupBy?.Context = Context;
             }
         }
+
+        /// <summary>
+        /// The custom CSS classes to apply to the table.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.Table.Appearance)]
+        public string? TableClass { get; set; }
 
         /// <summary>
         /// The content for the header of each group when <see cref="GroupBy"/> is set.
@@ -450,38 +590,68 @@ namespace MudBlazor
             get
             {
                 if (_currentRenderFilteredItemsCached)
-                    return _preEditSort ?? Array.Empty<T>();
+                {
+                    return _preEditSort ?? [];
+                }
+
                 if (Editing && HasPreEditSort)
+                {
                     return _preEditSort;
+                }
+
                 if (HasServerData)
+                {
                     _preEditSort = _serverData.Items?.ToList();
+                }
                 else if (Filter == null)
+                {
                     _preEditSort = Context.Sort(Items)?.ToList();
+                }
                 else
+                {
                     _preEditSort = Context.Sort(Items?.Where(Filter))?.ToList();
+                }
 
                 _currentRenderFilteredItemsCached = true;
-                unchecked { FilteringRunCount++; }
+                unchecked
+                {
+                    FilteringRunCount++;
+                }
 
-                return _preEditSort ?? Array.Empty<T>();
+                return _preEditSort ?? [];
             }
         }
+
+        /// <summary>
+        /// Renders the built-in loading progress bar.
+        /// </summary>
+        /// <remarks>
+        /// Custom loading content (<see cref="LoadingContent"/> or <see cref="LoadingContentBody"/>) replaces the progress bar when it is displayed, which is when the current page has no items.
+        /// When items are still present, for example during a refresh, the progress bar is shown instead.
+        /// </remarks>
+        private bool ShowLoadingProgress =>
+            Loading && (CurrentPageItems.Any() || (LoadingContent is null && LoadingContentBody is null));
 
         protected IEnumerable<T> CurrentPageItems
         {
             get
             {
-                if (@PagerContent == null)
+                if (PagerContent == null)
+                {
                     return FilteredItems; // we have no pagination
+                }
+
                 if (!HasServerData)
                 {
                     var filteredItemCount = GetFilteredItemsCount();
-                    int lastPageNo;
-                    if (filteredItemCount == 0)
-                        lastPageNo = 0;
-                    else
-                        lastPageNo = (filteredItemCount / RowsPerPage) - (filteredItemCount % RowsPerPage == 0 ? 1 : 0);
-                    CurrentPage = lastPageNo < CurrentPage ? lastPageNo : CurrentPage;
+                    var lastPageNo = filteredItemCount == 0
+                        ? 0
+                        : (filteredItemCount / RowsPerPage);
+                    if (filteredItemCount > 0 && filteredItemCount % RowsPerPage == 0)
+                    {
+                        lastPageNo -= 1;
+                    }
+                    SetCurrentPage(lastPageNo < CurrentPage ? lastPageNo : CurrentPage);
                 }
 
                 return GetItemsOfPage(CurrentPage, RowsPerPage);
@@ -491,24 +661,22 @@ namespace MudBlazor
         protected IEnumerable<T> GetItemsOfPage(int n, int pageSize)
         {
             if (n < 0 || pageSize <= 0)
-                return Array.Empty<T>();
+            {
+                return [];
+            }
 
             if (HasServerData)
-                return _serverData.Items ?? Array.Empty<T>();
+            {
+                return _serverData.Items ?? [];
+            }
 
             return FilteredItems.Skip(n * pageSize).Take(pageSize);
         }
 
-        protected override int NumPages
-        {
-            get
-            {
-                if (HasServerData)
-                    return (int)Math.Ceiling(_serverData.TotalItems / (double)RowsPerPage);
-
-                return (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
-            }
-        }
+        /// <inheritdoc/>
+        protected override int NumPages => HasServerData
+            ? (int)Math.Ceiling(_serverData.TotalItems / (double)RowsPerPage)
+            : (int)Math.Ceiling(FilteredItems.Count() / (double)RowsPerPage);
 
         /// <summary>
         /// Gets the number of filtered items.
@@ -516,9 +684,9 @@ namespace MudBlazor
         /// <returns>When <see cref="ServerData"/> is set, the total number of items, otherwise the number of <see cref="FilteredItems"/>.</returns>
         public override int GetFilteredItemsCount()
         {
-            if (HasServerData)
-                return _serverData.TotalItems;
-            return FilteredItems.Count();
+            return HasServerData
+                ? _serverData.TotalItems
+                : FilteredItems.Count();
         }
 
         /// <summary>
@@ -537,7 +705,37 @@ namespace MudBlazor
         public override void SetEditingItem(object? item)
         {
             if (!ReferenceEquals(_editingItem, item))
+            {
                 _editingItem = item;
+            }
+        }
+
+        /// <summary>
+        /// Gets the position of an item within <see cref="FilteredItems"/>, or <c>-1</c> when it is not present.
+        /// </summary>
+        /// <remarks>
+        /// Equivalent to <c>FilteredItems.ToList().IndexOf(item)</c> without copying the filtered list, which the row markup would otherwise do once per rendered row.
+        /// </remarks>
+        internal int GetFilteredItemIndex(T item)
+        {
+            var filteredItems = FilteredItems;
+            if (filteredItems is IList<T> list)
+            {
+                return list.IndexOf(item);
+            }
+
+            var index = 0;
+            foreach (var candidate in filteredItems)
+            {
+                if (EqualityComparer<T>.Default.Equals(candidate, item))
+                {
+                    return index;
+                }
+
+                index++;
+            }
+
+            return -1;
         }
 
         /// <summary>
@@ -549,7 +747,10 @@ namespace MudBlazor
         {
             var t = item.As<T>();
             if (t is null)
+            {
                 return false;
+            }
+
             return Items?.Contains(t) ?? false;
         }
 
@@ -579,12 +780,20 @@ namespace MudBlazor
         private void OnRowCheckboxChanged(bool checkedState, T item)
         {
             if (checkedState)
+            {
                 Context.Selection.Add(item);
+            }
             else
+            {
                 Context.Selection.Remove(item);
+            }
+
+            Context.UpdateRowCheckBoxes();
 
             if (SelectedItemsChanged.HasDelegate)
+            {
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
+            }
         }
 
         internal override void OnHeaderCheckboxClicked(bool checkedState)
@@ -592,15 +801,21 @@ namespace MudBlazor
             if (checkedState)
             {
                 foreach (var item in FilteredItems)
+                {
                     Context.Selection.Add(item);
+                }
             }
             else
+            {
                 Context.Selection.Clear();
+            }
 
             Context.UpdateRowCheckBoxes();
 
             if (SelectedItemsChanged.HasDelegate)
+            {
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
+            }
         }
 
         /// <summary>
@@ -616,23 +831,36 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Data)]
         public Func<TableState, CancellationToken, Task<TableData<T>>>? ServerData { get; set; }
 
-        private void CancelToken()
+        private CancellationToken CancelToken()
         {
+            // Swap in a fresh source before cancelling so the next load never observes the cancelled one.
+            // Cancelling can resume a superseded load whose caller starts another load and replaces this source, so its token is read first.
+            var next = new CancellationTokenSource();
+            var token = next.Token;
+            var previous = _cancellationTokenSrc;
+            _cancellationTokenSrc = next;
             try
             {
-                _cancellationTokenSrc?.Cancel();
+                previous?.Cancel();
             }
-            catch { /*ignored*/ }
+            catch
+            {
+                /*ignored*/
+            }
             finally
             {
-                _cancellationTokenSrc = new CancellationTokenSource();
+                previous?.Dispose();
             }
+
+            return token;
         }
 
         internal override async Task InvokeServerLoadFunc()
         {
             if (!HasServerData)
+            {
                 return;
+            }
 
             Loading = true;
             await InvokeAsync(StateHasChanged);
@@ -647,31 +875,64 @@ namespace MudBlazor
             };
 
             // Cancel any prior request
-            CancelToken();
+            var token = CancelToken();
 
             // Get data via the ServerData function
-            _serverData = await ServerData(state, _cancellationTokenSrc!.Token);
+            TableData<T> serverData;
+            try
+            {
+                serverData = await ServerData(state, token);
+            }
+            catch (Exception) when (token.IsCancellationRequested)
+            {
+                // A newer load cancelled this one, and it owns the data and the loading state.
+                // The outcome no longer matters, including a cancellation that the caller's API wrapped in its own exception type.
+                return;
+            }
 
-            if (CurrentPage * RowsPerPage > _serverData.TotalItems)
-                CurrentPage = 0;
+            // Loads can finish out of order, so data from a load that a newer one replaced is stale (#13943).
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
+            _serverData = serverData;
+
+            if (CurrentPage * RowsPerPage >= _serverData.TotalItems)
+            {
+                SetCurrentPage(0);
+
+                // The reset started a load for the first page, so that load ends the loading state and updates the pager.
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
+            }
 
             Loading = false;
             await InvokeAsync(StateHasChanged);
             Context?.PagerStateHasChanged?.Invoke();
         }
 
+        /// <inheritdoc/>
         protected override void OnAfterRender(bool firstRender)
         {
             base.OnAfterRender(firstRender);
             if (!firstRender)
+            {
                 Context?.PagerStateHasChanged?.Invoke();
+            }
         }
 
+        /// <inheritdoc/>
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
             if (firstRender)
+            {
                 await InvokeServerLoadFunc();
+            }
+
             TableContext.UpdateRowCheckBoxes(updateGroups: false);
         }
 
@@ -686,16 +947,10 @@ namespace MudBlazor
             return InvokeServerLoadFunc();
         }
 
-        internal override bool Editable { get => (RowEditingTemplate != null) || (Columns != null); }
+        internal override bool Editable => RowEditingTemplate != null || Columns != null;
 
         //GROUPING:
-        private IEnumerable<IGrouping<object, T>> GroupItemsPage
-        {
-            get
-            {
-                return GetItemsOfGroup(GroupBy, CurrentPageItems);
-            }
-        }
+        private IEnumerable<IGrouping<object, T>> GroupItemsPage => GetItemsOfGroup(GroupBy, CurrentPageItems);
 
         internal IEnumerable<IGrouping<object, T>> GetItemsOfGroup(TableGroupDefinition<T>? parent, IEnumerable<T>? sourceList)
         {
@@ -717,18 +972,24 @@ namespace MudBlazor
             if (checkedState)
             {
                 foreach (var item in items)
+                {
                     Context.Selection.Add(item);
+                }
             }
             else
             {
                 foreach (var item in items)
+                {
                     Context.Selection.Remove(item);
+                }
             }
 
             Context.UpdateRowCheckBoxes();
 
             if (SelectedItemsChanged.HasDelegate)
+            {
                 SelectedItemsChanged.InvokeAsync(SelectedItems);
+            }
         }
 
         /// <summary>
@@ -752,7 +1013,10 @@ namespace MudBlazor
             if (_groupBy is not null)
             {
                 _groupBy.IsInitiallyExpanded = expand;
-                Context?.GroupRows.Where(gr => gr.GroupDefinition == _groupBy).ToList().ForEach(gr => gr.Expanded = _groupBy.IsInitiallyExpanded);
+                Context?.GroupRows
+                    .Where(gr => gr.GroupDefinition == _groupBy)
+                    .ToList()
+                    .ForEach(gr => gr.Expanded = _groupBy.IsInitiallyExpanded);
             }
         }
 
@@ -777,8 +1041,64 @@ namespace MudBlazor
             {
                 _cancellationTokenSrc?.Cancel();
             }
-            catch { /*ignored*/ }
+            catch
+            {
+                /*ignored*/
+            }
+
             _cancellationTokenSrc?.Dispose();
+        }
+
+        /// <summary>
+        /// Scrolls the table to bring the specified item into view.
+        /// </summary>
+        /// <param name="item">The item to scroll to.</param>
+        public async Task ScrollToItemAsync(T item)
+        {
+            var items = FilteredItems.ToList();
+            var itemIndex = items.IndexOf(item);
+
+            if (itemIndex >= 0)
+            {
+                if (IsVirtualized)
+                {
+                    var targetItemId = $"{_tableId}_row_{itemIndex}";
+                    await ScrollManager.ScrollToVirtualizedItemAsync(_tableId, itemIndex, ItemSize, targetItemId, ScrollBehavior.Smooth);
+                }
+                else
+                {
+                    var targetItemId = $"{_tableId}_row_{itemIndex}";
+                    await ScrollManager.ScrollIntoViewAsync($"#{targetItemId}", ScrollBehavior.Smooth);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Scrolls to the specified item and sets focus to a specific cell within its row.
+        /// </summary>
+        /// <param name="item">The item whose row should be focused.</param>
+        /// <param name="cellIndex">The index of the cell to focus within the row.</param>
+        public async Task FocusCellAsync(T item, int cellIndex)
+        {
+            var items = FilteredItems.ToList();
+            var itemIndex = items.IndexOf(item);
+
+            if (itemIndex >= 0)
+            {
+                var targetItemId = $"{_tableId}_row_{itemIndex}";
+
+                if (IsVirtualized)
+                {
+                    await ScrollManager.ScrollToVirtualizedItemAsync(_tableId, itemIndex, ItemSize, targetItemId);
+                }
+                else
+                {
+                    await ScrollManager.ScrollIntoViewAsync($"#{targetItemId}", ScrollBehavior.Auto);
+                }
+
+                await JSRuntime.InvokeVoidAsync("mudTableCell.focusCell", targetItemId, cellIndex);
+                await JSRuntime.InvokeVoidAsync("mudTableCell.selectCell", targetItemId, cellIndex);
+            }
         }
     }
 }

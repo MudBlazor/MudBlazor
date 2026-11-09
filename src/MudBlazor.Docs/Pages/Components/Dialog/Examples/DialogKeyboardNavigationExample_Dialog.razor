@@ -12,7 +12,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">OK</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -35,7 +35,7 @@
             case "Enter":
             case "NumpadEnter":
                 if (string.IsNullOrEmpty(_returnValue)) {
-                    await DialogService.ShowMessageBox(
+                    await DialogService.ShowMessageBoxAsync(
                         "Sorry",
                         @"You must either select a coffee and close with Enter or cancel with Escape!", 
                         yesText:"Got it", 

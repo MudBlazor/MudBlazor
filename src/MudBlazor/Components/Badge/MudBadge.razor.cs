@@ -5,9 +5,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents an overlay added to an icon or button to add information such as a number of new items.
+    /// Badges show notifications, counts, or status information on navigation items and icons.
     /// </summary>
     public partial class MudBadge : MudComponentBase
     {
@@ -16,16 +15,16 @@ namespace MudBlazor
             .Build();
 
         protected string WrapperClass => new CssBuilder("mud-badge-wrapper")
-            .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
+            .AddClass($"mud-badge-{Origin.ToStringFast(true).Replace("-", " ")}")
             .Build();
 
         protected string BadgeClassname => new CssBuilder("mud-badge")
             .AddClass("mud-badge-dot", Dot)
             .AddClass("mud-badge-bordered", Bordered)
             .AddClass("mud-badge-icon", !string.IsNullOrEmpty(Icon) && !Dot)
-            .AddClass($"mud-badge-{Origin.ToDescriptionString().Replace("-", " ")}")
+            .AddClass($"mud-badge-{Origin.ToStringFast(true).Replace("-", " ")}")
             .AddClass($"mud-elevation-{Elevation.ToString()}")
-            .AddClass("mud-theme-" + Color.ToDescriptionString(), Color != Color.Default)
+            .AddClass("mud-theme-" + Color.ToStringFast(true), Color != Color.Default)
             .AddClass("mud-badge-default", Color == Color.Default)
             .AddClass("mud-badge-overlap", Overlap)
             .AddClass(BadgeClass)
@@ -161,6 +160,14 @@ namespace MudBlazor
         [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
 
         private string? _content;
+
+        // Without this gate the badge always registers a DOM click listener, even when nobody subscribed to OnClick.
+        // A null delegate is not enough, because Razor still hands Blazor an EventCallback carrying this component as the receiver, which the render tree treats as a live handler.
+        // Only a default EventCallback keeps the listener off the element.
+        private EventCallback<MouseEventArgs> BadgeClickCallback =>
+            OnClick.HasDelegate
+                ? EventCallback.Factory.Create<MouseEventArgs>(this, this.AsNonRenderingEventHandler<MouseEventArgs>(HandleBadgeClick))
+                : default;
 
         internal Task HandleBadgeClick(MouseEventArgs e)
         {

@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using AngleSharp.Html.Dom;
+﻿using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
-using Microsoft.AspNetCore.Components;
-using MudBlazor.UnitTests.TestComponents;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
@@ -27,12 +18,27 @@ namespace MudBlazor.UnitTests.Components
             stack.Justify.Should().BeNull();
             stack.AlignItems.Should().BeNull();
             stack.StretchItems.Should().BeNull();
+            stack.HtmlTag.Should().Be("div");
+        }
+
+        /// <summary>
+        /// The stack element carries its role, user attributes, class and style.
+        /// </summary>
+        [Test]
+        public void Stack_RendersRoleUserAttributesClassAndStyle()
+        {
+            var stack = Context.Render<MudStack>(parameters => parameters
+                .Add(x => x.Class, "my-class")
+                .Add(x => x.Style, "color:red")
+                .AddUnmatched("data-test", "value"));
+
+            stack.MarkupMatches("""<div role="group" data-test="value" class="d-flex flex-column gap-3 my-class" style="color:red"></div>""");
         }
 
         [Test]
         public void CheckDefaultClass()
         {
-            var stack = Context.RenderComponent<MudStack>();
+            var stack = Context.Render<MudStack>();
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", "gap-3" });
@@ -41,7 +47,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckRowClass()
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.Row, true));
+            var stack = Context.Render<MudStack>(x => x.Add(c => c.Row, true));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-row", "gap-3" });
@@ -50,7 +56,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckReverseClass()
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.Reverse, true));
+            var stack = Context.Render<MudStack>(x => x.Add(c => c.Reverse, true));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column-reverse", "gap-3" });
@@ -76,7 +82,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(16)]
         public void CheckSpacingClass(int spacing)
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.Spacing, spacing));
+            var stack = Context.Render<MudStack>(x => x.Add(c => c.Spacing, spacing));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"gap-{spacing}" });
@@ -133,7 +139,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Breakpoint.XlAndUp, true, true)]
         public void CheckBreakpointClass(Breakpoint breakpoint, bool row = false, bool reverse = false)
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.Breakpoint, breakpoint).Add(c => c.Row, row).Add(c => c.Reverse, reverse));
+            var stack = Context.Render<MudStack>(x => x.Add(c => c.Breakpoint, breakpoint).Add(c => c.Row, row).Add(c => c.Reverse, reverse));
 
             // Get the Default and Reverse States
             string defaultState = (row ? "row" : "column") + (reverse ? "-reverse" : string.Empty);
@@ -209,7 +215,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Justify.SpaceEvenly, "space-evenly")]
         public void CheckJustifyClass(Justify justify, string expectedClass)
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.Justify, justify));
+            var stack = Context.Render<MudStack>(x => x.Add(c => c.Justify, justify));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"justify-{expectedClass}", "gap-3" });
@@ -223,12 +229,11 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(AlignItems.Stretch, "stretch")]
         public void CheckAlignItemsClass(AlignItems align, string expectedClass)
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.AlignItems, align));
+            var stack = Context.Render<MudStack>(x => x.Add(c => c.AlignItems, align));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"align-{expectedClass}", "gap-3" });
         }
-
 
         [Test]
         [TestCase(StretchItems.Start, "start")]
@@ -238,7 +243,7 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(StretchItems.All, "all")]
         public void CheckStretchItemsClass(StretchItems stretch, string expectedClass)
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchItems, stretch));
+            var stack = Context.Render<MudStack>(x => x.Add(c => c.StretchItems, stretch));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().Contain(["d-flex", $"flex-grow-{expectedClass}"]);
@@ -247,7 +252,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void CheckStretchItemsNoneClass()
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.StretchItems, StretchItems.None));
+            var stack = Context.Render<MudStack>(x => x.Add(c => c.StretchItems, StretchItems.None));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().NotContain(["flex-grow-start", "flex-grow-end", "flex-grow-start-and-end", "flex-grow-all"]);
@@ -259,13 +264,50 @@ namespace MudBlazor.UnitTests.Components
         [TestCase(Wrap.WrapReverse, "wrap-reverse")]
         public void CheckWrapClass(Wrap wrap, string expectedClass)
         {
-            var stack = Context.RenderComponent<MudStack>(x => x.Add(c => c.Wrap, wrap));
+            var stack = Context.Render<MudStack>(x => x.Add(c => c.Wrap, wrap));
 
             var stackClass = stack.Find(".d-flex");
             stackClass.ClassList.Should().ContainInOrder(new[] { "d-flex", "flex-column", $"flex-{expectedClass}", "gap-3" });
         }
+
+        [Test]
+        public void HtmlTagSetToUlRendersUlElement()
+        {
+            var stack = Context.Render<MudStack>(x => x.Add(c => c.HtmlTag, "ul"));
+            var stackElement = stack.Find("ul.d-flex");
+
+            stackElement.Should().NotBeNull();
+            stackElement.HasAttribute("role").Should().BeFalse();
+        }
+
+        [Test]
+        public void DefaultStackRendersDivElementWithGroupRole()
+        {
+            var stack = Context.Render<MudStack>();
+            var stackElement = stack.Find("div.d-flex");
+
+            stackElement.Should().NotBeNull();
+            stackElement.GetAttribute("role").Should().Be("group");
+        }
+
+        [Test]
+        public void UserSuppliedRoleOverridesDefaultRoleForDiv()
+        {
+            var divStack = Context.Render<MudStack>(parameters => parameters
+                .AddUnmatched("role", "list"));
+            var divElement = divStack.Find("div.d-flex");
+
+            divElement.GetAttribute("role").Should().Be("list");
+        }
+
+        [Test]
+        public void SemanticTagDoesNotRenderRoleAttribute()
+        {
+            var semanticStack = Context.Render<MudStack>(parameters => parameters
+                .Add(c => c.HtmlTag, "ul"));
+            var semanticElement = semanticStack.Find("ul.d-flex");
+
+            semanticElement.HasAttribute("role").Should().BeFalse();
+        }
     }
 }
-
-
-

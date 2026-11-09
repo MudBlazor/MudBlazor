@@ -12,12 +12,34 @@ public static partial class ApiDocumentation
     /// <summary>
     /// The generated documentation for events.
     /// </summary>
-    public static Dictionary<string, DocumentedEvent> Events { get; private set; } = [];
+    /// <remarks>
+    /// Reading this builds the members of every type, because it can be enumerated.
+    /// Prefer the lookups below, which build only the type that declares the member being looked for.
+    /// </remarks>
+    public static Dictionary<string, DocumentedEvent> Events
+    {
+        get
+        {
+            ApiDocumentationMembers.EnsureAll();
+            return ApiDocumentationMembers.EventsInternal;
+        }
+    }
 
     /// <summary>
     /// The generated documentation for fields.
     /// </summary>
-    public static Dictionary<string, DocumentedField> Fields { get; private set; } = [];
+    /// <remarks>
+    /// Reading this builds the members of every type, because it can be enumerated.
+    /// Prefer the lookups below, which build only the type that declares the member being looked for.
+    /// </remarks>
+    public static Dictionary<string, DocumentedField> Fields
+    {
+        get
+        {
+            ApiDocumentationMembers.EnsureAll();
+            return ApiDocumentationMembers.FieldsInternal;
+        }
+    }
 
     /// <summary>
     /// The generated documentation for types.
@@ -27,12 +49,34 @@ public static partial class ApiDocumentation
     /// <summary>
     /// The generated documentation for properties.
     /// </summary>
-    public static Dictionary<string, DocumentedProperty> Properties { get; private set; }
+    /// <remarks>
+    /// Reading this builds the members of every type, because it can be enumerated.
+    /// Prefer the lookups below, which build only the type that declares the member being looked for.
+    /// </remarks>
+    public static Dictionary<string, DocumentedProperty> Properties
+    {
+        get
+        {
+            ApiDocumentationMembers.EnsureAll();
+            return ApiDocumentationMembers.PropertiesInternal;
+        }
+    }
 
     /// <summary>
     /// The generated documentation for methods.
     /// </summary>
-    public static Dictionary<string, DocumentedMethod> Methods { get; private set; } = [];
+    /// <remarks>
+    /// Reading this builds the members of every type, because it can be enumerated.
+    /// Prefer the lookups below, which build only the type that declares the member being looked for.
+    /// </remarks>
+    public static Dictionary<string, DocumentedMethod> Methods
+    {
+        get
+        {
+            ApiDocumentationMembers.EnsureAll();
+            return ApiDocumentationMembers.MethodsInternal;
+        }
+    }
 
     /// <summary>
     /// Gets an event, field, method, or property by its name.
@@ -51,6 +95,15 @@ public static partial class ApiDocumentation
         {
             return null;
         }
+        // An exact key match needs only the type that declares the member, so every kind is tried by key first.
+        // Going through GetProperty first instead would build every type as soon as the name turned out to be a method, which is what most cross-references are.
+        var match = ApiDocumentationMembers.Member(name);
+        if (match != null)
+        {
+            return match;
+        }
+
+        // No key matched, so fall back to the searches by name, which need every type built.
         DocumentedMember result = GetProperty(name);
         result ??= GetField(name);
         result ??= GetEvent(name);
@@ -146,18 +199,14 @@ public static partial class ApiDocumentation
         {
             return null;
         }
-        // First, try an exact match
-        if (Properties.TryGetValue(name, out var match))
+        // A member's key starts with the key of the type that declares it, so an exact match only needs that one type to be built.
+        var match = ApiDocumentationMembers.Property(name) ?? ApiDocumentationMembers.Property("MudBlazor." + name);
+        if (match != null)
         {
             return match;
         }
-        // Next, try with the MudBlazor namespace
-        if (Properties.TryGetValue("MudBlazor." + name, out match))
-        {
-            return match;
-        }
-        // Find a match by name
-        var byName = Properties.SingleOrDefault(type => type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        // Nothing matched by key.  Fall back to a search by name, which needs every type built.
+        var byName = Properties.SingleOrDefault(member => member.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         return byName.Value;
     }
 
@@ -172,18 +221,14 @@ public static partial class ApiDocumentation
         {
             return null;
         }
-        // First, try an exact match
-        if (Fields.TryGetValue(name, out var match))
+        // A member's key starts with the key of the type that declares it, so an exact match only needs that one type to be built.
+        var match = ApiDocumentationMembers.Field(name) ?? ApiDocumentationMembers.Field("MudBlazor." + name);
+        if (match != null)
         {
             return match;
         }
-        // Next, try with the MudBlazor namespace
-        if (Fields.TryGetValue("MudBlazor." + name, out match))
-        {
-            return match;
-        }
-        // Find a match by name
-        var byName = Fields.SingleOrDefault(type => type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        // Nothing matched by key.  Fall back to a search by name, which needs every type built.
+        var byName = Fields.SingleOrDefault(member => member.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         return byName.Value;
     }
 
@@ -198,18 +243,14 @@ public static partial class ApiDocumentation
         {
             return null;
         }
-        // First, try an exact match
-        if (Methods.TryGetValue(name, out var match))
+        // A member's key starts with the key of the type that declares it, so an exact match only needs that one type to be built.
+        var match = ApiDocumentationMembers.Method(name) ?? ApiDocumentationMembers.Method("MudBlazor." + name);
+        if (match != null)
         {
             return match;
         }
-        // Next, try with the MudBlazor namespace
-        if (Methods.TryGetValue("MudBlazor." + name, out match))
-        {
-            return match;
-        }
-        // Find a match by name
-        var byName = Methods.SingleOrDefault(type => type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        // Nothing matched by key.  Fall back to a search by name, which needs every type built.
+        var byName = Methods.SingleOrDefault(member => member.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         return byName.Value;
     }
 
@@ -224,18 +265,14 @@ public static partial class ApiDocumentation
         {
             return null;
         }
-        // First, try an exact match
-        if (Events.TryGetValue(name, out var match))
+        // A member's key starts with the key of the type that declares it, so an exact match only needs that one type to be built.
+        var match = ApiDocumentationMembers.Event(name) ?? ApiDocumentationMembers.Event("MudBlazor." + name);
+        if (match != null)
         {
             return match;
         }
-        // Next, try with the MudBlazor namespace
-        if (Events.TryGetValue("MudBlazor." + name, out match))
-        {
-            return match;
-        }
-        // Find a match by name
-        var byName = Events.SingleOrDefault(type => type.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        // Nothing matched by key.  Fall back to a search by name, which needs every type built.
+        var byName = Events.SingleOrDefault(member => member.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         return byName.Value;
     }
 
@@ -253,8 +290,8 @@ public static partial class ApiDocumentation
         { "avatargroup", "MudBlazor.MudAvatarGroup" },
         { "autocomplete", "MudBlazor.MudAutocomplete`1" },
         { "badge", "MudBlazor.MudBadge" },
-        { "bar", "MudBlazor.Charts.Bar" },
-        { "barchart", "MudBlazor.Charts.Bar" },
+        { "bar", "MudBlazor.Charts.Bar`1" },
+        { "barchart", "MudBlazor.Charts.Bar`1" },
         { "breadcrumbs", "MudBlazor.MudBreadcrumbs" },
         { "breakpointprovider", "MudBlazor.MudBreakpointProvider" },
         { "button", "MudBlazor.MudButton" },
@@ -280,8 +317,8 @@ public static partial class ApiDocumentation
         { "dialoginstance", "MudBlazor.MudDialogContainer" },
         { "dialogprovider", "MudBlazor.MudDialogProvider" },
         { "divider", "MudBlazor.MudDivider" },
-        { "donut", "MudBlazor.Charts.Donut" },
-        { "donutchart", "MudBlazor.Charts.Donut" },
+        { "donut", "MudBlazor.Charts.Donut`1" },
+        { "donutchart", "MudBlazor.Charts.Donut`1" },
         { "drawer", "MudBlazor.MudDrawer" },
         { "drawercontainer", "MudBlazor.MudDrawerContainer" },
         { "drawerheader", "MudBlazor.MudDrawerHeader" },
@@ -302,9 +339,9 @@ public static partial class ApiDocumentation
         { "inputcontrol", "MudBlazor.MudInputControl" },
         { "inputlabel", "MudBlazor.MudInputLabel" },
         { "item", "MudBlazor.MudItem" },
-        { "legend", "MudBlazor.Charts.Legend" },
-        { "line", "MudBlazor.Charts.Line" },
-        { "linechart", "MudBlazor.Charts.Line" },
+        { "legend", "MudBlazor.Charts.Legend`1" },
+        { "line", "MudBlazor.Charts.Line`1" },
+        { "linechart", "MudBlazor.Charts.Line`1" },
         { "link", "MudBlazor.MudLink" },
         { "list", "MudBlazor.MudList`1" },
         { "listitem", "MudBlazor.MudListItem`1" },
@@ -323,8 +360,8 @@ public static partial class ApiDocumentation
         { "pagecontentnavigation", "MudBlazor.MudPageContentNavigation" },
         { "pagination", "MudBlazor.MudPagination" },
         { "paper", "MudBlazor.MudPaper" },
-        { "pie", "MudBlazor.Charts.Pie" },
-        { "piechart", "MudBlazor.Charts.Pie" },
+        { "pie", "MudBlazor.Charts.Pie`1" },
+        { "piechart", "MudBlazor.Charts.Pie`1" },
         { "popover", "MudBlazor.MudPopover" },
         { "progress", "MudBlazor.MudProgressLinear" },
         { "radio", "MudBlazor.MudRadio`1" },
@@ -341,8 +378,8 @@ public static partial class ApiDocumentation
         { "slider", "MudBlazor.MudSlider`1" },
         { "snackbar", "MudBlazor.MudSnackbarProvider" },
         { "snackbarelement", "MudBlazor.MudSnackbarElement" },
-        { "sparkline", "MudBlazor.Charts.Line" },
-        { "stackedbar", "MudBlazor.Charts.StackedBar" },
+        { "sparkline", "MudBlazor.Charts.Line`1" },
+        { "stackedbar", "MudBlazor.Charts.StackedBar`1" },
         { "swipearea", "MudBlazor.MudSwipeArea" },
         { "switch", "MudBlazor.MudSwitch`1" },
         { "table", "MudBlazor.MudTable`1" },
@@ -358,7 +395,7 @@ public static partial class ApiDocumentation
         { "timeline", "MudBlazor.MudTimeline" },
         { "timelineitem", "MudBlazor.MudTimelineItem" },
         { "timepicker", "MudBlazor.MudTimePicker" },
-        { "timeseries", "MudBlazor.Charts.TimeSeries" },
+        { "timeseries", "MudBlazor.Charts.TimeSeries`1" },
         { "toggleiconbutton", "MudBlazor.MudToggleIconButton" },
         { "toolbar", "MudBlazor.MudToolBar" },
         { "tooltip", "MudBlazor.MudTooltip" },

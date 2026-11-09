@@ -8,10 +8,9 @@ using Microsoft.JSInterop;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
-/// A base class for implementing Popover components.
+/// Base class for popover components such as <see cref="MudPopover"/>, handling creation and lifecycle through the <see cref="IPopoverService"/>.
 /// </summary>
 /// <remarks>
 /// This class provides a base implementation for a Popover component. It implements the <see cref="IPopover"/> interface
@@ -50,10 +49,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     /// <inheritdoc />
     protected override async Task OnInitializedAsync()
     {
-        if (PopoverService.PopoverOptions.Mode == PopoverMode.Default)
-        {
-            await PopoverService.CreatePopoverAsync(this);
-        }
+        await PopoverService.CreatePopoverAsync(this);
 
         await base.OnInitializedAsync();
     }
@@ -65,10 +61,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
 
         if (_afterFirstRender)
         {
-            if (PopoverService.PopoverOptions.Mode == PopoverMode.Default)
-            {
-                await PopoverService.UpdatePopoverAsync(this);
-            }
+            await PopoverService.UpdatePopoverAsync(this);
         }
     }
 
@@ -77,10 +70,7 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     {
         if (firstRender)
         {
-            if (PopoverService.PopoverOptions.Mode == PopoverMode.Default)
-            {
-                await PopoverService.UpdatePopoverAsync(this);
-            }
+            await PopoverService.UpdatePopoverAsync(this);
 
             _afterFirstRender = true;
         }
@@ -94,15 +84,35 @@ public abstract class MudPopoverBase : MudComponentBase, IPopover, IAsyncDisposa
     {
         try
         {
-            if (IsJSRuntimeAvailable)
+            if (IsJSRuntimeAvailable || CanDestroyBeforeFirstRender())
             {
-                if (PopoverService.PopoverOptions.Mode == PopoverMode.Default)
-                {
-                    await PopoverService.DestroyPopoverAsync(this);
-                }
+                await PopoverService.DestroyPopoverAsync(this);
             }
         }
-        catch (JSDisconnectedException) { }
-        catch (TaskCanceledException) { }
+        catch (JSDisconnectedException)
+        {
+            // The circuit is gone, so the popover's browser-side state went with it.
+        }
+        catch (TaskCanceledException)
+        {
+            // The destroy call was cancelled while tearing down, and dispose must not throw.
+        }
+    }
+
+    // The popover was created in OnInitializedAsync, so it must also be destroyed when it never rendered.
+    // In interactive server rendering that happens when the next render batch removes it before the browser acknowledged the first one.
+    // Destroying may initialize the service's JS side, which only prerendering cannot do.
+    private bool CanDestroyBeforeFirstRender()
+    {
+        if (PopoverService.IsInitialized)
+        {
+            return true;
+        }
+
+#if NET9_0_OR_GREATER
+        return RendererInfo.IsInteractive;
+#else
+        return false;
+#endif
     }
 }

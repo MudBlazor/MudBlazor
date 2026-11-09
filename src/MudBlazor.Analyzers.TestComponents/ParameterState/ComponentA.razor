@@ -1,0 +1,60 @@
+@using MudBlazor.State
+
+<div>Counter: @Counter</div>
+
+@code {
+    [Parameter, ParameterState]
+    public int Counter { get; set; }
+
+    // Constructor assignment - allowed (no MUD0011)
+    public ComponentA()
+    {
+        Counter = 0;
+    }
+
+    // SetParametersAsync assignment - allowed (no MUD0011)
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        Counter = 5;
+        return base.SetParametersAsync(parameters);
+    }
+
+    // Reading the property inside a method - should trigger MUD0010
+    public int GetCounter()
+    {
+        return Counter; // MUD0010
+    }
+
+    // Writing inside a method - should trigger MUD0011
+    public void SetCounter(int value)
+    {
+        Counter = value; // MUD0011
+    }
+
+    // Reading the property in various ways - should trigger MUD0010
+    public void ReadExamples()
+    {
+        var x = Counter; // MUD0010
+        DoSomething(Counter); // MUD0010
+    }
+
+    // Writing with compound assignment - should trigger MUD0011
+    public void CompoundAssign()
+    {
+        Counter += 1; // MUD0011
+    }
+
+    // Increment - should trigger MUD0011
+    public void IncrementCounter()
+    {
+        Counter++; // MUD0011
+    }
+
+    // Decrement - should trigger MUD0011
+    public void DecrementCounter()
+    {
+        Counter--; // MUD0011
+    }
+
+    private void DoSomething(int value) { }
+}

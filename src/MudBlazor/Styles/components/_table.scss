@@ -1,5 +1,10 @@
 @import '../abstracts/variables';
 
+$header-height: 59px;
+$header-height-dense: 39px;
+$header-height-with-filter: 109px; // 59px + 50px (filter row height)
+$header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
+
 .mud-table {
   color: var(--mud-palette-text-primary);
   background-color: var(--mud-palette-surface);
@@ -7,7 +12,7 @@
   transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 
   &.mud-table-square {
-    border-radius: 0px;
+    border-radius: 0;
   }
 
   &.mud-table-outlined {
@@ -29,8 +34,12 @@
 
     & .mud-table-cell {
       color: var(--mud-palette-text-primary);
-      font-weight: 500;
-      line-height: 1.5rem;
+      font-size: var(--mud-typography-subtitle2-size);
+      font-family: var(--mud-typography-subtitle2-family);
+      font-weight: var(--mud-typography-subtitle2-weight);
+      line-height: var(--mud-typography-subtitle2-lineheight);
+      letter-spacing: var(--mud-typography-subtitle2-letterspacing);
+      text-transform: var(--mud-typography-subtitle2-text-transform);
     }
   }
 
@@ -39,6 +48,12 @@
 
     & .mud-table-cell {
       color: var(--mud-palette-text-primary);
+      font-size: var(--mud-typography-body2-size);
+      font-family: var(--mud-typography-body2-family);
+      font-weight: var(--mud-typography-body2-weight);
+      line-height: var(--mud-typography-body2-lineheight);
+      letter-spacing: var(--mud-typography-body2-letterspacing);
+      text-transform: var(--mud-typography-body2-text-transform);
     }
   }
 
@@ -58,6 +73,10 @@
   flex-direction: inherit;
   justify-content: flex-start;
 
+  &.mud-table-sort-label-full-width {
+    width: 100%;
+  }
+
   &.mud-clickable {
     cursor: pointer;
     user-select: none;
@@ -76,7 +95,7 @@
 
   .mud-table-sort-label-icon {
     font-size: 18px;
-    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
     margin-left: 4px;
     user-select: none;
     margin-right: 4px;
@@ -104,15 +123,16 @@
 }
 
 
+// Shrinks the expand/select column to its content instead of sharing leftover width.
+.mud-table-cell-fit {
+  width: 0;
+}
+
 .mud-table-cell {
   display: table-cell;
   padding: 16px;
-  font-size: 0.875rem;
   text-align: start;
-  font-weight: 400;
-  line-height: 1.43;
   border-bottom: 1px solid var(--mud-palette-table-lines);
-  letter-spacing: 0.01071em;
   vertical-align: inherit;
 
   & .mud-checkbox {
@@ -126,7 +146,7 @@
   & > .mud-input-control {
     & > div.mud-input.mud-input-text {
       color: var(--mud-theme-on-surface);
-      font-size: 0.875rem;
+      font-size: var(--mud-typography-body2-size);
       margin-top: -14px;
       margin-bottom: -8px;
     }
@@ -136,7 +156,7 @@
     & > .mud-input-control {
       & > div.mud-input.mud-input-text {
         color: var(--mud-theme-on-surface);
-        font-size: 0.875rem;
+        font-size: var(--mud-typography-body2-size);
         margin-top: -14px;
         margin-bottom: -8px;
       }
@@ -207,12 +227,12 @@
       & .mud-table-row {
         .mud-table-cell:first-child {
           border-right: none;
-          border-top-right-radius: 0px;
+          border-top-right-radius: 0;
         }
 
         .mud-table-cell:last-child {
           border-right: 1px solid var(--mud-palette-table-lines);
-          border-top-right-radius: 0px;
+          border-top-right-radius: 0;
         }
       }
     }
@@ -221,7 +241,7 @@
       & .mud-table-row {
         .mud-table-cell:last-child {
           border-right: 1px solid var(--mud-palette-table-lines);
-          border-top-right-radius: 0px;
+          border-top-right-radius: 0;
         }
 
         .mud-table-cell:only-child {
@@ -244,7 +264,7 @@
       & .mud-table-row {
         .mud-table-cell:last-child {
           border-right: 1px solid var(--mud-palette-table-lines);
-          border-top-right-radius: 0px;
+          border-top-right-radius: 0;
         }
       }
     }
@@ -265,36 +285,62 @@
   }
 
   & * .mud-table-root {
-
     .mud-table-head {
       & * .mud-table-cell:first-child {
-        border-radius: var(--mud-default-borderradius) 0px 0px 0px;
+        border-radius: var(--mud-default-borderradius) 0 0 0;
       }
 
       & * .mud-table-cell:last-child {
-        border-radius: 0px var(--mud-default-borderradius) 0px 0px;
+        border-radius: 0 var(--mud-default-borderradius) 0 0;
       }
 
-      & * .mud-table-cell {
+      //Shared Sticky Header Styles
+      .mud-table-cell, .mud-table-loading {
         background-color: var(--mud-palette-surface);
         position: sticky;
         z-index: 2;
+      }
+
+      // Row 1 (always)
+      .mud-table-cell {
         top: 0;
       }
 
-      & * .mud-table-loading {
-        background-color: var(--mud-palette-surface);
-        position: sticky;
-        z-index: 2;
-        top: 59px;
+      // Row 2 (filter or panel row)
+      .filter-header-cell {
+        top: $header-height;
       }
 
-      & * .mud-filter-panel-cell {
-        top: 59px;
+      // Row 2 (filter or panel row if table is dense)
+      &.mud-table-dense .filter-header-cell {
+        top: $header-height-dense;
       }
-      // If .mud-table-loading exists, move .mud-filter-panel-cell down
-      table:has(.mud-table-loading) & * .mud-filter-panel-cell {
-        top: 63px;
+
+      // Row 2 (loading row without filter header)
+      .mud-table-loading {
+        top: $header-height;
+      }
+
+      // Row 2 (loading row without filter header if table is dense)
+      &.mud-table-dense .mud-table-loading {
+        top: $header-height-dense;
+      }
+
+      // Row 3 (loading row with filter header)
+      &:has(.filter-header-cell) .mud-table-loading {
+        top: $header-height-with-filter;
+      }
+
+      // Row 3 (loading row with filter header if table is dense)
+      &.mud-table-dense:has(.filter-header-cell) .mud-table-loading {
+        top: $header-height-with-filter-dense;
+      }
+
+      // Row 1 (loading row with no header row above it, or one that renders no cells and so has no height).
+      // The offsets above assume a header row is there to sit under; without one they push the loader into empty space.
+      .mud-table-loading-row:first-child > .mud-table-loading,
+      tr:not(:has(> *)) + .mud-table-loading-row > .mud-table-loading {
+        top: 0;
       }
 
       & * .mud-table-cell.sticky-left,
@@ -306,32 +352,12 @@
   }
 }
 
-.mud-table-sticky-header.mud-table-dense {
-  & * .mud-table-root {
-    .mud-table-head {
-
-      & * .mud-table-loading {
-        top: 39px;
-      }
-
-      & * .mud-filter-panel-cell {
-        top: 39px;
-      }
-
-      table:has(.mud-table-loading) & * .mud-filter-panel-cell {
-        top: 43px;
-      }
-    }
-  }
-}
-
 .mud-table-sticky-footer {
   .mud-table-container {
     overflow-x: auto;
   }
 
   & * .mud-table-root {
-
     .mud-table-foot {
       position: sticky;
       z-index: 2;
@@ -344,12 +370,56 @@
   }
 }
 
-
 .mud-table-row {
   color: inherit;
   display: table-row;
   outline: 0;
   vertical-align: middle;
+}
+
+.mud-table-row-clickable {
+  cursor: pointer;
+}
+
+// RowHref: a real, empty <a> in the first cell, stretched over the whole row so the browser handles clicks, new tabs and middle clicks.
+// Interactive cell content sits above it.
+.mud-table-row-link {
+  position: relative;
+
+  &:has(.mud-table-row-link-anchor:focus-visible) {
+    outline: 2px solid var(--mud-palette-primary);
+    outline-offset: -2px;
+  }
+}
+
+// Raise interactive cell content above the stretched link.
+// :where() keeps this at zero specificity, so components that position their own inputs or labels absolutely (checkboxes, radios, switches, floating labels) keep their positioning.
+// Those already sit above the link with their own z-index.
+:where(.mud-table-row-link .mud-table-cell) :where(a:not(.mud-table-row-link-anchor), button, input, select, textarea, label, [tabindex]:not([tabindex="-1"])) {
+  position: relative;
+  z-index: 1;
+}
+
+.mud-table-row-link-anchor {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.mud-table-row-disabled {
+  color: var(--mud-palette-text-disabled);
+  cursor: default;
+  pointer-events: none;
+
+  & .mud-table-cell {
+    color: var(--mud-palette-text-disabled) !important;
+  }
 }
 
 .mud-table-hover {
@@ -364,7 +434,14 @@
 
 .mud-table-striped {
   & .mud-table-container .mud-table-root .mud-table-body {
-    & .mud-table-row:nth-of-type(odd) {
+    // Non-virtualized: nth-of-type works because no <tr> spacers exist.
+    &:not(.mud-table-body-virtualized) .mud-table-row:nth-of-type(odd) {
+      background-color: var(--mud-palette-table-striped);
+    }
+
+    // Virtualized: <Virtualize> renders <tr> spacers that shift nth-of-type ordering.
+    // Use index-based .mud-table-row-stripe class instead.
+    &.mud-table-body-virtualized .mud-table-row.mud-table-row-stripe {
       background-color: var(--mud-palette-table-striped);
     }
   }
@@ -372,9 +449,19 @@
 
 .mud-table-hover.mud-table-striped {
   & .mud-table-container .mud-table-root .mud-table-body {
-    @media(hover: hover) and (pointer: fine) {
-      & .mud-table-row:nth-of-type(odd):hover {
-        background-color: var(--mud-palette-table-hover);
+    &:not(.mud-table-body-virtualized) {
+      @media(hover: hover) and (pointer: fine) {
+        & .mud-table-row:nth-of-type(odd):hover {
+          background-color: var(--mud-palette-table-hover);
+        }
+      }
+    }
+
+    &.mud-table-body-virtualized {
+      @media(hover: hover) and (pointer: fine) {
+        & .mud-table-row.mud-table-row-stripe:hover {
+          background-color: var(--mud-palette-table-hover);
+        }
       }
     }
   }
@@ -437,11 +524,16 @@
 
 .mud-table-pagination-toolbar {
   border-top: 1px solid var(--mud-palette-table-lines);
-  height: 52px;
+  height: auto;
+  min-height: 52px;
   padding-right: 2px;
   padding-inline-end: 2px;
   padding-inline-start: unset;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+
+  & > .mud-select {
+    flex-grow: 0;
+  }
 
   & .mud-tablepager-left {
     flex-direction: row !important;
@@ -452,8 +544,13 @@
   }
 }
 
+.mud-table-pagination-top .mud-table-pagination-toolbar {
+  border-top: none;
+  border-bottom: 1px solid var(--mud-palette-table-lines);
+}
+
 .mud-table-pagination-spacer {
-  flex: 1 1 100%;
+  flex: 1 1 auto;
 }
 
 .mud-table-pagination-caption {
@@ -468,11 +565,11 @@
   cursor: pointer;
   margin-left: 10px !important;
   margin-right: 10px !important;
-  margin-top: 0px !important;
+  margin-top: 0 !important;
   min-width: 52px;
 
   & .mud-select-input {
-    margin-top: 0px !important;
+    margin-top: 0 !important;
     padding: 0 7px !important;
   }
 
@@ -523,7 +620,7 @@
 }
 
 .mud-header-togglehierarchy .mud-table-row-expander {
-    padding: 6px;
+  padding: 6px;
 }
 
 .mud-table-row-expander {
@@ -533,9 +630,9 @@
   margin-inline-end: -2px;
 }
 
-@mixin table-display-smalldevices ($breakpoint) {
+@mixin table-display-smalldevices($breakpoint) {
   .mud-#{$breakpoint}table {
-    .mud-table-root .mud-table-head,
+    .mud-table-root .mud-table-head .mud-table-row,
     .mud-table-root .mud-table-foot {
       display: none;
     }
@@ -547,6 +644,10 @@
 
     .mud-table-body {
       border-top: 1px solid var(--mud-palette-table-lines);
+    }
+
+    .mud-table-root colgroup {
+      display: none;
     }
 
     .mud-table-row {
@@ -566,7 +667,6 @@
       text-align: start !important;
     }
 
-
     &.mud-table-dense {
       & .mud-table-cell {
         padding: 6px 16px;
@@ -581,6 +681,16 @@
       padding-inline-start: unset;
     }
 
+    // Group header cells carry no data-label.
+    // Without this their empty :before still counts as a flex item, so space-between pushes the group content to the far edge.
+    .mud-table-cell.mud-datagrid-group {
+      justify-content: flex-start;
+
+      &:before {
+        content: none;
+      }
+    }
+
     &.mud-table-small-alignright .mud-table-cell:before {
       margin-right: auto;
     }
@@ -590,10 +700,14 @@
       height: 0;
       padding: 0;
       margin: 0;
+
+      // A row link hosted in a hidden cell still has to cover the row.
+      .mud-table-row-link-anchor {
+        visibility: visible;
+      }
     }
 
     .mud-table-pagination {
-
       .mud-table-pagination-spacer {
         flex: none;
       }
@@ -633,8 +747,9 @@
     }
   }
 }
+
 // Table Pagination Flex Wrapper on old phones
-@media (max-width:360px) {
+@media (max-width: 360px) {
   .mud-table {
     .mud-table-pagination {
       .mud-select {
@@ -652,11 +767,10 @@
   }
 }
 
-@media (max-width:416px) {
+@media (max-width: 416px) {
   .mud-table {
     .mud-table-pagination {
       .mud-table-pagination-toolbar {
-        flex-wrap: wrap;
         padding-top: 16px;
         padding-right: 16px;
         padding-inline-end: 16px;
@@ -674,26 +788,26 @@
   }
 }
 
-@media (max-width:$breakpoint-sm) {
+@media (max-width: $breakpoint-sm) {
   @include table-display-smalldevices("xs-");
 }
 
-@media (max-width:$breakpoint-md) {
+@media (max-width: $breakpoint-md) {
   @include table-display-smalldevices("sm-");
 }
 
-@media (max-width:$breakpoint-lg) {
+@media (max-width: $breakpoint-lg) {
   @include table-display-smalldevices("md-");
 }
 
-@media (max-width:$breakpoint-xl) {
+@media (max-width: $breakpoint-xl) {
   @include table-display-smalldevices("lg-");
 }
 
-@media (max-width:$breakpoint-xxl) {
+@media (max-width: $breakpoint-xxl) {
   @include table-display-smalldevices("xl-");
 }
 
-@media (min-width:$breakpoint-xxl) {
+@media (min-width: $breakpoint-xxl) {
   @include table-display-smalldevices("xxl-");
 }

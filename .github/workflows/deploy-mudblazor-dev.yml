@@ -5,12 +5,18 @@ on:
   push:
     branches: [ dev ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Queue every run instead of cancelling the running or pending one, because a cancelled run marks its commit as failed.
+  queue: max
+
 jobs:
   deploy-web-app:
     name: Deploy web app to dev.mudblazor.com
     if: ${{ github.repository_owner == 'MudBlazor' }}
     uses: MudBlazor/Workflows/.github/workflows/template-deploy-web-app.yml@main
     with:
+      dotnet-version: 10.0.x
       web-app-name: mudblazor-dev
       project-directory: './src/MudBlazor.Docs.WasmHost'
     secrets:

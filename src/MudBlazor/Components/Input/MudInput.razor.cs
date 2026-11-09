@@ -4,18 +4,24 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Utilities;
 
-#nullable enable
 namespace MudBlazor
 {
     /// <summary>
-    /// A component for collecting an input value.
+    /// Renders the underlying HTML input element used by text-based components such as <see cref="MudTextField{T}"/> and <see cref="MudNumericField{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of object managed by this input.</typeparam>
+    /// <seealso cref="MudBaseInput{T}" />
+    /// <seealso cref="MudInputControl" />
+    /// <seealso cref="MudRangeInput{T}" />
+    /// <seealso cref="MudTextField{T}" />
     public partial class MudInput<T> : MudBaseInput<T>
     {
         private string? _internalText;
         private string? _oldText = null;
-        private bool _shouldInitAutoGrow;
+        private bool _shouldInitSizing;
+        private bool _shouldUpdateSizingParams;
+        private bool _shouldAdjustSizingAfterRender;
+        private bool _disposed;
         private ElementReference _elementReference1;
         private readonly Lazy<DotNetObjectReference<MudInput<T>>> _dotNetReferenceLazy;
 
@@ -29,11 +35,12 @@ namespace MudBlazor
             new CssBuilder(
                     MudInputCssHelper.GetClassname(this,
                         () => HasNativeHtmlPlaceholder() ||
-                              !string.IsNullOrEmpty(Text) ||
+                              !string.IsNullOrEmpty(ReadText) ||
                               Adornment == Adornment.Start ||
                               !string.IsNullOrWhiteSpace(Placeholder) ||
                               ShrinkLabel))
-                .AddClass("mud-input-auto-grow", () => AutoGrow)
+                .AddClass($"mud-input-sizing-{Sizing.ToStringFast(true)}")
+                .AddClass("mud-input-full-width", FullWidth)
                 .Build();
 
         protected string InputClassname => MudInputCssHelper.GetInputClassname(this);
@@ -42,16 +49,18 @@ namespace MudBlazor
 
         protected string ClearButtonClassname =>
             new CssBuilder("mud-input-clear-button")
-                .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+                .AddClass("me-n1", Adornment == Adornment.End && !HideSpinButtons)
                 .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
-                .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+                .AddClass("me-6", Adornment != Adornment.End && !HideSpinButtons)
                 .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
                 .AddClass("mud-no-activator")
                 .Build();
 
-        internal override InputType GetInputType() => InputType;
+        protected internal override InputType GetInputType() => InputType;
 
-        protected string InputTypeString => InputType.ToDescriptionString();
+        protected string InputTypeString => InputType.ToStringFast(true);
+
+        internal bool IsClearing { get; set; }
 
         /// <summary>
         /// The type of input collected by this component.
@@ -122,12 +131,6 @@ namespace MudBlazor
         public EventCallback<MouseEventArgs> OnClearButtonClick { get; set; }
 
         /// <summary>
-        /// Occurs when a mouse wheel event is raised.
-        /// </summary>
-        [Parameter]
-        public EventCallback<WheelEventArgs> OnMouseWheel { get; set; }
-
-        /// <summary>
         /// The icon to display when <see cref="Clearable"/> is <c>true</c>.
         /// </summary>
         /// <remarks>
@@ -155,16 +158,16 @@ namespace MudBlazor
         public string NumericDownIcon { get; set; } = Icons.Material.Filled.KeyboardArrowDown;
 
         /// <summary>
-        /// Stretches this input vertically to accommodate the <see cref="MudBaseInput{T}.Text"/> value.
+        /// Defines the resizing behavior of this input.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>.
+        /// Defaults to <see cref="InputSizing.Fixed"/>.
         /// </remarks>
         [Parameter]
-        public bool AutoGrow { get; set; }
+        public InputSizing Sizing { get; set; } = InputSizing.Fixed;
 
         /// <summary>
-        /// The maximum vertical lines to display when <see cref="AutoGrow"/> is <c>true</c>.
+        /// The maximum vertical lines to display when <see cref="Sizing"/> is <see cref="InputSizing.Auto"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>0</c>.  When <c>0</c>. this property is ignored.
@@ -172,41 +175,40 @@ namespace MudBlazor
         [Parameter]
         public int MaxLines { get; set; }
 
-        protected Task OnInput(ChangeEventArgs? args)
-        {
-            if (!Immediate)
-                return Task.CompletedTask;
-            _isFocused = true;
-            return SetTextAsync(args?.Value as string);
-        }
-
-        protected async Task OnChange(ChangeEventArgs? args)
-        {
-            _internalText = args?.Value as string;
-            await OnInternalInputChanged.InvokeAsync(args);
-            if (!Immediate)
-            {
-                await SetTextAsync(args?.Value as string);
-            }
-        }
-
         /// <summary>
-        /// Paste hook for descendants.
+        /// Indicates whether the input should use a textarea element for dynamic sizing.
         /// </summary>
-        protected virtual Task OnPaste(ClipboardEventArgs args)
+        private bool ShouldUseTextArea => Sizing != InputSizing.Fixed || Lines > 1;
+
+        private Task OnInputOrOnChangeAsync(string? input) => Immediate ? OnInput(input) : OnChange(input);
+
+        protected async Task OnInput(string? args)
         {
-            return Task.CompletedTask;
+            _isFocused = true;
+            _internalText = args;
+            await OnInternalInputChanged.InvokeAsync(args);
+            await SetTextAndUpdateValueAsync(args);
+        }
+
+        protected async Task OnChange(string? args)
+        {
+            _internalText = args;
+            await OnInternalInputChanged.InvokeAsync(args);
+            await SetTextAndUpdateValueAsync(args);
         }
 
         /// <inheritdoc />
-        public override async ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override async ValueTask FocusAsync(bool preventScroll)
         {
             try
             {
                 if (InputType == InputType.Hidden && ChildContent != null)
-                    await _elementReference1.FocusAsync();
+                    await _elementReference1.FocusAsync(preventScroll);
                 else
-                    await ElementReference.FocusAsync();
+                    await ElementReference.FocusAsync(preventScroll);
             }
             catch (Exception e)
             {
@@ -230,6 +232,84 @@ namespace MudBlazor
         public override ValueTask SelectRangeAsync(int pos1, int pos2)
         {
             return ElementReference.MudSelectRangeAsync(pos1, pos2);
+        }
+
+        /// <summary>
+        /// Builds the attributes mirrored onto the focusable display element for hidden-input rendering.
+        /// </summary>
+        /// <remarks>
+        /// In this render the <c>&lt;input&gt;</c> is <c>type="hidden"</c> and the display <c>div</c> is what actually receives focus and clicks.
+        /// Every consumer-supplied attribute must move there — event handlers such as <c>@onfocus</c>, <c>data-*</c>, and accessibility attributes alike — or it silently stops working once a value is selected.
+        /// The hidden input can no longer fire them, so forwarding them here does not double up.
+        /// Caller-provided <c>UserAttributes</c> take precedence over the computed accessibility fallbacks. Returns <c>null</c> for every other render so the always-emitted (but hidden) presenter <c>div</c> does not get spurious attributes or allocate on the common input path.
+        /// </remarks>
+        private Dictionary<string, object?>? GetDisplayUserAttributes()
+        {
+            if (InputType != InputType.Hidden || ChildContent is null)
+            {
+                return null;
+            }
+
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+
+            // The hidden input still owns the id, and the presenter markup owns tabindex (the disabled branch deliberately omits it so a disabled control cannot take focus).
+            // Forwarding either would duplicate the id across both elements or make a disabled presenter focusable again.
+            attributes.Remove("id");
+            attributes.Remove("tabindex");
+
+            // The hidden input keeps name and form because it is what posts the value; on a div they do nothing but duplicate selectors.
+            attributes.Remove("name");
+            attributes.Remove("form");
+
+            var describedBy = GetAriaDescribedByString();
+            if (describedBy is not null)
+            {
+                attributes.TryAdd("aria-describedby", describedBy);
+            }
+
+            attributes.TryAdd("aria-invalid", HasErrors.ToString().ToLowerInvariant());
+            attributes.TryAdd("aria-required", Required.ToString().ToLowerInvariant());
+
+            // The presenter is a div, so the native disabled attribute on the hidden input no longer
+            // conveys the disabled state to assistive tech; mirror it as aria-disabled.
+            if (GetDisabledState())
+            {
+                attributes.TryAdd("aria-disabled", "true");
+            }
+
+            return attributes;
+        }
+
+        /// <summary>
+        /// Builds the attributes splatted onto the <c>&lt;input&gt;</c> element.
+        /// </summary>
+        /// <remarks>
+        /// Returns <c>UserAttributes</c> unchanged for every render except hidden-input rendering with child content.
+        /// In that render <see cref="GetDisplayUserAttributes"/> already moves the consumer attributes to the focusable display element.
+        /// Splatting them onto the hidden input as well would duplicate selectors such as <c>data-testid</c> across two elements.
+        /// The hidden input keeps only <c>id</c>, <c>name</c>, and <c>form</c>.
+        /// It is still the element that posts the value in a native form, so it needs <c>name</c> and <c>form</c>.
+        /// The explicit <c>id</c> attribute after the splat takes precedence, so keeping <c>id</c> here only preserves the previous attribute set.
+        /// </remarks>
+        private Dictionary<string, object?> GetInputElementUserAttributes()
+        {
+            if (InputType != InputType.Hidden || ChildContent is null)
+            {
+                return UserAttributes;
+            }
+
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+            foreach (var (key, value) in UserAttributes)
+            {
+                if (string.Equals(key, "id", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(key, "name", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(key, "form", StringComparison.OrdinalIgnoreCase))
+                {
+                    attributes[key] = value;
+                }
+            }
+
+            return attributes;
         }
 
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
@@ -256,67 +336,123 @@ namespace MudBlazor
                 return false;
             }
 
-            if (Value is string stringValue)
+            if (ReadValue is string stringValue)
             {
                 return !string.IsNullOrWhiteSpace(stringValue);
             }
 
-            return Value is not string and not null;
+            return ReadValue is not string and not null;
         }
 
         protected virtual async Task HandleClearButtonAsync(MouseEventArgs e)
         {
-            await SetTextAsync(string.Empty, updateValue: true);
+            IsClearing = true;
+            try
+            {
+                await SetTextAndUpdateValueAsync(string.Empty, updateValue: true);
+                await ElementReference.FocusAsync();
+                await OnClearButtonClick.InvokeAsync(e);
+            }
+            finally
+            {
+                IsClearing = false;
+            }
+        }
+
+        // The clear button lives inside components that open on mousedown, such as MudSelect and the pickers, so its own mousedown must not reach them.
+        // A `@onmousedown:stopPropagation` directive cannot sit beside `@onmousedown` on a component, so both travel through the splat instead, which is what the directive compiles to anyway.
+        private Dictionary<string, object>? _clearButtonAttributes;
+
+        private Dictionary<string, object> ClearButtonAttributes => _clearButtonAttributes ??= new Dictionary<string, object>(3)
+        {
+            ["onmousedown"] = EventCallback.Factory.Create<MouseEventArgs>(this, HandleClearMouseDownAsync),
+            ["__internal_stopPropagation_onmousedown"] = true,
+            ["onmouseleave"] = EventCallback.Factory.Create<MouseEventArgs>(this, HandleClearMouseLeaveAsync),
+        };
+
+        protected virtual async Task HandleClearMouseDownAsync(MouseEventArgs e)
+        {
+            IsClearing = true;
+        }
+
+        protected virtual async Task HandleClearMouseLeaveAsync(MouseEventArgs e)
+        {
+            IsClearing = false;
+        }
+
+        protected virtual async Task HandleSpinButtonPointerDownAsync()
+        {
             await ElementReference.FocusAsync();
-            await OnClearButtonClick.InvokeAsync(e);
+        }
+
+        private readonly record struct AutoSizingVisualState(
+            Variant Variant,
+            Margin Margin,
+            Typo Typo,
+            Adornment Adornment,
+            string? Class,
+            string? Style,
+            bool Disabled);
+
+        private AutoSizingVisualState CaptureAutoSizingVisualState()
+            => new(Variant, Margin, Typo, Adornment, Class, Style, GetDisabledState());
+
+        private void ResetAutoSizingFlags()
+        {
+            _shouldInitSizing = false;
+            _shouldUpdateSizingParams = false;
+            _shouldAdjustSizingAfterRender = false;
+        }
+
+        private void SyncAutoSizingTextSnapshot()
+        {
+            _oldText = _internalText;
         }
 
         /// <inheritdoc />
         public override async Task SetParametersAsync(ParameterView parameters)
         {
+            // Visual/style-affecting changes.
+            var oldVisualState = CaptureAutoSizingVisualState();
+
+            // Handled separately because they drive different lifecycle actions.
             var oldLines = Lines;
             var oldMaxLines = MaxLines;
-            var oldAutoGrow = AutoGrow;
+            var oldSizing = Sizing;
 
             await base.SetParametersAsync(parameters);
 
-            //if (!_isFocused || _forceTextUpdate)
-            //    _internalText = Text;
-            if (RuntimeLocation.IsServerSide && TextUpdateSuppression)
+            var newSizing = Sizing;
+            var hasAutoSizingVisualChange = oldVisualState != CaptureAutoSizingVisualState();
+            var hasAutoSizingParameterChange = oldLines != Lines || oldMaxLines != MaxLines || oldSizing != newSizing;
+
+            // Always update internal text (TextUpdateSuppression removed)
+            _internalText = ReadText;
+
+            if (oldSizing == InputSizing.Fixed && newSizing != InputSizing.Fixed)
             {
-                // Text update suppression, only in BSS (not in WASM).
-                // This is a fix for #1012
-                if (!_isFocused || _forceTextUpdate)
-                    _internalText = Text;
-            }
-            else
-            {
-                // in WASM (or in BSS with TextUpdateSuppression==false) we always update
-                _internalText = Text;
+                _shouldInitSizing = true;
             }
 
-            // Flag AutoGrow to be initialized on the next render.
-            if (!oldAutoGrow && AutoGrow)
+            if (newSizing != InputSizing.Fixed && !_shouldInitSizing && hasAutoSizingVisualChange)
             {
-                _shouldInitAutoGrow = true;
+                // Re-measure after style/class-related updates because runtime classes and computed styles can affect textarea metrics.
+                _shouldAdjustSizingAfterRender = true;
             }
 
-            if (IsJSRuntimeAvailable)
+            if (oldSizing != InputSizing.Fixed && newSizing == InputSizing.Fixed)
             {
-                if (oldAutoGrow && !AutoGrow)
+                // Disable dynamic sizing.
+                ResetAutoSizingFlags();
+                if (IsJSRuntimeAvailable)
                 {
-                    // Disable AutoGrow.
-                    _shouldInitAutoGrow = false;
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.destroy", ElementReference);
                 }
-                else if (oldLines != Lines || oldMaxLines != MaxLines)
-                {
-                    if (AutoGrow && !_shouldInitAutoGrow)
-                    {
-                        // Update AutoGrow parameters (if it was already enabled).
-                        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.updateParams", ElementReference, MaxLines);
-                    }
-                }
+            }
+            else if (newSizing != InputSizing.Fixed && !_shouldInitSizing && hasAutoSizingParameterChange)
+            {
+                // Defer until OnAfterRender so measurements use the latest DOM/classes.
+                _shouldUpdateSizingParams = true;
             }
         }
 
@@ -325,24 +461,32 @@ namespace MudBlazor
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (AutoGrow)
+            if (Sizing != InputSizing.Fixed)
             {
-                if (firstRender || _shouldInitAutoGrow)
+                if (firstRender || _shouldInitSizing)
                 {
-                    _shouldInitAutoGrow = false;
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.initAutoGrow", ElementReference, MaxLines);
-                    _oldText = _internalText;
+                    ResetAutoSizingFlags();
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.init", ElementReference, MaxLines);
+                    SyncAutoSizingTextSnapshot();
                 }
-                else if (_oldText != _internalText)
+                else if (_shouldUpdateSizingParams)
                 {
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.adjustHeight", ElementReference);
-                    _oldText = _internalText;
+                    _shouldUpdateSizingParams = false;
+                    _shouldAdjustSizingAfterRender = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.updateParams", ElementReference, MaxLines);
+                    SyncAutoSizingTextSnapshot();
+                }
+                else if (_shouldAdjustSizingAfterRender || _oldText != _internalText)
+                {
+                    _shouldAdjustSizingAfterRender = false;
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.adjustHeight", ElementReference);
+                    SyncAutoSizingTextSnapshot();
                 }
             }
-            if (firstRender)
+
+            if (firstRender && !_disposed)
             {
-                // add onblur event through javascript which will trigger CallOnBlurredAsync
-                // must do in javascript or it won't detect ios Keyboard button - limitation of Blazor/React/other frameworks of the DOM
+                // Attach a JS blur fallback for cases where focus is dismissed without Blazor observing the native blur event.
                 await ElementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
             }
 
@@ -355,8 +499,13 @@ namespace MudBlazor
         /// <param name="text">The new value.</param>
         public Task SetText(string? text)
         {
+            return SetText(text, updateValue: true);
+        }
+
+        internal Task SetText(string? text, bool updateValue)
+        {
             _internalText = text;
-            return SetTextAsync(text);
+            return SetTextAndUpdateValueAsync(text, updateValue);
         }
 
         // Certain HTML5 inputs (dates and color) have a native placeholder
@@ -374,12 +523,15 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
+            // Set before disposing the reference so a racing first-render blur attach skips.
+            _disposed = true;
+
             if (IsJSRuntimeAvailable)
             {
-                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeOnBlurEvent", ElementReference, _dotNetReferenceLazy);
-                if (AutoGrow)
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeOnBlurEvent", ElementReference);
+                if (Sizing != InputSizing.Fixed)
                 {
-                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputAutoGrow.destroy", ElementReference);
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudInputSizing.destroy", ElementReference);
                 }
             }
 
@@ -394,9 +546,11 @@ namespace MudBlazor
         [JSInvokable]
         public async Task CallOnBlurredAsync()
         {
-            // If onblurred already fired then cancel
+            // If native blur already ran, do not process the fallback callback again.
             if (!_isFocused)
+            {
                 return;
+            }
 
             await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
         }

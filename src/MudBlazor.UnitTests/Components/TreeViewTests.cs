@@ -1,46 +1,226 @@
-﻿using System.Linq;
+﻿using System.Globalization;
+using System.Text.Json;
+using AngleSharp.Dom;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
+using Microsoft.JSInterop.Infrastructure;
 using MudBlazor.Extensions;
+using MudBlazor.UnitTests.Mocks;
 using MudBlazor.UnitTests.TestComponents;
 using MudBlazor.UnitTests.TestComponents.TreeView;
 using NUnit.Framework;
-using static Bunit.ComponentParameterFactory;
 
 namespace MudBlazor.UnitTests.Components
 {
     [TestFixture]
     public class TreeViewTests : BunitTest
     {
+        private readonly VirtualizeCallbackRuntime _virtualizeCallbacks = new();
+
+        /// <summary>
+        /// Multi-selection checkboxes must expose the corresponding item text as their accessible name (#13977).
+        /// </summary>
         [Test]
-        public void TreeView_ClickWhileDisabled_DoesNotChangeSelection()
+        public void MultiSelection_Checkboxes_AreNamedByTheirItems()
         {
-            var comp = Context.RenderComponent<DisabledTreeViewTest>([Parameter(nameof(MudTreeView<string>.Disabled), true)]);
-            comp.Find("div.mud-treeview-item-content").Click();
+            Context.AddFakeTimeProvider();
+            var tree = Context.Render<TreeViewMultiSelectionCheckboxTest>();
+            var namedCount = 0;
+
+            foreach (var item in tree.FindAll(".mud-treeview-item-content"))
+            {
+                var checkbox = item.QuerySelector("input.mud-checkbox-input");
+                if (checkbox is null)
+                {
+                    continue;
+                }
+
+                var text = item.QuerySelector(".mud-treeview-item-label");
+                text.Should().NotBeNull();
+
+                var labelId = checkbox.GetAttribute("aria-labelledby");
+                labelId.Should().NotBeNullOrWhiteSpace();
+                var label = tree.Find($"[id='{labelId}']");
+                label.TextContent.Should().Be(text!.TextContent);
+                label.ClassList.Should().Contain("mud-treeview-item-label");
+                item.QuerySelector(".mud-sr-only").Should().BeNull();
+                namedCount++;
+            }
+
+            namedCount.Should().BeGreaterThan(1);
+        }
+
+        /// <summary>
+        /// The checkbox name follows an explicit TreeView item Text instead of its Value (#13977).
+        /// </summary>
+        [Test]
+        public void MultiSelection_CustomItemText_NamesCheckbox()
+        {
+            Context.AddFakeTimeProvider();
+            var tree = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(p => p.SelectionMode, SelectionMode.MultiSelection)
+                .AddChildContent<MudTreeViewItem<string>>(item => item
+                    .Add(x => x.Value, "documents")
+                    .Add(x => x.Text, "My documents")));
+
+            var checkbox = tree.Find("input.mud-checkbox-input");
+            var labelId = checkbox.GetAttribute("aria-labelledby");
+
+            labelId.Should().NotBeNullOrWhiteSpace();
+            tree.Find($"[id='{labelId}']").TextContent.Should().Be("My documents");
+            tree.FindAll(".mud-sr-only").Should().BeEmpty();
+        }
+
+        [Test]
+        public async Task TreeView_ClickWhileDisabled_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<DisabledTreeViewTest>(parameters => parameters.Add(x => x.Disabled, true));
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
             GetSelectedValue().Should().BeNullOrWhiteSpace();
 
-            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
             GetSelectedValue().Should().BeNullOrWhiteSpace();
         }
 
         [Test]
-        public void TreeView_ClickWhileActive_DoesChangeSelection()
+        public async Task TreeView_ClickWhileActive_DoesChangeSelection()
         {
-            var comp = Context.RenderComponent<DisabledTreeViewTest>(self => self.Add(x => x.Disabled, false));
-            comp.Find("div.mud-treeview-item-content").Click();
+            var comp = Context.Render<DisabledTreeViewTest>(self => self.Add(x => x.Disabled, false));
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             var GetSelectedValue = () => comp.Find("p.selected-value").TrimmedText();
             GetSelectedValue().Should().NotBeNullOrWhiteSpace();
             GetSelectedValue().Should().Be("content");
 
             // To reset
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             GetSelectedValue().Should().BeNullOrWhiteSpace();
 
-            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
             GetSelectedValue().Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task TreeView_MultiSelectionClickCheckboxWhenDisabled_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(parameters => parameters.Add(x => x.Disabled, true)
+                    .Add(x => x.ReadOnly, false));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(0);
+        }
+
+        [Test]
+        public async Task TreeView_MultiSelectionClickCheckboxWhenReadOnly_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(parameters => parameters.Add(x => x.ReadOnly, true)
+                    .Add(x => x.Disabled, false));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(0);
+        }
+
+        [Test]
+        public async Task TreeView_MultiSelectionClickCheckboxWhenReadOnlyAndDisabled_DoesNotChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(parameters => parameters.Add(x => x.ReadOnly, true)
+                    .Add(x => x.Disabled, true));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(0);
+        }
+
+        [Test]
+        public async Task TreeView_ClickMultiSelectionCheckboxWhileActive_DoesChangeSelection()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionCheckboxTest>(self => self.Add(x => x.Disabled, false)
+                    .Add(x => x.ReadOnly, false));
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            var GetSelectedValue = () => comp.Find("ul.selected-values").ChildElementCount;
+            GetSelectedValue().Should().Be(4);
+
+            // To reset
+            await comp.Find("div.mud-treeview-item-checkbox").ClickAsync();
+            GetSelectedValue().Should().Be(0);
+
+            await comp.Find("div.mud-treeview-item-checkbox").DoubleClickAsync();
+            GetSelectedValue().Should().Be(4);
+        }
+
+        // S1 parity: a visible valueless folder whose only children are hidden must keep a working checkbox when virtualized.
+        // The projection reports hidden selectable descendants through HasSelectableValues, so the row is selectable even though no child renders.
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_MultiSelection_VisibleValuelessParentWithHiddenSelectableChildren_CheckboxMatchesStandardMode(bool virtualize)
+        {
+            var comp = Context.Render<TreeViewHiddenChildrenParityTest>(self => self.Add(x => x.Virtualize, virtualize));
+            var folder = comp.Find("li.folder");
+            var folderCheckbox = folder.QuerySelector("label.mud-checkbox");
+            folderCheckbox.ClassList.Contains("mud-readonly").Should().BeFalse($"the folder's subtree offers values ({(virtualize ? "virtualized" : "standard")})");
+
+            await folder.QuerySelector("input.mud-checkbox-input").ChangeAsync(true);
+            comp.Find("p.selected-values").TrimmedText().Should().Be("1,2");
+            comp.Find("p.child-1-selected").TrimmedText().Should().Be("True");
+            comp.Find("p.child-2-selected").TrimmedText().Should().Be("True");
+
+            await folder.QuerySelector("input.mud-checkbox-input").ChangeAsync(false);
+            comp.Find("p.selected-values").TrimmedText().Should().BeEmpty();
+            comp.Find("p.child-1-selected").TrimmedText().Should().Be("False");
+            comp.Find("p.child-2-selected").TrimmedText().Should().Be("False");
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_MultiSelection_VisibleValuelessParentWithHiddenSelectableChildren_CheckboxStaysKeyboardOperable(bool virtualize)
+        {
+            var comp = Context.Render<TreeViewHiddenChildrenParityTest>(self => self.Add(x => x.Virtualize, virtualize));
+            var folderInput = comp.Find("li.folder input.mud-checkbox-input");
+
+            folderInput.KeyDown(new KeyboardEventArgs { Key = " ", Type = "keydown" });
+            comp.Find("p.selected-values").TrimmedText().Should().Be("1,2");
+
+            folderInput.KeyDown(new KeyboardEventArgs { Key = " ", Type = "keydown" });
+            comp.Find("p.selected-values").TrimmedText().Should().BeEmpty();
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public void TreeView_MultiSelection_ValuelessLeafWithoutChildren_RemainsReadOnly(bool virtualize)
+        {
+            var comp = Context.Render<TreeViewHiddenChildrenParityTest>(self => self.Add(x => x.Virtualize, virtualize));
+            comp.Find("li.leaf label.mud-checkbox").ClassList.Should().Contain("mud-readonly");
+        }
+
+        [Test]
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_MultiSelection_ReadOnlyParentWithHiddenSelectableChildren_CheckboxStaysReadOnly(bool virtualize)
+        {
+            var comp = Context.Render<TreeViewHiddenChildrenParityTest>(self => self.Add(x => x.Virtualize, virtualize)
+                    .Add(x => x.ReadOnly, true));
+            var folderCheckbox = comp.Find("li.folder label.mud-checkbox");
+            folderCheckbox.ClassList.Should().Contain("mud-readonly");
+
+            await comp.Find("li.folder div.mud-treeview-item-checkbox").ClickAsync();
+            comp.Find("p.selected-values").TrimmedText().Should().BeEmpty();
         }
 
         [Test]
@@ -49,14 +229,14 @@ namespace MudBlazor.UnitTests.Components
         [TestCase("item1.2")]
         public void TreeViewWithSingleSelection_Should_RespectInitialSelectedValue(string value)
         {
-            var comp = Context.RenderComponent<SimpleTreeViewTest>(self => self.Add(x => x.SelectedValue, value));
+            var comp = Context.Render<SimpleTreeViewTest>(self => self.Add(x => x.SelectedValue, value));
             comp.Find("div.mud-treeview-item-selected").QuerySelector(".mud-treeview-item-label").TrimmedText().Should().Be(value);
         }
 
         [Test]
-        public void TreeViewWith_SingleSelection_TwoWayBindingTest()
+        public async Task TreeViewWith_SingleSelection_TwoWayBinding()
         {
-            var comp = Context.RenderComponent<TreeViewSelectionBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
+            var comp = Context.Render<TreeViewSelectionBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
             // check initial selection
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -66,7 +246,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
 
             // select another value on tree1 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
@@ -76,7 +256,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
 
             // select another value on tree2 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -87,7 +267,7 @@ namespace MudBlazor.UnitTests.Components
 
             // in single selection clicking the same item twice won't de-select it!
             // select same value on tree1 and check selection has NOT changed
-            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -98,9 +278,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewWith_ToggleSelection_TwoWayBindingTest()
+        public async Task TreeViewWith_ToggleSelection_TwoWayBinding()
         {
-            var comp = Context.RenderComponent<TreeViewSelectionBindingTest>(self => self
+            var comp = Context.Render<TreeViewSelectionBindingTest>(self => self
                 .Add(x => x.SelectedValue, "item1.2")
                 .Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
             // check initial selection
@@ -112,7 +292,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
 
             // select another value on tree1 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
@@ -122,7 +302,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find(".tree2 .item-1-2 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
 
             // select another value on tree2 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -133,7 +313,7 @@ namespace MudBlazor.UnitTests.Components
 
             // in toggle selection clicking the same item twice will de-select it!
             // select same value on tree1 and check selection has been removed
-            comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree2 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().BeNullOrWhiteSpace();
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -144,9 +324,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewWith_MultiSelection_TwoWayBindingTest()
+        public async Task TreeViewWith_MultiSelection_TwoWayBinding()
         {
-            var comp = Context.RenderComponent<TreeViewSelectionBindingTest>(self => self
+            var comp = Context.Render<TreeViewSelectionBindingTest>(self => self
                 .Add(x => x.SelectedValues, ["item1", "item1.2"])
                 .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             // check initial selection
@@ -165,7 +345,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.2");
 
             // select another value on tree1 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
@@ -175,7 +355,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
 
             // remove a value on tree2 and check selection has changed on both trees
-            comp.Find(".tree2 .item-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
             comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
@@ -186,9 +366,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewWith_MultiSelection_ShouldNotAutoSelectParent()
+        public async Task TreeViewWith_MultiSelection_ShouldNotAutoSelectParent()
         {
-            var comp = Context.RenderComponent<TreeViewAutoSelectParentTest>(self => self
+            var comp = Context.Render<TreeViewAutoSelectParentTest>(self => self
                 .Add(x => x.SelectedValues, ["item1.2"])
                 .Add(x => x.AutoSelectParent, false));
             // check initial selection
@@ -198,21 +378,21 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1.2");
 
             // select another value on tree1 and check parent is not selected
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1.1, item1.2");
 
             // manually selecting a parent should still work
-            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.1, item1.2");
 
             // removing selection of a child will keep the parent selected
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-null");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
             comp.Find(".tree1 .item-1-2 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
@@ -220,9 +400,159 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void TreeViewWith_MultiSelection_ShouldCalculateTriStateAcrossAllDescendants()
+        {
+            var comp = Context.Render<TreeViewTriStateTraversalTest>(self => self
+                .Add(x => x.SelectedValues,
+                [
+                    "selected-leaf",
+                    "fully-selected", "fully-selected-child", "fully-selected-grandchild",
+                    "selected-parent", "selected-parent-child", "selected-parent-grandchild",
+                    "wide", "wide-selected", "wide-selected-2",
+                    "deep", "deep-1", "deep-2", "deep-3",
+                    "unselected-parent-grandchild"
+                ]));
+
+            static string CheckboxState(string className, IRenderedComponent<TreeViewTriStateTraversalTest> component) =>
+                component.Find($".{className} .mud-checkbox span").ClassList
+                    .Single(x => x is "mud-checkbox-true" or "mud-checkbox-false" or "mud-checkbox-null");
+
+            CheckboxState("selected-leaf", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("unselected-leaf", comp).Should().Be("mud-checkbox-false");
+            CheckboxState("fully-selected", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("fully-unselected", comp).Should().Be("mud-checkbox-false");
+            CheckboxState("selected-parent", comp).Should().Be("mud-checkbox-null");
+            CheckboxState("unselected-parent", comp).Should().Be("mud-checkbox-null");
+            CheckboxState("root", comp).Should().Be("mud-checkbox-null");
+            CheckboxState("wide", comp).Should().Be("mud-checkbox-null");
+            CheckboxState("deep", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("deep-1", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("deep-2", comp).Should().Be("mud-checkbox-true");
+            CheckboxState("deep-3", comp).Should().Be("mud-checkbox-true");
+        }
+
+        /// <summary>
+        /// A leaf without a value has nothing to select, so its checkbox is read-only and stays unchecked (#13233).
+        /// </summary>
+        [Test]
+        public async Task TreeViewWith_MultiSelection_LeafWithoutValue_ShouldNotBeCheckable()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionNoValueTest>();
+
+            // The item template doesn't pass a value, so these items have nothing to select
+            // A browser ignores clicks on a read-only checkbox, but ChangeAsync would still raise the event, so the read-only state is what's checked
+            foreach (var item in new[] { "template-item-1", "template-item-2", "template-item-3" })
+            {
+                IsItemCheckboxReadOnly(comp, item).Should().BeTrue();
+                await comp.Find($"li.{item} > .mud-treeview-item-content").ClickAsync();
+                ItemCheckboxState(comp, item).Should().Be("mud-checkbox-false");
+            }
+            comp.Find("p.template-selected-values").TrimmedText().Should().BeEmpty();
+
+            IsItemCheckboxReadOnly(comp, "note").Should().BeTrue();
+            IsItemCheckboxReadOnly(comp, "parent-note").Should().BeTrue();
+
+            // An item with a value, or with children to select, stays checkable
+            IsItemCheckboxReadOnly(comp, "group").Should().BeFalse();
+            IsItemCheckboxReadOnly(comp, "parent").Should().BeFalse();
+            IsItemCheckboxReadOnly(comp, "group-child-1").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A parent without a value checks and unchecks its children, and its checkbox shows their state (#13233).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeViewWith_MultiSelection_ParentWithoutValue_ShouldToggleAndReflectItsChildren(bool autoSelectParent)
+        {
+            var comp = Context.Render<TreeViewMultiSelectionNoValueTest>(self => self.Add(x => x.AutoSelectParent, autoSelectParent));
+
+            // The group has no value of its own, so checking it selects its children and it shows their state
+            await comp.Find("li.group > .mud-treeview-item-content .mud-checkbox input").ChangeAsync(true);
+            comp.Find("p.selected-values").TrimmedText().Should().Be("group-child-1, group-child-2");
+            ItemCheckboxState(comp, "group").Should().Be("mud-checkbox-true");
+
+            await comp.Find("li.group > .mud-treeview-item-content .mud-checkbox input").ChangeAsync(false);
+            comp.Find("p.selected-values").TrimmedText().Should().BeEmpty();
+            ItemCheckboxState(comp, "group").Should().Be("mud-checkbox-false");
+
+            await comp.Find("li.group-child-1 > .mud-treeview-item-content").ClickAsync();
+            ItemCheckboxState(comp, "group").Should().Be("mud-checkbox-null");
+
+            await comp.Find("li.group-child-2 > .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-values").TrimmedText().Should().Be("group-child-1, group-child-2");
+            ItemCheckboxState(comp, "group").Should().Be("mud-checkbox-true");
+        }
+
+        /// <summary>
+        /// A child without a value doesn't keep its parent partially checked or stop the parent from being unchecked (#13233).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeViewWith_MultiSelection_ChildWithoutValue_ShouldNotBlockParentToggle(bool autoSelectParent)
+        {
+            var comp = Context.Render<TreeViewMultiSelectionNoValueTest>(self => self.Add(x => x.AutoSelectParent, autoSelectParent));
+
+            // The note can't be selected, so it must not count as an unselected child of the parent
+            await comp.Find("li.parent > .mud-treeview-item-content .mud-checkbox input").ChangeAsync(true);
+            comp.Find("p.selected-values").TrimmedText().Should().Be("parent, parent-child");
+            ItemCheckboxState(comp, "parent").Should().Be("mud-checkbox-true");
+            ItemCheckboxState(comp, "parent-note").Should().Be("mud-checkbox-false");
+
+            await comp.Find("li.parent > .mud-treeview-item-content .mud-checkbox input").ChangeAsync(false);
+            comp.Find("p.selected-values").TrimmedText().Should().BeEmpty();
+            ItemCheckboxState(comp, "parent").Should().Be("mud-checkbox-false");
+        }
+
+        /// <summary>
+        /// With <see cref="MudTreeView{T}.AutoSelectParent"/>, a parent selected through its children shows as checked although one child has no value (#13233).
+        /// </summary>
+        [Test]
+        public async Task TreeViewWith_MultiSelection_AutoSelectParent_ShouldCheckParentWithChildWithoutValue()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionNoValueTest>(self => self.Add(x => x.AutoSelectParent, true));
+
+            await comp.Find("li.parent-child > .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-values").TrimmedText().Should().Be("parent, parent-child");
+            ItemCheckboxState(comp, "parent").Should().Be("mud-checkbox-true");
+
+            await comp.Find("li.parent-child > .mud-treeview-item-content").ClickAsync();
+            comp.Find("p.selected-values").TrimmedText().Should().BeEmpty();
+            ItemCheckboxState(comp, "parent").Should().Be("mud-checkbox-false");
+        }
+
+        /// <summary>
+        /// Items without a value don't keep their parent partially checked when the selection comes from <see cref="MudTreeView{T}.SelectedValues"/> (#13233).
+        /// </summary>
+        [Test]
+        public void TreeViewWith_MultiSelection_InitialSelection_ShouldIgnoreItemsWithoutValue()
+        {
+            var comp = Context.Render<TreeViewMultiSelectionNoValueTest>(self => self
+                .Add(x => x.SelectedValues, ["group-child-1", "group-child-2", "parent", "parent-child"]));
+
+            ItemCheckboxState(comp, "group").Should().Be("mud-checkbox-true");
+            ItemCheckboxState(comp, "parent").Should().Be("mud-checkbox-true");
+            ItemCheckboxState(comp, "parent-note").Should().Be("mud-checkbox-false");
+            ItemCheckboxState(comp, "note").Should().Be("mud-checkbox-false");
+        }
+
+        /// <summary>
+        /// Gets the state class of an item's own checkbox in <see cref="TreeViewMultiSelectionNoValueTest"/>: <c>mud-checkbox-true</c>, <c>mud-checkbox-false</c> or <c>mud-checkbox-null</c>.
+        /// </summary>
+        private static string ItemCheckboxState(IRenderedComponent<TreeViewMultiSelectionNoValueTest> comp, string itemClass) =>
+            comp.Find($"li.{itemClass} > .mud-treeview-item-content .mud-checkbox span").ClassList
+                .Single(x => x is "mud-checkbox-true" or "mud-checkbox-false" or "mud-checkbox-null");
+
+        /// <summary>
+        /// Whether an item's own checkbox in <see cref="TreeViewMultiSelectionNoValueTest"/> is read-only.
+        /// </summary>
+        private static bool IsItemCheckboxReadOnly(IRenderedComponent<TreeViewMultiSelectionNoValueTest> comp, string itemClass) =>
+            comp.Find($"li.{itemClass} > .mud-treeview-item-content label.mud-checkbox").ClassList.Contains("mud-readonly");
+
+        [Test]
         public void TreeViewItemSelected_ShouldBeInitializedCorrectly_SingleSelection()
         {
-            var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
+            var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1.2");
             comp.Find("p.item1-selected").TrimmedText().Should().Be("False");
             comp.Find("p.item1-1-selected").TrimmedText().Should().Be("False");
@@ -232,7 +562,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InitialValueOfTreeViewItemSelected_Should_InfluenceSelectedValue_SingleSelection()
         {
-            var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self
+            var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self
                 .Add(x => x.SelectedValue, "item1.2")
                 .Add(x => x.Item1Selected, true));
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
@@ -244,7 +574,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TreeViewItemSelected_ShouldBeInitializedCorrectly_MultiSelection()
         {
-            var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self
+            var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self
                 .Add(x => x.SelectedValues, ["item1", "item1.2"])
                 .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.Find("p.selected-values").TrimmedText().Should().Be("item1, item1.2");
@@ -256,7 +586,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TreeViewItemVisible_RendersWhenVisibleIsTrue()
         {
-            var comp = Context.RenderComponent<ItemVisibleTreeViewTest>(element =>
+            var comp = Context.Render<ItemVisibleTreeViewTest>(element =>
             {
                 element.Add(x => x.IsElementVisible, true);
             });
@@ -267,7 +597,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TreeViewItemVisible_RendersNotWhenVisibleIsFalse()
         {
-            var comp = Context.RenderComponent<ItemVisibleTreeViewTest>(element =>
+            var comp = Context.Render<ItemVisibleTreeViewTest>(element =>
             {
                 element.Add(x => x.IsElementVisible, false);
             });
@@ -280,7 +610,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange and act
             var searchPhrase = "Trash";
-            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            var comp = Context.Render<TreeViewFilterFuncTest>(element =>
             {
                 element.Add(x => x.SearchPhrase, searchPhrase);
                 element.Add(x => x.FilterFunc, (e) =>
@@ -310,7 +640,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange and act
             var searchPhrase = "Categories";
-            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            var comp = Context.Render<TreeViewFilterFuncTest>(element =>
             {
                 element.Add(x => x.SearchPhrase, searchPhrase);
                 element.Add(x => x.FilterFunc, (e) =>
@@ -340,7 +670,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange and act
             var searchPhrase = "Social";
-            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            var comp = Context.Render<TreeViewFilterFuncTest>(element =>
             {
                 element.Add(x => x.SearchPhrase, searchPhrase);
                 element.Add(x => x.FilterFunc, (e) =>
@@ -370,7 +700,7 @@ namespace MudBlazor.UnitTests.Components
         {
             // Arrange and act
             var searchPhrase = "Social";
-            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            var comp = Context.Render<TreeViewFilterFuncTest>(element =>
             {
                 element.Add(x => x.SearchPhrase, "Social");
                 element.Add(x => x.AreItemsPopulated, false);
@@ -392,7 +722,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void TreeViewFilterFunc_FilterFuncIsNull()
         {
-            var comp = Context.RenderComponent<TreeViewFilterFuncTest>(element =>
+            var comp = Context.Render<TreeViewFilterFuncTest>(element =>
             {
                 element.Add(x => x.SearchPhrase, "Social");
             });
@@ -411,7 +741,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void InitialValueOfTreeViewItemSelected_Should_InfluenceSelectedValue_MultiSelection()
         {
-            var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self
+            var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self
                 .Add(x => x.SelectedValues, ["item1", "item1.2"])
                 .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
                 .Add(x => x.Item11Selected, true));
@@ -425,9 +755,9 @@ namespace MudBlazor.UnitTests.Components
         /// Note: in this test the trees are synchronized solely via their item's Selected parameter
         /// </summary>
         [Test]
-        public void TreeViewItem_Selected_TwoWayBindingTest_SingleSelection()
+        public async Task TreeViewItem_Selected_TwoWayBindingTest_SingleSelection()
         {
-            var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
+            var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self.Add(x => x.SelectedValue, "item1.2"));
             // check initial selection
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -440,7 +770,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
 
             // select another value on tree1 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
@@ -453,7 +783,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.item1-2-selected").TrimmedText().Should().Be("False");
 
             // select another value on tree2 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find("p.selected-value").TrimmedText().Should().Be("item1.1");
             comp.Find(".tree1 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -467,9 +797,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewItem_Selected_TwoWayBindingTest_MultiSelection()
+        public async Task TreeViewItem_Selected_TwoWayBindingTest_MultiSelection()
         {
-            var comp = Context.RenderComponent<TreeViewItemSelectedBindingTest>(self => self
+            var comp = Context.Render<TreeViewItemSelectedBindingTest>(self => self
                 .Add(x => x.SelectedValues, ["item1", "item1.2"])
                 .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             // check initial selection
@@ -491,7 +821,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
 
             // select another value on tree1 and check selection has changed on both trees
-            comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree1 .item-1-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-true");
@@ -504,7 +834,7 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("p.item1-2-selected").TrimmedText().Should().Be("True");
 
             // remove a value on tree2 and check selection has changed on both trees
-            comp.Find(".tree2 .item-1 .mud-treeview-item-content").Click();
+            await comp.Find(".tree2 .item-1 .mud-treeview-item-content").ClickAsync();
             comp.Find(".tree1 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
             comp.Find(".tree2 .item-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
             comp.Find(".tree1 .item-1-1 .mud-checkbox span").ClassList.Should().Contain("mud-checkbox-false");
@@ -518,133 +848,166 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeView_WhenDisabled_DoesNotHaveRipple()
+        public async Task TreeView_WhenDisabled_DoesNotHaveRipple()
         {
-            var comp = Context.RenderComponent<TreeViewRippleTest>(self => self.Add(x => x.Disabled, true));
+            var comp = Context.Render<TreeViewRippleTest>(self => self.Add(x => x.Disabled, true));
 
             comp.FindAll("div.mud-ripple").Count.Should().Be(0);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Disabled, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Disabled, false));
             comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
         }
 
         [Test]
-        public void TreeView_WhenRippleDisabled_DoesNotHaveRipple()
+        public async Task TreeView_WhenRippleDisabled_DoesNotHaveRipple()
         {
-            var comp = Context.RenderComponent<TreeViewRippleTest>(self => self.Add(x => x.Ripple, false));
+            var comp = Context.Render<TreeViewRippleTest>(self => self.Add(x => x.Ripple, false));
 
             comp.FindAll("div.mud-ripple").Count.Should().Be(0);
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Ripple, true));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Ripple, true));
             comp.FindAll("div.mud-ripple").Count.Should().BeGreaterThan(0);
         }
 
         [Test]
-        public void Collapsed_ClickOnArrowButton_CheckClose()
+        public async Task Collapsed_ClickOnArrowButton_CheckClose()
         {
-            var comp = Context.RenderComponent<TreeViewTest1>();
+            var comp = Context.Render<TreeViewTest1>();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
-            comp.Find("button.mud-treeview-item-expand-button").Click();
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
-            comp.Find("button.mud-treeview-item-expand-button").Click();
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
         }
 
         [Test]
-        public void DoubleClickOnArrowButton_ShouldNotSelectItem()
+        public async Task DoubleClickOnArrowButton_ShouldNotSelectItem()
         {
-            var comp = Context.RenderComponent<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
-            comp.Find("button.mud-treeview-item-expand-button").Click();
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
             comp.FindAll("input.mud-checkbox-input").Count.Should().Be(10);
             comp.Instance.SubItemSelected.Should().BeFalse();
             comp.Instance.Item1Selected.Should().BeFalse();
             // double-click on expand button should not influence selection
-            comp.Find("button.mud-treeview-item-expand-button").DoubleClick();
+            await comp.Find("button.mud-treeview-item-expand-button").DoubleClickAsync();
             comp.Instance.SubItemSelected.Should().BeFalse();
             comp.Instance.Item1Selected.Should().BeFalse();
-            comp.Find("input.mud-checkbox-input").Change(true);
+            await comp.Find("input.mud-checkbox-input").ChangeAsync(true);
             comp.Instance.SubItemSelected.Should().BeTrue();
             comp.Instance.Item1Selected.Should().BeTrue();
             // double-click on expand button should not influence selection
-            comp.Find("button.mud-treeview-item-expand-button").DoubleClick();
+            await comp.Find("button.mud-treeview-item-expand-button").DoubleClickAsync();
             comp.Instance.SubItemSelected.Should().BeTrue();
             comp.Instance.Item1Selected.Should().BeTrue();
         }
 
+        /// <summary>
+        /// Only expandable items instantiate a toggle button; leaves render the arrow placeholder as plain markup.
+        /// </summary>
         [Test]
-        public void Collapsed_ClickOnTreeItem_CheckClose()
+        public void LeafItems_DoNotInstantiateToggleButton()
         {
-            var comp = Context.RenderComponent<TreeViewTest2>();
+            var comp = Context.Render<TreeViewTest1>();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
-            comp.Find("button.mud-treeview-item-expand-button").Click();
+            // Every item keeps the arrow slot because it is the indent gutter that aligns leaves with their parents.
+            comp.FindAll("div.mud-treeview-item-arrow").Count.Should().Be(10);
+            // Four of the ten items have children, so the other six pay for no component.
+            comp.FindComponents<MudTreeViewItemToggleButton>().Count.Should().Be(4);
+            comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(4);
+        }
+
+        /// <summary>
+        /// Double-clicking a leaf's arrow placeholder must not reach the item, matching the expand button (#9419).
+        /// </summary>
+        [Test]
+        public async Task DoubleClickOnLeafArrow_ShouldNotSelectItem()
+        {
+            var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.SingleSelection));
+            // Index 2 is "MudBlazor.svg", a leaf, so its arrow is the empty placeholder rather than a button.
+            comp.FindAll("div.mud-treeview-item-arrow")[2].QuerySelector("button").Should().BeNull();
+
+            await comp.FindAll("div.mud-treeview-item-arrow")[2].DoubleClickAsync();
+            comp.Instance.SelectedValue.Should().BeNull();
+
+            // The same double-click on the item content does select, which is what the placeholder shields against.
+            await comp.FindAll("div.mud-treeview-item-content")[2].DoubleClickAsync();
+            comp.Instance.SelectedValue.Should().Be("MudBlazor.svg");
+        }
+
+        [Test]
+        public async Task Collapsed_ClickOnTreeItem_CheckClose()
+        {
+            var comp = Context.Render<TreeViewTest2>();
+            comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
-            comp.Find("button.mud-treeview-item-expand-button").Click();
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
         }
 
         [Test]
-        public void Unselected_Select_CheckSelected_Deselect_CheckDeselected()
+        public async Task Unselected_Select_CheckSelected_Deselect_CheckDeselected()
         {
-            var comp = Context.RenderComponent<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
-            comp.Find("button.mud-treeview-item-expand-button").Click();
+            await comp.Find("button.mud-treeview-item-expand-button").ClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
             comp.FindAll("input.mud-checkbox-input").Count.Should().Be(10);
-            comp.Find("input.mud-checkbox-input").Change(true);
+            await comp.Find("input.mud-checkbox-input").ChangeAsync(true);
             comp.Instance.SubItemSelected.Should().BeTrue();
             comp.Instance.Item1Selected.Should().BeTrue();
-            comp.FindAll("input.mud-checkbox-input")[2].Change(false);
+            await comp.FindAll("input.mud-checkbox-input")[2].ChangeAsync(false);
             comp.Instance.SubItemSelected.Should().BeFalse();
             comp.Instance.Item1Selected.Should().BeFalse(); // <-- selecting child updates parent in multi-selection mode
         }
 
         [Test]
-        public void Normal_Activate_CheckActivated_ActivateAnother_CheckBoth()
+        public async Task Normal_Activate_CheckActivated_ActivateAnother_CheckBoth()
         {
-            var comp = Context.RenderComponent<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.MultiSelection));
             comp.FindAll(".mud-checkbox-true").Count.Should().Be(0);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.Instance.Item2Selected.Should().BeFalse();
             comp.FindAll(".mud-checkbox-true").Count.Should().Be(4); // item1 + entire sub-tree checked
-            comp.FindAll("div.mud-treeview-item-content")[4].Click();
+            await comp.FindAll("div.mud-treeview-item-content")[4].ClickAsync();
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.Instance.Item2Selected.Should().BeTrue();
             comp.FindAll(".mud-checkbox-true").Count.Should().Be(10);  // + item2 + entire sub-tree checked
         }
 
         [Test]
-        public void TreeView_WillUnselectItems_WhenNotMultiSelect()
+        public async Task TreeView_WillUnselectItems_WhenNotMultiSelect()
         {
-            var comp = Context.RenderComponent<TreeViewTest7>();
+            var comp = Context.Render<TreeViewTest7>();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.Instance.Item2Selected.Should().BeFalse();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
-            comp.FindAll("div.mud-treeview-item-content")[4].Click();
+            await comp.FindAll("div.mud-treeview-item-content")[4].ClickAsync();
             comp.Instance.Item1Selected.Should().BeFalse();
             comp.Instance.Item2Selected.Should().BeTrue();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
         }
 
         [Test]
-        public void Normal_Activate_CheckActivated_Deactivate_Check()
+        public async Task Normal_Activate_CheckActivated_Deactivate_Check()
         {
-            var comp = Context.RenderComponent<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
+            var comp = Context.Render<TreeViewTest1>(self => self.Add(x => x.SelectionMode, SelectionMode.ToggleSelection));
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.Instance.Item2Selected.Should().BeFalse();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(1);
-            comp.Find("div.mud-treeview-item-content").Click();
+            await comp.Find("div.mud-treeview-item-content").ClickAsync();
             comp.Instance.Item1Selected.Should().BeFalse();
             comp.Instance.Item2Selected.Should().BeFalse();
             comp.FindAll("div.mud-treeview-item-content.mud-treeview-item-selected").Count.Should().Be(0);
@@ -653,42 +1016,1898 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RenderWithTemplate_CheckResult()
         {
-            var comp = Context.RenderComponent<TreeViewTemplateTest>();
+            var comp = Context.Render<TreeViewTemplateTest>();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(8);
         }
 
+        /// <summary>
+        /// Verifies that flattened virtualized rows expose their depth and sibling position, which the nested lists of a standard tree convey structurally.
+        /// </summary>
         [Test]
-        public void TreeViewServerTest()
+        public async Task TreeViewVirtualize_DataItems_ExposesAccessibleHierarchy()
         {
-            var comp = Context.RenderComponent<TreeViewServerTest>();
+            var comp = Context.Render<TreeViewVirtualizationTest>();
+
+            var root = FindTreeItem(comp, "Root");
+            root.GetAttribute("aria-level").Should().Be("1");
+            root.GetAttribute("aria-posinset").Should().Be("1");
+            root.GetAttribute("aria-setsize").Should().Be("2");
+
+            var childA = FindTreeItem(comp, "Child A");
+            childA.GetAttribute("aria-level").Should().Be("2");
+            childA.GetAttribute("aria-posinset").Should().Be("1");
+            childA.GetAttribute("aria-setsize").Should().Be("2");
+
+            var childB = FindTreeItem(comp, "Child B");
+            childB.GetAttribute("aria-level").Should().Be("2");
+            childB.GetAttribute("aria-posinset").Should().Be("2");
+            childB.GetAttribute("aria-setsize").Should().Be("2");
+
+            await childB.QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            comp.WaitForAssertion(() =>
+            {
+                var grandchild = FindTreeItem(comp, "Grandchild");
+                grandchild.GetAttribute("aria-level").Should().Be("3");
+                grandchild.GetAttribute("aria-posinset").Should().Be("1");
+                grandchild.GetAttribute("aria-setsize").Should().Be("1");
+            });
+        }
+
+        /// <summary>
+        /// Verifies that repeated references to one backing item render distinct rows without failing.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_DuplicateReferences_RenderDistinctRows()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.DuplicateSharedItem, true));
+            var sharedRows = FindSharedRows(comp);
+            sharedRows.Should().HaveCount(2);
+
+            await sharedRows[1].QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            comp.Instance.SelectedValue.Should().Be("Shared");
+            FindSharedRows(comp).Should().OnlyContain(row => row.QuerySelector("div.mud-treeview-item-content")!.ClassList.Contains("mud-treeview-item-selected"));
+
+            static IReadOnlyList<IElement> FindSharedRows(IRenderedComponent<TreeViewVirtualizationTest> component)
+            {
+                return component.FindAll("li.mud-treeview-item")
+                    .Where(item => item.FirstElementChild?.TextContent.Contains("Shared", StringComparison.Ordinal) == true)
+                    .ToList();
+            }
+        }
+
+        /// <summary>
+        /// Verifies that virtualization falls back to standard rendering without a constrained height.
+        /// </summary>
+        [Test]
+        public void TreeViewVirtualize_DataItemsWithoutConstrainedHeight_UsesStandardRenderer()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.Height, (string)null!));
+
+            comp.FindComponents<Virtualize<TreeViewItemContext<string>>>().Should().BeEmpty();
+            comp.FindAll("ul.mud-treeview-group").Should().NotBeEmpty();
+            comp.Find("li.mud-treeview-item").HasAttribute("aria-level").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Verifies that MaxHeight enables flattened virtualized data-item rendering.
+        /// </summary>
+        [Test]
+        public void TreeViewVirtualize_DataItemsWithMaxHeight_UsesFlattenedVisibleItems()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.Height, (string)null!)
+                .Add(x => x.MaxHeight, "200px"));
+
+            var virtualize = comp.FindComponent<Virtualize<TreeViewItemContext<string>>>();
+
+            virtualize.Instance.Items.Should().NotBeNull();
+            virtualize.Instance.Items!.Select(x => x.Item.Value).Should().Equal("Root", "Child A", "Child B", "Other");
+            virtualize.Instance.Items!.Select(x => x.Depth).Should().Equal(0, 1, 1, 0);
+        }
+
+        /// <summary>
+        /// Verifies that explicit virtualization settings and the dense default item size are passed to the underlying virtualizer.
+        /// </summary>
+        [Test]
+        public void TreeViewVirtualize_DataItems_PassesVirtualizationSettings()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.ItemSize, 40f)
+                .Add(x => x.OverscanCount, 8)
+                .Add(x => x.MaxItemCount, 500));
+
+            var virtualize = comp.FindComponent<Virtualize<TreeViewItemContext<string>>>();
+
+            virtualize.Instance.ItemSize.Should().Be(40f);
+            virtualize.Instance.OverscanCount.Should().Be(8);
+            virtualize.Instance.MaxItemCount.Should().Be(500);
+
+            var denseComp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.Dense, true)
+                .Add(x => x.ItemSize, 0f));
+
+            denseComp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance.ItemSize.Should().Be(26f);
+        }
+
+        /// <summary>
+        /// Verifies that the virtualizer and rendered rows receive the same fixed height, including after runtime changes.
+        /// </summary>
+        [TestCase(false, 0f, 40f)]
+        [TestCase(true, 0f, 26f)]
+        [TestCase(false, 64.5f, 64.5f)]
+        public async Task TreeViewVirtualize_RowHeightMatchesItemSize(bool dense, float itemSize, float expectedSize)
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.Dense, dense)
+                .Add(x => x.ItemSize, itemSize));
+
+            var expectedHeight = expectedSize.ToString(System.Globalization.CultureInfo.InvariantCulture) + "px";
+            var initialVirtualizer = comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance;
+            comp.Find("ul.mud-treeview").GetAttribute("style").Should().Contain($"--mud-treeview-item-height:{expectedHeight}");
+            comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance.ItemSize
+                .Should().Be(expectedSize);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ItemSize, 72f)));
+
+            comp.Find("ul.mud-treeview").GetAttribute("style").Should().Contain("--mud-treeview-item-height:72px");
+            comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance.ItemSize.Should().Be(72f);
+            comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance.Should().NotBeSameAs(initialVirtualizer);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Virtualize, false)));
+
+            comp.Find("ul.mud-treeview").GetAttribute("style").Should().NotContain("--mud-treeview-item-height");
+        }
+
+        /// <summary>
+        /// Verifies that changing density resets the virtualizer's measurements to match the new default row height.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_DensityChangesResetMeasuredRowSize()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>();
+            var initialVirtualizer = comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance;
+            initialVirtualizer.ItemSize.Should().Be(40f);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Dense, true)));
+
+            comp.Find("ul.mud-treeview").GetAttribute("style").Should().Contain("--mud-treeview-item-height:26px");
+            comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance.ItemSize.Should().Be(26f);
+            comp.FindComponent<Virtualize<TreeViewItemContext<string>>>().Instance.Should().NotBeSameAs(initialVirtualizer);
+        }
+
+        /// <summary>
+        /// Verifies that taller custom content uses a sufficient fixed row height even when dense styling is enabled.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_CustomContentUsesConfiguredRowHeight()
+        {
+            Context.JSInterop.SetupVoid("Blazor._internal.Virtualize.init", _ => true).SetVoidResult();
+            var comp = Context.Render<TreeViewLargeDataTest>(parameters => parameters.Add(x => x.ItemCount, 100));
+
+            await comp.Find("input[data-option=custom]").ChangeAsync(true);
+            await comp.Find("input[data-option=dense]").ChangeAsync(true);
+            await ScrollVirtualizerAsync<int>(comp, 0f, 400f);
+
+            comp.Find("ul.mud-treeview").GetAttribute("style").Should().Contain("--mud-treeview-item-height:80px");
+            comp.FindComponent<Virtualize<TreeViewItemContext<int>>>().Instance.ItemSize.Should().Be(80f);
+            comp.Find("ul.mud-treeview").TextContent.Should().Contain("Third line");
+        }
+
+        /// <summary>
+        /// Verifies that binding expansion permissions gives both render modes the same behavior, including off-screen branches.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_DataItems_ExpansionHonorsBackingPermissions(bool virtualize)
+        {
+            var child = new TreeItemData<string>
+            {
+                Value = "Child",
+                Children = [new TreeItemData<string> { Value = "Leaf" }]
+            };
+            var blocked = new TreeItemData<string> { Value = "Blocked", Expandable = false, Children = [child] };
+            var items = Enumerable.Range(0, 50)
+                .Select(index => (ITreeItemData<string>)new TreeItemData<string> { Value = $"Root {index}" })
+                .Append(blocked).ToArray();
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.Virtualize, virtualize)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.ExpandedChanged), EventCallback.Factory.Create<bool>(this, expanded => item.Expanded = expanded));
+                    builder.AddAttribute(5, nameof(MudTreeViewItem<string>.CanExpand), item.Expandable);
+                    builder.CloseComponent();
+                }));
+
+            await comp.InvokeAsync(comp.Instance.ExpandAllAsync);
+
+            blocked.Expanded.Should().BeFalse();
+            child.Expanded.Should().BeFalse();
+
+            if (virtualize)
+            {
+                await ScrollVirtualizerAsync(comp, 48 * 40f, 200f);
+            }
+
+            var blockedItem = comp.FindComponents<MudTreeViewItem<string>>().Single(item => item.Instance.Value == "Blocked");
+            await comp.InvokeAsync(blockedItem.Instance.ExpandAllAsync);
+            if (virtualize)
+            {
+                await blockedItem.Find("button.mud-treeview-item-expand-button").ClickAsync();
+            }
+
+            blocked.Expanded.Should().BeFalse();
+            child.Expanded.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Verifies that non-virtualized data trees continue to use the template's expansion permission independently of backing data.
+        /// </summary>
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        public async Task TreeView_StandardDataItems_PreservesTemplateExpansionPermission(bool expandable, bool canExpand)
+        {
+            var root = new TreeItemData<string>
+            {
+                Value = "Root",
+                Expandable = expandable,
+                Children = [new TreeItemData<string> { Value = "Child" }]
+            };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [root])
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.ExpandedChanged), EventCallback.Factory.Create<bool>(this, expanded => item.Expanded = expanded));
+                    builder.AddAttribute(5, nameof(MudTreeViewItem<string>.CanExpand), canExpand);
+                    builder.CloseComponent();
+                }));
+
+            await comp.InvokeAsync(comp.Instance.ExpandAllAsync);
+
+            root.Expanded.Should().Be(canExpand);
+        }
+
+        /// <summary>
+        /// Verifies that a virtualized item with revoked expansion permission can still be collapsed.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_BlockedExpandedItemCanCollapse()
+        {
+            var root = new TreeItemData<string>
+            {
+                Value = "Root",
+                Expandable = false,
+                Expanded = true,
+                Children = [new TreeItemData<string> { Value = "Child" }]
+            };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [root])
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.CanExpand), item.Expandable);
+                    builder.CloseComponent();
+                }));
+
+            FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.HasAttribute("disabled").Should().BeFalse();
+
+            await FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            root.Expanded.Should().BeFalse();
+            GetVirtualizedValues(comp).Should().Equal("Root");
+            FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.HasAttribute("disabled").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Verifies that the common <c>CanExpand="@context.HasChildren"</c> template renders a virtualized tree, and logs nothing because a leaf has nothing to expand.
+        /// </summary>
+        [Test]
+        public void TreeViewVirtualize_CanExpandBoundToHasChildren_RendersWithoutWarning()
+        {
+            var provider = new MockLoggerProvider();
+            var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
+            Context.Services.AddLogging(builder => builder.ClearProviders().AddProvider(provider));
+            var root = new TreeItemData<string> { Value = "Root", Expanded = true, Children = [new TreeItemData<string> { Value = "Leaf" }] };
+
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [root])
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.CanExpand), item.HasChildren);
+                    builder.CloseComponent();
+                }));
+
+            GetVirtualizedValues(comp).Should().Equal("Root", "Leaf");
+            logger!.GetEntries().Should().NotContain(entry => entry.Level == LogLevel.Warning);
+        }
+
+        /// <summary>
+        /// Verifies that a rendered row whose template forbids expansion while its backing item allows it cannot be expanded from the row, that tree-wide expansion follows the backing item, and that the disagreement is logged once instead of failing the tree.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ConflictingTemplatePermission_BlocksRowAndLogsOnce()
+        {
+            var provider = new MockLoggerProvider();
+            var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
+            Context.Services.AddLogging(builder => builder.ClearProviders().AddProvider(provider));
+            var first = new TreeItemData<string> { Value = "First", Children = [new TreeItemData<string> { Value = "First child" }] };
+            var second = new TreeItemData<string> { Value = "Second", Children = [new TreeItemData<string> { Value = "Second child" }] };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [first, second])
+                .Add(x => x.ExpandOnClick, true)
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.ExpandedChanged), EventCallback.Factory.Create<bool>(this, expanded => item.Expanded = expanded));
+                    builder.AddAttribute(5, nameof(MudTreeViewItem<string>.CanExpand), false);
+                    builder.CloseComponent();
+                }));
+
+            await FindTreeItem(comp, "First").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            first.Expanded.Should().BeFalse();
+            GetVirtualizedValues(comp).Should().Equal("First", "Second");
+            FindTreeItem(comp, "First").QuerySelector("button.mud-treeview-item-expand-button")!.HasAttribute("disabled").Should().BeTrue();
+            logger!.GetEntries().Should().ContainSingle(entry => entry.Level == LogLevel.Warning && entry.Message.Contains("CanExpand", StringComparison.Ordinal));
+
+            await comp.InvokeAsync(comp.Instance.ExpandAllAsync);
+
+            first.Expanded.Should().BeTrue("tree-wide expansion cannot see the template's permission of items which are not rendered, so it follows Expandable for every item");
+            comp.WaitForAssertion(() => comp.FindComponents<MudTreeViewItem<string>>().Single(item => item.Instance.Value == "First")
+                .Find("button.mud-treeview-item-expand-button").HasAttribute("disabled").Should().BeFalse("an expanded item can always be collapsed"));
+        }
+
+        /// <summary>
+        /// Verifies that a large loaded tree keeps the number of rendered rows bounded while scrolling, selecting and changing expansion.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_LargeTreeKeepsRenderedRowsBounded()
+        {
+            var itemCount = 10_000;
+            Context.JSInterop.SetupVoid("Blazor._internal.Virtualize.init", _ => true).SetVoidResult();
+            var comp = Context.Render<TreeViewLargeDataTest>(parameters => parameters.Add(x => x.ItemCount, itemCount));
+            var virtualizer = comp.FindComponent<Virtualize<TreeViewItemContext<int>>>();
+            await ScrollVirtualizerAsync<int>(comp, 0f, 400f);
+            virtualizer.Instance.Items.Should().HaveCount(itemCount);
+            comp.FindAll("li.mud-treeview-item").Should().NotBeEmpty();
+            comp.FindAll("li.mud-treeview-item").Count.Should().BeLessThan(40);
+
+            await ScrollVirtualizerAsync<int>(comp, (itemCount - 20) * 40f, 400f);
+            var lastRow = comp.FindComponents<MudTreeViewItem<int>>().MaxBy(item => item.Instance.Value)!;
+            var lastValue = lastRow.Instance.Value;
+            lastValue.Should().BeGreaterThanOrEqualTo(itemCount - 30);
+            comp.FindAll("li.mud-treeview-item").Count.Should().BeLessThan(40);
+            await lastRow.Find(".mud-treeview-item-content").ClickAsync();
+            comp.Find("output").GetAttribute("data-selected-value").Should().Be(lastValue.ToString(CultureInfo.InvariantCulture));
+
+            await comp.InvokeAsync(comp.Instance.CollapseAllAsync);
+            virtualizer.Instance.Items.Should().HaveCount(100);
+            await comp.InvokeAsync(comp.Instance.Rerender);
+            await comp.InvokeAsync(comp.Instance.ExpandAllAsync);
+            virtualizer.Instance.Items.Should().HaveCount(itemCount);
+            comp.FindAll("li.mud-treeview-item").Count.Should().BeLessThan(40);
+        }
+
+        /// <summary>
+        /// Verifies that switching from standard to virtual rendering reads expansion, visibility, and selection from backing data.
+        /// </summary>
+        [Test]
+        public async Task TreeView_DataItems_StandardToVirtual_UsesBackingDataState()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.Virtualize, false)
+                .Add(x => x.BindExpanded, false));
+            var childB = FindDataItem(comp.Instance.TreeItems, "Child B");
+            var childA = FindDataItem(comp.Instance.TreeItems, "Child A");
+            var grandchild = FindDataItem(comp.Instance.TreeItems, "Grandchild");
+
+            await FindTreeItem(comp, "Child B").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            childB.Expanded.Should().BeFalse();
+            FindTreeItem(comp, "Grandchild").Should().NotBeNull();
+            childA.Visible = false;
+            grandchild.Selected = true;
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Virtualize, true)));
+
+            childB.Expanded.Should().BeFalse();
+            GetVirtualizedValues(comp).Should().Equal("Root", "Child B", "Other");
+            comp.Instance.SelectedValue.Should().Be("Grandchild");
+        }
+
+        /// <summary>
+        /// Verifies that switching from virtual to standard rendering preserves expansion state.
+        /// </summary>
+        [Test]
+        public async Task TreeView_DataItems_VirtualToStandard_PreservesExpansion()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>();
+
+            await FindTreeItem(comp, "Child B").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+            GetVirtualizedValues(comp).Should().Contain("Grandchild");
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Virtualize, false)));
+
+            comp.FindComponents<Virtualize<TreeViewItemContext<string>>>().Should().BeEmpty();
+            FindTreeItem(comp, "Grandchild").Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// Verifies that a moved item keeps its row component and receives its current hierarchy depth.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_DataItems_MovedItemKeepsComponentAndReceivesCurrentDepth()
+        {
+            var movableItem = new TreeItemData<string> { Value = "Movable", Text = "Movable" };
+            var parentItem = new TreeItemData<string> { Value = "Parent", Text = "Parent", Children = [movableItem] };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, new List<ITreeItemData<string>> { parentItem, movableItem })
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "120px")
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Text), item.Text);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.CloseComponent();
+                }));
+            var movableComponent = comp.FindComponents<MudTreeViewItem<string>>()
+                .Single(item => item.Instance.CurrentItemData?.Value == "Movable")
+                .Instance;
+
+            var movable = FindTreeItem(comp, "Movable");
+            movable.GetAttribute("style").Should().Contain("--mud-treeview-item-depth:0");
+            movable.GetAttribute("aria-level").Should().Be("1");
+            movable.GetAttribute("aria-posinset").Should().Be("2");
+            movable.GetAttribute("aria-setsize").Should().Be("2");
+
+            parentItem.Expanded = true;
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, new List<ITreeItemData<string>> { parentItem })));
+
+            comp.WaitForAssertion(() =>
+            {
+                var movedItem = FindTreeItem(comp, "Movable");
+                movedItem.GetAttribute("style").Should().Contain("--mud-treeview-item-depth:1");
+                movedItem.GetAttribute("aria-level").Should().Be("2");
+                movedItem.GetAttribute("aria-posinset").Should().Be("1");
+                movedItem.GetAttribute("aria-setsize").Should().Be("1");
+            });
+            comp.FindComponents<MudTreeViewItem<string>>()
+                .Single(item => item.Instance.CurrentItemData?.Value == "Movable")
+                .Instance.Should().BeSameAs(movableComponent, "rows are keyed by backing item");
+        }
+
+        /// <summary>
+        /// Verifies that string data items use their text as the selected value when Value is null.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_DataItems_SelectedValueUsesTextFallbackWhenValueIsNull()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.UseTextOnlyValues, true)
+                .Add(x => x.AutoExpand, true));
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedValue, "Grandchild")));
+
+            comp.WaitForAssertion(() =>
+            {
+                comp.Instance.SelectedValue.Should().Be("Grandchild");
+                GetTreeViewItemContexts(comp).Select(itemContext => itemContext.Item.Text).Should().Contain("Grandchild");
+            });
+        }
+
+        /// <summary>
+        /// Verifies that replacing virtualized items and selecting a replacement in one parameter update uses the replacement hierarchy.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ItemsReplacementAndSelectionUseCurrentHierarchy()
+        {
+            var initial = new TreeItemData<string> { Value = "Initial" };
+            var replacement = new TreeItemData<string> { Value = "Replacement" };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [initial])
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "80px")
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Selected), item.Selected);
+                    builder.CloseComponent();
+                }));
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, [replacement])
+                .Add(x => x.SelectedValue, "Replacement")));
+
+            replacement.Selected.Should().BeTrue();
+            FindTreeItem(comp, "Replacement").QuerySelector("div.mud-treeview-item-content")!
+                .ClassList.Should().Contain("mud-treeview-item-selected");
+        }
+
+        /// <summary>
+        /// Verifies that selecting a virtualized parent selects all of its descendants.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_MultiSelection_SelectingParentSelectsDescendants()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+
+            await FindTreeItem(comp, "Root").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["Root", "Child A", "Child B", "Grandchild"]);
+            GetDataItems(comp.Instance.TreeItems).Should().ContainSingle(item => item.Value == "Grandchild" && item.Selected);
+
+            await FindTreeItem(comp, "Root").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEmpty();
+            GetDataItems(comp.Instance.TreeItems).Should().OnlyContain(item => !item.Selected);
+        }
+
+        /// <summary>
+        /// Verifies that selecting a duplicated visible root does not update ancestors of its collapsed duplicate occurrence.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_DuplicateReferenceUsesClickedRowForAncestors()
+        {
+            var shared = new TreeItemData<string> { Value = "Shared", Text = "Shared" };
+            var collapsedParent = new TreeItemData<string>
+            {
+                Value = "Parent",
+                Text = "Parent",
+                Children = [shared]
+            };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [shared, collapsedParent])
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "120px")
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.AutoSelectParent, true)
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Text), item.Text);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.CloseComponent();
+                }));
+
+            await FindTreeItem(comp, "Shared").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            shared.Selected.Should().BeTrue();
+            collapsedParent.Selected.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Verifies that virtualized multi-selection invokes each item's SelectedChanged callback.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_MultiSelection_InvokesItemSelectedChanged()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            var initialChangeCount = comp.Instance.ItemSelectedChangedCount;
+
+            await FindTreeItem(comp, "Child A").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            comp.Instance.ItemSelectedChangedCount.Should().BeGreaterThan(initialChangeCount);
+            FindDataItem(comp.Instance.TreeItems, "Child A").Selected.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Verifies that external multi-selection updates collapsed virtualized item data.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_MultiSelection_ExternalSelectionUpdatesCollapsedItemData()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedValues, ["Grandchild"])));
+
+            FindDataItem(comp.Instance.TreeItems, "Grandchild").Selected.Should().BeTrue();
+            GetDataItems(comp.Instance.TreeItems)
+                .Where(item => item.Value != "Grandchild")
+                .Should()
+                .OnlyContain(item => !item.Selected);
+        }
+
+        /// <summary>
+        /// Verifies that a row mounting in the same parent render as an external deselection of its item does not overwrite that deselection.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ExternalDeselectionOfMountingRow_IsReconciled()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.SelectedValues, ["Grandchild"]));
+            var grandchild = FindDataItem(comp.Instance.TreeItems, "Grandchild");
+            grandchild.Selected.Should().BeTrue();
+
+            await comp.InvokeAsync(() =>
+            {
+                grandchild.Selected = false;
+                FindDataItem(comp.Instance.TreeItems, "Child B").Expanded = true;
+                comp.Instance.Rerender();
+            });
+
+            comp.WaitForAssertion(() => FindTreeItem(comp, "Grandchild").QuerySelector(".mud-checkbox span")!.ClassList.Should().NotContain("mud-checkbox-true"));
+            comp.Instance.SelectedValues.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Verifies that a backing selection change made together with a tree-only refresh, such as expanding all, is reconciled for rows on screen.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ExternalSelectionWithTreeOnlyRefresh_IsReconciled()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            var tree = comp.FindComponent<MudTreeView<string>>().Instance;
+            var childA = FindDataItem(comp.Instance.TreeItems, "Child A");
+
+            await comp.InvokeAsync(async () =>
+            {
+                childA.Selected = true;
+                await tree.ExpandAllAsync();
+            });
+
+            comp.WaitForAssertion(() => FindTreeItem(comp, "Child A").QuerySelector(".mud-checkbox span")!.ClassList.Should().Contain("mud-checkbox-true"));
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["Child A"]);
+        }
+
+        /// <summary>
+        /// Verifies that an external selection update selects an item in a collapsed branch without re-projecting the hierarchy.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ExternalSelection_DoesNotReprojectHierarchy()
+        {
+            var (items, tracked) = CreateTrackedHierarchy();
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+            var rows = GetTreeViewItemContexts(comp);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedValue, "Tracked")));
+
+            tracked.Selected.Should().BeTrue();
+            GetTreeViewItemContexts(comp).Should().BeSameAs(rows, "the rows are only replaced when the hierarchy is re-projected");
+        }
+
+        /// <summary>
+        /// Verifies that a parent render with unchanged items does not re-project the hierarchy, which made large trees slow to re-render.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRenderWithUnchangedItems_DoesNotReprojectHierarchy()
+        {
+            var (items, _) = CreateTrackedHierarchy();
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+            var rows = GetTreeViewItemContexts(comp);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetTreeViewItemContexts(comp).Should().BeSameAs(rows, "the rows are only replaced when the hierarchy is re-projected");
+        }
+
+        /// <summary>
+        /// Verifies that a parent render shows items made visible again in place, as when an application clears its own filter.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRender_ShowsItemsMadeVisibleInPlace()
+        {
+            var hidden = new TreeItemData<string> { Value = "Hidden", Text = "Hidden", Visible = false };
+            var hiddenChild = new TreeItemData<string> { Value = "Hidden child", Text = "Hidden child", Visible = false };
+            var folder = new TreeItemData<string> { Value = "Folder", Text = "Folder", Expanded = true, Children = [hiddenChild] };
+            var items = new List<ITreeItemData<string>> { new TreeItemData<string> { Value = "Shown", Text = "Shown" }, hidden, folder };
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+            GetVirtualizedValues(comp).Should().Equal("Shown", "Folder");
+
+            hidden.Visible = true;
+            hiddenChild.Visible = true;
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetVirtualizedValues(comp).Should().Equal("Shown", "Hidden", "Folder", "Hidden child");
+        }
+
+        /// <summary>
+        /// Verifies that a parent render applies <see cref="ITreeItemData{T}.Selected"/> set in place on an item which is not rendered, including its ancestor's check state.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRender_AppliesSelectionSetInPlaceOnItemNotRendered()
+        {
+            var child = new TreeItemData<string> { Value = "Child", Text = "Child" };
+            var folder = new TreeItemData<string> { Value = "Folder", Text = "Folder", Children = [child, new TreeItemData<string> { Value = "Sibling", Text = "Sibling" }] };
+            var items = new List<ITreeItemData<string>> { folder };
+            IReadOnlyCollection<string> selectedValues = null;
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.SelectedValuesChanged, values => selectedValues = values)
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<string>()));
+
+            child.Selected = true;
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            selectedValues.Should().BeEquivalentTo(["Child"]);
+            comp.WaitForAssertion(() => GetCheckBoxState(comp, "Folder").Should().Be("mud-checkbox-null"));
+        }
+
+        /// <summary>
+        /// Verifies that a parent render applies <see cref="ITreeItemData{T}.Expanded"/> set in place on an item which is not rendered.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRender_AppliesExpansionSetInPlaceOnItemNotRendered()
+        {
+            var folder = new TreeItemData<string> { Value = "Folder", Text = "Folder", Children = [new TreeItemData<string> { Value = "Child", Text = "Child" }] };
+            var items = Enumerable.Range(0, 50)
+                .Select(index => (ITreeItemData<string>)new TreeItemData<string> { Value = $"Root {index}", Text = $"Root {index}" })
+                .Append(folder)
+                .ToList();
+            Context.JSInterop.SetupVoid("Blazor._internal.Virtualize.init", _ => true).SetVoidResult();
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+            await ScrollVirtualizerAsync(comp, 0f, 200f);
+            comp.FindComponents<MudTreeViewItem<string>>().Should().NotContain(item => item.Instance.Value == "Folder");
+
+            folder.Expanded = true;
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetVirtualizedValues(comp).Should().EndWith(["Folder", "Child"]);
+        }
+
+        /// <summary>
+        /// Verifies that a parent render shows a root item which replaced another at the same position of the same collection.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRender_ShowsRootItemReplacedInPlace()
+        {
+            var items = new List<ITreeItemData<string>>
+            {
+                new TreeItemData<string> { Value = "First", Text = "First" },
+                new TreeItemData<string> { Value = "Replaced", Text = "Replaced" }
+            };
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+
+            items[1] = new TreeItemData<string> { Value = "Replacement", Text = "Replacement" };
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetVirtualizedValues(comp).Should().Equal("First", "Replacement");
+        }
+
+        /// <summary>
+        /// Verifies that a value changed in place is selectable in the same parent render.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRender_SelectsValueChangedInPlace()
+        {
+            var item = new MutableTreeItemData("Before");
+            var items = new List<ITreeItemData<string>> { item, new TreeItemData<string> { Value = "Other", Text = "Other" } };
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+
+            item.Value = "After";
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.SelectedValue, "After")));
+
+            item.Selected.Should().BeTrue();
+            FindTreeItem(comp, "Before").QuerySelector("div.mud-treeview-item-content")!.ClassList.Should().Contain("mud-treeview-item-selected");
+        }
+
+        /// <summary>
+        /// Verifies that an item whose <see cref="ITreeItemData{T}.Children"/> returns a new collection on every read does not make a parent render re-project, while a child added to it in place is still shown.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ChildrenReturningNewCollection_ReprojectsOnlyWhenChildrenChange()
+        {
+            var folder = new MutableTreeItemData("Folder") { Expanded = true };
+            folder.ChildList.Add(new TreeItemData<string> { Value = "First", Text = "First" });
+            var items = new List<ITreeItemData<string>> { folder };
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+            var rows = GetTreeViewItemContexts(comp);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetTreeViewItemContexts(comp).Should().BeSameAs(rows, "the rows are only replaced when the hierarchy is re-projected");
+
+            folder.ChildList.Add(new TreeItemData<string> { Value = "Second", Text = "Second" });
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetVirtualizedValues(comp).Should().Equal("Folder", "First", "Second");
+        }
+
+        /// <summary>
+        /// Verifies that a parent render shows a root item which was added to the same collection in place.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRender_ShowsRootItemAddedInPlace()
+        {
+            var (items, _) = CreateTrackedHierarchy();
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+
+            ((List<ITreeItemData<string>>)items).Add(new TreeItemData<string> { Value = "Added", Text = "Added" });
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetVirtualizedValues(comp).Should().Equal("Other", "Collapsed", "Added");
+        }
+
+        /// <summary>
+        /// Verifies that clicks after the tree published a filtered selection leave the published collection unchanged.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ClickAfterFilteredSelection_KeepsPublishedCollection()
+        {
+            var (items, _) = CreateTrackedHierarchy();
+            var raised = new List<IReadOnlyCollection<string>>();
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.SelectedValuesChanged, values => raised.Add(values))
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<string>()));
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedValues, ["Other", "Missing"])));
+            var published = raised.Should().ContainSingle().Subject;
+
+            await FindTreeItem(comp, "Collapsed").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+            await FindTreeItem(comp, "Other").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            published.Should().BeEquivalentTo(["Other"]);
+            raised.Should().HaveCount(3);
+            raised[1].Should().BeEquivalentTo(["Other", "Collapsed", "Tracked"]);
+            raised[2].Should().BeEquivalentTo(["Collapsed", "Tracked"]);
+        }
+
+        /// <summary>
+        /// Verifies that an in-place items change made inside the bound selection callback is shown by the render that callback queues.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_InPlaceChangeInsideSelectedValuesCallback_IsShown()
+        {
+            var (items, _) = CreateTrackedHierarchy();
+            var comp = Context.Render<TreeViewVirtualizedInPlaceCallbackTest>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.InsideSelectedValuesChanged, values => ((List<ITreeItemData<string>>)items).Add(new TreeItemData<string> { Value = "Added", Text = "Added" })));
+
+            await FindTreeItem(comp, "Other").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            GetVirtualizedValues(comp).Should().Equal("Other", "Collapsed", "Added");
+        }
+
+        /// <summary>
+        /// Verifies that expanding a folder splices its rows into the projection instead of reprojecting the hierarchy.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ExpandingFolderSplicesRowsWithoutReprojecting()
+        {
+            var (items, _) = CreateTrackedHierarchy();
+            var comp = RenderDataTree(items, SelectionMode.MultiSelection);
+            var otherRow = GetTreeViewItemContexts(comp).Single(row => row.Item.Value == "Other");
+
+            await FindTreeItem(comp, "Collapsed").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            GetVirtualizedValues(comp).Should().Equal("Other", "Collapsed", "Tracked");
+            GetTreeViewItemContexts(comp).Single(row => row.Item.Value == "Other").Should().BeSameAs(otherRow, "the splice keeps the rows which are not below the toggled folder");
+        }
+
+        /// <summary>
+        /// Verifies that expanding a folder whose child is itself an expanded folder splices the whole visible subtree at the right depths,
+        /// and that collapsing it removes every nested row while keeping the rows outside the folder.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_SplicingFolderWithNestedDescendants_MovesWholeVisibleSubtree()
+        {
+            var leaf = new TreeItemData<string> { Value = "Leaf", Text = "Leaf" };
+            var sub = new TreeItemData<string> { Value = "Sub", Text = "Sub", Expanded = true, Children = [leaf] };
+            var folder = new TreeItemData<string> { Value = "Folder", Text = "Folder", Children = [sub] };
+            var sibling = new TreeItemData<string> { Value = "Sib", Text = "Sib" };
+            var comp = RenderDataTree([folder, sibling], SelectionMode.MultiSelection);
+            var siblingRow = GetTreeViewItemContexts(comp).Single(row => row.Item.Value == "Sib");
+
+            await FindTreeItem(comp, "Folder").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            var expandedRows = GetTreeViewItemContexts(comp);
+            expandedRows.Select(row => row.Item.Value).Should().Equal("Folder", "Sub", "Leaf", "Sib");
+            expandedRows.Select(row => row.Depth).Should().Equal(new[] { 0, 1, 2, 0 }, "the splice inserts the nested subtree at the depths below the toggled folder");
+            expandedRows.Single(row => row.Item.Value == "Sib").Should().BeSameAs(siblingRow, "the splice keeps the rows which are not below the toggled folder");
+
+            await FindTreeItem(comp, "Folder").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            var collapsedRows = GetTreeViewItemContexts(comp);
+            collapsedRows.Select(row => row.Item.Value).Should().Equal("Folder", "Sib");
+            collapsedRows.Single(row => row.Item.Value == "Sib").Should().BeSameAs(siblingRow, "collapsing the folder keeps the rows outside it");
+        }
+
+        /// <summary>
+        /// Verifies that expanding a folder in a tree with repeated values falls back to a full reprojection instead of splicing, keeping the duplicate rows distinct.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ExpandingFolderWithRepeatedValues_FallsBackToReprojection()
+        {
+            var shared = new TreeItemData<string> { Value = "Shared", Text = "Shared" };
+            var folder = new TreeItemData<string> { Value = "Folder", Text = "Folder", Children = [shared] };
+            var comp = RenderDataTree([shared, folder], SelectionMode.MultiSelection);
+
+            await FindTreeItem(comp, "Folder").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            var rows = GetTreeViewItemContexts(comp);
+            rows.Select(row => row.Item.Value).Should().Equal("Shared", "Folder", "Shared");
+            rows.Select(row => row.Depth).Should().Equal(0, 0, 1);
+        }
+
+        /// <summary>
+        /// Verifies that a selection change arriving in the same parent render as an in-place change to the items moves the backing selection from an item which is not rendered to the new one.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_SelectionChangeWithInPlaceItemsChange_UpdatesBackingItems()
+        {
+            var (items, tracked) = CreateTrackedHierarchy();
+            var other = items.First();
+            var comp = RenderDataTree(items, SelectionMode.SingleSelection);
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedValue, "Tracked")));
+            tracked.Selected.Should().BeTrue();
+
+            ((List<ITreeItemData<string>>)items).Add(new TreeItemData<string> { Value = "Added", Text = "Added" });
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.SelectedValue, "Other")));
+
+            tracked.Selected.Should().BeFalse("the previously selected item is not rendered, so only the tree can clear it");
+            other.Selected.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Verifies that clicking a row selects it without walking the hierarchy again, in single and multi-selection.
+        /// </summary>
+        [TestCase(SelectionMode.SingleSelection)]
+        [TestCase(SelectionMode.MultiSelection)]
+        public async Task TreeViewVirtualize_ClickingRow_DoesNotReprojectHierarchy(SelectionMode selectionMode)
+        {
+            var (items, tracked) = CreateTrackedHierarchy();
+            var comp = RenderDataTree(items, selectionMode);
+            tracked.ResetReadCount();
+
+            await FindTreeItem(comp, "Other").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            items.First().Selected.Should().BeTrue();
+            tracked.ChildrenReadCount.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Verifies that replacement items whose backing selection disagrees with the selected values are projected once, in single and multi-selection.
+        /// </summary>
+        [TestCase(SelectionMode.SingleSelection)]
+        [TestCase(SelectionMode.MultiSelection)]
+        public async Task TreeViewVirtualize_ReplacedItemsWithDisagreeingSelection_ProjectsHierarchyOnce(SelectionMode selectionMode)
+        {
+            var (initialItems, _) = CreateTrackedHierarchy();
+            var comp = RenderDataTree(initialItems, selectionMode);
+            var (items, tracked) = CreateTrackedHierarchy();
+            items.First().Selected = true;
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Items, items)));
+
+            GetTreeViewItemContexts(comp).Single(row => row.Item.Value == "Other").IsSelected.Should().BeTrue();
+            tracked.ChildrenReadCount.Should().Be(1, "the pending reconciliation already settles a mounting row whose backing selection disagrees");
+        }
+
+        /// <summary>
+        /// Verifies that a selected item which leaves the items and returns is shown selected again, with its ancestors' check state, and that the next click deselects it.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_MultiSelection_SelectedItemRemovedAndRestored_StaysSelected()
+        {
+            var removed = new TreeItemData<string> { Value = "Removed", Text = "Removed" };
+            var sibling = new TreeItemData<string> { Value = "Sibling", Text = "Sibling" };
+            var folder = new TreeItemData<string> { Value = "Folder", Text = "Folder", Expanded = true, Children = [removed, sibling] };
+            IReadOnlyCollection<string> selectedValues = null;
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [folder])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.SelectedValuesChanged, values => selectedValues = values)
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<string>()));
+            await FindTreeItem(comp, "Removed").QuerySelector("div.mud-treeview-item-checkbox")!.ClickAsync();
+            selectedValues.Should().BeEquivalentTo(["Removed"]);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Items, [sibling])));
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Items, [folder])));
+
+            removed.Selected.Should().BeTrue();
+            GetCheckBoxState(comp, "Removed").Should().Be("mud-checkbox-true");
+            GetCheckBoxState(comp, "Folder").Should().Be("mud-checkbox-null");
+
+            await FindTreeItem(comp, "Removed").QuerySelector("div.mud-treeview-item-checkbox")!.ClickAsync();
+
+            selectedValues.Should().BeEmpty();
+            GetCheckBoxState(comp, "Removed").Should().Be("mud-checkbox-false");
+        }
+
+        /// <summary>
+        /// Verifies that with tri-state off, a folder without a value still derives its check state from its children in both render modes, as it did before virtualization.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public void TreeView_TriStateOff_ValuelessFolderReflectsChildren(bool virtualize)
+        {
+            var full = new TreeItemData<int?>
+            {
+                Text = "Full",
+                Expanded = true,
+                Children = [new TreeItemData<int?> { Value = 1, Text = "One" }, new TreeItemData<int?> { Value = 2, Text = "Two" }]
+            };
+            var partial = new TreeItemData<int?>
+            {
+                Text = "Partial",
+                Expanded = true,
+                Children = [new TreeItemData<int?> { Value = 3, Text = "Three" }, new TreeItemData<int?> { Value = 4, Text = "Four" }]
+            };
+            var comp = Context.Render<MudTreeView<int?>>(parameters => parameters
+                .Add(x => x.Items, [full, partial])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.TriState, false)
+                .Add(x => x.SelectedValues, [1, 2, 3])
+                .Add(x => x.Virtualize, virtualize)
+                .Add(x => x.Height, "400px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<int?>()));
+
+            GetCheckBoxState(comp, "Full").Should().Be("mud-checkbox-true");
+            GetCheckBoxState(comp, "Partial").Should().Be("mud-checkbox-null");
+            GetCheckBoxState(comp, "Four").Should().Be("mud-checkbox-false");
+        }
+
+        /// <summary>
+        /// Verifies that a folder without a value whose children are all selected shows a checked box in both render modes.
+        /// </summary>
+        [Test]
+        public void TreeView_ValuelessFolderWithAllChildrenSelected_ShowsCheckedInBothModes()
+        {
+            var standard = RenderFolderTree(Context, virtualize: false);
+            var virtualized = RenderFolderTree(Context, virtualize: true);
+
+            GetCheckState(standard).Should().Be("mud-checkbox-true");
+            GetCheckState(virtualized).Should().Be("mud-checkbox-true");
+
+            static IRenderedComponent<MudTreeView<int?>> RenderFolderTree(BunitContext context, bool virtualize)
+            {
+                var folder = new TreeItemData<int?>
+                {
+                    Text = "Folder",
+                    Expanded = true,
+                    Children = [new TreeItemData<int?> { Value = 1, Text = "One" }, new TreeItemData<int?> { Value = 2, Text = "Two" }]
+                };
+                return context.Render<MudTreeView<int?>>(parameters => parameters
+                    .Add(x => x.Items, [folder])
+                    .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                    .Add(x => x.SelectedValues, [1, 2])
+                    .Add(x => x.Virtualize, virtualize)
+                    .Add(x => x.Height, "200px")
+                    .Add(x => x.ItemTemplate, item => builder =>
+                    {
+                        builder.OpenComponent<MudTreeViewItem<int?>>(0);
+                        builder.AddAttribute(1, nameof(MudTreeViewItem<int?>.Value), item.Value);
+                        builder.AddAttribute(2, nameof(MudTreeViewItem<int?>.Text), item.Text);
+                        builder.AddAttribute(3, nameof(MudTreeViewItem<int?>.Items), item.Children);
+                        builder.AddAttribute(4, nameof(MudTreeViewItem<int?>.Expanded), item.Expanded);
+                        builder.CloseComponent();
+                    }));
+            }
+
+            static string GetCheckState(IRenderedComponent<MudTreeView<int?>> component)
+            {
+                return FindTreeItem(component, "Folder").QuerySelector(".mud-checkbox span")!.ClassList
+                    .Single(className => className.StartsWith("mud-checkbox-", StringComparison.Ordinal));
+            }
+        }
+
+        /// <summary>
+        /// Verifies that a valueless descendant does not make an otherwise fully selected parent indeterminate,
+        /// so both render modes agree. A valueless item cannot be selected, so it must not count as unselected.
+        /// </summary>
+        [Test]
+        public void TreeView_ValuelessDescendant_ShowsSameCheckStateInBothModes()
+        {
+            var standard = RenderLabelChildTree(Context, virtualize: false);
+            var virtualized = RenderLabelChildTree(Context, virtualize: true);
+
+            GetParentCheckState(standard).Should().Be("mud-checkbox-true");
+            GetParentCheckState(virtualized).Should().Be("mud-checkbox-true");
+
+            static IRenderedComponent<MudTreeView<int?>> RenderLabelChildTree(BunitContext context, bool virtualize)
+            {
+                var parent = new TreeItemData<int?>
+                {
+                    Value = 1,
+                    Text = "Parent",
+                    Expanded = true,
+                    Children =
+                    [
+                        new TreeItemData<int?> { Value = 2, Text = "SelectedChild" },
+                        new TreeItemData<int?> { Value = null, Text = "LabelChild" }
+                    ]
+                };
+
+                return context.Render<MudTreeView<int?>>(parameters => parameters
+                    .Add(x => x.Items, [parent])
+                    .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                    .Add(x => x.SelectedValues, [1, 2])
+                    .Add(x => x.Virtualize, virtualize)
+                    .Add(x => x.Height, "200px")
+                    .Add(x => x.ItemTemplate, item => builder =>
+                    {
+                        builder.OpenComponent<MudTreeViewItem<int?>>(0);
+                        builder.AddAttribute(1, nameof(MudTreeViewItem<int?>.Value), item.Value);
+                        builder.AddAttribute(2, nameof(MudTreeViewItem<int?>.Text), item.Text);
+                        builder.AddAttribute(3, nameof(MudTreeViewItem<int?>.Items), item.Children);
+                        builder.AddAttribute(4, nameof(MudTreeViewItem<int?>.Expanded), item.Expanded);
+                        builder.CloseComponent();
+                    }));
+            }
+
+            static string GetParentCheckState(IRenderedComponent<MudTreeView<int?>> component)
+            {
+                return FindTreeItem(component, "Parent").QuerySelector(".mud-checkbox span")!.ClassList
+                    .Single(className => className.StartsWith("mud-checkbox-", StringComparison.Ordinal));
+            }
+        }
+
+        /// <summary>
+        /// Verifies that reloading an item on a tree without <see cref="MudTreeView{T}.ServerData"/> keeps the
+        /// backing children, because no load will run to restore them.
+        /// </summary>
+        [Test]
+        public async Task TreeView_ReloadAsyncWithoutServerData_KeepsBackingChildren()
+        {
+            var parent = new TreeItemData<string>
+            {
+                Value = "parent",
+                Text = "Parent",
+                Expanded = true,
+                Children = [new TreeItemData<string> { Value = "child", Text = "Child" }]
+            };
+
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [parent])
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Text), item.Text);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.AddAttribute(4, nameof(MudTreeViewItem<string>.Expanded), item.Expanded);
+                    builder.CloseComponent();
+                }));
+
+            var parentItem = comp.FindComponents<MudTreeViewItem<string>>()
+                .Single(x => x.Instance.Text == "Parent").Instance;
+
+            await comp.InvokeAsync(() => parentItem.ReloadAsync());
+
+            parent.Children.Should().ContainSingle("a tree without ServerData cannot restore cleared children");
+        }
+
+        /// <summary>
+        /// Verifies that virtualized tri-state and parent selection use the complete backing data tree.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_MultiSelection_UsesDataTreeForTriStateAndParentSelection()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.SelectedValues, ["Child A"]));
+
+            FindTreeItem(comp, "Root").QuerySelector(".mud-checkbox span")!.ClassList.Should().Contain("mud-checkbox-null");
+
+            await FindTreeItem(comp, "Child B").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+
+            comp.Instance.SelectedValues.Should().BeEquivalentTo(["Root", "Child A", "Child B", "Grandchild"]);
+            FindTreeItem(comp, "Root").QuerySelector(".mud-checkbox span")!.ClassList.Should().Contain("mud-checkbox-true");
+        }
+
+        /// <summary>
+        /// Verifies that a parent render traverses collapsed descendants at most once.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ParentRender_DoesNotRepeatedlyEnumerateNestedCollapsedDescendants()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.RootExpanded, false));
+            await comp.InvokeAsync(comp.Instance.ResetNestedDescendantEnumerationCount);
+
+            await comp.InvokeAsync(comp.Instance.Rerender);
+
+            comp.Instance.NestedDescendantEnumerationCount.Should().BeLessThanOrEqualTo(1);
+        }
+
+        /// <summary>
+        /// Verifies that a row which mounts with an already selected value does not make the tree re-project or re-render more than an unselected row does.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_SelectedRowMount_DoesNotReprojectTree()
+        {
+            var unselectedComp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+            var selectedComp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.SelectedValues, ["Grandchild"]));
+
+            var unselected = await MeasureExpandAsync(unselectedComp);
+            var selected = await MeasureExpandAsync(selectedComp);
+
+            selected.Should().Be(unselected, "the projection already holds the mounted row's selection");
+
+            // Expands the collapsed "Child B" and reports how often the tree rendered and how often it enumerated the collapsed children.
+            static async Task<(int TreeRenders, int NestedEnumerations)> MeasureExpandAsync(IRenderedComponent<TreeViewVirtualizationTest> comp)
+            {
+                var tree = comp.FindComponent<MudTreeView<string>>();
+                await comp.InvokeAsync(comp.Instance.ResetNestedDescendantEnumerationCount);
+                var renders = tree.RenderCount;
+
+                await FindTreeItem(comp, "Child B").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+                comp.WaitForAssertion(() => FindTreeItem(comp, "Grandchild").Should().NotBeNull());
+
+                return (tree.RenderCount - renders, comp.Instance.NestedDescendantEnumerationCount);
+            }
+        }
+
+        /// <summary>
+        /// Verifies that a row mounting while the tree is held inside an item's asynchronous selected-changed callback does not break the selection update.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TreeViewVirtualize_RowMountDuringSelectedChangedCallback_CompletesSelectionUpdate()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.AutoExpand, true)
+                .Add(x => x.SelectedValue, "Child A"));
+            comp.WaitForAssertion(() => FindTreeItem(comp, "Child A").QuerySelector("div.mud-treeview-item-content")!.ClassList.Should().Contain("mud-treeview-item-selected"));
+            await comp.InvokeAsync(comp.Instance.GateNextItemSelectedChange);
+
+            // Selecting the collapsed grandchild auto-expands its parent, and the walk which deselects "Child A" stops inside the gated callback.
+            var selectionTask = comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedValue, "Grandchild")));
+            await comp.Instance.ItemSelectedChangeStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            await selectionTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            // The parent render queued by the selection change mounts the grandchild row while the walk is suspended.
+            comp.WaitForAssertion(() => FindTreeItem(comp, "Grandchild").Should().NotBeNull());
+            await comp.InvokeAsync(comp.Instance.CompleteItemSelectedChange);
+            // The resumed walk continues on the renderer's dispatcher, so this runs after it finished.
+            await comp.InvokeAsync(() => { });
+            if (Context.Renderer.UnhandledException.IsCompleted)
+            {
+                var exception = await Context.Renderer.UnhandledException;
+                Assert.Fail($"The selection walk failed after a row mounted during its callback: {exception.Message}");
+            }
+
+            comp.Instance.SelectedValue.Should().Be("Grandchild");
+            comp.WaitForAssertion(() => FindTreeItem(comp, "Grandchild").QuerySelector("div.mud-treeview-item-content")!.ClassList.Should().Contain("mud-treeview-item-selected"));
+        }
+
+        /// <summary>
+        /// Verifies that the item-level expand-all and collapse-all methods work on a virtualized row by updating its backing data.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ItemExpandAllAndCollapseAll_UpdateBackingData()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>();
+            var childB = comp.FindComponents<MudTreeViewItem<string>>().Single(item => item.Instance.CurrentItemData?.Value == "Child B").Instance;
+
+            await comp.InvokeAsync(childB.ExpandAllAsync);
+
+            comp.WaitForAssertion(() => GetVirtualizedValues(comp).Should().Contain("Grandchild"));
+
+            await comp.InvokeAsync(childB.CollapseAllAsync);
+
+            comp.WaitForAssertion(() => GetVirtualizedValues(comp).Should().NotContain("Grandchild"));
+        }
+
+        /// <summary>
+        /// Verifies that expanding all immediately includes items added in place since the previous render.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ExpandAllUsesCurrentInPlaceHierarchy()
+        {
+            var items = new List<ITreeItemData<string>> { new TreeItemData<string> { Value = "Initial" } };
+            var addedParent = new TreeItemData<string>
+            {
+                Value = "Added parent",
+                Children = [new TreeItemData<string> { Value = "Added child" }]
+            };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "120px")
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.CloseComponent();
+                }));
+            items.Add(addedParent);
+
+            await comp.InvokeAsync(comp.Instance.ExpandAllAsync);
+
+            addedParent.Expanded.Should().BeTrue();
+            comp.WaitForAssertion(() => FindTreeItem(comp, "Added child").Should().NotBeNull());
+        }
+
+        /// <summary>
+        /// Verifies that filtering immediately includes items added in place since the previous render.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_FilterUsesCurrentInPlaceHierarchy()
+        {
+            var items = new List<ITreeItemData<string>> { new TreeItemData<string> { Value = "Initial" } };
+            var added = new TreeItemData<string> { Value = "Added" };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "120px")
+                .Add(x => x.FilterFunc, _ => Task.FromResult(false))
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.CloseComponent();
+                }));
+            items.Add(added);
+
+            await comp.InvokeAsync(comp.Instance.FilterAsync);
+
+            added.Visible.Should().BeFalse();
+            comp.WaitForAssertion(() => comp.FindAll("li.mud-treeview-item").Should().BeEmpty());
+        }
+
+        /// <summary>
+        /// Verifies that server-loaded children are added to the flattened virtualized item list.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ServerData_AddsLoadedChildrenToFlattenedItems()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>();
+
+            GetVirtualizedValues(comp).Should().Equal("Root");
+
+            await FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            comp.WaitForAssertion(() => GetVirtualizedValues(comp).Should().Equal("Root", "Loaded 1"));
+            FindTreeItem(comp, "Loaded 1").GetAttribute("style").Should().Contain("--mud-treeview-item-depth:1");
+        }
+
+        /// <summary>
+        /// Verifies that a pending server load stays bound to its originating data item when that item is replaced.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TreeViewVirtualize_ServerData_ReplacedItemStillReceivesItsOwnLoad()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.UseTextFallback, true)
+                .Add(x => x.DelayServerData, true));
+            var originatingItem = comp.Instance.TreeItems.Single();
+
+            var loadTask = FindTreeItem(comp, "Node A").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+            await comp.Instance.ServerDataStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            await comp.InvokeAsync(comp.Instance.ReplaceRootWithTextFallback);
+            var replacementItem = comp.Instance.TreeItems.Single();
+            await comp.InvokeAsync(comp.Instance.CompleteServerData);
+            await loadTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            originatingItem.Children.Should().ContainSingle(item => item.Value == "Loaded 1");
+            replacementItem.Children.Should().BeNull();
+            FindTreeItem(comp, "Node B").QuerySelector("button.mud-treeview-item-expand-button").Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// Verifies that an asynchronous expanded callback loads the item that initiated it even after its row scrolled away.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TreeViewVirtualize_ServerData_ExpandedCallbackAfterScrollLoadsOriginatingItem()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.UseTextFallback, true)
+                .Add(x => x.DelayExpandedChanged, true)
+                .Add(x => x.RootCount, 2)
+                .Add(x => x.Height, "40px")
+                .Add(x => x.OverscanCount, 0)
+                .Add(x => x.MaxItemCount, 1));
+            var originatingItem = comp.Instance.TreeItems[0];
+            var otherItem = comp.Instance.TreeItems[1];
+
+            var expandTask = FindTreeItem(comp, "Node A").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+            await comp.Instance.ExpandedChangeStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            await ScrollVirtualizerAsync(comp, spacerSize: 40f, containerSize: 40f);
+            FindTreeItem(comp, "Node B").Should().NotBeNull();
+
+            await comp.InvokeAsync(comp.Instance.CompleteExpandedChange);
+            await expandTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            comp.Instance.LoadedParentValues.Should().Equal("Node A");
+            originatingItem.Children.Should().ContainSingle(item => item.Value == "Loaded 1");
+            otherItem.Children.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Verifies that scrolling keeps the row components of items which stay visible instead of re-creating every row.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_Scroll_KeepsRowComponentsOfItemsStillVisible()
+        {
+            var items = Enumerable.Range(1, 30)
+                .Select(index => (ITreeItemData<string>)new TreeItemData<string> { Value = $"Item {index}", Text = $"Item {index}" })
+                .ToList();
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "80px")
+                .Add(x => x.OverscanCount, 1)
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Text), item.Text);
+                    builder.CloseComponent();
+                }));
+            await ScrollVirtualizerAsync(comp, spacerSize: 200f, containerSize: 80f);
+            var before = GetRowComponents(comp);
+
+            await ScrollVirtualizerAsync(comp, spacerSize: 240f, containerSize: 80f);
+
+            var after = GetRowComponents(comp);
+            var stillVisible = after.Keys.Intersect(before.Keys).ToList();
+            stillVisible.Should().NotBeEmpty("the two-row viewport moved by one row");
+            stillVisible.Should().OnlyContain(item => ReferenceEquals(after[item], before[item]));
+
+            static Dictionary<ITreeItemData<string>, MudTreeViewItem<string>> GetRowComponents(IRenderedComponent<MudTreeView<string>> component)
+            {
+                var rows = new Dictionary<ITreeItemData<string>, MudTreeViewItem<string>>(ReferenceEqualityComparer.Instance);
+                foreach (var row in component.FindComponents<MudTreeViewItem<string>>())
+                {
+                    rows.Add(row.Instance.CurrentItemData!, row.Instance);
+                }
+
+                return rows;
+            }
+        }
+
+        /// <summary>
+        /// Verifies that an expanded callback can make the originating item ineligible for server loading.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ServerData_ExpandedCallbackCanCancelLoading()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.DisableExpandOnExpandedChanged, true));
+
+            await FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            comp.Instance.LoadCount.Should().Be(0);
+            comp.Instance.TreeItems[0].Children.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Verifies that disposing the tree invalidates a pending load before it can update backing data.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TreeViewVirtualize_ServerData_DisposalRejectsPendingCompletion()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.DelayServerData, true));
+            var fixture = comp.Instance;
+            var originatingItem = fixture.TreeItems.Single();
+            var loadTask = FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+            await fixture.ServerDataStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            await Context.DisposeComponentsAsync();
+            fixture.CompleteServerData();
+            await loadTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            originatingItem.Children.Should().BeNull();
+        }
+
+        /// <summary>
+        /// Verifies that a server load completing after virtualization is enabled updates the backing data item.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TreeView_ServerData_PendingStandardLoadSurvivesVirtualization()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.Virtualize, false)
+                .Add(x => x.DelayServerData, true));
+
+            var loadTask = FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+            await comp.Instance.ServerDataStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Virtualize, true)));
+
+            await comp.InvokeAsync(comp.Instance.CompleteServerData);
+            await loadTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            comp.Instance.TreeItems[0].Children.Should().ContainSingle(item => item.Value == "Loaded 1");
+            GetVirtualizedValues(comp).Should().Equal("Root", "Loaded 1");
+            comp.Instance.LoadCount.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Verifies that a virtual server load completing in standard mode refreshes the replacement tree.
+        /// </summary>
+        /// <remarks>
+        /// A standard tree does not read <see cref="ITreeItemData{T}.Selected"/> from the backing data unless the item template binds it, so the loaded child is not expected to become selected here.
+        /// </remarks>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TreeViewVirtualize_ServerData_PendingLoadRefreshesStandardTree()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.DelayServerData, true));
+            var loadTask = FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+            await comp.Instance.ServerDataStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Virtualize, false)));
+
+            await comp.InvokeAsync(comp.Instance.CompleteServerData);
+            await loadTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            comp.WaitForAssertion(() => FindTreeItem(comp, "Loaded 1").Should().NotBeNull());
+            comp.Instance.SelectedValue.Should().BeNull();
+            FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!
+                .ClassList.Should().NotContain("mud-treeview-item-arrow-load");
+        }
+
+        /// <summary>
+        /// Verifies that a virtualized item whose backing data is not expandable shows no expand button, since the tree refuses to load its children.
+        /// </summary>
+        [Test]
+        public void TreeViewVirtualize_ServerData_NotExpandableItemShowsNoExpandButton()
+        {
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [new TreeItemData<string> { Value = "Leaf", Text = "Leaf", Expandable = false }])
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "80px")
+                .Add(x => x.ServerData, _ => Task.FromResult<IReadOnlyCollection<TreeItemData<string>>>([]))
+                .Add(x => x.ItemTemplate, item => builder =>
+                {
+                    builder.OpenComponent<MudTreeViewItem<string>>(0);
+                    builder.AddAttribute(1, nameof(MudTreeViewItem<string>.Value), item.Value);
+                    builder.AddAttribute(2, nameof(MudTreeViewItem<string>.Text), item.Text);
+                    builder.AddAttribute(3, nameof(MudTreeViewItem<string>.Items), item.Children);
+                    builder.CloseComponent();
+                }));
+
+            FindTreeItem(comp, "Leaf").QuerySelector("button.mud-treeview-item-expand-button").Should().BeNull();
+        }
+
+        /// <summary>
+        /// Verifies that a reload superseded while its items callback was pending does not wipe the children a newer reload loaded.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TreeViewVirtualize_ServerData_SupersededReloadDoesNotWipeNewerChildren()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.InitialChildCount, 1)
+                .Add(x => x.BindItems, true)
+                .Add(x => x.DelayItemsChanged, true)
+                .Add(x => x.DelayServerDataIndependently, true));
+            var rootItem = comp.FindComponent<MudTreeViewItem<string>>().Instance;
+            var rootData = comp.Instance.TreeItems[0];
+
+            var firstReload = comp.InvokeAsync(rootItem.ReloadAsync);
+            await comp.Instance.ItemsChangeStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            var secondReload = comp.InvokeAsync(rootItem.ReloadAsync);
+            await comp.Instance.LoadStarted(1).WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            await comp.InvokeAsync(() => comp.Instance.CompleteServerData(1));
+            await comp.Instance.SecondItemsChangeStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            await comp.InvokeAsync(comp.Instance.CompleteItemsChange);
+            await Task.WhenAll(firstReload, secondReload).WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            rootData.Children.Should().ContainSingle(item => item.Value == "Loaded 1", "the superseded reload must not wipe the newer load");
+        }
+
+        /// <summary>
+        /// Verifies that reload supersedes a pending request and ignores its stale completion.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TreeViewVirtualize_ServerData_ReloadSupersedesPendingLoad()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.DelayServerDataIndependently, true));
+            var rootItem = comp.FindComponent<MudTreeViewItem<string>>();
+            var firstLoadTask = comp.InvokeAsync(rootItem.Instance.TryInvokeServerLoadFunc);
+            await comp.Instance.ServerDataStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            var reloadTask = comp.InvokeAsync(rootItem.Instance.ReloadAsync);
+
+            try
+            {
+                await comp.Instance.LoadStarted(2).WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                await comp.InvokeAsync(() => comp.Instance.CompleteServerData(2));
+                await reloadTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                comp.Instance.TreeItems[0].Children.Should().ContainSingle(item => item.Value == "Loaded 2");
+
+                await comp.InvokeAsync(() => comp.Instance.CompleteServerData(1));
+                await firstLoadTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                comp.Instance.TreeItems[0].Children.Should().ContainSingle(item => item.Value == "Loaded 2");
+            }
+            finally
+            {
+                await comp.InvokeAsync(comp.Instance.CompleteAllServerDataRequests);
+            }
+        }
+
+        /// <summary>
+        /// Verifies that a failure from a superseded request does not escape or replace fresh children.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TreeViewVirtualize_ServerData_ReloadIgnoresSupersededFailure()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.DelayServerDataIndependently, true));
+            var rootItem = comp.FindComponent<MudTreeViewItem<string>>();
+            var firstLoadTask = FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+            await comp.Instance.ServerDataStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            var reloadTask = comp.InvokeAsync(rootItem.Instance.ReloadAsync);
+
+            try
+            {
+                await comp.Instance.LoadStarted(2).WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                await comp.InvokeAsync(() => comp.Instance.CompleteServerData(2));
+                await reloadTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+                await comp.InvokeAsync(() => comp.Instance.FailServerData(1));
+                var act = () => firstLoadTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+                await act.Should().NotThrowAsync();
+                comp.Instance.TreeItems[0].Children.Should().ContainSingle(item => item.Value == "Loaded 2");
+
+                var currentFailureTask = comp.InvokeAsync(rootItem.Instance.ReloadAsync);
+                await comp.Instance.LoadStarted(3).WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                await comp.InvokeAsync(() => comp.Instance.FailServerData(3));
+                var currentFailure = () => currentFailureTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                await currentFailure.Should().ThrowAsync<InvalidOperationException>();
+                comp.WaitForAssertion(() => comp.Find("ul.mud-treeview")
+                    .QuerySelector("button.mud-treeview-item-arrow-load")
+                    .Should().BeNull());
+
+                var retryRootItem = comp.FindComponent<MudTreeViewItem<string>>();
+                var retryTask = comp.InvokeAsync(retryRootItem.Instance.ReloadAsync);
+                await comp.Instance.LoadStarted(4).WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                await comp.InvokeAsync(() => comp.Instance.CompleteServerData(4));
+                await retryTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                comp.WaitForAssertion(() =>
+                {
+                    comp.Instance.TreeItems[0].Children.Should().ContainSingle(item => item.Value == "Loaded 4");
+                    GetVirtualizedValues(comp).Should().Contain("Loaded 4");
+                });
+            }
+            finally
+            {
+                await comp.InvokeAsync(comp.Instance.CompleteAllServerDataRequests);
+            }
+        }
+
+        /// <summary>
+        /// Verifies that reload recency is based on invocation order when an earlier items callback is delayed.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TreeViewVirtualize_ServerData_LatestReloadInvocationWinsWhenEarlierItemsCallbackIsDelayed()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.BindItems, true)
+                .Add(x => x.DelayItemsChanged, true)
+                .Add(x => x.DelayServerDataIndependently, true)
+                .Add(x => x.InitialChildCount, 1));
+            var rootItem = comp.FindComponent<MudTreeViewItem<string>>();
+            var earlierReloadTask = comp.InvokeAsync(rootItem.Instance.ReloadAsync);
+            await comp.Instance.ItemsChangeStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            var latestReloadTask = comp.InvokeAsync(rootItem.Instance.ReloadAsync);
+
+            try
+            {
+                await comp.Instance.ServerDataStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                comp.Instance.LoadCount.Should().Be(1);
+
+                await comp.InvokeAsync(comp.Instance.CompleteItemsChange);
+                var firstOutcome = await Task.WhenAny(earlierReloadTask, comp.Instance.LoadStarted(2))
+                    .WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+                firstOutcome.Should().BeSameAs(earlierReloadTask);
+                comp.Instance.LoadCount.Should().Be(1);
+
+                await comp.InvokeAsync(() => comp.Instance.CompleteServerData(1));
+                await Task.WhenAll(earlierReloadTask, latestReloadTask)
+                    .WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                comp.Instance.TreeItems[0].Children.Should().ContainSingle(item => item.Value == "Loaded 1");
+            }
+            finally
+            {
+                await comp.InvokeAsync(comp.Instance.CompleteAllServerDataRequests);
+            }
+        }
+
+        /// <summary>
+        /// Verifies that a standard load completing after a virtual reload cannot supersede that reload.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TreeView_ServerData_PendingStandardLoadCannotSupersedeVirtualReload()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.Virtualize, false)
+                .Add(x => x.BindItems, true)
+                .Add(x => x.DelayItemsChanged, true)
+                .Add(x => x.DelayServerDataIndependently, true));
+            comp.Instance.TreeItems[0].Children = Array.Empty<TreeItemData<string>>();
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Virtualize, false)));
+            var standardRootItem = comp.FindComponent<MudTreeViewItem<string>>();
+            var standardLoadTask = comp.InvokeAsync(standardRootItem.Instance.TryInvokeServerLoadFunc);
+            await comp.Instance.ServerDataStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Virtualize, true)));
+            var virtualRootItem = comp.FindComponents<MudTreeViewItem<string>>()
+                .Single(component => ReferenceEquals(component.Instance.CurrentItemData, comp.Instance.TreeItems[0]));
+            var reloadTask = comp.InvokeAsync(virtualRootItem.Instance.ReloadAsync);
+            await comp.Instance.ItemsChangeStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            try
+            {
+                await comp.InvokeAsync(() => comp.Instance.CompleteServerData(1));
+                var oldLoadOutcome = await Task.WhenAny(standardLoadTask, comp.Instance.SecondItemsChangeStarted)
+                    .WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+                oldLoadOutcome.Should().BeSameAs(standardLoadTask);
+                comp.Instance.TreeItems[0].Children.Should().BeEmpty();
+
+                await comp.InvokeAsync(comp.Instance.CompleteItemsChange);
+                await comp.Instance.LoadStarted(2).WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                comp.Instance.LoadCount.Should().Be(2);
+
+                await comp.InvokeAsync(() => comp.Instance.CompleteServerData(2));
+                await Task.WhenAll(standardLoadTask, reloadTask)
+                    .WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+                comp.Instance.TreeItems[0].Children.Should().ContainSingle(item => item.Value == "Loaded 2");
+            }
+            finally
+            {
+                await comp.InvokeAsync(comp.Instance.CompleteItemsChange);
+                await comp.InvokeAsync(comp.Instance.CompleteAllServerDataRequests);
+            }
+        }
+
+        /// <summary>
+        /// Verifies that children loaded in standard mode are written to the backing item and reused after switching to virtual rendering.
+        /// </summary>
+        [Test]
+        public async Task TreeView_ServerData_StandardToVirtual_ReusesLoadedBackingChildren()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.Virtualize, false));
+
+            await FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            comp.Instance.LoadCount.Should().Be(1);
+            comp.Instance.TreeItems[0].Children.Should().ContainSingle(item => item.Value == "Loaded 1");
+            comp.Instance.TreeItems[0].Expanded = false;
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Virtualize, true)));
+
+            GetVirtualizedValues(comp).Should().Equal("Root");
+            var virtualRootItem = comp.FindComponents<MudTreeViewItem<string>>()
+                .Single(component => ReferenceEquals(component.Instance.CurrentItemData, comp.Instance.TreeItems[0]));
+            virtualRootItem.FindComponent<MudTreeViewItemToggleButton>().Instance.Expanded.Should().BeFalse();
+
+            await FindTreeItem(comp, "Root").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            comp.Instance.LoadCount.Should().Be(1, "the children are already loaded on the backing item");
+            comp.Instance.TreeItems[0].Expanded.Should().BeTrue();
+            comp.WaitForAssertion(() => GetVirtualizedValues(comp).Should().Equal("Root", "Loaded 1"));
+        }
+
+        [Test]
+        public async Task TreeViewServer()
+        {
+            var comp = Context.Render<TreeViewServerTest>();
             string.Join('|', comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent)).Should()
                 .Be("All Mail|Categories|Social|Updates|Trash");
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(5);
-            comp.FindAll("div.mud-treeview-item-content")[4].Click();
+            await comp.FindAll("div.mud-treeview-item-content")[4].ClickAsync();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(5); // <-- nothing loaded as it's not expandable
-            comp.FindAll("div.mud-treeview-item-content")[0].Click();
+            await comp.FindAll("div.mud-treeview-item-content")[0].ClickAsync();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(6); // <- loaded one more from server
-            comp.FindAll("div.mud-treeview-item-content")[3].Click();
+            await comp.FindAll("div.mud-treeview-item-content")[3].ClickAsync();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(7); // <- loaded another one from server
             // now loading a child of a server loaded item
-            comp.FindAll("div.mud-treeview-item-content")[1].Click();
+            await comp.FindAll("div.mud-treeview-item-content")[1].ClickAsync();
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(8); // <- loaded another one from server
             string.Join('|', comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent)).Should()
                 .Be("All Mail|Loaded 1|Loaded 3|Categories|Social|Loaded 2|Updates|Trash");
         }
 
+#nullable enable
+        [Test]
+        public async Task TreeViewServerData_BindsItems()
+        {
+            var comp = Context.Render<TreeViewServerTest>();
+            var target = comp.FindComponents<MudTreeViewItem<string?>>()
+                .First(x => x.Instance.Value == "All Mail");
+            await comp.InvokeAsync(target.Instance.ReloadAsync);
+
+            var root = comp.Instance.TreeItems.First(x => x.Value == "All Mail");
+            root.Children.Should().NotBeNull();
+            root.Children!.Should().HaveCount(1);
+            root.Children.First().Value.Should().StartWith("Loaded");
+        }
+#nullable disable
+
         [Test]
         public async Task TreeViewItem_ShouldBeAbleTo_ReloadInCollapsedState()
         {
-            var comp = Context.RenderComponent<TreeViewServerTest2>();
+            var comp = Context.Render<TreeViewServerTest2>();
             var treeviewItem = comp.FindComponents<MudTreeViewItem<string>>().FirstOrDefault();
             treeviewItem!.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded)).Should().Be(false);
             comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(2);
             // expand first tree
-            comp.Find("div.mud-treeview-item-arrow button").Click();
+            await comp.Find("div.mud-treeview-item-arrow button").ClickAsync();
             comp.FindAll("div.mud-treeview-item-arrow button").Count.Should().Be(3);
             // collapse first tree again
-            comp.Find("div.mud-treeview-item-arrow button").Click();
+            await comp.Find("div.mud-treeview-item-arrow button").ClickAsync();
             treeviewItem.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded)).Should().Be(false);
             // reload first tree in collapsed state
             var reloadTask = Task.CompletedTask;
@@ -698,7 +2917,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewTreeItemDataTest()
+        public void TreeViewTreeItemData()
         {
             // test default values
             new TreeItemData<int>().Expanded.Should().Be(false);
@@ -746,60 +2965,59 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewItem_DoubleClick_CheckExpanded()
+        public async Task TreeViewItem_DoubleClick_CheckExpanded()
         {
-            var comp = Context.RenderComponent<TreeViewTest3>();
+            var comp = Context.Render<TreeViewTest3>();
             var itemExpanded = false;
 
             var item = comp.FindComponent<MudTreeViewItem<string>>();
-            item.SetParametersAndRender(Parameter(nameof(MudTreeViewItem<string>.OnDoubleClick), new EventCallback<MouseEventArgs>(null, (Action)(() => itemExpanded = !itemExpanded))));
+            await item.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.OnDoubleClick, new EventCallback<MouseEventArgs>(null, (Action)(() => itemExpanded = !itemExpanded))));
 
             comp.FindAll("li.mud-treeview-item").Count.Should().Be(10);
 
-            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(1);
             itemExpanded.Should().BeTrue();
 
-            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
             comp.FindAll("li.mud-treeview-item .mud-collapse-container.mud-collapse-entering").Count.Should().Be(0);
             itemExpanded.Should().BeFalse();
         }
 
         [Test]
-        public void TreeViewItem_DoubleClick_CheckSelected()
+        public async Task TreeViewItem_DoubleClick_CheckSelected()
         {
-            var comp = Context.RenderComponent<TreeViewTest3>();
+            var comp = Context.Render<TreeViewTest3>();
             string selectedItem = null;
 
             var tree = comp.FindComponent<MudTreeView<string>>();
 
-            tree.SetParametersAndRender(Parameter(nameof(MudTreeView<string>.SelectedValueChanged), new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s))));
+            await tree.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValueChanged, new EventCallback<string>(null, (Action<string>)((s) => selectedItem = s))));
 
-            comp.Find("div.mud-treeview-item-content").DoubleClick();
+            await comp.Find("div.mud-treeview-item-content").DoubleClickAsync();
             selectedItem.Should().Be("content");
         }
 
         [Test]
         public async Task TreeViewItem_ProgrammaticallySelect()
         {
-            var comp = Context.RenderComponent<TreeViewTest4>();
+            var comp = Context.Render<TreeViewTest4>();
             var treeView = comp.FindComponent<MudTreeView<string>>();
 
             await comp.InvokeAsync(() => comp.Instance.ClickFirst());
-            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be("content"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SelectedValue.Should().Be("content"));
 
             await comp.InvokeAsync(() => comp.Instance.ClickSecond());
-            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be("src"));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SelectedValue.Should().Be("src"));
 
             await comp.InvokeAsync(() => comp.Instance.ClickSecond());
-            comp.WaitForAssertion(() => comp.Instance.SelectedValue.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => comp.Instance.SelectedValue.Should().Be(null));
         }
-
 
         [Test]
         public async Task TreeViewItem_BodyContent()
         {
-            var comp = Context.RenderComponent<TreeViewTest5>();
+            var comp = Context.Render<TreeViewTest5>();
             var treeView = comp.FindComponent<MudTreeView<string>>();
             var treeViewItem = comp.FindComponents<MudTreeViewItem<string>>()[2];
 
@@ -819,11 +3037,12 @@ namespace MudBlazor.UnitTests.Components
 
             // Test updating the treeview root.
             comp.Instance.SimulateUpdateRoot = true;
-            treeView.SetParam("Items", await comp.Instance.LoadServerData(null));
+            var items = await comp.Instance.LoadServerData(null);
+            await treeView.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Items, items));
             comp.FindAll("p.mud-typography")[1].InnerHtml.MarkupMatches("This is item 2");
 
             // Test reloading the treeview item.
-            comp.FindAll("button.mud-treeview-item-arrow-expand")[2].Click();
+            await comp.FindAll("button.mud-treeview-item-arrow-expand")[2].ClickAsync();
             comp.FindAll("p.mud-typography")[3].InnerHtml.MarkupMatches("This is item four");
             comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item five");
 
@@ -833,77 +3052,120 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("p.mud-typography")[4].InnerHtml.MarkupMatches("This is item 5");
         }
 
+        /// <summary>
+        /// The text and end text render the tag and typography classes their typo picks, including after the typo changes.
+        /// </summary>
         [Test]
-        public void TreeView_SetSelectedValue_SetsSelectedValue()
+        [TestCase(Typo.body1, "p", Typo.caption, "span")]
+        [TestCase(Typo.h6, "h6", Typo.subtitle2, "p")]
+        public async Task TreeViewItem_TextAndEndText_RenderTagForTypo(Typo textTypo, string textTag, Typo endTextTypo, string endTextTag)
         {
-            var comp = Context.RenderComponent<TreeViewTest6>();
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .AddChildContent<MudTreeViewItem<string>>(item => item
+                    .Add(x => x.Text, "Documents")));
+            var item = comp.FindComponent<MudTreeViewItem<string>>();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "logo.png"));
+            comp.Find(".mud-treeview-item-label").ClassName.Should().Be("mud-typography mud-typography-body1 mud-treeview-item-label");
+            comp.FindAll(".mud-typography").Should().ContainSingle();
+
+            await item.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.TextTypo, textTypo)
+                .Add(x => x.TextClass, "custom-text")
+                .Add(x => x.EndText, "3 files")
+                .Add(x => x.EndTextTypo, endTextTypo)
+                .Add(x => x.EndTextClass, "custom-end-text"));
+
+            var text = comp.Find(".mud-treeview-item-label");
+            text.LocalName.Should().Be(textTag);
+            text.ClassName.Should().Be($"mud-typography mud-typography-{textTypo} mud-treeview-item-label custom-text");
+            text.TextContent.Should().Be("Documents");
+
+            var endText = comp.Find(".custom-end-text");
+            endText.LocalName.Should().Be(endTextTag);
+            endText.ClassName.Should().Be($"mud-typography mud-typography-{endTextTypo} custom-end-text");
+            endText.TextContent.Should().Be("3 files");
+        }
+
+        [Test]
+        public async Task TreeView_SetSelectedValue_SetsSelectedValue()
+        {
+            var comp = Context.Render<TreeViewTest6>();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "logo.png"));
 
             comp.Instance.SelectedValue.Should().Be("logo.png");
         }
 
         [Test]
-        public void TreeView_SetSelectedValue_IsSetNullWhenNotFound()
+        public async Task TreeView_SetSelectedValue_IsSetNullWhenNotFound()
         {
-            var comp = Context.RenderComponent<TreeViewTest6>();
+            var comp = Context.Render<TreeViewTest6>();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "logo.png"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "logo.png"));
 
             comp.Instance.SelectedValue.Should().Be("logo.png");
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "xxxxxx"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "xxxxxx"));
 
             comp.Instance.SelectedValue.Should().Be(default);
         }
 
         [Test]
-        public void TreeView_SetSelectedValue_IsSetNullWhenInitialValueIsInvalid()
+        public async Task TreeView_SetSelectedValue_IsSetNullWhenInitialValueIsInvalid()
         {
-            var comp = Context.RenderComponent<TreeViewTest6>();
+            var comp = Context.Render<TreeViewTest6>();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "xxxxxx"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "xxxxxx"));
 
             comp.Instance.SelectedValue.Should().Be(default);
         }
 
         [Test]
-        public void TreeView_SelectedValue_ShouldUseComparer()
+        public async Task TreeView_SelectedValue_ShouldUseComparer()
         {
             // test tree with items ("Ax", "Bx", "Cx", "Dx")
-            var comp = Context.RenderComponent<TreeViewCompareTest>();
+            var comp = Context.Render<TreeViewCompareTest>();
             string GetSelectedValue() => comp.Find("p.selected-value").TrimmedText();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "Ax"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "Ax"));
             GetSelectedValue().Should().Be("Ax");
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "Bx"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "Bx"));
             GetSelectedValue().Should().Be("Bx");
 
             // setting A will not select anything because it isn't a valid value with the default comparer
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "A"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "A"));
             GetSelectedValue().Should().BeNullOrWhiteSpace();
 
             // set the comparer to a value that will only check the first character of the string
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Comparer,
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Comparer,
                 new DelegateEqualityComparer<string>(
                     (x, y) =>
                     {
                         if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+                        {
                             return true;
+                        }
+
                         if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                        {
                             return false;
+                        }
+
                         return x[0] == y[0];
                     },
                     obj =>
                     {
                         if (string.IsNullOrEmpty(obj))
+                        {
                             return 0;
+                        }
+
                         return obj[0].GetHashCode();
                     }
                 )
             ));
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.SelectedValue, "A"));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.SelectedValue, "A"));
             GetSelectedValue().Should().StartWith("A");
         }
 
@@ -912,28 +3174,37 @@ namespace MudBlazor.UnitTests.Components
         /// selected values are updated correctly.
         /// </summary>
         [Test]
-        public void TreeView_SelectedValues_ShouldUseComparer()
+        public async Task TreeView_SelectedValues_ShouldUseComparer()
         {
             // tree containing two children with values AA and AC
-            var comp = Context.RenderComponent<TreeViewComparerMultiSelectTest>(self => self.Add(x => x.SelectedValues, ["AA"]));
+            var comp = Context.Render<TreeViewComparerMultiSelectTest>(self => self.Add(x => x.SelectedValues, ["AA"]));
 
             comp.Instance.Item1Selected.Should().BeTrue();
             comp.Instance.Item2Selected.Should().BeFalse();
 
-            comp.SetParametersAndRender(parameters => parameters.Add(p => p.Comparer,
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Comparer,
                 new DelegateEqualityComparer<string>(
                     (x, y) =>
                     {
                         if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
+                        {
                             return true;
+                        }
+
                         if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                        {
                             return false;
+                        }
+
                         return x[0] == y[0];
                     },
                     obj =>
                     {
                         if (string.IsNullOrEmpty(obj))
+                        {
                             return 0;
+                        }
+
                         return obj[0].GetHashCode();
                     }
                 )
@@ -949,9 +3220,9 @@ namespace MudBlazor.UnitTests.Components
         /// NOTE: we can only check the component parameters directly here because they are two-way bound!
         /// </summary>
         [Test]
-        public void TreeViewItem_TwoWayBindingTest()
+        public async Task TreeViewItem_TwoWayBinding()
         {
-            var comp = Context.RenderComponent<TreeViewItemBindingTest>();
+            var comp = Context.Render<TreeViewItemBindingTest>();
             // check initial selection
             comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
@@ -966,15 +3237,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
             comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(false);
             // switches
-            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").Value.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
             // checkboxes
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").Value.Should().Be(true);
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").Value.Should().Be(false);
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").Value.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").ReadValue.Should().Be(true);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(false);
 
             // select logo.png via tree item
-            comp.Find(".item-logo .mud-treeview-item-content").Click();
+            await comp.Find(".item-logo .mud-treeview-item-content").ClickAsync();
             // selection visualization
             comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -989,15 +3260,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
             comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(true);
             // switches
-            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").Value.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
             // checkboxes
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").Value.Should().Be(false);
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").Value.Should().Be(false);
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").Value.Should().Be(true);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(true);
 
             // expand config via tree item
-            comp.Find(".item-config .mud-treeview-item-arrow button").Click();
+            await comp.Find(".item-config .mud-treeview-item-arrow button").ClickAsync();
             // selection visualization
             comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -1012,15 +3283,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
             comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(true);
             // switches
-            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").Value.Should().Be(true);
-            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(true);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
             // checkboxes
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").Value.Should().Be(false);
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").Value.Should().Be(false);
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").Value.Should().Be(true);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(true);
 
             // collapse config via switch
-            comp.Find(".switch-config input").Change(false);
+            await comp.Find(".switch-config input").ChangeAsync(false);
             // selection visualization
             comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
@@ -1035,15 +3306,15 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
             comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(true);
             // switches
-            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").Value.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
             // checkboxes
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").Value.Should().Be(false);
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").Value.Should().Be(false);
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").Value.Should().Be(true);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(true);
 
             // select launch.json via checkbox
-            comp.Find(".checkbox-launch input").Change(true);
+            await comp.Find(".checkbox-launch input").ChangeAsync(true);
             // selection visualization
             comp.Find(".item-config .mud-treeview-item-content").ClassList.Should().NotContain("mud-treeview-item-selected");
             comp.Find(".item-launch .mud-treeview-item-content").ClassList.Should().Contain("mud-treeview-item-selected");
@@ -1058,21 +3329,21 @@ namespace MudBlazor.UnitTests.Components
             comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "tasks.json").Selected.Should().Be(false);
             comp.FindComponents<MudTreeViewItem<string>>().Select(x => x.Instance).First(x => x.Text == "logo.png").Selected.Should().Be(false);
             // switches
-            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").Value.Should().Be(false);
-            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").Value.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-config").ReadValue.Should().Be(false);
+            comp.FindComponents<MudSwitch<bool>>().Select(x => x.Instance).First(x => x.Class == "switch-images").ReadValue.Should().Be(false);
             // checkboxes
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").Value.Should().Be(true);
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").Value.Should().Be(false);
-            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").Value.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-launch").ReadValue.Should().Be(true);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-tasks").ReadValue.Should().Be(false);
+            comp.FindComponents<MudCheckBox<bool>>().Select(x => x.Instance).First(x => x.Class == "checkbox-logo").ReadValue.Should().Be(false);
         }
 
         [Test]
-        public void TreeViewAutoExpansionTest()
+        public async Task TreeViewAutoExpansion()
         {
-            var comp = Context.RenderComponent<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true));
+            var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
-            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").Click();
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1080,7 +3351,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
             // select and check that along the path to the value all parents were expanded, nothing else
-            select("tasks.json");
+            await select("tasks.json");
             isExpanded("C:").Should().Be(true);
             isExpanded("config").Should().Be(true);
             isExpanded("launch.json").Should().Be(false);
@@ -1088,7 +3359,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
             // reset all to collapsed and check
-            comp.Find("button.collapse-all").Click();
+            await comp.Find("button.collapse-all").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1097,7 +3368,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("logo.png").Should().Be(false);
             // select and check that along the path to the value all parents were expanded, nothing else
             // here images itself must not be expanded, only its parent
-            select("images");
+            await select("images");
             isExpanded("C:").Should().Be(true);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1107,12 +3378,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewAutoExpansion_ShouldNot_ExpandNonExpandableItems()
+        public async Task TreeViewAutoExpansion_ShouldNot_ExpandNonExpandableItems()
         {
-            var comp = Context.RenderComponent<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true).Add(x => x.ConfigCanExpand, false));
+            var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, true).Add(x => x.ConfigCanExpand, false));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
-            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").Click();
+            var select = (string value) => comp.FindComponents<MudChip<string>>().FirstOrDefault(x => x.Instance.Text == value)?.Find("button.mud-chip").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1120,7 +3391,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
             // select and check that along the path to the value all parents were expanded, nothing else
-            select("tasks.json");
+            await select("tasks.json");
             isExpanded("C:").Should().Be(true);
             isExpanded("config").Should().Be(false); // <--- shouldn't be expanded because it can't
             isExpanded("launch.json").Should().Be(false);
@@ -1128,7 +3399,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
             // reset all to collapsed and check
-            comp.Find("button.collapse-all").Click();
+            await comp.Find("button.collapse-all").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1137,7 +3408,7 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("logo.png").Should().Be(false);
             // select and check that along the path to the value all parents were expanded, nothing else
             // here images itself must not be expanded, only its parent
-            select("logo.png");
+            await select("logo.png");
             isExpanded("C:").Should().Be(true);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1147,9 +3418,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewExpandAllCollapseAllTest()
+        public async Task TreeViewExpandAllCollapseAll()
         {
-            var comp = Context.RenderComponent<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, false));
+            var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.AutoExpand, false));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
             isExpanded("C:").Should().Be(false);
@@ -1158,14 +3429,14 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("tasks.json").Should().Be(false);
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
-            comp.Find("button.expand-all").Click();
+            await comp.Find("button.expand-all").ClickAsync();
             isExpanded("C:").Should().Be(true);
             isExpanded("config").Should().Be(true);
             isExpanded("launch.json").Should().Be(false);
             isExpanded("tasks.json").Should().Be(false);
             isExpanded("images").Should().Be(true);
             isExpanded("logo.png").Should().Be(false);
-            comp.Find("button.collapse-all").Click();
+            await comp.Find("button.collapse-all").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1175,9 +3446,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewExpandAll_ShouldNot_ExpandNonExpandableItems()
+        public async Task TreeViewExpandAll_ShouldNot_ExpandNonExpandableItems()
         {
-            var comp = Context.RenderComponent<TreeViewAutoExpandTest>(self => self.Add(x => x.ConfigCanExpand, false));
+            var comp = Context.Render<TreeViewAutoExpandTest>(self => self.Add(x => x.ConfigCanExpand, false));
             var isExpanded = (string value) => comp.FindComponents<MudTreeViewItem<string>>()
                 .FirstOrDefault(x => x.Instance.Value == value)?.Instance.GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
             isExpanded("C:").Should().Be(false);
@@ -1186,14 +3457,14 @@ namespace MudBlazor.UnitTests.Components
             isExpanded("tasks.json").Should().Be(false);
             isExpanded("images").Should().Be(false);
             isExpanded("logo.png").Should().Be(false);
-            comp.Find("button.expand-all").Click();
+            await comp.Find("button.expand-all").ClickAsync();
             isExpanded("C:").Should().Be(true);
             isExpanded("config").Should().Be(false); // <--- shouldn't be expanded because it can't
             isExpanded("launch.json").Should().Be(false);
             isExpanded("tasks.json").Should().Be(false);
             isExpanded("images").Should().Be(true);
             isExpanded("logo.png").Should().Be(false);
-            comp.Find("button.collapse-all").Click();
+            await comp.Find("button.collapse-all").ClickAsync();
             isExpanded("C:").Should().Be(false);
             isExpanded("config").Should().Be(false);
             isExpanded("launch.json").Should().Be(false);
@@ -1203,12 +3474,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerdataIsSet_Throw()
+        public void TreeViewItem_SetParameters_ValueIsSetNull_WhenTextUnset_RootServerDataIsSet_Throw()
         {
             var exception = Assert.Throws<InvalidOperationException>(() =>
             {
-                var comp = Context.RenderComponent<TreeViewTest8>();
-                comp.SetParametersAndRender();
+                var comp = Context.Render<TreeViewTest8>();
                 comp.FindAll("li.mud-treeview-item").Count.Should().Be(4);
             });
 
@@ -1221,9 +3491,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void TreeView_ClickItemWhileActive_DoesChangeSelection()
+        public async Task TreeView_ClickItemWhileActive_DoesChangeSelection()
         {
-            var comp = Context.RenderComponent<ItemSelectableTreeViewTest>();
+            var comp = Context.Render<ItemSelectableTreeViewTest>();
 
             var parentItemButton = comp.Find(".parent-item button.mud-treeview-item-expand-button");
             var parentItemContent = comp.Find(".parent-item > div.mud-treeview-item-content");
@@ -1234,19 +3504,19 @@ namespace MudBlazor.UnitTests.Components
                 .Instance
                 .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
 
-            parentItemContent.Click();
+            await parentItemContent.ClickAsync();
 
             GetSelectedValue().Should().Be("content");
 
             GetItemExpandedValue().Should().Be(false);
-            parentItemButton.Click();
+            await parentItemButton.ClickAsync();
             GetItemExpandedValue().Should().Be(true);
         }
 
         [Test]
-        public void TreeView_ClickItemWhileReadOnly_DoesNotChangeSelection()
+        public async Task TreeView_ClickItemWhileReadOnly_DoesNotChangeSelection()
         {
-            var comp = Context.RenderComponent<ItemSelectableTreeViewTest>(self => self.Add(x => x.ParentItemReadOnly, true));
+            var comp = Context.Render<ItemSelectableTreeViewTest>(self => self.Add(x => x.ParentItemReadOnly, true));
 
             var parentItemButton = comp.Find(".parent-item button.mud-treeview-item-expand-button");
             var parentItemContent = comp.Find(".parent-item > div.mud-treeview-item-content");
@@ -1257,18 +3527,18 @@ namespace MudBlazor.UnitTests.Components
                 .Instance
                 .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
 
-            parentItemContent.Click();
+            await parentItemContent.ClickAsync();
             GetSelectedValue().Should().BeNullOrWhiteSpace();
 
             GetItemExpandedValue().Should().Be(false);
-            parentItemButton.Click();
+            await parentItemButton.ClickAsync();
             GetItemExpandedValue().Should().Be(true);
         }
 
         [Test]
-        public void TreeView_ClickItemWhileDisabled_DoesNotChangeSelectionAndExpanded()
+        public async Task TreeView_ClickItemWhileDisabled_DoesNotChangeSelectionAndExpanded()
         {
-            var comp = Context.RenderComponent<ItemSelectableTreeViewTest>(self => self.Add(x => x.ParentItemDisabled, true));
+            var comp = Context.Render<ItemSelectableTreeViewTest>(self => self.Add(x => x.ParentItemDisabled, true));
 
             var parentItemButton = comp.Find(".parent-item button.mud-treeview-item-expand-button");
             var parentItemContent = comp.Find(".parent-item > div.mud-treeview-item-content");
@@ -1279,21 +3549,751 @@ namespace MudBlazor.UnitTests.Components
                 .Instance
                 .GetState<bool>(nameof(MudTreeViewItem<string>.Expanded));
 
-            parentItemContent.Click();
+            await parentItemContent.ClickAsync();
             GetSelectedValue().Should().BeNullOrWhiteSpace();
 
             GetItemExpandedValue().Should().Be(false);
-            parentItemButton.Click();
+            await parentItemButton.ClickAsync();
             GetItemExpandedValue().Should().Be(false);
         }
 
         [Test]
-        public void TreeView_ClickHeterogeneousTreeElement_ShouldNotThrow()
+        public async Task TreeView_ClickHeterogeneousTreeElement_ShouldNotThrow()
         {
-            var comp = Context.RenderComponent<TreeViewHeterogeneous>();
+            var comp = Context.Render<TreeViewHeterogeneous>();
             var l2 = comp.Find(".L2 > div.mud-treeview-item-content");
-            var act = () => l2.Click();
-            act.Should().NotThrow();
+            var act = () => l2.ClickAsync();
+            await act.Should().NotThrowAsync();
+        }
+
+        /// <summary>
+        /// Children of an item whose type has no tree above it get no root either, so they take no tree settings such as Ripple (#13739).
+        /// </summary>
+        [Test]
+        public void TreeViewItem_WithoutRoot_ChildrenStayWithoutRoot()
+        {
+            var comp = Context.Render<TreeViewHeterogeneousNestedTest>();
+
+            comp.Find(".L3 > div.mud-treeview-item-content").ClassList.Should().NotContain("mud-ripple");
+        }
+
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12833")]
+        public async Task TreeView_NewItem_ShouldBeSelected()
+        {
+            var comp = Context.Render<TreeViewNewItemSelectTest>();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+            comp.Instance.SelectedValue!.Name.Should().Be("2");
+            await comp.Find("#add_item").ClickAsync();
+            comp.Instance.SelectedValue.Should().NotBeNull();
+            comp.Instance.SelectedValue!.Name.Should().Be("4");
+        }
+
+        [Test(Description = "https://github.com/MudBlazor/MudBlazor/issues/12849")]
+        public async Task TreeView_ServerData_Reset()
+        {
+            var comp = Context.Render<TreeViewServerDataResetTest>();
+            var arrows = () => comp.FindAll("button.mud-treeview-item-expand-button");
+            var itemContents = () => comp.FindAll("div.mud-treeview-item-content").Select(x => x.TextContent);
+
+            arrows().Count.Should().Be(4);
+            await arrows()[1].ClickAsync();
+            comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (1)"));
+            await comp.Find("#btn_reset").ClickAsync();
+            comp.WaitForAssertion(() =>
+            {
+                arrows().Count.Should().Be(4);
+                itemContents().Should().NotContain("More Spam (1)");
+            });
+
+            await arrows()[1].ClickAsync();
+            comp.WaitForAssertion(() => itemContents().Should().Contain("More Spam (6)"));
+        }
+
+        /// <summary>
+        /// A standard tree must keep a bound selected value whose item has not been loaded yet when another branch loads.
+        /// </summary>
+        /// <remarks>
+        /// Reconciling selection from the backing <see cref="ITreeItemData{T}.Selected"/> flags is a virtualized concern.
+        /// A standard tree keeps its selection in the item components, so a server load must not prune the pending value.
+        /// </remarks>
+        [Test]
+        public async Task TreeView_ServerData_PendingSelectedValueSurvivesUnrelatedLoad()
+        {
+            var comp = Context.Render<TreeViewServerPendingSelectionTest>();
+            comp.Instance.SelectedValue.Should().Be("B1");
+
+            await FindTreeItem(comp, "A").QuerySelector("div.mud-treeview-item-arrow button")!.ClickAsync();
+            comp.WaitForAssertion(() => comp.FindAll("li.mud-treeview-item").Should().Contain(x => x.TextContent.Contains("A1", StringComparison.Ordinal)));
+
+            comp.Render();
+
+            comp.Instance.SelectedValueChangedCount.Should().Be(0, "no user selection happened");
+            comp.Instance.SelectedValue.Should().Be("B1");
+        }
+
+        /// <summary>
+        /// Verifies that a server load completing in a standard tree re-renders only the loading item, not unrelated items from the root.
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task TreeView_ServerData_LoadCompletionDoesNotRenderUnrelatedItems()
+        {
+            var comp = Context.Render<TreeViewVirtualizationServerTest>(parameters => parameters
+                .Add(x => x.Virtualize, false)
+                .Add(x => x.UseTextFallback, true)
+                .Add(x => x.RootCount, 2)
+                .Add(x => x.DelayServerData, true));
+            var unrelatedItem = comp.FindComponents<MudTreeViewItem<string>>().Single(item => item.Instance.CurrentItemData?.Text == "Node B");
+            var loadTask = FindTreeItem(comp, "Node A").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+            await comp.Instance.ServerDataStarted.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            comp.WaitForAssertion(() => FindTreeItem(comp, "Node A").QuerySelector("button.mud-treeview-item-expand-button")!.ClassList.Should().Contain("mud-treeview-item-arrow-load"));
+            var renders = unrelatedItem.RenderCount;
+
+            await comp.InvokeAsync(comp.Instance.CompleteServerData);
+            await loadTask.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+
+            comp.WaitForAssertion(() => FindTreeItem(comp, "Loaded 1").Should().NotBeNull());
+            unrelatedItem.RenderCount.Should().Be(renders, "only the loading item changed");
+        }
+
+        /// <summary>
+        /// A virtualized tree must keep a bound selected value whose item has not been loaded yet, and select the item once it loads.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ServerData_PendingSelectedValueSurvivesUntilLoaded()
+        {
+            var comp = Context.Render<TreeViewServerPendingSelectionTest>(parameters => parameters
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px"));
+            comp.Instance.SelectedValue.Should().Be("B1");
+
+            await FindTreeItem(comp, "A").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+            comp.WaitForAssertion(() => FindTreeItem(comp, "A1").Should().NotBeNull());
+
+            comp.Instance.SelectedValue.Should().Be("B1", "an unrelated load must not prune the pending value");
+
+            await FindTreeItem(comp, "B").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            comp.WaitForAssertion(() => FindTreeItem(comp, "B1").QuerySelector("div.mud-treeview-item-content")!.ClassList.Should().Contain("mud-treeview-item-selected"));
+            comp.Instance.SelectedValue.Should().Be("B1");
+            comp.Instance.SelectedValueChangedCount.Should().Be(0, "no user selection happened");
+        }
+
+        /// <summary>
+        /// A virtualized tree must keep the selection of a loaded child while its parent reloads, and re-select the child once it is loaded again.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ServerData_ReloadKeepsSelectedChild()
+        {
+            var comp = Context.Render<TreeViewServerPendingSelectionTest>(parameters => parameters
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.SelectedValue, (string)null!));
+            await FindTreeItem(comp, "A").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+            comp.WaitForAssertion(() => FindTreeItem(comp, "A1").Should().NotBeNull());
+            await FindTreeItem(comp, "A1").QuerySelector("div.mud-treeview-item-content")!.ClickAsync();
+            comp.Instance.SelectedValue.Should().Be("A1");
+            var parentItem = comp.FindComponents<MudTreeViewItem<string>>().Single(item => item.Instance.CurrentItemData?.Value == "A").Instance;
+
+            await comp.InvokeAsync(parentItem.ReloadAsync);
+
+            comp.Instance.SelectedValue.Should().Be("A1", "the reload must not prune the selected child");
+            comp.WaitForAssertion(() => FindTreeItem(comp, "A1").QuerySelector("div.mud-treeview-item-content")!.ClassList.Should().Contain("mud-treeview-item-selected"));
+        }
+
+        /// <summary>
+        /// Verifies that with <see cref="MudTreeView{T}.AutoExpand"/>, checking a collapsed parent expands it in both render modes.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_AutoExpand_CheckingCollapsedParentExpandsIt(bool virtualize)
+        {
+            var parent = new TreeItemData<string> { Value = "Parent", Text = "Parent", Children = [new TreeItemData<string> { Value = "Child", Text = "Child" }] };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [parent])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.AutoExpand, true)
+                .Add(x => x.Virtualize, virtualize)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<string>(bindExpanded: true)));
+
+            await FindTreeItem(comp, "Parent").QuerySelector("div.mud-treeview-item-checkbox")!.ClickAsync();
+
+            comp.WaitForAssertion(() => parent.Expanded.Should().BeTrue());
+            GetCheckBoxState(comp, "Parent").Should().Be("mud-checkbox-true");
+        }
+
+        /// <summary>
+        /// Verifies that a virtualized tree with <see cref="MudTreeView{T}.AutoExpand"/> only expands the ancestors of newly selected values, so a branch the user collapsed stays collapsed.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_AutoExpand_SelectingUnrelatedValueKeepsCollapsedBranch()
+        {
+            var firstFolder = new TreeItemData<string> { Value = "First", Text = "First", Children = [new TreeItemData<string> { Value = "A", Text = "A" }] };
+            var secondFolder = new TreeItemData<string> { Value = "Second", Text = "Second", Children = [new TreeItemData<string> { Value = "B", Text = "B" }] };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [firstFolder, secondFolder])
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.AutoExpand, true)
+                .Add(x => x.SelectedValues, ["A"])
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<string>(bindExpanded: true)));
+            comp.WaitForAssertion(() => firstFolder.Expanded.Should().BeTrue());
+
+            await FindTreeItem(comp, "First").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+            firstFolder.Expanded.Should().BeFalse();
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedValues, ["A", "B"])));
+
+            secondFolder.Expanded.Should().BeTrue();
+            firstFolder.Expanded.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Verifies that a virtualized tree with <see cref="MudTreeView{T}.AutoExpand"/> expands every branch which contains a repeated item with a newly selected descendant.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_AutoExpand_ExpandsEveryBranchContainingSharedItem()
+        {
+            var shared = new TreeItemData<string> { Value = "Shared", Text = "Shared", Children = [new TreeItemData<string> { Value = "Leaf", Text = "Leaf" }] };
+            var first = new TreeItemData<string> { Value = "First", Text = "First", Children = [shared] };
+            var second = new TreeItemData<string> { Value = "Second", Text = "Second", Children = [shared] };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [first, second])
+                .Add(x => x.AutoExpand, true)
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<string>()));
+
+            await comp.InvokeAsync(() => comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectedValue, "Leaf")));
+
+            first.Expanded.Should().BeTrue();
+            second.Expanded.Should().BeTrue();
+            shared.Expanded.Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Verifies that the expand button exposes whether its item is expanded in both render modes, because virtualized rows are not nested inside their parents.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_ExpandButton_ExposesExpandedState(bool virtualize)
+        {
+            var parent = new TreeItemData<string> { Value = "Parent", Text = "Parent", Children = [new TreeItemData<string> { Value = "Child", Text = "Child" }] };
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, [parent])
+                .Add(x => x.Virtualize, virtualize)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<string>(bindExpanded: true)));
+            FindTreeItem(comp, "Parent").QuerySelector("button.mud-treeview-item-expand-button")!.GetAttribute("aria-expanded").Should().Be("false");
+
+            await FindTreeItem(comp, "Parent").QuerySelector("button.mud-treeview-item-expand-button")!.ClickAsync();
+
+            comp.WaitForAssertion(() => FindTreeItem(comp, "Parent").QuerySelector("button.mud-treeview-item-expand-button")!.GetAttribute("aria-expanded").Should().Be("true"));
+        }
+
+        /// <summary>
+        /// A virtualized tree with <see cref="MudTreeView{T}.AutoExpand"/> must keep a branch collapsed after the user collapses it.
+        /// </summary>
+        /// <remarks>
+        /// Auto-expansion follows selection transitions. A parent re-render alone must not expand the ancestors of the selected item again.
+        /// </remarks>
+        [Test]
+        public async Task TreeViewVirtualize_AutoExpand_UserCollapseSurvivesParentRender()
+        {
+            var comp = Context.Render<TreeViewVirtualizationTest>(parameters => parameters
+                .Add(x => x.AutoExpand, true)
+                .Add(x => x.SelectedValue, "Grandchild"));
+
+            var childB = FindDataItem(comp.Instance.TreeItems, "Child B");
+            comp.WaitForAssertion(() => childB.Expanded.Should().BeTrue());
+
+            await FindTreeItem(comp, "Child B").QuerySelector("div.mud-treeview-item-arrow button")!.ClickAsync();
+
+            comp.WaitForAssertion(() => childB.Expanded.Should().BeFalse());
+
+            await comp.InvokeAsync(comp.Instance.Rerender);
+
+            childB.Expanded.Should().BeFalse("the user collapsed this branch and the selection did not change");
+            GetVirtualizedValues(comp).Should().NotContain("Grandchild");
+        }
+
+        /// <summary>
+        /// A tree rendered inside a virtualized row must not inherit the row's context.
+        /// </summary>
+        /// <remarks>
+        /// Without the reset, the inner items would treat themselves as virtualized rows of the outer tree, skipping their children and reporting the outer row's hierarchy.
+        /// </remarks>
+        [Test]
+        public void TreeViewVirtualize_NestedTreeInRow_DoesNotInheritRowContext()
+        {
+            var comp = Context.Render<TreeViewVirtualizedNestedTest>();
+
+            var innerItems = comp.FindAll("ul.nested-tree li.mud-treeview-item");
+            innerItems.Should().HaveCountGreaterThan(0);
+            innerItems.Should().OnlyContain(item => !item.ClassList.Contains("mud-treeview-item-virtualized"));
+            innerItems.Should().OnlyContain(item => !item.HasAttribute("aria-level"));
+            innerItems.Should().Contain(item => item.TextContent.Contains("Root inner child", StringComparison.Ordinal), "the inner item renders its own children");
+        }
+
+        /// <summary>
+        /// A virtualized tree nested inside another tree shares the outer root's state, so it must fall back to standard rendering.
+        /// </summary>
+        /// <remarks>
+        /// Nested trees render their groups through the root tree's template, so the inner parent is deliberately not expanded here.
+        /// </remarks>
+        [Test]
+        public void TreeViewVirtualize_NestedInsideAnotherTree_FallsBackToStandardRendering()
+        {
+            var provider = new MockLoggerProvider();
+            var logger = provider.CreateLogger(GetType().FullName) as MockLogger;
+            Context.Services.AddLogging(builder => builder.ClearProviders().AddProvider(provider));
+            var comp = Context.Render<TreeViewNestedVirtualizeTest>();
+
+            var innerItems = comp.FindAll("ul.nested-tree li.mud-treeview-item");
+            innerItems.Should().HaveCount(2);
+            innerItems.Should().OnlyContain(item => !item.ClassList.Contains("mud-treeview-item-virtualized"));
+            comp.FindComponents<Virtualize<TreeViewItemContext<string>>>().Should().BeEmpty();
+            logger!.GetEntries().Should().ContainSingle(entry => entry.Level == LogLevel.Warning && entry.Message.Contains("nested inside another tree", StringComparison.Ordinal));
+        }
+
+        /// <summary>
+        /// Supplying or removing ServerData after the first render keeps the existing items and the content inside them (#13739).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task TreeView_ServerDataChange_KeepsItems(bool startWithServerData)
+        {
+            Func<string, Task<IReadOnlyCollection<TreeItemData<string>>>> serverData = _ => Task.FromResult<IReadOnlyCollection<TreeItemData<string>>>([]);
+            List<TreeItemData<string>> items = [new() { Value = "Inbox", Expanded = true, Children = [new TreeItemData<string> { Value = "Unread" }] }];
+            var templated = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.ServerData, startWithServerData ? serverData : null)
+                .Add<MudTreeViewItem<string>, ITreeItemData<string>>(x => x.ItemTemplate, item => itemParameters => itemParameters
+                    .Add(x => x.Value, item.Value)
+                    .Add(x => x.Items, item.Children)
+                    .Add(x => x.Expanded, item.Expanded)));
+            var handWritten = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.ServerData, startWithServerData ? serverData : null)
+                .AddChildContent<MudTreeViewItem<string>>(item => item
+                    .Add(x => x.Value, "Archive")
+                    .Add(x => x.Expanded, true)
+                    .AddChildContent<MudTreeViewItem<string>>(child => child.Add(x => x.Value, "2025"))));
+            var itemsBefore = templated.FindComponents<MudTreeViewItem<string>>().Concat(handWritten.FindComponents<MudTreeViewItem<string>>()).Select(x => x.Instance).ToList();
+
+            await templated.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ServerData, startWithServerData ? null : serverData));
+            await handWritten.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ServerData, startWithServerData ? null : serverData));
+
+            var itemsAfter = templated.FindComponents<MudTreeViewItem<string>>().Concat(handWritten.FindComponents<MudTreeViewItem<string>>()).Select(x => x.Instance).ToList();
+            itemsAfter.Should().HaveCount(4).And.Equal(itemsBefore);
+        }
+
+        /// <summary>
+        /// Verifies that turning on the root's <see cref="MudTreeView{T}.Disabled"/> at runtime reaches items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeDisabled_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+            comp.Find(".lvl3.mud-treeview-item").ClassList.Should().NotContain("mud-treeview-item-disabled");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
+
+            comp.Find(".lvl1.mud-treeview-item").ClassList.Should().Contain("mud-treeview-item-disabled");
+            comp.Find(".lvl2.mud-treeview-item").ClassList.Should().Contain("mud-treeview-item-disabled");
+            comp.Find(".lvl3.mud-treeview-item").ClassList.Should().Contain("mud-treeview-item-disabled");
+            foreach (var input in comp.FindAll(".mud-treeview-item-checkbox input"))
+            {
+                input.HasAttribute("disabled").Should().BeTrue();
+            }
+        }
+
+        /// <summary>
+        /// Verifies that turning on the root's <see cref="MudTreeView{T}.ReadOnly"/> at runtime reaches items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeReadOnly_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+            comp.Find(".lvl3 .mud-treeview-item-content").ClassList.Should().Contain("cursor-pointer");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ReadOnly, true));
+
+            comp.Find(".lvl1 .mud-treeview-item-content").ClassList.Should().NotContain("cursor-pointer");
+            comp.Find(".lvl2 .mud-treeview-item-content").ClassList.Should().NotContain("cursor-pointer");
+            comp.Find(".lvl3 .mud-treeview-item-content").ClassList.Should().NotContain("cursor-pointer");
+        }
+
+        /// <summary>
+        /// Verifies that switching the root's <see cref="MudTreeView{T}.SelectionMode"/> at runtime gives every item a checkbox.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeSelectionMode_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.SingleSelection));
+            comp.FindAll(".mud-treeview-item-checkbox").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection));
+
+            comp.FindAll(".mud-treeview-item-checkbox").Count.Should().Be(3);
+        }
+
+        /// <summary>
+        /// Verifies that changing the root's <see cref="MudTreeView{T}.UncheckedIcon"/> at runtime reaches items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeUncheckedIcon_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.UncheckedIcon, CustomIcon));
+
+            comp.FindAll(".mud-treeview-item-checkbox").Should().AllSatisfy(checkbox => checkbox.InnerHtml.Should().Contain(CustomIconPath));
+        }
+
+        /// <summary>
+        /// Verifies that a later selection change does not leave an unchanged item showing the root's previous <see cref="MudTreeView{T}.UncheckedIcon"/>.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeUncheckedIconThenSelection_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.UncheckedIcon, CustomIcon));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.SelectedValues, new[] { "c1" }));
+
+            comp.Find(".lvl3 .mud-treeview-item-checkbox").InnerHtml.Should().Contain(CustomIconPath);
+        }
+
+        /// <summary>
+        /// Verifies that turning off the root's <see cref="MudTreeView{T}.Ripple"/> and turning on <see cref="MudTreeView{T}.ExpandOnDoubleClick"/> at runtime reach items at every depth.
+        /// </summary>
+        [Test]
+        public async Task TreeView_RuntimeRippleAndExpandOnDoubleClick_ShouldReachEveryDepth()
+        {
+            var comp = Context.Render<TreeViewRuntimeRootParametersTest>();
+            comp.Find(".lvl3 .mud-treeview-item-content").ClassList.Should().Contain("mud-ripple");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Ripple, false));
+
+            comp.FindAll(".mud-treeview-item-content").Should().AllSatisfy(content => content.ClassList.Should().NotContain("mud-ripple"));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ExpandOnDoubleClick, true));
+
+            comp.FindAll(".mud-treeview-item").Should().AllSatisfy(item => item.ClassList.Should().Contain("mud-treeview-select-none"));
+        }
+
+        private const string CustomIconPath = "M0 0h9";
+
+        private const string CustomIcon = "<path d=\"" + CustomIconPath + "\"/>";
+        /// <summary>
+        /// Mounting a tree must render each item once, not twice.
+        /// </summary>
+        /// <remarks>
+        /// Every top-level item asks the tree to refresh its selection state while it initialises, and the tree used to render unconditionally in response.
+        /// Nothing is selected in this tree, so the second pass produced exactly the markup the first one already had.
+        /// </remarks>
+        [Test]
+        public void TreeView_OnMount_RendersEachItemOnce()
+        {
+            var renders = 0;
+            Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.ChildContent, BuildItems(_ => renders++)));
+
+            renders.Should().Be(3);
+        }
+
+        /// <summary>
+        /// Mounting a multi-selection tree must also render each item once.
+        /// </summary>
+        /// <remarks>
+        /// The tri-state checkbox is derived from the sub-items, so a multi-selection item can go stale without its own state changing.
+        /// It is enough to render when that derived value stops matching what was rendered, which nothing selected never does.
+        /// </remarks>
+        [Test]
+        public void TreeView_MultiSelection_OnMount_RendersEachItemOnce()
+        {
+            var renders = 0;
+            Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.SelectionMode, SelectionMode.MultiSelection)
+                .Add(x => x.ChildContent, BuildItems(_ => renders++)));
+
+            renders.Should().Be(3);
+        }
+
+        /// <summary>
+        /// Selecting an item must re-render only that item, not every sibling.
+        /// </summary>
+        /// <remarks>
+        /// The tree refreshes the selection state of every item whenever the selection changes.
+        /// A sibling whose own state did not change has nothing new to show, and this guards the click path that the mount tests above do not reach.
+        /// </remarks>
+        [Test]
+        public void TreeView_SelectOneSibling_RendersOnlyChangedItem()
+        {
+            var renders = new int[3];
+            var comp = Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.ChildContent, BuildItems(index => renders[index]++)));
+
+            var afterMount = (int[])renders.Clone();
+            comp.FindAll(".mud-treeview-item-content")[0].Click();
+
+            renders[0].Should().Be(afterMount[0] + 1, "the selected item has a new state to show");
+            renders[1].Should().Be(afterMount[1], "sibling 1 did not change and should not have re-rendered");
+            renders[2].Should().Be(afterMount[2], "sibling 2 did not change and should not have re-rendered");
+        }
+
+        /// <summary>
+        /// Builds three sibling items whose body content reports every time it is rendered.
+        /// </summary>
+        /// <param name="onRender">Called with the item's index once per render of that item.</param>
+        private static RenderFragment BuildItems(Action<int> onRender) => builder =>
+        {
+            for (var i = 0; i < 3; i++)
+            {
+                var index = i;
+                builder.OpenComponent<MudTreeViewItem<string>>(index * 3);
+                builder.AddComponentParameter((index * 3) + 1, nameof(MudTreeViewItem<string>.Value), $"item{index}");
+                builder.AddComponentParameter((index * 3) + 2, nameof(MudTreeViewItem<string>.BodyContent), (RenderFragment<MudTreeViewItem<string>>)(item => content =>
+                {
+                    onRender(index);
+                    content.AddContent(0, item.Value);
+                }));
+                builder.CloseComponent();
+            }
+        };
+
+        /// <summary>
+        /// Finds the rendered tree item whose own content contains the specified text.
+        /// </summary>
+        private static IElement FindTreeItem<TComponent>(IRenderedComponent<TComponent> component, string text)
+            where TComponent : IComponent
+        {
+            return component.FindAll("li.mud-treeview-item")
+                .Single(item => item.FirstElementChild?.TextContent.Contains(text, StringComparison.Ordinal) == true);
+        }
+
+        /// <summary>
+        /// Simulates the browser reporting the virtualizer's scroll position as the space above the viewport and the viewport height, in pixels.
+        /// </summary>
+        private Task ScrollVirtualizerAsync(IRenderedComponent<IComponent> component, float spacerSize, float containerSize)
+            => ScrollVirtualizerAsync<string>(component, spacerSize, containerSize);
+
+        /// <summary>
+        /// Simulates the viewport position for a virtualized tree with the specified value type.
+        /// </summary>
+        /// <remarks>
+        /// Virtualize registers a .NET object reference with JavaScript on its first render, and the browser reports scrolling by invoking its JS-invokable callback.
+        /// The callback is invoked through the same public dispatcher, so the test does not depend on the framework's private members.
+        /// </remarks>
+        private Task ScrollVirtualizerAsync<T>(IRenderedComponent<IComponent> component, float spacerSize, float containerSize)
+        {
+            var virtualize = component.FindComponent<Virtualize<TreeViewItemContext<T>>>().Instance;
+            var renderedItemCount = component.FindComponents<MudTreeViewItem<T>>().Count(item => item.Instance.CurrentItemContext is not null);
+            var spacerSeparation = renderedItemCount * virtualize.ItemSize;
+            var callbackReference = Context.JSInterop.Invocations["Blazor._internal.Virtualize.init"][^1].Arguments[0]!;
+
+            return component.InvokeAsync(() => _virtualizeCallbacks.Invoke(callbackReference, "OnSpacerBeforeVisible", spacerSize, spacerSeparation, containerSize));
+        }
+
+        /// <summary>
+        /// Gets the class which describes a rendered item's checkbox state.
+        /// </summary>
+        private static string GetCheckBoxState<TComponent>(IRenderedComponent<TComponent> component, string text)
+            where TComponent : IComponent
+        {
+            return FindTreeItem(component, text).QuerySelector(".mud-checkbox span")!.ClassList
+                .Single(className => className is "mud-checkbox-true" or "mud-checkbox-false" or "mud-checkbox-null");
+        }
+
+        /// <summary>
+        /// Creates an item template which passes the backing item's value, text, children and expansion to each item.
+        /// </summary>
+        /// <param name="bindExpanded">Whether expansion changes made by an item are written back to its backing item.</param>
+        private RenderFragment<ITreeItemData<T>> DataItemTemplate<T>(bool bindExpanded = false) => item => builder =>
+        {
+            builder.OpenComponent<MudTreeViewItem<T>>(0);
+            builder.AddAttribute(1, nameof(MudTreeViewItem<T>.Value), item.Value);
+            builder.AddAttribute(2, nameof(MudTreeViewItem<T>.Text), item.Text);
+            builder.AddAttribute(3, nameof(MudTreeViewItem<T>.Items), item.Children);
+            builder.AddAttribute(4, nameof(MudTreeViewItem<T>.Expanded), item.Expanded);
+            if (bindExpanded)
+            {
+                builder.AddAttribute(5, nameof(MudTreeViewItem<T>.ExpandedChanged), EventCallback.Factory.Create<bool>(this, expanded => item.Expanded = expanded));
+            }
+
+            builder.CloseComponent();
+        };
+
+        /// <summary>
+        /// Creates a root item and a collapsed branch whose child counts how often the tree walks the hierarchy down to it.
+        /// </summary>
+        private static (IReadOnlyCollection<ITreeItemData<string>> Items, ProjectionTrackingTreeItemData Tracked) CreateTrackedHierarchy()
+        {
+            var tracked = new ProjectionTrackingTreeItemData("Tracked");
+            var items = new List<ITreeItemData<string>>
+            {
+                new TreeItemData<string> { Value = "Other", Text = "Other" },
+                new TreeItemData<string> { Value = "Collapsed", Text = "Collapsed", Children = [tracked] }
+            };
+
+            return (items, tracked);
+        }
+
+        /// <summary>
+        /// Renders a virtualized tree over data items with <see cref="DataItemTemplate{T}"/>.
+        /// </summary>
+        private IRenderedComponent<MudTreeView<string>> RenderDataTree(IReadOnlyCollection<ITreeItemData<string>> items, SelectionMode selectionMode)
+        {
+            return Context.Render<MudTreeView<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.SelectionMode, selectionMode)
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Height, "200px")
+                .Add(x => x.ItemTemplate, DataItemTemplate<string>()));
+        }
+
+        /// <summary>
+        /// Gets the values from the flattened virtualized item contexts.
+        /// </summary>
+        private static IReadOnlyList<string> GetVirtualizedValues(IRenderedComponent<IComponent> component)
+        {
+            return GetTreeViewItemContexts(component).Select(itemContext => itemContext.Item.Value ?? string.Empty).ToList();
+        }
+
+        /// <summary>
+        /// Gets the flattened item contexts rendered by <see cref="MudVirtualize{T}"/>.
+        /// </summary>
+        private static ICollection<TreeViewItemContext<string>> GetTreeViewItemContexts(IRenderedComponent<IComponent> component)
+        {
+            return component.FindComponent<Virtualize<TreeViewItemContext<string>>>()
+                .Instance
+                .Items!;
+        }
+
+        /// <summary>
+        /// Finds an item in a hierarchical data tree by value.
+        /// </summary>
+        private static ITreeItemData<string> FindDataItem(IEnumerable<ITreeItemData<string>> items, string value)
+        {
+            return GetDataItems(items).Single(item => item.Value == value);
+        }
+
+        /// <summary>
+        /// Enumerates every item in a hierarchical data tree.
+        /// </summary>
+        private static IEnumerable<ITreeItemData<string>> GetDataItems(IEnumerable<ITreeItemData<string>> items)
+        {
+            foreach (var item in items)
+            {
+                yield return item;
+
+                if (!item.HasChildren)
+                {
+                    continue;
+                }
+
+                foreach (var child in GetDataItems(item.Children))
+                {
+                    yield return child;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Counts reads of <see cref="Children"/> so a test can assert whether the tree walked the hierarchy down to this item.
+        /// </summary>
+        private sealed class ProjectionTrackingTreeItemData(string value) : ITreeItemData<string>
+        {
+            private IReadOnlyCollection<ITreeItemData<string>> _children;
+
+            public string Text { get; set; }
+
+            public string Icon { get; set; }
+
+            public string Value { get; } = value;
+
+            public bool Expanded { get; set; }
+
+            public bool Expandable { get; set; } = true;
+
+            public bool Selected { get; set; }
+
+            public bool Visible { get; set; } = true;
+
+            public IReadOnlyCollection<ITreeItemData<string>> Children
+            {
+                get
+                {
+                    ChildrenReadCount++;
+                    return _children;
+                }
+                set => _children = value;
+            }
+
+            public bool HasChildren => Children is { Count: > 0 };
+
+            public int ChildrenReadCount { get; private set; }
+
+            public void ResetReadCount() => ChildrenReadCount = 0;
+        }
+
+        /// <summary>
+        /// A data item whose value can change in place and whose <see cref="Children"/> returns a new read-only wrapper on every read, as an application exposing its own list would.
+        /// </summary>
+        private sealed class MutableTreeItemData(string value) : ITreeItemData<string>
+        {
+            public List<ITreeItemData<string>> ChildList { get; } = [];
+
+            public string Text { get; set; } = value;
+
+            public string Icon { get; set; }
+
+            public string Value { get; set; } = value;
+
+            public bool Expanded { get; set; }
+
+            public bool Expandable { get; set; } = true;
+
+            public bool Selected { get; set; }
+
+            public bool Visible { get; set; } = true;
+
+            public IReadOnlyCollection<ITreeItemData<string>> Children
+            {
+                get => ChildList.AsReadOnly();
+                set => throw new NotSupportedException();
+            }
+
+            public bool HasChildren => ChildList.Count > 0;
+        }
+
+        /// <summary>
+        /// Invokes JS-invokable .NET callbacks through the public dispatcher, which is how Blazor's JavaScript reaches .NET.
+        /// </summary>
+        private sealed class VirtualizeCallbackRuntime : JSRuntime
+        {
+            /// <summary>
+            /// Invokes a JS-invokable method of the object behind a <see cref="DotNetObjectReference{TValue}"/>.
+            /// </summary>
+            public void Invoke(object dotNetObjectReference, string methodIdentifier, params float[] arguments)
+            {
+                // Serializing the reference is how a JavaScript runtime assigns the id that the dispatcher looks it up by.
+                using var reference = JsonDocument.Parse(JsonSerializer.Serialize(dotNetObjectReference, JsonSerializerOptions));
+                var objectId = reference.RootElement.GetProperty("__dotNetObject").GetInt64();
+                DotNetDispatcher.Invoke(this, new DotNetInvocationInfo(null, methodIdentifier, objectId, null), JsonSerializer.Serialize(arguments));
+            }
+
+            protected override void BeginInvokeJS(long taskId, string identifier, string argsJson, JSCallResultType resultType, long targetInstanceId)
+                => throw new NotSupportedException();
+
+            protected override void EndInvokeDotNet(DotNetInvocationInfo invocationInfo, in DotNetInvocationResult invocationResult)
+                => throw new NotSupportedException();
         }
     }
 }

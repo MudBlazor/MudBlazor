@@ -2,21 +2,23 @@
 @inherits MudComponentBase
 @typeparam T
 
-<div class="@Classname" style="@Stylename"
-     id="@_id"
-     index="@Index"
-     @attributes="UserAttributes"
-     draggable="@(!Disabled ? "true" : "false")"
-     @ondragstart="DragStartedAsync"
-     @ontouchstart="TouchStartedAsync"
-     @ontouchend="TouchEndedAsync"
-     @ontouchmove="TouchMovedAsync"
-     @ondragend="DragEndedAsync"
-     @ondragenter="HandleDragEnter"
-     @ondragleave="HandleDragLeave">
+<CascadingValue Value="this" IsFixed="true">
+    <div class="@Classname" style="@Stylename"
+         id="@_id"
+         index="@Index"
+         @attributes="UserAttributes"
+         draggable="@IsEffectivelyDraggable.ToString().ToLowerInvariant()"
+         @ondragstart="DragStartedAsync"
+         @ontouchstart="OnTouchStart"
+         @ontouchend="OnTouchEnd"
+         @ontouchmove="OnTouchMove"
+         @ondragend="DragEndedAsync"
+         @ondragenter="HandleDragEnter"
+         @ondragleave="HandleDragLeave">
 
-    @if (!HideContent)
-    {
-        @ChildContent
-    }
-</div>
+        @if (!HideContent)
+        {
+            @ChildContent
+        }
+    </div>
+</CascadingValue>

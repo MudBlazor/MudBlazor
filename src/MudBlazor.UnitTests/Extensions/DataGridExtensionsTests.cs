@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Extensions
@@ -126,6 +126,23 @@ namespace MudBlazor.UnitTests.Extensions
             var vstate = new GridStateVirtualize<Person> { SortDefinitions = new List<SortDefinition<Person>> { ByName() } };
             var result = source.OrderBySortDefinitions(vstate).ToList();
             result.Select(x => x.Name).Should().ContainInOrder("Alpha", "Beta");
+        }
+
+        [Test]
+        public void OrderBy_SingleDefinition_CustomComparer_IsApplied()
+        {
+            // Comparer orders by string length; alphabetical order would give "a","mmm","zz".
+            var byNameLength = Comparer<object>.Create((a, b) => ((string)a!).Length.CompareTo(((string)b!).Length));
+            var p1 = new Person { Name = "mmm", Age = 1 };
+            var p2 = new Person { Name = "a", Age = 2 };
+            var p3 = new Person { Name = "zz", Age = 3 };
+            var source = new[] { p1, p2, p3 };
+            ICollection<SortDefinition<Person>> sortDefs = new List<SortDefinition<Person>>
+            {
+                new SortDefinition<Person>("Name", false, 0, p => p.Name, byNameLength)
+            };
+            var result = source.OrderBySortDefinitions(sortDefs).ToList();
+            result.Select(x => x.Name).Should().ContainInOrder("a", "zz", "mmm");
         }
     }
 }

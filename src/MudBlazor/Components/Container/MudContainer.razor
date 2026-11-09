@@ -7,11 +7,10 @@
 </div>
 
 @code {
-#nullable enable
     protected string Classname =>
         new CssBuilder("mud-container")
             .AddClass($"mud-container-fixed", Fixed)
-            .AddClass($"mud-container-maxwidth-{MaxWidth.ToDescriptionString()}", !Fixed)
+            .AddClass($"mud-container-maxwidth-{MaxWidth.ToStringFast(true)}", !Fixed)
             .AddClass($"mud-container--gutters", Gutters)
             .AddClass(Class)
             .Build();

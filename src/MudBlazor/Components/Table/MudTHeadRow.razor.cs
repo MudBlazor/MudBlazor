@@ -5,12 +5,11 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// A header row displayed at the top of a <see cref="MudTable{T}"/> and each group.
     /// </summary>
-    public partial class MudTHeadRow : MudComponentBase
+    public partial class MudTHeadRow : MudComponentBase, IDisposable
     {
         private bool? _checked = false;
 
@@ -111,6 +110,21 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this header row.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             Context?.HeaderRows.Remove(this);
         }
 

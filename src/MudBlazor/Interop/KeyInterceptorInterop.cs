@@ -8,7 +8,6 @@ using MudBlazor.Services;
 
 namespace MudBlazor.Interop;
 
-#nullable enable
 internal class KeyInterceptorInterop
 {
     private readonly IJSRuntime _jsRuntime;

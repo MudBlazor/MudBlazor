@@ -2,45 +2,18 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Blazored.LocalStorage;
-using Microsoft.Extensions.Logging;
 using MudBlazor.Docs.NotificationContent;
 
 namespace MudBlazor.Docs.Services.Notifications;
 
-public class InMemoryNotificationService : INotificationService
+public class InMemoryNotificationService(IBrowserStorage browserStorage) : INotificationService
 {
     private const string LocalStorageKey = "__notficationTimestamp";
-    private readonly ILocalStorageService _localStorageService;
-    private readonly ILogger<InMemoryNotificationService> _logger;
 
-    private readonly List<NotificationMessage> _messages;
+    private readonly List<NotificationMessage> _messages = [];
 
-    public InMemoryNotificationService(ILocalStorageService localStorageService,
-        ILogger<InMemoryNotificationService> logger)
-    {
-        _localStorageService = localStorageService;
-        _logger = logger;
-
-        _messages = new List<NotificationMessage>();
-    }
-
-    private async Task<DateTime> GetLastReadTimestamp()
-    {
-        if (await _localStorageService.ContainKeyAsync(LocalStorageKey) == false)
-        {
-            return DateTime.MinValue;
-        }
-        else
-        {
-            var timestamp = await _localStorageService.GetItemAsync<DateTime>(LocalStorageKey);
-            return timestamp;
-        }
-    }
+    // A missing timestamp reads as DateTime.MinValue, so every notification counts as unread.
+    private ValueTask<DateTime> GetLastReadTimestamp() => browserStorage.GetAsync<DateTime>(LocalStorageKey);
 
     public async Task<bool> AreNewNotificationsAvailable()
     {
@@ -52,7 +25,7 @@ public class InMemoryNotificationService : INotificationService
 
     public async Task MarkNotificationsAsRead()
     {
-        await _localStorageService.SetItemAsync(LocalStorageKey, DateTime.UtcNow.Date);
+        await browserStorage.SetAsync(LocalStorageKey, DateTime.UtcNow.Date);
     }
 
     public async Task MarkNotificationsAsRead(string id)
@@ -60,10 +33,10 @@ public class InMemoryNotificationService : INotificationService
         var message = await GetMessageById(id);
         if (message == null) { return; }
 
-        var timestamp = await _localStorageService.GetItemAsync<DateTime>(LocalStorageKey);
+        var timestamp = await GetLastReadTimestamp();
         if (message.PublishDate > timestamp)
         {
-            await _localStorageService.SetItemAsync(LocalStorageKey, message.PublishDate);
+            await browserStorage.SetAsync(LocalStorageKey, message.PublishDate);
         }
 
     }
@@ -84,13 +57,23 @@ public class InMemoryNotificationService : INotificationService
         return Task.CompletedTask;
     }
 
-
     public void Preload()
     {
         _messages.Add(new NotificationMessage(
-            typeof(Announcement_v8_GA).Name,
-            "v8: Riding the Momentum of v7",
-            "Learn about the new major version",
+            nameof(Announcement_v9_GA),
+            "MudBlazor v9.0.0 Released",
+            "Major Version",
+            "Announcement",
+            new DateTime(2026, 03, 01),
+            "https://github.com/MudBlazor/MudBlazor/blob/f979c2c84e3ddd5f01a20ebc1102838d32a4b01b/content/Nuget.png",
+            [
+                new NotificationAuthor("The MudBlazor Team", "https://mudblazor.com/_content/MudBlazor.Docs/images/logo.png")
+            ], typeof(Announcement_v9_GA)));
+
+        _messages.Add(new NotificationMessage(
+            nameof(Announcement_v8_GA),
+            "MudBlazor v8.0.0 Released",
+            "Major Version",
             "Announcement",
             new DateTime(2025, 01, 19),
             "https://github.com/MudBlazor/MudBlazor/blob/f979c2c84e3ddd5f01a20ebc1102838d32a4b01b/content/Nuget.png",
@@ -99,9 +82,9 @@ public class InMemoryNotificationService : INotificationService
             ], typeof(Announcement_v8_GA)));
 
         _messages.Add(new NotificationMessage(
-            typeof(Announcement_v7_GA).Name,
-            "v7 Is Here!",
-            "Learn about the new major version",
+            nameof(Announcement_v7_GA),
+            "MudBlazor v7.0.0 Released",
+            "Major Version",
             "Announcement",
             new DateTime(2024, 06, 29),
             "https://github.com/MudBlazor/MudBlazor/blob/f979c2c84e3ddd5f01a20ebc1102838d32a4b01b/content/Nuget.png",

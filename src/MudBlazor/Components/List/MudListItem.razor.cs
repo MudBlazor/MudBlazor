@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// An item within a <see cref="MudList{T}"/> component.
@@ -17,11 +18,16 @@ namespace MudBlazor
     {
         private bool _selected;
         private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
+        private ElementReference _elementReference = new();
+        private string? _subscribedElementId;
+        internal string ElementId { get; } = Identifier.Create("list-item");
 
-        private ParameterState<bool> _expandedState;
+        private readonly ParameterState<bool> _expandedState;
+        private readonly Action<ElementReference> _captureElementReference;
 
         public MudListItem()
         {
+            _captureElementReference = reference => _elementReference = reference;
             using var registerScope = CreateRegisterScope();
             _expandedState = registerScope.RegisterParameter<bool>(nameof(Expanded))
                 .WithParameter(() => Expanded)
@@ -34,14 +40,17 @@ namespace MudBlazor
                 .AddClass("mud-list-item-gutters", GetGutters())
                 .AddClass("mud-list-item-clickable", GetClickable())
                 .AddClass("mud-ripple", Ripple && GetClickable())
-                .AddClass($"mud-selected-item mud-{MudList?.Color.ToDescriptionString()}-text", !MultiSelection && _selected && !GetDisabled())
-                .AddClass($"mud-{MudList?.Color.ToDescriptionString()}-hover", !MultiSelection && _selected && !GetDisabled())
+                .AddClass($"mud-selected-item mud-{MudList?.Color.ToStringFast(true)}-text", !MultiSelection && _selected && !GetDisabled())
+                .AddClass($"mud-{MudList?.Color.ToStringFast(true)}-hover", !MultiSelection && _selected && !GetDisabled())
                 .AddClass("mud-list-item-disabled", GetDisabled())
                 .AddClass(Class)
                 .Build();
 
         [Inject]
         protected NavigationManager UriHelper { get; set; } = null!;
+
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
 
         [CascadingParameter]
         protected MudList<T>? MudList { get; set; }
@@ -131,6 +140,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public bool Ripple { get; set; } = true;
+
+        /// <summary>
+        /// Allows this item to handle keyboard input.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.  Set to <c>false</c> when a parent component owns keyboard navigation, which avoids a key interceptor per item.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.List.Behavior)]
+        public bool KeyboardEnabled { get; set; } = true;
 
         /// <summary>
         /// The icon to display for this list item.
@@ -227,6 +246,9 @@ namespace MudBlazor
         [Category(CategoryTypes.List.Expanding)]
         public bool Expanded { get; set; }
 
+        /// <summary>
+        /// Occurs when <see cref="Expanded"/> has changed.
+        /// </summary>
         [Parameter]
         public EventCallback<bool> ExpandedChanged { get; set; }
 
@@ -265,7 +287,7 @@ namespace MudBlazor
 
         private SelectionMode SelectionMode => TopLevelList?.SelectionMode ?? SelectionMode.SingleSelection;
 
-        private Typo TextTypo => GetDense() ? Typo.body2 : Typo.body1;
+        private string TextClassname => GetDense() ? "mud-typography mud-typography-body2" : "mud-typography mud-typography-body1";
 
         private bool GetClickable()
         {
@@ -289,12 +311,58 @@ namespace MudBlazor
             }
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            var effectiveElementId = KeyboardEnabled ? GetEffectiveElementId(ElementId) : null;
+
+            if (!string.Equals(_subscribedElementId, effectiveElementId, StringComparison.Ordinal))
+            {
+                if (!string.IsNullOrEmpty(_subscribedElementId))
+                {
+                    await KeyInterceptorService.UnsubscribeAsync(_subscribedElementId);
+                    _subscribedElementId = null;
+                }
+
+                if (effectiveElementId is not null)
+                {
+                    var options = new KeyInterceptorOptions(
+                        [
+                            // prevent scrolling page
+                            new(" ", preventDown: "key+none", preventUp: "key+none"),
+                            // prevent scrolling page and move focus to previous item
+                            new("ArrowUp", preventDown: "key+none"),
+                            // prevent scrolling page and move focus to next item
+                            new("ArrowDown", preventDown: "key+none"),
+                            new("Home", preventDown: "key+none"),
+                            new("End", preventDown: "key+none"),
+                            new("Enter", preventDown: "key+none"),
+                            new("NumpadEnter", preventDown: "key+none")
+                        ]);
+
+                    await KeyInterceptorService.SubscribeAsync(effectiveElementId, options, keys => keys
+                        .When(CanHandleKeys, builder => builder
+                            .OnKeyDown("ArrowDown", HandleArrowDownAsync)
+                            .OnKeyDown("ArrowUp", HandleArrowUpAsync)
+                            .OnKeyDown("Home", HandleHomeAsync)
+                            .OnKeyDown("End", HandleEndAsync)
+                            .OnKeyDown(" ", HandleSpaceAsync)
+                            .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)));
+
+                    _subscribedElementId = effectiveElementId;
+                }
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
         protected async Task OnClickHandlerAsync(MouseEventArgs eventArgs)
         {
             if (GetDisabled())
             {
                 return;
             }
+
+            MudList?.SetActiveItem(this);
             if (OnClickPreventDefault)
             {
                 await OnClick.InvokeAsync(eventArgs);
@@ -303,6 +371,7 @@ namespace MudBlazor
             if (NestedList != null)
             {
                 await _expandedState.SetValueAsync(!_expandedState.Value);
+                await OnClick.InvokeAsync(eventArgs);
                 return;
             }
             if (TopLevelList is not null && !GetReadOnly())
@@ -328,15 +397,57 @@ namespace MudBlazor
             // the only case a manual Navigition is required, is when
             // the target is empty, but a force reload is desired, all other cases are handled
             // by the html anchor
-            if (ForceLoad && string.IsNullOrEmpty(Href) == false && string.IsNullOrEmpty(Target))
+            if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
             {
                 UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
         }
 
+        internal async Task FocusAsync()
+        {
+            await OnFocusAsync(new FocusEventArgs());
+            await _elementReference.FocusAsync();
+        }
+
+        internal bool IsEnabled() => !GetDisabled();
+
+        private async Task OnFocusAsync(FocusEventArgs _)
+        {
+            TopLevelList?.SetActiveItem(this);
+
+            if (SelectionMode == SelectionMode.SingleSelection && NestedList is null && TopLevelList is not null && !GetReadOnly())
+            {
+                await TopLevelList.SetSelectedValueAsync(GetValue());
+            }
+        }
+
+        private Task HandleKeyDownAsync(KeyboardEventArgs args) => KeyInterceptorService.DispatchAsync(_subscribedElementId ?? GetEffectiveElementId(ElementId), KeyEventKind.Down, args);
+
+        private bool CanHandleKeys() => !GetDisabled() && MudList is not null && MudList.IsInteractive() && TopLevelList is not null && TopLevelList.IsTabbable(this);
+
+        private Task HandleArrowDownAsync() => MudList!.FocusAdjacentItemAsync(this, 1);
+
+        private Task HandleArrowUpAsync() => MudList!.FocusAdjacentItemAsync(this, -1);
+
+        private Task HandleHomeAsync() => MudList!.FocusBoundaryItemAsync(first: true);
+
+        private Task HandleEndAsync() => MudList!.FocusBoundaryItemAsync(first: false);
+
+        private Task HandleSpaceAsync() => OnKeyboardActivateAsync(activateLink: false);
+
+        private Task HandleEnterAsync()
+        {
+            if (HtmlTag == "a")
+            {
+                return Task.CompletedTask;
+            }
+
+            return OnKeyboardActivateAsync(activateLink: true);
+        }
+
         internal void SetSelected(bool selected)
         {
-            if (GetDisabled() || _selected == selected)
+            if (_selected == selected)
             {
                 return;
             }
@@ -357,7 +468,7 @@ namespace MudBlazor
 
         private bool GetReadOnly() => MudList?.ReadOnly == true || TopLevelList?.GetReadOnly() == true;
 
-        private bool GetDense() => Dense ?? MudList?.Dense == true;
+        private bool GetDense() => Dense ?? (MudList?.Dense == true);
 
         private bool GetGutters() => Gutters ?? MudList?.Gutters ?? true;
 
@@ -376,6 +487,86 @@ namespace MudBlazor
             else
             {
                 await TopLevelList.SelectValueAsync(GetValue());
+            }
+        }
+
+        private string? GetRole()
+        {
+            return GetReadOnly() ? "listitem" : "option";
+        }
+
+        private string? GetAriaSelected()
+        {
+            if (GetReadOnly())
+            {
+                return null;
+            }
+
+            return _selected ? "true" : "false";
+        }
+
+        private string? GetAriaExpanded()
+        {
+            if (NestedList is null)
+            {
+                return null;
+            }
+
+            return _expandedState.Value ? "true" : "false";
+        }
+
+        private string? GetTabIndex()
+        {
+            if (GetDisabled())
+            {
+                return "-1";
+            }
+
+            if (GetReadOnly())
+            {
+                return HtmlTag == "a" ? null : "-1";
+            }
+
+            return MudList?.IsTabbable(this) == true ? "0" : "-1";
+        }
+
+        private async Task OnKeyboardActivateAsync(bool activateLink)
+        {
+            if (GetDisabled())
+            {
+                return;
+            }
+
+            if (NestedList is not null)
+            {
+                await _expandedState.SetValueAsync(!_expandedState.Value);
+                await OnClick.InvokeAsync(new MouseEventArgs());
+                return;
+            }
+
+            if (TopLevelList is not null && !GetReadOnly())
+            {
+                var value = GetValue();
+
+                if (MultiSelection)
+                {
+                    await OnCheckboxChangedAsync();
+                }
+                else if (SelectionMode == SelectionMode.ToggleSelection)
+                {
+                    await TopLevelList.SetSelectedValueAsync(_selected ? default : value);
+                }
+                else
+                {
+                    await TopLevelList.SetSelectedValueAsync(value);
+                }
+            }
+
+            await OnClick.InvokeAsync(new MouseEventArgs());
+
+            if (activateLink && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
+            {
+                UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
             }
         }
 
@@ -401,17 +592,46 @@ namespace MudBlazor
 
         private bool GetPreventDefault() => GetDisabled();
 
+        /// <summary>
+        /// Opens the row element with its attributes; the Razor file renders the content and closes it.
+        /// </summary>
+        /// <remarks>
+        /// The tag is chosen at runtime, so the element is opened by name rather than written as markup.
+        /// class and style come before the splat so a class or style supplied through <see cref="MudComponentBase.UserAttributes"/> still wins, which is the precedence the MudElement boundary gave them.
+        /// </remarks>
+        private void OpenRow(RenderTreeBuilder builder)
+        {
+            builder.OpenElement(0, HtmlTag);
+            builder.AddAttribute(1, "id", ElementId);
+            builder.AddAttribute(2, "tabindex", GetTabIndex());
+            builder.AddAttribute(3, "role", GetRole());
+            builder.AddAttribute(4, "aria-selected", GetAriaSelected());
+            builder.AddAttribute(5, "aria-expanded", GetAriaExpanded());
+            builder.AddAttribute(6, "class", Classname);
+            builder.AddAttribute(7, "style", Style);
+            builder.AddMultipleAttributes(8, UserAttributes!);
+            builder.AddAttribute(9, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, OnClickHandlerAsync));
+            builder.AddAttribute(10, "onfocus", EventCallback.Factory.Create<FocusEventArgs>(this, OnFocusAsync));
+            builder.AddAttribute(11, "onkeydown", EventCallback.Factory.Create<KeyboardEventArgs>(this, HandleKeyDownAsync));
+            builder.AddAttribute(12, "href", Href);
+            builder.AddAttribute(13, "target", Target);
+            builder.AddEventStopPropagationAttribute(14, "onclick", !GetClickPropagation());
+            builder.AddEventPreventDefaultAttribute(15, "onclick", GetPreventDefault());
+            builder.AddElementReferenceCapture(16, _captureElementReference);
+        }
+
         private bool GetClickPropagation() => false;
 
         public void Dispose()
         {
-            if (MudList is null)
-            {
-                return;
-            }
             try
             {
-                MudList.Unregister(this);
+                MudList?.Unregister(this);
+
+                if (IsJSRuntimeAvailable && !string.IsNullOrEmpty(_subscribedElementId))
+                {
+                    _ = KeyInterceptorService.UnsubscribeAsync(_subscribedElementId);
+                }
             }
             catch (Exception) { /*ignore*/ }
         }

@@ -1,0 +1,34 @@
+﻿@page "/components/charts"
+@page "/components/chart/advanced-uses"
+@page "/components/universalchart"
+
+<DocsPage>
+    <DocsPageHeader Title="MudChart: Advanced Use Cases" Component="@nameof(MudChart<T>)" />
+
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Dynamic Chart Type">
+                <Description>
+                    Display the same dataset in multiple chart formats by simply switching the <CodeInline>ChartType</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(DynamicChartExample1)">
+                <DynamicChartExample1 />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+
+    <DocsPageContent>
+        <DocsPageSection>
+            <SectionHeader Title="Mixed Chart (Combo Chart)">
+                <Description>
+                    Charts inheriting from <CodeInline>MudAxisChartBase</CodeInline> can be combined to create complex visualizations.
+                    You can overlay different chart types, such as Bar and Line charts, to display multiple datasets in a single chart.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(MixedChartExample1)">
+                <MixedChartExample1 />
+            </SectionContent>
+        </DocsPageSection>
+    </DocsPageContent>
+</DocsPage>

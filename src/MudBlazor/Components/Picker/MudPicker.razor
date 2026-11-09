@@ -4,7 +4,6 @@
 
 @code
 {
-#nullable enable
     protected virtual RenderFragment? InputContent =>
         // note: Mask needs to remain before Text!
         @<MudTextField T="string"
@@ -13,7 +12,8 @@
                        Style="@Style"
                        Label="@Label"
                        Mask="@_mask"
-                       @bind-Value="@Text"
+                       @bind-Value:get="@ReadText"
+                       @bind-Value:set="@WriteTextAsync"
                        Immediate="@(ImmediateText && Editable)"
                        Placeholder="@Placeholder"
                        HelperText="@HelperText"
@@ -31,24 +31,26 @@
                        Margin="@Margin"
                        Required="@Required"
                        RequiredError="@RequiredError"
-                       Error="@Error"
-                       ErrorText="@ErrorText"
+                       Error="@HasErrors"
+                       ErrorId="@ErrorIdState.Value"
+                       ErrorText="@ErrorTextState.Value"
                        Clearable="@(Clearable && !GetReadOnlyState())"
+                       ClearIcon="@ClearIcon"
                        OnClearButtonClick="@(async () => await ClearAsync())"
-                       TextUpdateSuppression="@(Editable && !GetReadOnlyState())"
+                       ShrinkLabel="@ShrinkLabel"
+                       KeyDownPreventDefault="Open"
+                       InputId="@InputId"
                        @onclick="OnClickAsync" />;
 
-#nullable enable
     /// <summary>
     /// Gets the content to be rendered inside the picker.
     /// Override this property to provide custom content for the picker.
     /// </summary>
     protected virtual RenderFragment? PickerContent => null;
 
-#nullable enable
     protected virtual RenderFragment? Render =>
         @<CascadingValue Value="@this" IsFixed="true">
-            <div class="@PickerClassname" id="@_elementId">
+            <div class="@PickerClassname" id="@ElementId">
                 @if (PickerVariant != PickerVariant.Static)
                 {
                     <CascadingValue Name="SubscribeToParentForm" Value="false" IsFixed="true">
@@ -60,8 +62,8 @@
                 }
                 @if (PickerVariant == PickerVariant.Inline)
                 {
-                    <MudPopover Class="@PopoverClassname" Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" OverflowBehavior="@(OverflowBehavior)" RelativeWidth="@(RelativeWidth)" Paper="false">
-                        <div @ref="_pickerInlineRef" class="@PickerInlineClassname">
+                    <MudPopover Class="@PopoverClassname" Open="@Open" Fixed="true" AnchorOrigin="@(AnchorOrigin)" TransformOrigin="@(TransformOrigin)" RelativeWidth="@(RelativeWidth)" Paper="false">
+                        <div @ref="_pickerInlineRef" class="@PickerInlineClassname" role="@GetPopupRole()" aria-label="@GetPopupAriaLabel()" aria-labelledby="@GetPopupAriaLabelledBy()">
                             <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                                 <div class="@PickerContainerClassname">
                                     @if (PickerContent != null)
@@ -99,7 +101,7 @@
                 else if (Open && PickerVariant == PickerVariant.Dialog)
                 {
                     <MudOverlay Visible="@Open" OnClick="CloseOverlayAsync" DarkBackground="true" Class="mud-overlay-dialog">
-                        <MudPaper @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
+                        <MudPaper role="@GetPopupRole()" aria-label="@GetPopupAriaLabel()" aria-labelledby="@GetPopupAriaLabelledBy()" @attributes="UserAttributes" Class="@PickerPaperClassname" Style="@PickerPaperStylename" Square="@_pickerSquare">
                             <div class="@PickerContainerClassname">
                                 @if (PickerContent != null)
                                 {
@@ -120,7 +122,7 @@
             {
                 <MudOverlay Visible="@Open"
                             AutoClose
-                            Modal="@Modal"
+                            Modal="@GetModal()"
                             OnClosed="CloseOverlayAsync"
                             LockScroll="false"/>
             }

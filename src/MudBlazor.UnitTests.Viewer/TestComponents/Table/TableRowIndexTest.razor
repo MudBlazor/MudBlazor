@@ -1,0 +1,19 @@
+﻿<MudTable Items="@_items" T="string" RowClassFunc="@RowClassFunc">
+    <RowTemplate>
+        <MudTd>@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    public static string __description__ = "Used to verify a row's index is its position in the filtered items";
+
+    public List<int> SeenIndexes { get; } = new();
+
+    private readonly List<string> _items = new() { "a", "b", "a", "c" };
+
+    private string RowClassFunc(string item, int index)
+    {
+        SeenIndexes.Add(index);
+        return string.Empty;
+    }
+}

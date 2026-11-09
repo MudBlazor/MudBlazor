@@ -7,10 +7,13 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
-#nullable enable
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Renders the collapsible header row for a group of items in a <see cref="MudDataGrid{T}"/> when grouping is enabled.
+    /// </summary>
+    /// <typeparam name="T">The type of item displayed in the data grid.</typeparam>
     public partial class DataGridGroupRow<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
     {
         internal bool _expanded;
@@ -27,14 +30,23 @@ namespace MudBlazor
             .AddStyle(GroupStyleFunc?.Invoke(GroupDefinition))
             .Build();
 
+        /// <summary>
+        /// The data grid which contains this group row.
+        /// </summary>
         [Parameter, EditorRequired]
         [Category(CategoryTypes.DataGrid.Grouping)]
         public MudDataGrid<T> DataGrid { get; set; } = null!;
 
+        /// <summary>
+        /// Occurs when a row is clicked.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Selecting)]
         public EventCallback<(MouseEventArgs args, T item, int index)> RowClick { get; set; }
 
+        /// <summary>
+        /// Occurs when a row is right-clicked.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Selecting)]
         public EventCallback<(MouseEventArgs args, T item, int index)> ContextRowClick { get; set; }
@@ -53,22 +65,37 @@ namespace MudBlazor
         [Category(CategoryTypes.DataGrid.Grouping)]
         public IGrouping<object?, T>? Items { get; set; }
 
+        /// <summary>
+        /// The CSS classes applied to the group row.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
         public string? GroupClass { get; set; }
 
+        /// <summary>
+        /// The CSS styles applied to the group row.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
         public string? GroupStyle { get; set; }
 
+        /// <summary>
+        /// The function used to compute CSS classes for the group row.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
         public Func<GroupDefinition<T>, string>? GroupClassFunc { get; set; }
 
+        /// <summary>
+        /// The function used to compute CSS styles for the group row.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
         public Func<GroupDefinition<T>, string>? GroupStyleFunc { get; set; }
 
+        /// <summary>
+        /// The CSS classes applied to this group row.
+        /// </summary>
         [Parameter]
         [Category(CategoryTypes.DataGrid.Appearance)]
         public string? StyleClass { get; set; }
@@ -79,29 +106,35 @@ namespace MudBlazor
             base.OnParametersSet();
         }
 
+        // A forwarded click ends at a grid-owned callback whose receiver already renders the grid, which redraws every group row, so a level of nesting must not add a render of its own.
+        // The delegates are cached because AsNonRenderingEventHandler allocates a receiver on every call.
+        private Func<(MouseEventArgs args, T item, int index), Task>? _rowClickForwarder;
+        private Func<(MouseEventArgs args, T item, int index), Task>? _contextRowClickForwarder;
+
+        // The row always carries a click listener, so this forwarder is always needed.
+        private EventCallback<(MouseEventArgs args, T item, int index)> GetRowClickCallback()
+            => EventCallback.Factory.Create(
+                this,
+                _rowClickForwarder ??= this.AsNonRenderingEventHandler<(MouseEventArgs args, T item, int index)>(
+                    args => RowClick.InvokeAsync(args)));
+
+        // DataGridVirtualizeRow gates its context-menu listener on the same condition, so without a grid-level handler this forwarder could never fire.
+        private EventCallback<(MouseEventArgs args, T item, int index)> GetContextRowClickCallback()
+            => DataGrid.RowContextMenuClick.HasDelegate
+                ? EventCallback.Factory.Create(
+                    this,
+                    _contextRowClickForwarder ??= this.AsNonRenderingEventHandler<(MouseEventArgs args, T item, int index)>(
+                        args => ContextRowClick.InvokeAsync(args)))
+                : default;
+
         internal void GroupExpandClick()
         {
             _expanded = !_expanded;
-            // update the expansion state for _groupExpansionsDict
-            // if it has a key we see if it differs from the definition Expanded State and update accordingly
-            // if it doesn't we add it if the new state doesn't match the definition
+
+            // Only this row renders after the click, so its definition must carry the new state to the group template and the class and style functions.
+            GroupDefinition.Expanded = _expanded;
             if (Items != null)
-            {
-                var key = new { GroupDefinition.Title, Items.Key };
-                if (DataGrid._groupExpansionsDict.ContainsKey(key))
-                {
-                    if (_expanded == GroupDefinition.Expanded)
-                        DataGrid._groupExpansionsDict.Remove(key);
-                    else
-                        DataGrid._groupExpansionsDict[key] = _expanded;
-                }
-                else
-                {
-                    if (_expanded != GroupDefinition.Expanded)
-                        DataGrid._groupExpansionsDict.TryAdd(key, _expanded);
-                }
-            }
-            DataGrid._groupInitialExpanded = false;
+                DataGrid.SetGroupExpanded(GroupDefinition.Title, GroupDefinition.KeyPath, _expanded);
         }
     }
 }

@@ -2,35 +2,57 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Interfaces;
+using Microsoft.JSInterop;
+using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
-using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// An interactive menu that displays a list of options.
+    /// Displays a list of options that users can select from. Make menus easy to open, close, and select. Menus can open from a variety of components.
     /// </summary>
     /// <seealso cref="MudMenuItem" />
-    public partial class MudMenu : MudComponentBase, IActivatable, IDisposable
+    public partial class MudMenu : MudComponentBase, IDisposable
     {
         private readonly ParameterState<bool> _openState;
+        private Action<MouseEventArgs>? _suppressContextMenuHandler;
         private readonly List<MudMenu> _subMenus = [];
         private (double Top, double Left) _openPosition;
         private bool _isPointerOver;
         private bool _isTransient;
-        internal DebounceDispatcher _showDebouncer;
-        internal DebounceDispatcher _hideDebouncer;
+        private bool _lastInteractionWasKeyboard;
+        private CancellationTokenSource? _hoverCts;
+        private CancellationTokenSource? _leaveCts;
+        private int _focusedIndex = -1;
+        private bool _disposed;
+        private MudButton? _buttonActivator;
+        private MudMenuItem? _menuItemActivator;
+        private MudIconButton? _iconButtonActivator;
+        private ElementReference _menuWrapperRef;
+        private readonly List<object> _menuItems = [];
+        private readonly HashSet<object> _registeredItems = [];
+        private readonly string _elementId = Identifier.Create("menu");
+        private readonly string _listId = Identifier.Create("menu-list");
+        private DateTimeOffset _lastKeyboardActivation = DateTimeOffset.MinValue;
+        private readonly MenuContext _menuContext;
+
+        [Inject]
+        private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
+        [Inject]
+        private IPopoverService PopoverService { get; set; } = null!;
+
+        [Inject]
+        private TimeProvider TimeProvider { get; set; } = null!;
 
         public MudMenu()
         {
-            _showDebouncer = new DebounceDispatcher(MudGlobal.MenuDefaults.HoverDelay);
-            _hideDebouncer = new DebounceDispatcher(MudGlobal.MenuDefaults.HoverDelay);
-
+            _menuContext = new MenuContext(this);
             using var registerScope = CreateRegisterScope();
             _openState = registerScope.RegisterParameter<bool>(nameof(Open))
                 .WithParameter(() => Open)
@@ -74,13 +96,13 @@ namespace MudBlazor
                 .Build();
 
         /// <summary>
-        /// Inline styles for positioning the menu at the cursor's location.
+        /// Inline data attributes for positioning the menu at the cursor's location.
         /// </summary>
-        protected string Stylename =>
-            new StyleBuilder()
-                .AddStyle("top", _openPosition.Top.ToPx(), PositionAtCursor)
-                .AddStyle("left", _openPosition.Left.ToPx(), PositionAtCursor)
-                .Build();
+        private Dictionary<string, object> PositionAttributes => new()
+        {
+            { "data-pc-x", _openPosition.Left.ToString(CultureInfo.InvariantCulture) },
+            { "data-pc-y", _openPosition.Top.ToString(CultureInfo.InvariantCulture) },
+        };
 
         /// <summary>
         /// The text shown for this menu.
@@ -130,7 +152,7 @@ namespace MudBlazor
         public string? Icon { get; set; }
 
         /// <summary>
-        /// The color of the icon when <see cref="Icon"/> is set.
+        /// The color of the <see cref="StartIcon"/> and <see cref="EndIcon"/> icons.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Inherit"/>.
@@ -140,7 +162,7 @@ namespace MudBlazor
         public Color IconColor { get; set; } = Color.Inherit;
 
         /// <summary>
-        /// The icon displayed before the text.
+        /// The icon displayed before the text when <see cref="Icon"/> is not set. Also used for nested <see cref="MudMenu"/>.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -150,7 +172,7 @@ namespace MudBlazor
         public string? StartIcon { get; set; }
 
         /// <summary>
-        /// The icon displayed after the text.
+        /// The icon displayed after the text when <see cref="Icon"/> is not set.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
@@ -160,7 +182,7 @@ namespace MudBlazor
         public string? EndIcon { get; set; }
 
         /// <summary>
-        /// The color of this menu's button when <see cref="Icon"/> is not set.
+        /// The color of this menu's button when <see cref="Icon"/> is not set, or the color of the <see cref="MudIconButton" /> when <see cref="Icon"/> is set.
         /// </summary>
         /// <remarks>
         /// Defaults to <see cref="Color.Default"/>.
@@ -170,8 +192,11 @@ namespace MudBlazor
         public Color Color { get; set; } = Color.Default;
 
         /// <summary>
-        /// The size of this menu's button when <see cref="Icon" /> is not set.
+        /// The size of this menu's button when <see cref="Icon"/> is not set, or the size of the <see cref="MudIconButton" /> when <see cref="Icon"/> is set.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="Size.Medium"/>.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Appearance)]
         public Size Size { get; set; } = Size.Medium;
@@ -227,20 +252,38 @@ namespace MudBlazor
         public bool PositionAtCursor { get; set; }
 
         /// <summary>
-        /// Overrides the default button with a custom component.
+        /// Overrides the default button with custom content that receives a <see cref="MenuContext"/>.
         /// </summary>
         /// <remarks>
-        /// Can be a <see cref="MudButton"/>, <see cref="MudIconButton"/>, or any other component.
+        /// <para>The context provides methods to control the menu: <see cref="MenuContext.OpenAsync"/>,
+        /// <see cref="MenuContext.CloseAsync"/>, <see cref="MenuContext.ToggleAsync"/>, and
+        /// <see cref="MenuContext.CloseAllAsync"/>.</para>
+        /// <para>For hover activation, set <see cref="ActivationEvent"/> to <see cref="MouseEvent.MouseOver"/>
+        /// and allow the menu to handle pointer enter and leave events.</para>
+        /// <para>Example usage:</para>
+        /// <code>
+        /// &lt;MudMenu&gt;
+        ///     &lt;ActivatorContent&gt;
+        ///         &lt;MudButton OnClick="@context.ToggleAsync"&gt;Open Menu&lt;/MudButton&gt;
+        ///     &lt;/ActivatorContent&gt;
+        ///     &lt;ChildContent&gt;
+        ///         &lt;MudMenuItem&gt;Item 1&lt;/MudMenuItem&gt;
+        ///     &lt;/ChildContent&gt;
+        /// &lt;/MudMenu&gt;
+        /// </code>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
-        public RenderFragment? ActivatorContent { get; set; }
+        public RenderFragment<MenuContext>? ActivatorContent { get; set; }
 
         /// <summary>
-        /// The action which opens the menu, when <see cref="ActivatorContent"/> is set.
+        /// The mouse event which opens the menu.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MouseEvent.LeftClick"/>.
+        /// <para>Defaults to <see cref="MouseEvent.LeftClick"/>.</para>
+        /// <para>Default activators are wired automatically. When using <see cref="ActivatorContent"/>,
+        /// click and context menu activators should call the provided <see cref="MenuContext"/>.
+        /// Hover activation is handled by the menu's built-in pointer handlers.</para>
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.Behavior)]
@@ -267,15 +310,14 @@ namespace MudBlazor
         public Origin TransformOrigin { get; set; } = Origin.TopLeft;
 
         /// <summary>
-        /// The behavior of the dropdown popover menu
+        /// Displays the dropdown popover in a fixed position, even while scrolling.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DropdownSettings.Fixed" /> false
-        /// Defaults to <see cref="DropdownSettings.OverflowBehavior" /> <see cref="OverflowBehavior.FlipOnOpen" />
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Category(CategoryTypes.Popover.Behavior)]
         [Parameter]
-        public DropdownSettings DropdownSettings { get; set; } = new DropdownSettings();
+        public bool PopoverFixed { get; set; }
 
         /// <summary>
         /// Determines the width of the Popover dropdown in relation the parent container.
@@ -333,11 +375,29 @@ namespace MudBlazor
         /// Prevents interaction with background elements while this menu is open.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <see cref="PopoverOptions.ModalOverlay" />.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Menu.PopupBehavior)]
-        public bool Modal { get; set; } = true;
+        public bool? Modal { get; set; }
+
+        /// <summary>
+        /// Gets the resolved modal overlay value, using the global default from <see cref="PopoverOptions"/> if not explicitly set.
+        /// </summary>
+        /// <remarks>
+        /// TODO: Once .NET 8 support is dropped, consider using constructor injection (available in .NET 9+) to set defaults directly.
+        /// </remarks>
+        protected bool GetModal() => Modal ?? PopoverService.PopoverOptions.ModalOverlay;
+
+        /// <summary>
+        /// The id of the popup list while it is rendered, so the activator only references an element that exists.
+        /// </summary>
+        private string? GetAriaControls() => _openState.Value ? _listId : null;
+
+        /// <summary>
+        /// Gets the transition duration for the popover, using dense menus to disable animations.
+        /// </summary>
+        protected double GetTransitionDuration() => GetDense() ? 0 : PopoverService.PopoverOptions.Duration.TotalMilliseconds;
 
         /// <summary>
         /// The <see cref="MudMenuItem" /> components within this menu.
@@ -352,7 +412,7 @@ namespace MudBlazor
         /// <remarks>
         /// When this property changes, <see cref="OpenChanged"/> occurs.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Menu.PopupBehavior)]
         public bool Open { get; set; }
 
@@ -372,15 +432,23 @@ namespace MudBlazor
         /// </summary>
         internal bool GetDense() => Dense || ParentMenu?.GetDense() == true;
 
+        /// <summary>
+        /// Determines the positioning origin for the menu popover.
+        /// </summary>
+        /// <remarks>
+        /// This establishes where the menu will appear relative to its activator or the cursor.
+        /// </remarks>
         protected Origin GetAnchorOrigin()
         {
             if (AnchorOrigin is not null)
             {
+                // Use the defined anchor origin if set.
                 return AnchorOrigin.Value;
             }
 
             if (ParentMenu is not null)
             {
+                // Sub-menus typically open to the right of their parent.
                 return Origin.TopRight;
             }
             else if (PositionAtCursor)
@@ -388,14 +456,25 @@ namespace MudBlazor
                 return Origin.TopLeft;
             }
 
+            // Default behavior for a top-level menu is to open below its activator.
             return Origin.BottomLeft;
         }
 
+        /// <summary>
+        /// Registers a child menu with this menu, allowing for hierarchical menu management.
+        /// This is crucial for controlling the open/close state of nested menus.
+        /// </summary>
+        /// <param name="child">The child <see cref="MudMenu"/> to register.</param>
         protected void RegisterChild(MudMenu child)
         {
             _subMenus.Add(child);
         }
 
+        /// <summary>
+        /// Unregisters a child menu from this menu.
+        /// This is called when a child menu is disposed or removed, maintaining accurate tracking of nested menus.
+        /// </summary>
+        /// <param name="child">The child <see cref="MudMenu"/> to unregister.</param>
         protected void UnregisterChild(MudMenu child)
         {
             _subMenus.Remove(child);
@@ -404,7 +483,14 @@ namespace MudBlazor
         protected override void OnInitialized()
         {
             base.OnInitialized();
+
+            // If this menu is a sub-menu, register it with its parent.
             ParentMenu?.RegisterChild(this);
+
+            if (ParentMenu != null)
+            {
+                ParentMenu.RegisterItem(this); // Pass the MudMenu directly
+            }
         }
 
         protected Task OnOpenChanged(ParameterChangedEventArgs<bool> args)
@@ -417,14 +503,38 @@ namespace MudBlazor
         /// <summary>
         /// Closes this menu and any descendants if it's a nested menu.
         /// </summary>
+        /// <remarks>
+        /// It ensures that all nested menus are also closed when a parent menu is closed.
+        /// </remarks>
         public async Task CloseMenuAsync()
         {
+            // Discard any pending pointer actions so the menu doesn't re-open or try to close twice.
             CancelPendingActions();
 
             // Recursively close all child menus.
-            foreach (var child in _subMenus.Where(m => m._openState.Value))
+            var openChildren = _subMenus.Where(m => m._openState.Value).ToArray();
+            foreach (var child in openChildren)
             {
                 await child.CloseMenuAsync();
+            }
+
+            // Now close this menu itself.
+            _focusedIndex = -1;
+            _lastInteractionWasKeyboard = false;
+            _menuItems.Clear();
+            _registeredItems.Clear();
+            await Task.Yield();
+
+            if (_openState.Value)
+            {
+                try
+                {
+                    await KeyInterceptorService.UnsubscribeAsync(_elementId);
+                }
+                catch (JSException)
+                {
+                    // Element already gone, safe to ignore.
+                }
             }
 
             await _openState.SetValueAsync(false);
@@ -434,6 +544,9 @@ namespace MudBlazor
         /// <summary>
         /// Closes all menus in the hierarchy, starting from the top-most parent.
         /// </summary>
+        /// <remarks>
+        /// This is useful for dismissing all open menus with a single action, such as clicking outside the menu area.
+        /// </remarks>
         public async Task CloseAllMenusAsync()
         {
             // Traverse up the menu hierarchy to find the top-most parent.
@@ -450,6 +563,9 @@ namespace MudBlazor
 
             // Close the top-most menu, which will cascade down to close all its children.
             await top.CloseMenuAsync();
+
+            // Return focus to the menu
+            await top.FocusActivatorAsync();
         }
 
         /// <summary>
@@ -470,28 +586,41 @@ namespace MudBlazor
                 return;
             }
 
+            // Prevent conflicting actions.
+            CancelPendingActions();
+
             _isTransient = transient;
 
-            // Set the menu position if the event has cursor coordinates.
+            // Set the menu position to the cursor if the event has coordinates.
             if (args is MouseEventArgs mouseEventArgs)
             {
                 _openPosition = (mouseEventArgs.PageY, mouseEventArgs.PageX);
             }
 
+            // Officially open the menu.
             await _openState.SetValueAsync(true);
             await InvokeAsync(StateHasChanged);
+
+            // Wait for rendering to finish so the element with the ID is in the DOM
+            await Task.Yield();
+
+            await SubscribeToMenuKeyInterceptorAsync();
         }
 
         /// <summary>
-        /// Closes siblings before opening as a "mouse over" menu.
-        /// This is called in place of <see cref="OpenMenuAsync"/> if the menu activator is implicitly rendered for the submenu.
+        /// Closes sibling menus before opening as a "mouse over" menu.
+        /// It prevents multiple sub-menus at the same level from being open simultaneously when hovering.
         /// </summary>
+        /// <remarks>
+        /// This is called in place of <see cref="OpenMenuAsync"/> if the menu activator is implicitly rendered for the submenu.
+        /// </remarks>
         protected async Task OpenSubMenuAsync(EventArgs args)
         {
             // Close siblings (and self) first.
             if (ParentMenu is not null)
             {
-                foreach (var sibling in ParentMenu._subMenus.Where(m => m._openState.Value))
+                var openSiblings = ParentMenu._subMenus.Where(m => m._openState.Value).ToArray();
+                foreach (var sibling in openSiblings)
                 {
                     await sibling.CloseMenuAsync();
                 }
@@ -500,6 +629,16 @@ namespace MudBlazor
             // Open transiently so it will close when the pointer leaves its bounds.
             await OpenMenuAsync(args, true);
         }
+
+        // Only wire oncontextmenu when right-click actually activates this menu.
+        // The no-op lambda this replaces was still a live delegate, so every menu registered a real DOM listener that did nothing, which on Blazor Server turns every right-click inside a menu into a wasted network round-trip.
+        // With ActivatorContent the activator opens the menu, but the root still prevents the browser context menu, and before .NET 10 Blazor only honors that while a contextmenu listener is registered on the page.
+        private EventCallback<MouseEventArgs> ContextMenuCallback => ActivationEvent switch
+        {
+            MouseEvent.RightClick when ActivatorContent is null => EventCallback.Factory.Create<MouseEventArgs>(this, ToggleMenuAsync),
+            MouseEvent.RightClick => EventCallback.Factory.Create<MouseEventArgs>(this, _suppressContextMenuHandler ??= this.AsNonRenderingEventHandler<MouseEventArgs>(static _ => { })),
+            _ => default
+        };
 
         /// <summary>
         /// Toggles the menu's open or closed state.
@@ -518,6 +657,13 @@ namespace MudBlazor
             if (args is MouseEventArgs mouseEventArgs)
             {
                 // Determine if the click matches the expected activation event.
+                // This indicates it's a synthetic click following Enter/Space
+                var timeSinceKeyboard = TimeProvider.GetUtcNow() - _lastKeyboardActivation;
+                if (timeSinceKeyboard.TotalMilliseconds < 50)
+                {
+                    return Task.CompletedTask;
+                }
+
                 var leftClick = ActivationEvent == MouseEvent.LeftClick && mouseEventArgs.Button == 0;
                 var rightClick = ActivationEvent == MouseEvent.RightClick && (mouseEventArgs.Button is -1 or 2); // oncontextmenu = -1, right click = 2.
 
@@ -534,6 +680,12 @@ namespace MudBlazor
                 : OpenMenuAsync(args);
         }
 
+        /// <summary>
+        /// Determines if the menu should respond to hover events.
+        /// </summary>
+        /// <remarks>
+        /// This prevents hover-related actions on devices that don't support traditional hovering (e.g., touchscreens).
+        /// </remarks>
         private bool IsHoverable(PointerEventArgs args)
         {
             // If hover isn't explicitly enabled (or implicitly by being a submenu) there's no work to be done.
@@ -554,58 +706,91 @@ namespace MudBlazor
         /// <summary>
         /// Handles the pointer entering either the activator or the menu list.
         /// </summary>
-        internal async Task PointerEnterAsync(PointerEventArgs args)
+        /// <remarks>
+        /// This initiates a hover delay before opening the menu to provide a more forgiving user experience.
+        /// </remarks>
+        private async Task PointerEnterAsync(PointerEventArgs args)
         {
             _isPointerOver = true;
+            _lastInteractionWasKeyboard = false;
+
+            // Prevent conflicting actions.
+            CancelPendingActions();
 
             if (!IsHoverable(args))
             {
                 return;
             }
 
-            // Cancel any pending hide operation
-            _hideDebouncer.Cancel();
-
-            // Schedule the show operation with debouncing
-            await _showDebouncer.DebounceAsync(async () =>
+            if (MudGlobal.MenuDefaults.HoverDelay > 0)
             {
-                if (!_openState.Value)
+                _hoverCts = new();
+
+                try
                 {
-                    await OpenSubMenuAsync(args);
+                    await Task.Delay(TimeSpan.FromMilliseconds(MudGlobal.MenuDefaults.HoverDelay), TimeProvider, _hoverCts.Token);
                 }
-            });
+                catch (TaskCanceledException)
+                {
+                    // Hover action was canceled, meaning another action (like moving the pointer away) occurred.
+                    return;
+                }
+            }
+
+            if (!_openState.Value)
+            {
+                await OpenSubMenuAsync(args);
+            }
         }
 
         /// <summary>
         /// Handles the pointer leaving either the activator or the menu list.
         /// </summary>
-        internal async Task PointerLeaveAsync(PointerEventArgs args)
+        /// <remarks>
+        /// This introduces a delay before closing the menu to allow smooth transitions between nested menus.
+        /// </remarks>
+        private async Task PointerLeaveAsync(PointerEventArgs args)
         {
             _isPointerOver = false;
-            var isSubmenu = ParentMenu is not null;
-            if (!isSubmenu && ActivationEvent != MouseEvent.MouseOver)
-            {
-                return; // main menu that doesn't use mouseover
-            }
 
+            // Prevent conflicting actions.
+            CancelPendingActions();
+
+            // Only close if the menu is transient (e.g. hover-activated) and is hoverable.
             if (!_isTransient || !IsHoverable(args))
             {
                 return;
             }
 
-            // Cancel any pending show operation
-            _showDebouncer.Cancel();
-
-            // Schedule the hide operation with debouncing
-            await _hideDebouncer.DebounceAsync(async () =>
+            // Add a delay if one is configured.
+            if (MudGlobal.MenuDefaults.HoverDelay > 0)
             {
-                if (!HasPointerOver(this))
+                _leaveCts = new();
+
+                try
                 {
-                    await CloseMenuAsync();
+                    await Task.Delay(TimeSpan.FromMilliseconds(MudGlobal.MenuDefaults.HoverDelay), TimeProvider, _leaveCts.Token);
                 }
-            });
+                catch (TaskCanceledException)
+                {
+                    // Leave action was canceled, meaning the pointer re-entered the menu area.
+                    return;
+                }
+            }
+
+            // Close the menu only if the pointer is no longer over this menu or any of its sub-menus.
+            if (!HasPointerOver(this))
+            {
+                await CloseMenuAsync();
+            }
         }
 
+        /// <summary>
+        /// Recursively checks if the pointer is currently over this menu or any of its sub-menus.
+        /// </summary>
+        /// <remarks>
+        /// This is crucial for determining when to close hover-activated menus.
+        /// </remarks>
         protected bool HasPointerOver(MudMenu menu)
         {
             if (menu._isPointerOver)
@@ -616,27 +801,19 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Use if another action is started or explicitly called.
+        /// Cancels any pending hover or leave actions.
         /// </summary>
+        /// <remarks>
+        /// This is called when a new menu action is initiated, preventing conflicting or stale operations.
+        /// </remarks>
         private void CancelPendingActions()
         {
-            _showDebouncer.Cancel();
-            _hideDebouncer.Cancel();
+            // ReSharper disable MethodHasAsyncOverload
+            // Cancels any ongoing hover-to-open or leave-to-close delays.
+            _leaveCts?.Cancel();
+            _hoverCts?.Cancel();
+            // ReSharper restore MethodHasAsyncOverload
         }
-
-        /// <summary>
-        /// Implementation of IActivatable.Activate, toggles the menu.
-        /// </summary>
-        void IActivatable.Activate(object activator, MouseEventArgs args)
-        {
-            if (activator is MudBaseButton activatorButton &&
-                (activatorButton.Class?.Contains("mud-no-activator") ?? false))
-            {
-                return;
-            }
-            ToggleMenuAsync(args).CatchAndLog();
-        }
-
 
         /// <summary>
         /// Disposes managed and unmanaged resources.
@@ -644,9 +821,24 @@ namespace MudBlazor
         /// <param name="disposing">Indicates if managed resources should be disposed.</param>
         protected virtual void Dispose(bool disposing)
         {
+            // Idempotent: a second Dispose() (e.g. user code disposing a @ref before the
+            // renderer tears the component down) must not re-run cleanup such as Cancel() on
+            // an already-disposed CancellationTokenSource.
+            if (_disposed)
+                return;
+
+            // Set before cleanup so any in-flight async callback (e.g. the fire-and-forget
+            // focus calls in TrackKeyboardInteraction, or a queued OnAfterRenderAsync)
+            // short-circuits instead of running JS interop against the detached DOM. See #12184.
+            _disposed = true;
+
             if (disposing)
             {
-                CancelPendingActions();
+                _hoverCts?.Cancel();
+                _hoverCts?.Dispose();
+
+                _leaveCts?.Cancel();
+                _leaveCts?.Dispose();
 
                 ParentMenu?.UnregisterChild(this);
             }
@@ -659,6 +851,378 @@ namespace MudBlazor
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Handles keyboard navigation and interaction logic within the menu. including arrow keys,
+        /// enter/space to select or open submenus, tab to close and move focus, and escape to close.
+        /// </summary>
+        private async Task HandleKeyDownAsync(KeyboardEventArgs e)
+        {
+            if (e.Key == "ArrowDown" || e.Key == "ArrowUp" || e.Key == "ArrowRight" || e.Key == "ArrowLeft")
+            {
+                await HandleNavigationKeyAsync(e);
+            }
+            else if (e.Key == "Enter" || e.Key == " ")
+            {
+                await HandleActivationKeyAsync(e);
+            }
+            else if (e.Key == "Tab" || e.Key == "Escape")
+            {
+                await HandleDismissalKeyAsync(e);
+            }
+        }
+
+        /// <summary>
+        /// Handles keyboard navigation and interaction logic within the menu for arrow keys.
+        /// </summary>
+        private async Task HandleNavigationKeyAsync(KeyboardEventArgs e)
+        {
+            var items = _menuItems.Where(x => x is MudMenuItem).ToList();
+            if (items.Count == 0)
+                return;
+
+            switch (e.Key)
+            {
+                case "ArrowDown":
+                    await MoveFocusAsync(1, items.Count);
+                    break;
+
+                case "ArrowUp":
+                    await MoveFocusAsync(-1, items.Count);
+                    break;
+
+                case "ArrowRight":
+                    await HandleArrowRightAsync();
+                    break;
+
+                case "ArrowLeft":
+                    await HandleArrowLeftAsync();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Moves focus up or down in the menu.
+        /// </summary>
+        private Task MoveFocusAsync(int direction, int itemCount)
+        {
+            _focusedIndex = (_focusedIndex + direction + itemCount) % itemCount;
+
+            return FocusItemAsync(_focusedIndex);
+        }
+
+        /// <summary>
+        /// Handles the ArrowRight key - opens submenu or invokes click.
+        /// </summary>
+        private async Task HandleArrowRightAsync()
+        {
+            if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
+            {
+                var currentItem = _menuItems[_focusedIndex];
+
+                switch (currentItem)
+                {
+                    case MudMenuItem menuItem:
+                        var submenu = FindSubmenuForItem(menuItem);
+                        if (submenu != null)
+                        {
+                            await submenu.OpenSubMenuAsync(EventArgs.Empty);
+                        }
+                        else
+                        {
+                            await menuItem.OnClick.InvokeAsync();
+                        }
+                        break;
+
+                    case MudMenu menu:
+                        await menu.OpenSubMenuAsync(EventArgs.Empty);
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles the ArrowLeft key - closes current submenu or all menus.
+        /// </summary>
+        private async Task HandleArrowLeftAsync()
+        {
+            // Exit to parent menu if this is a submenu
+            if (ParentMenu != null)
+            {
+                await CloseMenuAsync();
+
+                // Return focus to the parent menu
+                if (ParentMenu._focusedIndex >= 0 && ParentMenu._focusedIndex < ParentMenu._menuItems.Count)
+                {
+                    await ParentMenu.FocusItemAsync(ParentMenu._focusedIndex);
+                }
+            }
+            else
+            {
+                // Close the menu if there are no further menu items on the arrow left
+                await CloseAllMenusAsync();
+            }
+        }
+
+        /// <summary>
+        /// Handles keyboard navigation and interaction logic within the menu and submenu for enter/space
+        /// </summary>
+        private async Task HandleActivationKeyAsync(KeyboardEventArgs e)
+        {
+            if (_menuItems.Count == 0)
+                return;
+
+            if (!_lastInteractionWasKeyboard)
+            {
+                await OpenMenuAsync(e);
+            }
+
+            if (_focusedIndex >= 0 && _focusedIndex < _menuItems.Count)
+            {
+                var currentItem = _menuItems[_focusedIndex];
+
+                // Handle different item types
+                switch (currentItem)
+                {
+                    case MudMenuItem menuItem:
+                        // If this item has a submenu, open it instead of invoking click
+                        var submenu = FindSubmenuForItem(menuItem);
+                        if (submenu != null)
+                        {
+                            submenu._lastKeyboardActivation = TimeProvider.GetUtcNow();
+                            submenu._lastInteractionWasKeyboard = true;
+                            await submenu.OpenSubMenuAsync(EventArgs.Empty);
+                        }
+                        else
+                        {
+                            await menuItem.OnClickHandlerAsync(new MouseEventArgs());
+                            _lastInteractionWasKeyboard = false;
+                        }
+                        break;
+
+                    case MudMenu menu:
+                        // For MudMenu items, always open the submenu
+                        menu._lastKeyboardActivation = TimeProvider.GetUtcNow();
+                        menu._lastInteractionWasKeyboard = true;
+                        await menu.OpenSubMenuAsync(EventArgs.Empty);
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles keyboard navigation and interaction logic within the menu for tab to close and move focus, and escape to close.
+        /// </summary>
+        private async Task HandleDismissalKeyAsync(KeyboardEventArgs e)
+        {
+            if (_menuItems.Count == 0)
+                return;
+
+            if (e.Key == "Tab")
+            {
+                await CloseAllMenusAsync();
+            }
+            else if (e.Key == "Escape")
+            {
+                // Close current menu or all menus if at top level
+                if (ParentMenu != null)
+                {
+                    await CloseMenuAsync();
+                    if (ParentMenu._focusedIndex >= 0 && ParentMenu._focusedIndex < ParentMenu._menuItems.Count)
+                    {
+                        await ParentMenu.FocusItemAsync(ParentMenu._focusedIndex);
+                    }
+                }
+                else
+                {
+                    await CloseAllMenusAsync();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Runs after component rendering. If the menu is open and no item is focused,
+        /// it automatically focuses the first enabled item in the list.
+        /// </summary>
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+
+            // The component may have been torn down (e.g. navigation) before this async
+            // callback runs; don't touch the DOM if so. See issue #12184.
+            if (_disposed)
+                return;
+
+            if (_openState.Value && _focusedIndex == -1)
+            {
+                // Focus the container first. This makes the menu "listen" for keys.
+                // The element can be detached between this render and the focus interop call
+                // (rapid open/close, navigation), which throws "Unable to focus an invalid
+                // element" on WebView hosts. Guard it like FocusActivatorAsync does. See #12184.
+                if (_menuWrapperRef.Context is not null)
+                {
+                    try
+                    {
+                        await _menuWrapperRef.FocusAsync(preventScroll: true);
+                    }
+                    catch (JSException)
+                    {
+                        // Element already gone from the DOM, safe to ignore.
+                    }
+                }
+
+                // Check if opened with keyboard and focus the first item
+                if (_lastInteractionWasKeyboard && _menuItems.Count > 0)
+                {
+                    _focusedIndex = 0;
+                    await FocusItemAsync(_focusedIndex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Registers a new menu item or submenu with the current menu.
+        /// Ensures the item is only added once
+        /// </summary>
+        internal void RegisterItem(object item)
+        {
+            if (_registeredItems.Add(item))
+            {
+                _menuItems.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// Sets focus to the menu item at the specified index, if the index is valid.
+        /// </summary>
+        internal async Task FocusItemAsync(int index)
+        {
+            // Reached from every keyboard navigation path, including the fire-and-forget calls
+            // in TrackKeyboardInteraction. Don't touch the DOM after disposal. See issue #12184.
+            if (_disposed)
+                return;
+
+            if (index >= 0 && index < _menuItems.Count)
+            {
+                var item = _menuItems[index];
+
+                // Retrieves the cref ElementRef associated with a menu item or submenu to allow focus control.
+                ElementReference elementRef = item switch
+                {
+                    MudMenuItem menuItem => menuItem.ElementReference,
+                    MudMenu menu => menu._menuItemActivator?.ElementReference ?? default,
+                    _ => default
+                };
+
+                if (elementRef.Context is not null)
+                {
+                    try
+                    {
+                        await elementRef.FocusAsync();
+                    }
+                    catch (JSException)
+                    {
+                        // Element already gone from the DOM (closed/navigated mid-focus), safe to ignore.
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Subscribes to keyboard events for this menu using the <see cref="KeyInterceptorService"/>,
+        /// preventing default browser scrolling behaviour for certain keys.
+        /// </summary>
+        private Task SubscribeToMenuKeyInterceptorAsync()
+        {
+            // Subscribe key interceptor to prevent default scrolling
+            var options = new KeyInterceptorOptions(
+                "mud-list",
+                [
+                    // prevent scrolling page
+                    new("ArrowDown", preventDown: "key+none"),
+                    new("ArrowUp", preventDown: "key+none"),
+                ]);
+            return KeyInterceptorService.SubscribeAsync(_elementId, options, keyDown: HandleKeyDownAsync);
+        }
+
+        /// <summary>
+        /// Focuses the activator element that opened this menu. This could be a button,
+        /// icon button, or another menu item depending on the context.
+        /// </summary>
+        private async Task FocusActivatorAsync()
+        {
+            try
+            {
+                if (ParentMenu is null)
+                {
+                    if (_buttonActivator is not null)
+                    {
+                        await _buttonActivator.FocusAsync();
+                    }
+                    else if (_iconButtonActivator is not null)
+                    {
+                        await _iconButtonActivator.FocusAsync();
+                    }
+                }
+                else
+                {
+                    if (_menuItemActivator is not null)
+                    {
+                        await _menuItemActivator.ElementReference.FocusAsync();
+                    }
+                }
+            }
+            catch (JSException)
+            {
+                // No focus added - menu closed without focusing, as the element is likely gone from the DOM.
+            }
+        }
+
+        /// <summary>
+        /// Finds the submenu associated with a given menu item by checking the _subMenus collection.
+        /// </summary>
+        private MudMenu? FindSubmenuForItem(MudMenuItem menuItem)
+        {
+            return _subMenus.FirstOrDefault(submenu => submenu._menuItemActivator == menuItem);
+        }
+
+        /// <summary>
+        /// Track whether the menu is selected or not and move to the correct position on Arrow Up/Down
+        /// </summary>
+        /// <param name="e"></param>
+        private void TrackKeyboardInteraction(KeyboardEventArgs e)
+        {
+            _lastInteractionWasKeyboard = true;
+
+            if (_openState.Value && _focusedIndex == -1 && _menuItems.Count > 0)
+            {
+                if (e.Key == "ArrowDown")
+                {
+                    _focusedIndex = 0;
+                    _ = InvokeAsync(() => FocusItemAsync(_focusedIndex));
+                }
+                else if (e.Key == "ArrowUp")
+                {
+                    _focusedIndex = _menuItems.Count - 1;
+                    _ = InvokeAsync(() => FocusItemAsync(_focusedIndex));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handle activator keydown when activator content is added to the menu/submenus. 
+        /// </summary>
+        /// <param name="e"></param>
+        private async Task HandleActivatorKeydown(KeyboardEventArgs e)
+        {
+            if (e.Key == "Enter" || e.Key == " ")
+            {
+                _lastInteractionWasKeyboard = true;
+                _lastKeyboardActivation = TimeProvider.GetUtcNow();
+
+                await ToggleMenuAsync(e);
+            }
         }
     }
 }

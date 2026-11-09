@@ -6,11 +6,16 @@ using MudBlazor.Components.Snackbar;
 
 namespace MudBlazor
 {
-#nullable enable
+    /// <summary>
+    /// Renders a single snackbar notification within a <see cref="MudSnackbarProvider"/>.
+    /// </summary>
     public partial class MudSnackbarElement : MudComponentBase, IDisposable
     {
         private RenderFragment? _css;
 
+        /// <summary>
+        /// The snackbar instance displayed by this component.
+        /// </summary>
         [Parameter]
         public Snackbar? Snackbar { get; set; }
 
@@ -34,6 +39,9 @@ namespace MudBlazor
         private string? Icon => Snackbar?.State.Icon;
         private Color IconColor => Snackbar?.State.Options.IconColor ?? Color.Inherit;
         private Size IconSize => Snackbar?.State.Options.IconSize ?? Size.Medium;
+
+        // Only warnings and errors interrupt; the provider's status region announces the rest politely.
+        private string? Role => Snackbar?.Severity is Severity.Warning or Severity.Error ? "alert" : null;
 
         // behavior
         private void ActionClicked() => Snackbar?.Clicked(false);

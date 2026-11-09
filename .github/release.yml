@@ -1,20 +1,31 @@
 changelog:
   exclude:
     labels:
-      - build
-      - docs
-      - tests
-      - dependency
+      - skip changelog
   categories:
     - title: Breaking Changes
       labels:
         - breaking change
     - title: New Features
       labels:
+        - new component
         - enhancement
     - title: Bug Fixes
       labels:
         - bug
+    - title: Accessibility
+      labels:
+        - accessibility
+    - title: Performance
+      labels:
+        - performance
     - title: Other Changes
       labels:
         - "*"
+      exclude:
+        labels:
+          - build
+          - docs
+          - tests
+          - dependency
+          - refactor

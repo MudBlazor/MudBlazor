@@ -40,7 +40,7 @@
 
     private async Task SaveStuffClickAsync()
     {
-        await _personForm.Validate();
+        await _personForm.ValidateAsync();
         if (_personForm.IsValid)
         {
             _isFormVisible = false;

@@ -10,6 +10,24 @@ namespace MudBlazor.Docs.Compiler
             var success = true;
             try
             {
+                // Early exit: if the generated file exists and our stamp is newer than all example files, skip generation.
+                if (File.Exists(Paths.SnippetsFilePath) && File.Exists(Paths.SnippetsStampFilePath))
+                {
+                    var stampLastWrite = File.GetLastWriteTimeUtc(Paths.SnippetsStampFilePath);
+                    var exampleFiles = Directory.EnumerateFiles(Paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
+                        .Where(f => Path.GetFileNameWithoutExtension(f).Contains(Paths.ExampleDiscriminator));
+                    var newestExampleTime = exampleFiles
+                        .Select(f => File.GetLastWriteTimeUtc(f))
+                        .DefaultIfEmpty(DateTime.MinValue)
+                        .Max();
+
+                    if (stampLastWrite > newestExampleTime)
+                    {
+                        Console.WriteLine("CodeSnippets: Snippets.generated.cs is up-to-date, skipping generation.");
+                        return true;
+                    }
+                }
+
                 var currentCode = string.Empty;
                 if (File.Exists(Paths.SnippetsFilePath))
                 {
@@ -44,7 +62,15 @@ namespace MudBlazor.Docs.Compiler
                 if (currentCode != cb.ToString())
                 {
                     File.WriteAllText(Paths.SnippetsFilePath, cb.ToString());
+                    Console.WriteLine("CodeSnippets: Updated Snippets.generated.cs");
                 }
+                else
+                {
+                    Console.WriteLine("CodeSnippets: Snippets.generated.cs content unchanged.");
+                }
+
+                // Stamp (not the .cs) so the next build's early-exit works without forcing a recompile.
+                Paths.TouchStamp(Paths.SnippetsStampFilePath);
             }
             catch (Exception e)
             {

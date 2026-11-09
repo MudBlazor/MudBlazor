@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentAssertions;
+﻿using AwesomeAssertions;
 using MudBlazor.Utilities;
 using NUnit.Framework;
 
@@ -318,27 +316,17 @@ namespace UtilityTests
         }
 
         [Test]
-        public void AddStyle_ShouldNotBeNullWithDefaultStruct()
+        public void AddStyle_With_ValueBuilder_When_False_Skips_Property()
         {
-            // Arrange
-            var styleBuilder = default(StyleBuilder);
-
             // Act
-            styleBuilder.AddStyle("background-color", "green");
-            styleBuilder.AddStyle("color", "red");
+            var styleBuilder = StyleBuilder.Empty()
+                .AddStyle("text-decoration", v => v.AddValue("underline", true), when: false)
+                .AddStyle("z-index", "-1")
+                .Build();
 
             // Assert
-            styleBuilder.Build().Should().Be("background-color:green;color:red;");
+            styleBuilder.Should().Be("z-index:-1;");
         }
 
-        [Test]
-        public void Build_ShouldNotBeNullWithDefaultStruct()
-        {
-            // Arrange
-            var styleBuilder = default(StyleBuilder);
-
-            // Assert
-            styleBuilder.Build().Should().Be("");
-        }
     }
 }

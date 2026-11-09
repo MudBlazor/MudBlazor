@@ -2,7 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FluentAssertions;
+using AwesomeAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.JSInterop;
 using Microsoft.JSInterop.Infrastructure;
@@ -168,5 +168,22 @@ public class PointerEventsNoneServiceTests
         afterObserversCount.Should().Be(0);
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPointerEventsNone.listenForPointerEvents", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Exactly(5));
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPointerEventsNone.dispose", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Once);
+    }
+
+    [Test]
+    public async Task DisposeAsync_WhenNeverSubscribed_ShouldNotCallJsDispose()
+    {
+        // A scoped service is disposed by the DI scope at the end of a prerender request, before a
+        // circuit exists. With no subscription there is no JS listener to tear down, so DisposeAsync
+        // must not call JS - otherwise it throws a first-chance InvalidOperationException. See #12574.
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new PointerEventsNoneService(NullLogger<PointerEventsNoneService>.Instance, jsRuntimeMock.Object);
+
+        // Act
+        await service.DisposeAsync();
+
+        // Assert
+        jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPointerEventsNone.dispose", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
     }
 }

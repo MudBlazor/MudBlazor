@@ -1,5 +1,6 @@
 ﻿@page "/mud/project/releases"
 @using System.Text.RegularExpressions
+@using MudBlazor.Docs.Utilities
 
 @inject GitHubApiClient _gitHubApiClient;
 
@@ -28,7 +29,7 @@
                             @if (release.PublishedAt > _oldReleases)
                             {
                                 <div class="docs-github-release-body">
-                                    @((MarkupString)GetBody(release.Body))
+                                    @((MarkupString)NewBody(release.Body))
                                 </div>
                             }
                             else
@@ -48,10 +49,20 @@
     private GitHubReleases[] _githubReleases;
     private readonly DateTime _oldReleases = DateTime.Parse("2022-11-09");
 
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         _githubReleases = await _gitHubApiClient.GetReleasesAsync();
         StateHasChanged();
+    }
+
+    private string NewBody(string value)
+    {
+        var html = MarkdownToHtml.Parse(value, new Uri(NavigationManager.Uri, UriKind.RelativeOrAbsolute), MarkdownToHtml.RenderMode.ReleasePageRender);
+
+        return html;
     }
 
     private static string GetBody(string value)

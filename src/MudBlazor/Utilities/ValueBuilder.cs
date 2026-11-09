@@ -2,30 +2,29 @@
 // License: MIT
 // See https://github.com/EdCharbeneau
 
-using System;
+namespace MudBlazor.Utilities;
 
-namespace MudBlazor.Utilities
+/// <summary>
+/// Accumulates space-separated string fragments added conditionally, used to build CSS class and style values.
+/// </summary>
+public class ValueBuilder
 {
-    public class ValueBuilder
+    private string? _stringBuffer;
+
+    public bool HasValue => !string.IsNullOrWhiteSpace(_stringBuffer);
+
+    /// <summary>
+    /// Adds a space separated conditional value to a property.
+    /// </summary>
+    public ValueBuilder AddValue(string value, bool when = true) => when ? AddRaw($"{value} ") : this;
+
+    public ValueBuilder AddValue(Func<string> value, bool when = true) => when ? AddRaw($"{value()} ") : this;
+
+    private ValueBuilder AddRaw(string style)
     {
-        private string stringBuffer;
-
-        public bool HasValue => !string.IsNullOrWhiteSpace(stringBuffer);
-        /// <summary>
-        /// Adds a space separated conditional value to a property.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="when"></param>
-        /// <returns></returns>
-        public ValueBuilder AddValue(string value, bool when = true) => when ? AddRaw($"{value} ") : this;
-        public ValueBuilder AddValue(Func<string> value, bool when = true) => when ? AddRaw($"{value()} ") : this;
-
-        private ValueBuilder AddRaw(string style)
-        {
-            stringBuffer += style;
-            return this;
-        }
-
-        public override string ToString() => stringBuffer != null ? stringBuffer.Trim() : string.Empty;
+        _stringBuffer += style;
+        return this;
     }
+
+    public override string ToString() => _stringBuffer != null ? _stringBuffer.Trim() : string.Empty;
 }

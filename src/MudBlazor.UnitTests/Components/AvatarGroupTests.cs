@@ -1,8 +1,5 @@
-﻿
-using System;
-using System.Linq;
+﻿using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using MudBlazor.UnitTests.TestComponents.AvatarGroup;
 using NUnit.Framework;
 
@@ -12,9 +9,9 @@ namespace MudBlazor.UnitTests.Components
     public class AvatarGroupTests : BunitTest
     {
         [Test]
-        public void AvatarGroupTest()
+        public void AvatarGroup()
         {
-            var comp = Context.RenderComponent<AvatarGroupTest>();
+            var comp = Context.Render<AvatarGroupTest>();
             // select elements needed for the test
             var group = comp.FindComponent<MudAvatarGroup>();
             var avatars = comp.FindAll(".mud-avatar").ToArray();
@@ -34,9 +31,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AvatarGroupMaxDefaultTest()
+        public void AvatarGroupMaxDefault()
         {
-            var comp = Context.RenderComponent<AvatarGroupMaxDefaultTest>();
+            var comp = Context.Render<AvatarGroupMaxDefaultTest>();
             // select elements needed for the test
             var group = comp.FindComponent<MudAvatarGroup>();
             var avatars = group.FindAll(".mud-avatar").ToArray();
@@ -64,9 +61,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AvatarGroupChangeMaxTest()
+        public async Task AvatarGroupChangeMax()
         {
-            var comp = Context.RenderComponent<AvatarGroupChangeMaxTest>();
+            var comp = Context.Render<AvatarGroupChangeMaxTest>();
             // select elements needed for the test
             var group = comp.FindComponent<MudAvatarGroup>();
             var avatars = comp.FindAll(".mud-avatar").ToArray();
@@ -84,7 +81,7 @@ namespace MudBlazor.UnitTests.Components
             avatars[3].ClassList.Should().Contain("mud-avatar-group-max-avatar");
 
             // click button to change max avatars to 4
-            comp.Find("#change-max-button").Click();
+            await comp.Find("#change-max-button").ClickAsync();
 
             // find all avatars again after click
             avatars = comp.FindAll(".mud-avatar").ToArray();
@@ -99,9 +96,9 @@ namespace MudBlazor.UnitTests.Components
             avatars[4].ClassList.Should().Contain("mud-avatar-group-max-avatar");
 
             // click button to change max avatars to 7
-            comp.Find("#change-max-button").Click();
-            comp.Find("#change-max-button").Click();
-            comp.Find("#change-max-button").Click();
+            await comp.Find("#change-max-button").ClickAsync();
+            await comp.Find("#change-max-button").ClickAsync();
+            await comp.Find("#change-max-button").ClickAsync();
 
             // find all avatars again after click
             avatars = comp.FindAll(".mud-avatar").ToArray();
@@ -118,7 +115,7 @@ namespace MudBlazor.UnitTests.Components
             avatars[6].ClassList.Should().NotContain("mud-avatar-group-max-avatar");
 
             // click button one more time to set it to 0
-            comp.Find("#change-max-button").Click();
+            await comp.Find("#change-max-button").ClickAsync();
 
             // find all avatars again after click
             avatars = comp.FindAll(".mud-avatar").ToArray();
@@ -129,7 +126,7 @@ namespace MudBlazor.UnitTests.Components
             avatars[0].ClassList.Should().Contain("mud-avatar-group-max-avatar");
 
             // click button one more time to set it to 1
-            comp.Find("#change-max-button").Click();
+            await comp.Find("#change-max-button").ClickAsync();
 
             // find all avatars again after click
             avatars = comp.FindAll(".mud-avatar").ToArray();
@@ -142,19 +139,19 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void AvatarGroupRemoveTest()
+        public async Task AvatarGroupRemove()
         {
-            var comp = Context.RenderComponent<AvatarGroupRemoveTest>();
+            var comp = Context.Render<AvatarGroupRemoveTest>();
 
-            comp.Find("#empty-button").Click();
+            await comp.Find("#empty-button").ClickAsync();
 
             comp.FindComponent<MudAvatarGroup>().Instance._avatars.Count.Should().Be(0);
         }
 
         [Test]
-        public void AvatarGroupMaxAvatarsTemplateTest()
+        public void AvatarGroupMaxAvatarsTemplate()
         {
-            var comp = Context.RenderComponent<AvatarGroupMaxAvatarsTemplateTest>();
+            var comp = Context.Render<AvatarGroupMaxAvatarsTemplateTest>();
 
             comp.FindComponent<MudButton>().Should().NotBeNull();
 

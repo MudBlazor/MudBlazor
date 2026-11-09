@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-#nullable enable
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
@@ -11,7 +10,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor;
 
 /// <summary>
-/// A wizard that guides the user through a series of steps to complete a transaction.
+/// Guides users through a series of steps to complete a transaction, such as forms or wizards.
 /// </summary>
 public partial class MudStepper : MudComponentBase
 {
@@ -24,13 +23,14 @@ public partial class MudStepper : MudComponentBase
             .WithChangeHandler(async args => await SetActiveIndexAsync(args.Value));
     }
 
+    private MudStep? _activeStep;
     private readonly ParameterState<int> _activeIndex;
-    private List<MudStep> _steps = [];
-    private HashSet<MudStep> _skippedSteps = [];
+    private readonly List<MudStep> _steps = [];
+    private readonly string _componentId = Identifier.Create();
 
     protected string Classname =>
         new CssBuilder("mud-stepper")
-            .AddClass("mud-stepper__horizontal", Vertical == false)
+            .AddClass("mud-stepper__horizontal", !Vertical)
             .AddClass("mud-stepper__vertical", Vertical)
             .AddClass("mud-stepper__center-labels", CenterLabels && !Vertical)
             .AddClass(Class)
@@ -47,20 +47,44 @@ public partial class MudStepper : MudComponentBase
             .AddClass(NavClass)
             .Build();
 
+    protected string ActionsClassname =>
+        new CssBuilder("mud-stepper-actions")
+            .AddClass(ActionsClass)
+            .Build();
+
+    internal string GetStepButtonId(MudStep step) => $"stepper-{_componentId}-tab-{step.FieldId}";
+
+    internal string GetStepPanelId(MudStep step) => $"stepper-{_componentId}-tabpanel-{step.FieldId}";
+
+    internal string? GetStepPanelIdIfRendered(MudStep step)
+    {
+        if (IsCompleted && CompletedContent is not null)
+        {
+            return null;
+        }
+
+        if (Vertical)
+        {
+            return GetStepPanelId(step);
+        }
+
+        return step == _activeStep ? GetStepPanelId(step) : null;
+    }
+
     /// <summary>
     /// The steps to step through.
     /// </summary>
-    public IReadOnlyList<MudStep> Steps => _steps;
+    public IReadOnlyList<IStepContext> Steps => _steps;
 
     /// <summary>
     /// The currently active step.
     /// </summary>
-    public MudStep? ActiveStep { get; private set; }
+    public IStepContext? ActiveStep => _activeStep;
 
     /// <summary>
     /// The index of the currently active step.
     /// </summary>
-    [Parameter]
+    [Parameter, ParameterState]
     [Category(CategoryTypes.List.Behavior)]
     public int ActiveIndex { get; set; } = -1;
 
@@ -102,6 +126,16 @@ public partial class MudStepper : MudComponentBase
     public Color ErrorStepColor { get; set; } = Color.Error;
 
     /// <summary>
+    /// The color of skipped steps.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Color.Default"/>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public Color SkippedStepColor { get; set; } = Color.Default;
+
+    /// <summary>
     /// The icon shown for completed steps.
     /// </summary>
     /// <remarks>
@@ -120,6 +154,16 @@ public partial class MudStepper : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public string StepErrorIcon { get; set; } = Icons.Material.Outlined.PriorityHigh;
+
+    /// <summary>
+    /// The icon shown for skipped steps.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <see cref="Icons.Material.Outlined.SkipNext"/>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public string StepSkippedIcon { get; set; } = Icons.Material.Outlined.SkipNext;
 
     /// <summary>
     /// The icon shown for the reset button.
@@ -182,6 +226,16 @@ public partial class MudStepper : MudComponentBase
     public string? NavClass { get; set; }
 
     /// <summary>
+    /// The CSS classes applied to the action bar.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public string? ActionsClass { get; set; }
+
+    /// <summary>
     /// Allows users to move between steps arbitrarily.
     /// </summary>
     /// <remarks>
@@ -199,7 +253,7 @@ public partial class MudStepper : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Link.Appearance)]
-    public bool ShowResetButton { get; set; } = false;
+    public bool ShowResetButton { get; set; }
 
     /// <summary>
     /// Renders steps vertically.
@@ -219,16 +273,6 @@ public partial class MudStepper : MudComponentBase
     public string? StepClass { get; set; }
 
     /// <summary>
-    /// The CSS styles applied to all steps.
-    /// </summary>
-    /// <remarks>
-    /// Defaults to <c>null</c>.
-    /// </remarks>
-    [Parameter]
-    [Category(CategoryTypes.List.Appearance)]
-    public string? StepStyle { get; set; }
-
-    /// <summary>
     /// Centers the labels for each step below the circle.
     /// </summary>
     /// <remarks>
@@ -242,11 +286,21 @@ public partial class MudStepper : MudComponentBase
     /// Displays a ripple effect when a step is clicked.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.  Only applies when <see cref="NonLinear"/> is <c>true</c>. 
+    /// Defaults to <c>true</c>.  Only applies when <see cref="NonLinear"/> is <c>true</c>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
     public bool Ripple { get; set; } = true;
+
+    /// <summary>
+    /// Displays if a step has been skipped in the label.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public bool ShowSkip { get; set; } = false;
 
     /// <summary>
     /// Shows a scroll bar for steps if needed.
@@ -272,37 +326,37 @@ public partial class MudStepper : MudComponentBase
     /// Whether the current step can be skipped.
     /// </summary>
     /// <remarks>
-    /// Typically used to enable or disable a custon <c>Skip</c> button.
+    /// Typically used to enable or disable a custom <c>Skip</c> button.
     /// </remarks>
     public bool IsCurrentStepSkippable => _steps.Any() && ActiveStep is not null && ActiveStep.Skippable;
 
-    private bool CanReset => _steps.Any(x => x.CompletedState || x.HasErrorState) || _activeIndex > 0;
+    private bool CanReset => _steps.Any(x => x.CompletedState.Value || x.HasErrorState.Value) || _activeIndex > 0;
 
     /// <summary>
     /// Whether the user can go to the next step.
     /// </summary>
     /// <remarks>
-    /// Typically used to enable or disable a custon <c>Next</c> button.
+    /// Typically used to enable or disable a custom <c>Next</c> button.
     /// </remarks>
-    public bool CanGoToNextStep => _steps.Any() && _steps.SkipWhile(x => _steps.IndexOf(x) <= _activeIndex).Count(x => !x.DisabledState) > 0;
+    public bool CanGoToNextStep => _steps.Any() && _steps.SkipWhile(x => _steps.IndexOf(x) <= _activeIndex).Any(x => !x.DisabledState.Value);
 
     /// <summary>
     /// Whether the <c>Previous</c> button is enabled.
     /// </summary>
-    public bool PreviousStepEnabled => _steps.Any() && _steps.TakeWhile(x => _steps.IndexOf(x) < _activeIndex).Count(x => !x.DisabledState) > 0;
+    public bool PreviousStepEnabled => _steps.Any() && _steps.TakeWhile(x => _steps.IndexOf(x) < _activeIndex).Any(x => !x.DisabledState.Value);
 
     /// <summary>
     /// Whether all steps have been completed.
     /// </summary>
-    public bool IsCompleted => _steps.Any() && _steps.Where(x => !x.Skippable).All(x => x.CompletedState.Value);
+    public bool IsCompleted => _steps.Any() && _steps.Where(x => !x.SkippedState.Value).All(x => x.CompletedState.Value);
 
     /// <summary>
     /// Whether the <c>Complete</c> or <c>Next</c> button is displayed.
     /// </summary>
     public bool ShowCompleteInsteadOfNext => _steps.Any() &&
-                                             _steps.Count(x => !x.Skippable && !x.CompletedState.Value) == 1 &&
+                                             _steps.Count(x => x is { SkippedState.Value: false, CompletedState.Value: false }) == 1 &&
                                              ActiveStep != null &&
-                                             _steps.First(x => !x.Skippable && !x.CompletedState.Value) == ActiveStep;
+                                             _steps.First(x => x is { SkippedState.Value: false, CompletedState.Value: false }) == ActiveStep;
 
     /// <summary>
     /// The steps in this component.
@@ -322,7 +376,7 @@ public partial class MudStepper : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
-    public RenderFragment<MudStep>? TitleTemplate { get; set; }
+    public RenderFragment<IStepContext>? TitleTemplate { get; set; }
 
     /// <summary>
     /// The custom template for displaying each step's index and icon.
@@ -332,7 +386,7 @@ public partial class MudStepper : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
-    public RenderFragment<MudStep>? LabelTemplate { get; set; }
+    public RenderFragment<IStepContext>? LabelTemplate { get; set; }
 
     /// <summary>
     /// The custom template for displaying lines connecting each step.
@@ -342,7 +396,7 @@ public partial class MudStepper : MudComponentBase
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]
-    public RenderFragment<MudStep>? ConnectorTemplate { get; set; }
+    public RenderFragment<IStepContext>? ConnectorTemplate { get; set; }
 
     /// <summary>
     /// This content is displayed when all steps are completed
@@ -383,7 +437,7 @@ public partial class MudStepper : MudComponentBase
 
         if (_activeIndex.Value >= 0 && _activeIndex.Value < _steps.Count)
         {
-            ActiveStep = _steps[_activeIndex.Value];
+            _activeStep = _steps[_activeIndex.Value];
         }
     }
 
@@ -396,9 +450,9 @@ public partial class MudStepper : MudComponentBase
     /// <summary>
     /// This is only called after initialization (first render) 
     /// </summary>
-    private async Task ConsolidateActiveIndexAsync()
+    private Task ConsolidateActiveIndexAsync()
     {
-        await SetActiveIndexAsync(_activeIndex.Value);
+        return SetActiveIndexAsync(_activeIndex.Value);
     }
 
     private async Task UpdateStepAsync(MudStep? step, MouseEventArgs ev, StepAction stepAction, bool ignoreDisabledState = false)
@@ -436,12 +490,14 @@ public partial class MudStepper : MudComponentBase
                 }
             case StepAction.Skip:
                 {
+                    await step.SetSkippedAsync(true);
+
                     var nextStep = GetNextStep(index);
                     if (nextStep is not null)
                         index = _steps.IndexOf(nextStep);
                     await SetActiveIndexAsync(index);
+                    break;
                 }
-                break;
             case StepAction.Reset:
                 break;
             default:
@@ -451,7 +507,10 @@ public partial class MudStepper : MudComponentBase
                 }
         }
 
-        await (ActiveStep?.OnClick.InvokeAsync(ev) ?? Task.CompletedTask);
+        if (_activeStep is not null)
+        {
+            await _activeStep.OnClick.InvokeAsync(ev);
+        }
     }
 
     private async Task SetActiveIndexAsync(int value, bool skipDisabled = false)
@@ -464,12 +523,13 @@ public partial class MudStepper : MudComponentBase
         var step = index >= 0 ? _steps[index] : null;
         if (skipDisabled)
         {
-            step = _steps.SkipWhile(x => _steps.IndexOf(x) < index || x.DisabledState).FirstOrDefault();
+            step = _steps.SkipWhile(x => _steps.IndexOf(x) < index || x.DisabledState.Value).FirstOrDefault();
             index = step is null ? -1 : _steps.IndexOf(step);
         }
-        ActiveStep = step;
+        _activeStep = step;
         await _activeIndex.SetValueAsync(index);
-        StateHasChanged(); // this is important !
+        // This is important !
+        await InvokeAsync(StateHasChanged);
     }
 
     // Keeps track of initialization
@@ -497,7 +557,7 @@ public partial class MudStepper : MudComponentBase
         {
             index--;
             step = _steps[index];
-            if (!step.DisabledState)
+            if (!step.DisabledState.Value)
                 break;
         }
         return step;
@@ -512,7 +572,7 @@ public partial class MudStepper : MudComponentBase
         {
             index++;
             step = _steps[index];
-            if (!step.DisabledState)
+            if (!step.DisabledState.Value)
                 break;
         }
         return step;
@@ -535,7 +595,7 @@ public partial class MudStepper : MudComponentBase
     /// </summary>
     public Task NextStepAsync()
     {
-        return UpdateStepAsync(ActiveStep, new MouseEventArgs(), StepAction.Complete);
+        return UpdateStepAsync(_activeStep, new MouseEventArgs(), StepAction.Complete);
     }
 
     /// <summary>
@@ -543,7 +603,7 @@ public partial class MudStepper : MudComponentBase
     /// </summary>
     public Task SkipCurrentStepAsync()
     {
-        return UpdateStepAsync(ActiveStep, new MouseEventArgs(), StepAction.Skip);
+        return UpdateStepAsync(_activeStep, new MouseEventArgs(), StepAction.Skip);
     }
 
     /// <summary>
@@ -559,6 +619,8 @@ public partial class MudStepper : MudComponentBase
         foreach (var step in _steps)
         {
             await step.SetCompletedAsync(false, refreshParent: false);
+            await step.SetSkippedAsync(false, refreshParent: false);
+
             if (resetErrors)
             {
                 await step.SetHasErrorAsync(false, refreshParent: false);

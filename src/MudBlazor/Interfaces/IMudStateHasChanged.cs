@@ -4,7 +4,9 @@
 
 namespace MudBlazor.Interfaces;
 
-#nullable enable
+/// <summary>
+/// Exposes a component's <c>StateHasChanged</c> method so a parent or sibling can request a re-render without a concrete component reference.
+/// </summary>
 public interface IMudStateHasChanged
 {
     /// <summary>

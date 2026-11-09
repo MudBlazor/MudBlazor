@@ -14,6 +14,7 @@
                                    Size="@IconSize"
                                    Text="@AdornmentText"
                                    Placement="@Adornment.Start"
+                                   AriaLabel="@AdornmentAriaLabel"
                                    AdornmentClick="@OnAdornmentClick" />
             }
             <div class="@InnerClassname">
@@ -27,6 +28,7 @@
                                    Size="@IconSize"
                                    Text="@AdornmentText"
                                    Placement="@Adornment.End"
+                                   AriaLabel="@AdornmentAriaLabel"
                                    AdornmentClick="@OnAdornmentClick" />
             }
             @if (Variant == Variant.Outlined)

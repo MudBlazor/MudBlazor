@@ -8,21 +8,20 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A list of clickable page numbers along with navigation buttons.
     /// </summary>
     public partial class MudPagination : MudComponentBase
     {
-        private ParameterState<int> _countState;
-        private ParameterState<int> _selectedState;
-        private ParameterState<int> _middleCountState;
-        private ParameterState<int> _boundaryCountState;
+        private readonly ParameterState<int> _countState;
+        private readonly ParameterState<int> _selectedState;
+        private readonly ParameterState<int> _middleCountState;
+        private readonly ParameterState<int> _boundaryCountState;
 
         private string Classname =>
             new CssBuilder("mud-pagination")
-                .AddClass($"mud-pagination-{Variant.ToDescriptionString()}")
-                .AddClass($"mud-pagination-{Size.ToDescriptionString()}")
+                .AddClass($"mud-pagination-{Variant.ToStringFast(true)}")
+                .AddClass($"mud-pagination-{Size.ToStringFast(true)}")
                 .AddClass("mud-pagination-disable-elevation", !DropShadow)
                 .AddClass("mud-pagination-rtl", RightToLeft)
                 .AddClass(Class)
@@ -68,7 +67,7 @@ namespace MudBlazor
         /// <summary>
         /// The total number of pages.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Pagination.Behavior)]
         public int Count { get; set; } = 1;
 
@@ -76,11 +75,12 @@ namespace MudBlazor
         /// The number of pages shown before and after the ellipsis.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>. <br />
+        /// Defaults to <c>2</c>. <br />
+        /// A value of <c>0</c> would hide the page numbers at the edge: <c>&lt; ... 4 5 6 ... &gt;</c> <br />
         /// A value of <c>1</c> would show one-page number at the edge: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c> <br />
-        /// A value of <c>2</c> would show two-page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c> 
+        /// A value of <c>2</c> would show two-page numbers at the edge: <c>&lt; 1 2 ... 4 5 6 ... 8 9 &gt;</c>
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Pagination.Appearance)]
         public int BoundaryCount { get; set; } = 2;
 
@@ -88,18 +88,18 @@ namespace MudBlazor
         /// The number of pages shown between the ellipsis.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>1</c>. <br />
+        /// Defaults to <c>3</c>. <br />
         /// A value of <c>1</c> would show one-page number in the middle: <c>&lt; 1 ... 5 ... 9 &gt;</c> <br />
         /// A value of <c>3</c> would show three-page numbers in the middle: <c>&lt; 1 ... 4 5 6 ... 9 &gt;</c>
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Pagination.Appearance)]
         public int MiddleCount { get; set; } = 3;
 
         /// <summary>
         /// The selected page number.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Pagination.Behavior)]
         public int Selected { get; set; } = 1;
 
@@ -267,7 +267,7 @@ namespace MudBlazor
          -1 is displayed as "..." in the ui*/
         private int[] GeneratePagination()
         {
-            //return array {1, ..., Count} if Count is small 
+            //return array {1, ..., Count} if Count is small
             if (_countState.Value <= 4 || _countState.Value <= (2 * _boundaryCountState.Value) + _middleCountState.Value + 2)
             {
                 var result = new int[_countState.Value];
@@ -277,6 +277,32 @@ namespace MudBlazor
                 }
 
                 return result;
+            }
+
+            //With no boundary pages there is nothing for a single-page gap to be absorbed into.
+            //The path below would then show one page more than MiddleCount, so use a plain sliding window.
+            if (_boundaryCountState.Value == 0)
+            {
+                var maxStart = _countState.Value - _middleCountState.Value + 1;
+                var start = Math.Clamp(_selectedState.Value - (_middleCountState.Value / 2), 1, maxStart);
+
+                var window = new List<int>(_middleCountState.Value + 2);
+                if (start > 1)
+                {
+                    window.Add(-1);
+                }
+
+                for (var i = 0; i < _middleCountState.Value; i++)
+                {
+                    window.Add(start + i);
+                }
+
+                if (start + _middleCountState.Value - 1 < _countState.Value)
+                {
+                    window.Add(-1);
+                }
+
+                return window.ToArray();
             }
 
             var length = (2 * _boundaryCountState.Value) + _middleCountState.Value + 2;
@@ -379,7 +405,7 @@ namespace MudBlazor
 
         private Task SetBoundaryCount(int count)
         {
-            var newCount = Math.Max(1, count);
+            var newCount = Math.Max(0, count);
 
             return _boundaryCountState.SetValueAsync(newCount);
         }

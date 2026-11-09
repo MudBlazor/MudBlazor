@@ -1,11 +1,17 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
+<style>
+    .timeline-red-dot {
+        background-color: var(--mud-palette-error);
+    }
+</style>
+
 <MudItem>
     <MudTimeline Reverse="true">
         <MudTimelineItem>
             <MudText Align="Align.End">Static dot</MudText>
         </MudTimelineItem>
-        <MudTimelineItem DotStyle="background-color: #ff0000">
+        <MudTimelineItem DotClass="timeline-red-dot">
             <MudText Align="Align.End">Red dot</MudText>
         </MudTimelineItem>
         <MudTimelineItem>

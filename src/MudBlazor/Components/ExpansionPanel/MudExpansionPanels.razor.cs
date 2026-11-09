@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor.Interfaces;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
     /// A container which manages <see cref="MudExpansionPanel"/> components such that when one panel is expanded the others are collapsed automatically.
     /// </summary>
@@ -11,7 +11,24 @@ namespace MudBlazor
     /// <seealso cref="MudCollapse"/>
     public partial class MudExpansionPanels : MudComponentBase
     {
-        private List<MudExpansionPanel> _panels = new();
+        private readonly List<MudExpansionPanel> _panels = new();
+
+        public MudExpansionPanels()
+        {
+            using var registerScope = CreateRegisterScope();
+            registerScope.RegisterParameter<int>(nameof(Elevation))
+                .WithParameter(() => Elevation)
+                .WithChangeHandler(RenderPanels);
+            registerScope.RegisterParameter<bool>(nameof(Dense))
+                .WithParameter(() => Dense)
+                .WithChangeHandler(RenderPanels);
+            registerScope.RegisterParameter<bool>(nameof(Gutters))
+                .WithParameter(() => Gutters)
+                .WithChangeHandler(RenderPanels);
+            registerScope.RegisterParameter<bool>(nameof(Outlined))
+                .WithParameter(() => Outlined)
+                .WithChangeHandler(RenderPanels);
+        }
 
         protected string Classname =>
             new CssBuilder("mud-expansion-panels")
@@ -24,11 +41,10 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ExpansionPanel.Appearance)]
-        public bool Square { get; set; } = MudGlobal.Rounded == false;
+        public bool Square { get; set; }
 
         /// <summary>
         /// Allows multiple panels to be expanded at the same time.
@@ -94,6 +110,18 @@ namespace MudBlazor
         /// Expansion panels are controlled by adding more <see cref="MudExpansionPanel"/> components in the Razor page.
         /// </remarks>
         public IReadOnlyList<MudExpansionPanel> Panels => _panels;
+
+        /// <summary>
+        /// Renders every panel after a parameter that panels read from this component has changed.
+        /// </summary>
+        /// <remarks>
+        /// Panels read these values through a fixed cascade, so a panel without content of its own is not re-rendered when they change.
+        /// </remarks>
+        private void RenderPanels()
+        {
+            foreach (IMudStateHasChanged panel in _panels)
+                panel.StateHasChanged();
+        }
 
         internal async Task AddPanelAsync(MudExpansionPanel panel)
         {

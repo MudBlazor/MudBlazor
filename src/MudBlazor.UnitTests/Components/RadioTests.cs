@@ -1,12 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.AspNetCore.Components.Web;
-using MudBlazor.Docs.Examples;
-using MudBlazor.UnitTests.TestComponents;
+using MudBlazor.UnitTests.TestComponents.Radio;
 using MudBlazor.UnitTests.TestComponents.RadioGroup;
+using MudBlazor.UnitTests.Utilities;
+using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -15,9 +13,9 @@ namespace MudBlazor.UnitTests.Components
     public class RadioTests : BunitTest
     {
         [Test]
-        public void RadiGroup_CheckClassTest()
+        public void RadiGroup_CheckClass()
         {
-            var comp = Context.RenderComponent<RadioGroupTest1>();
+            var comp = Context.Render<RadioGroupTest1>();
 
             var inputControl = comp.FindComponent<MudInputControl>();
             inputControl.Instance.InputContent.Should().NotBeNull();
@@ -32,10 +30,79 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-radio-group.some-input-class").Should().ContainSingle();
         }
 
+        /// <summary>
+        /// The label and child content use body1 typography and take the error color while the radio has errors.
+        /// </summary>
         [Test]
-        public void RadioGroupTest1()
+        public async Task Radio_LabelAndChildContent_TakeErrorColor()
         {
-            var comp = Context.RenderComponent<RadioGroupTest1>();
+            var comp = Context.Render<MudRadio<string>>(parameters => parameters
+                .Add(p => p.Value, "a")
+                .Add(p => p.Label, "Option A")
+                .AddChildContent("Details"));
+
+            comp.FindAll("label.mud-radio span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, true));
+
+            comp.FindAll("label.mud-radio span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1 mud-error-text");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Error, false));
+
+            comp.FindAll("label.mud-radio span.mud-typography").Should().HaveCount(2)
+                .And.OnlyContain(text => text.ClassName == "mud-typography mud-typography-body1");
+        }
+
+        [Test]
+        public void Radio_AriaLabel()
+        {
+            var comp = Context.Render<RadioAriaLabelTest>();
+
+            // verify radio one maintains it's original structure, no aria class used, label with a span element
+            var r1 = comp.Find(".r1");
+            r1.GetElementsByClassName("mud-sr-only").Length.Should().Be(0);
+            var element0 = comp.Find(".r1 label.mud-radio span.mud-typography");
+            element0.HasAttribute("aria-hidden").Should().BeFalse();
+
+            // radio two should have both a valid label with aria-hidden, an input with arialabelledby and the labelledby element
+            var r2 = comp.Find(".r2");
+            r2.GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
+            var element1 = comp.Find(".r2 label.mud-radio span.mud-typography");
+            element1.GetAttribute("aria-hidden").Should().Be("true");
+            var input1 = comp.Find(".r2 label.mud-radio input");
+            var input1ForId = input1.GetAttribute("aria-labelledby");
+            comp.Find($".r2 label.mud-radio #{input1ForId}").Should().NotBeNull();
+
+            // radio three should have original structure intact, no aria class used, label with a span element for child content
+            var r3 = comp.Find(".r3");
+            r3.GetElementsByClassName("mud-sr-only").Length.Should().Be(0);
+            var element2 = comp.Find(".r3 label.mud-radio span.mud-typography");
+            element2.HasAttribute("aria-hidden").Should().BeFalse();
+
+            // radio four should look identical to two except this time it's with ChildContent
+            var r4 = comp.Find(".r4");
+            r4.GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
+            var element3 = comp.Find(".r4 label.mud-radio span.mud-typography");
+            element3.GetAttribute("aria-hidden").Should().Be("true");
+            var input3 = comp.Find(".r4 label.mud-radio input");
+            var input3ForId = input3.GetAttribute("aria-labelledby");
+            comp.Find($".r4 label.mud-radio #{input3ForId}").Should().NotBeNull();
+
+            // radio five has no label, no child content, just arialabel
+            var r5 = comp.Find(".r5");
+            r5.GetElementsByClassName("mud-sr-only").Length.Should().Be(1);
+            comp.FindAll(".r5 label.mud-radio span.mud-typography").Count.Should().Be(0);
+            var input4 = comp.Find(".r5 label.mud-radio input");
+            var input4ForId = input4.GetAttribute("aria-labelledby");
+            comp.Find($".r5 label.mud-radio #{input4ForId}").Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task RadioGroupTest1()
+        {
+            var comp = Context.Render<RadioGroupTest1>();
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -46,28 +113,28 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-radio > span.mud-icon-button")[1].ClassList.Should().NotContain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[2].ClassList.Should().NotContain("mud-checked");
             // click radio 1
-            inputs[0].Click();
+            await inputs[0].ClickAsync();
             group.Instance.Value.Should().Be("1");
 
             comp.FindAll(".mud-radio > span.mud-icon-button")[0].ClassList.Should().Contain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[1].ClassList.Should().NotContain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[2].ClassList.Should().NotContain("mud-checked");
             // click radio 2
-            inputs[1].Click();
+            await inputs[1].ClickAsync();
             group.Instance.Value.Should().Be("2");
 
             comp.FindAll(".mud-radio > span.mud-icon-button")[0].ClassList.Should().NotContain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[1].ClassList.Should().Contain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[2].ClassList.Should().NotContain("mud-checked");
             // click radio 3
-            inputs[2].Click();
+            await inputs[2].ClickAsync();
             group.Instance.Value.Should().Be("3");
 
             comp.FindAll(".mud-radio > span.mud-icon-button")[0].ClassList.Should().NotContain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[1].ClassList.Should().NotContain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[2].ClassList.Should().Contain("mud-checked");
             // click radio 1
-            inputs[0].Click();
+            await inputs[0].ClickAsync();
             group.Instance.Value.Should().Be("1");
 
             comp.FindAll(".mud-radio > span.mud-icon-button")[0].ClassList.Should().Contain("mud-checked");
@@ -78,7 +145,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest2()
         {
-            var comp = Context.RenderComponent<RadioGroupTest2>();
+            var comp = Context.Render<RadioGroupTest2>();
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             // check initial state, should be initialized to second radio by default
@@ -89,9 +156,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void RadioGroupTest3()
+        public async Task RadioGroupTest3()
         {
-            var comp = Context.RenderComponent<RadioGroupTest3>();
+            var comp = Context.Render<RadioGroupTest3>();
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
@@ -104,7 +171,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-radio > span.mud-icon-button")[2].ClassList.Should().NotContain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[3].ClassList.Should().Contain("mud-checked");
             // click first radio of second group - they should both switch to L1
-            inputs[2].Click();
+            await inputs[2].ClickAsync();
 
             groups[0].Instance.Value.Should().Be("1");
             groups[1].Instance.Value.Should().Be("1");
@@ -113,7 +180,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-radio > span.mud-icon-button")[2].ClassList.Should().Contain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[3].ClassList.Should().NotContain("mud-checked");
             // click second radio of first group - they should both switch to L1
-            inputs[1].Click();
+            await inputs[1].ClickAsync();
 
             groups[0].Instance.Value.Should().Be("2");
             groups[1].Instance.Value.Should().Be("2");
@@ -124,9 +191,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void RadioGroupTest4()
+        public async Task RadioGroupTest4()
         {
-            var comp = Context.RenderComponent<RadioGroupTest4>();
+            var comp = Context.Render<RadioGroupTest4>();
             // select elements needed for the test
             var groups = comp.FindComponents<MudRadioGroup<string>>();
 
@@ -138,7 +205,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-radio > span.mud-icon-button")[2].ClassList.Should().NotContain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[3].ClassList.Should().NotContain("mud-checked");
             // click first radio of second group - only second group should switch to L1
-            comp.FindAll("input")[2].Click();
+            await comp.FindAll("input")[2].ClickAsync();
 
             groups[0].Instance.Value.Should().Be(null);
             groups[1].Instance.Value.Should().Be("x");
@@ -147,7 +214,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-radio > span.mud-icon-button")[2].ClassList.Should().Contain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[3].ClassList.Should().NotContain("mud-checked");
             // click second radio of first group - only first group should switch to L1
-            comp.FindAll("input")[1].Click();
+            await comp.FindAll("input")[1].ClickAsync();
 
             groups[0].Instance.Value.Should().Be("2");
             groups[1].Instance.Value.Should().Be("x");
@@ -158,9 +225,9 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void RadioGroupTest5()
+        public async Task RadioGroupTest5()
         {
-            var comp = Context.RenderComponent<RadioGroupTest5>();
+            var comp = Context.Render<RadioGroupTest5>();
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             // check initial state
@@ -169,14 +236,14 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-radio > span.mud-icon-button")[1].ClassList.Should().NotContain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[2].ClassList.Should().NotContain("mud-checked");
             // click radio 1
-            comp.FindAll("input")[0].Click();
+            await comp.FindAll("input")[0].ClickAsync();
             group.Instance.Value.Should().Be("1");
 
             comp.FindAll(".mud-radio > span.mud-icon-button")[0].ClassList.Should().Contain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[1].ClassList.Should().NotContain("mud-checked");
             comp.FindAll(".mud-radio > span.mud-icon-button")[2].ClassList.Should().NotContain("mud-checked");
             // click reset button
-            comp.Find("button").Click();
+            await comp.Find("button").ClickAsync();
             group.Instance.Value.Should().Be(null);
 
             comp.FindAll(".mud-radio > span.mud-icon-button")[0].ClassList.Should().NotContain("mud-checked");
@@ -187,7 +254,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void RadioGroupTest6()
         {
-            var comp = Context.RenderComponent<RadioGroupTest6>();
+            var comp = Context.Render<RadioGroupTest6>();
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             // check dense
@@ -203,68 +270,107 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void RadioTest_BindAfter()
+        public async Task Radio_BindAfter()
         {
-            var comp = Context.RenderComponent<RadioGroupTest5>();
+            var comp = Context.Render<RadioGroupTest5>();
             // select elements needed for the test
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var inputs = comp.FindAll("input").ToArray();
 
             //Value should change on radio click and bind after should fire
-            inputs[1].Click();
+            await inputs[1].ClickAsync();
             group.Instance.Value.Should().Be("2");
             comp.Instance.BindAfterCount.Should().Be(1);
 
             //Value should change when reset via the button, but bind after should NOT fire
-            comp.Find("button").Click();
+            await comp.Find("button").ClickAsync();
             group.Instance.Value.Should().Be(null);
             comp.Instance.BindAfterCount.Should().Be(1);
         }
 
         [Test]
-        public void RadioTest_KeyboardInput()
+        public async Task Radio_KeyboardInput()
         {
-            var comp = Context.RenderComponent<RadioGroupTest1>();
+            var comp = Context.Render<RadioGroupTest1>();
             // print the generated html
             // select elements needed for the test
             var radio = comp.FindComponent<MudRadioGroup<string>>();
             radio.Instance.Value.Should().Be(null);
 
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
-            comp.WaitForAssertion(() => radio.Instance.Value.Should().Be("1"));
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be("1"));
 
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
-            comp.WaitForAssertion(() => radio.Instance.Value.Should().Be(null));
+            // Backspace is not a standard radio interaction and no longer clears the selection.
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Backspace", Type = "keydown", });
+            await comp.WaitForAssertionAsync(() => radio.Instance.Value.Should().Be("1"));
 
             //Can't tabbed around the radios in test.
         }
 
         [Test]
-        public async Task RadioTest_Other()
+        public async Task RadioGroup_ResetAsync_ResetsToDefault()
         {
-            var comp = Context.RenderComponent<RadioGroupTest1>();
+            // #11369: ResetAsync must reset the group to default(T) consistently, and re-selection must still work.
+
+            // Non-nullable bool: default is false, so resetting selects the "false" radio.
+            var boolGroup = Context.Render<MudRadioGroup<bool>>(self => self
+                .Add(x => x.Value, true)
+                .AddChildContent<MudRadio<bool>>(r => r.Add(x => x.Value, true))
+                .AddChildContent<MudRadio<bool>>(r => r.Add(x => x.Value, false)));
+
+            await boolGroup.InvokeAsync(() => boolGroup.Instance.ResetAsync());
+            boolGroup.Instance.Value.Should().BeFalse();
+            boolGroup.FindAll("input.mud-radio-input[checked]").Count.Should().Be(1);
+
+            // Re-selecting right after a reset still updates the value (the #11369 symptom).
+            await boolGroup.FindAll("input.mud-radio-input")[0].ClickAsync(new MouseEventArgs());
+            boolGroup.Instance.Value.Should().BeTrue();
+
+            // Nullable with a matching null option: resets to null and selects that option.
+            var nullableWithNull = Context.Render<MudRadioGroup<bool?>>(self => self
+                .Add(x => x.Value, false)
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, true))
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, false))
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, (bool?)null)));
+
+            await nullableWithNull.InvokeAsync(() => nullableWithNull.Instance.ResetAsync());
+            nullableWithNull.Instance.Value.Should().BeNull();
+            nullableWithNull.FindAll("input.mud-radio-input[checked]").Count.Should().Be(1);
+
+            // Nullable without a null option: resets to null and clears the selection entirely.
+            var nullableNoNull = Context.Render<MudRadioGroup<bool?>>(self => self
+                .Add(x => x.Value, false)
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, true))
+                .AddChildContent<MudRadio<bool?>>(r => r.Add(x => x.Value, false)));
+
+            await nullableNoNull.InvokeAsync(() => nullableNoNull.Instance.ResetAsync());
+            nullableNoNull.Instance.Value.Should().BeNull();
+            nullableNoNull.FindAll("input.mud-radio-input[checked]").Count.Should().Be(0);
+        }
+
+        [Test]
+        public async Task Radio_Other()
+        {
+            var comp = Context.Render<RadioGroupTest1>();
             var group = comp.FindComponent<MudRadioGroup<string>>();
             var radio = comp.FindComponent<MudRadio<string>>();
 
             await comp.InvokeAsync(() => radio.Instance.IMudRadioGroup = null);
             await comp.InvokeAsync(() => radio.Instance.OnClickAsync());
-            comp.WaitForAssertion(() => radio.Instance.Value.Should().Be("1"));
-#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
-            await comp.InvokeAsync(() => radio.Instance.Disabled = true);
-#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
-            comp.WaitForAssertion(() => group.Instance.Value.Should().Be(null));
+            await comp.WaitForAssertionAsync(() => radio.Instance.ReadValue.Should().Be("1"));
+            await radio.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
+            await comp.WaitForAssertionAsync(() => group.Instance.Value.Should().Be(null));
 
-            comp.Find("input").KeyDown(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
-            comp.WaitForAssertion(() => group.Instance.Value.Should().Be(null));
+            await comp.Find("input").KeyDownAsync(new KeyboardEventArgs() { Key = "Enter", Type = "keydown", });
+            await comp.WaitForAssertionAsync(() => group.Instance.Value.Should().Be(null));
         }
 
-
         [Test]
-        public void RadioTest_TypeException()
+        public void Radio_TypeException()
         {
             try
             {
-                var comp = Context.RenderComponent<RadioGroupExceptionTest>();
+                var comp = Context.Render<RadioGroupExceptionTest>();
             }
             catch (Exception ex)
             {
@@ -273,17 +379,33 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A mismatched group must leave the typed parent null rather than fail the cast.
+        /// </summary>
+        [Test]
+        public void Radio_TypeMismatch_ShouldNotLeaveACastThatThrows()
+        {
+            var radio = new MudRadio<string>();
+            var group = new MudRadioGroup<char>();
+
+            // The cascade is assigned before the group rejects it, so the mismatched parent stays behind.
+            var assign = () => radio.IMudRadioGroup = group;
+            assign.Should().Throw<GenericTypeMismatchException>();
+
+            radio.MudRadioGroup.Should().BeNull();
+        }
+
+        /// <summary>
         /// Tests the Disabled property of the MudRadio
         /// </summary>
         [Test]
-        public void RadioDisabledTest()
+        public async Task RadioDisabled()
         {
-            var comp = Context.RenderComponent<RadioGroupTest7>();
+            var comp = Context.Render<RadioGroupTest7>();
             comp.Instance.SelectedOption.Should().BeNull();
 
-            comp.FindAll("input")[2].Click(); //click enabled radio
+            await comp.FindAll("input")[2].ClickAsync(); //click enabled radio
             comp.Instance.SelectedOption.Should().Be("Radio 3");
-            comp.FindAll("input")[3].Click(); //click disable radio
+            await comp.FindAll("input")[3].ClickAsync(); //click disable radio
             comp.Instance.SelectedOption.Should().Be("Radio 3");
 
             comp.FindAll("label")[3].ClassList.Contains("mud-disabled").Should().BeTrue();
@@ -293,16 +415,16 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the Disabled property of the MudRadioGroup
         /// </summary>
         [Test]
-        public void RadioGroupDisabledTest()
+        public async Task RadioGroupDisabled()
         {
-            var comp = Context.RenderComponent<RadioReadOnlyDisabledTest>();
+            var comp = Context.Render<RadioReadOnlyDisabledTest>();
             var radioGroup = comp.FindComponents<MudRadioGroup<string>>()[1];
 
             var radios = radioGroup.FindComponents<MudRadio<string>>();
             radios.Count.Should().Be(4);
             radioGroup.FindAll(".mud-radio > span.mud-disabled").Count.Should().Be(0);
 
-            comp.FindAll(".mud-switch-button > input")[1].Change(true);
+            await comp.FindAll(".mud-switch-button > input")[1].ChangeAsync(true);
             radioGroup.FindAll(".mud-radio > span.mud-disabled").Count.Should().Be(4);
         }
 
@@ -310,67 +432,85 @@ namespace MudBlazor.UnitTests.Components
         /// Tests the Readonly property of the MudRadioGroup
         /// </summary>
         [Test]
-        public void RadioGroupReadOnlyTest()
+        public async Task RadioGroupReadOnly()
         {
-            var comp = Context.RenderComponent<RadioReadOnlyDisabledTest>();
+            var comp = Context.Render<RadioReadOnlyDisabledTest>();
             var radioGroup = comp.FindComponents<MudRadioGroup<string>>()[0];
 
             var radios = radioGroup.FindComponents<MudRadio<string>>();
             radios.Count.Should().Be(4);
             radioGroup.FindAll(".mud-radio > span.mud-readonly").Count.Should().Be(0);
 
-            comp.FindAll(".mud-switch-button > input")[0].Change(true);
+            await comp.FindAll(".mud-switch-button > input")[0].ChangeAsync(true);
             radioGroup.FindAll(".mud-radio > span.mud-readonly").Count.Should().Be(4);
         }
 
-        /// <summary>
-        /// Optional RadioGroup should not have required attribute and aria-required should be false.
-        /// </summary>
         [Test]
-        public void OptionalRadioGroup_Should_NotHaveRequiredAttributeAndAriaRequiredShouldBeFalse()
+        public void OptionalRadioGroup_Should_HaveAriaRequiredFalse()
         {
-            var comp = Context.RenderComponent<RadioGroupRequiredTest>();
+            var comp = Context.Render<RadioGroupRequiredTest>();
 
-            comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeFalse();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("false");
         }
 
-        /// <summary>
-        /// Required RadioGroup should have required and aria-required attributes.
-        /// </summary>
         [Test]
-        public void RequiredRadioGroup_Should_HaveRequiredAndAriaRequiredAttributes()
+        public void RequiredRadioGroup_Should_HaveAriaRequiredTrue()
         {
-            var comp = Context.RenderComponent<RadioGroupRequiredTest>(parameters => parameters
+            var comp = Context.Render<RadioGroupRequiredTest>(parameters => parameters
                 .Add(p => p.Required, true));
 
-            comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeTrue();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("true");
         }
 
-        /// <summary>
-        /// Required and aria-required RadioGroup attributes should be dynamic.
-        /// </summary>
         [Test]
-        public void RequiredAndAriaRequiredRadioGroupAttributes_Should_BeDynamic()
+        public async Task RadioGroupAriaRequired_Should_BeDynamic()
         {
-            var comp = Context.RenderComponent<RadioGroupRequiredTest>();
+            var comp = Context.Render<RadioGroupRequiredTest>();
 
-
-            comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeFalse();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("false");
 
-            comp.SetParametersAndRender(parameters => parameters
+            await comp.SetParametersAndRenderAsync(parameters => parameters
                 .Add(p => p.Required, true));
 
-            comp.Find("div[role=\"radiogroup\"]").HasAttribute("required").Should().BeTrue();
             comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        [Test]
+        public void Radio_Respects_Custom_TabIndex()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.AddUnmatched("tabindex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void Radio_Uses_Default_TabIndex_When_Enabled()
+        {
+            var comp = Context.Render<MudRadio<bool>>();
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("0");
+        }
+
+        [Test]
+        public void Radio_Uses_Default_TabIndex_When_Disabled()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.Add(x => x.Disabled, true));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        [Test]
+        public void Radio_Respects_Custom_TabIndex_CaseInsensitive()
+        {
+            var comp = Context.Render<MudRadio<bool>>(parameters => parameters.AddUnmatched("TabIndex", "-1"));
+
+            comp.Find("input").GetAttribute("tabindex").Should().Be("-1");
         }
 
         [Test]
         public void ReadOnlyDisabled_ShouldNot_Ripple()
         {
-            var create = (bool readOnly, bool disabled) => Context.RenderComponent<MudRadioGroup<bool>>(self => self
+            var create = (bool readOnly, bool disabled) => Context.Render<MudRadioGroup<bool>>(self => self
                 .Add(x => x.Disabled, disabled)
                 .Add(x => x.ReadOnly, readOnly)
                 .AddChildContent<MudRadio<bool>>(self => self.Add(x => x.Ripple, true)));
@@ -386,7 +526,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public void ReadOnlyDisabled_ShouldNot_Hover()
         {
-            var create = (bool readOnly, bool disabled) => Context.RenderComponent<MudRadioGroup<bool>>(self => self
+            var create = (bool readOnly, bool disabled) => Context.Render<MudRadioGroup<bool>>(self => self
                 .Add(x => x.Disabled, disabled)
                 .Add(x => x.ReadOnly, readOnly)
                 .AddChildContent<MudRadio<bool>>(self => self.Add(x => x.UncheckedColor, Color.Default)));
@@ -397,6 +537,149 @@ namespace MudBlazor.UnitTests.Components
             create(readOnly = true, disabled = false).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
             create(readOnly = false, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
             create(readOnly = true, disabled = true).Find("span.mud-button-root").ClassList.Should().NotContain("hover:mud-default-hover");
+        }
+
+        /// <summary>
+        /// A radio with no child content still picks up the group's error state, which #13743 found going stale.
+        /// </summary>
+        [Test]
+        public async Task RadioGroup_ErrorState_ReachesRadiosWithoutChildContent()
+        {
+            var comp = Context.Render<MudRadioGroup<int>>(self => self
+                .Add(x => x.ErrorId, "group-error")
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 1))
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 2)));
+
+            comp.FindAll("span.mud-button-root").Should().AllSatisfy(x => x.ClassList.Should().NotContain("mud-error-text"));
+            comp.FindAll("input.mud-radio-input").Should().AllSatisfy(x => x.HasAttribute("aria-describedby").Should().BeFalse());
+
+            await comp.SetParametersAndRenderAsync(self => self.Add(x => x.Error, true));
+
+            comp.FindAll("span.mud-button-root").Should().AllSatisfy(x => x.ClassList.Should().Contain("mud-error-text"));
+            comp.FindAll("input.mud-radio-input").Should().AllSatisfy(x => x.GetAttribute("aria-describedby").Should().Be("group-error"));
+        }
+
+        /// <summary>
+        /// Changing the group's Name after the first render still reaches radios with no child content (#13743).
+        /// </summary>
+        [Test]
+        public async Task RadioGroup_NameChangedAfterRender_ReachesRadios()
+        {
+            var comp = Context.Render<MudRadioGroup<int>>(self => self
+                .Add(x => x.Name, "before")
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 1))
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 2)));
+
+            comp.FindAll("input.mud-radio-input").Should().AllSatisfy(x => x.GetAttribute("name").Should().Be("before"));
+
+            await comp.SetParametersAndRenderAsync(self => self.Add(x => x.Name, "after"));
+
+            comp.FindAll("input.mud-radio-input").Should().AllSatisfy(x => x.GetAttribute("name").Should().Be("after"));
+        }
+
+        /// <summary>
+        /// A group render that changes nothing a radio shows leaves the radios alone.
+        /// </summary>
+        [Test]
+        public async Task RadioGroup_RenderingItself_DoesNotRerenderEveryRadio()
+        {
+            var comp = Context.Render<MudRadioGroup<int>>(self => self
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 1))
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 2))
+                .AddChildContent<MudRadio<int>>(r => r.Add(x => x.Value, 3)));
+
+            var before = comp.FindComponents<MudRadio<int>>().Select(x => x.RenderCount).ToArray();
+
+            await comp.SetParametersAndRenderAsync(self => self.Add(x => x.Class, "repainted"));
+
+            var after = comp.FindComponents<MudRadio<int>>().Select(x => x.RenderCount).ToArray();
+            after.Should().Equal(before);
+        }
+
+        [Test]
+        public void RadioColor_ReadOnly_ShouldKeepColor()
+        {
+            // #9524: a read-only radio keeps Color/UncheckedColor (only Disabled greys out),
+            // while the interactive hover class stays suppressed.
+            var comp = Context.Render<MudRadioGroup<int>>(self => self
+                .Add(x => x.ReadOnly, true)
+                .Add(x => x.Value, 1)
+                .AddChildContent<MudRadio<int>>(r => r
+                    .Add(x => x.Value, 1)
+                    .Add(x => x.Color, Color.Success)
+                    .Add(x => x.UncheckedColor, Color.Error))
+                .AddChildContent<MudRadio<int>>(r => r
+                    .Add(x => x.Value, 2)
+                    .Add(x => x.Color, Color.Success)
+                    .Add(x => x.UncheckedColor, Color.Error)));
+
+            var icons = comp.FindAll("span.mud-button-root");
+            // first radio is checked -> Color; second is unchecked -> UncheckedColor
+            icons[0].ClassList.Should().Contain("mud-success-text");
+            icons[0].ClassList.Should().NotContain("hover:mud-success-hover");
+            icons[1].ClassList.Should().Contain("mud-error-text");
+            icons[1].ClassList.Should().NotContain("hover:mud-error-hover");
+        }
+
+        [Test]
+        public void RadioLabel()
+        {
+            var value = new DisplayNameLabelClass();
+
+            var comp = Context.Render<MudRadio<bool>>(x => x.Add(f => f.For, () => value.Boolean));
+            comp.Instance.Label.Should().Be("Boolean LabelAttribute"); //label should be set by the attribute
+
+            var comp2 = Context.Render<MudRadio<bool>>(x => x.Add(f => f.For, () => value.Boolean).Add(l => l.Label, "Label Parameter"));
+            comp2.Instance.Label.Should().Be("Label Parameter"); //existing label should remain
+        }
+
+        /// <summary>
+        /// A radiogroup cannot carry the native required attribute, so aria-required is its only required-ness signal and callers must be able to set it.
+        /// </summary>
+        [Test]
+        public void RadioGroup_Should_LetUserAttributesOverrideAriaRequired()
+        {
+            var comp = Context.Render<MudRadioGroup<string>>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "aria-required", "true" } }));
+
+            comp.Find("div[role=radiogroup]").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Without a caller-supplied value the radiogroup still announces required-ness from the parameter.
+        /// </summary>
+        [Test]
+        public void RadioGroup_Should_ComputeAriaRequiredFromParameter()
+        {
+            var comp = Context.Render<MudRadioGroup<string>>(parameters => parameters
+                .Add(p => p.Required, true));
+
+            comp.Find("div[role=radiogroup]").GetAttribute("aria-required").Should().Be("true");
+        }
+
+        /// <summary>
+        /// An invalid radio group and each of its radios link to the group's error text.
+        /// </summary>
+        [Test]
+        public async Task RadioGroupWithError_ShouldLinkRadiosToErrorText()
+        {
+            var comp = Context.Render<RadioGroupRequiredTest>();
+            var radioGroup = comp.FindComponent<MudRadioGroup<bool>>();
+
+            comp.Find("div[role=\"radiogroup\"]").HasAttribute("aria-invalid").Should().BeFalse();
+            comp.FindAll("input[type=\"radio\"]").Should().OnlyContain(input => !input.HasAttribute("aria-describedby"));
+
+            await radioGroup.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Error, true)
+                .Add(p => p.ErrorId, "group-error")
+                .Add(p => p.ErrorText, "Pick one"));
+
+            comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-invalid").Should().Be("true");
+            comp.Find("div[role=\"radiogroup\"]").GetAttribute("aria-describedby").Should().Be("group-error");
+            // aria-invalid is not supported on the radio role, so the group carries it and each radio only points at the text.
+            comp.FindAll("input[type=\"radio\"]").Should().OnlyContain(input => !input.HasAttribute("aria-invalid"));
+            comp.FindAll("input[type=\"radio\"]").Should().OnlyContain(input => input.GetAttribute("aria-describedby") == "group-error");
+            comp.Find("#group-error").TextContent.Trim().Should().Be("Pick one");
         }
     }
 }

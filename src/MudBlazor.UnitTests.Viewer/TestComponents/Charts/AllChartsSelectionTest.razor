@@ -1,0 +1,225 @@
+﻿@using MudBlazor
+@using MudBlazor.Charts
+
+<MudStack Spacing="2" AlignItems="AlignItems.Center">
+    <MudStack Class="my-2" Spacing="4" Row>
+        <MudSelect T="ChartType" Label="Chart Type" @bind-Value="_chartType" Dense FitContent Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (ChartType chartType in Enum.GetValues(typeof(ChartType)))
+            {
+                <MudSelectItem Value="chartType">@chartType</MudSelectItem>
+            }
+        </MudSelect>
+        @if (_chartType == ChartType.Bar || _chartType == ChartType.StackedBar)
+        {
+            <MudSelect T="Justify" Label="Justify Type" @bind-Value="_selectedJustify" Dense FitContent Variant="Variant.Outlined" Margin="Margin.Dense">
+                @foreach (Justify justify in Enum.GetValues(typeof(Justify)))
+                {
+                    <MudSelectItem Value="justify">@justify</MudSelectItem>
+                }
+            </MudSelect>
+        }
+        else if (_chartType == ChartType.Line || _chartType == ChartType.Timeseries)
+        {
+            <MudSelect T="LineDisplayType" Label="Display Type" @bind-Value="_selectedDisplayType" Dense FitContent Variant="Variant.Outlined" Margin="Margin.Dense">
+                @foreach (LineDisplayType lineType in Enum.GetValues(typeof(LineDisplayType)))
+                {
+                    <MudSelectItem Value="lineType">@lineType</MudSelectItem>
+                }
+            </MudSelect>
+        }
+        else if (_chartType == ChartType.Pie || _chartType == ChartType.Donut || _chartType == ChartType.Rose || _chartType == ChartType.Radar || _chartType == ChartType.Sankey)
+        {
+            <MudSelect T="AggregationOption" Label="Group By" @bind-Value="_selectedAggregationOption" Dense FitContent Variant="Variant.Outlined" Margin="Margin.Dense">
+                @foreach (AggregationOption groupBy in Enum.GetValues(typeof(AggregationOption)))
+                {
+                    <MudSelectItem Value="groupBy">@groupBy</MudSelectItem>
+                }
+            </MudSelect>
+        }
+    </MudStack>
+    <MudStack Class="my-2" Row>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => _series = DataSet.Take(_series.Count + 1).ToList())">Add Country</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => { if (_series.Count > 1) _series.Remove(_series.Last()); })">Remove Country</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@(() => _dataPointCount = Math.Min(_dataPointCount + 1, 12))">Add Month</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@(() => _dataPointCount = Math.Max(_dataPointCount - 1, 1))">Remove Month</MudButton>
+    </MudStack>
+    <MudStack Row>
+        <MudCheckBox @bind-Value="_matchParentSize" Label="Match Parent Size" Color="Color.Tertiary" />
+        <MudCheckBox @bind-Value="_canHideSeries" Label="Can Hide Series" Color="Color.Tertiary" />
+        <MudCheckBox @bind-Value="_useCustomTooltip" Label="Custom Tooltip" Color="Color.Tertiary" />
+    </MudStack>
+    <MudChart ChartType="_chartType"
+              ChartSeries="@GetChartSeries()"
+              ChartOptions="@GetChartOptions()"
+              ChartLabels="@_labels.Take(_dataPointCount).ToArray()"
+              @bind-SelectedIndex="_index"
+              Width="100%"
+              Height="350px"
+              CanHideSeries="_canHideSeries"
+              TooltipTemplate="@(_useCustomTooltip ? CustomTooltip : null)"
+              MatchBoundsToSize="_matchParentSize" />
+    <MudText Typo="Typo.h6">Selected portion of the chart: @_index</MudText>
+</MudStack>
+<MudStack Class="my-2" Row>
+    @if (_chartType == ChartType.Bar || _chartType == ChartType.StackedBar)
+    {
+        <MudSlider @bind-Value="_spacingRatio" Min="0" Max="1" Step="0.02">Spacing: @_spacingRatio.ToString("F2")</MudSlider>
+        <MudSlider @bind-Value="_barWidthRatio" Min="0" Max="1" Step="0.02">Width: @_barWidthRatio.ToString("F2")</MudSlider>
+    }
+    @if (_chartType == ChartType.Bar)
+    {
+        <MudSlider @bind-Value="_innerGapRatio" Min="0" Max="1" Step="0.02">Gap: @_innerGapRatio.ToString("F2")</MudSlider>
+    }
+</MudStack>
+
+    @code {
+    private int _index = -1;
+    private bool _canHideSeries;
+    private bool _matchParentSize;
+    private bool _useCustomTooltip;
+    private int _dataPointCount = 3;
+    private double _spacingRatio = 1.0;
+    private double _barWidthRatio = 0.4;
+    private double _innerGapRatio = 0.0;
+    private ChartType _chartType = ChartType.Bar;
+    private Justify _selectedJustify = Justify.SpaceEvenly;
+    private LineDisplayType _selectedDisplayType = LineDisplayType.Line;
+    private AggregationOption _selectedAggregationOption = AggregationOption.GroupByLabel;
+    private List<ChartSeries<double>> _series = DataSet.Take(1).ToList();
+    private static List<ChartSeries<double>> DataSet =>
+    [
+        new() { Name = "United Kingdom", Data = new([60, 54, 23, 42, 67, 31, 45, 72, 38, 51, 63, 29]) },
+        new() { Name = "United States",  Data = new([40, 12, 32, 58, 43, 65, 27, 49, 38, 74, 51, 68]) },
+        new() { Name = "Greenland",      Data = new([47, 30, 43, 25, 59, 63, 48, 36, 52, 69, 41, 55]) },
+        new() { Name = "Germany",        Data = new([19, 51, 54, 37, 62, 45, 58, 31, 74, 52, 67, 43]) },
+        new() { Name = "Norway",         Data = new([14, 27, 65, 43, 21, 58, 39, 76, 42, 55, 38, 61]) },
+        new() { Name = "Italy",          Data = new([20, 34, 76, 45, 57, 29, 63, 48, 71, 36, 59, 42]) },
+        new() { Name = "Spain",          Data = new([10, 48, 87, 35, 62, 29, 54, 43, 76, 31, 58, 67]) },
+        new() { Name = "Sweden",         Data = new([08, 14, 98, 45, 32, 67, 29, 53, 41, 72, 38, 61]) }
+    ];
+
+    private string[] _labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    private IChartOptions GetChartOptions() => _chartType switch
+    {
+        ChartType.Bar => new BarChartOptions
+        {
+            Justify = _selectedJustify,
+            SeriesSpacingRatio = _spacingRatio,
+            BarWidthRatio = _barWidthRatio,
+            BarSpacingRatio = _innerGapRatio
+        },
+        ChartType.StackedBar => new StackedBarChartOptions
+        {
+            Justify = _selectedJustify,
+            BarWidthRatio = _barWidthRatio,
+            SeriesSpacingRatio = _spacingRatio,
+        },
+        ChartType.Line => new LineChartOptions
+        {
+            LineDisplayType = _selectedDisplayType,
+        },
+        ChartType.Pie => new PieChartOptions
+        {
+            AggregationOption = _selectedAggregationOption,
+            ShowAsPercentage = true,
+        },
+        ChartType.Donut => new DonutChartOptions
+        {
+            AggregationOption = _selectedAggregationOption,
+        },
+        ChartType.Rose => new RoseChartOptions
+        {
+            AggregationOption = _selectedAggregationOption,
+            ShowToolTips = false,
+            ShowValues = true,
+        },
+        ChartType.Radar => new RadarChartOptions
+        {
+            AggregationOption = _selectedAggregationOption,
+        },
+        ChartType.Timeseries => new TimeSeriesChartOptions
+        {
+            TimeLabelSpacing = TimeSpan.FromDays(7),
+            TooltipTimeLabelFormat = "dd-MMM-yyyy",
+            TimeLabelFormat = "dd-MMM",
+            XAxisLabelRotation = 90,
+            ShowDataMarkers = false,
+            SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>()
+            {
+                [DataSet[1]] = new SeriesDisplayOverride
+                {
+                    LineDisplayType = LineDisplayType.Area,
+                }
+            }
+        },
+        ChartType.HeatMap => new HeatMapChartOptions
+        {
+            ChartPalette = [Colors.Teal.Lighten1],
+            EnableSmoothGradient = true,
+            ShowToolTips = true,
+            ShowLabels = false,
+        },
+        ChartType.Sankey => new SankeyChartOptions
+        {
+            AggregationOption = _selectedAggregationOption,
+            MinVerticalSpacing = 10,
+            EdgeOpacity = 0.7,
+        },
+        _ => throw new NotImplementedException()
+    };
+
+    private static readonly DateTime[] _dateLabels = Enumerable.Range(0, 12).Select(i => new DateTime(DateTime.Now.Year, 1, 1).AddMonths(i)).ToArray();
+    private List<ChartSeries<double>> GetChartSeries()
+    {
+        if (_chartType == ChartType.Timeseries)
+        {
+            return _series.Select(s => new ChartSeries<double>()
+            {
+                Name = s.Name,
+                Data = s.Data.Values.Take(_dataPointCount).Select((y, i) => (_dateLabels[i], y)).ToArray()
+            }).ToList();
+        }
+        else
+        {
+            return _series.Select(s => new ChartSeries<double>
+            {
+                Name = s.Name,
+                Data = s.Data.Values.Take(_dataPointCount).ToArray()
+            }).ToList();
+        }
+    }
+
+    private RenderFragment<(SvgPath Segment, string Color)> CustomTooltip => context => builder =>
+    {
+        builder.OpenElement(0, "g");
+
+        builder.OpenElement(1, "foreignObject");
+        builder.AddAttribute(2, "x", "0");
+        builder.AddAttribute(3, "y", "0");
+        builder.AddAttribute(4, "width", "150");
+        builder.AddAttribute(5, "height", "60");
+
+        builder.OpenElement(6, "div");
+        builder.AddAttribute(7, "xmlns", "http://www.w3.org/1999/xhtml");
+        builder.AddAttribute(8, "style", $"background:{context.Color}; color:white; border-radius:6px; padding:8px; font-size:12px; font-family:sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,0.2);");
+
+        builder.OpenElement(9, "div");
+        builder.OpenElement(10, "strong");
+        builder.AddContent(11, context.Segment.LabelXValue);
+        builder.CloseElement(); // strong
+        builder.CloseElement(); // div
+
+        builder.OpenElement(12, "div");
+        builder.AddContent(13, $"Value: {context.Segment.LabelYValue}");
+        builder.CloseElement(); // div
+
+        builder.OpenElement(14, "div");
+        builder.AddContent(15, $"Index: {context.Segment.Index}");
+        builder.CloseElement(); // div
+
+        builder.CloseElement(); // outer div
+        builder.CloseElement(); // foreignObject
+        builder.CloseElement(); // g
+    };
+}

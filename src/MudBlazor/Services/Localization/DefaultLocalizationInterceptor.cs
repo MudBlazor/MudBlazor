@@ -3,11 +3,12 @@ using Microsoft.Extensions.Logging;
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// The <see cref="DefaultLocalizationInterceptor"/> manages translations, incorporating English as the default language,
-/// facilitating the addition of custom translations without imposing limitations on their implementation.
+/// Default localization interceptor that blends built-in English resources with optional custom translations.
 /// </summary>
+/// <remarks>
+/// This is the standard interceptor used by MudBlazor. It keeps the internal English resources as a reliable fallback while allowing apps to override or extend translations.
+/// </remarks>
 public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
 {
     /// <summary>
@@ -34,7 +35,8 @@ public class DefaultLocalizationInterceptor : AbstractLocalizationInterceptor
             var currentCulture = Thread.CurrentThread.CurrentUICulture.Parent.TwoLetterISOLanguageName;
             if (MudLocalizer is null || currentCulture.Equals("en", StringComparison.InvariantCultureIgnoreCase))
             {
-                return Localizer[key, arguments];
+                // The argument-less indexer skips the string.Format copy, and most keys take no arguments.
+                return arguments.Length > 0 ? Localizer[key, arguments] : Localizer[key];
             }
         }
 

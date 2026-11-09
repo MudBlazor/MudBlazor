@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
-using FluentAssertions;
+using AwesomeAssertions;
 using MudBlazor.Extensions;
 using NUnit.Framework;
 
@@ -53,6 +53,19 @@ public class DateTimeExtensionTests
     }
 
     [Test]
+    public void ToIsoDateString_ShouldZeroPad_WhenComponentsAreSingleDigit()
+    {
+        // Arrange
+        var dateTime = new DateTime(7, 1, 9); // Year 7, January 9th.
+
+        // Act
+        var result = dateTime.ToIsoDateString();
+
+        // Assert
+        result.Should().Be("0007-01-09");
+    }
+
+    [Test]
     public void StartOfMonth_ShouldReturnFirstDayOfMonth()
     {
         // Arrange
@@ -81,6 +94,20 @@ public class DateTimeExtensionTests
     }
 
     [Test]
+    public void EndOfMonth_ShouldReturn29Days_ForFebruaryInLeapYear()
+    {
+        // Arrange
+        var dateTime = new DateTime(2024, 2, 10); // 2024 is a leap year.
+        var culture = CultureInfo.InvariantCulture;
+
+        // Act
+        var result = dateTime.EndOfMonth(culture);
+
+        // Assert
+        result.Should().Be(new DateTime(2024, 2, 29));
+    }
+
+    [Test]
     public void StartOfWeek_ShouldReturnFirstDayOfWeek()
     {
         // Arrange
@@ -88,7 +115,7 @@ public class DateTimeExtensionTests
         const DayOfWeek FirstDayOfWeek = DayOfWeek.Monday;
 
         // Act
-        var result = dateTime.StartOfWeek(FirstDayOfWeek);
+        var result = dateTime.StartOfWeek(FirstDayOfWeek, CultureInfo.CurrentCulture);
 
         // Assert
         result.Should().Be(new DateTime(2023, 10, 2)); // Monday
@@ -102,7 +129,7 @@ public class DateTimeExtensionTests
         const DayOfWeek FirstDayOfWeek = DayOfWeek.Monday;
 
         // Act
-        var result = dateTime.StartOfWeek(FirstDayOfWeek);
+        var result = dateTime.StartOfWeek(FirstDayOfWeek, CultureInfo.CurrentCulture);
 
         // Assert
         result.Should().Be(new DateTime(2023, 10, 2)); // Monday
@@ -116,9 +143,37 @@ public class DateTimeExtensionTests
         const DayOfWeek FirstDayOfWeek = DayOfWeek.Monday;
 
         // Act
-        var result = dateTime.StartOfWeek(FirstDayOfWeek);
+        var result = dateTime.StartOfWeek(FirstDayOfWeek, CultureInfo.CurrentCulture);
 
         // Assert
         result.Should().Be(new DateTime(1, 1, 1)); // Monday
+    }
+
+    [Test]
+    public void LastWeekDayOfMonth_ShouldReturnLastWeekDayOfMonth()
+    {
+        // Arrange
+        var dateTime = new DateTime(2023, 9, 15); // September 15, 2023
+        var culture = CultureInfo.InvariantCulture;
+
+        // Act
+        var result = dateTime.LastWeekDayOfMonth(DayOfWeek.Friday, culture);
+
+        // Assert
+        result.Should().Be(new DateTime(2023, 9, 29)); // September 29, 2023 (Friday)
+    }
+
+    [Test]
+    public void FirstWeekDayOfMonth_ShouldReturnFirstWeekDayOfMonth()
+    {
+        // Arrange
+        var dateTime = new DateTime(2023, 9, 15); // September 15, 2023
+        var culture = CultureInfo.InvariantCulture;
+
+        // Act
+        var result = dateTime.FirstWeekDayOfMonth(DayOfWeek.Monday, culture);
+
+        // Assert
+        result.Should().Be(new DateTime(2023, 9, 4)); // September 4, 2023 (Monday)
     }
 }

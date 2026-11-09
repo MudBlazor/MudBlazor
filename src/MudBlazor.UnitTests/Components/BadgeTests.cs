@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.UnitTests.TestComponents.Badge;
 using NUnit.Framework;
@@ -10,40 +10,70 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class BadgeTests : BunitTest
     {
+        /// <summary>
+        /// A badge without an OnClick subscriber must not register a DOM click listener, so it cannot cost a round-trip.
+        /// </summary>
+        [Test]
+        public async Task Badge_WithoutOnClick_RegistersNoClickListener()
+        {
+            var comp = Context.Render<MudBadge>(parameters => parameters.Add(x => x.Visible, true));
+            var badge = comp.Find("span.mud-badge");
+
+            var click = async () => await badge.ClickAsync(new MouseEventArgs());
+
+            await click.Should().ThrowAsync<MissingEventHandlerException>();
+        }
+
+        /// <summary>
+        /// A badge with an OnClick subscriber still registers the DOM click listener.
+        /// </summary>
+        [Test]
+        public async Task Badge_WithOnClick_RegistersClickListener()
+        {
+            var clicked = false;
+            var comp = Context.Render<MudBadge>(parameters => parameters
+                .Add(x => x.Visible, true)
+                .Add(x => x.OnClick, EventCallback.Factory.Create<MouseEventArgs>(this, () => clicked = true)));
+
+            await comp.Find("span.mud-badge").ClickAsync(new MouseEventArgs());
+
+            clicked.Should().BeTrue();
+        }
+
         [Test]
         public async Task Badge_Renders_Using_Default_Values()
         {
-            var comp = Context.RenderComponent<MudBadge>();
+            var comp = Context.Render<MudBadge>();
             comp.FindAll("span").Should().HaveCount(3, "Default behavior of badge is to render 3 spans");
 
             await comp.InvokeAsync(() => comp.Instance.HandleBadgeClick(new MouseEventArgs()));
         }
 
         [Test]
-        public void Badge_Renders_When_VisibleIsTrue()
+        public async Task Badge_Renders_When_VisibleIsTrue()
         {
-            var comp = Context.RenderComponent<MudBadge>();
-            comp.SetParam("Visible", true);
+            var comp = Context.Render<MudBadge>();
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Visible, true));
             comp.FindAll("span").Should().HaveCount(3, "Visible badge renders 3 spans");
         }
 
         [Test]
-        public void Badge_Does_Not_Render_When_VisibleIsFalse()
+        public async Task Badge_Does_Not_Render_When_VisibleIsFalse()
         {
-            var comp = Context.RenderComponent<MudBadge>();
-            comp.SetParam("Visible", false);
+            var comp = Context.Render<MudBadge>();
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Visible, false));
             comp.FindAll("span").Should().HaveCount(1, "Hidden badge renders 1 span");
         }
 
         [Test]
-        public async Task BadgeTest_Click()
+        public async Task Badge_Click()
         {
-            var comp = Context.RenderComponent<BadgeClickTest>();
+            var comp = Context.Render<BadgeClickTest>();
             var badge = comp.FindComponent<MudBadge>();
             var numeric = comp.FindComponent<MudNumericField<int>>();
-            comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(0));
+            await comp.WaitForAssertionAsync(() => numeric.Instance.Value.Should().Be(0));
             await comp.InvokeAsync(() => badge.Instance.HandleBadgeClick(new MouseEventArgs()));
-            comp.WaitForAssertion(() => numeric.Instance.Value.Should().Be(1));
+            await comp.WaitForAssertionAsync(() => numeric.Instance.Value.Should().Be(1));
         }
 
         [Test]
@@ -53,7 +83,7 @@ namespace MudBlazor.UnitTests.Components
             const string BadgeAriaLabel = "New notifications";
 
             // Act
-            var cut = Context.RenderComponent<MudBadge>(parameters => parameters
+            var cut = Context.Render<MudBadge>(parameters => parameters
                 .Add(p => p.BadgeAriaLabel, BadgeAriaLabel)
                 .Add(p => p.Visible, true)
                 .AddChildContent("Test Content")

@@ -111,6 +111,22 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Accessibility">
+                <Description>
+                    Interactive lists use listbox semantics and roving keyboard focus. When the list is read-only it falls back to list semantics for screen readers.
+                    Use the following shortcuts when focus is inside an interactive list:
+
+                    <MudList T="string" Dense="true" ReadOnly="true">
+                        <MudListItem Class="py-0"><CodeInline>Tab</CodeInline> enters or leaves the list using the current active item.</MudListItem>
+                        <MudListItem Class="py-0"><CodeInline>Arrow Up</CodeInline> and <CodeInline>Arrow Down</CodeInline> move between items in the current list level.</MudListItem>
+                        <MudListItem Class="py-0"><CodeInline>Home</CodeInline> and <CodeInline>End</CodeInline> jump to the first or last enabled item.</MudListItem>
+                        <MudListItem Class="py-0"><CodeInline>Space</CodeInline> toggles the focused item in multi-select lists and expands nested items.</MudListItem>
+                        <MudListItem Class="py-0"><CodeInline>Enter</CodeInline> activates the focused item.</MudListItem>
+                    </MudList>
+                </Description>
+            </SectionHeader>
+        </DocsPageSection>
 
     </DocsPageContent>
 </DocsPage>

@@ -1,0 +1,96 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudCard Style="width: 70%;">
+    <MudCardContent>
+        <MudFileUpload @bind-Files="@_browserFiles"
+                       AppendMultipleFiles="true"
+                       DragAndDrop="true"
+                       tabindex="-1"
+                       @bind-Dragging="@_dragging"
+                       @bind-Dragging:after="@ClearDragClass">
+            <CustomContent>
+                <MudPaper Height="300px"
+                          Outlined="true"
+                          @onclick="@context.OpenFilePickerAsync"
+                          @ondragenter="@SetDragClass"
+                          Class="@_dragClass">
+                    <MudText Typo="Typo.h6">
+                        Drag files here or click to browse
+                    </MudText>
+                    <div class="flex-grow-1">
+                        @foreach (var file in context.GetFilenames())
+                        {
+                            <MudChip T="string"
+                                     Color="Color.Dark"
+                                     Text="@file"
+                                     CloseIcon="@Icons.Material.Outlined.Close"
+                                     OnClose="@(async () => await context.RemoveFileAsync(file))"
+                                     tabindex="-1" />
+                        }
+                    </div>
+                    <MudToolBar Gutters="false"
+                                Class="d-flex justify-end align-end gap-4">
+                        <MudButton Color="Color.Primary"
+                                   OnClick="@context.OpenFilePickerAsync"
+                                   Variant="Variant.Filled">
+                            Browse files
+                        </MudButton>
+                        <MudButton Color="Color.Error"
+                                   Disabled="@(!context.GetFilenames().Any())"
+                                   OnClick="@context.ClearAsync"
+                                   Variant="Variant.Filled">
+                            Clear
+                        </MudButton>
+                    </MudToolBar>
+                </MudPaper>
+            </CustomContent>
+            <SelectedTemplate />
+        </MudFileUpload>
+    </MudCardContent>
+</MudCard>
+
+@code
+{
+    private const string DefaultDragClass = "relative d-flex flex-column p-r gap-2 rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private IReadOnlyList<IBrowserFile> _browserFiles =
+    [
+        new DummyBrowserFile("test1.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
+        new DummyBrowserFile("test2.jpg", DateTimeOffset.Now, 1024, "image/jpeg", []),
+    ];
+    private string _dragClass = DefaultDragClass;
+    private bool _dragging = false;
+
+    private void SetDragClass()
+    {
+        _dragClass = $"{DefaultDragClass} mud-border-success";
+        _dragging = true;
+    }
+
+    private void ClearDragClass()
+    {
+        if (!_dragging)
+        {
+            _dragClass = DefaultDragClass;
+        }
+    }
+
+    public class DummyBrowserFile : IBrowserFile
+    {
+        public string Name { get; }
+        public DateTimeOffset LastModified { get; }
+        public long Size { get; }
+        public string ContentType { get; }
+        public byte[] Content { get; }
+
+        public DummyBrowserFile(string name, DateTimeOffset lastModified, long size, string contentType, byte[] content)
+        {
+            Name = name;
+            LastModified = lastModified;
+            Size = size;
+            ContentType = contentType;
+            Content = content;
+        }
+
+        public Stream OpenReadStream(long maxAllowedSize = 512000, CancellationToken cancellationToken = default) => new MemoryStream(Content);
+    }
+}

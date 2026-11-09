@@ -29,7 +29,7 @@
 
     private static string ToString(TestItem? x) => x is null ? string.Empty : $"{x.A}";
 
-    private static string GetMultiSelectionText(List<string> selectedValues)
+    private static string GetMultiSelectionText(IReadOnlyList<string> selectedValues)
     {
         return $"Selected values: {string.Join(", ", selectedValues.Select(x => x))}";
     }

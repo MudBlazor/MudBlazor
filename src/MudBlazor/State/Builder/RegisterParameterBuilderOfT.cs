@@ -8,7 +8,6 @@ using MudBlazor.State.Comparer;
 
 namespace MudBlazor.State.Builder;
 
-#nullable enable
 /// <summary>
 /// Builder class for constructing instances of <see cref="ParameterState{T}"/>.
 /// </summary>
@@ -22,15 +21,9 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     private Func<EventCallback<T>> _eventCallbackFunc = () => default;
     private IParameterChangedHandler<T>? _parameterChangedHandler;
     private IParameterEqualityComparerSwappable<T>? _comparer;
-    private readonly Lazy<ParameterStateInternal<T>> _parameterStateLazy;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="RegisterParameterBuilder{T}"/> class.
-    /// </summary>
-    public RegisterParameterBuilder()
-    {
-        _parameterStateLazy = new Lazy<ParameterStateInternal<T>>(CreateParameterState);
-    }
+    // Registration happens once per component instance, on one thread, so a Lazy would only add an object and a delegate.
+    private ParameterStateInternal<T>? _parameterState;
 
     /// <summary>
     /// Sets the metadata for the parameter.
@@ -99,9 +92,31 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// <param name="parameterChangedHandler">The parameter changed handler.</param>
     /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
     /// <returns>The current instance of the builder.</returns>
+    public RegisterParameterBuilder<T> WithChangeHandler(Func<ParameterChangedContext, Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    {
+        return WithChangeHandler(new ParameterChangedLambdaTaskParameterViewHandler<T>(parameterChangedHandler), handlerName);
+    }
+
+    /// <summary>
+    /// Sets the parameter changed handler for the parameter.
+    /// </summary>
+    /// <param name="parameterChangedHandler">The parameter changed handler.</param>
+    /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
+    /// <returns>The current instance of the builder.</returns>
     public RegisterParameterBuilder<T> WithChangeHandler(Func<Task> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
     {
         return WithChangeHandler(new ParameterChangedLambdaTaskHandler<T>(parameterChangedHandler), handlerName);
+    }
+
+    /// <summary>
+    /// Sets the parameter changed handler for the parameter.
+    /// </summary>
+    /// <param name="parameterChangedHandler">The parameter changed handler.</param>
+    /// <param name="handlerName">The handler's name. Do not set this value as it's set at compile-time through <see cref="CallerArgumentExpressionAttribute"/>.</param>
+    /// <returns>The current instance of the builder.</returns>
+    public RegisterParameterBuilder<T> WithChangeHandler(Action<ParameterChangedContext> parameterChangedHandler, [CallerArgumentExpression(nameof(parameterChangedHandler))] string? handlerName = null)
+    {
+        return WithChangeHandler(new ParameterChangedLambdaParameterViewHandler<T>(parameterChangedHandler), handlerName);
     }
 
     /// <summary>
@@ -174,15 +189,16 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     /// Builds the parameter state.
     /// </summary>
     /// <returns>The created parameter state.</returns>
-    internal ParameterStateInternal<T> Attach() => _parameterStateLazy.Value;
+    internal ParameterStateInternal<T> Attach() => _parameterState ??= CreateParameterState();
 
     private ParameterStateInternal<T> CreateParameterState()
     {
         ArgumentNullException.ThrowIfNull(_parameterName);
+        ArgumentNullException.ThrowIfNull(_getParameterValueFunc);
 
         var parameterState = ParameterStateInternal<T>.Attach(
             new ParameterMetadata(_parameterName, _handlerName, _comparerParameterName),
-            _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
+            _getParameterValueFunc,
             _eventCallbackFunc,
             _parameterChangedHandler,
             _comparer);
@@ -191,7 +207,7 @@ public class RegisterParameterBuilder<T> : IParameterBuilderAttach
     }
 
     /// <inheritdoc />
-    bool IParameterBuilderAttach.IsAttached => _parameterStateLazy.IsValueCreated;
+    bool IParameterBuilderAttach.IsAttached => _parameterState is not null;
 
     /// <inheritdoc />
     IParameterComponentLifeCycle IParameterBuilderAttach.Attach() => Attach();

@@ -8,7 +8,6 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor.Internal;
 
-#nullable enable
 /// <summary>
 /// An icon displayed within an input component.
 /// </summary>

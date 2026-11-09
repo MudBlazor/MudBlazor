@@ -1,14 +1,7 @@
 ﻿@page "/components/menu"
 
 <DocsPage>
-    <DocsPageHeader Title="Menus" Component="@nameof(MudMenu)">
-        <Description>
-            <MudAlert Class="mt-4" Severity="Severity.Warning">
-                Note: Blazor static rendering is not supported.
-                <MudLink Href="/getting-started/installation#manual-install-add-components" Target="_blank">See install guide for more info</MudLink>.
-            </MudAlert>
-        </Description>
-    </DocsPageHeader>
+    <DocsPageHeader Title="Menus" Component="@nameof(MudMenu)" />
     <DocsPageContent>
 
         <DocsPageSection>
@@ -63,8 +56,9 @@
                 <DocsPageSection>
                     <SectionHeader Title="Custom Activator">
                         <Description>
-                            If the regular customization options are not enough, use the <CodeInline>ActivatorContent</CodeInline> render fragment to define a custom activator element for opening the menu.
-                            In this example, a custom button, chip, and avatar are each used to open a menu.
+                            Use <CodeInline>ActivatorContent</CodeInline> when the built-in activators are not enough.
+                            Wire click and right-click activators to the provided menu context; for hover, set <CodeInline>ActivationEvent</CodeInline> to <CodeInline>MouseEvent.MouseOver</CodeInline> and let <CodeInline>MudMenu</CodeInline> handle pointer events.
+                            Add <CodeInline>tabindex="0"</CodeInline> to activators generated from code or conditional markup so they can receive keyboard focus.
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuActivatorExample1)" ShowCode="false">
@@ -146,8 +140,9 @@
                 <DocsPageSection>
                     <SectionHeader Title="Mouse Events">
                         <Description>
-                            Use the <CodeInline>ActivationEvent</CodeInline> property to specify which mouse event opens the menu.
-                            If the menu is a nested menu, this property may act differently.
+                            Use <CodeInline>ActivationEvent</CodeInline> to choose which mouse event opens a menu with a built-in activator.
+                            With <CodeInline>ActivatorContent</CodeInline>, wire only events that are not handled automatically, such as custom right-click.
+                            Nested menus may handle activation differently.
                         </Description>
                     </SectionHeader>
                     <SectionContent Code="@nameof(MenuActivatorExample2)" ShowCode="false">
@@ -203,19 +198,6 @@
                     </SectionContent>
                 </DocsPageSection>
 
-                <DocsPageSection>
-                    <SectionHeader Title="DropdownSettings">
-                        <Description>
-                            This component uses <MudLink Href="/components/popover">MudPopover</MudLink>
-                            to place its list of items in combination with <MudLink Href="/components/overlay">MudOverlay</MudLink>.
-                            Some of these settings can be controlled with <CodeInline>DropdownSettings</CodeInline>,
-                            which contain defaults for the <CodeInline>MudPopover</CodeInline> appearance and behavior.
-                            <MudLink Color="Color.Secondary" Href="/components/popover#dropdownsettings">
-                                Read more on popover's page.
-                            </MudLink>
-                        </Description>
-                    </SectionHeader>
-                </DocsPageSection>
             </SectionSubGroups>
         </DocsPageSection>
     </DocsPageContent>

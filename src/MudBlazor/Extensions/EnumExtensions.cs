@@ -1,6 +1,5 @@
 ﻿namespace MudBlazor.Extensions
 {
-#nullable enable
     public static class EnumExtensions
     {
         /// <summary>

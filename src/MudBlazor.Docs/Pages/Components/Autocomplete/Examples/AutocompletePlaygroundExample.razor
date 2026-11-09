@@ -1,5 +1,6 @@
 ﻿@namespace MudBlazor.Docs.Examples
 @using MudBlazor
+@using System.Threading
 
 <MudStack Row Class="justify-space-between mud-width-full">
     <MudStack Style="width: 300px">
@@ -50,7 +51,7 @@
     private bool _helperText;
     private bool _helperTextOnFocus;
     private bool _clearable;
-    private bool _modal = true;
+    private bool _modal;
 
     private string[] _states =
     {

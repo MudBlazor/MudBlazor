@@ -1,0 +1,44 @@
+﻿<MudPopoverProvider />
+
+<MudMenu Label="Full Menu Width" Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" PopoverClass="menu-popover-class" Disabled="DisableMenu">
+    <MudMenuItem Class="test-class" OnClick="@(() => InvokeItem(1))">1</MudMenuItem>
+    <MudMenuItem Href="https://www.test.com" OnClick="@(() => InvokeItem(2))">2</MudMenuItem>
+    <MudMenuItem Href="https://www.test.com" Target="_blank" OnClick="@(() => InvokeItem(3))">3</MudMenuItem>
+
+    <MudMenu Label="4">
+        <ActivatorContent>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => InvokeItem(4))">Button</MudButton>
+        </ActivatorContent>
+        <ChildContent>
+            <MudMenu Label="4.1">
+                 <ActivatorContent>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => InvokeItem(41))">Button</MudButton>
+                 </ActivatorContent>
+                 <ChildContent>
+                    <MudMenuItem Label="4.1.1" OnClick="@(() => InvokeItem(411))" />
+                    <MudMenuItem Label="4.1.2" OnClick="@(() => InvokeItem(412))" />
+                    <MudMenuItem Label="4.1.3" OnClick="@(() => InvokeItem(413))" />
+                </ChildContent>
+            </MudMenu>
+
+            <MudMenuItem Label="4.2" OnClick="@(() => InvokeItem(42))" />
+        </ChildContent>
+    </MudMenu>
+
+    <MudMenuItem OnClick="@(() => InvokeItem(5))" Disabled>5 Disabled</MudMenuItem>
+    <MudMenuItem OnClick="@(() => InvokeItem(6))">6</MudMenuItem>
+</MudMenu>
+
+@code {
+    public static string __description__ = "Access Menu Via Keyboard -> Click Enter -> Select item with arrow keys -> Press Enter";
+    [Parameter]
+    public bool DisableMenu { get; set; }
+
+    public int? LastInvokedIndex { get; private set; }
+
+    private void InvokeItem(int index)
+    {
+        LastInvokedIndex = index;
+        StateHasChanged();
+    }
+}

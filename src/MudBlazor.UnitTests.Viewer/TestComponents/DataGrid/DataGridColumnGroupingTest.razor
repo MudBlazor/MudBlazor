@@ -1,16 +1,25 @@
 ﻿<MudPopoverProvider />
 <MudDataGrid T="Model" ShowMenuIcon="true" Items="@_items" Groupable="true">
     <Columns>
-        <PropertyColumn Property="x => x.Name" Title="Name" Grouping="@IsNameGrouped" HeaderClass="name" />
-        <PropertyColumn Property="x => x.Age" Title="Age" Grouping="@IsAgeGrouped" HeaderClass="age" />
+        <PropertyColumn Property="x => x.Name" Title="Name" @bind-Grouping="@IsNameGrouped" HeaderClass="name" />
+        <PropertyColumn Property="x => x.Age" Title="Age" @bind-Grouping="@IsAgeGrouped" HeaderClass="age" />
         <PropertyColumn Property="x => x.Gender" Title="Gender" @bind-Grouping="@IsGenderGrouped" HeaderClass="gender"/>
         <PropertyColumn Property="x => x.Profession" Title="Profession" @bind-Grouping="@IsProfessionGrouped" GroupBy="_groupByProfession" HeaderClass="profession" />
     </Columns>
 </MudDataGrid>
 
-<MudButton Class="GroupByGender" @onclick="GroupByGender">Group By Gender</MudButton>
-<MudButton Class="GroupByAge" @onclick="GroupByAge">Group By Age</MudButton>
-<MudButton Class="GroupByProfession" @onclick="GroupByProfession">Group By Profession</MudButton>
+<MudButton Class="@($"GroupByName {(IsNameGrouped ? "test-grouped" : "")}")" @onclick="GroupByName">Group By Name</MudButton>
+<MudButton Class="@($"GroupByGender {(IsGenderGrouped ? "test-grouped" : "")}")" @onclick="GroupByGender">Group By Gender</MudButton>
+<MudButton Class="@($"GroupByAge {(IsAgeGrouped ? "test-grouped" : "")}")" @onclick="GroupByAge">Group By Age</MudButton>
+<MudButton Class="@($"GroupByProfession {(IsProfessionGrouped ? "test-grouped" : "")}")" @onclick="GroupByProfession">Group By Profession</MudButton>
+<MudButton Class="UnGroupAll" @onclick="UnGroupAll">UnGroup All</MudButton>
+
+<style>
+    .test-grouped {
+        border: 1px dotted red;
+    }
+</style>
+
 @code {
 
     private readonly Func<Model, object> _groupByProfession = x => string.IsNullOrEmpty(x.Profession)
@@ -32,6 +41,14 @@
         new("Steve", 32, "Male", null),
         new("Alice", 32, "Female", "Cook")
     ];
+
+    private void GroupByName(MouseEventArgs args)
+    {
+        IsNameGrouped = true;
+        IsProfessionGrouped = false;
+        IsAgeGrouped = false;
+        IsGenderGrouped = false;
+    }
 
     private void GroupByGender(MouseEventArgs args)
     {
@@ -55,7 +72,15 @@
         IsProfessionGrouped = true;
         IsAgeGrouped = false;
         IsGenderGrouped = false;
-    }    
+    }
+
+    private void UnGroupAll(MouseEventArgs args)
+    {
+        IsNameGrouped = false;
+        IsProfessionGrouped = false;
+        IsAgeGrouped = false;
+        IsGenderGrouped = false;
+    }
 
     public record Model(string Name, int Age, string Gender, string? Profession);
 }

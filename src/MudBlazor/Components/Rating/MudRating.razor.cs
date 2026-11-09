@@ -5,10 +5,9 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
-    /// A component for collecting and displaying ratings.
+    /// Ratings provide insight regarding other's opinions and experiences with a product. Collecting user feedback via ratings is a simple analytic that can provide a lot of feedback to your product or application.
     /// </summary>
     /// <seealso cref="MudRatingItem"/>
     public partial class MudRating : MudComponentBase
@@ -30,6 +29,7 @@ namespace MudBlazor
         protected string ClassName =>
             new CssBuilder("mud-rating-root")
                 .AddClass("mud-disabled", Disabled)
+                .AddClass("mud-readonly", ReadOnly)
                 .AddClass(Class)
                 .Build();
 
@@ -49,6 +49,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>.
         /// </remarks>
+        [Obsolete("Prefer the RatingItemsClass property with CSS https://github.com/MudBlazor/MudBlazor/issues/12047")]
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
         public string? RatingItemsStyle { get; set; }
@@ -137,11 +138,11 @@ namespace MudBlazor
         /// Shows a ripple effect when an item is clicked.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>true</c>.
+        /// Defaults to <c>false</c>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Rating.Appearance)]
-        public bool Ripple { get; set; } = true;
+        public bool Ripple { get; set; } = false;
 
         /// <summary>
         /// Prevents the user from interacting with this rating and shows a disabled color.
@@ -175,7 +176,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>0</c>.  Must be equal or less than <see cref="MaxValue"/>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.Rating.Data)]
         public int SelectedValue { get; set; } = 0;
 
@@ -219,7 +220,15 @@ namespace MudBlazor
             }
         }
 
-        internal Task HandleItemHoveredAsync(int? itemValue) => SetHoveredValueAsync(itemValue);
+        internal Task HandleItemHoveredAsync(int? itemValue)
+        {
+            if (ReadOnly || Disabled)
+            {
+                return Task.CompletedTask;
+            }
+
+            return SetHoveredValueAsync(itemValue);
+        }
 
         private async Task IncreaseValueAsync(int val)
         {

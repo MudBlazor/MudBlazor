@@ -58,6 +58,7 @@ public sealed partial class DocsPageHeader
     /// </summary>
     [Parameter]
     public string SubTitle { get; set; }
+    private string ComputedSubTitle { get; set; }
 
     /// <summary>
     /// The description of this page.
@@ -93,11 +94,19 @@ public sealed partial class DocsPageHeader
             DocumentedType = ApiDocumentation.GetType(Component);
             // Look for an example page for this type
             Example = DocumentedType == null ? null : MenuService.GetExample(DocumentedType);
-            // If there is no subtitle set, but we have a component summary, use the component summary
-            if (string.IsNullOrEmpty(SubTitle) && !string.IsNullOrEmpty(DocumentedType.Summary))
-            {
-                SubTitle = DocumentedType.Summary;
-            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(SubTitle))
+        {
+            ComputedSubTitle = SubTitle;
+        }
+        else if (DocumentedType != null && !string.IsNullOrWhiteSpace(DocumentedType.Summary))
+        {
+            ComputedSubTitle = DocumentedType.Summary;
+        }
+        else
+        {
+            ComputedSubTitle = "";
         }
     }
 
@@ -112,9 +121,9 @@ public sealed partial class DocsPageHeader
     /// <returns></returns>
     private string GetSubTitle()
     {
-        if (string.IsNullOrEmpty(SubTitle))
+        if (string.IsNullOrEmpty(ComputedSubTitle))
             return "";
-        return SubTitle.TrimEnd('.') + ".";
+        return ComputedSubTitle.TrimEnd('.') + ".";
     }
 
     /// <summary>

@@ -13,6 +13,7 @@ public class Program
 
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
         builder.Services.AddMudServices();
+        builder.Services.AddSingleton<ISearchService, SearchService>();
         builder.Services.AddSingleton<IPeriodicTableService, PeriodicTableService>();
 
         return builder.Build().RunAsync();

@@ -3,12 +3,14 @@
 // See the LICENSE file in the project root for more information.
 
 using System.ComponentModel;
+using NetEscapades.EnumGenerators;
 
 namespace MudBlazor;
 
 /// <summary>
-/// Specifies the scroll behavior for scrolling operations.
+/// Specifies whether a scroll animates smoothly or jumps immediately, matching the CSS <c>scroll-behavior</c> property.
 /// </summary>
+[EnumExtensions]
 public enum ScrollBehavior
 {
     /// <summary>

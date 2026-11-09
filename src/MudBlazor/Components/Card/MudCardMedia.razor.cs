@@ -3,9 +3,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents an image displayed as part of a <see cref="MudCard"/>.
+    /// The media area of a <see cref="MudCard"/>, displaying an image or graphic sized to a set height.
     /// </summary>
     /// <seealso cref="MudCard" />
     /// <seealso cref="MudCardActions" />

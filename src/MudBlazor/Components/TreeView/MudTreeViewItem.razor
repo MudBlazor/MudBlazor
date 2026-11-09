@@ -1,10 +1,14 @@
-@namespace MudBlazor
+﻿@namespace MudBlazor
 @inherits MudComponentBase
 @typeparam T
 
-@if (Visible)
+@if (IsVirtualizedItem || Visible)
 {
-    <li @attributes="UserAttributes" class="@Classname" style="@Style">
+    @* Virtualized rows are flat siblings, so the hierarchy is exposed through level and position instead of nested lists. *@
+    <li aria-level="@(IsVirtualizedItem ? (int?)(CurrentItemContext!.Depth + 1) : null)"
+        aria-posinset="@(IsVirtualizedItem ? (int?)CurrentItemContext!.PositionInSet : null)"
+        aria-setsize="@(IsVirtualizedItem ? (int?)CurrentItemContext!.SetSize : null)"
+        @attributes="UserAttributes" class="@Classname" style="@Stylename">
         <div class="@ContentClassname" @onclick="OnItemClickedAsync" @onclick:stopPropagation="true" @ondblclick="OnItemDoubleClickedAsync" @ondblclick:stopPropagation="true">
             @if (Content != null)
             {
@@ -12,12 +16,19 @@
             }
             else
             {
-                <MudTreeViewItemToggleButton Disabled="@GetDisabled()" Loading="_loading" Expanded="_expandedState.Value" ExpandedChanged="OnItemExpanded" Visible="@(HasChildren() && AreChildrenVisible())" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+                @if (HasChildren())
+                {
+                    <MudTreeViewItemToggleButton Disabled="@(GetDisabled() || (IsVirtualizedItem && !GetCanExpand() && !GetExpanded()))" Loading="@GetServerDataLoading()" Expanded="GetExpanded()" ExpandedChanged="OnItemExpanded" Visible="@(IsVirtualizedItem || AreChildrenVisible())" ExpandedIcon="@ExpandButtonIcon" ExpandedIconColor="@ExpandButtonIconColor" LoadingIcon="@LoadingIcon" LoadingIconColor="LoadingIconColor"></MudTreeViewItemToggleButton>
+                }
+                else
+                {
+                    <div class="mud-treeview-item-arrow" @ondblclick="OnArrowDoubleClick" @ondblclick:stopPropagation="true"></div>
+                }
 
                 @if (MultiSelection)
                 {
-                    <MudCheckBox T="bool?" TriState Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@GetIndeterminateIcon()"
-                                 @bind-Value:get="GetCheckBoxStateTriState()" @bind-Value:set="@(x=>OnCheckboxChangedAsync())" Disabled="@Disabled"></MudCheckBox>
+                    <MudCheckBox T="bool?" TriState aria-labelledby="@(BodyContent is null ? _checkboxTextId : null)" Class="mud-treeview-item-checkbox" CheckedIcon="@CheckedIcon" UncheckedIcon="@UncheckedIcon" IndeterminateIcon="@GetIndeterminateIcon()"
+                                 @bind-Value:get="GetCheckBoxStateTriState()" @bind-Value:set="@(x => OnCheckboxChangedAsync())" Disabled="@GetDisabled()" ReadOnly="@GetCheckBoxReadOnly()"></MudCheckBox>
                 }
 
                 @if (HasIcon)
@@ -33,15 +44,11 @@
                 }
                 else
                 {
-                    <MudText Typo="@TextTypo" Class="@TextClassname">
-                        @GetText()
-                    </MudText>
+                    @MudText.RenderText(TextTypo, TextClassname, GetText(), MultiSelection ? _checkboxTextId : null)
 
                     @if (!string.IsNullOrEmpty(EndText))
                     {
-                        <MudText Typo="@EndTextTypo" Class="@EndTextClass">
-                            @EndText
-                        </MudText>
+                        @MudText.RenderText(EndTextTypo, EndTextClass, EndText)
                     }
 
                     @if (!string.IsNullOrEmpty(EndIcon))
@@ -53,17 +60,32 @@
                 }
             }
         </div>
-        @if (HasChildren())
+        @if (HasChildren() && !IsVirtualizedItem)
         {
             <MudCollapse Expanded="@_expandedState.Value">
-                <CascadingValue Value="@MudTreeRoot" IsFixed="true">
-                    <CascadingValue Value="this" IsFixed="true">
-                        <MudTreeView Items="@_itemsState.Value" ItemTemplate="MudTreeRoot?.ItemTemplate" Class="mud-treeview-group">
-                            @ChildContent
-                        </MudTreeView>
+                @if (MudTreeRoot is null)
+                {
+                    @* An item outside a tree passes its missing root on, so the nested tree does not become a root of its own. *@
+                    <CascadingValue Value="@MudTreeRoot" IsFixed="true">
+                        @RenderChildTree
                     </CascadingValue>
-                </CascadingValue>
+                }
+                else
+                {
+                    @RenderChildTree
+                }
             </MudCollapse>
         }
     </li>
+}
+
+@code {
+    private void RenderChildTree(RenderTreeBuilder __builder)
+    {
+        <CascadingValue Value="this" IsFixed="true">
+            <MudTreeView Items="@_itemsState.Value" ItemTemplate="MudTreeRoot?.ItemTemplate" Class="mud-treeview-group">
+                @ChildContent
+            </MudTreeView>
+        </CascadingValue>
+    }
 }

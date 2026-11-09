@@ -4,7 +4,6 @@
 
 namespace MudBlazor.State.Builder;
 
-#nullable enable
 /// <summary>
 /// Represents a scope for registering parameters.
 /// </summary>

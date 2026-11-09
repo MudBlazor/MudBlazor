@@ -1,12 +1,9 @@
 ﻿
-
-using System.Threading.Tasks;
+using AwesomeAssertions;
 using Bunit;
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Interfaces;
-using MudBlazor.UnitTests.Mocks;
-using MudBlazor.UnitTests.Shared.Mocks;
+using MudBlazor.Resources;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -14,21 +11,21 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class PageContentNavigationTests : BunitTest
     {
+        [SetUp]
         public override void Setup()
         {
             base.Setup();
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), new MockScrollSpyFactory()));
-
         }
 
         [Test]
         public void DefaultValues()
         {
-            var comp = Context.RenderComponent<MudPageContentNavigation>();
+            var comp = Context.Render<MudPageContentNavigation>();
 
             comp.Instance.ActiveSection.Should().BeNull();
             comp.Instance.Sections.Should().BeEmpty();
-            comp.Instance.Headline.Should().Be("Contents");
+            comp.Instance.Headline.Should().Be("");
             comp.Instance.SectionClassSelector.Should().BeNullOrEmpty();
 
             comp.Nodes.Should().ContainSingle();
@@ -36,11 +33,49 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task CustomNavMenuTitle()
+        {
+            var comp = Context.Render<MudPageContentNavigation>(parameters => parameters.Add(x => x.Headline, "Custom title"));
+
+            var section1 = new MudPageContentSection("my section", "my-id");
+            var section2 = new MudPageContentSection("my section 2", "my-id-2");
+
+            comp.Instance.AddSection(section1, false);
+            comp.Instance.AddSection(section2, false);
+            await comp.InvokeAsync(() => ((IMudStateHasChanged)comp.Instance).StateHasChanged());
+
+            comp.RenderCount.Should().Be(2);
+
+            comp.Instance.ActiveSection.Should().BeNull();
+            comp.Instance.Sections.Should().BeEquivalentTo(new[] { section1, section2 });
+
+            comp.Nodes.Should().ContainSingle();
+            comp.Instance.Headline.Should().Be("Custom title");
+
+            var navMenu = comp.FindComponent<MudNavMenu>();
+            navMenu.Instance.UserAttributes.GetValueOrDefault("aria-label").Should().Be("Custom title");
+
+            var headlineItem = comp.FindComponent<MudText>();
+            headlineItem.FindAll("p.mud-typography")[0].TextContent.Should().Be("Custom title");
+
+            var navLinks = comp.FindComponents<MudNavLink>();
+            navLinks.Should().HaveCount(2);
+            navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink navigation-level-0");
+
+            var firstLinkText = navLinks[0].Find(".mud-nav-link-text");
+            firstLinkText.TextContent.Should().Be("my section");
+
+            var secondLinkText = navLinks[1].Find(".mud-nav-link-text");
+            secondLinkText.TextContent.Should().Be("my section 2");
+        }
+
+        [Test]
         [TestCase(true)]
         [TestCase(false)]
         public async Task AddSection(bool withUpdate)
         {
-            var comp = Context.RenderComponent<MudPageContentNavigation>();
+            var localizer = Context.Services.GetRequiredService<InternalMudLocalizer>();
+            var comp = Context.Render<MudPageContentNavigation>();
 
             var section1 = new MudPageContentSection("my section", "my-id");
             var section2 = new MudPageContentSection("my section 2", "my-id-2");
@@ -64,6 +99,12 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Nodes.Should().ContainSingle();
 
+            var navMenu = comp.FindComponent<MudNavMenu>();
+            navMenu.Instance.UserAttributes.GetValueOrDefault("aria-label").Should().Be(localizer[LanguageResource.MudPageContentNavigation_NavMenu]);
+
+            var headlineItem = comp.FindComponent<MudText>();
+            headlineItem.FindAll("p.mud-typography")[0].TextContent.Should().Be(localizer[LanguageResource.MudPageContentNavigation_NavMenu]);
+
             var navLinks = comp.FindComponents<MudNavLink>();
             navLinks.Should().HaveCount(2);
             navLinks[0].Instance.Class.Should().Be("page-content-navigation-navlink navigation-level-0");
@@ -86,7 +127,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockScrollSpyFactory(mockedScrollSpy);
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
-            var comp = Context.RenderComponent<MudPageContentNavigation>();
+            var comp = Context.Render<MudPageContentNavigation>();
 
             var section1 = new MudPageContentSection("my section", "my-id");
             var section2 = new MudPageContentSection("different section", "my-id-2");
@@ -119,7 +160,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockScrollSpyFactory(mockedScrollSpy);
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
-            var comp = Context.RenderComponent<MudPageContentNavigation>(p => p.Add(x => x.ActivateFirstSectionAsDefault, true));
+            var comp = Context.Render<MudPageContentNavigation>(p => p.Add(x => x.ActivateFirstSectionAsDefault, true));
 
             var section1 = new MudPageContentSection("my section", "my-id");
             var section2 = new MudPageContentSection("my section 2", "my-id-2");
@@ -146,14 +187,14 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void NavigateBySections()
+        public async Task NavigateBySections()
         {
             var spyMock = new MockScrollSpy();
 
             var factory = new MockScrollSpyFactory(spyMock);
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
-            var comp = Context.RenderComponent<MudPageContentNavigation>();
+            var comp = Context.Render<MudPageContentNavigation>();
 
             var section1 = new MudPageContentSection("my first section", "my-id1");
             var section2 = new MudPageContentSection("my second section", "my-id2");
@@ -164,12 +205,12 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.AddSection(section2, false);
             comp.Instance.AddSection(section3, false);
 
-            comp.InvokeAsync(() => ((IMudStateHasChanged)comp.Instance).StateHasChanged());
+            await comp.InvokeAsync(() => ((IMudStateHasChanged)comp.Instance).StateHasChanged());
 
             for (var i = 0; i < 3; i++)
             {
                 var navLinks = comp.FindComponents<MudNavLink>();
-                navLinks[i].Find(".mud-nav-link").Click();
+                await navLinks[i].Find(".mud-nav-link").ClickAsync();
 
                 comp.Instance.ActiveSection.Should().Be(sections[i]);
                 navLinks = comp.FindComponents<MudNavLink>();
@@ -191,7 +232,7 @@ namespace MudBlazor.UnitTests.Components
             var factory = new MockScrollSpyFactory(spyMock);
             Context.Services.Add(new ServiceDescriptor(typeof(IScrollSpyFactory), factory));
 
-            var comp = Context.RenderComponent<MudPageContentNavigation>(x => x.Add(y => y.SectionClassSelector, "my-section-class"));
+            var comp = Context.Render<MudPageContentNavigation>(x => x.Add(y => y.SectionClassSelector, "my-section-class"));
 
             spyMock.SpyingInitiated.Should().BeTrue();
             spyMock.SpyingClassSelector.Should().Be("my-section-class");
@@ -232,7 +273,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task HideContentIfOnlyOneSectionIsAdded()
         {
-            var comp = Context.RenderComponent<MudPageContentNavigation>();
+            var comp = Context.Render<MudPageContentNavigation>();
 
             var section = new MudPageContentSection("my section", "my-id");
 

@@ -1,0 +1,23 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Style="width:400px;" Breakpoint="Breakpoint.SmAndDown">
+    <MudStack>
+        <MudText>Direction: @_direction</MudText>
+        <MudToggleGroup T="Direction" SelectionMode="SelectionMode.SingleSelection" @bind-Value="_direction" Color="Color.Primary" CheckMark FixedContent Vertical>
+            <MudToggleItem Value="@Direction.Top" Text="Top" />
+            <MudToggleItem Value="@Direction.Right" Text="Right" />
+            <MudToggleItem Value="@Direction.Bottom" Text="Bottom" />
+            <MudToggleItem Value="@Direction.Left" Text="Left" />
+        </MudToggleGroup>
+    </MudStack>
+    <MudFabMenu StartIcon="@Icons.Material.Outlined.Send" Color="Color.Primary" Direction="@_direction">
+        <MudFabMenuItem StartIcon="@Icons.Custom.Brands.Slack" Color="Color.Secondary" />
+        <MudFabMenuItem StartIcon="@Icons.Custom.Brands.Discord" Color="Color.Secondary" />
+        <MudFabMenuItem StartIcon="@Icons.Custom.Brands.Gmail" Color="Color.Secondary" />
+    </MudFabMenu>
+</MudStack>
+
+
+@code {
+    private Direction _direction = Direction.Top;
+}

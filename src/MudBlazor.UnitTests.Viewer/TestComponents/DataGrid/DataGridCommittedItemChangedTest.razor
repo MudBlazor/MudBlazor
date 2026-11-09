@@ -1,0 +1,48 @@
+<MudDialogProvider />
+
+<MudDataGrid T="Model" Items="@_items" ReadOnly="false"
+             EditMode="@DataGridEditMode.Form" EditTrigger="@DataGridEditTrigger.OnRowClick"
+             CommittedItemChanges="OnCommittedItemChangesAsync"
+             CommittedItemChanged="OnCommittedItemChangedAsync">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private readonly List<Model> _items = new()
+    {
+        new Model { Name = "John", Age = 45 },
+        new Model { Name = "Johanna", Age = 23 }
+    };
+
+    public string? SourceNameWhenCommittedItemChanges { get; private set; }
+
+    public string? EditedCopyNameWhenCommittedItemChanges { get; private set; }
+
+    public string? SourceNameWhenCommittedItemChanged { get; private set; }
+
+    public bool CommittedItemChangedCalled { get; private set; }
+
+    public class Model
+    {
+        public required string Name { get; set; }
+
+        public required int Age { get; set; }
+    }
+
+    private Task<DataGridEditFormAction> OnCommittedItemChangesAsync(Model item)
+    {
+        EditedCopyNameWhenCommittedItemChanges = item.Name;
+        SourceNameWhenCommittedItemChanges = _items[1].Name;
+        return Task.FromResult(DataGridEditFormAction.Close);
+    }
+
+    private Task OnCommittedItemChangedAsync(Model item)
+    {
+        CommittedItemChangedCalled = true;
+        SourceNameWhenCommittedItemChanged = _items[1].Name;
+        return Task.CompletedTask;
+    }
+}

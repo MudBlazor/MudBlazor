@@ -1,0 +1,24 @@
+<MudPopoverProvider />
+
+<MudSelect T="Pizza" MultiSelection="true" ToStringFunc="GetDisplayText" @bind-SelectedValues="_selected">
+    @foreach (var item in Enum.GetValues<Pizza>())
+    {
+        <MudSelectItem T="Pizza" Value="@item" />
+    }
+</MudSelect>
+
+@code {
+    public static string __description__ = "Multi-selection with childless enum items should refresh checkbox state immediately when ToStringFunc provides the display text.";
+
+    private IReadOnlyCollection<Pizza> _selected = [];
+
+    public enum Pizza
+    {
+        Cardinale,
+        Diavolo,
+        Margarita,
+        Spinaci
+    }
+
+    private static string? GetDisplayText(Pizza value) => Enum.GetName(value);
+}

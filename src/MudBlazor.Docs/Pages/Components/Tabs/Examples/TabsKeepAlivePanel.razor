@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="@(() => Counter++)">@ComponentName Counter: @Counter</MudButton>
+
+@code {
+#nullable enable
+    [Parameter]
+    public string? ComponentName { get; set; }
+
+    [Parameter]
+    public EventCallback FirstRender { get; set; }
+
+    public int Counter { get; set; } = 0;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await FirstRender.InvokeAsync();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

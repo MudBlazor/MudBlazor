@@ -21,7 +21,7 @@ public partial class ParameterStateChildComp1 : MudComponentBase
             .WithChangeHandler(OnParameterChanged);
     }
 
-    [Parameter]
+    [Parameter, ParameterState]
     public int Counter { get; set; } = 0;
 
     [Parameter]

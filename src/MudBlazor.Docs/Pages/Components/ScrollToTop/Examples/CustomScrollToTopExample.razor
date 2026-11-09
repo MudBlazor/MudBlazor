@@ -6,8 +6,11 @@
         <MudText Typo="Typo.h3" Align="Align.Center">Some initial long text</MudText>
         <MudText Typo="Typo.h3" Align="Align.Center">Middle text</MudText>
         <MudText Typo="Typo.h3" Align="Align.Center">Bottom text</MudText>
-        <MudScrollToTop TopOffset="100" Selector="#another_unique_identifier" Style="z-index:2001;">
-            <div class="mud-theme-secondary px-3 py-6 mud-elevation-16 rounded-xl fixed" style="bottom:20px;left:20px;">Scroll to top custom button</div>
+        <MudScrollToTop TopOffset="100" 
+                        Selector="#another_unique_identifier"
+                        VisibleCssClass="visible absolute"
+                        HiddenCssClass="hidden absolute">
+            <div class="mud-theme-secondary px-3 py-6 mud-elevation-16 rounded-xl" style="bottom:20px;left:20px;">Scroll to top custom button</div>
         </MudScrollToTop>
     </MudPaper>
 </div>

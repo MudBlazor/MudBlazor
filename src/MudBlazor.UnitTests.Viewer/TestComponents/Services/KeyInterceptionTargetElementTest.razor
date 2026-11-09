@@ -1,0 +1,142 @@
+﻿@using MudBlazor.Services
+
+<MudGrid Spacing="3" Style="width: 500px;">
+    <MudItem xs="4">
+        <MudButton Variant="Variant.Outlined" FullWidth="true" OnClick="AddItem">
+            Add Item
+        </MudButton>
+    </MudItem>
+    <MudItem xs="4">
+        <MudButton Variant="Variant.Outlined" FullWidth="true" OnClick="RemoveItem" Disabled="_items.Count == 0">
+            Remove Item
+        </MudButton>
+    </MudItem>
+    <MudItem xs="4">
+        @if (!_isAttached)
+        {
+            <MudButton Variant="Variant.Outlined" FullWidth="true" OnClick="Subscribe">Subscribe</MudButton>
+        }
+        else
+        {
+            <MudButton Variant="Variant.Outlined" FullWidth="true" OnClick="Unsubscribe">Unsubscribe</MudButton>
+        }
+    </MudItem>
+    <MudItem xs="6">
+        <MudPaper Class="pa-3">
+            <MudStack>
+                <MudText Typo="Typo.subtitle2">Target Self</MudText>
+                <MudText Typo="Typo.caption">Last key: @_targetSelf.LastKey</MudText>
+                <MudList id="@_targetSelf.Id" T="string" tabindex="0">
+                    @foreach (string item in _items)
+                    {
+                        <MudListItem @key="@item" Text="@item" Value="@item" />
+                    }
+                </MudList>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="6">
+        <MudPaper Class="pa-3">
+            <MudStack>
+                <MudText Typo="Typo.subtitle2">Target Children</MudText>
+                <MudText Typo="Typo.caption">Last key: @_targetChildren.LastKey</MudText>
+                <MudList id="@_targetChildren.Id" T="string">
+                    @foreach (string item in _items)
+                    {
+                        <MudListItem @key="@item" Text="@item" Value="@item" tabindex="0" />
+                    }
+                </MudList>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    public const string __description__ = @"
+Sample for demonstration of the KeyInterceptor option to target the element itself for attachment of the key event handlers 
+by setting KeyInterceptorOptions.TargetClass to null. Click an item from either list and press some keys to see the 
+interception in action. Add/remove items to verify (in case of targeting children) that handlers are attached to the new 
+elements. Unsubscribe/subscribe to test reattachment of the handlers. To verify unsubscription, you can check keydown/keyup 
+handler attachment in the browser console.";
+
+    private class MudListInstance(string id)
+    {
+        public string Id { get; } = id;
+
+        public string? LastKey { get; set; }
+    }
+
+    private readonly MudListInstance _targetSelf = new("target-self");
+    private readonly MudListInstance _targetChildren = new("target-children");
+
+    private bool _isAttached = true;
+    private List<string> _items = [Identifier.Create()];
+
+    [Inject]
+    public IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        await Subscribe();
+    }
+    private async Task Subscribe()
+    {
+        await Subscribe(_targetSelf.Id, null);
+        await Subscribe(_targetChildren.Id, "mud-list-item");
+        _isAttached = true;
+    }
+
+    private async Task Subscribe(string elementId, string? targetClass)
+    {
+        var options = new KeyInterceptorOptions()
+        {
+            TargetClass = targetClass,
+            EnableLogging = false,
+            Keys = [
+                new KeyOptions("/.+/", subscribeDown: true),
+            ]
+        };
+
+        await KeyInterceptorService.SubscribeAsync(elementId, options, x => HandleKeyDownAsync(elementId, x));
+    }
+
+    private async Task Unsubscribe()
+    {
+        await KeyInterceptorService.UnsubscribeAsync(_targetSelf.Id);
+        await KeyInterceptorService.UnsubscribeAsync(_targetChildren.Id);
+        _isAttached = false;
+    }
+
+    private void AddItem()
+    {
+        _items.Insert(Random.Shared.Next(0, _items.Count + 1), Identifier.Create());
+        StateHasChanged();
+    }
+
+    private void RemoveItem()
+    {
+        _items.RemoveAt(Random.Shared.Next(0, _items.Count));
+        StateHasChanged();
+    }
+
+    private Task HandleKeyDownAsync(string id, KeyboardEventArgs args)
+    {
+        if (id == _targetSelf.Id)
+        {
+            _targetSelf.LastKey = args.Key;
+        }
+        else if (id == _targetChildren.Id)
+        {
+            _targetChildren.LastKey = args.Key;
+        }
+
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+}

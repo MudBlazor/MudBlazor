@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// Defines filter definition features for a column.
@@ -49,6 +48,9 @@ public interface IFilterDefinition<[DynamicallyAccessedMembers(DynamicallyAccess
     /// <summary>
     /// The value to filter.
     /// </summary>
+    /// <remarks>
+    /// For <see cref="FilterOperator.Enum.IsAnyOf"/>, this is a collection of enum values.
+    /// </remarks>
     object? Value { get; set; }
 
     FieldType FieldType => FieldType.Identify(Column?.PropertyType);

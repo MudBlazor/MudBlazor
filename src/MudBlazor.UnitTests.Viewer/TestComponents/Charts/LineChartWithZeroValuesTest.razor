@@ -1,5 +1,5 @@
 ﻿<div>
-    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="_index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="_index" ChartLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
 </div>
 
 @code {
@@ -7,10 +7,11 @@
 
     private int _index = -1; //default value cannot be 0 -> first selectedindex is 0.
 
-    public List<ChartSeries> Series = 
+    public List<ChartSeries<double>> Series =
     [
-        new() { Name = "Series 1", Data = [0, 0, 0, 0, 0, 0, 0, 0, 0] }
+        new() { Name = "Series 1", Data = new([0, 0, 0, 0, 0, 0, 0, 0, 0]) }
     ];
 
     public string[] XAxisLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep"];
 }
+

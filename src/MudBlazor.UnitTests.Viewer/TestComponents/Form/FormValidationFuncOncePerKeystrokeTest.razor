@@ -1,0 +1,20 @@
+@* Regression component for #13174: counts how many times the validation func runs while typing. *@
+<MudForm @ref="Form" ValidationDelay="0">
+    <MudTextField @bind-Value="_value" Immediate="true" Validation="@(new Func<string, bool>(Validate))" />
+</MudForm>
+
+@code {
+    public static string __description__ =
+        "With Immediate + @bind-Value, the validation func must run exactly once per keystroke, not twice (#13174).";
+
+    public MudForm Form = null!;
+    private string _value = string.Empty;
+
+    public int ValidationCount { get; private set; }
+
+    private bool Validate(string value)
+    {
+        ValidationCount++;
+        return true;
+    }
+}

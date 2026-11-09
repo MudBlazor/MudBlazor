@@ -4,22 +4,21 @@
 @inject InternalMudLocalizer Localizer
 
 @{
-#nullable enable
 }
 
-<div @attributes="UserAttributes" id="@_elementId" class="mud-dialog-container @GetPosition()">
-    <MudOverlay Visible="true" OnClick="HandleBackgroundClickAsync" Class="@BackgroundClassname" DarkBackground="true" />
-    <div id="_@Id.ToString("N")" role="dialog" class="@Classname" style="@Style">
+<div @attributes="UserAttributes" id="@ElementId" class="mud-dialog-container @GetPosition()">
+    <MudOverlay Visible="true" OnClick="HandleBackgroundClickAsync" Class="@BackgroundClassname" DarkBackground="true" @onmouseup="OnMouseUpAsync" />
+    <div @ref="_dialogContainerReference" id="_@Id.ToString("N")" role="dialog" aria-modal="true" aria-labelledby="@GetAriaLabelledBy()" aria-label="@GetAriaLabel()" class="@Classname" style="@CurrentStyle" tabindex="-1">
         @if (!GetHideHeader())
         {
-            <div class="@TitleClassname">
-                @if (TitleContent is null)
+            <div id="@($"_{Id:N}_title")" class="@TitleClassname">
+                @if (CurrentTitleContent is null)
                 {
                     <MudText Typo="Typo.h6">@_titleState.Value</MudText>
                 }
                 else
                 {
-                    @TitleContent
+                    @CurrentTitleContent
                 }
                 @if (GetCloseButton())
                 {

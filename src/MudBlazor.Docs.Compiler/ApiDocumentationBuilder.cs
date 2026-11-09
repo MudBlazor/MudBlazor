@@ -3,8 +3,11 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using LoxSmoke.DocXml;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities.Converter.Base;
 
 namespace MudBlazor.Docs.Compiler;
 
@@ -133,6 +136,53 @@ public class ApiDocumentationBuilder
     }
 
     /// <summary>
+    /// Path to MudBlazor's reference assembly, if known (passed by the build).
+    /// </summary>
+    /// <remarks>
+    /// The reference assembly is byte-stable unless the public API surface changes, so it lets us skip regeneration after library edits that only touch method bodies. 
+    /// Falls back to the implementation assembly (which changes on every build) when not supplied.
+    /// </remarks>
+    public string? ReferenceAssemblyPath { get; set; }
+
+    /// <summary>
+    /// Hashes the inputs that the generated API documentation depends on: the public API surface (reference assembly), the XML doc comments, and the generator version.
+    /// Lets the build skip the expensive reflection pass when none of them changed.
+    /// </summary>
+    private string ComputeInputHash()
+    {
+        using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+
+        var apiSurface = ReferenceAssemblyPath is { Length: > 0 } refPath && File.Exists(refPath)
+            ? refPath
+            : Assemblies[0].Location;
+        AppendFile(hash, apiSurface);
+
+        var xmlPath = Path.ChangeExtension(Assemblies[0].Location, ".xml");
+        if (File.Exists(xmlPath))
+        {
+            AppendFile(hash, xmlPath);
+        }
+
+        // Generator identity, so changing the compiler invalidates the cache.
+        var generator = typeof(ApiDocumentationBuilder).Assembly.Location;
+        hash.AppendData(Encoding.UTF8.GetBytes(generator + File.GetLastWriteTimeUtc(generator).Ticks));
+
+        return Convert.ToHexString(hash.GetHashAndReset());
+
+        // Stream the file through the hash in chunks instead of allocating the whole file (the reference assembly is several MB).
+        static void AppendFile(IncrementalHash hash, string path)
+        {
+            using var stream = File.OpenRead(path);
+            var buffer = new byte[81920];
+            int read;
+            while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                hash.AppendData(buffer, 0, read);
+            }
+        }
+    }
+
+    /// <summary>
     /// Gets whether a type is excluded from documentation.
     /// </summary>
     /// <param name="type">The type to check.</param>
@@ -155,6 +205,16 @@ public class ApiDocumentationBuilder
         return false;
     }
 
+    private static bool ImplementsConverterInterface(Type type)
+    {
+        if (!type.IsClass) return false;
+
+        return type
+            .GetInterfaces()
+            .Any(i => i.IsGenericType
+                      && i.GetGenericTypeDefinition() == typeof(IConverter<,>));
+    }
+
     /// <summary>
     /// Gets whether a type is excluded from documentation.
     /// </summary>
@@ -175,12 +235,24 @@ public class ApiDocumentationBuilder
     /// </summary>
     public bool Execute()
     {
+        // Early exit: skip generation when the generated file exists and the public API surface, XML comments, and generator are unchanged since the stamp was last written.
+        var inputHash = ComputeInputHash();
+        if (File.Exists(Paths.ApiDocumentationFilePath) && File.Exists(Paths.ApiDocumentationStampFilePath)
+            && File.ReadAllText(Paths.ApiDocumentationStampFilePath).Trim() == inputHash)
+        {
+            Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs is up-to-date (API surface unchanged), skipping generation.");
+            return true;
+        }
+
         AddTypesToDocument();
         ResolveSeeAlsoLinks();
         FindDeclaringTypes();
         AddGlobalsToDocument();
         ExportApiDocumentation();
         CalculateDocumentationCoverage();
+
+        // Record the inputs we generated from so the next build can skip when nothing changed.
+        Paths.WriteStamp(Paths.ApiDocumentationStampFilePath, inputHash);
         return true;
     }
 
@@ -202,6 +274,7 @@ public class ApiDocumentationBuilder
                     && !IsExcluded(type)
                     // ... which aren't interfaces
                     && !type.IsInterface
+                    && !ImplementsConverterInterface(type)
                     // ... which aren't source generators
                     && !type.Name.Contains("SourceGenerator")
                     // ... which aren't extension classes
@@ -693,20 +766,36 @@ public class ApiDocumentationBuilder
         // Sort everything by category
         using var writer = new ApiDocumentationWriter();
         writer.WriteHeader();
+
+        // The type tier: name, summary, remarks and base type for every documented type.
+        // This is all most of the site needs, so it is what boots.
         writer.WriteClassStart();
         writer.WriteConstructorStart();
-        writer.WriteProperties(Properties);
-        writer.WriteMethods(Methods);
-        writer.WriteFields(Fields);
-        writer.WriteEvents(Events);
         writer.WriteTypes(Types);
-        writer.LinkDocumentedTypes(Properties);
-        writer.LinkDocumentedTypes(Methods);
-        writer.LinkDocumentedTypes(Fields);
-        writer.LinkDocumentedTypes(Events);
-        writer.WriteSeeAlsoLinks(Types);
         writer.WriteConstructorEnd();
         writer.WriteClassEnd();
+        writer.WriteLine();
+
+        // The member tier, one loader per type.
+        // An API page shows one type's members, so building them a type at a time keeps the other 480 types' members out of the heap.
+        writer.WriteMembersClassStart();
+        writer.WriteMembersConstructorStart();
+        writer.WriteExternalMembers(
+            Properties.Values.Where(member => member.DeclaringDocumentedType == null),
+            Methods.Values.Where(member => member.DeclaringDocumentedType == null),
+            Fields.Values.Where(member => member.DeclaringDocumentedType == null),
+            Events.Values.Where(member => member.DeclaringDocumentedType == null));
+        writer.WriteConstructorEnd();
+        writer.WriteLine();
+        writer.WriteLoadTypeDispatch(Types.Values);
+
+        foreach (var type in Types.Values)
+        {
+            writer.WriteTypeLoader(type);
+        }
+
+        writer.WriteClassEnd();
+
         var currentCode = string.Empty;
         if (File.Exists(Paths.ApiDocumentationFilePath))
         {
@@ -715,6 +804,11 @@ public class ApiDocumentationBuilder
         if (currentCode != writer.ToString())
         {
             File.WriteAllText(Paths.ApiDocumentationFilePath, writer.ToString());
+            Console.WriteLine("ApiDocumentationBuilder: Updated ApiDocumentation.generated.cs");
+        }
+        else
+        {
+            Console.WriteLine("ApiDocumentationBuilder: ApiDocumentation.generated.cs content unchanged.");
         }
     }
 
@@ -736,14 +830,12 @@ public class ApiDocumentationBuilder
         var fieldCoverage = wellDocumentedFields / (double)Fields.Count;
         var eventCoverage = wellDocumentedEvents / (double)Events.Count;
 
-        Console.WriteLine(@"XML Documentation Coverage for MudBlazor:");
-        Console.WriteLine();
-        Console.WriteLine(@$"Types:      {wellDocumentedTypes} of {Types.Count} ({typeCoverage:P0}) types");
-        Console.WriteLine(@$"Properties: {wellDocumentedProperties} of {Properties.Count} ({propertyCoverage:P0}) properties");
-        Console.WriteLine(@$"Methods:    {wellDocumentedMethods} of {Methods.Count} ({methodCoverage:P0}) methods");
-        Console.WriteLine(@$"Fields:     {wellDocumentedFields} of {Fields.Count} ({fieldCoverage:P0}) fields");
-        Console.WriteLine(@$"Events:     {wellDocumentedEvents} of {Events.Count} ({eventCoverage:P0}) events/EventCallback");
-        Console.WriteLine();
+        Console.WriteLine(
+            @$"XML Doc Coverage: T {wellDocumentedTypes}/{Types.Count} ({typeCoverage:P0}), " +
+            @$"P {wellDocumentedProperties}/{Properties.Count} ({propertyCoverage:P0}), " +
+            @$"M {wellDocumentedMethods}/{Methods.Count} ({methodCoverage:P0}), " +
+            @$"F {wellDocumentedFields}/{Fields.Count} ({fieldCoverage:P0}), " +
+            @$"E {wellDocumentedEvents}/{Events.Count} ({eventCoverage:P0})");
     }
 
     /// <summary>
@@ -771,7 +863,11 @@ public class ApiDocumentationBuilder
             {
                 // Yes.   Move up to the type  (i.e. "MudBlazor.___")
                 start += 13;
-                var end = start == -1 ? -1 : globalProperty.Value.Summary.IndexOf('\"', start);
+                var end = globalProperty.Value.Summary.IndexOf('\"', start);
+                if (end == -1)
+                {
+                    continue;
+                }
                 var typeName = globalProperty.Value.Summary.Substring(start, end - start);
 
                 // Does the mentioned type exist?

@@ -1,7 +1,6 @@
 ﻿@using System.Globalization
 
-<MudNumericField @ref="NumericField"
-                 id="num-field-id"
+<MudNumericField id="num-field-id"
                  Step="0.1M"
                  @bind-Value="Value"
                  Label="Numeric Input"
@@ -13,12 +12,10 @@
 <MudSwitch @bind-Value="@UsePattern" Label="Use Pattern"/>
 
 @code {
-    public static string __description__ = "Render as Type Number or Text";
+    public static string __description__ = "Render as Type Text and only emit pattern when requested";
 
     [Parameter]
     public bool UsePattern { get; set; }
 
     public decimal Value { get; set; }
-
-    public MudNumericField<decimal> NumericField { get; set; } = null!;
 }

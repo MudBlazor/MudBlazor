@@ -1,51 +1,54 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
-#nullable enable
+
+/// <summary>
+/// A customizable piece of text.
+/// </summary>
 public partial class MudText : MudComponentBase
 {
     protected string Classname =>
         new CssBuilder("mud-typography")
-            .AddClass($"mud-typography-{Typo.ToDescriptionString()}")
-            .AddClass($"mud-{Color.ToDescriptionString()}-text", Color != Color.Default && Color != Color.Inherit)
+            .AddClass($"mud-typography-{Typo.ToStringFast(true)}")
+            .AddClass($"mud-{Color.ToStringFast(true)}-text", Color != Color.Default && Color != Color.Inherit)
             .AddClass("mud-typography-gutterbottom", GutterBottom)
-            .AddClass($"mud-typography-align-{ConvertAlign(Align).ToDescriptionString()}", Align != Align.Inherit)
+            .AddClass($"mud-typography-align-{ConvertAlign(Align).ToStringFast(true)}", Align != Align.Inherit)
             .AddClass("d-inline", Inline)
+            .AddClass("mud-typography-nowrap", Truncate)
             .AddClass(Class)
             .Build();
 
+    /// <summary>
+    /// Whether text is displayed right-to-left.
+    /// </summary>
     [CascadingParameter(Name = "RightToLeft")]
     public bool RightToLeft { get; set; }
 
     /// <summary>
-    /// Applies theme typography styles to the element.
+    /// The theme style of the text.
     /// </summary>
     /// <remarks>
-    /// <para>
-    /// The rendered HTML tag is determined by the theme unless <see cref="HtmlTag"/> is set.
-    /// The tag affects the display type and the applicability of properties like <see cref="Align"/> and <see cref="GutterBottom"/>.
-    /// </para>
-    /// Defaults to <see cref="Typo.body1"/> which uses the block-level <c>p</c> element.
+    /// Defaults to <see cref="Typo.body1"/>. Uses the theme HTML tag unless <see cref="HtmlTag"/> is set.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Appearance)]
     public Typo Typo { get; set; } = Typo.body1;
 
     /// <summary>
-    /// The <c>text-align</c> that will be used.
+    /// The horizontal alignment of this text.
     /// </summary>
     /// <remarks>
-    /// Has no effect on inline displays.
-    /// Defaults to <see cref="Align.Inherit"/>.
+    /// Defaults to <see cref="Align.Inherit"/>. Controls which <c>text-align</c> will be used. Has no effect on inline displays.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Appearance)]
     public Align Align { get; set; } = Align.Inherit;
 
     /// <summary>
-    /// The theme color of the component.
+    /// The color of this text.
     /// </summary>
     /// <remarks>
     /// Defaults to <see cref="Color.Inherit"/>.
@@ -58,18 +61,20 @@ public partial class MudText : MudComponentBase
     /// Adds a bottom margin.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.
-    /// Has no effect on inline displays.
+    /// Defaults to <c>false</c>.  Has no effect on inline displays.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Appearance)]
     public bool GutterBottom { get; set; }
 
     /// <summary>
-    /// Adds the <c>d-inline</c> display class, allowing text to continue on the same line rather than starting a new line.
+    /// Whether this text continues on the same line.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>, meaning no display class will be added.
+    /// Defaults to <c>false</c>.
+    /// When <c>true</c>, the <c>d-inline</c> class is added so block elements such as headings and paragraphs stay on the same line.
+    /// When <c>false</c>, the element keeps its default display, so typos rendered as <c>span</c> (such as <see cref="Typo.caption"/>) remain inline.
+    /// Use <see cref="HtmlTag"/> to render those as a block element.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Behavior)]
@@ -83,22 +88,49 @@ public partial class MudText : MudComponentBase
     public RenderFragment? ChildContent { get; set; }
 
     /// <summary>
-    /// The HTML element that will be rendered (Example: <c>span</c>, <c>p</c>, <c>h1</c>).
+    /// The HTML element used for this text.         that will be rendered (Example: <c>span</c>, <c>p</c>, <c>h1</c>).
     /// </summary>
     /// <remarks>
-    /// <para>
-    /// This can be used to
+    /// Defaults to <c>null</c>, meaning the tag is automatically decided based on <see cref="Typo"/>.<br />
+    /// A custom tag such as <c>span</c>, <c>p</c>, <c>h1</c> can be used to
     /// <see href="https://developer.mozilla.org/docs/Web/HTML/Element#text_content">
-    /// specify the type of content for accessibility and SEO more accurately
-    /// </see>.
-    /// </para>
-    /// Defaults to <c>null</c>, meaning the tag be decided based on <see cref="Typo"/>.
+    /// specify the type of content for accessibility and SEO more accurately</see>.<br />
+    /// The tag affects the display type and the applicability of properties like <see cref="Align"/> and <see cref="GutterBottom"/>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Behavior)]
     public string? HtmlTag { get; set; }
 
+    /// <summary>
+    /// Truncates the text with an ellipsis if it overflows its container.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Text.Behavior)]
+    public bool Truncate { get; set; }
+
+    /// <inheritdoc />
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        builder.OpenElement(0, GetActualTag());
+        builder.AddMultipleAttributes(1, UserAttributes!);
+        builder.AddAttribute(2, "class", Classname);
+        builder.AddAttribute(3, "style", Style);
+        builder.AddContent(4, ChildContent);
+        builder.CloseElement();
+    }
+
     private string GetActualTag() => string.IsNullOrEmpty(HtmlTag) ? GetTagName(Typo) : HtmlTag;
+
+    // Renders the element a MudText with only a typo, a class and text would render, for library components that repeat it per item.
+    // It is a fragment so its hardcoded sequence numbers get their own region inside the caller's markup.
+    internal static RenderFragment RenderText(Typo typo, string? className, string? text, string? elementId = null) => builder =>
+    {
+        builder.OpenElement(0, GetTagName(typo));
+        builder.AddAttribute(1, "id", elementId);
+        builder.AddAttribute(2, "class", new CssBuilder("mud-typography").AddClass($"mud-typography-{typo.ToStringFast(true)}").AddClass(className).Build());
+        builder.AddContent(3, text);
+        builder.CloseElement();
+    };
 
     private static string GetTagName(Typo typo) => typo switch
     {

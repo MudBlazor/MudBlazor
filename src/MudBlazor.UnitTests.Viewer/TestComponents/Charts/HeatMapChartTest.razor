@@ -39,8 +39,8 @@
         </MudRadioGroup>
     </MudItem>
     <MudItem xs="10">
-        <MudChart ChartType="ChartType.HeatMap" ChartSeries="@Series" 
-            XAxisLabels="@XAxisLabels" ChartOptions="@options" LegendPosition="_showLegendPosition"></MudChart>
+        <MudChart T="double" ChartType="ChartType.HeatMap" ChartSeries="@Series" 
+        ChartLabels="@ChartLabels" ChartOptions="@options" LegendPosition="_showLegendPosition"></MudChart>
     </MudItem>
 </MudGrid>
 <MudGrid>
@@ -99,9 +99,10 @@
 </MudGrid>
 
 @code {
+
     public static string __description__ = "HeatMap Demo";
-    private ChartOptions options = new ChartOptions();
-    private List<ChartSeries> Series = new List<ChartSeries>();
+    private HeatMapChartOptions options = new HeatMapChartOptions();
+    private List<ChartSeries<double>> Series = new List<ChartSeries<double>>();
     private XAxisLabelPosition _XAxisLabelPosition = XAxisLabelPosition.Bottom;
     private YAxisLabelPosition _YAxisLabelPosition = YAxisLabelPosition.Left;
     private bool _enableGradient = false;
@@ -145,33 +146,35 @@
 
     private void BuildOptions()
     {
-        options = new ChartOptions();
+        options = new HeatMapChartOptions();
         options.XAxisLabelPosition = _XAxisLabelPosition;
         options.YAxisLabelPosition = _YAxisLabelPosition;
         options.EnableSmoothGradient = _enableGradient;
         options.ChartPalette = _colors.Take(_colorCount).ToArray();
+
+        options.ShowToolTips = _showValueToolTips;
         options.ShowLabels = _showValueLabels;
         options.ShowLegend = _legendVisible;
         options.ShowLegendLabels = _showLegendValues;
         StateHasChanged();
     }
 
-    public readonly List<ChartSeries> HeatMapSeries = new List<ChartSeries>()
+    public readonly List<ChartSeries<double>> HeatMapSeries = new List<ChartSeries<double>>()
     {
-        new ChartSeries() { Name = "Mo", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
-        new ChartSeries() { Name = "Te", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
-        new ChartSeries() { Name = "We", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
-        new ChartSeries() { Name = "Th", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
-        new ChartSeries() { Name = "Fr", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
-        new ChartSeries() { Name = "Sa", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
-        new ChartSeries() { Name = "Su", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
+        new() { Name = "Mo", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
+        new() { Name = "Te", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new() { Name = "We", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
+        new() { Name = "Th", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new() { Name = "Fr", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
+        new() { Name = "Sa", Data = new double[] { 35, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new() { Name = "Su", Data = new double[] { 22, 90, 62, 32, 05, 42, 63, 43, 155 } },
     };
 
-    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+    public string[] ChartLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
 
     private void RandomizeData()
     {
-        var newSeries = new List<ChartSeries>();
+        var newSeries = new List<ChartSeries<double>>();
         string[] days = { "Mo", "Te", "We", "Th", "Fr", "Sa", "Su" };
         int dataPoints = 9;
 
@@ -182,10 +185,11 @@
             {
                 data[i] = Random.Shared.NextDouble() * 100;
             }
-            newSeries.Add(new ChartSeries() { Name = day, Data = data });
+            newSeries.Add(new() { Name = day, Data = data });
         }
 
         Series = newSeries;
     }
 
 }
+

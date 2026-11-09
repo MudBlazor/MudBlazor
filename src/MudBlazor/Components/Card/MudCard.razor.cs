@@ -3,9 +3,8 @@ using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
-#nullable enable
     /// <summary>
-    /// Represents a block of content which can include a header, image, content, and actions.
+    /// Cards contain actions, text, or media like images or graphics. Keeping a card to a single subject keeps the design clean.
     /// </summary>
     /// <seealso cref="MudCardActions" />
     /// <seealso cref="MudCardContent" />
@@ -32,11 +31,10 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Can be overridden by <see cref="MudGlobal.Rounded"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
-        public bool Square { get; set; } = MudGlobal.Rounded == false;
+        public bool Square { get; set; }
 
         /// <summary>
         /// Displays an outline.
@@ -47,6 +45,16 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Card.Appearance)]
         public bool Outlined { get; set; }
+
+        /// <summary>
+        /// Adds visual padding to the content (<see cref="MudCardHeader"/>, <see cref="MudCardContent"/> or <see cref="MudCardActions"/>).
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Card.Appearance)]
+        public bool ContentPadding { get; set; } = true;
 
         /// <summary>
         /// The content within this component.

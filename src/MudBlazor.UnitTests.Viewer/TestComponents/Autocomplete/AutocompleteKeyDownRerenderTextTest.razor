@@ -1,0 +1,40 @@
+@using Microsoft.AspNetCore.Components.Web
+
+<MudAutocomplete T="User"
+                 Label="User Select"
+                 Clearable="true"
+                 Strict="false"
+                 ResetValueOnEmptyText="true"
+                 OnKeyDown="OnUserListKeyDown"
+                 SearchFunc="SearchUsersAsync"
+                 @bind-Value="SelectedUser"
+                 Variant="Variant.Outlined" />
+
+@code {
+    public static string __description__ = "Autocomplete should preserve the current text during key-triggered rerenders while no value is selected.";
+
+    private User? SelectedUser { get; set; }
+
+    private readonly List<User> _userList =
+    [
+        new(1, "User One"),
+        new(2, "User Two"),
+        new(3, "User Three")
+    ];
+
+    private Task<IEnumerable<User>> SearchUsersAsync(string? searchText, CancellationToken cancellationToken)
+    {
+        var users = _userList.Where(user => user.Username.Contains(searchText ?? string.Empty, StringComparison.InvariantCultureIgnoreCase));
+        return Task.FromResult<IEnumerable<User>>(users);
+    }
+
+    private Task OnUserListKeyDown(KeyboardEventArgs args)
+    {
+        return Task.CompletedTask;
+    }
+
+    public record User(int Id, string Username)
+    {
+        public override string ToString() => Username;
+    }
+}

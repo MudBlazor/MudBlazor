@@ -4,9 +4,8 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
-/// Represents a light color palette.
+/// Light-mode color palette that keeps MudBlazor's default theme colors from <see cref="Palette"/>.
 /// </summary>
 public class PaletteLight : Palette
 {

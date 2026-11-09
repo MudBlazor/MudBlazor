@@ -1,6 +1,6 @@
 ﻿<MudPopoverProvider />
 
-<MudSelect T="string" ValueChanged="ValueChanged" SelectedValuesChanged="ValuesChanged" MultiSelection="MultiSelection">
+<MudSelect T="string" ValueChanged="@ValueChanged" SelectedValuesChanged="@ValuesChanged" MultiSelection="@MultiSelection">
     <MudSelectItem T="string" Value="@("1")" />
     <MudSelectItem T="string" Value="@("2")" />
     <MudSelectItem T="string" Value="@("3")" />
@@ -11,9 +11,9 @@
     [Parameter]
     public bool MultiSelection { get; set; }
 
-    public int ValueChangeCount { get; set; }
+    public int ValueChangeCount { get; private set; }
 
-    public int ValuesChangeCount { get; set; }
+    public int ValuesChangeCount { get; private set; }
 
     private void ValueChanged()
     {

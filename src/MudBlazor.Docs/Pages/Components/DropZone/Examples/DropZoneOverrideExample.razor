@@ -16,7 +16,12 @@
         </MudDropZone>
     </ChildContent>
     <ItemRenderer>
-        <div class="mud-elevation-25 pa-4 my-4">@context.Name</div>
+        <MudStack Row Class="mud-elevation-25 pa-4 my-4">
+            <MudDragHandle T="DropItem">
+                <MudIcon Icon="@Icons.Material.Filled.DragHandle" Color="Color.Inherit" Class="mr-2" />
+            </MudDragHandle>
+            @context.Name
+        </MudStack>
     </ItemRenderer>
 </MudDropContainer>
 

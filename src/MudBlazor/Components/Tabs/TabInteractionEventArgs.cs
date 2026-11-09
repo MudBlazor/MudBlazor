@@ -4,7 +4,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// The information about a requested activity when <see cref="MudTabs.OnPreviewInteraction"/> occurs.

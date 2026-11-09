@@ -1,15 +1,19 @@
 ﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace MudBlazor
 {
-#nullable enable
 
     /// <summary>
     /// The options applied to an individual snackbar.
     /// </summary>
     public class SnackbarOptions : CommonSnackbarOptions
     {
+        private readonly string _severityIcon;
+        private string _icon;
+
         /// <summary>
         /// Occurs when the snackbar is clicked.
         /// </summary>
@@ -69,20 +73,17 @@ namespace MudBlazor
         public bool CloseAfterNavigation { get; set; }
 
         /// <summary>
-        /// Hides the icon for the snackbar.
-        /// </summary>
-        /// <remarks>
-        /// Defaults to <c>false</c>.
-        /// </remarks>
-        public bool HideIcon { get; set; }
-
-        /// <summary>
         /// The custom icon to display for the snackbar.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  Will be set to match the <see cref="Severity"/>.
+        /// Defaults to the icon matching the <see cref="Severity"/>.  Setting this to <c>null</c> restores that default.  Use <see cref="CommonSnackbarOptions.HideIcon"/> to hide the icon.
         /// </remarks>
-        public string Icon { get; set; }
+        [AllowNull]
+        public string Icon
+        {
+            get => _icon;
+            set => _icon = value ?? _severityIcon;
+        }
 
         /// <summary>
         /// The color of the icon to display.
@@ -100,6 +101,8 @@ namespace MudBlazor
         /// </remarks>
         public SnackbarDuplicatesBehavior DuplicatesBehavior { get; set; } = SnackbarDuplicatesBehavior.GlobalDefault;
 
+        internal bool RequiresInteraction => RequireInteraction ?? !string.IsNullOrWhiteSpace(Action);
+
         /// <summary>
         /// Creates new options for a snackbar.
         /// </summary>
@@ -109,18 +112,16 @@ namespace MudBlazor
         {
             Severity = severity;
 
-            if (string.IsNullOrEmpty(Icon))
+            _severityIcon = Severity switch
             {
-                Icon = Severity switch
-                {
-                    Severity.Normal => NormalIcon,
-                    Severity.Info => InfoIcon,
-                    Severity.Success => SuccessIcon,
-                    Severity.Warning => WarningIcon,
-                    Severity.Error => ErrorIcon,
-                    _ => throw new ArgumentOutOfRangeException(nameof(severity)),
-                };
-            }
+                Severity.Normal => NormalIcon,
+                Severity.Info => InfoIcon,
+                Severity.Success => SuccessIcon,
+                Severity.Warning => WarningIcon,
+                Severity.Error => ErrorIcon,
+                _ => throw new ArgumentOutOfRangeException(nameof(severity)),
+            };
+            _icon = _severityIcon;
         }
     }
 }

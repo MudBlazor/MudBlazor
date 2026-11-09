@@ -1,0 +1,39 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@using MudBlazor.Charts
+
+<MudPaper Class="doc-section-component-container">
+    <MudChart T="double" ChartType="ChartType.StackedBar" ChartSeries="@StackedDataSet" ChartOptions="@_barChartOptions" MatchBoundsToSize="true" Width="100%" Height="500px">
+        <Line ChartSeries="@LineDataSet" ChartOptions="@_lineChartOptions" />
+    </MudChart>
+</MudPaper>
+
+@code {
+    private List<ChartSeries<double>> StackedDataSet =>
+    [
+        new() { Name = "New", Data = new([400, 380, 350, 300, 320, 380, 390, 400, 420, 450, 400, 500, 1200, 450, 480, 400, 420, 450, 460, 480, 500, 580, 600, 650, 700, 600, 450, 500, 550, 580, 600, 620, 550]) },
+        new() { Name = "Upgrade", Data = new([300, 250, 200, 150, 180, 120, 130, 150, 180, 200, 220, 250, 200, 150, 180, 200, 220, 150, 180, 200, 220, 250, 280, 300, 250, 200, 230, 250, 280, 220, 250, 200, 280]) },
+        new() { Name = "Churn", Data = new([-1, -60, -60, -40, -70, -100, -80, -120, -130, -140, -150, -150, -200, -600, -150, -180, -190, -200, -210, -220, -230, -300, -320, -350, -380, -400, -500, -450, -420, -400, -450, -480, -500]) },
+        new() { Name = "Downgrade", Data = new([-1, -20, -30, -20, -40, -50, -60, -70, -70, -80, -90, -150, -200, -100, -80, -100, -110, -120, -130, -140, -150, -180, -150, -180, -200, -220, -250, -180, -150, -130, -150, -160, -180]) },
+    ];
+
+    private StackedBarChartOptions _barChartOptions = new StackedBarChartOptions()
+    {
+        ChartPalette = ["#4A89C2", "#80B5E2", "#E17C45", "#F4B183"],
+        BarWidthRatio = .95,
+        YAxisTicks = 400,
+        YAxisSuggestedMax = 1600,
+    };
+
+    private List<ChartSeries<double>> LineDataSet =>
+    [
+        new() { Name = "Overall Change", Data = new([ 650, 550, 450, 380, 300, 320, 350, 400, 380, 420, 350, 650, 880, -300, 400, 250, 300, 320, 280, 350, 300, 400, 380, 420, 750, 600, 200, 300, 400, 380, 350, 400, 200 ]) }
+    ];
+
+    private LineChartOptions _lineChartOptions = new LineChartOptions()
+    {
+        ChartPalette = ["#512DA8"],
+        ShowDataMarkers = true,
+        LineStrokeWidth = 1.8,
+    };
+}

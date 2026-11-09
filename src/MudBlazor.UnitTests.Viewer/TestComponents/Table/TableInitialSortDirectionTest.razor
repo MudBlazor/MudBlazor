@@ -1,0 +1,15 @@
+﻿<MudTable Items="@_examples" T="string">
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialSortDirection="@InitialSortDirection" SortBy="new Func<string, object>(x=>x)">#</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Nr">@context</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [Parameter]
+    public SortDirection InitialSortDirection { get; set; } = SortDirection.Descending;
+
+    private readonly IEnumerable<string> _examples = new List<string> { "B", "A", "C" };
+}

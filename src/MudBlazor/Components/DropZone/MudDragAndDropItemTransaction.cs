@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// The information related to a <see cref="MudDropZone{T}"/> drag-and-drop transaction.

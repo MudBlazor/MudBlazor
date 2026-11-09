@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 namespace MudBlazor;
 
-#nullable enable
 
 /// <summary>
 /// The data within a <see cref="MudTable{T}"/> group when grouping is enabled.

@@ -1,5 +1,4 @@
-comment:
-  require_changes: true
+comment: false
 coverage:
   status:
     project:

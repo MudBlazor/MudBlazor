@@ -6,9 +6,9 @@
 
 @inject InternalMudLocalizer Localizer
 
-@if (Column != null && !Column.HiddenState.Value)
+@if (!Column.HiddenState.Value)
 {
-    <th scope="col" class="@Classname" style="@Stylename" colspan="@Column?.HeaderColSpan" @attributes="@UserAttributes">
+    <th scope="col" class="@Classname" style="@Stylename" colspan="@Column.HeaderColSpan" @attributes="@UserAttributes">
         @if (Column.filterable && Column.FilterTemplate != null)
         {
             @Column.FilterTemplate(Column.FilterContext)
@@ -23,6 +23,15 @@
                 else if (fieldType.IsNumber && !(@operator ?? "").EndsWith("empty"))
                 {
                     <MudNumericField T="double?" Culture="@Column.Culture" Value="@valueNumber" ValueChanged="@NumberValueChangedAsync" FullWidth="true" Placeholder="@Localizer[LanguageResource.MudDataGrid_FilterValue]" Margin="@Margin.Dense" Immediate="true" DebounceInterval="@(!DataGrid.HasServerData ? 0 : 500.0)" />
+                }
+                else if (fieldType.IsEnum && @operator == FilterOperator.Enum.IsAnyOf)
+                {
+                    <MudSelect T="Enum" MultiSelection="true" SelectedValues="@valueEnums" SelectedValuesChanged="@EnumValuesChangedAsync" FullWidth="true" Dense="true" Margin="@Margin.Dense">
+                        @foreach (var item in EnumExtensions.GetSafeEnumValues(fieldType.InnerType))
+                        {
+                            <MudSelectItem T="Enum" Value="@item">@Localizer[item]</MudSelectItem>
+                        }
+                    </MudSelect>
                 }
                 else if (fieldType.IsEnum)
                 {
@@ -42,11 +51,15 @@
                         <MudSelectItem T="bool?" Value="@(false)">@Localizer[LanguageResource.MudDataGrid_False]</MudSelectItem>
                     </MudSelect>
                 }
+                else if (fieldType.IsDateOnly && !(@operator ?? "").EndsWith("empty"))
+                {
+                    <MudDatePicker Date="@valueDateOnlyForPicker" DateChanged="@DateOnlyValueChangedAsync" Margin="@Margin.Dense" />
+                }
                 else if (fieldType.IsDateTime && !(@operator ?? "").EndsWith("empty"))
                 {
                     <MudGrid Spacing="0">
                         <MudItem xs="7">
-                            <MudDatePicker Date="@valueDate" DateChanged="@DateValueChangedAsync" Margin="@Margin.Dense" />
+                            <MudDatePicker Date="@valueDateTimeForPicker" DateChanged="@DateTimeValueChangedAsync" Margin="@Margin.Dense" />
                         </MudItem>
                         <MudItem xs="5">
                             <MudTimePicker Time="@valueTime" TimeChanged="@TimeValueChangedAsync" Margin="@Margin.Dense" />
@@ -55,7 +68,7 @@
                 }
                 @if (!Column.ShowFilterIcon.HasValue || Column.ShowFilterIcon.Value)
                 {
-                    <MudMenu Class="column-filter-menu" Icon="@Icons.Material.Filled.FilterAlt" Size="@Size.Small" Dense="true">
+                    <MudMenu Class="column-filter-menu" Icon="@DataGrid.FilterIconFilled" Size="@Size.Small" Dense="true">
                         @foreach (var o in operators)
                         {
                             if (!string.IsNullOrWhiteSpace(o))
@@ -64,7 +77,7 @@
                             }
                         }
                     </MudMenu>
-                    <MudIconButton Class="align-self-center" Icon="@Icons.Material.Filled.FilterAltOff" Size="@Size.Small" OnClick="@ClearFilterAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_ClearFilter]"></MudIconButton>
+                    <MudIconButton Class="align-self-center filter-button clear" Icon="@DataGrid.FilterIconClear" Size="@Size.Small" OnClick="@ClearFilterAsync" aria-label="@Localizer[LanguageResource.MudDataGrid_ClearFilter]"></MudIconButton>
                 }
             </MudStack>
         }

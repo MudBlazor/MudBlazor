@@ -2,7 +2,6 @@
 
 namespace MudBlazor;
 
-#nullable enable
 /// <summary>
 /// Provides extension methods for sorting and for <see cref="MudTable{T}"/>.
 /// </summary>

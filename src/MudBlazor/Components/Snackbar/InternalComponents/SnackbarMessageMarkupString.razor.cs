@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Components;
 
 namespace MudBlazor.Components.Snackbar.InternalComponents;
 
-#nullable enable
+/// <summary>
+/// Renders a snackbar message supplied as an HTML <see cref="MarkupString"/>.
+/// </summary>
 public partial class SnackbarMessageMarkupString : ComponentBase
 {
     /// <summary>
