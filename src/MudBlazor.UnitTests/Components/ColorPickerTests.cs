@@ -1166,6 +1166,27 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task PaletteView_DoesNotRenderHiddenFieldAndControls()
+        {
+            // https://github.com/MudBlazor/MudBlazor/issues/9131
+            var comp = Context.Render<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.Palette);
+                p.Add(x => x.Variant, PickerVariant.Static);
+            });
+
+            comp.FindAll(".mud-picker-color-view-collection").Should().ContainSingle();
+            comp.FindAll(".mud-picker-color-picker").Should().BeEmpty();
+            comp.FindAll(".mud-picker-color-controls").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ViewMode, ColorPickerView.Spectrum));
+
+            comp.FindAll(".mud-picker-color-view").Should().BeEmpty();
+            comp.FindAll(".mud-picker-color-picker").Should().ContainSingle();
+            comp.FindAll(".mud-picker-color-controls").Should().ContainSingle();
+        }
+
+        [Test]
         [TestCase(PickerVariant.Static, false)]
         [TestCase(PickerVariant.Inline, true)]
         [TestCase(PickerVariant.Dialog, true)]

@@ -1,0 +1,22 @@
+@using MudBlazor.Utilities
+
+@* Repro for https://github.com/MudBlazor/MudBlazor/issues/9131 *@
+<div style="display:flex; gap:24px; align-items:flex-start; padding:16px;">
+    <div id="case-default" style="outline:2px dashed red;">
+        <MudText Typo="Typo.caption">Static + Palette view, defaults</MudText>
+        <MudColorPicker PickerVariant="PickerVariant.Static" ColorPickerView="ColorPickerView.Palette" Palette="@_palette" />
+    </div>
+    <div id="case-noinputs" style="outline:2px dashed red;">
+        <MudText Typo="Typo.caption">Static + Palette, no field/sliders/inputs/preview</MudText>
+        <MudColorPicker PickerVariant="PickerVariant.Static" ColorPickerView="ColorPickerView.Palette" Palette="@_palette"
+                        ShowColorField="false" ShowSliders="false" ShowInputs="false" ShowPreview="false" />
+    </div>
+    <div id="case-defaultpalette" style="outline:2px dashed red;">
+        <MudText Typo="Typo.caption">Static + Palette, default 35 colors</MudText>
+        <MudColorPicker PickerVariant="PickerVariant.Static" ColorPickerView="ColorPickerView.Palette" />
+    </div>
+</div>
+
+@code {
+    private readonly IEnumerable<MudColor> _palette = ["#ff4081ff", "#2196f3ff", "#00c853ff", "#ff9800ff", "#f44336ff"];
+}
