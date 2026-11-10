@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
 
 namespace MudBlazor.Benchmarks;
 
@@ -12,7 +11,6 @@ namespace MudBlazor.Benchmarks;
 /// This helps determine if the comparer caching optimization is worthwhile.
 /// </summary>
 [MemoryDiagnoser]
-[SimpleJob(RuntimeMoniker.Net10_0)]
 public class DelegateInvocationBenchmark
 {
     private readonly IEqualityComparer<int> _cachedComparer = EqualityComparer<int>.Default;

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0;$(PrimaryTargetFramework)</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0;$(PrimaryTargetFramework)</TargetFrameworks>
     <Nullable>enable</Nullable>
     <EnumGenerator_ForceInternal>true</EnumGenerator_ForceInternal>
   </PropertyGroup>
@@ -89,6 +89,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.1" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net11.0' ">
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="11.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="11.0.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.ResxSourceGenerator" Version="3.11.0-beta1.26226.5">
@@ -121,7 +126,7 @@
   <PropertyGroup>
     <!-- Check if we're the first TFM when building directly (no outer build) -->
     <_IsFirstTfm>false</_IsFirstTfm>
-    <_IsFirstTfm Condition="'$(TargetFramework)' == 'net10.0'">true</_IsFirstTfm>
+    <_IsFirstTfm Condition="'$(TargetFramework)' == '$(PrimaryTargetFramework)'">true</_IsFirstTfm>
   </PropertyGroup>
 
   <Target Name="BuildWebAssets"
@@ -193,7 +198,7 @@
   <!--Add analyzer to build output so it works transitively -->
   <Target Name="_AddAnalyzersToOutput">
     <!--Limit to one copy (MudBlazor is multi targeted) analyzers are .net standard 2.0 -->
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
+    <ItemGroup Condition=" '$(TargetFramework)' == '$(PrimaryTargetFramework)' ">
       <TfmSpecificPackageFile Include="..\MudBlazor.Analyzers\bin\$(Configuration)\netstandard2.0\$(AssemblyName).Analyzers.dll" PackagePath="analyzers/dotnet/cs" />
       <TfmSpecificPackageFile Include="..\MudBlazor.Analyzers.CodeFixes\bin\$(Configuration)\netstandard2.0\$(AssemblyName).Analyzers.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
       <!-- Add compiler visible properties to nuget for analyzers -->

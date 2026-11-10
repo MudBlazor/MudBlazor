@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Jobs;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 
@@ -14,7 +13,6 @@ namespace MudBlazor.Benchmarks;
 /// Tests performance impact of custom comparers, static vs dynamic comparers, and equality checks.
 /// </summary>
 [MemoryDiagnoser]
-[SimpleJob(RuntimeMoniker.Net10_0)]
 public class ParameterStateComparerBenchmark
 {
     private SyntheticParameterStateContainer? _container;
