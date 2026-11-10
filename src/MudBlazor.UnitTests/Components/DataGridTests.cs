@@ -14,6 +14,9 @@ using Bunit;
 using Bunit.Rendering;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
+using Moq;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.UnitTests.TestComponents.DataGrid;
@@ -1392,6 +1395,201 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("mud-table-pagination-actions");
             await pagerContent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowPageNumber, false));
             comp.Markup.Should().NotContain("1-10 of 20");
+        }
+
+        /// <summary>
+        /// Verifies the pager wires MudPagination to the grid's page state and hides page buttons by default.
+        /// </summary>
+        [Test]
+        public void DataGridPagerUsesMudPagination()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var pagination = comp.FindComponent<MudPagination>().Instance;
+
+            // the pager wires MudPagination to the grid's page state (20 items, 10 per page => 2 pages, first page selected)
+            pagination.Count.Should().Be(2);
+            pagination.Selected.Should().Be(1);
+
+            // first and last navigation buttons are shown, page buttons are hidden by default for backward compatibility
+            pagination.ShowFirstButton.Should().BeTrue();
+            pagination.ShowLastButton.Should().BeTrue();
+            pagination.ShowPageButtons.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Verifies ShowPageButtons renders page buttons that jump the grid directly to a page.
+        /// </summary>
+        [Test]
+        public async Task DataGridPagerShowPageButtons()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+            var pagerContent = comp.FindComponent<MudDataGridPager<DataGridPaginationTest.Item>>();
+
+            // page buttons are hidden by default
+            comp.FindComponent<MudPagination>().Instance.ShowPageButtons.Should().BeFalse();
+
+            // enable the clickable page buttons
+            await pagerContent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowPageButtons, true));
+            comp.FindComponent<MudPagination>().Instance.ShowPageButtons.Should().BeTrue();
+
+            // we start on the first page
+            dataGrid.Instance.CurrentPage.Should().Be(0);
+
+            // clicking the "2" page button jumps the grid directly to the second page
+            await comp.FindAll(".mud-pagination button").Single(button => button.TextContent.Trim() == "2").ClickAsync();
+            dataGrid.Instance.CurrentPage.Should().Be(1);
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("10");
+        }
+
+        /// <summary>
+        /// Verifies the pager passes its appearance parameters through to MudPagination.
+        /// </summary>
+        [Test]
+        public async Task DataGridPagerPaginationAppearance()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var pagerContent = comp.FindComponent<MudDataGridPager<DataGridPaginationTest.Item>>();
+
+            // defaults match MudPagination's defaults
+            var pagination = comp.FindComponent<MudPagination>().Instance;
+            pagination.Variant.Should().Be(Variant.Text);
+            pagination.Size.Should().Be(Size.Medium);
+            pagination.Color.Should().Be(Color.Primary);
+
+            await pagerContent.SetParametersAndRenderAsync(parameters =>
+            {
+                parameters.Add(x => x.PaginationVariant, Variant.Filled);
+                parameters.Add(x => x.PaginationSize, Size.Large);
+                parameters.Add(x => x.PaginationColor, Color.Secondary);
+            });
+
+            pagination = comp.FindComponent<MudPagination>().Instance;
+            pagination.Variant.Should().Be(Variant.Filled);
+            pagination.Size.Should().Be(Size.Large);
+            pagination.Color.Should().Be(Color.Secondary);
+        }
+
+        /// <summary>
+        /// Verifies the icon button layout only applies while the pager has no page buttons.
+        /// </summary>
+        [Test]
+        public async Task DataGridPagerIconButtonLayoutFollowsShowPageButtons()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var pagerContent = comp.FindComponent<MudDataGridPager<DataGridPaginationTest.Item>>();
+
+            comp.Find(".mud-pagination").ClassList.Should().Contain("mud-table-pagination-icon-buttons");
+
+            await pagerContent.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowPageButtons, true));
+
+            comp.Find(".mud-pagination").ClassList.Should().NotContain("mud-table-pagination-icon-buttons");
+        }
+
+        /// <summary>
+        /// Verifies the navigation buttons keep their accessible names when rendered by MudPagination.
+        /// </summary>
+        [Test]
+        public void DataGridPagerNavigationButtonsHaveAccessibleNames()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+
+            var labels = comp.FindAll(".mud-table-pagination-actions button").Select(button => button.GetAttribute("aria-label"));
+
+            labels.Should().Equal("First page", "Previous page", "Next page", "Last page");
+        }
+
+        /// <summary>
+        /// Verifies the pager labels its navigation buttons from its own resource keys, so existing translations keep working.
+        /// </summary>
+        [Test]
+        public void DataGridPagerNavigationButtonsUsePagerResourceKeys()
+        {
+            var interceptor = new Mock<ILocalizationInterceptor>();
+            interceptor.Setup(x => x.Handle(It.IsAny<string>(), It.IsAny<object[]>()))
+                .Returns((string key, object[] _) => new LocalizedString(key, key));
+            Context.Services.AddSingleton(interceptor.Object);
+
+            var comp = Context.Render<DataGridPaginationTest>();
+
+            var labels = comp.FindAll(".mud-table-pagination-actions button").Select(button => button.GetAttribute("aria-label"));
+
+            labels.Should().Equal("MudDataGridPager_FirstPage", "MudDataGridPager_PreviousPage", "MudDataGridPager_NextPage", "MudDataGridPager_LastPage");
+        }
+
+        /// <summary>
+        /// Verifies NavigateTo keeps a page index inside the available pages.
+        /// </summary>
+        [TestCase(-1, 0)]
+        [TestCase(1, 1)]
+        [TestCase(99, 1)]
+        public async Task DataGridNavigateToClampsPageIndex(int pageIndex, int expectedPage)
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+
+            // 20 items at 10 per page gives the page indices 0 and 1
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(pageIndex));
+
+            dataGrid.Instance.CurrentPage.Should().Be(expectedPage);
+            comp.FindComponent<MudPagination>().Instance.Selected.Should().Be(expectedPage + 1);
+        }
+
+        /// <summary>
+        /// Verifies NavigateTo stops at the last page when the grid loads its data from a server.
+        /// </summary>
+        [Test]
+        public async Task DataGridNavigateToClampsPageIndexWithServerData()
+        {
+            var comp = Context.Render<DataGridServerPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridServerPaginationTest.Model>>();
+
+            // 100 items at 10 per page gives the page indices 0 to 9
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(99));
+
+            dataGrid.Instance.CurrentPage.Should().Be(9);
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("Name 90");
+        }
+
+        /// <summary>
+        /// Verifies NavigateTo stays on the first page when the grid has no items.
+        /// </summary>
+        [TestCase(-1)]
+        [TestCase(0)]
+        [TestCase(3)]
+        public async Task DataGridNavigateToStaysOnFirstPageWhenEmpty(int pageIndex)
+        {
+            var comp = Context.Render<MudDataGrid<int>>(parameters => parameters.Add(x => x.Items, Array.Empty<int>()));
+
+            await comp.InvokeAsync(() => comp.Instance.NavigateTo(pageIndex));
+
+            comp.Instance.CurrentPage.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Verifies the grid and pager move to a valid page when a filter removes the current page.
+        /// </summary>
+        [Test]
+        public async Task DataGridPagerFollowsGridWhenFilterRemovesCurrentPage()
+        {
+            var comp = Context.Render<DataGridPaginationTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridPaginationTest.Item>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.NavigateTo(1));
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("10");
+
+            await dataGrid.SetParametersAndRenderAsync(parameters =>
+                parameters.Add(x => x.QuickFilter, (DataGridPaginationTest.Item x) => x.Name == "3"));
+
+            dataGrid.Instance.CurrentPage.Should().Be(0);
+            dataGrid.Find(".mud-table-body td").TextContent.Trim().Should().Be("3");
+
+            var pagination = comp.FindComponent<MudPagination>().Instance;
+            pagination.Count.Should().Be(1);
+            pagination.Selected.Should().Be(1);
+
+            // only one page remains, so there is nowhere left to navigate
+            comp.FindAll(".mud-table-pagination-actions button").Should().OnlyContain(button => button.IsDisabled());
         }
 
         [Test]
