@@ -1165,10 +1165,12 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        /// <summary>
+        /// Palette view does not render the color field or controls underneath the palette (#9131).
+        /// </summary>
         [Test]
         public async Task PaletteView_DoesNotRenderHiddenFieldAndControls()
         {
-            // https://github.com/MudBlazor/MudBlazor/issues/9131
             var comp = Context.Render<SimpleColorPickerTest>(p =>
             {
                 p.Add(x => x.ViewMode, ColorPickerView.Palette);
