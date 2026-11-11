@@ -47,6 +47,11 @@ public interface IAxisChartOptions : IChartOptions
     public int XAxisLabelRotation { get; set; }
 
     /// <summary>
+    /// Draws every nth label on the X-axis, leaving the ones in between blank.
+    /// </summary>
+    public int XAxisLabelInterval { get; set; }
+
+    /// <summary>
     /// The title of the X-axis.
     /// </summary>
     public string? XAxisTitle { get; set; }

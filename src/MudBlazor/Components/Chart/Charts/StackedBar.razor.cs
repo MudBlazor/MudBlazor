@@ -235,7 +235,7 @@ namespace MudBlazor.Charts
                 };
                 VerticalLines.Add(line);
 
-                var label = j < ChartLabels.Length ? ChartLabels[j] : "";
+                var label = j < ChartLabels.Length && ShouldLabelVerticalGridLine(j) ? ChartLabels[j] : "";
                 var text = new SvgText()
                 {
                     X = x,

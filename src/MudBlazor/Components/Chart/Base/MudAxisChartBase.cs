@@ -77,6 +77,17 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     protected readonly List<SvgText> VerticalValues = [];
 
     /// <summary>
+    /// Whether the X-axis label at this index is drawn, which <see cref="IAxisChartOptions.XAxisLabelInterval"/> decides.
+    /// </summary>
+    /// <remarks>
+    /// Only the axis is thinned out.
+    /// The label a tooltip shows is read separately, so a point whose axis label was skipped still names itself on hover.
+    /// </remarks>
+    /// <param name="index">The index of the vertical grid line.</param>
+    protected bool ShouldLabelVerticalGridLine(int index) =>
+        index % Math.Max(1, ChartOptions?.XAxisLabelInterval ?? 1) == 0;
+
+    /// <summary>
     /// The legends of the chart.
     /// </summary>
     protected readonly List<SvgLegend> Legends = [];

@@ -608,5 +608,29 @@ namespace MudBlazor.UnitTests.Charts
             labels.Should().HaveCount(2);
             labels.Select(l => l.TextContent).Should().ContainInOrder(1000.ToString("N0"), 2000.ToString("N0"));
         }
+
+        /// <summary>
+        /// XAxisLabelInterval leaves out the axis labels in between.
+        /// </summary>
+        [Test]
+        public void BarChartXAxisLabelIntervalThinsTheAxis()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30, 40, 50 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D", "E"])
+                .Add(p => p.ChartOptions, new BarChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    XAxisLabelInterval = 2
+                }));
+
+            comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C", "E");
+        }
     }
 }

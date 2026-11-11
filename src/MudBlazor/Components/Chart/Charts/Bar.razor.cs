@@ -159,7 +159,7 @@ namespace MudBlazor.Charts
                 var line = new SvgPath { Index = i, Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}" };
                 VerticalLines.Add(line);
 
-                var xLabels = i < ChartLabels.Length ? ChartLabels[i] : "";
+                var xLabels = i < ChartLabels.Length && ShouldLabelVerticalGridLine(i) ? ChartLabels[i] : "";
                 var lineValue = new SvgText { X = x + (_barGroupWidth / 2) - (_barGap * spaces / 2) - leftShift, Y = _boundHeight - XAxisLabelOffset, Value = xLabels };
                 VerticalValues.Add(lineValue);
             }

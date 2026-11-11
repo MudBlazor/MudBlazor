@@ -804,5 +804,36 @@ namespace MudBlazor.UnitTests.Charts
                 .Where(x => x.GetAttribute("opacity") is null)
                 .Should().OnlyContain(x => x.GetAttribute("fill") == "none");
         }
+
+        /// <summary>
+        /// XAxisLabelInterval leaves out the axis labels in between and nothing else.
+        /// </summary>
+        [Test]
+        public async Task LineChartXAxisLabelIntervalThinsTheAxisOnly()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30, 40, 50 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D", "E"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    XAxisLabelInterval = 2,
+                    ShowToolTips = true,
+                    TooltipTitleFormat = "{{Y_VALUE}} - {{X_VALUE}}"
+                }));
+
+            // A label that was left out is empty, and an empty label is skipped rather than rendered.
+            comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C", "E");
+
+            // B has no label on the axis, but its own point still names it on hover.
+            await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new());
+            comp.Find("g.svg-tooltip").TextContent.Should().Contain("20 - B");
+        }
     }
 }

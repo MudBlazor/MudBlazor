@@ -143,7 +143,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             };
             VerticalLines.Add(line);
 
-            var xLabels = GetVerticalGridLineLabel(i);
+            var xLabels = ShouldLabelVerticalGridLine(i) ? GetVerticalGridLineLabel(i) : string.Empty;
 
             var lineValue = new SvgText
             {
