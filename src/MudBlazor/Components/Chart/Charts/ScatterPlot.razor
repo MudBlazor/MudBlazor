@@ -77,20 +77,18 @@
             {
                 var isHovered = item.Equals(HoveredDataPointPath);
 
-                // Always-visible data point marker
-                if (!isHovered)
-                {
-                    builder.OpenElement(seq++, "circle");
-                    builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
-                    builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
-                    builder.AddAttribute(seq++, "fill", color);
-                    builder.AddAttribute(seq++, "stroke", color);
-                    builder.AddAttribute(seq++, "stroke-width", DataPointStroke.ToStr());
-                    builder.AddAttribute(seq++, "cx", item.CX.ToStr());
-                    builder.AddAttribute(seq++, "cy", item.CY.ToStr());
-                    builder.AddAttribute(seq++, "r", PointRadius.ToStr());
-                    builder.CloseElement();
-                }
+                // Always-visible data point marker, kept for the hovered point too, under the filled hover circle.
+                // Leaving it out shifts the sequence numbers of everything after it, so every later point would be rebuilt on each hover.
+                builder.OpenElement(seq++, "circle");
+                builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
+                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+                builder.AddAttribute(seq++, "fill", color);
+                builder.AddAttribute(seq++, "stroke", color);
+                builder.AddAttribute(seq++, "stroke-width", DataPointStroke.ToStr());
+                builder.AddAttribute(seq++, "cx", item.CX.ToStr());
+                builder.AddAttribute(seq++, "cy", item.CY.ToStr());
+                builder.AddAttribute(seq++, "r", PointRadius.ToStr());
+                builder.CloseElement();
 
                 // Optional data label
                 if (ChartOptions?.ShowDataLabels is true)

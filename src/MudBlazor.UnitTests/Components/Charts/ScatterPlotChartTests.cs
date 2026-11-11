@@ -1000,5 +1000,33 @@ namespace MudBlazor.UnitTests.Charts
             (dots.GetAttribute("d")!.Split('L').Length - 1).Should().Be(1, because: "the lone reading gets drawn");
             dots.GetAttribute("stroke-linecap").Should().Be("round", because: "a zero-length segment only paints under a round cap");
         }
+
+        /// <summary>
+        /// Hovering a point keeps its marker under the hover circle instead of taking it out of the chart.
+        /// </summary>
+        [Test]
+        public async Task ScatterPlotHoverKeepsEveryMarker()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((10, 20), (20, 30), (30, 10), (40, 40)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    ShowToolTips = true,
+                }));
+
+            int MarkerCount() => comp.FindAll("circle.mud-chart-point").Count(x => !x.HasAttribute("opacity"));
+            MarkerCount().Should().Be(4);
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync();
+
+            // Leaving the hovered marker out shifted the sequence numbers of every point drawn after it, so each hover rebuilt all of them.
+            MarkerCount().Should().Be(4);
+        }
     }
 }

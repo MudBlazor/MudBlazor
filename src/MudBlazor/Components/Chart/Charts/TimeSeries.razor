@@ -118,7 +118,9 @@
             {
                 bool isHoveredPoint = item.Equals(HoveredDataPointPath);
 
-                if (showDataMarkers && !isHoveredPoint)
+                // The hovered point keeps its marker under the filled hover circle.
+                // Leaving it out shifts the sequence numbers of everything after it, so every later point would be rebuilt on each hover.
+                if (showDataMarkers)
                 {
                     builder.OpenElement(seq++, "circle");
                     builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
