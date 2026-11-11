@@ -634,6 +634,9 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C", "E");
         }
 
+        /// <summary>
+        /// A tooltip on a bar that reaches the top of a short chart flips into the bar, with or without a TooltipTemplate.
+        /// </summary>
         [TestCase(false)]
         [TestCase(true)]
         public async Task BarChartTooltipFlipsIntoABarWithNoRoomAbove(bool useTemplate)

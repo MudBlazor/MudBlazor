@@ -917,6 +917,9 @@ namespace MudBlazor.UnitTests.Charts
             Tooltip().TipY.Should().BeGreaterThan(Tooltip().BaseY, "the triangle should point down at the point");
         }
 
+        /// <summary>
+        /// A wide tooltip on the first or last point slides inside the chart while its triangle stays on the point.
+        /// </summary>
         [TestCase(false)]
         [TestCase(true)]
         public async Task LineChartTooltipStaysInsideTheSideEdges(bool useTemplate)
