@@ -113,6 +113,7 @@
                     builder.OpenElement(seq++, "circle");
                     builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
                     builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
+                    builder.AddAttribute(seq++, "fill", "none");
                     builder.AddAttribute(seq++, "stroke", color);
                     builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
                     builder.AddAttribute(seq++, "cx", item.CX.ToStr());
@@ -122,19 +123,22 @@
                 }
 
                 // Hoverable point (invisible until hovered)
-                builder.OpenElement(seq++, "circle");
-                builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
-                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
-                builder.AddAttribute(seq++, "fill", item.Equals(HoveredDataPointPath) ? color : string.Empty);
-                builder.AddAttribute(seq++, "stroke", color);
-                builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
-                builder.AddAttribute(seq++, "opacity", item.Equals(HoveredDataPointPath) ? 1 : 0);
-                builder.AddAttribute(seq++, "cx", item.CX.ToStr());
-                builder.AddAttribute(seq++, "cy", item.CY.ToStr());
-                builder.AddAttribute(seq++, "r", DataPointHoverRadius.ToStr());
-                builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, item)));
-                builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnDataPointMouseOut));
-                builder.CloseElement();
+                if (ChartOptions?.ShowToolTips is not false)
+                {
+                    builder.OpenElement(seq++, "circle");
+                    builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
+                    builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
+                    builder.AddAttribute(seq++, "fill", item.Equals(HoveredDataPointPath) ? color : string.Empty);
+                    builder.AddAttribute(seq++, "stroke", color);
+                    builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
+                    builder.AddAttribute(seq++, "opacity", item.Equals(HoveredDataPointPath) ? 1 : 0);
+                    builder.AddAttribute(seq++, "cx", item.CX.ToStr());
+                    builder.AddAttribute(seq++, "cy", item.CY.ToStr());
+                    builder.AddAttribute(seq++, "r", DataPointHoverRadius.ToStr());
+                    builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, item)));
+                    builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnDataPointMouseOut));
+                    builder.CloseElement();
+                }
             }
         }
     };

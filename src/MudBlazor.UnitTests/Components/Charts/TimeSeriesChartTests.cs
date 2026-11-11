@@ -500,5 +500,30 @@ namespace MudBlazor.UnitTests.Charts
             (dots.GetAttribute("d")!.Split('L').Length - 1).Should().Be(1, because: "the lone reading gets drawn");
             dots.GetAttribute("stroke-linecap").Should().Be("round", because: "a zero-length segment only paints under a round cap");
         }
+
+        /// <summary>
+        /// Data markers are drawn as rings, and when tooltips are turned off.
+        /// </summary>
+        [Test]
+        public void TimeSeriesChartDataMarkersAreRingsAndRenderWithoutTooltips()
+        {
+            SetupBBoxInterop();
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(new DateTime(2000, 1, 1)))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions
+                {
+                    TimeLabelSpacing = TimeSpan.FromHours(1),
+                    ShowDataMarkers = true,
+                    ShowToolTips = false
+                }));
+
+            // With tooltips off the hover targets are left out, so each point is drawn exactly once.
+            var markers = comp.FindAll("circle.mud-chart-point");
+
+            markers.Should().HaveCount(4);
+            markers.Should().OnlyContain(x => x.GetAttribute("fill") == "none");
+        }
     }
 }

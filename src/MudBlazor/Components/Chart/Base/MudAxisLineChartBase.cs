@@ -65,6 +65,17 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     protected virtual bool ShouldAlwaysPopulateDataPoints => false;
 
     /// <summary>
+    /// Whether the data points behind the tooltips and the visible markers need to be collected on this render.
+    /// </summary>
+    /// <remarks>
+    /// The markers are drawn from the same data points as the tooltips, so a chart with markers on and tooltips off used to draw nothing.
+    /// </remarks>
+    private bool ShouldPopulateDataPoints =>
+        ChartOptions?.ShowToolTips == true
+        || ChartOptions?.ShowDataMarkers == true
+        || ShouldAlwaysPopulateDataPoints;
+
+    /// <summary>
     /// Gets the data value for a specific series and data point.
     /// </summary>
     /// <typeparam name="TReturn">The type of the return value.</typeparam>
@@ -303,7 +314,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             chartLine.Append(' ');
             chartLine.Append(ToS(y));
 
-            if (ChartOptions?.ShowToolTips == true || ShouldAlwaysPopulateDataPoints)
+            if (ShouldPopulateDataPoints)
             {
                 chartDataCircles.Add(new SvgCircle
                 {
@@ -373,7 +384,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 }
                 lastPointX = sx;
 
-                if (ChartOptions?.ShowToolTips == true)
+                if (ShouldPopulateDataPoints)
                 {
                     chartDataCircles.Add(new SvgCircle
                     {
@@ -425,8 +436,8 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 chartLine.Append(ToS(y));
 
                 var localIndex = j / InterpolationResolution;
-                // Add tooltip points for interpolated data if needed
-                if (j % InterpolationResolution == 0 && ChartOptions?.ShowToolTips == true &&
+                // Collect the data point that this stretch of the interpolated line came from
+                if (j % InterpolationResolution == 0 && ShouldPopulateDataPoints &&
                     localIndex < segment.Count)
                 {
                     var originalIndex = segment[localIndex];
