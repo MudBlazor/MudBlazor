@@ -527,6 +527,34 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         /// <summary>
+        /// Hovering a point keeps its marker under the hover circle instead of taking it out of the chart.
+        /// </summary>
+        [Test]
+        public async Task TimeSeriesChartHoverKeepsEveryMarker()
+        {
+            SetupBBoxInterop();
+            var time = new DateTime(2000, 1, 1);
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(time, count: 4))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions
+                {
+                    TimeLabelSpacing = TimeSpan.FromHours(1),
+                    ShowDataMarkers = true,
+                    ShowToolTips = true,
+                }));
+
+            int MarkerCount() => comp.FindAll("circle.mud-chart-point").Count(x => !x.HasAttribute("opacity"));
+            MarkerCount().Should().Be(4);
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            // Leaving the hovered marker out shifted the sequence numbers of every point drawn after it, so each hover rebuilt all of them.
+            MarkerCount().Should().Be(4);
+        }
+
+        /// <summary>
         /// YAxisTicks = 0 picks a round step that fits the values.
         /// </summary>
         [Test]
