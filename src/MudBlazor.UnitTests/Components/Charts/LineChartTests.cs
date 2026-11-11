@@ -1,10 +1,12 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+using System.Globalization;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Charts;
+using MudBlazor.Interop;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
@@ -834,6 +836,85 @@ namespace MudBlazor.UnitTests.Charts
             // B has no label on the axis, but its own point still names it on hover.
             await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new());
             comp.Find("g.svg-tooltip").TextContent.Should().Contain("20 - B");
+        }
+
+        /// <summary>
+        /// A point at the top of the chart has no room for its tooltip above it, so the tooltip is drawn below the point instead of hanging off the chart.
+        /// A ChartTooltip written into a TooltipTemplate is placed by the chart too, so it has to flip the same way.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task LineChartTooltipFlipsBelowAPointWithNoRoomAbove(bool useTemplate)
+        {
+            Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 40, Height: 16));
+
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 50, 30 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters =>
+            {
+                parameters
+                    .Add(p => p.ChartType, ChartType.Line)
+                    .Add(p => p.MatchBoundsToSize, true)
+                    .Add(p => p.ChartSeries, chartSeries)
+                    .Add(p => p.ChartLabels, ["A", "B", "C"])
+                    .Add(p => p.ChartOptions, new LineChartOptions
+                    {
+                        ChartPalette = _baseChartPalette,
+                        ShowToolTips = true,
+                        TooltipTitleFormat = "{{Y_VALUE}}",
+                        TooltipSubtitleFormat = "{{X_VALUE}}",
+                    });
+
+                if (useTemplate)
+                {
+                    parameters.Add(p => p.TooltipTemplate, context => builder =>
+                    {
+                        builder.OpenComponent<ChartTooltip>(0);
+                        builder.AddComponentParameter(1, nameof(ChartTooltip.Title), context.Segment.LabelYValue);
+                        builder.AddComponentParameter(2, nameof(ChartTooltip.Subtitle), context.Segment.LabelXValue);
+                        builder.AddComponentParameter(3, nameof(ChartTooltip.X), 0d);
+                        builder.AddComponentParameter(4, nameof(ChartTooltip.Y), 0d);
+                        builder.CloseComponent();
+                    });
+                }
+            });
+
+            // A short chart like a dashboard tile, where the top gridline is close to the edge.
+            MudAxisChartBase<double, LineChartOptions> line = comp.FindComponent<Line<double>>().Instance;
+            await comp.InvokeAsync(() => line.OnElementSizeChanged(new ElementSize { Width = 390, Height = 160, Timestamp = 1 }));
+            comp.WaitForAssertion(() => comp.Find("svg.mud-chart-line").GetAttribute("viewBox").Should().Be("0 0 390 160"));
+
+            // The tooltip is laid out against the chart's own coordinates, so a template's offset is added back on.
+            (double Top, double Bottom, double TipY, double BaseY) Tooltip()
+            {
+                var offsetY = useTemplate ? double.Parse(comp.Find("g.mud-chart-tooltip").GetAttribute("transform")!.Split(',', ')')[1], CultureInfo.InvariantCulture) : 0;
+                var rect = comp.Find("g.svg-tooltip rect");
+                var top = offsetY + double.Parse(rect.GetAttribute("y")!, CultureInfo.InvariantCulture);
+                var bottom = top + double.Parse(rect.GetAttribute("height")!, CultureInfo.InvariantCulture);
+                var triangle = comp.Find("g.svg-tooltip polygon").GetAttribute("points")!.Split(' ')
+                    .Select(point => offsetY + double.Parse(point.Split(',')[1], CultureInfo.InvariantCulture)).ToArray();
+                return (top, bottom, triangle[2], triangle[0]);
+            }
+
+            double PointY(int index) => double.Parse(comp.FindAll("circle.mud-chart-point")[index].GetAttribute("cy")!, CultureInfo.InvariantCulture);
+
+            // The highest reading sits on the top gridline, with less room above it than the tooltip is tall.
+            var topPointY = PointY(1);
+            await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new());
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+
+            var flipped = Tooltip();
+            flipped.Top.Should().BeGreaterThan(topPointY, "the tooltip should sit below the point it describes");
+            flipped.TipY.Should().BeLessThan(flipped.BaseY, "the triangle should point up at the point");
+
+            // The lowest reading has plenty of room, so its tooltip stays above it.
+            var lowPointY = PointY(0);
+            await comp.FindAll("circle.mud-chart-point")[0].MouseOverAsync(new());
+            comp.WaitForAssertion(() => Tooltip().Bottom.Should().BeLessThan(lowPointY));
+            Tooltip().TipY.Should().BeGreaterThan(Tooltip().BaseY, "the triangle should point down at the point");
         }
     }
 }

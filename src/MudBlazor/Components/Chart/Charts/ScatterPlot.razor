@@ -24,7 +24,7 @@
                    YAxisTitle="@ChartOptions?.YAxisTitle"
                    ChartType="@ChartType"
                    SeriesContent="@RenderScatterPoints()"
-                   TooltipContent="@RenderTooltip()"
+                   TooltipContent="@WithTooltipRoom(RenderTooltip(), DataPointLabelOffset)"
                    CustomGraphics="@CustomGraphics"
                    HoveredSegment="@HoveredDataPointPath"
                    HorizontalLines="@HorizontalLines"
