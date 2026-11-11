@@ -987,5 +987,30 @@ namespace MudBlazor.UnitTests.Charts
             await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new());
             comp.WaitForAssertion(() => ((Tooltip().Left + Tooltip().Right) / 2).Should().BeApproximately(middleX, 0.001));
         }
+
+        /// <summary>
+        /// Hovering a point keeps its marker under the hover circle instead of taking it out of the chart.
+        /// </summary>
+        [Test]
+        public async Task LineChartHoverKeepsEveryMarker()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30, 40 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette, ShowDataMarkers = true, ShowToolTips = true }));
+
+            int MarkerCount() => comp.FindAll("circle.mud-chart-point").Count(x => !x.HasAttribute("opacity"));
+            MarkerCount().Should().Be(4);
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync(new());
+
+            // Leaving the hovered marker out shifted the sequence numbers of every point drawn after it, so each hover rebuilt all of them.
+            MarkerCount().Should().Be(4);
+        }
     }
 }
