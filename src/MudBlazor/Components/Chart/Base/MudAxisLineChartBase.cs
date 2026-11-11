@@ -53,6 +53,24 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     protected SvgPath? HoveredDataPointPath { get; set; }
 
     /// <summary>
+    /// Wraps a tooltip so the <see cref="ChartTooltip"/> inside it, including one from a <c>TooltipTemplate</c>, knows the room around the hovered point.
+    /// </summary>
+    /// <param name="tooltip">The tooltip to wrap.</param>
+    /// <param name="labelOffset">How far above the point the tooltip is anchored.</param>
+    private protected RenderFragment WithTooltipRoom(RenderFragment tooltip, double labelOffset) => builder =>
+    {
+        // A tooltip placed by TooltipPositionFunc goes wherever the caller put it, so it gets no room to flip into.
+        var room = HoveredDataPointPath is { } point && TooltipPositionFunc is null
+            ? new ChartTooltipRoom(Above: point.LabelY - labelOffset, Below: _boundHeight - point.LabelY - labelOffset, FlipOffset: labelOffset * 2)
+            : null;
+
+        builder.OpenComponent<CascadingValue<ChartTooltipRoom>>(0);
+        builder.AddComponentParameter(1, nameof(CascadingValue<ChartTooltipRoom>.Value), room);
+        builder.AddComponentParameter(2, nameof(CascadingValue<ChartTooltipRoom>.ChildContent), tooltip);
+        builder.CloseComponent();
+    };
+
+    /// <summary>
     /// Indicates whether the chart should be interpolated.
     /// </summary>
     protected abstract bool ShouldInterpolate { get; }

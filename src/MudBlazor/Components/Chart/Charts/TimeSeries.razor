@@ -26,7 +26,7 @@
                        YAxisTitle="@ChartOptions?.YAxisTitle"
                        ChartType="@ChartType"
                        SeriesContent="@RenderLineSeries()"
-                       TooltipContent="@RenderTooltip()"
+                       TooltipContent="@WithTooltipRoom(RenderTooltip(), DataPointLabelOffset)"
                        ChildContent="@OverlayContent"
                        CustomGraphics="@CustomGraphics"
                        HoveredSegment="@HoveredDataPointPath"
@@ -207,6 +207,6 @@
 
     private RenderFragment Chart =>@<g class="mud-charts-line-series">
                                         @RenderLineSeries()
-                                        @RenderTooltip()
+                                        @WithTooltipRoom(RenderTooltip(), DataPointLabelOffset)
                                     </g>;
 }
