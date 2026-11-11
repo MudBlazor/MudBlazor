@@ -341,8 +341,17 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
         {
             // Aim for about five gaps, or fewer when the axis may not draw that many lines.
             var gaps = maxTicks is { } limit ? Math.Clamp(limit - 1, 1, AutoGridGaps) : AutoGridGaps;
+            var step = RoundGridStep((high - low) / gaps, strictlyAbove: false);
 
-            return T.CreateSaturating(RoundGridStep((high - low) / gaps, strictlyAbove: false));
+            // Lines start and end on whole steps, which can add one at each end, so move up through the round steps until they fit.
+            // Once the step is past every value the count can't shrink, and the chart's own limit takes over.
+            var reach = Math.Max(Math.Abs(low), Math.Abs(high));
+            while (maxTicks is { } most && step <= reach && Math.Ceiling(high / step) - Math.Floor(low / step) + 1 > most)
+            {
+                step = RoundGridStep(step, strictlyAbove: true);
+            }
+
+            return T.CreateSaturating(step);
         }
 
         // A series that never changes has no range to split, so the step goes past its value, which puts it between zero and one step instead of on the edge.

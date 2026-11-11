@@ -68,7 +68,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.Width, "100%")
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels)
-                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette, InterpolationOption = opt, YAxisTicks = 20 }));
+                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette, InterpolationOption = opt }));
 
             comp.Instance.ChartSeries.Should().NotBeEmpty();
 
@@ -567,8 +567,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new LineChartOptions
                 {
                     ChartPalette = _baseChartPalette,
-                    InterpolationOption = InterpolationOption.NaturalSpline,
-                    YAxisTicks = 20,
+                    InterpolationOption = InterpolationOption.NaturalSpline
                 }));
 
             var line = comp.Find("path.mud-chart-line:not(.mud-chart-dots)");
@@ -918,39 +917,49 @@ namespace MudBlazor.UnitTests.Charts
             Tooltip().TipY.Should().BeGreaterThan(Tooltip().BaseY, "the triangle should point down at the point");
         }
 
+        /// <summary>
+        /// YAxisTicks = 0 picks a round step that fits the values, including a step past a series that never changes.
+        /// </summary>
         [TestCase(new double[] { 3, 7, 5, 2, 6 }, new[] { "2", "3", "4", "5", "6", "7" })]
         [TestCase(new double[] { 0, 1000 }, new[] { "0", "200", "400", "600", "800", "1000" })]
         [TestCase(new double[] { 5, 5, 5 }, new[] { "0", "10" })]
-        public void LineChartPicksARoundYAxisStepByDefault(double[] data, string[] expectedLabels)
+        public void LineChartAutomaticYAxisStepIsRound(double[] data, string[] expectedLabels)
         {
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = data }])
-                .Add(p => p.ChartLabels, data.Select((_, i) => i.ToString(CultureInfo.InvariantCulture)).ToArray()));
+                .Add(p => p.ChartLabels, data.Select((_, i) => i.ToString(CultureInfo.InvariantCulture)).ToArray())
+                .Add(p => p.ChartOptions, new LineChartOptions { YAxisTicks = 0 }));
 
             comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal(expectedLabels);
         }
 
-        [Test]
-        public void LineChartRoundYAxisStepStaysWithinMaxNumYAxisTicks()
+        /// <summary>
+        /// The automatic step moves up to the next round number when the extra lines at each end would go over MaxNumYAxisTicks.
+        /// </summary>
+        [TestCase(new double[] { 0, 1000 }, new[] { "0", "500", "1000" })]
+        [TestCase(new double[] { 3, 7 }, new[] { "0", "5", "10" })]
+        public void LineChartAutomaticYAxisStepStaysRoundWithinMaxNumYAxisTicks(double[] data, string[] expectedLabels)
         {
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
-                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 0, 1000 } }])
-                .Add(p => p.ChartLabels, ["A", "B"])
-                .Add(p => p.ChartOptions, new LineChartOptions { MaxNumYAxisTicks = 3 }));
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = data }])
+                .Add(p => p.ChartLabels, data.Select((_, i) => i.ToString(CultureInfo.InvariantCulture)).ToArray())
+                .Add(p => p.ChartOptions, new LineChartOptions { YAxisTicks = 0, MaxNumYAxisTicks = 3 }));
 
-            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("0", "500", "1000");
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal(expectedLabels);
         }
 
+        /// <summary>
+        /// Without YAxisTicks set the axis keeps its step of 20.
+        /// </summary>
         [Test]
-        public void LineChartKeepsAnExplicitYAxisStep()
+        public void LineChartKeepsTheDefaultYAxisStep()
         {
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 3, 7, 5, 2, 6 } }])
-                .Add(p => p.ChartLabels, ["A", "B", "C", "D", "E"])
-                .Add(p => p.ChartOptions, new LineChartOptions { YAxisTicks = 20 }));
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D", "E"]));
 
             comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("0", "20");
         }

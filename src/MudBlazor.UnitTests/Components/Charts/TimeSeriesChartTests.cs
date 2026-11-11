@@ -79,7 +79,7 @@ namespace MudBlazor.UnitTests.Charts
                         Visible = true,
                     }
                 ])
-                .Add(p => p.ChartOptions, new TimeSeriesChartOptions() { TimeLabelSpacing = TimeSpan.FromHours(1), YAxisTicks = 20 }));
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions() { TimeLabelSpacing = TimeSpan.FromHours(1) }));
 
             // check the line path
             comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"15\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 38 320 L 248.6667 320 L 459.3333 320 L 670 320\"></path>");
@@ -107,7 +107,7 @@ namespace MudBlazor.UnitTests.Charts
                         Visible = true,
                     }
                 ])
-                .Add(p => p.ChartOptions, new TimeSeriesChartOptions() { TimeLabelSpacing = TimeSpan.FromHours(1), YAxisTicks = 20 }));
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions() { TimeLabelSpacing = TimeSpan.FromHours(1) }));
 
             // check the line path
             comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"15\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 38 320 L 248.6667 320 L 459.3333 320 L 670 320\"></path>");
@@ -163,8 +163,7 @@ namespace MudBlazor.UnitTests.Charts
                 {
                     TimeLabelSpacing = TimeSpan.FromHours(1),
                     LineDisplayType = LineDisplayType.Line,
-                    TimeLabelSpacingRounding = true,
-                    YAxisTicks = 20,
+                    TimeLabelSpacingRounding = true
                 }));
 
             // check the axis
@@ -192,8 +191,7 @@ namespace MudBlazor.UnitTests.Charts
                     TimeLabelSpacingRoundingPadSeries = true,
                     TimeLabelSpacing = TimeSpan.FromHours(1),
                     LineDisplayType = LineDisplayType.Line,
-                    TimeLabelSpacingRounding = true,
-                    YAxisTicks = 20,
+                    TimeLabelSpacingRounding = true
                 }));
 
             // check the axis
@@ -528,8 +526,11 @@ namespace MudBlazor.UnitTests.Charts
             markers.Should().OnlyContain(x => x.GetAttribute("fill") == "none");
         }
 
+        /// <summary>
+        /// YAxisTicks = 0 picks a round step that fits the values.
+        /// </summary>
         [Test]
-        public void TimeSeriesChartPicksARoundYAxisStepByDefault()
+        public void TimeSeriesChartAutomaticYAxisStepIsRound()
         {
             SetupBBoxInterop();
 
@@ -544,7 +545,7 @@ namespace MudBlazor.UnitTests.Charts
                         Data = new double[] { 3, 7, 5, 2, 6 }.Select((y, i) => new TimeValue<double>(time.AddHours(i), y)).ToList(),
                     }
                 ])
-                .Add(p => p.ChartOptions, new TimeSeriesChartOptions { TimeLabelSpacing = TimeSpan.FromHours(1) }));
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions { TimeLabelSpacing = TimeSpan.FromHours(1), YAxisTicks = 0 }));
 
             comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("2", "3", "4", "5", "6", "7");
         }

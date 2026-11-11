@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void ScatterPlotShowsCorrectYAxisLabels()
         {
-            // Y range 10–40 picks a step of 10 by default
+            // Y range 10–40, default YAxisTicks=20 → grid lines at 0, 20, 40
             var series = new List<ChartSeries<double>>
             {
                 new() { Name = "S1", Data = Points((1, 10), (2, 40)) }
@@ -100,7 +100,10 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartSeries, series)
                 .Add(p => p.ChartOptions, new ScatterPlotChartOptions()));
 
-            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("10", "20", "30", "40");
+            var yAxis = comp.Find(".mud-charts-yaxis");
+            yAxis.InnerHtml.Should().Contain(">0<");
+            yAxis.InnerHtml.Should().Contain(">20<");
+            yAxis.InnerHtml.Should().Contain(">40<");
         }
 
         [Test]
@@ -594,7 +597,7 @@ namespace MudBlazor.UnitTests.Charts
             var options = new ScatterPlotChartOptions();
 
             options.PointRadius.Should().Be(5);
-            options.XAxisTicks.Should().Be(0);
+            options.XAxisTicks.Should().Be(20);
             options.MaxNumXAxisTicks.Should().Be(20);
             options.XAxisFormat.Should().BeNull();
             options.ShowDataLabels.Should().BeFalse();
@@ -998,12 +1001,15 @@ namespace MudBlazor.UnitTests.Charts
             dots.GetAttribute("stroke-linecap").Should().Be("round", because: "a zero-length segment only paints under a round cap");
         }
 
+        /// <summary>
+        /// YAxisTicks = 0 and XAxisTicks = 0 pick round steps that fit the values on each axis.
+        /// </summary>
         [Test]
-        public void ScatterPlotPicksRoundAxisStepsByDefault()
+        public void ScatterPlotAutomaticAxisStepsAreRound()
         {
             var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
                 .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "S1", Data = Points((2, 3), (4, 5), (7, 7)) }])
-                .Add(p => p.ChartOptions, new ScatterPlotChartOptions()));
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions { YAxisTicks = 0, XAxisTicks = 0 }));
 
             comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("3", "4", "5", "6", "7");
             comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("2", "3", "4", "5", "6", "7");
