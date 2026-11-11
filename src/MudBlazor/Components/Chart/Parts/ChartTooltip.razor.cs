@@ -14,6 +14,7 @@ public partial class ChartTooltip : ComponentBase
 
     private const double TriangleWidth = 16;
     private const double TriangleHeight = 8;
+    private const double CornerRadius = 4;
 
     private double TriangleStrokeWidth => StrokeWidth + 1;
     private bool HasSubtitle => !string.IsNullOrWhiteSpace(Subtitle);
@@ -219,6 +220,14 @@ public partial class ChartTooltip : ComponentBase
             _backgroundBBox = _backgroundBBox with { Y = top };
         }
 
+        // A tooltip that would run past the left or right edge of the chart slides back in, but only as far as the triangle still meets the box.
+        if (room is not null)
+        {
+            var shift = SlideInside(_backgroundBBox.X, _backgroundBBox.Width, X - room.Left, X + room.Right);
+            _textBbox = _textBbox with { X = _textBbox.X + shift };
+            _backgroundBBox = _backgroundBBox with { X = _backgroundBBox.X + shift };
+        }
+
         // Distances from the anchor run up toward the box, or down once the tooltip is flipped.
         double AwayFromPoint(double distance) => flip ? anchorY + distance : anchorY - distance;
 
@@ -234,6 +243,24 @@ public partial class ChartTooltip : ComponentBase
 
         _isMeasured = true;
         StateHasChanged();
+    }
+
+    private double SlideInside(double left, double width, double leftEdge, double rightEdge)
+    {
+        // How far the box can move before the triangle under it would hang past the rounded corner.
+        var keep = ShowTriangle ? (TriangleWidth / 2) + TriangleStrokeWidth + CornerRadius : 0;
+
+        if (left < leftEdge)
+        {
+            return Math.Max(0, Math.Min(leftEdge, X - keep) - left);
+        }
+
+        if (left + width > rightEdge)
+        {
+            return Math.Min(0, Math.Max(rightEdge - width, X + keep - width) - left);
+        }
+
+        return 0;
     }
 }
 
@@ -253,4 +280,6 @@ public enum ChartTooltipAnchorPositionX
 /// <param name="Above">The distance from the tooltip's anchor up to the top of the chart.</param>
 /// <param name="Below">The distance from the flipped anchor down to the bottom of the chart.</param>
 /// <param name="FlipOffset">How far below the usual anchor the flipped one sits, which clears the point itself.</param>
-internal sealed record ChartTooltipRoom(double Above, double Below, double FlipOffset);
+/// <param name="Left">The distance from the anchor to the left edge of the chart.</param>
+/// <param name="Right">The distance from the anchor to the right edge of the chart.</param>
+internal sealed record ChartTooltipRoom(double Above, double Below, double FlipOffset, double Left, double Right);
