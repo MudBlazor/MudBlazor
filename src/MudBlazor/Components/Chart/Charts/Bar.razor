@@ -26,7 +26,7 @@
                        XAxisTitle="@ChartOptions?.XAxisTitle"
                        YAxisTitle="@ChartOptions?.YAxisTitle"
                        SeriesContent="@RenderBars()"
-                       TooltipContent="@RenderTooltip()"
+                       TooltipContent="@WithTooltipRoom(RenderTooltip(), _hoveredBar, 0)"
                        ChildContent="@OverlayContent"
                        CustomGraphics="@CustomGraphics"
                        HoveredSegment="@_hoveredBar"
@@ -135,6 +135,6 @@
 
     private RenderFragment Chart =>@<g class="mud-charts-bar-series">
                                         @RenderBars()
-                                        @RenderTooltip()
+                                        @WithTooltipRoom(RenderTooltip(), _hoveredBar, 0)
                                     </g>;
 }
