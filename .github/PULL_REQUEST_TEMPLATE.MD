@@ -7,8 +7,8 @@
 
 **Before/After:**
 <!-- Required for anything user-visible, even if the fix itself is pure logic.
-AI-assisted code is welcome, but a person has to check it. Record the before and after video yourself, by hand, in a local run of this branch, so reviewers can see it working in regular use. Recordings or screenshots made or driven by an AI tool, agent, or script are not accepted.
-Upload the video here so it plays inline. Screenshots are enough only when nothing moves or responds to input.
+AI-assisted code is welcome, but a person has to check it. Record the before and after video yourself, by hand, in a local run of this branch, so reviewers can see it working in regular use. Recordings or screenshots in which an AI tool, agent, or script operates the app are not accepted.
+Upload the video here so it plays inline, and make sure the difference itself is visible in it. Screenshots are enough only when nothing moves or responds to input.
 If nothing visible changes (e.g. build, tests), remove this section. If no media is needed for another reason, say why here. -->
 
 **Checklist:**
