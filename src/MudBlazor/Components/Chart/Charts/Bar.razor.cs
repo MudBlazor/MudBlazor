@@ -194,6 +194,7 @@ namespace MudBlazor.Charts
                         Data = $"M {ToS(gridValueX)} {ToS(gridValueY)} L {ToS(gridValueX)} {ToS(gridValue)}",
                         LabelXValue = ChartLabels.Length > j ? ChartLabels[j] : string.Empty,
                         LabelYValue = dataValue.ToString(series.TooltipYValueFormat, null),
+                        YValue = double.CreateSaturating(dataValue),
                         LabelX = gridValueX,
                         LabelY = dataValue <= T.Zero ? gridValueY : gridValue
                     };

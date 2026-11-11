@@ -332,7 +332,8 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                     LabelX = x,
                     LabelXValue = GetLabelXValue(seriesIndex, j),
                     LabelY = y,
-                    LabelYValue = GetDataValueAsString(seriesIndex, j)
+                    LabelYValue = GetDataValueAsString(seriesIndex, j),
+                    YValue = GetDataValueAsDouble(seriesIndex, j)
                 });
             }
         }
@@ -402,7 +403,8 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                         LabelX = sx,
                         LabelXValue = GetLabelXValue(seriesIndex, segment[0]),
                         LabelY = sy,
-                        LabelYValue = GetDataValueAsString(seriesIndex, segment[0])
+                        LabelYValue = GetDataValueAsString(seriesIndex, segment[0]),
+                        YValue = GetDataValueAsDouble(seriesIndex, segment[0])
                     });
                 }
 
@@ -457,7 +459,8 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                         LabelX = x,
                         LabelXValue = GetLabelXValue(seriesIndex, originalIndex),
                         LabelY = y,
-                        LabelYValue = GetDataValueAsString(seriesIndex, originalIndex)
+                        LabelYValue = GetDataValueAsString(seriesIndex, originalIndex),
+                        YValue = GetDataValueAsDouble(seriesIndex, originalIndex)
                     });
                 }
             }
@@ -545,6 +548,14 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         var value = GetDataValue<double>(seriesIndex, dataPointIndex);
         return value.ToString(Series[seriesIndex].TooltipYValueFormat);
     }
+
+    /// <summary>
+    /// Gets the data value as a number, so a tooltip can write it the way the Y axis does.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="dataPointIndex">The index of the data point.</param>
+    /// <returns>The data value.</returns>
+    internal virtual double GetDataValueAsDouble(int seriesIndex, int dataPointIndex) => GetDataValue<double>(seriesIndex, dataPointIndex);
 
     /// <summary>
     /// Adds a legend for a series.

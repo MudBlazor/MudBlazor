@@ -364,6 +364,8 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         return dataValue.Value.ToString(Series[seriesIndex].TooltipYValueFormat, CultureInfo.CurrentCulture);
     }
 
+    internal override double GetDataValueAsDouble(int seriesIndex, int dataPointIndex) => double.CreateSaturating(GetDataValue<TimeValue<T>>(seriesIndex, dataPointIndex).Value);
+
     protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)
     {
         var dataValue = GetDataValue<TimeValue<T>>(seriesIndex, dataPointIndex);

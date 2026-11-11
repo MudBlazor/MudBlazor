@@ -298,6 +298,7 @@ namespace MudBlazor.Charts
                         Data = $"M {ToS(x)} {ToS(yStart)} L {ToS(x)} {ToS(isNegative ? yEnd + BarOverlapAmountFix : yEnd - BarOverlapAmountFix)}",
                         LabelXValue = ChartLabels.Length > dataIndex ? ChartLabels[dataIndex] : string.Empty,
                         LabelYValue = dataValue.ToString(series.TooltipYValueFormat, null),
+                        YValue = double.CreateSaturating(dataValue),
                         LabelX = x,
                         LabelY = isNegative ? yStart : yEnd
                     });

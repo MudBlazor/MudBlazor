@@ -553,5 +553,30 @@ namespace MudBlazor.UnitTests.Charts
             // Leaving the hovered marker out shifted the sequence numbers of every point drawn after it, so each hover rebuilt all of them.
             MarkerCount().Should().Be(4);
         }
+
+        /// <summary>
+        /// {{Y_AXIS_VALUE}} writes the hovered value with YAxisToStringFunc, while {{Y_VALUE}} stays as it was.
+        /// </summary>
+        [Test]
+        public async Task TimeSeriesChartTooltipYAxisValueUsesTheAxisFormatter()
+        {
+            SetupBBoxInterop();
+            var time = new DateTime(2000, 1, 1);
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(time, count: 4))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions
+                {
+                    TimeLabelSpacing = TimeSpan.FromHours(1),
+                    ShowToolTips = true,
+                    YAxisToStringFunc = value => $"{value / 1000}k",
+                    TooltipTitleFormat = "{{Y_AXIS_VALUE}} ({{Y_VALUE}})",
+                }));
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            comp.Find("g.svg-tooltip").TextContent.Should().Contain("1k (1000)");
+        }
     }
 }
