@@ -632,5 +632,21 @@ namespace MudBlazor.UnitTests.Charts
 
             comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C", "E");
         }
+
+        [Test]
+        public void BarChartGridlinesTakeTheirStrokeFromTheTheme()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 40, 20, 60 } }])
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new BarChartOptions { YAxisLines = true, XAxisLines = true }));
+
+            var gridlines = comp.FindAll(".mud-charts-gridlines-yaxis path, .mud-charts-gridlines-xaxis-lines path");
+
+            // The colour and weight come from the stylesheet so they follow the theme, which a stroke attribute in the markup can't.
+            gridlines.Should().NotBeEmpty();
+            gridlines.Should().OnlyContain(x => !x.HasAttribute("stroke") && !x.HasAttribute("stroke-width"));
+        }
     }
 }

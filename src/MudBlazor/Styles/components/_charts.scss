@@ -97,6 +97,13 @@
   min-width: unset;
 }
 
+// Gridlines use the theme's divider colour at a whole pixel, since a hairline of a translucent colour antialiases away to nothing.
+.mud-charts-gridlines-yaxis path,
+.mud-charts-gridlines-xaxis-lines path {
+  stroke: var(--mud-palette-lines-default);
+  stroke-width: 1px;
+}
+
 .mud-charts-yaxis {
   fill: var(--mud-palette-text-primary);
 }
