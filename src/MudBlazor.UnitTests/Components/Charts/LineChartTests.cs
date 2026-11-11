@@ -918,6 +918,77 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         /// <summary>
+        /// A wide tooltip on the first or last point slides inside the chart while its triangle stays on the point.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task LineChartTooltipStaysInsideTheSideEdges(bool useTemplate)
+        {
+            // A long title makes the tooltip wider than the room beside the first and last points.
+            Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 120, Height: 16));
+
+            var comp = Context.Render<MudChart<double>>(parameters =>
+            {
+                parameters
+                    .Add(p => p.ChartType, ChartType.Line)
+                    .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 50, 30 } }])
+                    .Add(p => p.ChartLabels, ["A", "B", "C"])
+                    .Add(p => p.ChartOptions, new LineChartOptions
+                    {
+                        ChartPalette = _baseChartPalette,
+                        ShowToolTips = true,
+                        TooltipTitleFormat = "{{SERIES_NAME}}: {{Y_VALUE}}",
+                        TooltipSubtitleFormat = "{{X_VALUE}}",
+                    });
+
+                if (useTemplate)
+                {
+                    parameters.Add(p => p.TooltipTemplate, context => builder =>
+                    {
+                        builder.OpenComponent<ChartTooltip>(0);
+                        builder.AddComponentParameter(1, nameof(ChartTooltip.Title), context.Segment.LabelYValue);
+                        builder.AddComponentParameter(2, nameof(ChartTooltip.Subtitle), context.Segment.LabelXValue);
+                        builder.AddComponentParameter(3, nameof(ChartTooltip.X), 0d);
+                        builder.AddComponentParameter(4, nameof(ChartTooltip.Y), 0d);
+                        builder.CloseComponent();
+                    });
+                }
+            });
+
+            var width = double.Parse(comp.Find("svg.mud-chart-line").GetAttribute("viewBox")!.Split(' ')[2], CultureInfo.InvariantCulture);
+
+            // The tooltip is laid out against the chart's own coordinates, so a template's offset is added back on.
+            (double Left, double Right, double TipX) Tooltip()
+            {
+                var offsetX = useTemplate ? double.Parse(comp.Find("g.mud-chart-tooltip").GetAttribute("transform")!.Split('(', ',')[1], CultureInfo.InvariantCulture) : 0;
+                var rect = comp.Find("g.svg-tooltip rect");
+                var left = offsetX + double.Parse(rect.GetAttribute("x")!, CultureInfo.InvariantCulture);
+                var right = left + double.Parse(rect.GetAttribute("width")!, CultureInfo.InvariantCulture);
+                var tipX = offsetX + double.Parse(comp.Find("g.svg-tooltip polygon").GetAttribute("points")!.Split(' ')[2].Split(',')[0], CultureInfo.InvariantCulture);
+                return (left, right, tipX);
+            }
+
+            double PointX(int index) => double.Parse(comp.FindAll("circle.mud-chart-point")[index].GetAttribute("cx")!, CultureInfo.InvariantCulture);
+
+            var firstX = PointX(0);
+            await comp.FindAll("circle.mud-chart-point")[0].MouseOverAsync(new());
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+            var first = Tooltip();
+            first.Left.Should().BeGreaterThanOrEqualTo(0, "the tooltip should not hang off the left edge");
+            first.TipX.Should().BeApproximately(firstX, 0.001, "the triangle should still point at the point");
+
+            var lastX = PointX(2);
+            await comp.FindAll("circle.mud-chart-point")[2].MouseOverAsync(new());
+            comp.WaitForAssertion(() => Tooltip().Right.Should().BeLessThanOrEqualTo(width, "the tooltip should not hang off the right edge"));
+            Tooltip().TipX.Should().BeApproximately(lastX, 0.001, "the triangle should still point at the point");
+
+            // A point in the middle has room either side, so its tooltip stays centred on it.
+            var middleX = PointX(1);
+            await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new());
+            comp.WaitForAssertion(() => ((Tooltip().Left + Tooltip().Right) / 2).Should().BeApproximately(middleX, 0.001));
+        }
+
+        /// <summary>
         /// Hovering a point keeps its marker under the hover circle instead of taking it out of the chart.
         /// </summary>
         [Test]
