@@ -866,7 +866,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartType, ChartType.StackedBar)
                 .Add(p => p.Height, "350px")
                 .Add(p => p.Width, "650px")
-                .Add(p => p.ChartOptions, new ChartOptions { ChartPalette = _baseChartPalette })
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { ChartPalette = _baseChartPalette, YAxisTicks = 20 })
                 .Add(p => p.ChartSeries, chartSeries)
                 .Add(p => p.ChartLabels, xAxisLabels));
 
@@ -1271,6 +1271,20 @@ namespace MudBlazor.UnitTests.Charts
                 }));
 
             comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C", "E");
+        }
+
+        [Test]
+        public void StackedBarChartPicksARoundYAxisStepByDefault()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, [
+                    new ChartSeries<double> { Name = "Series 1", Data = new double[] { 1, 2, 3 } },
+                    new ChartSeries<double> { Name = "Series 2", Data = new double[] { 2, 3, 4 } },
+                ])
+                .Add(p => p.ChartLabels, ["A", "B", "C"]));
+
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("0", "2", "4", "6", "8");
         }
     }
 }

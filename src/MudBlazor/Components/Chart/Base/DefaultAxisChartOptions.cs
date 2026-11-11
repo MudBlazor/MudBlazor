@@ -9,7 +9,7 @@ namespace MudBlazor.Charts;
 /// </summary>
 public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartOptions
 {
-    private int _yAxisTicks = 20;
+    private int _yAxisTicks;
     private int _maxNumYAxisTicks = 20;
     private int _xAxisLabelInterval = 1;
 
@@ -17,13 +17,13 @@ public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartO
     /// The spacing between vertical tick marks.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>20</c>.
-    /// Value must be greater than or equal to <c>1</c>.
+    /// Defaults to <c>0</c>, which picks a round spacing (1, 2 or 5 times a power of ten) that fits the values in about five steps.
+    /// Values below <c>0</c> are treated as <c>0</c>.
     /// </remarks>
     public int YAxisTicks
     {
         get => _yAxisTicks;
-        set => _yAxisTicks = Math.Max(1, value);
+        set => _yAxisTicks = Math.Max(0, value);
     }
 
     /// <summary>

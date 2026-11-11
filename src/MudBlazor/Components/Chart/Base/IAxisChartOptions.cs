@@ -10,7 +10,7 @@ namespace MudBlazor.Charts;
 public interface IAxisChartOptions : IChartOptions
 {
     /// <summary>
-    /// The spacing between vertical tick marks.
+    /// The spacing between vertical tick marks, or <c>0</c> to pick a round spacing that fits the values.
     /// </summary>
     public int YAxisTicks { get; set; }
 

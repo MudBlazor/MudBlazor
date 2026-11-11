@@ -93,6 +93,12 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     protected readonly List<SvgLegend> Legends = [];
 
     protected const double Epsilon = 1e-6;
+
+    // How many gaps between gridlines an axis aims for when it picks its own step.
+    private const int AutoGridGaps = 5;
+
+    private static ReadOnlySpan<double> RoundGridStepMultiples => [1, 2, 5, 10, 20];
+
     /// <summary>
     /// The default width of the chart bounds.
     /// </summary>
@@ -311,6 +317,57 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
                 _boundHeight = height;
             }
         }
+    }
+
+    /// <summary>
+    /// Gets the spacing between gridlines on an axis.
+    /// </summary>
+    /// <param name="ticks">The spacing set in the options, where <c>0</c> picks a round one that fits the values.</param>
+    /// <param name="maxTicks">The most gridlines the axis may draw.</param>
+    /// <param name="min">The lowest value the axis has to reach.</param>
+    /// <param name="max">The highest value the axis has to reach.</param>
+    /// <returns>The spacing between gridlines.</returns>
+    private protected static T GetGridUnits(int? ticks, int? maxTicks, T min, T max)
+    {
+        if (ticks is > 0)
+        {
+            return T.CreateSaturating(ticks.Value);
+        }
+
+        var low = double.CreateSaturating(min);
+        var high = double.CreateSaturating(max);
+
+        if (high > low)
+        {
+            // Aim for about five gaps, or fewer when the axis may not draw that many lines.
+            var gaps = maxTicks is { } limit ? Math.Clamp(limit - 1, 1, AutoGridGaps) : AutoGridGaps;
+
+            return T.CreateSaturating(RoundGridStep((high - low) / gaps, strictlyAbove: false));
+        }
+
+        // A series that never changes has no range to split, so the step goes past its value, which puts it between zero and one step instead of on the edge.
+        var value = Math.Max(Math.Abs(low), Math.Abs(high));
+
+        return T.CreateSaturating(value > 0 ? RoundGridStep(value, strictlyAbove: true) : 1);
+    }
+
+    // Steps are 1, 2 or 5 times a power of ten, and whole numbers because that's all the tick options can hold.
+    private static double RoundGridStep(double atLeast, bool strictlyAbove)
+    {
+        var magnitude = Math.Pow(10, Math.Floor(Math.Log10(atLeast)));
+
+        // 10 and 20 cover a logarithm that rounds just under a whole power of ten.
+        foreach (var multiple in RoundGridStepMultiples)
+        {
+            var step = multiple * magnitude;
+            if (strictlyAbove ? step > atLeast : step >= atLeast)
+            {
+                return Math.Max(1, Math.Round(step));
+            }
+        }
+
+        // Only an infinite value gets here.
+        return Math.Max(1, atLeast);
     }
 
     /// <summary>

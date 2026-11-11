@@ -960,7 +960,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.ChartLabels, [""])
-                .Add(p => p.ChartOptions, new LineChartOptions() { YAxisToStringFunc = testCase.YAxisToStringFunc })
+                .Add(p => p.ChartOptions, new LineChartOptions() { YAxisToStringFunc = testCase.YAxisToStringFunc, YAxisTicks = 20 })
                 .Add(p => p.ChartSeries, [new() { Data = new([YAxisTestValue]) }])
             );
 

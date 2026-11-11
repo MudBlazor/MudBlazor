@@ -23,9 +23,9 @@ public class ScatterPlotChartOptions : DefaultAxisLineChartOptions, IAxisLineCha
     /// The spacing between tick marks on the X axis.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>20</c>.
+    /// Defaults to <c>0</c>, which picks a round spacing (1, 2 or 5 times a power of ten) that fits the values in about five steps.
     /// </remarks>
-    public int XAxisTicks { get; set; } = 20;
+    public int XAxisTicks { get; set; }
 
     /// <summary>
     /// The maximum number of X-axis tick marks allowed.

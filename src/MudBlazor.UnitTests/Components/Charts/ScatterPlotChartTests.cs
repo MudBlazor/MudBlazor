@@ -90,7 +90,7 @@ namespace MudBlazor.UnitTests.Charts
         [Test]
         public void ScatterPlotShowsCorrectYAxisLabels()
         {
-            // Y range 10–40, default YAxisTicks=20 → grid lines at 0, 20, 40
+            // Y range 10–40 picks a step of 10 by default
             var series = new List<ChartSeries<double>>
             {
                 new() { Name = "S1", Data = Points((1, 10), (2, 40)) }
@@ -100,10 +100,7 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartSeries, series)
                 .Add(p => p.ChartOptions, new ScatterPlotChartOptions()));
 
-            var yAxis = comp.Find(".mud-charts-yaxis");
-            yAxis.InnerHtml.Should().Contain(">0<");
-            yAxis.InnerHtml.Should().Contain(">20<");
-            yAxis.InnerHtml.Should().Contain(">40<");
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("10", "20", "30", "40");
         }
 
         [Test]
@@ -597,7 +594,7 @@ namespace MudBlazor.UnitTests.Charts
             var options = new ScatterPlotChartOptions();
 
             options.PointRadius.Should().Be(5);
-            options.XAxisTicks.Should().Be(20);
+            options.XAxisTicks.Should().Be(0);
             options.MaxNumXAxisTicks.Should().Be(20);
             options.XAxisFormat.Should().BeNull();
             options.ShowDataLabels.Should().BeFalse();
@@ -999,6 +996,17 @@ namespace MudBlazor.UnitTests.Charts
             var dots = comp.Find("path.mud-chart-dots");
             (dots.GetAttribute("d")!.Split('L').Length - 1).Should().Be(1, because: "the lone reading gets drawn");
             dots.GetAttribute("stroke-linecap").Should().Be("round", because: "a zero-length segment only paints under a round cap");
+        }
+
+        [Test]
+        public void ScatterPlotPicksRoundAxisStepsByDefault()
+        {
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "S1", Data = Points((2, 3), (4, 5), (7, 7)) }])
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions()));
+
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("3", "4", "5", "6", "7");
+            comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("2", "3", "4", "5", "6", "7");
         }
     }
 }

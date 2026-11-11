@@ -75,7 +75,7 @@ public class ChartOptionsTests
         options.InterpolationOption.Should().Be(InterpolationOption.Straight);
 
         // Inherited from DefaultAxisChartOptions
-        options.YAxisTicks.Should().Be(20);
+        options.YAxisTicks.Should().Be(0);
         options.MaxNumYAxisTicks.Should().Be(20);
         options.YAxisLines.Should().BeTrue();
         options.XAxisLines.Should().BeFalse();
