@@ -633,6 +633,9 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C", "E");
         }
 
+        /// <summary>
+        /// Gridlines leave their colour and weight to the stylesheet so they follow the theme.
+        /// </summary>
         [Test]
         public void BarChartGridlinesTakeTheirStrokeFromTheTheme()
         {
