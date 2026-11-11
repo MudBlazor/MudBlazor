@@ -99,6 +99,9 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
 
     private static ReadOnlySpan<double> RoundGridStepMultiples => [1, 2, 5, 10, 20];
 
+    // The step an axis takes when the chart has no options, the same one new options start with.
+    private protected const int DefaultGridStep = 20;
+
     /// <summary>
     /// The default width of the chart bounds.
     /// </summary>
@@ -320,6 +323,16 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     }
 
     /// <summary>
+    /// Gets the spacing between horizontal gridlines from the chart's options.
+    /// </summary>
+    /// <param name="min">The lowest value the axis has to reach.</param>
+    /// <param name="max">The highest value the axis has to reach.</param>
+    /// <returns>The spacing between gridlines.</returns>
+    private protected T GetGridYUnits(T min, T max) => ChartOptions is { } options
+        ? GetGridUnits(options.YAxisTicks, options.MaxNumYAxisTicks, min, max)
+        : T.CreateSaturating(DefaultGridStep);
+
+    /// <summary>
     /// Gets the spacing between gridlines on an axis.
     /// </summary>
     /// <param name="ticks">The spacing set in the options, where <c>0</c> picks a round one that fits the values.</param>
@@ -327,11 +340,11 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// <param name="min">The lowest value the axis has to reach.</param>
     /// <param name="max">The highest value the axis has to reach.</param>
     /// <returns>The spacing between gridlines.</returns>
-    private protected static T GetGridUnits(int? ticks, int? maxTicks, T min, T max)
+    private protected static T GetGridUnits(int ticks, int maxTicks, T min, T max)
     {
-        if (ticks is > 0)
+        if (ticks > 0)
         {
-            return T.CreateSaturating(ticks.Value);
+            return T.CreateSaturating(ticks);
         }
 
         var low = double.CreateSaturating(min);
@@ -340,13 +353,13 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
         if (high > low)
         {
             // Aim for about five gaps, or fewer when the axis may not draw that many lines.
-            var gaps = maxTicks is { } limit ? Math.Clamp(limit - 1, 1, AutoGridGaps) : AutoGridGaps;
+            var gaps = Math.Clamp(maxTicks - 1, 1, AutoGridGaps);
             var step = RoundGridStep((high - low) / gaps, strictlyAbove: false);
 
             // Lines start and end on whole steps, which can add one at each end, so move up through the round steps until they fit.
             // Once the step is past every value the count can't shrink, and the chart's own limit takes over.
             var reach = Math.Max(Math.Abs(low), Math.Abs(high));
-            while (maxTicks is { } most && step <= reach && Math.Ceiling(high / step) - Math.Floor(low / step) + 1 > most)
+            while (step <= reach && Math.Ceiling(high / step) - Math.Floor(low / step) + 1 > maxTicks)
             {
                 step = RoundGridStep(step, strictlyAbove: true);
             }

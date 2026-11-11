@@ -207,7 +207,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     {
         if (!HasSeriesData())
         {
-            gridYUnits = GetGridUnits(ChartOptions?.YAxisTicks, ChartOptions?.MaxNumYAxisTicks, T.Zero, T.Zero);
+            gridYUnits = GetGridYUnits(T.Zero, T.Zero);
             numHorizontalLines = 1;
             lowestHorizontalLine = 0;
             numVerticalLines = 1;
@@ -218,7 +218,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
         AdjustSuggestedMax(ref maxY);
 
-        gridYUnits = GetGridUnits(ChartOptions?.YAxisTicks, ChartOptions?.MaxNumYAxisTicks, minY, maxY);
+        gridYUnits = GetGridYUnits(minY, maxY);
         lowestHorizontalLine = GetLowestLine(minY, gridYUnits);
         var highestHorizontalLine = GetHighestLine(maxY, gridYUnits);
         numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;

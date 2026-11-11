@@ -114,7 +114,7 @@ namespace MudBlazor.Charts
                     maxY = T.Max(maxY, T.Zero); // we want to include the 0 in the grid
                 }
 
-                gridYUnits = GetGridUnits(ChartOptions?.YAxisTicks, ChartOptions?.MaxNumYAxisTicks, minY, maxY);
+                gridYUnits = GetGridYUnits(minY, maxY);
                 lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits));
                 var highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits));
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
@@ -133,7 +133,7 @@ namespace MudBlazor.Charts
             }
             else
             {
-                gridYUnits = GetGridUnits(ChartOptions?.YAxisTicks, ChartOptions?.MaxNumYAxisTicks, T.Zero, T.Zero);
+                gridYUnits = GetGridYUnits(T.Zero, T.Zero);
                 numHorizontalLines = 1;
                 lowestHorizontalLine = 0;
                 numVerticalLines = 1;

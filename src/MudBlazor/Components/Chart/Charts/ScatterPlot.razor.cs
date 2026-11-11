@@ -67,7 +67,7 @@ partial class ScatterPlot<T> : MudAxisLineChartBase<T, ScatterPlotChartOptions> 
 
         if (visiblePoints.Length == 0)
         {
-            gridYUnits = GetGridUnits(ChartOptions?.YAxisTicks, ChartOptions?.MaxNumYAxisTicks, T.Zero, T.Zero);
+            gridYUnits = GetGridYUnits(T.Zero, T.Zero);
             lowestHorizontalLine = 0;
             numHorizontalLines = 1;
             return;
@@ -87,7 +87,7 @@ partial class ScatterPlot<T> : MudAxisLineChartBase<T, ScatterPlotChartOptions> 
             maxY = T.Max(maxY, T.Zero);
         }
 
-        gridYUnits = GetGridUnits(ChartOptions?.YAxisTicks, ChartOptions?.MaxNumYAxisTicks, minY, maxY);
+        gridYUnits = GetGridYUnits(minY, maxY);
         lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits));
         var highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits));
         numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
@@ -113,7 +113,7 @@ partial class ScatterPlot<T> : MudAxisLineChartBase<T, ScatterPlotChartOptions> 
 
         if (xValues.Length == 0)
         {
-            gridXUnits = GetGridUnits(ChartOptions?.XAxisTicks, ChartOptions?.MaxNumXAxisTicks, T.Zero, T.Zero);
+            gridXUnits = GetGridXUnits(T.Zero, T.Zero);
             lowestVerticalLine = 0;
             numVerticalLines = 1;
             return;
@@ -122,7 +122,7 @@ partial class ScatterPlot<T> : MudAxisLineChartBase<T, ScatterPlotChartOptions> 
         var minX = xValues.Min();
         var maxX = xValues.Max();
 
-        gridXUnits = GetGridUnits(ChartOptions?.XAxisTicks, ChartOptions?.MaxNumXAxisTicks, minX, maxX);
+        gridXUnits = GetGridXUnits(minX, maxX);
         lowestVerticalLine = (int)Math.Floor(double.CreateSaturating(minX) / double.CreateSaturating(gridXUnits));
         var highestVerticalLine = (int)Math.Ceiling(double.CreateSaturating(maxX) / double.CreateSaturating(gridXUnits));
         numVerticalLines = highestVerticalLine - lowestVerticalLine + 1;
@@ -136,6 +136,10 @@ partial class ScatterPlot<T> : MudAxisLineChartBase<T, ScatterPlotChartOptions> 
             numVerticalLines = highestVerticalLine - lowestVerticalLine + 1;
         }
     }
+
+    private T GetGridXUnits(T min, T max) => ChartOptions is { } options
+        ? GetGridUnits(options.XAxisTicks, options.MaxNumXAxisTicks, min, max)
+        : T.CreateSaturating(DefaultGridStep);
 
     protected override string GetVerticalGridLineLabel(int index)
     {

@@ -110,7 +110,7 @@ namespace MudBlazor.Charts
                     : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), allValues.Max());
 
                 // Bars grow from zero, so the axis always reaches it.
-                gridYUnits = GetGridUnits(ChartOptions?.YAxisTicks, ChartOptions?.MaxNumYAxisTicks, T.Min(minY, T.Zero), T.Max(maxY, T.Zero));
+                gridYUnits = GetGridYUnits(T.Min(minY, T.Zero), T.Max(maxY, T.Zero));
                 lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits)), 0);
                 var highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits)), 0);
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
@@ -131,7 +131,7 @@ namespace MudBlazor.Charts
             }
             else
             {
-                gridYUnits = GetGridUnits(ChartOptions?.YAxisTicks, ChartOptions?.MaxNumYAxisTicks, T.Zero, T.Zero);
+                gridYUnits = GetGridYUnits(T.Zero, T.Zero);
                 numHorizontalLines = 1;
                 lowestHorizontalLine = 0;
                 numVerticalLines = 1;

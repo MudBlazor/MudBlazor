@@ -115,7 +115,7 @@ namespace MudBlazor.Charts
             var (stackedPos, stackedNeg) = ComputeStackedColumnTotals(numVerticalLines);
             var (maxY, minY) = GetYAxisExtremes(stackedPos, stackedNeg);
 
-            gridYUnits = GetGridUnits(ChartOptions?.YAxisTicks, ChartOptions?.MaxNumYAxisTicks, minY, maxY);
+            gridYUnits = GetGridYUnits(minY, maxY);
             numHorizontalLines = StackedBar<T>.CalculateNumHorizontalLines(gridYUnits, maxY, minY, out lowestHorizontalLine);
 
             ClampNumHorizontalLines(ref gridYUnits, ref numHorizontalLines, ref lowestHorizontalLine, maxY, minY);

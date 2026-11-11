@@ -923,6 +923,7 @@ namespace MudBlazor.UnitTests.Charts
         [TestCase(new double[] { 3, 7, 5, 2, 6 }, new[] { "2", "3", "4", "5", "6", "7" })]
         [TestCase(new double[] { 0, 1000 }, new[] { "0", "200", "400", "600", "800", "1000" })]
         [TestCase(new double[] { 5, 5, 5 }, new[] { "0", "10" })]
+        [TestCase(new double[] { 0, 0, 0 }, new[] { "0" })]
         public void LineChartAutomaticYAxisStepIsRound(double[] data, string[] expectedLabels)
         {
             var comp = Context.Render<MudChart<double>>(parameters => parameters
@@ -937,15 +938,16 @@ namespace MudBlazor.UnitTests.Charts
         /// <summary>
         /// The automatic step moves up to the next round number when the extra lines at each end would go over MaxNumYAxisTicks.
         /// </summary>
-        [TestCase(new double[] { 0, 1000 }, new[] { "0", "500", "1000" })]
-        [TestCase(new double[] { 3, 7 }, new[] { "0", "5", "10" })]
-        public void LineChartAutomaticYAxisStepStaysRoundWithinMaxNumYAxisTicks(double[] data, string[] expectedLabels)
+        [TestCase(new double[] { 0, 1000 }, 3, new[] { "0", "500", "1000" })]
+        [TestCase(new double[] { 3, 7 }, 3, new[] { "0", "5", "10" })]
+        [TestCase(new double[] { 3, 7 }, 2, new[] { "0", "10" })]
+        public void LineChartAutomaticYAxisStepStaysRoundWithinMaxNumYAxisTicks(double[] data, int maxTicks, string[] expectedLabels)
         {
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
                 .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = data }])
                 .Add(p => p.ChartLabels, data.Select((_, i) => i.ToString(CultureInfo.InvariantCulture)).ToArray())
-                .Add(p => p.ChartOptions, new LineChartOptions { YAxisTicks = 0, MaxNumYAxisTicks = 3 }));
+                .Add(p => p.ChartOptions, new LineChartOptions { YAxisTicks = 0, MaxNumYAxisTicks = maxTicks }));
 
             comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal(expectedLabels);
         }
