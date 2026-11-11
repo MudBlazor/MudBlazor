@@ -1,10 +1,5 @@
 @import '../abstracts/variables';
 
-$header-height: 59px;
-$header-height-dense: 39px;
-$header-height-with-filter: 109px; // 59px + 50px (filter row height)
-$header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
-
 .mud-table {
   color: var(--mud-palette-text-primary);
   background-color: var(--mud-palette-surface);
@@ -286,6 +281,12 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
 
   & * .mud-table-root {
     .mud-table-head {
+      // The whole head sticks as one block, so every header row (a custom header row, the column titles,
+      // the filter row and the loading row) stays stacked in order whatever its height.
+      position: sticky;
+      top: 0;
+      z-index: 2;
+
       & * .mud-table-cell:first-child {
         border-radius: var(--mud-default-borderradius) 0 0 0;
       }
@@ -294,53 +295,11 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
         border-radius: 0 var(--mud-default-borderradius) 0 0;
       }
 
-      //Shared Sticky Header Styles
+      // The cells stay positioned without a vertical offset, so sticky columns still stick horizontally.
       .mud-table-cell, .mud-table-loading {
         background-color: var(--mud-palette-surface);
         position: sticky;
         z-index: 2;
-      }
-
-      // Row 1 (always)
-      .mud-table-cell {
-        top: 0;
-      }
-
-      // Row 2 (filter or panel row)
-      .filter-header-cell {
-        top: $header-height;
-      }
-
-      // Row 2 (filter or panel row if table is dense)
-      &.mud-table-dense .filter-header-cell {
-        top: $header-height-dense;
-      }
-
-      // Row 2 (loading row without filter header)
-      .mud-table-loading {
-        top: $header-height;
-      }
-
-      // Row 2 (loading row without filter header if table is dense)
-      &.mud-table-dense .mud-table-loading {
-        top: $header-height-dense;
-      }
-
-      // Row 3 (loading row with filter header)
-      &:has(.filter-header-cell) .mud-table-loading {
-        top: $header-height-with-filter;
-      }
-
-      // Row 3 (loading row with filter header if table is dense)
-      &.mud-table-dense:has(.filter-header-cell) .mud-table-loading {
-        top: $header-height-with-filter-dense;
-      }
-
-      // Row 1 (loading row with no header row above it, or one that renders no cells and so has no height).
-      // The offsets above assume a header row is there to sit under; without one they push the loader into empty space.
-      .mud-table-loading-row:first-child > .mud-table-loading,
-      tr:not(:has(> *)) + .mud-table-loading-row > .mud-table-loading {
-        top: 0;
       }
 
       & * .mud-table-cell.sticky-left,
