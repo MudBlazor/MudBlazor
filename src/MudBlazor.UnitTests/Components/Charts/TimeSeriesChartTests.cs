@@ -481,6 +481,27 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         /// <summary>
+        /// A time series holding a single reading draws that reading as a dot.
+        /// </summary>
+        [Test]
+        public void TimeSeriesChartLonePointRendersAsDot()
+        {
+            SetupBBoxInterop();
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(new DateTime(2000, 1, 1), count: 1))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions { TimeLabelSpacing = TimeSpan.FromHours(1) }));
+
+            // One reading leaves the series line as a bare move, which paints nothing.
+            comp.Find("path.mud-chart-line:not(.mud-chart-dots)").GetAttribute("d").Should().NotContain("L");
+
+            var dots = comp.Find("path.mud-chart-dots");
+            (dots.GetAttribute("d")!.Split('L').Length - 1).Should().Be(1, because: "the lone reading gets drawn");
+            dots.GetAttribute("stroke-linecap").Should().Be("round", because: "a zero-length segment only paints under a round cap");
+        }
+
+        /// <summary>
         /// Data markers are drawn as rings, and when tooltips are turned off.
         /// </summary>
         [Test]

@@ -83,6 +83,22 @@
             builder.AddAttribute(seq++, "d", chartLine.Data);
             builder.CloseElement();
 
+            // Readings with a gap either side have no segment of their own.
+            // They are drawn as zero-length ones on a path of their own, which keeps the round cap they need off the series line.
+            if (ChartDots.TryGetValue(index, out var chartDots))
+            {
+                builder.OpenElement(seq++, "path");
+                builder.AddAttribute(seq++, "class", $"{lineClass} mud-chart-dots");
+                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+                builder.AddAttribute(seq++, "fill", "none");
+                builder.AddAttribute(seq++, "stroke", color);
+                builder.AddAttribute(seq++, "stroke-opacity", overrideSettings?.StrokeOpacity.ToStr() ?? "1");
+                builder.AddAttribute(seq++, "stroke-width", LineStrokeWidth.ToStr());
+                builder.AddAttribute(seq++, "stroke-linecap", "round");
+                builder.AddAttribute(seq++, "d", chartDots.Data);
+                builder.CloseElement();
+            }
+
             // Area Path (if LineDisplayType.Area)
             var displayType = overrideSettings?.LineDisplayType ?? ChartOptions.LineDisplayType;
             if (displayType == LineDisplayType.Area && index < ChartAreas.Count)

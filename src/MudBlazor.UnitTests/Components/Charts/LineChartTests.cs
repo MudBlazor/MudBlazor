@@ -547,33 +547,123 @@ namespace MudBlazor.UnitTests.Charts
             moveToCount.Should().Be(1, because: "ConnectNullPoints joins the interpolated segments into one line");
         }
 
+        /// <summary>
+        /// An interpolated series draws each reading that has a gap either side as a dot.
+        /// </summary>
         [Test]
-        public void LineChartInterpolatedIsolatedPointsRenderAsMoves()
+        public void LineChartInterpolatedIsolatedPointsRenderAsDots()
         {
             var chartSeries = new List<ChartSeries<double>>
             {
                 new() { Name = "Series 1", Data = new double?[] { 10, null, 30, null, 50 } }
             };
-            string[] xAxisLabels = { "A", "B", "C", "D", "E" };
 
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
-                .Add(p => p.Height, "350px")
-                .Add(p => p.Width, "100%")
                 .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D", "E"])
                 .Add(p => p.ChartOptions, new LineChartOptions
                 {
                     ChartPalette = _baseChartPalette,
                     InterpolationOption = InterpolationOption.NaturalSpline
                 }));
 
-            var path = comp.Find("path.mud-chart-line");
-            var d = path.GetAttribute("d");
+            var line = comp.Find("path.mud-chart-line:not(.mud-chart-dots)");
+            var d = line.GetAttribute("d");
 
             // Each non-null point is isolated by nulls, so no segment can be interpolated into line commands.
             (d!.Split('M').Length - 1).Should().Be(3, because: "each isolated point starts its own subpath");
             d.Should().NotContain("L", because: "single-point segments produce move commands only");
+            line.GetAttribute("stroke-linecap").Should().BeNull(because: "the series line keeps the cap it had");
+
+            // The points themselves are drawn apart from it, as zero-length segments under a round cap.
+            var dots = comp.Find("path.mud-chart-dots");
+            dots.GetAttribute("d").Should().Be("M 30 270.8333 L 30 270.8333 M 350 172.5 L 350 172.5 M 670 74.1667 L 670 74.1667");
+            dots.GetAttribute("stroke-linecap").Should().Be("round");
+        }
+
+        /// <summary>
+        /// A straight series draws a reading that has a gap either side as a dot.
+        /// </summary>
+        [Test]
+        public void LineChartStraightIsolatedPointRendersAsDot()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double?[] { 10, null, 30, null, 50 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D", "E"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    InterpolationOption = InterpolationOption.Straight
+                }));
+
+            var d = comp.Find("path.mud-chart-line:not(.mud-chart-dots)").GetAttribute("d");
+
+            // Nothing but moves, which is why these readings painted nothing at all before.
+            (d!.Split('M').Length - 1).Should().Be(3, because: "each isolated point starts its own subpath");
+            d.Should().NotContain("L");
+
+            var dots = comp.Find("path.mud-chart-dots").GetAttribute("d");
+            (dots!.Split('L').Length - 1).Should().Be(3, because: "every isolated point gets drawn");
+        }
+
+        /// <summary>
+        /// Only the readings with no neighbour to draw a segment to go on the dots path.
+        /// </summary>
+        [Test]
+        public void LineChartOnlyLonePointsReachTheDotsPath()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double?[] { 10, 20, null, 50 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    InterpolationOption = InterpolationOption.Straight
+                }));
+
+            var d = comp.Find("path.mud-chart-line:not(.mud-chart-dots)").GetAttribute("d");
+
+            // The pair has a real segment of its own and is left alone.
+            (d!.Split('M').Length - 1).Should().Be(2, because: "the gap splits the series into two subpaths");
+            (d.Split('L').Length - 1).Should().Be(1, because: "only the pair has a segment to draw");
+
+            var dots = comp.Find("path.mud-chart-dots").GetAttribute("d");
+            (dots!.Split('L').Length - 1).Should().Be(1, because: "only the trailing lone point needs drawing");
+        }
+
+        /// <summary>
+        /// A series that draws every point renders no dots path and keeps its own line cap.
+        /// </summary>
+        [Test]
+        public void LineChartWithoutLonePointsIsLeftAlone()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette }));
+
+            // Nothing is added to a chart that was already drawing every point, caps included.
+            comp.FindAll("path.mud-chart-dots").Should().BeEmpty();
+            comp.Find("path.mud-chart-line").GetAttribute("stroke-linecap").Should().BeNull();
         }
 
         [Test]
