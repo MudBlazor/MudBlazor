@@ -32,6 +32,17 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     protected Dictionary<int, SvgPath> ChartAreas { get; set; } = [];
 
     /// <summary>
+    /// The SVG paths for readings that have no neighbour to draw a segment to, keyed by series index.
+    /// </summary>
+    /// <remarks>
+    /// These are zero-length segments and only paint under a round line cap.
+    /// So they are kept apart from the series line, which keeps its own caps.
+    /// </remarks>
+    protected Dictionary<int, SvgPath> ChartDots { get; set; } = [];
+
+    private readonly StringBuilder _chartDots = new();
+
+    /// <summary>
     /// The SVG circles for the chart data points.
     /// </summary>
     protected Dictionary<int, List<SvgCircle>> ChartDataPoints { get; set; } = [];
@@ -144,6 +155,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     {
         ChartLines.Clear();
         ChartAreas.Clear();
+        ChartDots.Clear();
         ChartDataPoints.Clear();
 
         if (Series.Count == 0)
@@ -164,6 +176,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             var chartLine = new StringBuilder();
             var chartDataCircles = new List<SvgCircle>();
             ChartDataPoints[i] = chartDataCircles;
+            _chartDots.Clear();
 
             var overrideSettings = GetSeriesDisplayOverride(series);
             var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;
@@ -181,6 +194,15 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             };
             ChartLines.Add(line);
 
+            if (_chartDots.Length > 0)
+            {
+                ChartDots[i] = new SvgPath
+                {
+                    Index = i,
+                    Data = _chartDots.ToString()
+                };
+            }
+
             var displayType = overrideSettings?.LineDisplayType ?? ChartOptions?.LineDisplayType;
 
             if (displayType == LineDisplayType.Area)
@@ -188,6 +210,18 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 GenerateAreaChart(i, chartLine, lowestHorizontalLine, firstPointX, firstPointY, lastPointX);
             }
         }
+    }
+
+    private void AppendDot(double x, double y)
+    {
+        _chartDots.Append(_chartDots.Length > 0 ? " M " : "M ");
+        _chartDots.Append(ToS(x));
+        _chartDots.Append(' ');
+        _chartDots.Append(ToS(y));
+        _chartDots.Append(" L ");
+        _chartDots.Append(ToS(x));
+        _chartDots.Append(' ');
+        _chartDots.Append(ToS(y));
     }
 
     /// <summary>
@@ -215,12 +249,28 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         var dataLength = series.Data.Points.Count;
         var needsMoveTo = true;
 
+        // A run of one point produces a bare move, which draws nothing at all.
+        // So the point goes to the dots path as well, where a zero-length segment under a round cap paints it.
+        double segmentX = 0, segmentY = 0;
+        var segmentLength = 0;
+
+        void CloseSegment()
+        {
+            if (segmentLength == 1)
+            {
+                AppendDot(segmentX, segmentY);
+            }
+
+            segmentLength = 0;
+        }
+
         for (var j = 0; j < dataLength; j++)
         {
             if (!series.Data[j].HasValue)
             {
                 if (ChartOptions?.ConnectNullPoints != true)
                 {
+                    CloseSegment();
                     needsMoveTo = true;
                 }
                 continue;
@@ -245,6 +295,9 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             }
 
             lastPointX = x;
+            segmentX = x;
+            segmentY = y;
+            segmentLength++;
 
             chartLine.Append(ToS(x));
             chartLine.Append(' ');
@@ -264,6 +317,8 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 });
             }
         }
+
+        CloseSegment();
 
         return (firstPointX, firstPointY, lastPointX);
     }
@@ -303,12 +358,13 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         {
             if (segment.Count <= 1)
             {
-                // Single point — just emit an M (no interpolation possible)
+                // Single point, so there is nothing to interpolate and the move below paints nothing on its own.
                 var (sx, sy) = GetXYForDataPoint(seriesIndex, segment[0], lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
                 chartLine.Append(chartLine.Length > 0 ? " M " : "M ");
                 chartLine.Append(ToS(sx));
                 chartLine.Append(' ');
                 chartLine.Append(ToS(sy));
+                AppendDot(sx, sy);
 
                 if (firstPointX == 0 && firstPointY == 0)
                 {
