@@ -126,6 +126,23 @@ public class RoseChartTests : BunitTest
         comp.FindAll("text.mud-chart-label-value tspan").Count(ts => ts.TextContent == "75%").Should().Be(1);
     }
 
+    /// <summary>
+    /// A share that falls halfway between two tenths rounds the same way on every runtime.
+    /// </summary>
+    [Test]
+    public void RoseChart_Option_ShowAsPercentage_RoundsTiesLikeEarlierRuntimes()
+    {
+        var comp = Context.Render<Rose<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 3, 1997 } } }) // 0.15% and 99.85%
+            .Add(p => p.ChartOptions, new RoseChartOptions { ShowValues = true, ShowAsPercentage = true })
+            .Add(p => p.ChartLabels, new string[] { "A", "B" })
+            .Add(p => p.Width, "300px")
+            .Add(p => p.Height, "300px")
+        );
+
+        comp.FindAll("text.mud-chart-label-value tspan").Select(ts => ts.TextContent).Should().Contain("0.2%");
+    }
+
     [Test]
     public void RoseChart_Data_EmptySeries()
     {

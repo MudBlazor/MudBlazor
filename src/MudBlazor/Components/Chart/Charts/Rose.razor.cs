@@ -5,6 +5,7 @@
 using System.Globalization;
 using System.Numerics;
 using System.Text;
+using MudBlazor.Extensions;
 
 namespace MudBlazor.Charts;
 
@@ -66,7 +67,7 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
                 LabelX = x,
                 LabelY = y,
                 LabelXValue = ChartOptions.ShowAsPercentage
-                    ? $"{ToS(Math.Round(data / sum * 100, 1))}%"
+                    ? $"{ToS((data / sum * 100).RoundToDigits(1))}%"
                     : value.ToString(null, CultureInfo.InvariantCulture),
                 LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty
             });

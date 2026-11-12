@@ -120,7 +120,7 @@ public partial class Radar<T> : MudRadialChartBase<T, RadarChartOptions> where T
                 Data = pathString,
                 Points = points,
                 LabelXValue = ChartOptions.ShowAsPercentage
-                    ? ToS(Math.Round(normalizedData[seriesIndex] * 100, 1)) + "%"
+                    ? ToS((normalizedData[seriesIndex] * 100).RoundToDigits(1)) + "%"
                     : series.Data.Aggregate(T.Zero, static (sum, value) => sum + value).ToString(null, CultureInfo.InvariantCulture),
                 LabelYValue = series.Name
             };

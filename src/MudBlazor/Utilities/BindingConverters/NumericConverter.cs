@@ -8,6 +8,7 @@ namespace MudBlazor
     {
         // From .NET 11 on, converting a double or float to decimal gives the exact binary value, so 0.1 becomes 0.1000000000000000055511151231.
         // Earlier runtimes kept 15 significant digits of a double and 7 of a float, and going through text keeps that on every runtime.
+        // TODO(net11): Once every target runs on .NET 11 or later, decide whether the DataGrid and the slider should take the exact value instead.
         public static decimal ToDecimal(double d)
         {
             if (!double.IsFinite(d))
