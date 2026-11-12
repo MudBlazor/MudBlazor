@@ -9,7 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MudBlazor\MudBlazor.csproj" />
     <!--
-      Pinned to the Roslyn version bundled in the GA .NET SDK 10.0.100 that global.json targets (Roslyn
+      Pinned to the Roslyn version bundled in the GA .NET 10 SDK, 10.0.100 (Roslyn
       5.0.x). This is an ordinary package reference in a Razor helper library (NOT a shipped analyzer),
       so it is not a CS9057 / compiler-floor concern; the pin keeps the Roslyn API aligned with the base
       SDK so MSBuildWorkspace + the Razor source generator yield deterministic analyzer results across

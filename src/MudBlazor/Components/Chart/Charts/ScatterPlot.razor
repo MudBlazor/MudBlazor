@@ -205,8 +205,8 @@
 
             if (!string.IsNullOrWhiteSpace(tooltipTitleFormat))
             {
-                var tooltipTitle = FormatTooltipText(tooltipTitleFormat, series, HoveredDataPointPath);
-                var tooltipSubtitle = FormatTooltipText(tooltipSubtitleFormat, series, HoveredDataPointPath);
+                var tooltipTitle = FormatTooltip(tooltipTitleFormat, series, HoveredDataPointPath);
+                var tooltipSubtitle = FormatTooltip(tooltipSubtitleFormat, series, HoveredDataPointPath);
 
                 builder.OpenComponent<ChartTooltip>(seq++);
                 builder.AddAttribute(seq++, "Title", tooltipTitle);

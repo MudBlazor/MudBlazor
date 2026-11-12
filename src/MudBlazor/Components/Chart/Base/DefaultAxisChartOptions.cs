@@ -63,6 +63,9 @@ public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartO
     /// If set, this function will be used to convert Y-axis values to strings for display purposes.
     /// If not provided, <see cref="YAxisFormat"/> will be used instead.
     /// </summary>
+    /// <remarks>
+    /// Tooltips can write values the same way with <c>{{Y_AXIS_VALUE}}</c> in <see cref="DefaultChartOptions.TooltipTitleFormat"/> or <see cref="DefaultChartOptions.TooltipSubtitleFormat"/>.
+    /// </remarks>
     public Func<double, string>? YAxisToStringFunc { get; set; }
 
     /// <summary>
