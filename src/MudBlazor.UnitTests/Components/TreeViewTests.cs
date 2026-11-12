@@ -4098,7 +4098,7 @@ namespace MudBlazor.UnitTests.Components
             var spacerSeparation = renderedItemCount * virtualize.ItemSize;
             var callbackReference = Context.JSInterop.Invocations["Blazor._internal.Virtualize.init"][^1].Arguments[0]!;
 
-            return component.InvokeAsync(() => _virtualizeCallbacks.Invoke(callbackReference, "OnSpacerBeforeVisible", spacerSize, spacerSeparation, containerSize));
+            return component.InvokeAsync(() => _virtualizeCallbacks.Invoke(callbackReference, "OnSpacerBeforeVisible", spacerSize, spacerSeparation, containerSize, UserScrollReason));
         }
 
         /// <summary>
@@ -4272,6 +4272,11 @@ namespace MudBlazor.UnitTests.Components
 
             public bool HasChildren => ChildList.Count > 0;
         }
+
+        /// <summary>
+        /// The value of Blazor's internal SpacerVisibilityReason.UserScroll, which .NET 11 added as the last argument of the Virtualize spacer callbacks.
+        /// </summary>
+        private const float UserScrollReason = 0;
 
         /// <summary>
         /// Invokes JS-invokable .NET callbacks through the public dispatcher, which is how Blazor's JavaScript reaches .NET.
