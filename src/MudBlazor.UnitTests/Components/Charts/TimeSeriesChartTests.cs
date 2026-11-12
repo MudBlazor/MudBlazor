@@ -553,5 +553,29 @@ namespace MudBlazor.UnitTests.Charts
             // Leaving the hovered marker out shifted the sequence numbers of every point drawn after it, so each hover rebuilt all of them.
             MarkerCount().Should().Be(4);
         }
+
+        /// <summary>
+        /// YAxisTicks = 0 picks a round step that fits the values.
+        /// </summary>
+        [Test]
+        public void TimeSeriesChartAutomaticYAxisStepIsRound()
+        {
+            SetupBBoxInterop();
+
+            var time = new DateTime(2000, 1, 1);
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, [
+                    new()
+                    {
+                        Name = "Series 1",
+                        Data = new double[] { 3, 7, 5, 2, 6 }.Select((y, i) => new TimeValue<double>(time.AddHours(i), y)).ToList(),
+                    }
+                ])
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions { TimeLabelSpacing = TimeSpan.FromHours(1), YAxisTicks = 0 }));
+
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("2", "3", "4", "5", "6", "7");
+        }
     }
 }
