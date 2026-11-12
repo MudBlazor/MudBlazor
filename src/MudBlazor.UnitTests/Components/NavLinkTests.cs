@@ -1,7 +1,9 @@
 ﻿using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents.NavLink;
 using NUnit.Framework;
 
@@ -26,6 +28,21 @@ namespace MudBlazor.UnitTests.Components
             // print the generated html
             // select elements needed for the test
             comp.Find("a").GetAttribute("rel").Should().Be(expectedRel);
+        }
+
+        /// <summary>
+        /// RelativeToCurrentUri resolves a relative Href against the current page.
+        /// </summary>
+        [Test]
+        public void NavLink_RelativeToCurrentUri_ResolvesHrefAgainstCurrentPage()
+        {
+            Context.Services.GetRequiredService<NavigationManager>().NavigateTo("folder/page");
+
+            var comp = Context.Render<MudNavLink>(parameters => parameters
+                .Add(x => x.Href, "sibling")
+                .Add(x => x.RelativeToCurrentUri, true));
+
+            comp.Find("a").GetAttribute("href").Should().EndWith("/folder/sibling");
         }
 
         [TestCase(null)]

@@ -45,6 +45,12 @@ namespace MudBlazor
                     attributes["href"] = Href;
                     attributes["target"] = Target;
                     attributes["rel"] = Rel ?? (!string.IsNullOrWhiteSpace(Target) ? "noopener noreferrer" : string.Empty);
+#if NET11_0_OR_GREATER
+                    if (RelativeToCurrentUri)
+                    {
+                        attributes[nameof(RelativeToCurrentUri)] = true;
+                    }
+#endif
                 }
 
                 foreach (var attribute in UserAttributes)
@@ -161,6 +167,19 @@ namespace MudBlazor
         [Category(CategoryTypes.General.ClickAction)]
         public string? Href { get; set; }
 
+        // TODO(net11): Remove the conditional compilation when .NET 10 support is dropped.
+#if NET11_0_OR_GREATER
+        /// <summary>
+        /// Resolves a relative <see cref="Href"/> against the current page instead of the app's base path.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Available on .NET 11 and later.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.General.ClickAction)]
+        public bool RelativeToCurrentUri { get; set; }
+#endif
+
         /// <summary>
         /// Performs a full page load during navigation.
         /// </summary>
@@ -206,7 +225,11 @@ namespace MudBlazor
 
             if (Href is not null)
             {
+#if NET11_0_OR_GREATER
+                UriHelper.NavigateTo(Href, new NavigationOptions { ForceLoad = ForceLoad, RelativeToCurrentUri = RelativeToCurrentUri });
+#else
                 UriHelper.NavigateTo(Href, ForceLoad);
+#endif
             }
             else
             {
