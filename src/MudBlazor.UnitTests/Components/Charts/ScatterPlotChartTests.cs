@@ -1002,6 +1002,33 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         /// <summary>
+        /// YAxisTicks = 0 and XAxisTicks = 0 pick round steps that fit the values on each axis.
+        /// </summary>
+        [Test]
+        public void ScatterPlotAutomaticAxisStepsAreRound()
+        {
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "S1", Data = Points((2, 3), (4, 5), (7, 7)) }])
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions { YAxisTicks = 0, XAxisTicks = 0 }));
+
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("3", "4", "5", "6", "7");
+            comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("2", "3", "4", "5", "6", "7");
+        }
+
+        /// <summary>
+        /// A scatter plot with no options keeps the default step of 20 on both axes instead of picking one.
+        /// </summary>
+        [Test]
+        public void ScatterPlotWithoutOptionsKeepsTheDefaultAxisSteps()
+        {
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "S1", Data = Points((2, 3), (4, 5), (7, 7)) }]));
+
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("0", "20");
+            comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("0", "20");
+        }
+
+        /// <summary>
         /// Hovering a point keeps its marker under the hover circle instead of taking it out of the chart.
         /// </summary>
         [Test]

@@ -162,5 +162,37 @@ namespace MudBlazor.UnitTests.Charts
             comp.Find("g.svg-tooltip text").GetAttribute("x").Should().Be("50");
             comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse();
         }
+
+        /// <summary>
+        /// A tooltip with a subtitle keeps its height when it is measured again, instead of growing by a line each time.
+        /// </summary>
+        [Test]
+        public async Task TooltipWithASubtitleKeepsItsHeightWhenMeasuredAgain()
+        {
+            // One line of text measures 14 high, and both lines measure as one at first because the subtitle starts with no offset.
+            Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 60, Height: 14));
+
+            var comp = Context.Render<ChartTooltip>(parameters => parameters
+                    .Add(p => p.Title, "20")
+                    .Add(p => p.Subtitle, "Mon")
+                    .Add(p => p.X, 200)
+                    .Add(p => p.Y, 100)
+                );
+
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+            var height = comp.Find("g.svg-tooltip rect").GetAttribute("height");
+            comp.FindAll("g.svg-tooltip tspan")[1].GetAttribute("dy").Should().Be("14");
+
+            // Now that the subtitle sits a line below the title, the browser measures both lines and the gap between them.
+            Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 60, Height: 28));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                    .Add(p => p.Title, "30")
+                    .Add(p => p.X, 250)
+                );
+
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip text").GetAttribute("x").Should().Be("250"));
+            comp.Find("g.svg-tooltip rect").GetAttribute("height").Should().Be(height);
+            comp.FindAll("g.svg-tooltip tspan")[1].GetAttribute("dy").Should().Be("14");
+        }
     }
 }
