@@ -11,6 +11,16 @@
     <PrimaryTargetFramework>net11.0</PrimaryTargetFramework>
   </PropertyGroup>
 
+  <!--
+    Blazor analyzers new in .NET 11.
+    BL0016 wants every JS interop call in a try/catch, and adding one changes which exceptions reach callers.
+    BL0011 and BL0012 are enforced in the library only: test components and docs examples call StateHasChanged from methods that tests invoke directly.
+  -->
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);BL0016</NoWarn>
+    <NoWarn Condition="'$(MSBuildProjectName)' != 'MudBlazor'">$(NoWarn);BL0011;BL0012</NoWarn>
+  </PropertyGroup>
+
   <PropertyGroup>
     <!-- NetEscapades.EnumGenerators.Generators uses DescriptionAttribute to generate the enum values -->
     <EnumGenerator_EnumMetadataSource>DescriptionAttribute</EnumGenerator_EnumMetadataSource>

@@ -86,6 +86,19 @@ namespace MudBlazor
         public int MaxItemCount { get; set; } = 100;
 #endif
 
+#if NET11_0_OR_GREATER
+        /// <summary>
+        /// Compares items from <see cref="ItemsProvider"/> so the list can tell when items were added above the ones already shown.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="EqualityComparer{T}.Default"/>.
+        /// Set a comparer that matches items by a unique key when <typeparamref name="T"/> is a class without value equality and the provider returns new instances.
+        /// Available on .NET 11 and later.
+        /// </remarks>
+        [Parameter]
+        public IEqualityComparer<T>? ItemComparer { get; set; }
+#endif
+
         /// <summary>
         /// Gets or sets tag name of the HTML element that will be used as virtualization spacer. Default is div.
         /// </summary>
@@ -98,6 +111,12 @@ namespace MudBlazor
             _virtualizeAttributes.Clear();
 #if NET9_0_OR_GREATER
             _virtualizeAttributes[nameof(MaxItemCount)] = MaxItemCount;
+#endif
+#if NET11_0_OR_GREATER
+            if (ItemComparer is not null)
+            {
+                _virtualizeAttributes[nameof(ItemComparer)] = ItemComparer;
+            }
 #endif
         }
 
