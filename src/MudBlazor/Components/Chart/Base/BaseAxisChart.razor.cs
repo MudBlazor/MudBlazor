@@ -253,8 +253,8 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
             await ElementRefChanged.InvokeAsync(_svgRef);
         }
 
-        var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
-        var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
+        var yAxisLabelSize = _yAxisGroupElementReference != null ? (await JsRuntime.InvokeAsyncWithErrorHandling<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference)).value : null;
+        var xAxisLabelSize = _xAxisGroupElementReference != null ? (await JsRuntime.InvokeAsyncWithErrorHandling<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference)).value : null;
 
         var axisChanged = false;
 

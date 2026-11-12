@@ -156,6 +156,53 @@ public class ScrollManagerTests
         _runtimeMock.VerifyAll();
     }
 
+    /// <summary>
+    /// Scroll calls made after the circuit is gone complete without throwing.
+    /// </summary>
+    [TestCase("mudScrollManager.scrollTo")]
+    [TestCase("mudScrollManager.scrollIntoView")]
+    [TestCase("mudScrollManager.scrollToBottom")]
+    [TestCase("mudScrollManager.scrollToYear")]
+    [TestCase("mudScrollManager.scrollToListItem")]
+    public async Task ScrollMethods_Disconnected_Swallowed(string identifier)
+    {
+        SetupThrowingInvocation(identifier, new JSDisconnectedException("disconnected"));
+
+        var act = async () => await InvokeScrollMethod(identifier);
+
+        await act.Should().NotThrowAsync();
+    }
+
+    /// <summary>
+    /// Scroll calls still surface JavaScript errors to the caller.
+    /// </summary>
+    [TestCase("mudScrollManager.scrollTo")]
+    [TestCase("mudScrollManager.scrollIntoView")]
+    [TestCase("mudScrollManager.scrollToBottom")]
+    [TestCase("mudScrollManager.scrollToYear")]
+    [TestCase("mudScrollManager.scrollToListItem")]
+    public async Task ScrollMethods_JSException_Rethrown(string identifier)
+    {
+        SetupThrowingInvocation(identifier, new JSException("failed"));
+
+        var act = async () => await InvokeScrollMethod(identifier);
+
+        await act.Should().ThrowAsync<JSException>();
+    }
+
+    /// <summary>
+    /// Calls the scroll method that invokes the given JavaScript identifier.
+    /// </summary>
+    private ValueTask InvokeScrollMethod(string identifier) => identifier switch
+    {
+        "mudScrollManager.scrollTo" => _service.ScrollToAsync("#list", 10, 20, ScrollBehavior.Auto),
+        "mudScrollManager.scrollIntoView" => _service.ScrollIntoViewAsync(".target", ScrollBehavior.Auto),
+        "mudScrollManager.scrollToBottom" => _service.ScrollToBottomAsync("messages"),
+        "mudScrollManager.scrollToYear" => _service.ScrollToYearAsync("year-2026"),
+        "mudScrollManager.scrollToListItem" => _service.ScrollToListItemAsync("item-1"),
+        _ => throw new ArgumentOutOfRangeException(nameof(identifier))
+    };
+
     private void SetupVoidInvocation(string identifier, Func<object[], bool> argumentMatcher)
     {
         _runtimeMock

@@ -166,7 +166,7 @@ public partial class ChartTooltip : ComponentBase
         var subtitleGap = HasSubtitle ? _textBbox.Height : 0;
 
         var measurementId = ++_measurementId;
-        var textBBox = await JsRuntime.InvokeAsync<BBox>("mudGetSvgBBox", _text);
+        var (_, textBBox) = await JsRuntime.InvokeAsyncWithErrorHandling<BBox>("mudGetSvgBBox", _text);
 
         // A newer measurement started because the text or position changed while this one was running.
         // Its box belongs to the older text, so only the latest measurement is applied.

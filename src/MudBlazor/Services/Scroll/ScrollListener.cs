@@ -117,7 +117,9 @@ namespace MudBlazor
         /// <inheritdoc />
         public ValueTask<ScrollEventArgs> GetCurrentScrollDataAsync()
         {
+#pragma warning disable BL0016 // The caller needs the real value or the error, and there is no honest fallback to return.
             return _js.InvokeAsync<ScrollEventArgs>("mudScrollListener.getCurrentScrollPosition", Selector);
+#pragma warning restore BL0016
         }
 
         /// <inheritdoc />

@@ -4000,6 +4000,61 @@ namespace MudBlazor.UnitTests.Components
             jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()), Times.Once);
         }
 
+        /// <summary>
+        /// Focusing a cell after the circuit is gone completes without throwing.
+        /// </summary>
+        [Test]
+        public async Task FocusCellAsync_Disconnected_Swallowed()
+        {
+            var items = GetTestItems(10);
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()))
+                .Throws(new JSDisconnectedException("disconnected"));
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.selectCell", It.IsAny<object[]>()))
+                .Throws(new JSDisconnectedException("disconnected"));
+            Context.Services.AddSingleton(jsRuntimeMock.Object);
+
+            var comp = Context.Render<MudTable<TestItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.RowTemplate, context => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, context.Name)));
+                    builder.CloseComponent();
+                }));
+
+            var act = () => comp.InvokeAsync(() => comp.Instance.FocusCellAsync(items[3], 0));
+
+            await act.Should().NotThrowAsync();
+            jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.selectCell", It.IsAny<object[]>()), Times.Once);
+        }
+
+        /// <summary>
+        /// Focusing a cell still surfaces JavaScript errors to the caller.
+        /// </summary>
+        [Test]
+        public async Task FocusCellAsync_JSException_Rethrown()
+        {
+            var items = GetTestItems(10);
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudTableCell.focusCell", It.IsAny<object[]>()))
+                .Throws(new JSException("failed"));
+            Context.Services.AddSingleton(jsRuntimeMock.Object);
+
+            var comp = Context.Render<MudTable<TestItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.RowTemplate, context => builder =>
+                {
+                    builder.OpenComponent<MudTd>(0);
+                    builder.AddAttribute(1, "ChildContent", (RenderFragment)(b => b.AddContent(2, context.Name)));
+                    builder.CloseComponent();
+                }));
+
+            var act = () => comp.InvokeAsync(() => comp.Instance.FocusCellAsync(items[3], 0));
+
+            await act.Should().ThrowAsync<JSException>();
+        }
+
         [Test]
         public async Task FocusCellAsync_Virtualized_ItemAndCellExist_CallsScrollToVirtualizedItemAndJSRuntime()
         {

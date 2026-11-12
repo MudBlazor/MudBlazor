@@ -194,7 +194,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
         if (firstRender)
         {
             _builtContainerId = GetEffectiveElementId(_containerId);
-            await JsRuntime.InvokeVoidAsync("mudSplitPanel.build", _builtContainerId, Horizontal, ResetOnDoubleClick, MinPanelSize, FirstPanelInitialSize, PanelGap);
+            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudSplitPanel.build", _builtContainerId, Horizontal, ResetOnDoubleClick, MinPanelSize, FirstPanelInitialSize, PanelGap);
         }
     }
 
@@ -204,7 +204,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
 
         if (IsJSRuntimeAvailable)
         {
-            await JsRuntime.InvokeVoidAsync("mudSplitPanel_update", ResolvedContainerId, Horizontal, ResetOnDoubleClick, MinPanelSize, PanelGap);
+            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudSplitPanel_update", ResolvedContainerId, Horizontal, ResetOnDoubleClick, MinPanelSize, PanelGap);
         }
     }
 
@@ -213,7 +213,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     /// </summary>
     public async Task ResetDividerPositionAsync()
     {
-        await JsRuntime.InvokeVoidAsync("mudSplitPanel_resetDividerPosition", ResolvedContainerId);
+        await JsRuntime.InvokeVoidAsyncIgnoreDisconnected("mudSplitPanel_resetDividerPosition", ResolvedContainerId);
     }
 
     /// <summary>
@@ -225,7 +225,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     /// <param name="offset">The offset in pixels from the left or top border.</param>
     public async Task SetDividerPositionAsync(int offset)
     {
-        await JsRuntime.InvokeVoidAsync("mudSplitPanel_setDividerPosition", ResolvedContainerId, offset);
+        await JsRuntime.InvokeVoidAsyncIgnoreDisconnected("mudSplitPanel_setDividerPosition", ResolvedContainerId, offset);
     }
 
     /// <summary>
@@ -233,7 +233,9 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     /// </summary>
     public async Task<int> GetDividerPositionAsync()
     {
+#pragma warning disable BL0016 // The caller needs the real value or the error, and there is no honest fallback to return.
         return await JsRuntime.InvokeAsync<int>("mudSplitPanel_getDividerPosition", ResolvedContainerId);
+#pragma warning restore BL0016
     }
 
     /// <inheritdoc/>

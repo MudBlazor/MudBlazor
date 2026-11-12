@@ -1,5 +1,6 @@
 ﻿using AwesomeAssertions;
 using Bunit;
+using Microsoft.JSInterop;
 using MudBlazor.Charts;
 using NUnit.Framework;
 
@@ -46,6 +47,24 @@ namespace MudBlazor.UnitTests.Charts
 
             // One initial render plus the one the recalculation asks for, then it settles.
             comp.RenderCount.Should().BeLessThanOrEqualTo(3);
+        }
+
+        /// <summary>
+        /// A tooltip whose text measurement hits a lost circuit renders without throwing.
+        /// </summary>
+        [Test]
+        public void TooltipMeasurementDisconnected_StillRenders()
+        {
+            Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetException(new JSDisconnectedException("disconnected"));
+
+            var comp = Context.Render<ChartTooltip>(parameters => parameters
+                    .Add(p => p.Title, "Some Title")
+                    .Add(p => p.X, 200)
+                    .Add(p => p.Y, 100)
+                );
+
+            comp.Find("g.svg-tooltip text").TextContent.Should().Contain("Some Title");
+            Context.JSInterop.VerifyInvoke("mudGetSvgBBox");
         }
 
         /// <summary>
