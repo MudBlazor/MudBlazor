@@ -1,7 +1,9 @@
 ﻿using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.UnitTests.TestComponents.NavLink;
 using NUnit.Framework;
 
@@ -27,6 +29,42 @@ namespace MudBlazor.UnitTests.Components
             // select elements needed for the test
             comp.Find("a").GetAttribute("rel").Should().Be(expectedRel);
         }
+
+#if NET11_0_OR_GREATER
+        /// <summary>
+        /// RelativeToCurrentUri resolves a relative Href against the current page.
+        /// </summary>
+        [Test]
+        public void NavLink_RelativeToCurrentUri_ResolvesHrefAgainstCurrentPage()
+        {
+            Context.Services.GetRequiredService<NavigationManager>().NavigateTo("folder/page");
+
+            var comp = Context.Render<MudNavLink>(parameters => parameters
+                .Add(x => x.Href, "sibling")
+                .Add(x => x.RelativeToCurrentUri, true));
+
+            comp.Find("a").GetAttribute("href").Should().EndWith("/folder/sibling");
+        }
+
+        /// <summary>
+        /// A link with OnClick renders without an anchor and still navigates relative to the current page when clicked.
+        /// </summary>
+        [Test]
+        public async Task NavLink_RelativeToCurrentUri_WithOnClick_NavigatesAgainstCurrentPage()
+        {
+            var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
+            navigationManager.NavigateTo("folder/page");
+
+            var comp = Context.Render<MudNavLink>(parameters => parameters
+                .Add(x => x.Href, "sibling")
+                .Add(x => x.RelativeToCurrentUri, true)
+                .Add(x => x.OnClick, (MouseEventArgs _) => { }));
+
+            await comp.Find(".mud-nav-link").ClickAsync();
+
+            navigationManager.Uri.Should().EndWith("/folder/sibling");
+        }
+#endif
 
         [TestCase(null)]
         [TestCase("_blank")]
