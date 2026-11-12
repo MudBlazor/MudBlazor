@@ -5,6 +5,7 @@
     position: relative;
   }
 
+  
   .grid-dropzone {
     position: absolute !important;
     top: 0;
@@ -13,7 +14,13 @@
     width: 2rem;
     z-index: 100;
     background-color: transparent;
+    pointer-events: none;
   }
+
+  .grid-dropzone.mud-drop-zone-transaction-active {
+    pointer-events: auto;
+  }
+
 
   .dropzone-pre {
     inset-inline-start: -2.5rem;
