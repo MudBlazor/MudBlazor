@@ -85,7 +85,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"15\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 38 320 L 248.6667 320 L 459.3333 320 L 670 320\"></path>");
 
             // check the axis
-            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 38 320 L 670 320\"></path></g></g>");
+            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path d=\"M 38 320 L 670 320\"></path></g></g>");
             comp.Markup.Should().ContainEquivalentOf("<text x='28' y='325' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>");
             comp.Markup.Should().ContainEquivalentOf("<text x='38' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 38 342.5)'>23:00</text><text x='248.6667' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 248.6667 342.5)'>00:00</text><text x='459.3333' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 459.3333 342.5)'>01:00</text><text x='670' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 670 342.5)'>02:00</text></g>");
         }
@@ -113,7 +113,7 @@ namespace MudBlazor.UnitTests.Charts
             comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"15\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 38 320 L 248.6667 320 L 459.3333 320 L 670 320\"></path>");
 
             // check the axis
-            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 38 320 L 670 320\"></path></g></g>");
+            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path d=\"M 38 320 L 670 320\"></path></g></g>");
             comp.Markup.Should().ContainEquivalentOf("<text x='28' y='325' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>");
             comp.Markup.Should().ContainEquivalentOf("<text x='38' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 38 342.5)'>23:00</text><text x='248.6667' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 248.6667 342.5)'>00:00</text><text x='459.3333' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 459.3333 342.5)'>01:00</text><text x='670' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 670 342.5)'>02:00</text></g>");
         }
