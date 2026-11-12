@@ -478,7 +478,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.DateRange, range));
 
             comp.Instance.DateRange.Should().Be(range);
-            wasEventCallbackCalled.Should().BeTrue();
+            wasEventCallbackCalled.Should().BeFalse("a parent assignment does not raise DateRangeChanged (#10834)");
         }
 
         [Test]
@@ -544,6 +544,44 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Instance.DateRange.Should().Be(dr2);
             wasEventCallbackCalled.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A DateRange assigned by the parent is applied without raising DateRangeChanged (#10834).
+        /// </summary>
+        [Test]
+        public async Task DateRangeChanged_ShouldNotFire_WhenDateRangeSetFromParent()
+        {
+            var invocationCount = 0;
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(x => x.DateRangeChanged, (DateRange _) => invocationCount++));
+
+            var range = new DateRange(new DateTime(2022, 1, 1), new DateTime(2022, 1, 10));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, range));
+
+            comp.Instance.DateRange.Should().Be(range);
+            invocationCount.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A range the user picks from the calendar still raises DateRangeChanged (#10834).
+        /// </summary>
+        [Test]
+        public async Task DateRangeChanged_ShouldFire_WhenUserSelectsRange()
+        {
+            var invocationCount = 0;
+            var comp = Context.Render<DateRangePickerImpl>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.DateRangeChanged, (DateRange _) => invocationCount++));
+            var picker = comp.Instance;
+
+            var start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 10);
+            var end = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 12);
+            await comp.InvokeAsync(() => picker.ClickDayAsync(start));
+            await comp.InvokeAsync(() => picker.ClickDayAsync(end));
+
+            picker.DateRange.Should().Be(new DateRange(start, end));
+            invocationCount.Should().Be(1);
         }
 
         // new DateRange() chains to new DateRange(null, null), so both produce an all-null range.
@@ -1105,10 +1143,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A deliberate null assignment must still clear text that failed to convert, even after the binding echo preserved it.
+        /// Later parent renders that pass the same null keep text that failed to convert, and ClearAsync still clears it.
         /// </summary>
         [Test]
-        public async Task DateRangePicker_ExplicitNull_ShouldClearInvalidText_AfterTheEchoPreservedIt()
+        public async Task DateRangePicker_RepeatedNullFromParent_KeepsInvalidText()
         {
             var start = new DateTime(2020, 10, 26);
             var end = new DateTime(2020, 10, 30);
@@ -1120,14 +1158,14 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[1].ChangeAsync(end.ToShortDateString());
             await comp.FindAll("input")[0].ChangeAsync("INVALID");
 
-            // The binding hands the resulting null straight back, which must leave the edit alone.
+            // The binding echo and any later parent render, such as a form's validity changing, pass the same null.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, null));
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, null));
 
             ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be("INVALID");
             ((IHtmlInputElement)comp.FindAll("input")[1]).Value.Should().Be(end.ToShortDateString());
 
-            // Assigning null again is the consumer deliberately clearing, which is the only way out of a conversion error.
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.DateRange, null));
+            await comp.InvokeAsync(() => comp.Instance.ClearAsync());
 
             comp.Instance.Text.Should().BeNull();
             ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().BeEmpty();
@@ -1135,10 +1173,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Setting DateRange to null clears text that failed to convert, which is the only way out of the conversion error.
+        /// ClearAsync clears text that failed to convert even though the range is already null.
         /// </summary>
         [Test]
-        public async Task DateRangePicker_ShouldClearInvalidText_WhenDateRangeSetNull()
+        public async Task DateRangePicker_ClearAsync_ShouldClearInvalidText()
         {
             const string Invalid = "INVALID_RANGE";
             var comp = Context.Render<MudDateRangePicker>();
@@ -1148,7 +1186,7 @@ namespace MudBlazor.UnitTests.Components
             picker.DateRange.Should().BeNull();
             picker.Text.Should().Be(Invalid);
 
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DateRange, null));
+            await comp.InvokeAsync(() => picker.ClearAsync());
 
             picker.DateRange.Should().BeNull();
             picker.Text.Should().BeNull();
@@ -1348,8 +1386,9 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(picker => picker.DateRange, new DateRange(twoDaysAgo, today)));
 
+            // AllowDisabledDatesInRange keeps the range despite the disabled date, and a parent assignment does not raise DateRangeChanged (#10834).
             comp.Instance.DateRange.Should().Be(range);
-            wasEventCallbackCalled.Should().BeTrue();
+            wasEventCallbackCalled.Should().BeFalse();
         }
 
         [Test]
@@ -1969,58 +2008,69 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().Contain(comp.Instance.ClearIcon);
         }
 
+        /// <summary>
+        /// Picking the same range again after the clear button raises DateRangeChanged again (#12775).
+        /// </summary>
         [Test]
         public async Task DateRangePicker_ClearAndReselectSameDateRange_ShouldFireDateRangeChanged()
         {
-            var initialRange = new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29));
+            // The range is picked from the calendar, because a parent assignment no longer raises DateRangeChanged (#10834).
             var changedRanges = new List<DateRange>();
-
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+            var comp = Context.Render<DateRangePickerImpl>(parameters => parameters
                 .Add(p => p.Clearable, true)
-                .Add(p => p.DateRange, initialRange)
                 .Add(p => p.DateRangeChanged, (DateRange range) => changedRanges.Add(range)));
-
             var picker = comp.Instance;
-            picker.DateRange.Should().Be(initialRange);
 
-            // Clear the date range via the clearable X button
-            await comp.Find("button").ClickAsync();
+            var start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 10);
+            var end = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 12);
+            var range = new DateRange(start, end);
 
-            // DateRangeChanged should fire on clear
+            await comp.InvokeAsync(() => picker.ClickDayAsync(start));
+            await comp.InvokeAsync(() => picker.ClickDayAsync(end));
             changedRanges.Should().HaveCount(1);
+            picker.DateRange.Should().Be(range);
 
-            // Reselect the exact same date range (simulating user reselecting after clearing)
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DateRange, initialRange));
-
-            // DateRangeChanged should fire again even when reselecting the same range after clearing
+            await comp.Find(".mud-input-clear-button").ClickAsync();
             changedRanges.Should().HaveCount(2);
+            changedRanges[1].Should().BeNull();
+            picker.DateRange.Should().BeNull();
+
+            await comp.InvokeAsync(() => picker.ClickDayAsync(start));
+            await comp.InvokeAsync(() => picker.ClickDayAsync(end));
+            changedRanges.Should().HaveCount(3);
+            picker.DateRange.Should().Be(range);
         }
 
+        /// <summary>
+        /// Picking the same range again after ClearAsync raises DateRangeChanged again (#12775).
+        /// </summary>
         [Test]
         public async Task DateRangePicker_ClearViaClearAsync_ShouldFireDateRangeChanged()
         {
-            var initialRange = new DateRange(new DateTime(2020, 10, 26), new DateTime(2020, 10, 29));
             var changedRanges = new List<DateRange>();
-
-            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
-                .Add(p => p.Clearable, true)
-                .Add(p => p.DateRange, initialRange)
+            var comp = Context.Render<DateRangePickerImpl>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
                 .Add(p => p.DateRangeChanged, (DateRange range) => changedRanges.Add(range)));
-
             var picker = comp.Instance;
-            picker.DateRange.Should().Be(initialRange);
 
-            // Clear the date range via ClearAsync
-            await comp.InvokeAsync(() => picker.ClearAsync());
+            var start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 10);
+            var end = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 12);
+            var range = new DateRange(start, end);
 
-            // DateRangeChanged should fire on clear
+            await comp.InvokeAsync(() => picker.ClickDayAsync(start));
+            await comp.InvokeAsync(() => picker.ClickDayAsync(end));
             changedRanges.Should().HaveCount(1);
+            picker.DateRange.Should().Be(range);
 
-            // Reselect the exact same date range after clearing via ClearAsync
-            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.DateRange, initialRange));
-
-            // DateRangeChanged should fire again when reselecting the same range after clearing
+            await comp.InvokeAsync(() => picker.ClearAsync());
             changedRanges.Should().HaveCount(2);
+            changedRanges[1].Should().BeNull();
+            picker.DateRange.Should().BeNull();
+
+            await comp.InvokeAsync(() => picker.ClickDayAsync(start));
+            await comp.InvokeAsync(() => picker.ClickDayAsync(end));
+            changedRanges.Should().HaveCount(3);
+            picker.DateRange.Should().Be(range);
         }
 
         [Test]
@@ -2157,6 +2207,29 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedMonthName = new DateTime(2025, 12, 1).ToString(culture.DateTimeFormat.YearMonthPattern, culture);
             comp.Find(".mud-button-month").TextContent.Trim().Should().Be(expectedMonthName);
+        }
+
+        /// <summary>
+        /// A range that a derived component assigns in its constructor is shown even though it never arrives through the parameters.
+        /// </summary>
+        [Test]
+        public void DateRangePicker_RangeAssignedInDerivedConstructor_IsShown()
+        {
+            var comp = Context.Render<PresetRangePicker>();
+
+            comp.Instance.DateRange.Should().Be(PresetRangePicker.Preset);
+            ((IHtmlInputElement)comp.FindAll("input")[0]).Value.Should().Be(PresetRangePicker.Preset.Start.Value.ToShortDateString());
+            ((IHtmlInputElement)comp.FindAll("input")[1]).Value.Should().Be(PresetRangePicker.Preset.End.Value.ToShortDateString());
+        }
+
+        private sealed class PresetRangePicker : MudDateRangePicker
+        {
+            public static readonly DateRange Preset = new(new DateTime(2020, 10, 26), new DateTime(2020, 10, 30));
+
+            public PresetRangePicker()
+            {
+                DateRange = Preset;
+            }
         }
 
         private sealed class DateRangePickerImpl : MudDateRangePicker

@@ -490,6 +490,44 @@ namespace MudBlazor.UnitTests.Components
             picker.Time.Should().Be(initialTime);
         }
 
+        /// <summary>
+        /// A Time assigned by the parent is applied without raising TimeChanged (#10834).
+        /// </summary>
+        [Test]
+        public async Task TimeChanged_ShouldNotFire_WhenTimeSetFromParent()
+        {
+            var eventCount = 0;
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.TimeChanged, (TimeSpan? _) => eventCount++));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Time, new TimeSpan(9, 15, 0)));
+
+            comp.Instance.Time.Should().Be(new TimeSpan(9, 15, 0));
+            eventCount.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A time the user picks on the clock still raises TimeChanged, and the initial parameter does not (#10834).
+        /// </summary>
+        [Test]
+        public async Task TimeChanged_ShouldFire_WhenUserPicksTime()
+        {
+            var eventCount = 0;
+            TimeSpan? changed = null;
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.Time, new TimeSpan(10, 30, 0))
+                .Add(p => p.TimeChanged, (TimeSpan? t) => { eventCount++; changed = t; }));
+            var picker = comp.Instance;
+
+            await comp.InvokeAsync(() => picker.SelectTimeFromStick(5, false));
+            await comp.InvokeAsync(picker.SubmitAsync);
+
+            eventCount.Should().Be(1);
+            changed.Should().Be(picker.Time);
+            picker.Time.Should().NotBe(new TimeSpan(10, 30, 0));
+        }
+
         [Test]
         public async Task SelectTimeFromStick_IgnoresSentinelValue()
         {
