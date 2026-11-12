@@ -10553,5 +10553,54 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.Instance.SortDefinitions.Should().BeEmpty();
             dataGrid.FindAll("th").Should().OnlyContain(header => !header.HasAttribute("aria-sort"));
         }
+
+        public class PricedItem
+        {
+            public decimal Price { get; set; }
+
+            public decimal? Discount { get; set; }
+        }
+
+        /// <summary>
+        /// A number filter holds a double, which has to match a decimal column holding the same number as written.
+        /// </summary>
+        [Test]
+        public void FilterDefinitionNumber_DecimalColumn_MatchesFractions()
+        {
+#pragma warning disable BL0005
+            var column = new PropertyColumn<PricedItem, decimal> { Property = x => x.Price };
+            var nullableColumn = new PropertyColumn<PricedItem, decimal?> { Property = x => x.Discount };
+#pragma warning restore BL0005
+            var item = new PricedItem { Price = 0.1m, Discount = 19.99m };
+
+            Func<PricedItem, bool> Filter(Column<PricedItem> filterColumn, string filterOperator, double value) =>
+                new FilterDefinition<PricedItem> { Column = filterColumn, Operator = filterOperator, Value = value }.GenerateFilterFunction();
+
+            Filter(column, FilterOperator.Number.Equal, 0.1)(item).Should().BeTrue();
+            Filter(column, FilterOperator.Number.NotEqual, 0.1)(item).Should().BeFalse();
+            Filter(column, FilterOperator.Number.GreaterThanOrEqual, 0.1)(item).Should().BeTrue();
+            Filter(column, FilterOperator.Number.LessThan, 0.1)(item).Should().BeFalse();
+            Filter(nullableColumn, FilterOperator.Number.Equal, 19.99)(item).Should().BeTrue();
+            Filter(nullableColumn, FilterOperator.Number.LessThanOrEqual, 19.99)(item).Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Editing a decimal cell stores the number as typed, although the editor hands the column a double.
+        /// </summary>
+        [Test]
+        public void PropertyColumn_SetProperty_DecimalKeepsTypedValue()
+        {
+#pragma warning disable BL0005
+            var column = new PropertyColumn<PricedItem, decimal> { Property = x => x.Price };
+            var nullableColumn = new PropertyColumn<PricedItem, decimal?> { Property = x => x.Discount };
+#pragma warning restore BL0005
+            var item = new PricedItem();
+
+            column.SetProperty(item, 19.99d);
+            nullableColumn.SetProperty(item, 0.1d);
+
+            item.Price.Should().Be(19.99m);
+            item.Discount.Should().Be(0.1m);
+        }
     }
 }

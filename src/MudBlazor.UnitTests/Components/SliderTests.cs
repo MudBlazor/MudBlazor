@@ -293,6 +293,9 @@ namespace MudBlazor.UnitTests.Components
 
         [TestCase(100.0, 200.0, 25.0, 5)]
         [TestCase(-200.0, -100.0, 25.0, 5)]
+        [TestCase(0.0, 1.0, 0.1, 11)]
+        [TestCase(0.0, 1.0, 0.2, 6)]
+        [TestCase(0.1, 0.9, 0.1, 9)]
         public void TickMarksEnabled_CheckAmount(double min, double max, double step, int expectedAmount)
         {
             var comp = Context.Render<MudSlider<double>>(x =>
