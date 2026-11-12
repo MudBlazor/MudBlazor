@@ -618,6 +618,7 @@ namespace MudBlazor.Utilities
 
         // From .NET 11 on, Math.Round(value, digits) rounds the exact binary value, so 0.525 (stored as 0.52500000000000002) becomes 0.53 instead of 0.52.
         // Scaling before rounding is what earlier runtimes did, and keeps a color the same on every runtime.
+        // TODO(net11): A major version could switch to Math.Round(value, digits) once every target runs on .NET 11 or later, which shifts lightened and darkened colors slightly.
         private static double RoundToDigits(double value, int digits)
         {
             var scale = Math.Pow(10, digits);

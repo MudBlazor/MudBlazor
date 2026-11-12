@@ -48,7 +48,7 @@ public static class CSharpAnalyzerVerifier<TAnalyzer>
         {
             // Add reference assemblies for .NET
             // Keep the version in sync with the MudBlazor project
-            // TODO: Use standard .NET 11.0 reference assemblies when available
+            // TODO(net11): Use standard .NET 11.0 reference assemblies when available
             // Copied from https://github.com/dotnet/roslyn-sdk/blob/f500e81ba5596809e711a3022bf8e80a00c8371b/src/Microsoft.CodeAnalysis.Testing/Microsoft.CodeAnalysis.Analyzer.Testing/ReferenceAssemblies.cs#L1216
             ReferenceAssemblies = new("net11.0",
                 new("Microsoft.NETCore.App.Ref", "11.0.0"),

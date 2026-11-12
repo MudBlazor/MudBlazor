@@ -86,6 +86,7 @@ namespace MudBlazor
         public int MaxItemCount { get; set; } = 100;
 #endif
 
+        // TODO(net11): Remove the conditional compilation and the splatting below when .NET 10 support is dropped.
 #if NET11_0_OR_GREATER
         /// <summary>
         /// Compares items from <see cref="ItemsProvider"/> so the list can tell when items were added above the ones already shown.

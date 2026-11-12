@@ -15,6 +15,8 @@
     Blazor analyzers new in .NET 11.
     BL0016 wants every JS interop call in a try/catch, and adding one changes which exceptions reach callers.
     BL0011 and BL0012 are enforced in the library only: test components and docs examples call StateHasChanged from methods that tests invoke directly.
+    TODO(net11): Remove BL0016 once the library guards its JS interop calls.
+    TODO(net11): Enforce BL0011 and BL0012 in the tests and docs once their components are cleaned up.
   -->
   <PropertyGroup>
     <NoWarn>$(NoWarn);BL0016</NoWarn>

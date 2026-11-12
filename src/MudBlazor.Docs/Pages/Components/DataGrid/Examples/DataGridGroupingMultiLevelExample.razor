@@ -328,7 +328,8 @@
 
     private record USState(int Id, string State, int Counties, int Population, string PrimaryIndustry, string Region, string Climate, int YearInducted);
 
-    // These stay last: the .NET 11 Razor compiler ends the nullable context of a code block after a nested switch expression.
+    // TODO(net11): These stay last because the .NET 11 Razor compiler ends the nullable context of a code block after a nested switch expression (CS8669).
+    // Move them back above ExpandAllGroupsAsync once the compiler keeps the context.
     private static string GroupClassFunc(GroupDefinition<USState> item)
     {
         var key = item.Grouping.Key?.ToString();
