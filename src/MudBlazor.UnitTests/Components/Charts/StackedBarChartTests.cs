@@ -1272,5 +1272,23 @@ namespace MudBlazor.UnitTests.Charts
 
             comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C", "E");
         }
+
+        /// <summary>
+        /// YAxisTicks = 0 picks a round step that fits the stacked totals.
+        /// </summary>
+        [Test]
+        public void StackedBarChartAutomaticYAxisStepIsRound()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, [
+                    new ChartSeries<double> { Name = "Series 1", Data = new double[] { 1, 2, 3 } },
+                    new ChartSeries<double> { Name = "Series 2", Data = new double[] { 2, 3, 4 } },
+                ])
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { YAxisTicks = 0 }));
+
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("0", "2", "4", "6", "8");
+        }
     }
 }

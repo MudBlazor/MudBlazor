@@ -162,6 +162,9 @@ public partial class ChartTooltip : ComponentBase
         _previousFontSize = FontSize;
         _previousRoom = Room;
 
+        // The subtitle is drawn one measured line below the title, so measuring the text again takes in that gap as well.
+        var subtitleGap = HasSubtitle ? _textBbox.Height : 0;
+
         var measurementId = ++_measurementId;
         var textBBox = await JsRuntime.InvokeAsync<BBox>("mudGetSvgBBox", _text);
 
@@ -173,7 +176,7 @@ public partial class ChartTooltip : ComponentBase
         }
 
         var textWidth = textBBox?.Width ?? 0;
-        var textHeight = textBBox?.Height ?? 0;
+        var textHeight = Math.Max(0, (textBBox?.Height ?? 0) - subtitleGap);
 
         var xText = AnchorPositionX switch
         {

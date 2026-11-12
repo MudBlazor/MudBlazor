@@ -24,6 +24,7 @@ public class ScatterPlotChartOptions : DefaultAxisLineChartOptions, IAxisLineCha
     /// </summary>
     /// <remarks>
     /// Defaults to <c>20</c>.
+    /// Set it to <c>0</c> to pick a round spacing (1, 2 or 5 times a power of ten) that fits the values in about five steps, or fewer when <see cref="MaxNumXAxisTicks"/> is lower.
     /// </remarks>
     public int XAxisTicks { get; set; } = 20;
 
