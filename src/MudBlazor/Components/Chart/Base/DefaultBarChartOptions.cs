@@ -57,6 +57,7 @@ public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
     /// </summary>
     /// <remarks>
     /// Defaults to "{{Y_VALUE}}"
+    /// <c>{{Y_AXIS_VALUE}}</c> writes the value the way the Y axis labels it with <c>YAxisToStringFunc</c> or <c>YAxisFormat</c>.
     /// </remarks>
     public override string TooltipTitleFormat { get; set; } = "{{Y_VALUE}}";
 }

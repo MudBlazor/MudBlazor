@@ -28,6 +28,11 @@ namespace MudBlazor
         public string LabelYValue { get; set; } = string.Empty;
 
         /// <summary>
+        /// The number behind <see cref="LabelYValue"/>, kept so a tooltip can write it the way the Y axis does.
+        /// </summary>
+        internal double YValue { get; set; }
+
+        /// <summary>
         /// The label X position for on hover.
         /// </summary>
         public double LabelX { get; set; }

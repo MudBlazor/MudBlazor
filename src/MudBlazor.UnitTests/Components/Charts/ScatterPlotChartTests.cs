@@ -1055,5 +1055,31 @@ namespace MudBlazor.UnitTests.Charts
             // Leaving the hovered marker out shifted the sequence numbers of every point drawn after it, so each hover rebuilt all of them.
             MarkerCount().Should().Be(4);
         }
+
+        /// <summary>
+        /// {{Y_AXIS_VALUE}} writes the hovered point's Y value with YAxisToStringFunc, while {{Y_VALUE}} stays as it was.
+        /// </summary>
+        [Test]
+        public async Task ScatterPlotTooltipYAxisValueUsesTheAxisFormatter()
+        {
+            var series = new List<ChartSeries<double>>
+            {
+                new() { Name = "S1", Data = Points((10, 20), (20, 30), (30, 10)) }
+            };
+
+            var comp = Context.Render<ScatterPlot<double>>(parameters => parameters
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new ScatterPlotChartOptions
+                {
+                    ChartPalette = _palette,
+                    ShowToolTips = true,
+                    YAxisToStringFunc = value => $"{value}h",
+                    TooltipTitleFormat = "{{Y_AXIS_VALUE}} ({{Y_VALUE}})",
+                }));
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync();
+
+            comp.Find("g.svg-tooltip").TextContent.Should().Contain("30h (30)");
+        }
     }
 }

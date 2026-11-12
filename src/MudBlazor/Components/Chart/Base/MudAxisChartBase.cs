@@ -22,6 +22,9 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     where TOptions : IAxisChartOptions
 {
+    // Written in a tooltip format, this is the Y value the way the axis labels it.
+    private const string YAxisValuePlaceholder = "{{Y_AXIS_VALUE}}";
+
     [Inject]
     private IJSRuntime JsRuntime { get; init; } = null!;
 
@@ -490,10 +493,10 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// </summary>
     /// <param name="value">The value to build the string for.</param>
     /// <returns>The string representation of the Y-axis value.</returns>
-    protected string BuildYAxisValueString(T value)
-    {
-        var doubleValue = double.CreateSaturating(value);
+    protected string BuildYAxisValueString(T value) => FormatYAxisValue(double.CreateSaturating(value));
 
+    private string FormatYAxisValue(double doubleValue)
+    {
         return ChartOptions?.YAxisToStringFunc is null
             ? ToS(doubleValue, ChartOptions?.YAxisFormat)
             : ChartOptions.YAxisToStringFunc(doubleValue);
@@ -517,6 +520,24 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
             .Replace("{{SERIES_NAME}}", series.Name)
             .Replace("{{X_VALUE}}", path.LabelXValue)
             .Replace("{{Y_VALUE}}", path.LabelYValue);
+    }
+
+    /// <summary>
+    /// Formats the tooltip text, including <c>{{Y_AXIS_VALUE}}</c> written the way the Y axis labels it.
+    /// </summary>
+    /// <param name="format">The format string.</param>
+    /// <param name="series">The chart series.</param>
+    /// <param name="path">The SVG path.</param>
+    /// <returns>The formatted tooltip text.</returns>
+    private protected string FormatTooltip(string? format, ChartSeries<T> series, SvgPath path)
+    {
+        // Only run the axis formatter when the format asks for it, since YAxisToStringFunc is the app's own code.
+        if (format?.Contains(YAxisValuePlaceholder, StringComparison.Ordinal) is true)
+        {
+            format = format.Replace(YAxisValuePlaceholder, FormatYAxisValue(path.YValue));
+        }
+
+        return FormatTooltipText(format, series, path);
     }
 
     /// <summary>

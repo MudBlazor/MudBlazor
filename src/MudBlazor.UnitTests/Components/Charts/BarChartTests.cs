@@ -741,5 +741,31 @@ namespace MudBlazor.UnitTests.Charts
             comp.WaitForAssertion(() => Tooltip().Bottom.Should().BeLessThan(shortTop));
             Tooltip().TipY.Should().BeGreaterThan(Tooltip().BaseY, "the triangle should point down at the top of the bar");
         }
+
+        /// <summary>
+        /// {{Y_AXIS_VALUE}} writes the hovered bar's value with YAxisToStringFunc, while {{Y_VALUE}} stays as it was.
+        /// </summary>
+        [Test]
+        public async Task BarChartTooltipYAxisValueUsesTheAxisFormatter()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartOptions, new BarChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    YAxisToStringFunc = value => $"{value}h",
+                    TooltipTitleFormat = "{{Y_AXIS_VALUE}} ({{Y_VALUE}})",
+                }));
+
+            await comp.FindAll("path.mud-chart-bar")[1].MouseOverAsync(new());
+
+            comp.Find("g.svg-tooltip").TextContent.Should().Contain("20h (20)");
+        }
     }
 }

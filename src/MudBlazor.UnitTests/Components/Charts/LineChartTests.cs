@@ -1061,5 +1061,58 @@ namespace MudBlazor.UnitTests.Charts
             // Leaving the hovered marker out shifted the sequence numbers of every point drawn after it, so each hover rebuilt all of them.
             MarkerCount().Should().Be(4);
         }
+
+        /// <summary>
+        /// {{Y_AXIS_VALUE}} writes the hovered value with YAxisToStringFunc, while {{Y_VALUE}} stays as it was.
+        /// </summary>
+        [Test]
+        public async Task LineChartTooltipYAxisValueUsesTheAxisFormatter()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30, 40 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    YAxisToStringFunc = value => $"{value}h",
+                    TooltipTitleFormat = "{{Y_AXIS_VALUE}} ({{Y_VALUE}})",
+                }));
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync(new());
+
+            comp.Find("g.svg-tooltip").TextContent.Should().Contain("20h (20)");
+        }
+
+        /// <summary>
+        /// {{Y_AXIS_VALUE}} falls back to YAxisFormat when there's no YAxisToStringFunc, in the subtitle as well as the title.
+        /// </summary>
+        [Test]
+        public async Task LineChartTooltipYAxisValueUsesTheAxisFormat()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30, 40 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    YAxisFormat = "0.0",
+                    TooltipTitleFormat = "{{Y_VALUE}}",
+                    TooltipSubtitleFormat = "{{Y_AXIS_VALUE}}",
+                }));
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync(new());
+
+            comp.FindAll("g.svg-tooltip tspan").Select(x => x.TextContent).Should().Equal("20", "20.0");
+        }
     }
 }
