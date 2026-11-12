@@ -7,9 +7,6 @@
 {
     if (ItemsProvider is not null)
     {
-        // The analyzer cannot see that ItemComparer is passed through _virtualizeAttributes.
-        // TODO(net11): Pass ItemComparer as an attribute and remove this pragma when .NET 10 support is dropped.
-#pragma warning disable BL0011
         <Virtualize TItem="T" @ref="@_virtualizeContainerReference" ItemsProvider="@ItemsProvider" Context="item" OverscanCount="@OverscanCount" ItemSize="@ItemSize" SpacerElement="@SpacerElement" @attributes="@_virtualizeAttributes">
             <ChildContent>
                 @if (ChildContent is not null)
@@ -24,7 +21,6 @@
                 @NoRecordsContent
             </EmptyContent>
         </Virtualize>
-#pragma warning restore BL0011
     }
     else
     {
