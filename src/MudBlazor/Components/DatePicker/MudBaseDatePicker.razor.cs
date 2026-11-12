@@ -748,7 +748,6 @@ namespace MudBlazor
             if (!FixYear.HasValue)
             {
                 CurrentView = OpenTo.Year;
-                StateHasChanged();
                 _scrollToYearAfterRender = true;
             }
         }
