@@ -350,15 +350,14 @@ namespace MudBlazor
                     return false;
                 try
                 {
-                    // Convert from the value's own type: a float widened to double first would re-expose the binary noise the decimal step is meant to remove (float 0.01 stepping would show 0.16000001).
+                    // Convert through the shortest text that round-trips: from .NET 11 on, a cast gives the exact binary value (0.1 becomes 0.1000000000000000055511151231), which is the noise the decimal step is meant to remove.
+                    // Format the value's own type, because a float widened to double first would show that noise too (float 0.01 stepping would show 0.16000001).
                     if (value is float f)
                     {
-                        result = (decimal)f;
                         // Reject lossy conversions: a value that comes back from decimal even slightly lower than it went in would trip the overflow clamp in Change and jump to Max.
-                        return (float)result == f;
+                        return decimal.TryParse(f.ToString("R", CultureInfo.InvariantCulture), NumberStyles.Float, CultureInfo.InvariantCulture, out result) && (float)result == f;
                     }
-                    result = (decimal)d;
-                    return (double)result == d;
+                    return decimal.TryParse(d.ToString("R", CultureInfo.InvariantCulture), NumberStyles.Float, CultureInfo.InvariantCulture, out result) && (double)result == d;
                 }
                 catch (OverflowException)
                 {

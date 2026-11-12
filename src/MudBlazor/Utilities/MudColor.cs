@@ -156,8 +156,8 @@ namespace MudBlazor.Utilities
         public MudColor(double h, double s, double l, int a)
         {
             h = Math.Round(h.EnsureRange(360), 0);
-            s = Math.Round(s.EnsureRange(1), 2);
-            l = Math.Round(l.EnsureRange(1), 2);
+            s = RoundToDigits(s.EnsureRange(1), 2);
+            l = RoundToDigits(l.EnsureRange(1), 2);
             a = a.EnsureRange(255);
 
             var hsl = new HSL(h, s, l);
@@ -616,9 +616,17 @@ namespace MudBlazor.Utilities
         /// <returns><c>true</c> if the string was successfully parsed; otherwise, <c>false</c>.</returns>
         public static bool TryParse([NotNullWhen(true)] string? s, [MaybeNullWhen(false)] out MudColor result) => TryParse(s, null, out result);
 
-        private static double NormalizeAlpha(byte a, int digit = 2) => Math.Round(a / 255.0, digit);
+        // From .NET 11 on, Math.Round(value, digits) rounds the exact binary value, so 0.525 (stored as 0.52500000000000002) becomes 0.53 instead of 0.52.
+        // Scaling before rounding is what earlier runtimes did, and keeps a color the same on every runtime.
+        private static double RoundToDigits(double value, int digits)
+        {
+            var scale = Math.Pow(10, digits);
+            return Math.Round(value * scale) / scale;
+        }
 
-        private static double NormalizeAlpha(int a, int digit = 2) => Math.Round(a / 255.0, digit);
+        private static double NormalizeAlpha(byte a, int digit = 2) => RoundToDigits(a / 255.0, digit);
+
+        private static double NormalizeAlpha(int a, int digit = 2) => RoundToDigits(a / 255.0, digit);
 
         private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
@@ -794,7 +802,7 @@ namespace MudBlazor.Utilities
                 s = (max - min) / (2D - (max + min)); //(max-min > 0)?
             }
 
-            return new HSL(Math.Round(h.EnsureRange(360), 0), Math.Round(s.EnsureRange(1), 2), Math.Round(l.EnsureRange(1), 2));
+            return new HSL(Math.Round(h.EnsureRange(360), 0), RoundToDigits(s.EnsureRange(1), 2), RoundToDigits(l.EnsureRange(1), 2));
         }
 
         /// <inheritdoc />
