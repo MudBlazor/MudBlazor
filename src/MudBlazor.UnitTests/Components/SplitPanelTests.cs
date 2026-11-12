@@ -115,8 +115,8 @@ public class SplitPanelTests : BunitTest
         Context.JSInterop.SetupVoid("mudSplitPanel_resetDividerPosition", _ => true).SetException(new JSDisconnectedException("disconnected"));
         Context.JSInterop.SetupVoid("mudSplitPanel_setDividerPosition", _ => true).SetException(new JSDisconnectedException("disconnected"));
 
-        var reset = () => comp.Instance.ResetDividerPositionAsync();
-        var set = () => comp.Instance.SetDividerPositionAsync(123);
+        var reset = () => comp.InvokeAsync(() => comp.Instance.ResetDividerPositionAsync());
+        var set = () => comp.InvokeAsync(() => comp.Instance.SetDividerPositionAsync(123));
 
         await reset.Should().NotThrowAsync();
         await set.Should().NotThrowAsync();
@@ -132,8 +132,8 @@ public class SplitPanelTests : BunitTest
         Context.JSInterop.SetupVoid("mudSplitPanel_resetDividerPosition", _ => true).SetException(new JSException("failed"));
         Context.JSInterop.SetupVoid("mudSplitPanel_setDividerPosition", _ => true).SetException(new JSException("failed"));
 
-        var reset = () => comp.Instance.ResetDividerPositionAsync();
-        var set = () => comp.Instance.SetDividerPositionAsync(123);
+        var reset = () => comp.InvokeAsync(() => comp.Instance.ResetDividerPositionAsync());
+        var set = () => comp.InvokeAsync(() => comp.Instance.SetDividerPositionAsync(123));
 
         await reset.Should().ThrowAsync<JSException>();
         await set.Should().ThrowAsync<JSException>();
