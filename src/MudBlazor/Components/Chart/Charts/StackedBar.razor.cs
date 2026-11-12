@@ -108,9 +108,6 @@ namespace MudBlazor.Charts
         /// </summary>
         private void ComputeStackedUnitsAndNumberOfLines(out int lowestHorizontalLine, out T gridYUnits, out int numHorizontalLines, out int numVerticalLines)
         {
-            var yAxisTicks = ChartOptions?.YAxisTicks;
-
-            gridYUnits = T.CreateSaturating(yAxisTicks.HasValue && yAxisTicks.Value > 0 ? yAxisTicks.Value : 20);
             numVerticalLines = Series.Count == 0 ? 0 : Series.Max(series => series.Data.Count);
 
             CalculateStrokeWidth(numVerticalLines);
@@ -118,6 +115,7 @@ namespace MudBlazor.Charts
             var (stackedPos, stackedNeg) = ComputeStackedColumnTotals(numVerticalLines);
             var (maxY, minY) = GetYAxisExtremes(stackedPos, stackedNeg);
 
+            gridYUnits = GetGridYUnits(minY, maxY);
             numHorizontalLines = StackedBar<T>.CalculateNumHorizontalLines(gridYUnits, maxY, minY, out lowestHorizontalLine);
 
             ClampNumHorizontalLines(ref gridYUnits, ref numHorizontalLines, ref lowestHorizontalLine, maxY, minY);
@@ -235,7 +233,7 @@ namespace MudBlazor.Charts
                 };
                 VerticalLines.Add(line);
 
-                var label = j < ChartLabels.Length ? ChartLabels[j] : "";
+                var label = j < ChartLabels.Length && ShouldLabelVerticalGridLine(j) ? ChartLabels[j] : "";
                 var text = new SvgText()
                 {
                     X = x,

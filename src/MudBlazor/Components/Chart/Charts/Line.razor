@@ -26,7 +26,7 @@
                        YAxisTitle="@ChartOptions?.YAxisTitle"
                        ChartType="@ChartType"
                        SeriesContent="@RenderChartLines()"
-                       TooltipContent="@RenderTooltip()"
+                       TooltipContent="@WithTooltipRoom(RenderTooltip(), DataPointLabelOffset)"
                        ChildContent="@OverlayContent"
                        CustomGraphics="@CustomGraphics"
                        HoveredSegment="@HoveredDataPointPath"
@@ -75,6 +75,22 @@
             builder.AddAttribute(seq++, "d", chartLine.Data);
             builder.CloseElement();
 
+            // Readings with a gap either side have no segment of their own.
+            // They are drawn as zero-length ones on a path of their own, which keeps the round cap they need off the series line.
+            if (ChartDots.TryGetValue(chartLine.Index, out var chartDots))
+            {
+                builder.OpenElement(seq++, "path");
+                builder.AddAttribute(seq++, "class", $"{lineClass} mud-chart-dots");
+                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
+                builder.AddAttribute(seq++, "fill", "none");
+                builder.AddAttribute(seq++, "stroke", color);
+                builder.AddAttribute(seq++, "stroke-opacity", overrideSettings?.StrokeOpacity.ToStr() ?? "1");
+                builder.AddAttribute(seq++, "stroke-width", LineStrokeWidth.ToStr());
+                builder.AddAttribute(seq++, "stroke-linecap", "round");
+                builder.AddAttribute(seq++, "d", chartDots.Data);
+                builder.CloseElement();
+            }
+
             // Area path if applicable
             var displayType = overrideSettings?.LineDisplayType ?? ChartOptions?.LineDisplayType;
             if (displayType == LineDisplayType.Area)
@@ -92,11 +108,14 @@
             // Data points
             foreach (var item in ChartDataPoints[chartLine.Index].OrderBy(x => x.Index))
             {
-                if (showDataMarkers && !item.Equals(HoveredDataPointPath))
+                // The hovered point keeps its marker under the filled hover circle.
+                // Leaving it out shifts the sequence numbers of everything after it, so every later point would be rebuilt on each hover.
+                if (showDataMarkers)
                 {
                     builder.OpenElement(seq++, "circle");
                     builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
                     builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
+                    builder.AddAttribute(seq++, "fill", "none");
                     builder.AddAttribute(seq++, "stroke", color);
                     builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
                     builder.AddAttribute(seq++, "cx", item.CX.ToStr());
@@ -106,19 +125,22 @@
                 }
 
                 // Hoverable point (invisible until hovered)
-                builder.OpenElement(seq++, "circle");
-                builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
-                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
-                builder.AddAttribute(seq++, "fill", item.Equals(HoveredDataPointPath) ? color : string.Empty);
-                builder.AddAttribute(seq++, "stroke", color);
-                builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
-                builder.AddAttribute(seq++, "opacity", item.Equals(HoveredDataPointPath) ? 1 : 0);
-                builder.AddAttribute(seq++, "cx", item.CX.ToStr());
-                builder.AddAttribute(seq++, "cy", item.CY.ToStr());
-                builder.AddAttribute(seq++, "r", DataPointHoverRadius.ToStr());
-                builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, item)));
-                builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnDataPointMouseOut));
-                builder.CloseElement();
+                if (ChartOptions?.ShowToolTips is not false)
+                {
+                    builder.OpenElement(seq++, "circle");
+                    builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
+                    builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
+                    builder.AddAttribute(seq++, "fill", item.Equals(HoveredDataPointPath) ? color : string.Empty);
+                    builder.AddAttribute(seq++, "stroke", color);
+                    builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
+                    builder.AddAttribute(seq++, "opacity", item.Equals(HoveredDataPointPath) ? 1 : 0);
+                    builder.AddAttribute(seq++, "cx", item.CX.ToStr());
+                    builder.AddAttribute(seq++, "cy", item.CY.ToStr());
+                    builder.AddAttribute(seq++, "r", DataPointHoverRadius.ToStr());
+                    builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, item)));
+                    builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnDataPointMouseOut));
+                    builder.CloseElement();
+                }
             }
         }
     };
@@ -171,6 +193,6 @@
 
     private RenderFragment Chart =>@<g class="mud-charts-line-series">
                                         @RenderChartLines()
-                                        @RenderTooltip()
+                                        @WithTooltipRoom(RenderTooltip(), DataPointLabelOffset)
                                     </g>;
 }

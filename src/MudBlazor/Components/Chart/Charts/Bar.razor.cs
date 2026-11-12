@@ -101,9 +101,6 @@ namespace MudBlazor.Charts
 
         private void ComputeUnitsAndNumberOfLines(out T gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
         {
-            var yAxisTicks = ChartOptions?.YAxisTicks;
-            gridYUnits = T.CreateSaturating(yAxisTicks is > 0 ? yAxisTicks.Value : 20);
-
             var allValues = Series.SelectMany(series => series.Data).ToArray();
             if (allValues.Length != 0)
             {
@@ -112,6 +109,8 @@ namespace MudBlazor.Charts
                     ? allValues.Max()
                     : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), allValues.Max());
 
+                // Bars grow from zero, so the axis always reaches it.
+                gridYUnits = GetGridYUnits(T.Min(minY, T.Zero), T.Max(maxY, T.Zero));
                 lowestHorizontalLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits)), 0);
                 var highestHorizontalLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits)), 0);
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
@@ -132,6 +131,7 @@ namespace MudBlazor.Charts
             }
             else
             {
+                gridYUnits = GetGridYUnits(T.Zero, T.Zero);
                 numHorizontalLines = 1;
                 lowestHorizontalLine = 0;
                 numVerticalLines = 1;
@@ -159,7 +159,7 @@ namespace MudBlazor.Charts
                 var line = new SvgPath { Index = i, Data = $"M {ToS(x)} {ToS(_boundHeight - VerticalStartSpace)} L {ToS(x)} {ToS(VerticalEndSpace)}" };
                 VerticalLines.Add(line);
 
-                var xLabels = i < ChartLabels.Length ? ChartLabels[i] : "";
+                var xLabels = i < ChartLabels.Length && ShouldLabelVerticalGridLine(i) ? ChartLabels[i] : "";
                 var lineValue = new SvgText { X = x + (_barGroupWidth / 2) - (_barGap * spaces / 2) - leftShift, Y = _boundHeight - XAxisLabelOffset, Value = xLabels };
                 VerticalValues.Add(lineValue);
             }

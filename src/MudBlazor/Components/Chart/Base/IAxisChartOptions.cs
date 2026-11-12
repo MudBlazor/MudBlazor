@@ -10,7 +10,7 @@ namespace MudBlazor.Charts;
 public interface IAxisChartOptions : IChartOptions
 {
     /// <summary>
-    /// The spacing between vertical tick marks.
+    /// The spacing between vertical tick marks, or <c>0</c> to pick a round spacing that fits the values.
     /// </summary>
     public int YAxisTicks { get; set; }
 
@@ -45,6 +45,11 @@ public interface IAxisChartOptions : IChartOptions
     /// Rotation angle to rotate the labels in degrees.
     /// </summary>
     public int XAxisLabelRotation { get; set; }
+
+    /// <summary>
+    /// Draws every nth label on the X-axis, leaving the ones in between blank.
+    /// </summary>
+    public int XAxisLabelInterval { get; set; }
 
     /// <summary>
     /// The title of the X-axis.

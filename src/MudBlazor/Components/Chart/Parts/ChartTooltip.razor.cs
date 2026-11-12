@@ -14,6 +14,7 @@ public partial class ChartTooltip : ComponentBase
 
     private const double TriangleWidth = 16;
     private const double TriangleHeight = 8;
+    private const double CornerRadius = 4;
 
     private double TriangleStrokeWidth => StrokeWidth + 1;
     private bool HasSubtitle => !string.IsNullOrWhiteSpace(Subtitle);
@@ -99,7 +100,7 @@ public partial class ChartTooltip : ComponentBase
     public int StrokeWidth { get; set; } = 1;
 
     /// <summary>
-    /// Whether to show the triangle pointing down.
+    /// Whether to show the triangle pointing at the anchor.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>true</c>.
@@ -116,6 +117,15 @@ public partial class ChartTooltip : ComponentBase
     [Parameter]
     public ChartTooltipAnchorPositionX AnchorPositionX { get; set; } = ChartTooltipAnchorPositionX.Center;
 
+    /// <summary>
+    /// The room the chart has around the point this tooltip describes.
+    /// </summary>
+    /// <remarks>
+    /// Cascaded by the chart rather than passed, so a tooltip written into a chart's <c>TooltipTemplate</c> moves below its point too.
+    /// </remarks>
+    [CascadingParameter]
+    internal ChartTooltipRoom? Room { get; set; }
+
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(BBox))]
     public ChartTooltip() { }
 
@@ -124,6 +134,7 @@ public partial class ChartTooltip : ComponentBase
     private string? _previousFontSize;
     private string? _previousTitle;
     private string? _previousSubtitle;
+    private ChartTooltipRoom? _previousRoom;
     private bool _isMeasured;
     private int _measurementId;
 
@@ -136,7 +147,7 @@ public partial class ChartTooltip : ComponentBase
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (firstRender || FontSize != _previousFontSize || Title != _previousTitle || Subtitle != _previousSubtitle || !_previousX.Equals(X) || !_previousY.Equals(Y))
+        if (firstRender || FontSize != _previousFontSize || Title != _previousTitle || Subtitle != _previousSubtitle || !_previousX.Equals(X) || !_previousY.Equals(Y) || Room != _previousRoom)
         {
             await RecalculateBoxWidthAsync();
         }
@@ -149,6 +160,10 @@ public partial class ChartTooltip : ComponentBase
         _previousTitle = Title;
         _previousSubtitle = Subtitle;
         _previousFontSize = FontSize;
+        _previousRoom = Room;
+
+        // The subtitle is drawn one measured line below the title, so measuring the text again takes in that gap as well.
+        var subtitleGap = HasSubtitle ? _textBbox.Height : 0;
 
         var measurementId = ++_measurementId;
         var textBBox = await JsRuntime.InvokeAsync<BBox>("mudGetSvgBBox", _text);
@@ -161,7 +176,7 @@ public partial class ChartTooltip : ComponentBase
         }
 
         var textWidth = textBBox?.Width ?? 0;
-        var textHeight = textBBox?.Height ?? 0;
+        var textHeight = Math.Max(0, (textBBox?.Height ?? 0) - subtitleGap);
 
         var xText = AnchorPositionX switch
         {
@@ -195,18 +210,60 @@ public partial class ChartTooltip : ComponentBase
             Height: backgroundHeight * (HasSubtitle ? 1.5 : 1)
         );
 
+        // A tooltip that would run off the top of the chart is drawn below its point instead, as the same shape upside down.
+        var room = Room;
+        var reachAbove = Y - _backgroundBBox.Y;
+        var flip = room is not null && reachAbove > room.Above && reachAbove <= room.Below;
+        var anchorY = flip ? Y + room!.FlipOffset : Y;
+
+        if (flip)
+        {
+            var top = anchorY + (Y - (_backgroundBBox.Y + _backgroundBBox.Height));
+            _textBbox = _textBbox with { Y = _textBbox.Y + top - _backgroundBBox.Y };
+            _backgroundBBox = _backgroundBBox with { Y = top };
+        }
+
+        // A tooltip that would run past the left or right edge of the chart slides back in, but only as far as the triangle still meets the box.
+        if (room is not null)
+        {
+            var shift = SlideInside(_backgroundBBox.X, _backgroundBBox.Width, X - room.Left, X + room.Right);
+            _textBbox = _textBbox with { X = _textBbox.X + shift };
+            _backgroundBBox = _backgroundBBox with { X = _backgroundBBox.X + shift };
+        }
+
+        // Distances from the anchor run up toward the box, or down once the tooltip is flipped.
+        double AwayFromPoint(double distance) => flip ? anchorY + distance : anchorY - distance;
+
         if (ShowTriangle)
         {
-            _triangleBorderPoints = $"{ToS(X - (TriangleWidth / 2))},{ToS(Y - TriangleHeight)} " + // Left
-                                    $"{ToS(X + (TriangleWidth / 2))},{ToS(Y - TriangleHeight)} " + // Right
-                                    $"{ToS(X)},{ToS(Y - TriangleStrokeWidth)}"; // Bottom
-            _triangleBackgroundPoints = $"{ToS(X - (TriangleWidth / 2) - TriangleStrokeWidth)},{ToS(Y - TriangleHeight - TriangleStrokeWidth)} " + // Left
-                                        $"{ToS(X + (TriangleWidth / 2) + TriangleStrokeWidth)},{ToS(Y - TriangleHeight - TriangleStrokeWidth)} " + // Right
-                                        $"{ToS(X)},{ToS(Y - TriangleStrokeWidth)}"; // Bottom
+            _triangleBorderPoints = $"{ToS(X - (TriangleWidth / 2))},{ToS(AwayFromPoint(TriangleHeight))} " + // Left
+                                    $"{ToS(X + (TriangleWidth / 2))},{ToS(AwayFromPoint(TriangleHeight))} " + // Right
+                                    $"{ToS(X)},{ToS(AwayFromPoint(TriangleStrokeWidth))}"; // Tip
+            _triangleBackgroundPoints = $"{ToS(X - (TriangleWidth / 2) - TriangleStrokeWidth)},{ToS(AwayFromPoint(TriangleHeight + TriangleStrokeWidth))} " + // Left
+                                        $"{ToS(X + (TriangleWidth / 2) + TriangleStrokeWidth)},{ToS(AwayFromPoint(TriangleHeight + TriangleStrokeWidth))} " + // Right
+                                        $"{ToS(X)},{ToS(AwayFromPoint(TriangleStrokeWidth))}"; // Tip
         }
 
         _isMeasured = true;
         StateHasChanged();
+    }
+
+    private double SlideInside(double left, double width, double leftEdge, double rightEdge)
+    {
+        // How far the box can move before the triangle under it would hang past the rounded corner.
+        var keep = ShowTriangle ? (TriangleWidth / 2) + TriangleStrokeWidth + CornerRadius : 0;
+
+        if (left < leftEdge)
+        {
+            return Math.Max(0, Math.Min(leftEdge, X - keep) - left);
+        }
+
+        if (left + width > rightEdge)
+        {
+            return Math.Min(0, Math.Max(rightEdge - width, X + keep - width) - left);
+        }
+
+        return 0;
     }
 }
 
@@ -219,3 +276,13 @@ public enum ChartTooltipAnchorPositionX
     Center,
     End
 }
+
+/// <summary>
+/// The room a chart has around a hovered point, which a <see cref="ChartTooltip"/> uses to move below the point when it doesn't fit above it.
+/// </summary>
+/// <param name="Above">The distance from the tooltip's anchor up to the top of the chart.</param>
+/// <param name="Below">The distance from the flipped anchor down to the bottom of the chart.</param>
+/// <param name="FlipOffset">How far below the usual anchor the flipped one sits, which clears the point itself.</param>
+/// <param name="Left">The distance from the anchor to the left edge of the chart.</param>
+/// <param name="Right">The distance from the anchor to the right edge of the chart.</param>
+internal sealed record ChartTooltipRoom(double Above, double Below, double FlipOffset, double Left, double Right);

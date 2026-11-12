@@ -1,10 +1,12 @@
 ﻿// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
+using System.Globalization;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using MudBlazor.Charts;
+using MudBlazor.Interop;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Charts
@@ -547,33 +549,123 @@ namespace MudBlazor.UnitTests.Charts
             moveToCount.Should().Be(1, because: "ConnectNullPoints joins the interpolated segments into one line");
         }
 
+        /// <summary>
+        /// An interpolated series draws each reading that has a gap either side as a dot.
+        /// </summary>
         [Test]
-        public void LineChartInterpolatedIsolatedPointsRenderAsMoves()
+        public void LineChartInterpolatedIsolatedPointsRenderAsDots()
         {
             var chartSeries = new List<ChartSeries<double>>
             {
                 new() { Name = "Series 1", Data = new double?[] { 10, null, 30, null, 50 } }
             };
-            string[] xAxisLabels = { "A", "B", "C", "D", "E" };
 
             var comp = Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Line)
-                .Add(p => p.Height, "350px")
-                .Add(p => p.Width, "100%")
                 .Add(p => p.ChartSeries, chartSeries)
-                .Add(p => p.ChartLabels, xAxisLabels)
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D", "E"])
                 .Add(p => p.ChartOptions, new LineChartOptions
                 {
                     ChartPalette = _baseChartPalette,
                     InterpolationOption = InterpolationOption.NaturalSpline
                 }));
 
-            var path = comp.Find("path.mud-chart-line");
-            var d = path.GetAttribute("d");
+            var line = comp.Find("path.mud-chart-line:not(.mud-chart-dots)");
+            var d = line.GetAttribute("d");
 
             // Each non-null point is isolated by nulls, so no segment can be interpolated into line commands.
             (d!.Split('M').Length - 1).Should().Be(3, because: "each isolated point starts its own subpath");
             d.Should().NotContain("L", because: "single-point segments produce move commands only");
+            line.GetAttribute("stroke-linecap").Should().BeNull(because: "the series line keeps the cap it had");
+
+            // The points themselves are drawn apart from it, as zero-length segments under a round cap.
+            var dots = comp.Find("path.mud-chart-dots");
+            dots.GetAttribute("d").Should().Be("M 30 270.8333 L 30 270.8333 M 350 172.5 L 350 172.5 M 670 74.1667 L 670 74.1667");
+            dots.GetAttribute("stroke-linecap").Should().Be("round");
+        }
+
+        /// <summary>
+        /// A straight series draws a reading that has a gap either side as a dot.
+        /// </summary>
+        [Test]
+        public void LineChartStraightIsolatedPointRendersAsDot()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double?[] { 10, null, 30, null, 50 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D", "E"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    InterpolationOption = InterpolationOption.Straight
+                }));
+
+            var d = comp.Find("path.mud-chart-line:not(.mud-chart-dots)").GetAttribute("d");
+
+            // Nothing but moves, which is why these readings painted nothing at all before.
+            (d!.Split('M').Length - 1).Should().Be(3, because: "each isolated point starts its own subpath");
+            d.Should().NotContain("L");
+
+            var dots = comp.Find("path.mud-chart-dots").GetAttribute("d");
+            (dots!.Split('L').Length - 1).Should().Be(3, because: "every isolated point gets drawn");
+        }
+
+        /// <summary>
+        /// Only the readings with no neighbour to draw a segment to go on the dots path.
+        /// </summary>
+        [Test]
+        public void LineChartOnlyLonePointsReachTheDotsPath()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double?[] { 10, 20, null, 50 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    InterpolationOption = InterpolationOption.Straight
+                }));
+
+            var d = comp.Find("path.mud-chart-line:not(.mud-chart-dots)").GetAttribute("d");
+
+            // The pair has a real segment of its own and is left alone.
+            (d!.Split('M').Length - 1).Should().Be(2, because: "the gap splits the series into two subpaths");
+            (d.Split('L').Length - 1).Should().Be(1, because: "only the pair has a segment to draw");
+
+            var dots = comp.Find("path.mud-chart-dots").GetAttribute("d");
+            (dots!.Split('L').Length - 1).Should().Be(1, because: "only the trailing lone point needs drawing");
+        }
+
+        /// <summary>
+        /// A series that draws every point renders no dots path and keeps its own line cap.
+        /// </summary>
+        [Test]
+        public void LineChartWithoutLonePointsIsLeftAlone()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette }));
+
+            // Nothing is added to a chart that was already drawing every point, caps included.
+            comp.FindAll("path.mud-chart-dots").Should().BeEmpty();
+            comp.Find("path.mud-chart-line").GetAttribute("stroke-linecap").Should().BeNull();
         }
 
         [Test]
@@ -593,6 +685,381 @@ namespace MudBlazor.UnitTests.Charts
 
             // An empty label paints nothing, so it has no business taking up a node.
             comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C");
+        }
+
+        /// <summary>
+        /// Data markers are drawn when tooltips are turned off.
+        /// </summary>
+        [Test]
+        public void LineChartDataMarkersRenderWithoutTooltips()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    ShowDataMarkers = true,
+                    ShowToolTips = false
+                }));
+
+            // Markers are built from the same data points as tooltips, so they used to vanish with them.
+            comp.FindAll("circle.mud-chart-point").Should().HaveCount(3);
+        }
+
+        /// <summary>
+        /// Data markers are drawn when tooltips are turned off and the line is interpolated.
+        /// </summary>
+        [Test]
+        [TestCaseSource("GetInterpolationOptions")]
+        public void LineChartDataMarkersRenderWithoutTooltipsWhenInterpolated(InterpolationOption opt)
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30, 25 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    InterpolationOption = opt,
+                    ShowDataMarkers = true,
+                    ShowToolTips = false
+                }));
+
+            // The interpolated builder collects its data points at its own gates, which the straight one does not go through.
+            comp.FindAll("circle.mud-chart-point").Should().HaveCount(4);
+        }
+
+        /// <summary>
+        /// The invisible hover targets are only drawn when tooltips are on.
+        /// </summary>
+        [Test]
+        public void LineChartHoverTargetsOnlyRenderWithTooltips()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } }
+            };
+
+            var withTooltips = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    ShowDataMarkers = true
+                }));
+
+            // Each point gets a marker, and a larger invisible circle over it to catch the hover.
+            withTooltips.FindAll("circle.mud-chart-point[opacity]").Should().HaveCount(3);
+
+            var withoutTooltips = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    ShowDataMarkers = true,
+                    ShowToolTips = false
+                }));
+
+            // There is no tooltip for it to open, and it would still swallow the hover and flip the chart's overflow.
+            withoutTooltips.FindAll("circle.mud-chart-point[opacity]").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Data markers are drawn as rings rather than filled discs.
+        /// </summary>
+        [Test]
+        public void LineChartDataMarkersAreNotFilled()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    ShowDataMarkers = true
+                }));
+
+            // An unset fill falls back to SVG's initial black, which paints every marker as a solid dot.
+            comp.FindAll("circle.mud-chart-point")
+                .Where(x => x.GetAttribute("opacity") is null)
+                .Should().OnlyContain(x => x.GetAttribute("fill") == "none");
+        }
+
+        /// <summary>
+        /// XAxisLabelInterval leaves out the axis labels in between and nothing else.
+        /// </summary>
+        [Test]
+        public async Task LineChartXAxisLabelIntervalThinsTheAxisOnly()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30, 40, 50 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D", "E"])
+                .Add(p => p.ChartOptions, new LineChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    XAxisLabelInterval = 2,
+                    ShowToolTips = true,
+                    TooltipTitleFormat = "{{Y_VALUE}} - {{X_VALUE}}"
+                }));
+
+            // A label that was left out is empty, and an empty label is skipped rather than rendered.
+            comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C", "E");
+
+            // B has no label on the axis, but its own point still names it on hover.
+            await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new());
+            comp.Find("g.svg-tooltip").TextContent.Should().Contain("20 - B");
+        }
+
+        /// <summary>
+        /// A point at the top of the chart has no room for its tooltip above it, so the tooltip is drawn below the point instead of hanging off the chart.
+        /// A ChartTooltip written into a TooltipTemplate is placed by the chart too, so it has to flip the same way.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task LineChartTooltipFlipsBelowAPointWithNoRoomAbove(bool useTemplate)
+        {
+            Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 40, Height: 16));
+
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 50, 30 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters =>
+            {
+                parameters
+                    .Add(p => p.ChartType, ChartType.Line)
+                    .Add(p => p.MatchBoundsToSize, true)
+                    .Add(p => p.ChartSeries, chartSeries)
+                    .Add(p => p.ChartLabels, ["A", "B", "C"])
+                    .Add(p => p.ChartOptions, new LineChartOptions
+                    {
+                        ChartPalette = _baseChartPalette,
+                        ShowToolTips = true,
+                        TooltipTitleFormat = "{{Y_VALUE}}",
+                        TooltipSubtitleFormat = "{{X_VALUE}}",
+                    });
+
+                if (useTemplate)
+                {
+                    parameters.Add(p => p.TooltipTemplate, context => builder =>
+                    {
+                        builder.OpenComponent<ChartTooltip>(0);
+                        builder.AddComponentParameter(1, nameof(ChartTooltip.Title), context.Segment.LabelYValue);
+                        builder.AddComponentParameter(2, nameof(ChartTooltip.Subtitle), context.Segment.LabelXValue);
+                        builder.AddComponentParameter(3, nameof(ChartTooltip.X), 0d);
+                        builder.AddComponentParameter(4, nameof(ChartTooltip.Y), 0d);
+                        builder.CloseComponent();
+                    });
+                }
+            });
+
+            // A short chart like a dashboard tile, where the top gridline is close to the edge.
+            MudAxisChartBase<double, LineChartOptions> line = comp.FindComponent<Line<double>>().Instance;
+            await comp.InvokeAsync(() => line.OnElementSizeChanged(new ElementSize { Width = 390, Height = 160, Timestamp = 1 }));
+            comp.WaitForAssertion(() => comp.Find("svg.mud-chart-line").GetAttribute("viewBox").Should().Be("0 0 390 160"));
+
+            // The tooltip is laid out against the chart's own coordinates, so a template's offset is added back on.
+            (double Top, double Bottom, double TipY, double BaseY) Tooltip()
+            {
+                var offsetY = useTemplate ? double.Parse(comp.Find("g.mud-chart-tooltip").GetAttribute("transform")!.Split(',', ')')[1], CultureInfo.InvariantCulture) : 0;
+                var rect = comp.Find("g.svg-tooltip rect");
+                var top = offsetY + double.Parse(rect.GetAttribute("y")!, CultureInfo.InvariantCulture);
+                var bottom = top + double.Parse(rect.GetAttribute("height")!, CultureInfo.InvariantCulture);
+                var triangle = comp.Find("g.svg-tooltip polygon").GetAttribute("points")!.Split(' ')
+                    .Select(point => offsetY + double.Parse(point.Split(',')[1], CultureInfo.InvariantCulture)).ToArray();
+                return (top, bottom, triangle[2], triangle[0]);
+            }
+
+            double PointY(int index) => double.Parse(comp.FindAll("circle.mud-chart-point")[index].GetAttribute("cy")!, CultureInfo.InvariantCulture);
+
+            // The highest reading sits on the top gridline, with less room above it than the tooltip is tall.
+            var topPointY = PointY(1);
+            await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new());
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+
+            var flipped = Tooltip();
+            flipped.Top.Should().BeGreaterThan(topPointY, "the tooltip should sit below the point it describes");
+            flipped.TipY.Should().BeLessThan(flipped.BaseY, "the triangle should point up at the point");
+
+            // The lowest reading has plenty of room, so its tooltip stays above it.
+            var lowPointY = PointY(0);
+            await comp.FindAll("circle.mud-chart-point")[0].MouseOverAsync(new());
+            comp.WaitForAssertion(() => Tooltip().Bottom.Should().BeLessThan(lowPointY));
+            Tooltip().TipY.Should().BeGreaterThan(Tooltip().BaseY, "the triangle should point down at the point");
+        }
+
+        /// <summary>
+        /// YAxisTicks = 0 picks a round step that fits the values, including a step past a series that never changes.
+        /// </summary>
+        [TestCase(new double[] { 3, 7, 5, 2, 6 }, new[] { "2", "3", "4", "5", "6", "7" })]
+        [TestCase(new double[] { 0, 1000 }, new[] { "0", "200", "400", "600", "800", "1000" })]
+        [TestCase(new double[] { 5, 5, 5 }, new[] { "0", "10" })]
+        [TestCase(new double[] { 0, 0, 0 }, new[] { "0" })]
+        public void LineChartAutomaticYAxisStepIsRound(double[] data, string[] expectedLabels)
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = data }])
+                .Add(p => p.ChartLabels, data.Select((_, i) => i.ToString(CultureInfo.InvariantCulture)).ToArray())
+                .Add(p => p.ChartOptions, new LineChartOptions { YAxisTicks = 0 }));
+
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal(expectedLabels);
+        }
+
+        /// <summary>
+        /// The automatic step moves up to the next round number when the extra lines at each end would go over MaxNumYAxisTicks.
+        /// </summary>
+        [TestCase(new double[] { 0, 1000 }, 3, new[] { "0", "500", "1000" })]
+        [TestCase(new double[] { 3, 7 }, 3, new[] { "0", "5", "10" })]
+        [TestCase(new double[] { 3, 7 }, 2, new[] { "0", "10" })]
+        public void LineChartAutomaticYAxisStepStaysRoundWithinMaxNumYAxisTicks(double[] data, int maxTicks, string[] expectedLabels)
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = data }])
+                .Add(p => p.ChartLabels, data.Select((_, i) => i.ToString(CultureInfo.InvariantCulture)).ToArray())
+                .Add(p => p.ChartOptions, new LineChartOptions { YAxisTicks = 0, MaxNumYAxisTicks = maxTicks }));
+
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal(expectedLabels);
+        }
+
+        /// <summary>
+        /// Without YAxisTicks set the axis keeps its step of 20.
+        /// </summary>
+        [Test]
+        public void LineChartKeepsTheDefaultYAxisStep()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 3, 7, 5, 2, 6 } }])
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D", "E"]));
+
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("0", "20");
+        }
+
+        /// <summary>
+        /// A wide tooltip on the first or last point slides inside the chart while its triangle stays on the point.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task LineChartTooltipStaysInsideTheSideEdges(bool useTemplate)
+        {
+            // A long title makes the tooltip wider than the room beside the first and last points.
+            Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 120, Height: 16));
+
+            var comp = Context.Render<MudChart<double>>(parameters =>
+            {
+                parameters
+                    .Add(p => p.ChartType, ChartType.Line)
+                    .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 50, 30 } }])
+                    .Add(p => p.ChartLabels, ["A", "B", "C"])
+                    .Add(p => p.ChartOptions, new LineChartOptions
+                    {
+                        ChartPalette = _baseChartPalette,
+                        ShowToolTips = true,
+                        TooltipTitleFormat = "{{SERIES_NAME}}: {{Y_VALUE}}",
+                        TooltipSubtitleFormat = "{{X_VALUE}}",
+                    });
+
+                if (useTemplate)
+                {
+                    parameters.Add(p => p.TooltipTemplate, context => builder =>
+                    {
+                        builder.OpenComponent<ChartTooltip>(0);
+                        builder.AddComponentParameter(1, nameof(ChartTooltip.Title), context.Segment.LabelYValue);
+                        builder.AddComponentParameter(2, nameof(ChartTooltip.Subtitle), context.Segment.LabelXValue);
+                        builder.AddComponentParameter(3, nameof(ChartTooltip.X), 0d);
+                        builder.AddComponentParameter(4, nameof(ChartTooltip.Y), 0d);
+                        builder.CloseComponent();
+                    });
+                }
+            });
+
+            var width = double.Parse(comp.Find("svg.mud-chart-line").GetAttribute("viewBox")!.Split(' ')[2], CultureInfo.InvariantCulture);
+
+            // The tooltip is laid out against the chart's own coordinates, so a template's offset is added back on.
+            (double Left, double Right, double TipX) Tooltip()
+            {
+                var offsetX = useTemplate ? double.Parse(comp.Find("g.mud-chart-tooltip").GetAttribute("transform")!.Split('(', ',')[1], CultureInfo.InvariantCulture) : 0;
+                var rect = comp.Find("g.svg-tooltip rect");
+                var left = offsetX + double.Parse(rect.GetAttribute("x")!, CultureInfo.InvariantCulture);
+                var right = left + double.Parse(rect.GetAttribute("width")!, CultureInfo.InvariantCulture);
+                var tipX = offsetX + double.Parse(comp.Find("g.svg-tooltip polygon").GetAttribute("points")!.Split(' ')[2].Split(',')[0], CultureInfo.InvariantCulture);
+                return (left, right, tipX);
+            }
+
+            double PointX(int index) => double.Parse(comp.FindAll("circle.mud-chart-point")[index].GetAttribute("cx")!, CultureInfo.InvariantCulture);
+
+            var firstX = PointX(0);
+            await comp.FindAll("circle.mud-chart-point")[0].MouseOverAsync(new());
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+            var first = Tooltip();
+            first.Left.Should().BeGreaterThanOrEqualTo(0, "the tooltip should not hang off the left edge");
+            first.TipX.Should().BeApproximately(firstX, 0.001, "the triangle should still point at the point");
+
+            var lastX = PointX(2);
+            await comp.FindAll("circle.mud-chart-point")[2].MouseOverAsync(new());
+            comp.WaitForAssertion(() => Tooltip().Right.Should().BeLessThanOrEqualTo(width, "the tooltip should not hang off the right edge"));
+            Tooltip().TipX.Should().BeApproximately(lastX, 0.001, "the triangle should still point at the point");
+
+            // A point in the middle has room either side, so its tooltip stays centred on it.
+            var middleX = PointX(1);
+            await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new());
+            comp.WaitForAssertion(() => ((Tooltip().Left + Tooltip().Right) / 2).Should().BeApproximately(middleX, 0.001));
+        }
+
+        /// <summary>
+        /// Hovering a point keeps its marker under the hover circle instead of taking it out of the chart.
+        /// </summary>
+        [Test]
+        public async Task LineChartHoverKeepsEveryMarker()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30, 40 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette, ShowDataMarkers = true, ShowToolTips = true }));
+
+            int MarkerCount() => comp.FindAll("circle.mud-chart-point").Count(x => !x.HasAttribute("opacity"));
+            MarkerCount().Should().Be(4);
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync(new());
+
+            // Leaving the hovered marker out shifted the sequence numbers of every point drawn after it, so each hover rebuilt all of them.
+            MarkerCount().Should().Be(4);
         }
     }
 }

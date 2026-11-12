@@ -24,7 +24,7 @@
                    YAxisTitle="@ChartOptions?.YAxisTitle"
                    ChartType="@ChartType"
                    SeriesContent="@RenderScatterPoints()"
-                   TooltipContent="@RenderTooltip()"
+                   TooltipContent="@WithTooltipRoom(RenderTooltip(), DataPointLabelOffset)"
                    CustomGraphics="@CustomGraphics"
                    HoveredSegment="@HoveredDataPointPath"
                    HorizontalLines="@HorizontalLines"
@@ -77,20 +77,18 @@
             {
                 var isHovered = item.Equals(HoveredDataPointPath);
 
-                // Always-visible data point marker
-                if (!isHovered)
-                {
-                    builder.OpenElement(seq++, "circle");
-                    builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
-                    builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
-                    builder.AddAttribute(seq++, "fill", color);
-                    builder.AddAttribute(seq++, "stroke", color);
-                    builder.AddAttribute(seq++, "stroke-width", DataPointStroke.ToStr());
-                    builder.AddAttribute(seq++, "cx", item.CX.ToStr());
-                    builder.AddAttribute(seq++, "cy", item.CY.ToStr());
-                    builder.AddAttribute(seq++, "r", PointRadius.ToStr());
-                    builder.CloseElement();
-                }
+                // Always-visible data point marker, kept for the hovered point too, under the filled hover circle.
+                // Leaving it out shifts the sequence numbers of everything after it, so every later point would be rebuilt on each hover.
+                builder.OpenElement(seq++, "circle");
+                builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
+                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+                builder.AddAttribute(seq++, "fill", color);
+                builder.AddAttribute(seq++, "stroke", color);
+                builder.AddAttribute(seq++, "stroke-width", DataPointStroke.ToStr());
+                builder.AddAttribute(seq++, "cx", item.CX.ToStr());
+                builder.AddAttribute(seq++, "cy", item.CY.ToStr());
+                builder.AddAttribute(seq++, "r", PointRadius.ToStr());
+                builder.CloseElement();
 
                 // Optional data label
                 if (ChartOptions?.ShowDataLabels is true)
@@ -151,6 +149,22 @@
             builder.AddAttribute(seq++, "stroke-width", LineStrokeWidth.ToStr());
             builder.AddAttribute(seq++, "d", chartLine.Data);
             builder.CloseElement();
+
+            // Readings with a gap either side have no segment of their own.
+            // They are drawn as zero-length ones on a path of their own, which keeps the round cap they need off the series line.
+            if (ChartDots.TryGetValue(index, out var chartDots))
+            {
+                builder.OpenElement(seq++, "path");
+                builder.AddAttribute(seq++, "class", $"{lineClass} mud-chart-dots");
+                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+                builder.AddAttribute(seq++, "fill", "none");
+                builder.AddAttribute(seq++, "stroke", color);
+                builder.AddAttribute(seq++, "stroke-opacity", overrideSettings?.StrokeOpacity.ToStr() ?? "1");
+                builder.AddAttribute(seq++, "stroke-width", LineStrokeWidth.ToStr());
+                builder.AddAttribute(seq++, "stroke-linecap", "round");
+                builder.AddAttribute(seq++, "d", chartDots.Data);
+                builder.CloseElement();
+            }
         }
     };
 

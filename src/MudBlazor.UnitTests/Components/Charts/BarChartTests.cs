@@ -8,6 +8,7 @@ using Bunit;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Charts;
 using MudBlazor.Extensions;
+using MudBlazor.Interop;
 using MudBlazor.UnitTests.Components;
 using NUnit.Framework;
 
@@ -607,6 +608,138 @@ namespace MudBlazor.UnitTests.Charts
             var labels = comp.FindAll("text.mud-chart-value-label");
             labels.Should().HaveCount(2);
             labels.Select(l => l.TextContent).Should().ContainInOrder(1000.ToString("N0"), 2000.ToString("N0"));
+        }
+
+        /// <summary>
+        /// XAxisLabelInterval leaves out the axis labels in between.
+        /// </summary>
+        [Test]
+        public void BarChartXAxisLabelIntervalThinsTheAxis()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30, 40, 50 } }
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D", "E"])
+                .Add(p => p.ChartOptions, new BarChartOptions
+                {
+                    ChartPalette = _baseChartPalette,
+                    XAxisLabelInterval = 2
+                }));
+
+            comp.FindAll("g.mud-charts-xaxis text").Select(x => x.TextContent).Should().Equal("A", "C", "E");
+        }
+
+        /// <summary>
+        /// Gridlines leave their colour and weight to the stylesheet so they follow the theme.
+        /// </summary>
+        [Test]
+        public void BarChartGridlinesTakeTheirStrokeFromTheTheme()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 40, 20, 60 } }])
+                .Add(p => p.ChartLabels, ["A", "B", "C"])
+                .Add(p => p.ChartOptions, new BarChartOptions { YAxisLines = true, XAxisLines = true }));
+
+            var gridlines = comp.FindAll(".mud-charts-gridlines-yaxis path, .mud-charts-gridlines-xaxis-lines path");
+
+            // The colour and weight come from the stylesheet so they follow the theme, which a stroke attribute in the markup can't.
+            gridlines.Should().NotBeEmpty();
+            gridlines.Should().OnlyContain(x => !x.HasAttribute("stroke") && !x.HasAttribute("stroke-width"));
+        }
+
+        /// <summary>
+        /// YAxisTicks = 0 picks a round step over a range that reaches zero, since bars grow from it.
+        /// </summary>
+        [Test]
+        public void BarChartAutomaticYAxisStepIsRound()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Bar)
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 3, 7, 5, 2, 6 } }])
+                .Add(p => p.ChartLabels, ["A", "B", "C", "D", "E"])
+                .Add(p => p.ChartOptions, new BarChartOptions { YAxisTicks = 0 }));
+
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("0", "2", "4", "6", "8");
+        }
+
+        /// <summary>
+        /// A tooltip on a bar that reaches the top of a short chart flips into the bar, with or without a TooltipTemplate.
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task BarChartTooltipFlipsIntoABarWithNoRoomAbove(bool useTemplate)
+        {
+            Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 40, Height: 16));
+
+            var comp = Context.Render<MudChart<double>>(parameters =>
+            {
+                parameters
+                    .Add(p => p.ChartType, ChartType.Bar)
+                    .Add(p => p.MatchBoundsToSize, true)
+                    .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 50, 30 } }])
+                    .Add(p => p.ChartLabels, ["A", "B", "C"])
+                    .Add(p => p.ChartOptions, new BarChartOptions
+                    {
+                        ChartPalette = _baseChartPalette,
+                        ShowToolTips = true,
+                        TooltipTitleFormat = "{{Y_VALUE}}",
+                        TooltipSubtitleFormat = "{{X_VALUE}}",
+                    });
+
+                if (useTemplate)
+                {
+                    parameters.Add(p => p.TooltipTemplate, context => builder =>
+                    {
+                        builder.OpenComponent<ChartTooltip>(0);
+                        builder.AddComponentParameter(1, nameof(ChartTooltip.Title), context.Segment.LabelYValue);
+                        builder.AddComponentParameter(2, nameof(ChartTooltip.Subtitle), context.Segment.LabelXValue);
+                        builder.AddComponentParameter(3, nameof(ChartTooltip.X), 0d);
+                        builder.AddComponentParameter(4, nameof(ChartTooltip.Y), 0d);
+                        builder.CloseComponent();
+                    });
+                }
+            });
+
+            // A short chart like a dashboard tile, where the tallest bar reaches close to the top edge.
+            MudAxisChartBase<double, BarChartOptions> bar = comp.FindComponent<Bar<double>>().Instance;
+            await comp.InvokeAsync(() => bar.OnElementSizeChanged(new ElementSize { Width = 390, Height = 160, Timestamp = 1 }));
+            comp.WaitForAssertion(() => comp.Find("svg.mud-chart-bar").GetAttribute("viewBox").Should().Be("0 0 390 160"));
+
+            // The tooltip is laid out against the chart's own coordinates, so a template's offset is added back on.
+            (double Top, double Bottom, double TipY, double BaseY) Tooltip()
+            {
+                var offsetY = useTemplate ? double.Parse(comp.Find("g.mud-chart-tooltip").GetAttribute("transform")!.Split(',', ')')[1], CultureInfo.InvariantCulture) : 0;
+                var rect = comp.Find("g.svg-tooltip rect");
+                var top = offsetY + double.Parse(rect.GetAttribute("y")!, CultureInfo.InvariantCulture);
+                var bottom = top + double.Parse(rect.GetAttribute("height")!, CultureInfo.InvariantCulture);
+                var triangle = comp.Find("g.svg-tooltip polygon").GetAttribute("points")!.Split(' ')
+                    .Select(point => offsetY + double.Parse(point.Split(',')[1], CultureInfo.InvariantCulture)).ToArray();
+                return (top, bottom, triangle[2], triangle[0]);
+            }
+
+            // A bar is drawn as a line from its base up to its top.
+            double BarTop(int index) => double.Parse(comp.FindAll("path.mud-chart-bar")[index].GetAttribute("d")!.Split(' ')[^1], CultureInfo.InvariantCulture);
+
+            // The tallest bar reaches the top gridline, with less room above it than the tooltip is tall.
+            var tallTop = BarTop(1);
+            await comp.FindAll("path.mud-chart-bar")[1].MouseOverAsync(new());
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+
+            var flipped = Tooltip();
+            flipped.Top.Should().BeGreaterThan(tallTop, "the tooltip should sit inside the bar, below its top");
+            flipped.TipY.Should().BeLessThan(flipped.BaseY, "the triangle should point up at the top of the bar");
+
+            // The shortest bar has plenty of room, so its tooltip stays above it.
+            var shortTop = BarTop(0);
+            await comp.FindAll("path.mud-chart-bar")[0].MouseOverAsync(new());
+            comp.WaitForAssertion(() => Tooltip().Bottom.Should().BeLessThan(shortTop));
+            Tooltip().TipY.Should().BeGreaterThan(Tooltip().BaseY, "the triangle should point down at the top of the bar");
         }
     }
 }
