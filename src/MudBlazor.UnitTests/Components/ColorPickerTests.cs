@@ -1188,6 +1188,37 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-picker-color-controls").Should().ContainSingle();
         }
 
+        /// <summary>
+        /// A static picker's palette is inside .mud-picker-static so it can fill the container; popover and dialog palettes are not (#9131).
+        /// </summary>
+        [Test]
+        [TestCase(PickerVariant.Static, true)]
+        [TestCase(PickerVariant.Inline, false)]
+        [TestCase(PickerVariant.Dialog, false)]
+        public async Task PaletteView_StaticFillsContainer_PopoverAndDialogKeepFixedWidth(PickerVariant variant, bool insideStatic)
+        {
+            var comp = Context.Render<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.Palette);
+                p.Add(x => x.Variant, variant);
+            });
+
+            if (variant is PickerVariant.Dialog or PickerVariant.Inline)
+            {
+                await comp.Instance.OpenPicker();
+            }
+
+            var view = comp.Find(".mud-picker-color-view");
+            if (insideStatic)
+            {
+                view.Closest(".mud-picker-static").Should().NotBeNull();
+            }
+            else
+            {
+                view.Closest(".mud-picker-static").Should().BeNull();
+            }
+        }
+
         [Test]
         [TestCase(PickerVariant.Static, false)]
         [TestCase(PickerVariant.Inline, true)]

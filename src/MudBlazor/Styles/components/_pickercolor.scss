@@ -230,6 +230,11 @@
   padding: 6px;
   background-color: var(--mud-palette-surface);
 
+  // A static picker fills its container, so its palette does too.
+  .mud-picker-static & {
+    width: 100%;
+  }
+
   .mud-picker-color-view-collection {
     display: flex;
     flex-wrap: wrap;
