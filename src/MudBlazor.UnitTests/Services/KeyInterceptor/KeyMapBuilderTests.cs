@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Text.RegularExpressions;
 using AwesomeAssertions;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
@@ -599,5 +600,53 @@ public class KeyMapBuilderTests
         lastReceivedArgs.Should().NotBeNull();
         lastReceivedArgs!.Key.Should().Be("F1");
         lastReceivedArgs.AltKey.Should().BeTrue();
+    }
+
+    /// <summary>
+    /// The key predicates used by MudBlazor's components match the same browser keys as the patterns they replace.
+    /// </summary>
+    [Test]
+    public void KeyPredicates_MatchTheSameKeysAsTheirPatterns()
+    {
+        var keys = new List<string> { "", "Enter", "Escape", "Tab", "ArrowUp", "Backspace", "Dead", "Unidentified", "NumpadEnter", char.ConvertFromUtf32(0x1F600) };
+        for (var c = char.MinValue; ; c++)
+        {
+            keys.Add(c.ToString());
+            if (c == char.MaxValue)
+            {
+                break;
+            }
+        }
+
+        foreach (var key in keys)
+        {
+            KeyMapBuilder.IsAnyKey(key).Should().Be(Regex.IsMatch(key, "."), $"/./ on {key}");
+            KeyMapBuilder.IsSingleNonSpaceCharacter(key).Should().Be(Regex.IsMatch(key, "^[^ ]$"), $"/^[^ ]$/ on {key}");
+        }
+    }
+
+    /// <summary>
+    /// The internal registration methods match literal keys, key sets and predicates, and never read a key as a pattern.
+    /// </summary>
+    [Test]
+    public async Task InternalRegistrations_MatchLiteralKeysAndPredicates()
+    {
+        var hits = new List<string>();
+        var (keyDown, keyUp) = KeyMapBuilder.Create()
+            .OnKeyDownLiteral("/a/", () => { hits.Add("literal"); return Task.CompletedTask; })
+            .OnKeyDownLiteral("Tab", args => { hits.Add("literal-args:" + args.Key); return Task.CompletedTask; })
+            .OnKeyDownAnyLiteral(["Enter", "NumpadEnter"], () => { hits.Add("any"); return Task.CompletedTask; })
+            .OnKeyDownAnyLiteral(["x", "X"], args => { hits.Add("any-args:" + args.Key); return Task.CompletedTask; })
+            .OnKeyUpWhere(KeyMapBuilder.IsAnyKey, args => { hits.Add("up:" + args.Key); return Task.CompletedTask; })
+            .Build();
+
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "a" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "/a/" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "Tab" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "NumpadEnter" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "X" });
+        await keyUp.NotifyOnKeyUpAsync(new KeyboardEventArgs { Key = "q" });
+
+        hits.Should().Equal("literal", "literal-args:Tab", "any", "any-args:X", "up:q");
     }
 }

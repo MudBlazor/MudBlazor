@@ -263,6 +263,43 @@ public sealed class KeyMapBuilder
         return this;
     }
 
+    // MudBlazor's own components register keys through the internal methods below, which never build a Regex.
+    // Only the public string methods accept "/pattern/" keys, so an app whose code never calls them can trim the regular expression engine away.
+
+    internal KeyMapBuilder OnKeyDownLiteral(string key, Func<Task> action)
+        => OnKeyDownWhere(k => k == key, _ => action());
+
+    internal KeyMapBuilder OnKeyDownLiteral(string key, Func<KeyboardEventArgs, Task> action)
+        => OnKeyDownWhere(k => k == key, action);
+
+    internal KeyMapBuilder OnKeyDownAnyLiteral(IEnumerable<string> keys, Func<Task> action)
+        => OnKeyDownWhere(new HashSet<string>(keys).Contains, _ => action());
+
+    internal KeyMapBuilder OnKeyDownAnyLiteral(IEnumerable<string> keys, Func<KeyboardEventArgs, Task> action)
+        => OnKeyDownWhere(new HashSet<string>(keys).Contains, action);
+
+    internal KeyMapBuilder OnKeyDownWhere(Func<string, bool> matches, Func<KeyboardEventArgs, Task> action)
+    {
+        _commands.Add(new PredicateKeyCommand(KeyEventKind.Down, matches, action));
+        return this;
+    }
+
+    internal KeyMapBuilder OnKeyUpWhere(Func<string, bool> matches, Func<KeyboardEventArgs, Task> action)
+    {
+        _commands.Add(new PredicateKeyCommand(KeyEventKind.Up, matches, action));
+        return this;
+    }
+
+    /// <summary>
+    /// Matches the keys the pattern <c>/./</c> matches: any key name with a character other than a line feed.
+    /// </summary>
+    internal static bool IsAnyKey(string key) => key.AsSpan().IndexOfAnyExcept('\n') >= 0;
+
+    /// <summary>
+    /// Matches the browser key names the pattern <c>/^[^ ]$/</c> matches: a single character that is not a space.
+    /// </summary>
+    internal static bool IsSingleNonSpaceCharacter(string key) => key.Length == 1 && key[0] != ' ';
+
     public (IKeyDownObserver, IKeyUpObserver) Build()
     {
         if (_commands.Count == 0)
@@ -419,6 +456,19 @@ public sealed class KeyMapBuilder
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => inner.ExecuteAsync(args);
+    }
+
+    private sealed class PredicateKeyCommand(KeyEventKind kind, Func<string, bool> matches, Func<KeyboardEventArgs, Task> action) : IKeyCommand
+    {
+        public KeyEventKind Kind { get; } = kind;
+
+        public bool IsHook => false;
+
+        public bool CanExecute(KeyboardEventArgs args)
+            => args.Key is not null && matches(args.Key);
+
+        public Task ExecuteAsync(KeyboardEventArgs args)
+            => action(args);
     }
 
     private sealed class HookCommand(KeyEventKind kind, Func<KeyboardEventArgs, Task> hook) : IKeyCommand
