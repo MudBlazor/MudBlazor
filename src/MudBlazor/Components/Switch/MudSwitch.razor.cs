@@ -119,9 +119,9 @@ namespace MudBlazor
 
                 await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
                     .When(CanHandleKeys, builder => builder
-                        .OnKeyDownAny(["ArrowLeft", "Delete"], () => SetBoolValueAsync(false, true))
-                        .OnKeyDownAny(["ArrowRight", "Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
-                        .OnKeyDown(" ", () => SetBoolValueAsync(!BoolValue, true))));
+                        .OnKeyDownAnyLiteral(["ArrowLeft", "Delete"], () => SetBoolValueAsync(false, true))
+                        .OnKeyDownAnyLiteral(["ArrowRight", "Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
+                        .OnKeyDownLiteral(" ", () => SetBoolValueAsync(!BoolValue, true))));
             }
 
             await base.OnAfterRenderAsync(firstRender);
