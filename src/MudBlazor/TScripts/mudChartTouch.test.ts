@@ -5,7 +5,7 @@ const svgNamespace = "http://www.w3.org/2000/svg";
 const attached: [MudChartTouch, Element][] = [];
 
 // happy-dom does no layout, so each hover target reports a 10px box centred on its point.
-function renderChart(points: [id: string, x: number, y: number][], followX = true) {
+function renderChart(points: [id: string, x: number, y: number][], followX = true, chartTouch = new MudChartTouch()) {
     const svg = document.createElementNS(svgNamespace, "svg");
     for (const [id, x, y] of points) {
         const circle = document.createElementNS(svgNamespace, "circle");
@@ -27,7 +27,6 @@ function renderChart(points: [id: string, x: number, y: number][], followX = tru
     svg.addEventListener("mouseover", e => hovers.push(`over ${(e.target as Element).id}`));
     svg.addEventListener("mouseout", e => hovers.push(`out ${(e.target as Element).id}`));
 
-    const chartTouch = new MudChartTouch();
     chartTouch.attach(svg, followX);
     attached.push([chartTouch, svg]);
     return { svg, hovers, chartTouch };
@@ -121,6 +120,29 @@ test("a scrub keeps the browser's long press menu and text selection away, and o
     expect(beforeHold).toEqual([false, false]);
     expect(duringScrub).toEqual([true, true]);
     expect(afterLift).toEqual([false, false]);
+});
+
+test("lifting the finger off the chart still ends the scrub", () => {
+    const { svg, hovers } = renderChart(days);
+
+    pointer(svg, "pointerdown", 8, 60);
+    pointer(svg, "pointermove", 30, 60);
+    pointer(document.body, "pointerup", 30, 400);
+
+    expect(hovers).toEqual(["over tue", "out tue"]);
+});
+
+test("a chart taken out of the page mid-scrub doesn't stop touch on the others", () => {
+    const chartTouch = new MudChartTouch();
+    const removed = renderChart(days, true, chartTouch);
+    const remaining = renderChart(days, true, chartTouch);
+
+    pointer(removed.svg, "pointerdown", 8, 60);
+    pointer(removed.svg, "pointermove", 30, 60);
+    removed.svg.remove();
+    tap(remaining.svg, 50, 80);
+
+    expect(remaining.hovers).toEqual(["over wed"]);
 });
 
 test("a tap opens the nearest point until a touch somewhere else", () => {

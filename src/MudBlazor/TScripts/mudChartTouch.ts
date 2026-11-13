@@ -30,7 +30,6 @@ interface Pinned {
 interface ChartListeners {
     pointerdown: (e: PointerEvent) => void;
     pointermove: (e: PointerEvent) => void;
-    pointerup: (e: PointerEvent) => void;
     touchmove: (e: TouchEvent) => void;
     click: (e: MouseEvent) => void;
     longPress: (e: Event) => void;
@@ -47,7 +46,7 @@ export default class MudChartTouch {
     #drag: Drag | null = null;
     #pinned: Pinned | null = null;
     #tapChart: Element | null = null;
-    #listeningForTouchOutside = false;
+    #listeningToDocument = false;
 
     /**
      * Starts following touch on a chart's svg element.
@@ -58,20 +57,24 @@ export default class MudChartTouch {
             return;
         }
 
-        if (!this.#listeningForTouchOutside) {
+        if (!this.#listeningToDocument) {
             // A touch anywhere else puts away the tooltip a tap left open.
             document.addEventListener("pointerdown", e => {
                 if (e.pointerType !== "mouse" && this.#pinned && !this.#pinned.chart.contains(e.target as Node)) {
                     this.#unpin();
                 }
             }, { capture: true });
-            this.#listeningForTouchOutside = true;
+
+            // The finger can lift off the chart, or after the element it landed on has been re-rendered away, so a drag ends wherever the page hears the lift.
+            const endDrag = (e: PointerEvent) => this.#endDrag(e.pointerId);
+            document.addEventListener("pointerup", endDrag, { capture: true });
+            document.addEventListener("pointercancel", endDrag, { capture: true });
+            this.#listeningToDocument = true;
         }
 
         const listeners: ChartListeners = {
             pointerdown: e => this.#onPointerDown(chart, followX, e),
             pointermove: e => this.#onPointerMove(chart, followX, e),
-            pointerup: e => this.#endDrag(e.pointerId),
             // Once a drag is a scrub the page must not scroll under it, even when the finger runs downhill with the line.
             // The listener is on the chart from the start because the browser only waits for a non-passive listener that is there when the finger lands.
             touchmove: e => {
@@ -102,8 +105,6 @@ export default class MudChartTouch {
 
         chart.addEventListener("pointerdown", listeners.pointerdown as EventListener);
         chart.addEventListener("pointermove", listeners.pointermove as EventListener);
-        chart.addEventListener("pointerup", listeners.pointerup as EventListener);
-        chart.addEventListener("pointercancel", listeners.pointerup as EventListener);
         chart.addEventListener("touchmove", listeners.touchmove as EventListener, { passive: false });
         chart.addEventListener("click", listeners.click as EventListener);
         chart.addEventListener("contextmenu", listeners.longPress);
@@ -122,8 +123,6 @@ export default class MudChartTouch {
 
         chart.removeEventListener("pointerdown", listeners.pointerdown as EventListener);
         chart.removeEventListener("pointermove", listeners.pointermove as EventListener);
-        chart.removeEventListener("pointerup", listeners.pointerup as EventListener);
-        chart.removeEventListener("pointercancel", listeners.pointerup as EventListener);
         chart.removeEventListener("touchmove", listeners.touchmove as EventListener);
         chart.removeEventListener("click", listeners.click as EventListener);
         chart.removeEventListener("contextmenu", listeners.longPress);
@@ -152,6 +151,12 @@ export default class MudChartTouch {
             return;
         }
 
+        // A chart taken out of the page mid-drag may never hear its finger lift, so its drag is dropped instead of being taken for a first finger still down.
+        if (this.#drag && !this.#drag.chart.isConnected) {
+            clearTimeout(this.#drag.hold);
+            this.#drag = null;
+        }
+
         if (this.#drag) {
             // A second finger is a pinch, so a drag that hasn't become a scrub yet lets it go.
             if (!this.#drag.scrub) {
@@ -170,7 +175,7 @@ export default class MudChartTouch {
             scrub: null,
             hovered: null,
             hold: setTimeout(() => {
-                if (this.#drag === drag && drag.scrub === null) {
+                if (this.#drag === drag && drag.scrub === null && chart.isConnected) {
                     this.#startScrub(drag);
                     this.#scrubTo(drag, drag.x, drag.y, followX);
                 }
