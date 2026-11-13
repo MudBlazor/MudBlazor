@@ -49,7 +49,8 @@
         </MudTooltip>
         </MudPickerToolbar>
         <MudPickerContent Class="mud-picker-color-content">
-            @if (ShowColorField)
+            @* The palette view replaces the color field and controls, so they aren't rendered underneath it (#9131). *@
+            @if (ShowColorField && _colorPickerViewState.Value != ColorPickerView.Palette)
             {
                 <div class="mud-picker-color-picker">
                     @if (_colorPickerViewState.Value == ColorPickerView.Spectrum)
@@ -102,7 +103,7 @@
             }
             @if (_colorPickerViewState.Value != ColorPickerView.GridCompact)
             {
-                @if (ShowSliders || ShowInputs || ShowPreview)
+                @if ((ShowSliders || ShowInputs || ShowPreview) && _colorPickerViewState.Value != ColorPickerView.Palette)
                 {
                     <div class="mud-picker-color-controls">
                         @if (ShowSliders || ShowPreview)
