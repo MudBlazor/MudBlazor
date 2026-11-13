@@ -30,6 +30,11 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     private ElementReference? _yAxisGroupElementReference;
     private ElementSize? _lastYAxisLabelSize;
     private ElementSize? _lastXAxisLabelSize;
+    private bool _touchToolTips;
+    private MeasuredLabels? _measuredLabels;
+
+    // The labels as they were last measured, by count and by the first label of each axis, which is a new object each time the chart makes its labels.
+    private sealed record MeasuredLabels(int HorizontalCount, SvgText? FirstHorizontal, int VerticalCount, SvgText? FirstVertical);
 
     /// <summary>
     /// The size of the Y-axis labels.
@@ -253,6 +258,18 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
             await ElementRefChanged.InvokeAsync(_svgRef);
         }
 
+        await UpdateTouchToolTipsAsync();
+
+        // A chart makes new labels whenever it rebuilds, which a change of data, options, size or a parent render all do.
+        // Hovering renders the chart again with the same labels, so measuring them again would only cost two calls into the browser.
+        var labels = new MeasuredLabels(HorizontalValues.Count, HorizontalValues.FirstOrDefault(), VerticalValues.Count, VerticalValues.FirstOrDefault());
+        if (!firstRender && labels == _measuredLabels)
+        {
+            return;
+        }
+
+        _measuredLabels = labels;
+
         var yAxisLabelSize = _yAxisGroupElementReference != null ? (await JsRuntime.InvokeAsyncWithErrorHandling<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference)).value : null;
         var xAxisLabelSize = _xAxisGroupElementReference != null ? (await JsRuntime.InvokeAsyncWithErrorHandling<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference)).value : null;
 
@@ -291,6 +308,28 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
         if (axisChanged && AxisChanged.HasDelegate)
         {
             await AxisChanged.InvokeAsync();
+        }
+    }
+
+    // A touch listener can only stop the page scrolling if it was on the chart before the finger landed, so the chart attaches it as soon as the option is on rather than on the first touch.
+    private async Task UpdateTouchToolTipsAsync()
+    {
+        var touchToolTips = ChartOptions is IAxisLineChartOptions { ShowToolTips: true, ShowToolTipsOnTouch: true };
+        if (touchToolTips == _touchToolTips)
+        {
+            return;
+        }
+
+        _touchToolTips = touchToolTips;
+
+        if (touchToolTips)
+        {
+            // Line and time series points are read left to right, so a finger picks the nearest point along x; scatter points have no such order.
+            await JsRuntime.InvokeVoidAsync("mudChartTouch.attach", _svgRef, ChartOptions is not ScatterPlotChartOptions);
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("mudChartTouch.detach", _svgRef);
         }
     }
 }

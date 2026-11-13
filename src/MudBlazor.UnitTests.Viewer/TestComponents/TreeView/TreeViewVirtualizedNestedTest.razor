@@ -1,4 +1,4 @@
-﻿<MudTreeView T="string" Items="_items" Virtualize="true" Height="200px">
+﻿<MudTreeView T="string" Items="_items" Virtualize="@Virtualize" Height="200px">
     <ItemTemplate>
         <MudTreeViewItem Value="@context.Value" Text="@context.Text" Items="@context.Children" Expanded="@context.Expanded">
             <BodyContent Context="item">
@@ -14,6 +14,9 @@
 </MudTreeView>
 
 @code {
+    [Parameter]
+    public bool Virtualize { get; set; } = true;
+
     private readonly List<TreeItemData<string>> _items =
     [
         new TreeItemData<string> { Value = "Root", Text = "Root", Expanded = true, Children = [new TreeItemData<string> { Value = "Child", Text = "Child" }] }
