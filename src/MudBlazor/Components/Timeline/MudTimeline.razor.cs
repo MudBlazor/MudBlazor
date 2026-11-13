@@ -49,7 +49,8 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <see cref="TimelinePosition.Alternate"/>.<br />
         /// Can be set to <c>Left</c>, <c>Right</c>, <c>Alternate</c>, <c>Start</c>, or <c>End</c> when <see cref="TimelineOrientation"/> is <see cref="TimelineOrientation.Vertical"/>.<br />
-        /// Can be set to <c>Top</c>, <c>Bottom</c>, or <c>Alternate</c> when <see cref="TimelineOrientation"/> is <see cref="TimelineOrientation.Horizontal"/>.
+        /// Can be set to <c>Top</c>, <c>Bottom</c>, or <c>Alternate</c> when <see cref="TimelineOrientation"/> is <see cref="TimelineOrientation.Horizontal"/>.<br />
+        /// For <c>Start</c>, <c>End</c>, <c>Top</c>, and <c>Bottom</c>, the line stays at the edge unless one of this timeline's own items provides <see cref="MudTimelineItem.ItemOpposite"/>, which centers the line.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Timeline.Behavior)]
