@@ -61,6 +61,9 @@
     private RenderFragment RenderScatterPoints() => builder =>
     {
         var seq = 0;
+        var dataPointStroke = DataPointStroke.ToStr();
+        var pointRadius = PointRadius.ToStr();
+        var pointHoverRadius = PointHoverRadius.ToStr();
 
         // Render scatter point series
         foreach (var seriesEntry in ChartDataPoints)
@@ -73,21 +76,23 @@
                 ? ChartOptions.ChartPalette[index % ChartOptions.ChartPalette.Length]
                 : string.Empty;
 
+            var pointIndex = -1;
             foreach (var item in seriesEntry.Value)
             {
+                pointIndex++;
                 var isHovered = item.Equals(HoveredDataPointPath);
 
                 // Always-visible data point marker, kept for the hovered point too, under the filled hover circle.
                 // Leaving it out shifts the sequence numbers of everything after it, so every later point would be rebuilt on each hover.
                 builder.OpenElement(seq++, "circle");
                 builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
-                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+                builder.AddAttribute(seq++, "onclick", GetSeriesClickCallback(index));
                 builder.AddAttribute(seq++, "fill", color);
                 builder.AddAttribute(seq++, "stroke", color);
-                builder.AddAttribute(seq++, "stroke-width", DataPointStroke.ToStr());
-                builder.AddAttribute(seq++, "cx", item.CX.ToStr());
-                builder.AddAttribute(seq++, "cy", item.CY.ToStr());
-                builder.AddAttribute(seq++, "r", PointRadius.ToStr());
+                builder.AddAttribute(seq++, "stroke-width", dataPointStroke);
+                builder.AddAttribute(seq++, "cx", item.CXText);
+                builder.AddAttribute(seq++, "cy", item.CYText);
+                builder.AddAttribute(seq++, "r", pointRadius);
                 builder.CloseElement();
 
                 // Optional data label
@@ -108,17 +113,17 @@
                 if (ChartOptions?.ShowToolTips is not false)
                 {
                     builder.OpenElement(seq++, "circle");
-                    builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
-                    builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+                    builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point mud-chart-hover-point");
+                    builder.AddAttribute(seq++, "onclick", GetSeriesClickCallback(index));
                     builder.AddAttribute(seq++, "fill", isHovered ? color : string.Empty);
                     builder.AddAttribute(seq++, "stroke", color);
-                    builder.AddAttribute(seq++, "stroke-width", DataPointStroke.ToStr());
+                    builder.AddAttribute(seq++, "stroke-width", dataPointStroke);
                     builder.AddAttribute(seq++, "opacity", isHovered ? 1 : 0);
-                    builder.AddAttribute(seq++, "cx", item.CX.ToStr());
-                    builder.AddAttribute(seq++, "cy", item.CY.ToStr());
-                    builder.AddAttribute(seq++, "r", PointHoverRadius.ToStr());
-                    builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, item)));
-                    builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnDataPointMouseOut));
+                    builder.AddAttribute(seq++, "cx", item.CXText);
+                    builder.AddAttribute(seq++, "cy", item.CYText);
+                    builder.AddAttribute(seq++, "r", pointHoverRadius);
+                    builder.AddAttribute(seq++, "onmouseover", GetDataPointMouseOverCallback(index, pointIndex));
+                    builder.AddAttribute(seq++, "onmouseout", DataPointMouseOutCallback);
                     builder.CloseElement();
                 }
             }
@@ -142,7 +147,7 @@
 
             builder.OpenElement(seq++, "path");
             builder.AddAttribute(seq++, "class", lineClass);
-            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+            builder.AddAttribute(seq++, "onclick", GetSeriesClickCallback(index));
             builder.AddAttribute(seq++, "fill", "none");
             builder.AddAttribute(seq++, "stroke", color);
             builder.AddAttribute(seq++, "stroke-opacity", overrideSettings?.StrokeOpacity.ToStr() ?? "1");
@@ -156,7 +161,7 @@
             {
                 builder.OpenElement(seq++, "path");
                 builder.AddAttribute(seq++, "class", $"{lineClass} mud-chart-dots");
-                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+                builder.AddAttribute(seq++, "onclick", GetSeriesClickCallback(index));
                 builder.AddAttribute(seq++, "fill", "none");
                 builder.AddAttribute(seq++, "stroke", color);
                 builder.AddAttribute(seq++, "stroke-opacity", overrideSettings?.StrokeOpacity.ToStr() ?? "1");

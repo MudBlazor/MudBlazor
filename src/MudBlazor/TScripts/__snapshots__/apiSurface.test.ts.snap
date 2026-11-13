@@ -4,6 +4,10 @@ exports[`window API surface is unchanged 1`] = `
 {
   "getTabbableElements": "function(1)",
   "hasDefinedParentHeight": "function(1)",
+  "mudChartTouch": {
+    "attach": "function(2)",
+    "detach": "function(1)",
+  },
   "mudDragAndDrop": {
     "getDropIndexOnPosition": "function(3)",
     "getDropZoneIdentifierOnPosition": "function(2)",
