@@ -1114,5 +1114,52 @@ namespace MudBlazor.UnitTests.Charts
 
             comp.FindAll("g.svg-tooltip tspan").Select(x => x.TextContent).Should().Equal("20", "20.0");
         }
+
+        /// <summary>
+        /// A tooltip writes the value with the series' TooltipYValueFormat for every numeric type a chart takes.
+        /// </summary>
+        [Test]
+        public async Task LineChartTooltipValueFormatWorksForEveryNumberType()
+        {
+            (await HoveredTooltip<int>([10, 20, 30])).Should().Contain("020");
+            (await HoveredTooltip<long>([10, 20, 30])).Should().Contain("020");
+            (await HoveredTooltip<float>([10, 20.4f, 30])).Should().Contain("020");
+            (await HoveredTooltip<decimal>([10, 20.4m, 30])).Should().Contain("020");
+            (await HoveredTooltip<double>([10, 19.6, 30])).Should().Contain("020");
+
+            async Task<string> HoveredTooltip<T>(T[] values) where T : struct, System.Numerics.INumber<T>, System.Numerics.IMinMaxValue<T>, IFormattable
+            {
+                var comp = Context.Render<MudChart<T>>(parameters => parameters
+                    .Add(p => p.ChartType, ChartType.Line)
+                    .Add(p => p.ChartSeries, [new ChartSeries<T> { Name = "Series 1", Data = values, TooltipYValueFormat = "000" }])
+                    .Add(p => p.ChartOptions, new LineChartOptions { TooltipTitleFormat = "{{Y_VALUE}}" }));
+
+                await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync(new());
+
+                return comp.Find("g.svg-tooltip").TextContent;
+            }
+        }
+
+        /// <summary>
+        /// The Y axis spans the lowest and highest readings across every visible series, skipping gaps and hidden series.
+        /// </summary>
+        [Test]
+        public void LineChartYAxisSpansTheVisibleReadings()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries,
+                [
+                    new ChartSeries<double> { Name = "Series 1", Data = new double?[] { null, -15, 40, null } },
+                    new ChartSeries<double> { Name = "Series 2", Data = new double?[] { 5, null, 55 } },
+                    new ChartSeries<double> { Name = "Hidden", Data = new double[] { -500, 900 }, Visible = false },
+                ])
+                .Add(p => p.ChartOptions, new LineChartOptions { YAxisTicks = 10 }));
+
+            var labels = comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).ToArray();
+
+            labels.First().Should().Be("-20");
+            labels.Last().Should().Be("60");
+        }
     }
 }
