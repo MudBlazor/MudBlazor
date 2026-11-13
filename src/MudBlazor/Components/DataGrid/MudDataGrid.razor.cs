@@ -47,6 +47,7 @@ namespace MudBlazor
         private MudDropContainer<Column<T>>? _columnsPanelDropContainer;
         private readonly PropertyInfo[] _properties = typeof(T).GetProperties();
         private CancellationTokenSource? _serverDataCancellationTokenSource;
+        private INotifyCollectionChanged? _trackedCollection;
         private IEnumerable<T>? _currentRenderFilteredItemsCache = null;
         internal GroupDefinition<T>? _groupDefinition;
         internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
@@ -949,23 +950,38 @@ namespace MudBlazor
 
         private void SetupCollectionChangeTracking()
         {
-            if (Items is INotifyCollectionChanged changed)
+            var collection = Items as INotifyCollectionChanged;
+            if (ReferenceEquals(collection, _trackedCollection))
+                return;
+
+            // Only the current Items is tracked, so a replaced collection can't change this grid's selection or keep it alive.
+            StopCollectionChangeTracking();
+            _trackedCollection = collection;
+            if (collection is not null)
+                collection.CollectionChanged += OnItemsCollectionChanged;
+        }
+
+        private void StopCollectionChangeTracking()
+        {
+            if (_trackedCollection is not null)
+                _trackedCollection.CollectionChanged -= OnItemsCollectionChanged;
+
+            _trackedCollection = null;
+        }
+
+        private void OnItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            InvokeAsync(async () =>
             {
-                changed.CollectionChanged += (s, e) =>
-                {
-                    InvokeAsync(async () =>
-                    {
-                        _currentRenderFilteredItemsCache = null;
+                _currentRenderFilteredItemsCache = null;
 
-                        if (Groupable)
-                            GroupItems();
+                if (Groupable)
+                    GroupItems();
 
-                        ApplyInitialExpansionForNewItems(e);
-                        await CleanupRemovedItemsAsync(e);
-                        StateHasChanged();
-                    });
-                };
-            }
+                ApplyInitialExpansionForNewItems(e);
+                await CleanupRemovedItemsAsync(e);
+                StateHasChanged();
+            });
         }
 
         private async Task CleanupRemovedItemsAsync(NotifyCollectionChangedEventArgs e)
@@ -3384,6 +3400,9 @@ namespace MudBlazor
 
         protected virtual void Dispose(bool disposing)
         {
+            // A collection that outlives the grid, such as one held by a service, would otherwise keep the grid alive.
+            StopCollectionChangeTracking();
+
             // Cancel a load still in flight so its data source can stop and its result is discarded.
             var source = _serverDataCancellationTokenSource;
             try
