@@ -77,12 +77,18 @@ namespace MudBlazor
         // Whether _selection is the collection last published through SelectedValues, which the application can hold on to.
         private bool _selectionPublished;
         private readonly HashSet<MudTreeViewItem<T>> _childItems = new();
-        private readonly TreeViewProjection<T> _projection = new();
+        // Only a virtualized tree projects its rows, so a standard tree and every nested tree never create one.
+        private TreeViewProjection<T>? _projection;
         // ServerData load state belongs to the backing node object, not the rendered component instance.
         // When the parent replaces Items with new node objects, the old entries can disappear with them.
-        private readonly TreeViewServerLoadState<T> _serverLoadState = new();
+        // Items route their state to the root tree, so nested trees never create one.
+        private TreeViewServerLoadState<T>? _serverLoadState;
+#if NET9_0_OR_GREATER
         // Mirrors the splatting workaround in MudVirtualize, because Virtualize only has MaxItemCount on .NET 9 and later (#12701).
-        private readonly Dictionary<string, object?> _virtualizeAttributes = new();
+        private Dictionary<string, object?>? _virtualizeAttributes;
+#endif
+        // Decided at the first render, because adding or removing the cascade later would recreate every item below it.
+        private bool? _resetsItemContext;
         private bool _isFirstRender = true;
         private bool _isDisposed;
         private bool _hasLoggedInvalidVirtualizeConfiguration;
@@ -443,10 +449,6 @@ namespace MudBlazor
         {
             base.OnParametersSet();
 
-#if NET9_0_OR_GREATER
-            _virtualizeAttributes[nameof(MaxItemCount)] = MaxItemCount;
-#endif
-
             if (MudTreeRoot == this)
             {
                 if (!IsVirtualized)
@@ -458,7 +460,7 @@ namespace MudBlazor
                 else if (_projectionDirty
                     || !ReferenceEquals(Items, _projectedItems)
                     || !ReferenceEquals(Comparer, _projectedComparer)
-                    || _projection.HasChanged(Items))
+                    || Projection.HasChanged(Items))
                 {
                     // The application changes the backing items in place, so a parent render compares them with the projection.
                     // Rebuilding costs far more than comparing, so a parent render with unchanged items keeps the current projection.
@@ -711,6 +713,22 @@ namespace MudBlazor
 
         internal bool IsDisposed => _isDisposed;
 
+        private TreeViewProjection<T> Projection => _projection ??= new();
+
+        /// <summary>
+        /// The attributes splatted onto the virtualizer, which carry <see cref="MaxItemCount"/> on .NET 9 and later.
+        /// </summary>
+        private Dictionary<string, object?>? GetVirtualizeAttributes()
+        {
+#if NET9_0_OR_GREATER
+            _virtualizeAttributes ??= new();
+            _virtualizeAttributes[nameof(MaxItemCount)] = MaxItemCount;
+            return _virtualizeAttributes;
+#else
+            return null;
+#endif
+        }
+
         /// <summary>
         /// Rebuilds the flattened rows and the selection projection when the backing data changed since the last build.
         /// </summary>
@@ -724,7 +742,7 @@ namespace MudBlazor
                 // A selection change can be under way, in which case the tree's selection is already new while the backing items still hold the old one.
                 // Projecting what was last applied lets the change be applied as a difference, which is what clears the old selection from items which are not rendered.
                 // What was last applied also holds values whose item left the hierarchy, so the item is selected again when it returns.
-                _projection.Rebuild(Items, _projectSelectionFromTree ? GetSelection() : _projection.SelectedValues, Comparer);
+                Projection.Rebuild(Items, _projectSelectionFromTree ? GetSelection() : Projection.SelectedValues, Comparer);
                 _projectSelectionFromTree = false;
                 _projectedItems = Items;
                 _projectedComparer = Comparer;
@@ -756,7 +774,7 @@ namespace MudBlazor
         private ReadOnlyCollection<TreeViewItemContext<T>> GetRows()
         {
             EnsureProjection();
-            return _projection.Rows;
+            return Projection.Rows;
         }
 
         /// <summary>
@@ -767,7 +785,7 @@ namespace MudBlazor
         internal void ToggleProjection(TreeViewItemContext<T>? row, bool expanded)
         {
             // Splicing keeps the other rows, so toggling a folder costs the rows below it instead of re-projecting the whole hierarchy.
-            if (row is not null && !_projectionDirty && _projection.TrySpliceExpansion(row.RowKey, expanded))
+            if (row is not null && !_projectionDirty && Projection.TrySpliceExpansion(row.RowKey, expanded))
             {
                 StateHasChanged();
                 return;
@@ -807,7 +825,17 @@ namespace MudBlazor
             return Dense ? DefaultDenseItemSize : DefaultItemSize;
         }
 
-        internal TreeViewServerLoadEntry GetServerLoadEntry(ITreeItemData<T> item) => _serverLoadState.GetEntry(item);
+        internal TreeViewServerLoadEntry GetServerLoadEntry(ITreeItemData<T> item) => (_serverLoadState ??= new()).GetEntry(item);
+
+        internal TreeViewServerLoadEntry? FindServerLoadEntry(ITreeItemData<T> item) => _serverLoadState?.FindEntry(item);
+
+        /// <summary>
+        /// Whether this tree hides the row context of the virtualized row it is rendered in.
+        /// </summary>
+        /// <remarks>
+        /// Only a virtualized tree renders rows, and a tree inside one of its rows is nested in it, so other trees have no row context to hide.
+        /// </remarks>
+        private bool ResetsItemContext() => _resetsItemContext ??= MudTreeRoot is not null && MudTreeRoot != this && MudTreeRoot.IsVirtualized;
 
         internal async Task OnItemClickAsync(MudTreeViewItem<T> clickedItem)
         {
@@ -820,7 +848,7 @@ namespace MudBlazor
                 if (IsVirtualized && clickedItem.CurrentItemContext is { } clickedRow)
                 {
                     EnsureProjection();
-                    var row = _projection.FindRow(clickedRow.RowKey) ?? clickedRow;
+                    var row = Projection.FindRow(clickedRow.RowKey) ?? clickedRow;
                     // The selection can be the collection last published through SelectedValues, so the toggle then works on a copy.
                     // Copying on every click would cost time proportional to the selection, which can hold every value in the tree.
                     if (_selectionPublished)
@@ -829,7 +857,7 @@ namespace MudBlazor
                         _selectionPublished = false;
                     }
 
-                    var newlySelected = _projection.ToggleSubtreeSelection(row, _selection, AutoSelectParent);
+                    var newlySelected = Projection.ToggleSubtreeSelection(row, _selection, AutoSelectParent);
                     var shouldRefresh = ExpandAncestors(newlySelected);
                     await _selectedValuesState.SetValueAsync(_selection.ToList()); // note: .ToList() is essential here!
                     await UpdateItemsAsync(synchronizeVirtualized: false);
@@ -991,8 +1019,8 @@ namespace MudBlazor
             }
 
             EnsureProjection();
-            var becameSelected = selected && !_projection.IsSelected(value);
-            _projection.SetSelected(value, selected);
+            var becameSelected = selected && !Projection.IsSelected(value);
+            Projection.SetSelected(value, selected);
             return becameSelected && ExpandAncestors([value]);
         }
 
@@ -1006,7 +1034,7 @@ namespace MudBlazor
         private bool ApplyVirtualizedSelection(IReadOnlyCollection<T> selection)
         {
             EnsureProjection();
-            return ExpandAncestors(_projection.ApplySelection(selection));
+            return ExpandAncestors(Projection.ApplySelection(selection));
         }
 
         ///  <summary>
@@ -1023,7 +1051,7 @@ namespace MudBlazor
                 EnsureProjection();
             }
 
-            var isValid = value is not null && (IsVirtualized ? _projection.Represents(value) : GetSelectableValues().Contains(value));
+            var isValid = value is not null && (IsVirtualized ? Projection.Represents(value) : GetSelectableValues().Contains(value));
             var newValue = isValid ? value : default;
 
             // note: if there is no item that corresponds to the value, the value is reset to default!
@@ -1048,7 +1076,7 @@ namespace MudBlazor
             }
 
             var newSelection = IsVirtualized
-                ? new HashSet<T>(newValues.Where(_projection.Represents), Comparer)
+                ? new HashSet<T>(newValues.Where(Projection.Represents), Comparer)
                 : new HashSet<T>(newValues.Where(GetSelectableValues().Contains), Comparer);
             if (_selection.SetEquals(newSelection))
             {
@@ -1079,7 +1107,7 @@ namespace MudBlazor
             if (IsVirtualized && synchronizeVirtualized)
             {
                 // A change such as a new selection mode can affect every item, so the whole hierarchy is synchronized and re-projected.
-                _projection.SynchronizeSelection(Items, selection, Comparer);
+                Projection.SynchronizeSelection(Items, selection, Comparer);
                 _projectionDirty = true;
                 _projectSelectionFromTree = true;
             }
@@ -1108,7 +1136,7 @@ namespace MudBlazor
         private async Task<TreeViewSelectionResult<T>> ReconcileVirtualizedSelectionAsync()
         {
             EnsureProjection();
-            var result = _projection.ReconcileSelection(
+            var result = Projection.ReconcileSelection(
                 MultiSelection,
                 _selectedValueState.Value,
                 _selection);
@@ -1219,7 +1247,7 @@ namespace MudBlazor
             }
 
             EnsureProjection();
-            return _projection.ExpandAncestors(newlySelectedValues);
+            return Projection.ExpandAncestors(newlySelectedValues);
         }
 
         /// <summary>

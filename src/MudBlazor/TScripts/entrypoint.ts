@@ -1,6 +1,7 @@
 // Must stay the first import so the license banner leads the bundle.
 import "./mudAAAlicense";
 
+import MudChartTouch from "./mudChartTouch";
 import MudDragAndDrop from "./mudDragAndDrop";
 import MudElementReference from "./mudElementReference";
 import MudExitPrompt from "./mudExitPrompt";
@@ -36,6 +37,7 @@ declare global {
     interface Window {
         getTabbableElements: typeof getTabbableElements;
         hasDefinedParentHeight: typeof hasDefinedParentHeight;
+        mudChartTouch: MudChartTouch;
         mudDragAndDrop: MudDragAndDrop;
         mudElementRef: MudElementReference;
         mudExitPrompt: MudExitPrompt;
@@ -74,6 +76,7 @@ declare global {
 
 window.getTabbableElements = getTabbableElements;
 window.hasDefinedParentHeight = hasDefinedParentHeight;
+window.mudChartTouch = new MudChartTouch();
 window.mudDragAndDrop = new MudDragAndDrop();
 window.mudElementRef = new MudElementReference();
 // Guard against a second copy of the script replacing the instance that owns the registered prompts.
