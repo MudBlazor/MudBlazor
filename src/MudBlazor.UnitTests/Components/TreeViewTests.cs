@@ -4049,6 +4049,50 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A standard tree and the trees nested in its items render no row-context cascade, which only virtualized rows read.
+        /// </summary>
+        [Test]
+        public void TreeView_Standard_RendersNoRowContextCascade()
+        {
+            var comp = Context.Render<SimpleTreeViewTest>();
+
+            comp.FindComponents<MudTreeView<string>>().Should().HaveCount(2);
+            comp.FindComponents<CascadingValue<TreeViewItemContext<string>>>().Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A standard tree built from Items cascades one data node per item and no empty node around them.
+        /// </summary>
+        [Test]
+        public void TreeView_StandardItemTemplate_CascadesOneDataNodePerItem()
+        {
+            var comp = Context.Render<TreeViewTemplateTest>();
+
+            comp.FindComponents<MudTreeView<string>>().Should().HaveCount(2);
+            comp.FindComponents<CascadingValue<ITreeItemData<string>>>().Should().HaveCount(comp.FindComponents<MudTreeViewItem<string>>().Count);
+            comp.FindComponents<CascadingValue<TreeViewItemContext<string>>>().Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A tree inside a row keeps standard rendering while the outer tree switches virtualization on and off.
+        /// </summary>
+        [Test]
+        public async Task TreeViewVirtualize_ToggledAtRuntime_NestedTreeInRowKeepsStandardRendering()
+        {
+            var comp = Context.Render<TreeViewVirtualizedNestedTest>(parameters => parameters.Add(x => x.Virtualize, false));
+
+            foreach (var virtualize in new[] { true, false, true })
+            {
+                await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Virtualize, virtualize));
+
+                comp.FindComponents<Virtualize<TreeViewItemContext<string>>>().Should().HaveCount(virtualize ? 1 : 0);
+                var innerItems = comp.FindAll("ul.nested-tree li.mud-treeview-item");
+                innerItems.Should().Contain(item => item.TextContent.Contains("Root inner child", StringComparison.Ordinal));
+                innerItems.Should().OnlyContain(item => !item.ClassList.Contains("mud-treeview-item-virtualized") && !item.HasAttribute("aria-level"));
+            }
+        }
+
+        /// <summary>
         /// Builds three sibling items whose body content reports every time it is rendered.
         /// </summary>
         /// <param name="onRender">Called with the item's index once per render of that item.</param>
