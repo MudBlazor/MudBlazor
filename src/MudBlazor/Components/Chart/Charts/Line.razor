@@ -67,7 +67,7 @@
             // Line path
             builder.OpenElement(seq++, "path");
             builder.AddAttribute(seq++, "class", lineClass);
-            builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
+            builder.AddAttribute(seq++, "onclick", GetSeriesClickCallback(chartLine.Index));
             builder.AddAttribute(seq++, "fill", "none");
             builder.AddAttribute(seq++, "stroke", color);
             builder.AddAttribute(seq++, "stroke-opacity", overrideSettings?.StrokeOpacity.ToStr() ?? "1");
@@ -81,7 +81,7 @@
             {
                 builder.OpenElement(seq++, "path");
                 builder.AddAttribute(seq++, "class", $"{lineClass} mud-chart-dots");
-                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
+                builder.AddAttribute(seq++, "onclick", GetSeriesClickCallback(chartLine.Index));
                 builder.AddAttribute(seq++, "fill", "none");
                 builder.AddAttribute(seq++, "stroke", color);
                 builder.AddAttribute(seq++, "stroke-opacity", overrideSettings?.StrokeOpacity.ToStr() ?? "1");
@@ -98,7 +98,7 @@
                 var chartArea = ChartAreas[chartLine.Index];
                 builder.OpenElement(seq++, "path");
                 builder.AddAttribute(seq++, "class", lineClass);
-                builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
+                builder.AddAttribute(seq++, "onclick", GetSeriesClickCallback(chartLine.Index));
                 builder.AddAttribute(seq++, "fill", color);
                 builder.AddAttribute(seq++, "fill-opacity", overrideSettings?.FillOpacity.ToStr() ?? "0.4");
                 builder.AddAttribute(seq++, "d", chartArea.Data);
@@ -106,15 +106,17 @@
             }
 
             // Data points
+            var pointIndex = -1;
             foreach (var item in ChartDataPoints[chartLine.Index].OrderBy(x => x.Index))
             {
+                pointIndex++;
                 // The hovered point keeps its marker under the filled hover circle.
                 // Leaving it out shifts the sequence numbers of everything after it, so every later point would be rebuilt on each hover.
                 if (showDataMarkers)
                 {
                     builder.OpenElement(seq++, "circle");
                     builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
-                    builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
+                    builder.AddAttribute(seq++, "onclick", GetSeriesClickCallback(chartLine.Index));
                     builder.AddAttribute(seq++, "fill", "none");
                     builder.AddAttribute(seq++, "stroke", color);
                     builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
@@ -129,7 +131,7 @@
                 {
                     builder.OpenElement(seq++, "circle");
                     builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
-                    builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
+                    builder.AddAttribute(seq++, "onclick", GetSeriesClickCallback(chartLine.Index));
                     builder.AddAttribute(seq++, "fill", item.Equals(HoveredDataPointPath) ? color : string.Empty);
                     builder.AddAttribute(seq++, "stroke", color);
                     builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
@@ -137,8 +139,8 @@
                     builder.AddAttribute(seq++, "cx", item.CX.ToStr());
                     builder.AddAttribute(seq++, "cy", item.CY.ToStr());
                     builder.AddAttribute(seq++, "r", DataPointHoverRadius.ToStr());
-                    builder.AddAttribute(seq++, "onmouseover", EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, item)));
-                    builder.AddAttribute(seq++, "onmouseout", EventCallback.Factory.Create(this, OnDataPointMouseOut));
+                    builder.AddAttribute(seq++, "onmouseover", GetDataPointMouseOverCallback(chartLine.Index, pointIndex));
+                    builder.AddAttribute(seq++, "onmouseout", DataPointMouseOutCallback);
                     builder.CloseElement();
                 }
             }

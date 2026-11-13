@@ -42,6 +42,10 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
 
     private readonly StringBuilder _chartDots = new();
 
+    private readonly List<EventCallback> _seriesClickCallbacks = [];
+    private readonly List<List<EventCallback<MouseEventArgs>>> _dataPointMouseOverCallbacks = [];
+    private EventCallback? _dataPointMouseOutCallback;
+
     /// <summary>
     /// The SVG circles for the chart data points.
     /// </summary>
@@ -651,6 +655,63 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         return ChartOptions?.SeriesDisplayOverrides?.TryGetValue(series, out var overrideData) is true
             ? overrideData
             : null;
+    }
+
+    /// <summary>
+    /// Gets the handler that selects a series when one of its paths or points is clicked.
+    /// </summary>
+    /// <remarks>
+    /// Each handler is made once and handed out on every render.
+    /// A handler made fresh on each render never equals the previous one, so the renderer would replace it on every point of the chart whenever it renders, hover included.
+    /// </remarks>
+    /// <param name="seriesIndex">The index of the series.</param>
+    private protected EventCallback GetSeriesClickCallback(int seriesIndex)
+    {
+        while (_seriesClickCallbacks.Count <= seriesIndex)
+        {
+            var index = _seriesClickCallbacks.Count;
+            _seriesClickCallbacks.Add(EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+        }
+
+        return _seriesClickCallbacks[seriesIndex];
+    }
+
+    /// <summary>
+    /// Gets the mouse over handler for a data point, by its position in <see cref="ChartDataPoints"/>.
+    /// </summary>
+    /// <remarks>
+    /// The handler looks the point up when it runs, so it stays the same when the chart is rebuilt and only the point behind it changes.
+    /// </remarks>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="pointIndex">The position of the point in the series' data points.</param>
+    private protected EventCallback<MouseEventArgs> GetDataPointMouseOverCallback(int seriesIndex, int pointIndex)
+    {
+        while (_dataPointMouseOverCallbacks.Count <= seriesIndex)
+        {
+            _dataPointMouseOverCallbacks.Add([]);
+        }
+
+        var callbacks = _dataPointMouseOverCallbacks[seriesIndex];
+        while (callbacks.Count <= pointIndex)
+        {
+            var index = callbacks.Count;
+            callbacks.Add(EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, seriesIndex, index)));
+        }
+
+        return callbacks[pointIndex];
+    }
+
+    /// <summary>
+    /// The mouse out handler shared by every data point.
+    /// </summary>
+    private protected EventCallback DataPointMouseOutCallback => _dataPointMouseOutCallback ??= EventCallback.Factory.Create(this, OnDataPointMouseOut);
+
+    private void OnDataPointMouseOver(MouseEventArgs e, int seriesIndex, int pointIndex)
+    {
+        if (ChartDataPoints.TryGetValue(seriesIndex, out var points) && pointIndex < points.Count)
+        {
+            OnDataPointMouseOver(e, points[pointIndex]);
+        }
     }
 
     /// <summary>

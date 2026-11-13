@@ -1148,5 +1148,89 @@ namespace MudBlazor.UnitTests.Charts
 
             comp.FindAll("g.svg-tooltip tspan").Select(x => x.TextContent).Should().Equal("20", "20.0");
         }
+
+        /// <summary>
+        /// Hovering keeps the event handlers of the points it doesn't touch, so a hover only sends the circles that change.
+        /// </summary>
+        [Test]
+        public async Task LineChartHoverKeepsTheOtherPointsHandlers()
+        {
+            var chartSeries = new List<ChartSeries<double>>
+            {
+                new() { Name = "Series 1", Data = new double[] { 10, 20, 30, 40 } },
+                new() { Name = "Series 2", Data = new double[] { 5, 15, 25, 35 } },
+            };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, chartSeries)
+                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette, ShowDataMarkers = true }));
+
+            string[] HandlerIds() => comp.FindAll("path.mud-chart-line, circle.mud-chart-point")
+                .SelectMany(x => new[] { x.GetAttribute("blazor:onclick"), x.GetAttribute("blazor:onmouseover"), x.GetAttribute("blazor:onmouseout") })
+                .Where(x => x is not null)
+                .ToArray()!;
+
+            var before = HandlerIds();
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync(new());
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOutAsync(new());
+
+            HandlerIds().Should().Equal(before);
+        }
+
+        /// <summary>
+        /// A point hovered after the data changed describes the new data, not what was at its position before.
+        /// </summary>
+        [Test]
+        public async Task LineChartHoverAfterNewDataDescribesTheNewData()
+        {
+            var options = new LineChartOptions { ChartPalette = _baseChartPalette, TooltipTitleFormat = "{{Y_VALUE}}" };
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 20, 30 } }])
+                .Add(p => p.ChartOptions, options));
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync(new());
+            comp.Find("g.svg-tooltip").TextContent.Should().Contain("20");
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOutAsync(new());
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 11, 21, 31, 41 } }]));
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync(new());
+            comp.Find("g.svg-tooltip").TextContent.Should().Contain("21");
+            comp.FindAll("circle.mud-chart-point[opacity='1']").Should().ContainSingle();
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOutAsync(new());
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[3].MouseOverAsync(new());
+            comp.Find("g.svg-tooltip").TextContent.Should().Contain("41");
+        }
+
+        /// <summary>
+        /// Clicking a point, the line or the area of a series selects that series.
+        /// </summary>
+        [TestCase("circle.mud-chart-point")]
+        [TestCase("path.mud-chart-line")]
+        public async Task LineChartClickSelectsTheSeries(string selector)
+        {
+            var selected = -1;
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries,
+                [
+                    new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 20, 30 } },
+                    new ChartSeries<double> { Name = "Series 2", Data = new double[] { 5, 15, 25 } },
+                ])
+                .Add(p => p.SelectedIndexChanged, i => selected = i)
+                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette, LineDisplayType = LineDisplayType.Area }));
+
+            var targets = comp.FindAll(selector);
+            await targets[^1].ClickAsync(new());
+            selected.Should().Be(1);
+
+            await comp.FindAll(selector)[0].ClickAsync(new());
+            selected.Should().Be(0);
+        }
     }
 }
