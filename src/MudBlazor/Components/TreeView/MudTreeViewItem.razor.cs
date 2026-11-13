@@ -20,7 +20,7 @@ namespace MudBlazor
     public partial class MudTreeViewItem<T> : MudComponentBase, IDisposable
     {
         // Server-load state for items which are not bound to a backing data item (ChildContent trees).
-        private readonly TreeViewServerLoadEntry _localServerLoad = new();
+        private TreeViewServerLoadEntry? _localServerLoad;
         private readonly ParameterState<bool> _selectedState;
         private readonly ParameterState<bool> _expandedState;
         private readonly ParameterState<IReadOnlyCollection<ITreeItemData<T>>?> _itemsState;
@@ -449,12 +449,22 @@ namespace MudBlazor
         {
             return CurrentItemData is not null && MudTreeRoot is not null
                 ? MudTreeRoot.GetServerLoadEntry(CurrentItemData)
+                : _localServerLoad ??= new();
+        }
+
+        /// <summary>
+        /// Returns the server-load state of this item without creating it, so rendering an item that never loaded allocates nothing.
+        /// </summary>
+        private TreeViewServerLoadEntry? FindServerLoadEntry()
+        {
+            return CurrentItemData is not null && MudTreeRoot is not null
+                ? MudTreeRoot.FindServerLoadEntry(CurrentItemData)
                 : _localServerLoad;
         }
 
-        private bool GetServerDataLoaded() => GetServerLoadEntry().IsLoaded;
+        private bool GetServerDataLoaded() => FindServerLoadEntry()?.IsLoaded == true;
 
-        private bool GetServerDataLoading() => GetServerLoadEntry().IsLoading;
+        private bool GetServerDataLoading() => FindServerLoadEntry()?.IsLoading == true;
 
         /// <summary>
         /// Gets the tri-state checkbox value, remembering what was rendered.

@@ -90,22 +90,54 @@ namespace MudBlazor.Charts
         private void ComputeUnitsAndNumberOfLines(out T gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
         {
             var visibleSeries = Series.Where(series => series.Visible).ToArray();
-            var values = visibleSeries
-                .Select(s => s.Data)
-                .Where(d => d != null)
-                .SelectMany(d => d.Points)
-                .Where(p => p.HasValue)
-                .Select(p => p.Y);
 
-            if (visibleSeries.Length > 0 && values.Any())
+            // One pass over the readings, which a chart rebuilds on every render of its parent.
+            var hasValues = false;
+            T minValue = T.Zero, maxValue = T.Zero;
+            foreach (var series in visibleSeries)
             {
-                var minY = values.Min();
+                if (series.Data is null)
+                {
+                    continue;
+                }
+
+                foreach (var point in series.Data.Points)
+                {
+                    if (!point.HasValue)
+                    {
+                        continue;
+                    }
+
+                    if (!hasValues)
+                    {
+                        minValue = maxValue = point.Y;
+                        hasValues = true;
+                    }
+                    else
+                    {
+                        // Compared the way Enumerable.Min and Max compare, so a NaN reading is handled as before.
+                        if (Comparer<T>.Default.Compare(point.Y, minValue) < 0)
+                        {
+                            minValue = point.Y;
+                        }
+
+                        if (Comparer<T>.Default.Compare(point.Y, maxValue) > 0)
+                        {
+                            maxValue = point.Y;
+                        }
+                    }
+                }
+            }
+
+            if (visibleSeries.Length > 0 && hasValues)
+            {
+                var minY = minValue;
                 var maxY = ChartOptions?.YAxisSuggestedMax is null
-                    ? values.Max()
-                    : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), values.Max());
+                    ? maxValue
+                    : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), maxValue);
 
                 var hasAreaDisplay = ChartOptions?.LineDisplayType == LineDisplayType.Area || visibleSeries.Any(series => GetSeriesDisplayOverride(series)?.LineDisplayType == LineDisplayType.Area);
-                var clampToZeroCanApply = ChartOptions?.ClampToZero is true && values.All(v => v >= T.Zero);
+                var clampToZeroCanApply = ChartOptions?.ClampToZero is true && minValue >= T.Zero;
                 var includeYAxisZeroPoint = ChartOptions?.YAxisRequireZeroPoint is true || hasAreaDisplay || clampToZeroCanApply;
 
                 if (includeYAxisZeroPoint)
@@ -149,6 +181,14 @@ namespace MudBlazor.Charts
         {
             return (TReturn)Convert.ChangeType(Series[seriesIndex].Data.GetValue(dataPointIndex), typeof(TReturn));
         }
+
+        protected override string GetDataValueAsString(int seriesIndex, int dataPointIndex)
+        {
+            return GetDataValueAsDouble(seriesIndex, dataPointIndex).ToString(Series[seriesIndex].TooltipYValueFormat);
+        }
+
+        // Converting through Convert.ChangeType boxes the value twice for every point on every rebuild.
+        internal override double GetDataValueAsDouble(int seriesIndex, int dataPointIndex) => double.CreateSaturating(Series[seriesIndex].Data[dataPointIndex].Y);
 
         protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)
         {

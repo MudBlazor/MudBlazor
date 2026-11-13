@@ -9,6 +9,8 @@ test("window is defined", () => {
 // When a script is ported to TypeScript, keep (or update) its entry here so a missing
 // export is caught immediately instead of surfacing as a runtime interop failure.
 const expectedWindowGlobals: [name: string, type: "object" | "function"][] = [
+    // mudChartTouch.ts
+    ["mudChartTouch", "object"],
     // mudDragAndDrop.ts
     ["mudDragAndDrop", "object"],
     // mudElementReference.ts
