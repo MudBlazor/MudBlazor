@@ -52,6 +52,8 @@
     private RenderFragment RenderLineSeries() => builder =>
     {
         var seq = 0;
+        var dataPointRadius = DataPointRadius.ToStr();
+        var dataPointHoverRadius = DataPointHoverRadius.ToStr();
 
         foreach (var chartLine in ChartLines)
         {
@@ -115,10 +117,11 @@
 
             // Data Points
             var pointIndex = -1;
-            foreach (var item in ChartDataPoints[index].OrderBy(x => x.Index))
+            var hoveredPoint = isHovered ? HoveredDataPointPath : null;
+            foreach (var item in ChartDataPoints[index])
             {
                 pointIndex++;
-                bool isHoveredPoint = item.Equals(HoveredDataPointPath);
+                var isHoveredPoint = item.Equals(hoveredPoint);
 
                 // The hovered point keeps its marker under the filled hover circle.
                 // Leaving it out shifts the sequence numbers of everything after it, so every later point would be rebuilt on each hover.
@@ -130,9 +133,9 @@
                     builder.AddAttribute(seq++, "fill", "none");
                     builder.AddAttribute(seq++, "stroke", color);
                     builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
-                    builder.AddAttribute(seq++, "cx", item.CX.ToStr());
-                    builder.AddAttribute(seq++, "cy", item.CY.ToStr());
-                    builder.AddAttribute(seq++, "r", DataPointRadius.ToStr());
+                    builder.AddAttribute(seq++, "cx", item.CXText);
+                    builder.AddAttribute(seq++, "cy", item.CYText);
+                    builder.AddAttribute(seq++, "r", dataPointRadius);
                     builder.CloseElement();
                 }
 
@@ -146,9 +149,9 @@
                     builder.AddAttribute(seq++, "stroke", color);
                     builder.AddAttribute(seq++, "stroke-width", DataPointStroke);
                     builder.AddAttribute(seq++, "opacity", isHoveredPoint ? 1 : 0);
-                    builder.AddAttribute(seq++, "cx", item.CX.ToStr());
-                    builder.AddAttribute(seq++, "cy", item.CY.ToStr());
-                    builder.AddAttribute(seq++, "r", DataPointHoverRadius.ToStr());
+                    builder.AddAttribute(seq++, "cx", item.CXText);
+                    builder.AddAttribute(seq++, "cy", item.CYText);
+                    builder.AddAttribute(seq++, "r", dataPointHoverRadius);
                     builder.AddAttribute(seq++, "onmouseover", GetDataPointMouseOverCallback(index, pointIndex));
                     builder.AddAttribute(seq++, "onmouseout", DataPointMouseOutCallback);
                     builder.CloseElement();
