@@ -35,7 +35,8 @@ function renderChart(points: [id: string, x: number, y: number][], followX = tru
 const days: [string, number, number][] = [["mon", 10, 50], ["tue", 30, 20], ["wed", 50, 80]];
 
 function pointer(target: Element, type: string, x: number, y: number, pointerType = "touch", pointerId = 1) {
-    target.dispatchEvent(new PointerEvent(type, { pointerType, pointerId, clientX: x, clientY: y, bubbles: true }));
+    // The first finger down is the primary pointer, and these tests only ever put a second finger down as pointer 2.
+    target.dispatchEvent(new PointerEvent(type, { pointerType, pointerId, isPrimary: pointerId === 1, clientX: x, clientY: y, bubbles: true }));
 }
 
 function tap(target: Element, x: number, y: number, pointerType = "touch") {
@@ -191,6 +192,31 @@ test("a second finger lets a drag that hasn't picked a direction go, for a pinch
     jest.advanceTimersByTime(1000);
 
     expect(hovers).toEqual([]);
+});
+
+test("a second finger off the chart lets the first go too, so a pinch across the chart's edge stays a pinch", () => {
+    const { svg, hovers } = renderChart(days);
+
+    pointer(svg, "pointerdown", 8, 60, "touch", 1);
+    pointer(document.body, "pointerdown", 300, 300, "touch", 2);
+    pointer(svg, "pointermove", 30, 60, "touch", 1);
+    jest.advanceTimersByTime(1000);
+    const prevented = touchMove(svg);
+
+    expect(prevented).toBe(false);
+    expect(hovers).toEqual([]);
+});
+
+test("a second finger doesn't stop a scrub that has already started", () => {
+    const { svg, hovers } = renderChart(days);
+
+    pointer(svg, "pointerdown", 8, 60, "touch", 1);
+    pointer(svg, "pointermove", 30, 60, "touch", 1);
+    pointer(document.body, "pointerdown", 300, 300, "touch", 2);
+    pointer(svg, "pointermove", 52, 60, "touch", 1);
+    pointer(svg, "pointerup", 52, 60, "touch", 1);
+
+    expect(hovers).toEqual(["over tue", "over wed", "out wed"]);
 });
 
 test("the finger's height picks between series that share an x", () => {

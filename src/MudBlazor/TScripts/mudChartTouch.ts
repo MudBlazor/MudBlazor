@@ -58,9 +58,18 @@ export default class MudChartTouch {
         }
 
         if (!this.#listeningToDocument) {
-            // A touch anywhere else puts away the tooltip a tap left open.
             document.addEventListener("pointerdown", e => {
-                if (e.pointerType !== "mouse" && this.#pinned && !this.#pinned.chart.contains(e.target as Node)) {
+                if (e.pointerType === "mouse") {
+                    return;
+                }
+
+                // A second finger is a pinch wherever it lands, so a drag that hasn't become a scrub yet lets it go.
+                if (!e.isPrimary && this.#drag && !this.#drag.scrub) {
+                    this.#dropDrag();
+                }
+
+                // A touch anywhere else puts away the tooltip a tap left open.
+                if (this.#pinned && !this.#pinned.chart.contains(e.target as Node)) {
                     this.#unpin();
                 }
             }, { capture: true });
@@ -130,9 +139,7 @@ export default class MudChartTouch {
         this.#charts.delete(chart);
 
         if (this.#drag?.chart === chart) {
-            clearTimeout(this.#drag.hold);
-            unhover(this.#drag.hovered);
-            this.#drag = null;
+            this.#dropDrag();
         }
 
         if (this.#pinned?.chart === chart) {
@@ -147,24 +154,14 @@ export default class MudChartTouch {
     #onPointerDown(chart: Element, followX: boolean, e: PointerEvent) {
         this.#tapChart = null;
 
-        if (e.pointerType === "mouse") {
+        // Only a first finger starts a drag; the page listener has already dealt with a second one.
+        if (e.pointerType === "mouse" || !e.isPrimary) {
             return;
         }
 
-        // A chart taken out of the page mid-drag may never hear its finger lift, so its drag is dropped instead of being taken for a first finger still down.
-        if (this.#drag && !this.#drag.chart.isConnected) {
-            clearTimeout(this.#drag.hold);
-            this.#drag = null;
-        }
-
+        // A first finger means every earlier one has lifted, so a drag still held here missed its lift, as a chart taken out of the page mid-drag can.
         if (this.#drag) {
-            // A second finger is a pinch, so a drag that hasn't become a scrub yet lets it go.
-            if (!this.#drag.scrub) {
-                clearTimeout(this.#drag.hold);
-                this.#drag = null;
-            }
-
-            return;
+            this.#dropDrag();
         }
 
         const drag: Drag = {
@@ -249,6 +246,12 @@ export default class MudChartTouch {
         } else if (drag.scrub === null) {
             this.#tapChart = drag.chart;
         }
+    }
+
+    #dropDrag() {
+        clearTimeout(this.#drag?.hold);
+        unhover(this.#drag?.hovered ?? null);
+        this.#drag = null;
     }
 
     #unpin() {
