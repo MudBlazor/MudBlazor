@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Globalization;
 using System.Numerics;
 using System.Text;
 using Microsoft.AspNetCore.Components;
@@ -41,6 +42,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     protected Dictionary<int, SvgPath> ChartDots { get; set; } = [];
 
     private readonly StringBuilder _chartDots = new();
+    private readonly StringBuilder _chartLine = new();
 
     private readonly List<EventCallback> _seriesClickCallbacks = [];
     private readonly List<List<EventCallback<MouseEventArgs>>> _dataPointMouseOverCallbacks = [];
@@ -196,7 +198,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 continue;
             }
 
-            var chartLine = new StringBuilder();
+            var chartLine = _chartLine.Clear();
             var chartDataCircles = new List<SvgCircle>();
             ChartDataPoints[i] = chartDataCircles;
             _chartDots.Clear();
@@ -235,16 +237,20 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         }
     }
 
+    // Writes the number straight into the path, where ToS would make a string for every coordinate first.
+    private static void AppendNumber(StringBuilder builder, double value) =>
+        builder.Append(CultureInfo.InvariantCulture, $"{Math.Round(value, 4)}");
+
     private void AppendDot(double x, double y)
     {
         _chartDots.Append(_chartDots.Length > 0 ? " M " : "M ");
-        _chartDots.Append(ToS(x));
+        AppendNumber(_chartDots, x);
         _chartDots.Append(' ');
-        _chartDots.Append(ToS(y));
+        AppendNumber(_chartDots, y);
         _chartDots.Append(" L ");
-        _chartDots.Append(ToS(x));
+        AppendNumber(_chartDots, x);
         _chartDots.Append(' ');
-        _chartDots.Append(ToS(y));
+        AppendNumber(_chartDots, y);
     }
 
     /// <summary>
@@ -322,9 +328,9 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             segmentY = y;
             segmentLength++;
 
-            chartLine.Append(ToS(x));
+            AppendNumber(chartLine, x);
             chartLine.Append(' ');
-            chartLine.Append(ToS(y));
+            AppendNumber(chartLine, y);
 
             if (ShouldPopulateDataPoints)
             {
@@ -385,9 +391,9 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 // Single point, so there is nothing to interpolate and the move below paints nothing on its own.
                 var (sx, sy) = GetXYForDataPoint(seriesIndex, segment[0], lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
                 chartLine.Append(chartLine.Length > 0 ? " M " : "M ");
-                chartLine.Append(ToS(sx));
+                AppendNumber(chartLine, sx);
                 chartLine.Append(' ');
-                chartLine.Append(ToS(sy));
+                AppendNumber(chartLine, sy);
                 AppendDot(sx, sy);
 
                 if (firstPointX == 0 && firstPointY == 0)
@@ -445,9 +451,9 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
 
                 lastPointX = x;
 
-                chartLine.Append(ToS(x));
+                AppendNumber(chartLine, x);
                 chartLine.Append(' ');
-                chartLine.Append(ToS(y));
+                AppendNumber(chartLine, y);
 
                 var localIndex = j / InterpolationResolution;
                 // Collect the data point that this stretch of the interpolated line came from
@@ -598,21 +604,21 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
 
         // add an extra point based on the x of the last point and 0 to add the area to the bottom
         chartArea.Append(" L ");
-        chartArea.Append(ToS(lastPointX));
+        AppendNumber(chartArea, lastPointX);
         chartArea.Append(' ');
-        chartArea.Append(ToS(zeroPointY));
+        AppendNumber(chartArea, zeroPointY);
 
         // add an extra point based on the x of the first point and 0 to close the area
         chartArea.Append(" L ");
-        chartArea.Append(ToS(firstPointX));
+        AppendNumber(chartArea, firstPointX);
         chartArea.Append(' ');
-        chartArea.Append(ToS(zeroPointY));
+        AppendNumber(chartArea, zeroPointY);
 
         // add an the first point again to close the area
         chartArea.Append(" L ");
-        chartArea.Append(ToS(firstPointX));
+        AppendNumber(chartArea, firstPointX);
         chartArea.Append(' ');
-        chartArea.Append(ToS(firstPointY));
+        AppendNumber(chartArea, firstPointY);
         chartArea.Append(" Z");
 
         var area = new SvgPath
