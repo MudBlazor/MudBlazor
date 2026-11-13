@@ -67,6 +67,20 @@ namespace MudBlazor.UnitTests.Components
             inputs[1].Attributes.GetNamedItem("aria-label")?.Value.Should().Be("End date");
         }
 
+        /// <summary>
+        /// A non-editable range picker suppresses the on-screen keyboard on both inputs, while an editable one keeps it (#8549).
+        /// </summary>
+        [TestCase(false, "none")]
+        [TestCase(true, "text")]
+        public void DateRangePicker_InputMode_DependsOnEditable(bool editable, string expectedInputMode)
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Editable, editable));
+
+            comp.FindAll("input").Select(input => input.GetAttribute("inputmode"))
+                .Should().Equal(expectedInputMode, expectedInputMode);
+        }
+
         [Test]
         public async Task DateRangePickerSeparatorIcon()
         {
