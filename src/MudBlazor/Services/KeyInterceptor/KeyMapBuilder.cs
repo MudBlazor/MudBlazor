@@ -267,16 +267,28 @@ public sealed class KeyMapBuilder
     // Only the public string methods accept "/pattern/" keys, so an app whose code never calls them can trim the regular expression engine away.
 
     internal KeyMapBuilder OnKeyDownLiteral(string key, Func<Task> action)
-        => OnKeyDownWhere(k => k == key, _ => action());
+    {
+        _commands.Add(new LiteralKeyCommand(KeyEventKind.Down, key, null, action, null));
+        return this;
+    }
 
     internal KeyMapBuilder OnKeyDownLiteral(string key, Func<KeyboardEventArgs, Task> action)
-        => OnKeyDownWhere(k => k == key, action);
+    {
+        _commands.Add(new LiteralKeyCommand(KeyEventKind.Down, key, null, null, action));
+        return this;
+    }
 
-    internal KeyMapBuilder OnKeyDownAnyLiteral(IEnumerable<string> keys, Func<Task> action)
-        => OnKeyDownWhere(new HashSet<string>(keys).Contains, _ => action());
+    internal KeyMapBuilder OnKeyDownAnyLiteral(string[] keys, Func<Task> action)
+    {
+        _commands.Add(new LiteralKeyCommand(KeyEventKind.Down, null, keys, action, null));
+        return this;
+    }
 
-    internal KeyMapBuilder OnKeyDownAnyLiteral(IEnumerable<string> keys, Func<KeyboardEventArgs, Task> action)
-        => OnKeyDownWhere(new HashSet<string>(keys).Contains, action);
+    internal KeyMapBuilder OnKeyDownAnyLiteral(string[] keys, Func<KeyboardEventArgs, Task> action)
+    {
+        _commands.Add(new LiteralKeyCommand(KeyEventKind.Down, null, keys, null, action));
+        return this;
+    }
 
     internal KeyMapBuilder OnKeyDownWhere(Func<string, bool> matches, Func<KeyboardEventArgs, Task> action)
     {
@@ -456,6 +468,21 @@ public sealed class KeyMapBuilder
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => inner.ExecuteAsync(args);
+    }
+
+    // One class covers a single key or a small key set, with either action shape.
+    // Components register several keys per instance, so each registration stays a single allocation.
+    private sealed class LiteralKeyCommand(KeyEventKind kind, string? key, string[]? keys, Func<Task>? action, Func<KeyboardEventArgs, Task>? actionWithArgs) : IKeyCommand
+    {
+        public KeyEventKind Kind { get; } = kind;
+
+        public bool IsHook => false;
+
+        public bool CanExecute(KeyboardEventArgs args)
+            => keys is null ? args.Key == key : Array.IndexOf(keys, args.Key) >= 0;
+
+        public Task ExecuteAsync(KeyboardEventArgs args)
+            => action is not null ? action() : actionWithArgs!(args);
     }
 
     private sealed class PredicateKeyCommand(KeyEventKind kind, Func<string, bool> matches, Func<KeyboardEventArgs, Task> action) : IKeyCommand

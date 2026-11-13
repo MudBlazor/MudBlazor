@@ -671,4 +671,22 @@ public class KeyMapBuilderTests
 
         hits.Should().Equal("a", "search:b");
     }
+
+    /// <summary>
+    /// Internal registrations ignore a key event without a key instead of throwing.
+    /// </summary>
+    [Test]
+    public async Task InternalRegistrations_IgnoreEventWithoutKey()
+    {
+        var hits = new List<string>();
+        var (keyDown, _) = KeyMapBuilder.Create()
+            .OnKeyDownLiteral("Tab", () => { hits.Add("literal"); return Task.CompletedTask; })
+            .OnKeyDownAnyLiteral(["Enter", "NumpadEnter"], () => { hits.Add("any"); return Task.CompletedTask; })
+            .OnKeyDownWhere(KeyMapBuilder.IsAnyKey, _ => { hits.Add("where"); return Task.CompletedTask; })
+            .Build();
+
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs());
+
+        hits.Should().BeEmpty();
+    }
 }
