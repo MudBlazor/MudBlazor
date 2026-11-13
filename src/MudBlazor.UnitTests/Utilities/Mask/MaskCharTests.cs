@@ -131,13 +131,17 @@ public class MaskCharTests
     }
 
     /// <summary>
-    /// A default mask character has no expression and throws the same exception type the regex engine threw.
+    /// A mask character without an expression throws what the regex engine threw for it, parameter name included.
     /// </summary>
     [Test]
-    public void DefaultMaskChar_IsMatch_ThrowsArgumentNullException()
+    public void MaskCharWithoutExpression_IsMatch_ThrowsLikeRegexEngine()
     {
-        var maskChar = default(MaskChar);
+        var engineParamName = FluentActions.Invoking(() => Regex.IsMatch("a", null!))
+            .Should().Throw<ArgumentNullException>().Which.ParamName;
 
-        maskChar.Invoking(x => x.IsMatch('a')).Should().Throw<ArgumentNullException>();
+        default(MaskChar).Invoking(x => x.IsMatch('a'))
+            .Should().Throw<ArgumentNullException>().WithParameterName(engineParamName);
+        new MaskChar('n', null!).Invoking(x => x.IsMatch('a'))
+            .Should().Throw<ArgumentNullException>().WithParameterName(engineParamName);
     }
 }
