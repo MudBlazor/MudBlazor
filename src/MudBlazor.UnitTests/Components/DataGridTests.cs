@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq.Expressions;
@@ -9515,6 +9516,27 @@ namespace MudBlazor.UnitTests.Components
             await Context.DisposeComponentsAsync();
 
             items.Subscribers.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A disposed grid ignores later changes to its collection, so removing a selected item neither throws nor reaches the grid's selection callback.
+        /// </summary>
+        [Test]
+        public async Task DataGrid_Disposed_IgnoresLaterCollectionChanges()
+        {
+            var items = new ObservableCollection<string> { "Espresso", "Latte" };
+            var selectionChanges = 0;
+            Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.SelectedItems, new HashSet<string> { "Espresso" })
+                .Add(x => x.SelectedItemsChanged, _ => selectionChanges++));
+
+            await Context.DisposeComponentsAsync();
+            var remove = () => items.Remove("Espresso");
+
+            remove.Should().NotThrow();
+            selectionChanges.Should().Be(0);
         }
 
         /// <summary>
