@@ -393,6 +393,40 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindAll("path.mud-chart-serie-hovered").Count.Should().Be(0, "mousing out clears the hovered state");
         }
 
+        /// <summary>
+        /// A line chart with no overlay draws its inner chart without the extra mount render that only overlays need.
+        /// </summary>
+        [Test]
+        public void LineChartWithoutOverlaySkipsTheOverlayRender()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Line)
+                .Add(p => p.ChartSeries, [new() { Name = "Series 1", Data = new double[] { 90, 79, 72, 69, 62, 62 } }])
+                .Add(p => p.ChartLabels, _sixLabels)
+                .Add(p => p.ChartOptions, new LineChartOptions { ChartPalette = _baseChartPalette }));
+
+            comp.FindComponent<Line<double>>().RenderCount.Should().BeLessThan(7, "MudChart renders a second time on mount only for overlay charts, which this chart has none of");
+            comp.FindAll("path.mud-chart-line").Count.Should().Be(1);
+        }
+
+        /// <summary>
+        /// An overlay line inside another chart still receives the outer chart on mount.
+        /// </summary>
+        [Test]
+        public void OverlayLineReceivesTheOuterChartOnMount()
+        {
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.StackedBar)
+                .Add(p => p.ChartSeries, [new() { Name = "Stack 1", Data = new double[] { 100, 120, 90, 140, 110, 130 } }])
+                .Add(p => p.ChartLabels, _sixLabels)
+                .Add(p => p.ChartOptions, new StackedBarChartOptions { ChartPalette = _baseChartPalette })
+                .AddChildContent<Line<double>>(cp => cp
+                    .Add(l => l.ChartSeries, [new() { Name = "Overlay", Data = new double[] { 50, 60, 40, 70, 55, 65 } }])
+                    .Add(l => l.ChartOptions, new LineChartOptions { ChartPalette = ["#000000"], ShowToolTips = true })));
+
+            comp.FindComponent<Line<double>>().Instance.IsOverlayChart.Should().BeTrue();
+        }
+
         [Test]
         public void LineChartNullDataPointsCreateGaps()
         {
