@@ -80,7 +80,7 @@ public readonly struct MaskChar : IEquatable<MaskChar>
     /// <returns><c>true</c> when the character matches <see cref="Regex"/>.</returns>
     internal bool IsMatch(char textChar)
     {
-        // Only a default instance has no expression, and the engine rejected that with the same exception type.
+        // A default instance or a null expression has no pattern, and the engine rejected both with the same exception type.
         ArgumentNullException.ThrowIfNull(Regex);
         return _isMatch!(textChar);
     }

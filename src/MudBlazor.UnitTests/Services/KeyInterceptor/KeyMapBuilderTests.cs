@@ -649,4 +649,26 @@ public class KeyMapBuilderTests
 
         hits.Should().Equal("literal", "literal-args:Tab", "any", "any-args:X", "up:q");
     }
+
+    /// <summary>
+    /// Internal registrations match keys case-sensitively, and the first matching one stops the commands after it, as string registrations do.
+    /// </summary>
+    [Test]
+    public async Task InternalRegistrations_AreCaseSensitiveAndStopAtFirstMatch()
+    {
+        var hits = new List<string>();
+        var (keyDown, _) = KeyMapBuilder.Create()
+            .OnKeyDownLiteral("Tab", () => { hits.Add("tab"); return Task.CompletedTask; })
+            .OnKeyDownAnyLiteral(["Enter", "NumpadEnter"], () => { hits.Add("enter"); return Task.CompletedTask; })
+            .OnKeyDownAnyLiteral(["a", "A"], () => { hits.Add("a"); return Task.CompletedTask; })
+            .OnKeyDownWhere(KeyMapBuilder.IsSingleNonSpaceCharacter, args => { hits.Add("search:" + args.Key); return Task.CompletedTask; })
+            .Build();
+
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "tab" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "ENTER" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "a" });
+        await keyDown.NotifyOnKeyDownAsync(new KeyboardEventArgs { Key = "b" });
+
+        hits.Should().Equal("a", "search:b");
+    }
 }
