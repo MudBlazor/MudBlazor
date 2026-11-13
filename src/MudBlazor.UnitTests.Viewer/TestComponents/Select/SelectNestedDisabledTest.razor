@@ -1,0 +1,18 @@
+﻿<MudPopoverProvider />
+
+<MudSelect T="string" @bind-Value="Value" Label="Category">
+    <MudSelectItem Value="@("archive")" Disabled="true">
+        <ChildContent>Archive</ChildContent>
+        <NestedList>
+            <MudSelectItem Value="@("old-docs")">Old docs</MudSelectItem>
+            <MudSelectItem Value="@("old-photos")">Old photos</MudSelectItem>
+        </NestedList>
+    </MudSelectItem>
+    <MudSelectItem Value="@("current")">Current</MudSelectItem>
+</MudSelect>
+
+@code {
+    public static string __description__ = "A select whose first branch is disabled but still opens to show its children.";
+
+    [Parameter] public string? Value { get; set; }
+}

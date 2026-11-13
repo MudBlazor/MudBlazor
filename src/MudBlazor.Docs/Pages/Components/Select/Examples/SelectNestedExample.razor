@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSelect T="string" @bind-Value="_category" Label="Category" Variant="Variant.Outlined">
+    <MudSelectItem Value="@("Electronics")">
+        <ChildContent>Electronics</ChildContent>
+        <NestedList>
+            <MudSelectItem Value="@("Phones")">
+                <ChildContent>Phones</ChildContent>
+                <NestedList>
+                    <MudSelectItem Value="@("Smartphones")">Smartphones</MudSelectItem>
+                    <MudSelectItem Value="@("Feature phones")">Feature phones</MudSelectItem>
+                </NestedList>
+            </MudSelectItem>
+            <MudSelectItem Value="@("Laptops")">Laptops</MudSelectItem>
+        </NestedList>
+    </MudSelectItem>
+    <MudSelectItem Value="@("Books")">
+        <ChildContent>Books</ChildContent>
+        <NestedList>
+            <MudSelectItem Value="@("Fiction")">Fiction</MudSelectItem>
+            <MudSelectItem Value="@("Non-fiction")">Non-fiction</MudSelectItem>
+        </NestedList>
+    </MudSelectItem>
+    <MudSelectItem Value="@("Garden")">Garden</MudSelectItem>
+</MudSelect>
+
+@code {
+    private string _category = "Smartphones";
+}

@@ -1,0 +1,33 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudSelect T="string" @bind-Value="_single" Label="Single selection" Variant="Variant.Outlined" ExpandOnClick="true">
+            <MudSelectItem Value="@("Fruit")">
+                <ChildContent>Fruit</ChildContent>
+                <NestedList>
+                    <MudSelectItem Value="@("Apples")">Apples</MudSelectItem>
+                    <MudSelectItem Value="@("Bananas")">Bananas</MudSelectItem>
+                </NestedList>
+            </MudSelectItem>
+            <MudSelectItem Value="@("Dairy")">Dairy</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSelect T="string" @bind-SelectedValues="_multiple" Label="Multi-selection" Variant="Variant.Outlined" MultiSelection="true" ExpandOnClick="true">
+            <MudSelectItem Value="@("Fruit")">
+                <ChildContent>Fruit</ChildContent>
+                <NestedList>
+                    <MudSelectItem Value="@("Apples")">Apples</MudSelectItem>
+                    <MudSelectItem Value="@("Bananas")">Bananas</MudSelectItem>
+                </NestedList>
+            </MudSelectItem>
+            <MudSelectItem Value="@("Dairy")">Dairy</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _single = "Dairy";
+    private IReadOnlyCollection<string> _multiple = new HashSet<string>();
+}
