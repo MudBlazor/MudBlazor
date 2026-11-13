@@ -428,4 +428,22 @@ public class ChartDataModelTests : BunitTest
     }
 
     #endregion
+
+    /// <summary>
+    /// The position a circle writes into the chart follows its center when the center is moved after being written once.
+    /// </summary>
+    [Test]
+    public void SvgCircleTextFollowsItsCenter()
+    {
+        var circle = new SvgCircle { CX = 1.23456, CY = 2 };
+
+        circle.CXText.Should().Be("1.2346");
+        circle.CYText.Should().Be("2");
+
+        circle.CX = 10.5;
+        circle.CY = -3;
+
+        circle.CXText.Should().Be("10.5");
+        circle.CYText.Should().Be("-3");
+    }
 }
