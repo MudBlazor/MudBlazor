@@ -60,4 +60,13 @@ internal sealed class TreeViewServerLoadState<T>
         ArgumentNullException.ThrowIfNull(item);
         return _entries.GetOrCreateValue(item);
     }
+
+    /// <summary>
+    /// Returns the load entry for an item, or <c>null</c> when nothing was loaded for it yet.
+    /// </summary>
+    public TreeViewServerLoadEntry? FindEntry(ITreeItemData<T> item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        return _entries.TryGetValue(item, out var entry) ? entry : null;
+    }
 }
