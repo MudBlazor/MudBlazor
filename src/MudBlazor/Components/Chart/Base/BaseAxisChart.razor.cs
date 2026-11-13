@@ -30,6 +30,7 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     private ElementReference? _yAxisGroupElementReference;
     private ElementSize? _lastYAxisLabelSize;
     private ElementSize? _lastXAxisLabelSize;
+    private bool _touchToolTips;
 
     /// <summary>
     /// The size of the Y-axis labels.
@@ -291,6 +292,30 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
         if (axisChanged && AxisChanged.HasDelegate)
         {
             await AxisChanged.InvokeAsync();
+        }
+
+        await UpdateTouchToolTipsAsync();
+    }
+
+    // A touch listener can only stop the page scrolling if it was on the chart before the finger landed, so the chart attaches it as soon as the option is on rather than on the first touch.
+    private async Task UpdateTouchToolTipsAsync()
+    {
+        var touchToolTips = ChartOptions is IAxisLineChartOptions { ShowToolTips: true, ShowToolTipsOnTouch: true };
+        if (touchToolTips == _touchToolTips)
+        {
+            return;
+        }
+
+        _touchToolTips = touchToolTips;
+
+        if (touchToolTips)
+        {
+            // Line and time series points are read left to right, so a finger picks the nearest point along x; scatter points have no such order.
+            await JsRuntime.InvokeVoidAsync("mudChartTouch.attach", _svgRef, ChartOptions is not ScatterPlotChartOptions);
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("mudChartTouch.detach", _svgRef);
         }
     }
 }

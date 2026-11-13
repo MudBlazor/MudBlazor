@@ -1,0 +1,59 @@
+﻿@using MudBlazor.Charts
+
+<MudStack Class="pa-4" Spacing="4">
+    <MudSwitch T="bool" Value="_touch" ValueChanged="SetTouch" Color="Color.Primary" Label="ShowToolTipsOnTouch" />
+    <MudText>Drag sideways across a chart to walk the tooltip from point to point, or press and hold and then go in any direction. Lift to hide it, tap to open the nearest point, and drag up or down to scroll the page.</MudText>
+    <MudChart ChartType="ChartType.Line" ChartSeries="_lineSeries" ChartLabels="_months" ChartOptions="_lineOptions" Width="100%" Height="300px" MatchBoundsToSize />
+    <MudText>The time series below has one series, and the scatter plot picks the point nearest the finger in both directions instead of along x.</MudText>
+    <MudChart ChartType="ChartType.Timeseries" ChartSeries="_timeSeries" ChartOptions="_timeOptions" Width="100%" Height="300px" MatchBoundsToSize />
+    <MudChart ChartType="ChartType.ScatterPlot" ChartSeries="_scatterSeries" ChartOptions="_scatterOptions" Width="100%" Height="300px" MatchBoundsToSize />
+    <MudText>This text is here so the page is taller than a phone screen and has to scroll.</MudText>
+</MudStack>
+
+@code {
+    public static string __description__ = "Line, time series and scatter charts with ShowToolTipsOnTouch, to drive with a finger or touch emulation.";
+
+    private bool _touch = true;
+    private LineChartOptions _lineOptions = null!;
+    private TimeSeriesChartOptions _timeOptions = null!;
+    private ScatterPlotChartOptions _scatterOptions = null!;
+
+    private readonly string[] _months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    private readonly List<ChartSeries<double>> _lineSeries =
+    [
+        new() { Name = "Rainfall", Data = new double[] { 78, 61, 66, 52, 48, 40, 35, 44, 57, 79, 88, 84 } },
+        new() { Name = "Sunshine", Data = new double[] { 45, 70, 104, 150, 190, 186, 192, 178, 130, 92, 55, 40 } },
+    ];
+
+    private readonly List<ChartSeries<double>> _timeSeries =
+    [
+        new()
+        {
+            Name = "Temperature",
+            Data = Enumerable.Range(0, 14)
+                .Select(day => new TimeValue<double>(new DateTime(2026, 11, 1).AddDays(day), Math.Round(8 + 4 * Math.Sin(day / 2.0), 1)))
+                .ToList(),
+        },
+    ];
+
+    private readonly List<ChartSeries<double>> _scatterSeries =
+    [
+        new() { Name = "Height and weight", Data = new ChartData<double>([(150, 52), (158, 61), (163, 58), (167, 70), (171, 66), (176, 81), (180, 74), (184, 88), (190, 85)]) },
+    ];
+
+    protected override void OnInitialized() => BuildOptions();
+
+    private void SetTouch(bool value)
+    {
+        _touch = value;
+        BuildOptions();
+    }
+
+    private void BuildOptions()
+    {
+        _lineOptions = new LineChartOptions { ShowDataMarkers = true, ShowToolTipsOnTouch = _touch };
+        _timeOptions = new TimeSeriesChartOptions { ShowDataMarkers = true, TimeLabelSpacing = TimeSpan.FromDays(3), TimeLabelFormat = "MMM d", TooltipTimeLabelFormat = "MMM d", ShowToolTipsOnTouch = _touch };
+        _scatterOptions = new ScatterPlotChartOptions { ShowToolTipsOnTouch = _touch };
+    }
+}

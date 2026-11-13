@@ -128,7 +128,7 @@
                 if (ChartOptions?.ShowToolTips is not false)
                 {
                     builder.OpenElement(seq++, "circle");
-                    builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point");
+                    builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point mud-chart-hover-point");
                     builder.AddAttribute(seq++, "onclick", EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(chartLine.Index)));
                     builder.AddAttribute(seq++, "fill", item.Equals(HoveredDataPointPath) ? color : string.Empty);
                     builder.AddAttribute(seq++, "stroke", color);
