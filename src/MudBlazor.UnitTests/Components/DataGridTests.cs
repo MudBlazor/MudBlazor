@@ -7501,7 +7501,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Resetting every order to null restores declaration placement after a conditional column instance was replaced (#11570).
+        /// Resetting every order to null keeps declaration placement when a replaced column re-entered at its declaration position (#11570).
         /// </summary>
         [Test]
         public async Task DataGridAllNullResetRestoresDeclarationPlacementAfterConditionalReplacement()
@@ -7526,6 +7526,39 @@ namespace MudBlazor.UnitTests.Components
             {
                 dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
                 dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Name", "Age", "Status");
+                comp.Instance.NameOrder.Should().BeNull();
+                comp.Instance.AgeOrder.Should().BeNull();
+                comp.Instance.StatusOrder.Should().BeNull();
+                comp.Instance.CallbackCount.Should().Be(0);
+            });
+        }
+
+        /// <summary>
+        /// Resetting every order to null keeps the re-entry placement of a column that was replaced at an explicit position (#11570).
+        /// </summary>
+        [Test]
+        public async Task DataGridAllNullResetKeepsReentryPlacementAfterConditionalReplacement()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Name", "Age", "Status");
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(nameOrder: 1, ageOrder: 0, statusOrder: 2));
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Age", "Name", "Status"));
+
+            // Swapping the @if branch replaces the Age column instance, so it re-enters at its explicit leading position.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.BindAgeOrder, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.BindAgeOrder, true));
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Age", "Name", "Status");
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(null, null, null));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Age", "Name", "Status");
                 comp.Instance.NameOrder.Should().BeNull();
                 comp.Instance.AgeOrder.Should().BeNull();
                 comp.Instance.StatusOrder.Should().BeNull();
