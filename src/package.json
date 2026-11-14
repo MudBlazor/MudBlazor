@@ -4,8 +4,8 @@
     "@microsoft/dotnet-js-interop": "10.0.11",
     "@types/bun": "1.4.4",
     "@types/node": "26.6.6",
-    "oxlint": "1.91.0",
-    "sass": "1.107.1",
+    "oxlint": "1.93.0",
+    "sass": "1.108.2",
     "typescript": "7.0.2"
   },
   "trustedDependencies": ["sass"]
