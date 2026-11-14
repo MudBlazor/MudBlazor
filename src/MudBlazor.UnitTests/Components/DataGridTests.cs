@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -9482,6 +9484,74 @@ namespace MudBlazor.UnitTests.Components
         }
 
         #region Selection Cleanup Tests (ObservableCollection)
+
+        /// <summary>
+        /// The grid tracks only its current Items collection, so a replaced collection no longer holds the grid or reaches its selection (found while triaging #10173).
+        /// </summary>
+        [Test]
+        public async Task DataGrid_ItemsReplaced_StopsTrackingOldCollection()
+        {
+            var first = new SubscriberCountingCollection<string> { "Espresso", "Latte" };
+            var second = new SubscriberCountingCollection<string> { "Mocha" };
+            var comp = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.Items, first));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Items, second));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Items, first));
+
+            first.Subscribers.Should().Be(1);
+            second.Subscribers.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A disposed grid stops tracking its Items collection, so a collection that outlives the grid doesn't keep it alive (found while triaging #10173).
+        /// </summary>
+        [Test]
+        public async Task DataGrid_Disposed_StopsTrackingItemsCollection()
+        {
+            var items = new SubscriberCountingCollection<string> { "Espresso", "Latte" };
+            Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.Items, items));
+
+            await Context.DisposeComponentsAsync();
+
+            items.Subscribers.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A disposed grid ignores later changes to its collection, so removing a selected item neither throws nor reaches the grid's selection callback.
+        /// </summary>
+        [Test]
+        public async Task DataGrid_Disposed_IgnoresLaterCollectionChanges()
+        {
+            var items = new ObservableCollection<string> { "Espresso", "Latte" };
+            var selectionChanges = 0;
+            Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.SelectedItems, new HashSet<string> { "Espresso" })
+                .Add(x => x.SelectedItemsChanged, _ => selectionChanges++));
+
+            await Context.DisposeComponentsAsync();
+            var remove = () => items.Remove("Espresso");
+
+            remove.Should().NotThrow();
+            selectionChanges.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A list that counts its CollectionChanged subscribers.
+        /// </summary>
+        private sealed class SubscriberCountingCollection<T> : List<T>, INotifyCollectionChanged
+        {
+            public int Subscribers { get; private set; }
+
+            public event NotifyCollectionChangedEventHandler CollectionChanged
+            {
+                add => Subscribers++;
+                remove => Subscribers--;
+            }
+        }
 
         [Test]
         public async Task DataGrid_SelectedItems_ShouldUpdateWhenSingleItemRemoved()
