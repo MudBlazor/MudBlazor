@@ -21,8 +21,7 @@ public partial class Appbar : IDisposable
     private MudAutocomplete<ApiLinkServiceEntry>? _searchBarAutocomplete;
     private MudAutocomplete<ApiLinkServiceEntry>? _searchDialogAutocomplete;
     private DialogOptions _dialogOptions = new() { Position = DialogPosition.TopCenter, NoHeader = true, CloseOnEscapeKey = true };
-    private static readonly JsKeyModifier[] CtrlLeftKeyModifiers = [JsKeyModifier.ControlLeft];
-    private static readonly JsKeyModifier[] CtrlRightKeyModifiers = [JsKeyModifier.ControlRight];
+    private static readonly JsKeyModifier[] CtrlKeyModifiers = [JsKeyModifier.Control];
 
     public bool IsSearchDialogOpen
     {
