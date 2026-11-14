@@ -1,4 +1,4 @@
-@using System.Net.Http.Json
+﻿@using System.Net.Http.Json
 @using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
@@ -7,7 +7,7 @@
              ColumnResizeMode="ResizeMode.Container" Hideable="_hideable" Filterable="_filterable" Groupable="_groupable" FilterMode="_filterMode" ShowMenuIcon="true"
              ColumnOrderChanged="OnColumnOrderChanged">
     <Columns>
-        <SelectColumn T="Element" />
+        <SelectColumn T="Element"/>
         <PropertyColumn Property="x => x.Number" Title="Nr" />
         <PropertyColumn Property="x => x.Sign" Hidden="true" DragAndDropEnabled="false" Groupable="false" Sortable="false" Filterable="false" />
         <PropertyColumn Property="x => x.Name" Title="Name" Hidden="false" DragAndDropEnabled="true" Groupable="true" Sortable="true" Filterable="true" Grouping="false" />
@@ -56,6 +56,7 @@
 
 @code {
     private IEnumerable<Element> _elements = new List<Element>();
+
     private DataGridFilterMode _filterMode = DataGridFilterMode.Simple;
     private bool _dragDropReorderingEnabled = true;
     private bool _columnsPanelReorderingEnabled = true;
@@ -68,15 +69,15 @@
     private bool _groupCategory;
     private MudDataGrid<Element> _grid = null!;
     private string _status = "Use a header drag, or use the columns panel to reorder columns.";
-    private readonly IConverter<bool, bool?> _oppositeBoolConverter = Conversions.From(value => !value, (bool? value) => !value ?? true);
 
+    private readonly IConverter<bool, bool?> _oppositeBoolConverter = Conversions.From(value => !value, (bool? value) => !value ?? true);
     protected override async Task OnInitializedAsync()
     {
         _elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
     }
 
     private async Task HideColumnsAsync(bool hide)
-    {
+    {        
         foreach (var column in _grid.RenderedColumns)
         {
             if (hide)
@@ -87,7 +88,7 @@
             {
                 await column.ShowAsync();
             }
-        }
+        };
     }
 
     private void OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Element> args)

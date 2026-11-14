@@ -3279,7 +3279,11 @@ namespace MudBlazor
                 await NotifyColumnOrderChangedAsync(changedColumn, previousIndex, RenderedColumns.IndexOf(changedColumn));
             }
 
-            await InvokeAsync(StateHasChanged);
+            // User interactions re-render through their own EventCallback, so only the parameter-driven path needs an explicit render.
+            if (origin == ColumnOrderChangeOrigin.ParameterUpdate)
+            {
+                await InvokeAsync(StateHasChanged);
+            }
         }
 
         private List<Column<T>> GetColumnsToNormalize()
@@ -3305,7 +3309,6 @@ namespace MudBlazor
 
         private enum ColumnOrderChangeOrigin
         {
-            None,
             ParameterUpdate,
             UserInteraction
         }

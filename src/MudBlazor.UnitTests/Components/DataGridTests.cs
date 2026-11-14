@@ -7089,7 +7089,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Initial bound order values determine the rendered column order.
+        /// Initial bound order values determine the rendered column order (#11570).
         /// </summary>
         [Test]
         public async Task DataGridOrderParameterSetsInitialRenderedOrder()
@@ -7128,7 +7128,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// The columns-panel arrow updates bound order state and raises one callback.
+        /// The columns-panel arrow updates bound order state and raises one callback (#11570).
         /// </summary>
         [Test]
         public async Task DataGridArrowReorderUpdatesBoundStateAndRaisesOneCallback()
@@ -7156,7 +7156,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// An awaited binding overlapping a silent parent restore retains the user notification (#12827).
+        /// An awaited binding overlapping a silent parent restore retains the user notification (#11570).
         /// </summary>
         [Test]
         [CancelAfter(10000)]
@@ -7207,7 +7207,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Pinned panel arrow/drop handlers reject moves before touching null bindings (#12827).
+        /// Pinned panel arrow/drop handlers reject moves before touching null bindings (#11570).
         /// </summary>
         [TestCase("ColumnDown", 0, 1)]
         [TestCase("ColumnUp", 1, 0)]
@@ -7235,7 +7235,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A rejected real panel drop restores its cached display order without changing grid bindings (#12827).
+        /// A rejected real panel drop restores its cached display order without changing grid bindings (#11570).
         /// </summary>
         [Test]
         public async Task DataGridPinnedPanelDropRestoresDisplayedOrder()
@@ -7280,7 +7280,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Actual header drops cannot move the hierarchy or target its pinned position (#12827).
+        /// Actual header drops cannot move the hierarchy or target its pinned position (#11570).
         /// </summary>
         [TestCase(DataGridDragAndDropColumnReorderMode.Swap, true, false)]
         [TestCase(DataGridDragAndDropColumnReorderMode.Swap, false, false)]
@@ -7331,7 +7331,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Header drag-and-drop updates bound order state and raises one callback with the final snapshot.
+        /// Header drag-and-drop updates bound order state and raises one callback with the final snapshot (#11570).
         /// </summary>
         [Test]
         [TestCase(DataGridDragAndDropColumnReorderMode.Swap, "Name", "Status", 0, 2, "Status", "Age", "Name")]
@@ -7407,7 +7407,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Resetting every order to null restores declaration and default Select placement without another callback.
+        /// Resetting every order to null restores declaration and default Select placement without another callback (#11570).
         /// </summary>
         [Test]
         public async Task DataGridAllNullResetRestoresDefaultPlacementSilently()
@@ -7445,7 +7445,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Columns-panel drag-and-drop updates bound order state and raises one callback.
+        /// Columns-panel drag-and-drop updates bound order state and raises one callback (#11570).
         /// </summary>
         [Test]
         public async Task DataGridColumnsPanelReorderUpdatesBoundStateAndRaisesOneCallback()
@@ -7476,7 +7476,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Parameter-driven restoration reorders columns without raising the grid callback.
+        /// Parameter-driven restoration reorders columns without raising the grid callback (#11570).
         /// </summary>
         [Test]
         public async Task DataGridOrderParameterRestoreIsSilent()
@@ -7617,7 +7617,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// A newly rendered grid restores the column order from persisted bound values.
+        /// A newly rendered grid restores the column order from persisted bound values (#11570).
         /// </summary>
         [Test]
         public async Task DataGridReopenedRestoresColumnOrderFromBoundState()
@@ -7745,7 +7745,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Bound values have already been updated when a successful user reorder notifies the grid callback.
+        /// Bound values have already been updated when a successful user reorder notifies the grid callback (#11570).
         /// </summary>
         [Test]
         public async Task DataGridOrderCallbackSeesUpdatedBoundValues()

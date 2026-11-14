@@ -9,6 +9,9 @@ namespace MudBlazor;
 /// <summary>
 /// Represents the information related to a <see cref="MudDataGrid{T}.ColumnOrderChanged"/> event.
 /// </summary>
+/// <remarks>
+/// Indices include pinned columns and can differ from <see cref="Column{T}.Order"/> values.
+/// </remarks>
 /// <typeparam name="T">The item managed by the <see cref="MudDataGrid{T}"/>.</typeparam>
 public sealed class DataGridColumnOrderChangedEventArgs<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
 {

@@ -131,6 +131,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>. When unset, the declaration order is used.
+        /// A parameter-driven change to this value is applied when the grid next renders.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.DataGrid.Behavior)]
