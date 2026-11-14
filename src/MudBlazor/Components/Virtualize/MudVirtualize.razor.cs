@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
@@ -12,6 +13,7 @@ namespace MudBlazor
     /// Wraps Blazor's <see cref="Virtualize{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item rendered in the list.</typeparam>
+    [SuppressMessage("Usage", "BL0011", Justification = "ItemComparer reaches the inner Virtualize through _virtualizeAttributes, which the analyzer cannot see.")]
     public partial class MudVirtualize<T> : ComponentBase
     {
         /// <summary>
@@ -86,6 +88,21 @@ namespace MudBlazor
         public int MaxItemCount { get; set; } = 100;
 #endif
 
+#if NET11_0_OR_GREATER
+        /// <summary>
+        /// Compares items from <see cref="ItemsProvider"/> so the list can tell whether new items were inserted above the ones already shown.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="EqualityComparer{T}.Default"/>.
+        /// When the total item count grows, the list compares an item it already loaded with the item now at the same index.
+        /// If they differ, it treats the new items as inserted above and keeps the visible items in place.
+        /// Set a comparer that matches items by a unique key when <typeparamref name="T"/> is a class without value equality and the provider returns new instances, otherwise every growth looks like an insertion.
+        /// Available on .NET 11 and later.
+        /// </remarks>
+        [Parameter]
+        public IEqualityComparer<T>? ItemComparer { get; set; }
+#endif
+
         /// <summary>
         /// Gets or sets tag name of the HTML element that will be used as virtualization spacer. Default is div.
         /// </summary>
@@ -98,6 +115,10 @@ namespace MudBlazor
             _virtualizeAttributes.Clear();
 #if NET9_0_OR_GREATER
             _virtualizeAttributes[nameof(MaxItemCount)] = MaxItemCount;
+#endif
+#if NET11_0_OR_GREATER
+            // Always passed, because Virtualize keeps the last comparer it was given when the parameter is left out.
+            _virtualizeAttributes[nameof(ItemComparer)] = ItemComparer ?? EqualityComparer<T>.Default;
 #endif
         }
 
