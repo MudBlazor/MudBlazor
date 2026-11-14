@@ -6545,6 +6545,44 @@ namespace MudBlazor.UnitTests.Components
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid2);
         }
 
+        [Test]
+        public async Task TableFilterNullableGuidKeepsRowsUntilValueIsEntered()
+        {
+            var popoverProvider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<DataGridFilterGuid<Guid?>>();
+            var grid = comp.Instance.MudGridRef;
+
+            // Opening the column's filter adds a definition with no value yet.
+            await comp.Find(".filter-button").ClickAsync();
+            grid.FilterDefinitions.Single().Value.Should().BeNull();
+            comp.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(2);
+
+            await popoverProvider.Find(".filter-input input").InputAsync(comp.Instance.Guid1.ToString());
+            comp.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(1);
+
+            await popoverProvider.Find(".filter-input input").InputAsync("");
+            comp.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(2);
+        }
+
+        [TestCase(FilterOperator.Guid.Equal)]
+        [TestCase(FilterOperator.Guid.NotEqual)]
+        public void TableFilterNullableGuidWithoutValueMatchesAllRows(string filterOperator)
+        {
+            var comp = Context.Render<DataGridFilterGuid<Guid?>>();
+            var guidColumn = comp.Instance.MudGridRef.RenderedColumns.FirstOrDefault(x => x.PropertyName == "Id");
+            var filterDefinition = new FilterDefinition<DataGridFilterGuid<Guid?>.WeatherForecast>
+            {
+                Column = guidColumn,
+                Operator = filterOperator,
+                Value = null,
+            };
+
+            var matches = filterDefinition.GenerateFilterFunction();
+
+            matches(new() { Id = comp.Instance.Guid1, Date = DateTime.UtcNow, TemperatureC = 14, Summary = "Bracing" }).Should().BeTrue();
+            matches(new() { Id = null, Date = DateTime.UtcNow, TemperatureC = 14, Summary = "Bracing" }).Should().BeTrue();
+        }
+
         //[Test]
         //public async Task TableFilterGuidInDictionary()
         //{
