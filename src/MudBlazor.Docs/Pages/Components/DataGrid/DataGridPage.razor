@@ -548,7 +548,7 @@
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">
                         <div>* <CodeInline>HierarchyColumn</CodeInline> stays pinned and does not participate in <CodeInline>Order</CodeInline> state.</div>
                         <div>* An unordered <CodeInline>SelectColumn</CodeInline> stays leading after the Hierarchy column until explicitly ordered or displaced by a user reorder.</div>
-                        <div>* A column added after the first render keeps the position where it entered when values are reset to <CodeInline>null</CodeInline>.</div>
+                        <div>* A column added after the first render is ranked after the column that preceded it when it entered, so resetting values to <CodeInline>null</CodeInline> does not restore its original markup position.</div>
                         <div>* <CodeInline>(unset)</CodeInline> indicates a null order value.</div>
                     </MudAlert>
                 </Description>

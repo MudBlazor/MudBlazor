@@ -131,7 +131,7 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>. When unset, the declaration order is used.
-        /// A column added after the first render takes its rank from the position where it entered the grid.
+        /// A column added after the first render is ranked directly after the column that preceded it when it entered, so a reset to <c>null</c> does not restore its markup position.
         /// A parameter-driven change to this value is applied when the grid next renders.
         /// Values past the last position keep their order relative to other explicit columns rather than exact positions.
         /// </remarks>
