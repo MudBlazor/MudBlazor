@@ -1,4 +1,4 @@
-﻿// Copyright (c) MudBlazor 2021
+// Copyright (c) MudBlazor 2021
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -723,6 +723,26 @@ namespace MudBlazor
         private Color GetButtonColor(ColorPickerView view) => _colorPickerViewState.Value == view ? Color.Primary : Color.Inherit;
 
         private string GetColorDotClass(MudColor color) => new CssBuilder("mud-picker-color-dot").AddClass("selected", color == _valueState.Value).ToString();
+
+        private Task HandleSwatchKeyDownAsync(KeyboardEventArgs args, MudColor color)
+        {
+            if (args.Key is "Enter" or " " or "Spacebar")
+            {
+                return SelectPaletteColorAsync(color);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private Task HandlePreviewKeyDownAsync(KeyboardEventArgs args)
+        {
+            if (args.Key is "Enter" or " " or "Spacebar")
+            {
+                ToggleCollection();
+            }
+
+            return Task.CompletedTask;
+        }
 
         private string AlphaSliderStyle => new StyleBuilder()
             .AddStyle($"background-image: linear-gradient(to {(RightToLeft ? "left" : "right")}, transparent, {ValueOrDefault.ToString(MudColorOutputFormats.RGB)})")
