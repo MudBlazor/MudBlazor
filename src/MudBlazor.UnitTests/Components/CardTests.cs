@@ -35,5 +35,24 @@ namespace MudBlazor.UnitTests.Components
 
             comp.Find("div").GetAttribute("title").Should().Be("Cover art");
         }
+
+        [Test]
+        public void CardContent_AsGrid_Should_LayOutItemsInAGrid()
+        {
+            var comp = Context.Render<CardContentAsGridTest>();
+
+            var content = comp.Find(".mud-card-content");
+            content.ClassList.Should().Contain("mud-grid");
+            comp.FindAll(".mud-grid-item").Should().HaveCount(2);
+        }
+
+        [Test]
+        public void CardContent_WithoutAsGrid_Should_Not_RenderAGrid()
+        {
+            var comp = Context.Render<MudCardContent>(parameters => parameters
+                .AddChildContent("Card content"));
+
+            comp.Find(".mud-card-content").ClassList.Should().NotContain("mud-grid");
+        }
     }
 }

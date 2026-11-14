@@ -1,6 +1,15 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<div @attributes="UserAttributes" class="@Classname" style="@Style">
-    @ChildContent
-</div>
+@if (AsGrid)
+{
+    <MudGrid @attributes="UserAttributes" Class="@Classname" Style="@Style">
+        @ChildContent
+    </MudGrid>
+}
+else
+{
+    <div @attributes="UserAttributes" class="@Classname" style="@Style">
+        @ChildContent
+    </div>
+}
