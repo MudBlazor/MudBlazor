@@ -177,6 +177,24 @@
                     <DataGridGroupingMultiLevelExample />
                 </SectionContent>
             </DocsPageSection>
+
+            <DocsPageSection>
+                <SectionHeader Title="Group Row Customization">
+                    <Description>
+                        <CodeInline>GroupClass</CodeInline> and <CodeInline>GroupStyle</CodeInline> apply to every group row.
+                        <CodeInline>GroupClassFunc</CodeInline> and <CodeInline>GroupStyleFunc</CodeInline> receive the <CodeInline>GroupDefinition</CodeInline> of each row, so its <CodeInline>Level</CodeInline> can set per-level classes and styles.
+                        The <CodeInline>GroupStyleFunc</CodeInline> style is added after <CodeInline>GroupStyle</CodeInline>, so it can override the shared style for a level.
+                        <br /><br />
+                        Set <CodeInline>GroupIndented="false"</CodeInline> on the grouped columns to replace the built-in indentation with your own, and set a <CodeInline>GroupTemplate</CodeInline> on a column to change the header of that level only.
+                        <br /><br />
+                        <CodeInline>ExpandAllGroupsAsync</CodeInline> and <CodeInline>CollapseAllGroupsAsync</CodeInline> only act while <CodeInline>IsGrouped</CodeInline> is <CodeInline>true</CodeInline>.
+                        Ungroup both columns from their column menus to see the buttons disabled.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupingCustomizationExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridGroupingCustomizationExample />
+                </SectionContent>
+            </DocsPageSection>
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="Sorting">

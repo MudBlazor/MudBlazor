@@ -1,0 +1,71 @@
+@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@using MudBlazor.Utilities
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient HttpClient
+
+<MudDataGrid @ref="_dataGrid" T="Company" Items="_org" Groupable Dense
+             GroupClass="py-1"
+             GroupStyle="border-inline-start: 4px solid var(--mud-palette-primary)"
+             GroupClassFunc="GroupClassFunc"
+             GroupStyleFunc="GroupStyleFunc">
+    <Columns>
+        <PropertyColumn Property="x => x.Department" @bind-Grouping="_departmentGrouping" GroupIndented="false" GroupExpanded>
+            <GroupTemplate>@context.Grouping.Key (@context.Grouping.Count())</GroupTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Team" @bind-Grouping="_teamGrouping" GroupByOrder="1" GroupIndented="false" GroupExpanded>
+            <GroupTemplate>Team @context.Grouping.Key</GroupTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Role" Groupable="false" />
+        <PropertyColumn Property="x => x.Name" Groupable="false" />
+        <PropertyColumn Property="x => x.Score" Groupable="false" />
+    </Columns>
+</MudDataGrid>
+
+<div class="d-flex gap-2 mt-4">
+    <MudButton OnClick="@ExpandAllGroupsAsync" Color="Color.Primary" Disabled="@(!_isGrouped)">Expand all</MudButton>
+    <MudButton OnClick="@CollapseAllGroupsAsync" Color="Color.Primary" Disabled="@(!_isGrouped)">Collapse all</MudButton>
+</div>
+
+@code {
+#nullable enable
+    private MudDataGrid<Company> _dataGrid = null!;
+    private List<Company> _org = [];
+    private bool _departmentGrouping = true;
+    private bool _teamGrouping = true;
+    private bool _isGrouped;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _org = await HttpClient.GetFromJsonAsync<List<Company>>("webapi/company") ?? [];
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        // The grid builds its groups while it renders, so refresh the buttons once that state changes.
+        if (_isGrouped != _dataGrid.IsGrouped)
+        {
+            _isGrouped = _dataGrid.IsGrouped;
+            StateHasChanged();
+        }
+    }
+
+    private static string GroupClassFunc(GroupDefinition<Company> group)
+    {
+        return group.Level > 1 ? "mud-background" : string.Empty;
+    }
+
+    // GroupIndented="false" turns off the built-in indentation, so the level sets it here.
+    // Logical properties keep the indent and border on the start side in right-to-left layouts.
+    private static string GroupStyleFunc(GroupDefinition<Company> group)
+    {
+        return new StyleBuilder()
+            .AddStyle("padding-inline-start", $"{group.Level * 24}px")
+            .AddStyle("border-inline-start", "2px solid var(--mud-palette-secondary)", group.Level > 1)
+            .Build();
+    }
+
+    private Task ExpandAllGroupsAsync() => _dataGrid.ExpandAllGroupsAsync();
+
+    private Task CollapseAllGroupsAsync() => _dataGrid.CollapseAllGroupsAsync();
+}

@@ -20,11 +20,12 @@ public class SectionContentTests : BunitTest
     /// <summary>
     /// The TryMudBlazor snippet of an example using the Company model also carries the model, so the playground can compile it.
     /// </summary>
-    [Test]
-    public async Task RunOnTryMudBlazor_IncludesCompanyModel()
+    [TestCase(nameof(DataGridGroupingMultiLevelExample))]
+    [TestCase(nameof(DataGridGroupingCustomizationExample))]
+    public async Task RunOnTryMudBlazor_IncludesCompanyModel(string example)
     {
-        var url = await RunOnTryMudBlazorAsync(nameof(DataGridGroupingMultiLevelExample));
-        NUnit.Framework.TestContext.Out.WriteLine($"{nameof(DataGridGroupingMultiLevelExample)} TryMudBlazor URL length: {url.Length}");
+        var url = await RunOnTryMudBlazorAsync(example);
+        NUnit.Framework.TestContext.Out.WriteLine($"{example} TryMudBlazor URL length: {url.Length}");
 
         var files = DecodeSnippetFiles(url);
 
