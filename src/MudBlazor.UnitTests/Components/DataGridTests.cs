@@ -6545,6 +6545,9 @@ namespace MudBlazor.UnitTests.Components
             grid.FilteredItems.FirstOrDefault()?.Id.Should().Be(comp.Instance.Guid2);
         }
 
+        /// <summary>
+        /// Opening a nullable Guid column's filter keeps every row until a value is typed, and clearing the value brings them back.
+        /// </summary>
         [Test]
         public async Task TableFilterNullableGuidKeepsRowsUntilValueIsEntered()
         {
@@ -6564,6 +6567,9 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-table-body .mud-table-row").Count.Should().Be(2);
         }
 
+        /// <summary>
+        /// A nullable Guid filter without a value matches every row under both Equal and NotEqual.
+        /// </summary>
         [TestCase(FilterOperator.Guid.Equal)]
         [TestCase(FilterOperator.Guid.NotEqual)]
         public void TableFilterNullableGuidWithoutValueMatchesAllRows(string filterOperator)
