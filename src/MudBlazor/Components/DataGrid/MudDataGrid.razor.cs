@@ -10,6 +10,8 @@ using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
+using Microsoft.JSInterop;
+using MudBlazor.Extensions;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 using MudBlazor.Utilities.Clone;
@@ -29,9 +31,13 @@ namespace MudBlazor
     [CascadingTypeParameter(nameof(T))]
     public partial class MudDataGrid<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
+
         private MudForm? _editForm;
         internal int? _rowsPerPage;
         private int _currentPage = 0;
+        private bool _scrollToTopPending;
         internal bool _groupInitialExpanded = true;
         internal MudVirtualize<IndexBag<T>>? _mudVirtualize;
         private bool _isFirstRendered = false;
@@ -1367,7 +1373,10 @@ namespace MudBlazor
                 CurrentPageChanged.InvokeAsync(_currentPage);
 
                 if (_isFirstRendered)
+                {
+                    _scrollToTopPending = true;
                     InvokeAsync(InvokeServerLoadFunc);
+                }
             }
         }
 
@@ -1376,6 +1385,18 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public EventCallback<int> CurrentPageChanged { get; set; }
+
+        /// <summary>
+        /// Scrolls the rows back to the top when another page is shown.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// Applies when the rows scroll inside this grid, for instance with a <see cref="Height"/>.
+        /// The rows are scrolled when <see cref="CurrentPage"/> or <see cref="RowsPerPage"/> changes after the first render.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Pagination)]
+        public bool ScrollToTopOnPageChange { get; set; }
 
         /// <summary>
         /// Prevents values from being edited.
@@ -1707,6 +1728,17 @@ namespace MudBlazor
             else
             {
                 PagerStateHasChangedEvent?.Invoke();
+
+                // A server load renders the old rows as loading first, so the scroll waits for the render that shows the new page.
+                if (_scrollToTopPending && !Loading)
+                {
+                    _scrollToTopPending = false;
+
+                    // Only the vertical position is reset: the container also scrolls sideways when the columns are wider than the grid.
+                    // Without Items or ServerData the container isn't rendered.
+                    if (ScrollToTopOnPageChange && (Items != null || HasServerData))
+                        await JsRuntime.InvokeVoidAsyncIgnoreErrors("mudScrollManager.resetScrollTop", _gridElement);
+                }
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -2727,6 +2759,9 @@ namespace MudBlazor
             }
 
             await RowsPerPageChanged.InvokeAsync(_rowsPerPage.Value);
+
+            if (_isFirstRendered)
+                _scrollToTopPending = true;
 
             StateHasChanged();
 

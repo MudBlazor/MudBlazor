@@ -206,6 +206,7 @@ exports[`window API surface is unchanged 1`] = `
   "mudScrollManager": {
     "_lockCount": "number",
     "lockScroll": "function(2)",
+    "resetScrollTop": "function(1)",
     "scrollIntoView": "function(2)",
     "scrollTo": "function(4)",
     "scrollToBottom": "function(2)",
