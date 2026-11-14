@@ -117,10 +117,8 @@ namespace MudBlazor
             _virtualizeAttributes[nameof(MaxItemCount)] = MaxItemCount;
 #endif
 #if NET11_0_OR_GREATER
-            if (ItemComparer is not null)
-            {
-                _virtualizeAttributes[nameof(ItemComparer)] = ItemComparer;
-            }
+            // Always passed, because Virtualize keeps the last comparer it was given when the parameter is left out.
+            _virtualizeAttributes[nameof(ItemComparer)] = ItemComparer ?? EqualityComparer<T>.Default;
 #endif
         }
 
