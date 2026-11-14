@@ -38,6 +38,7 @@ namespace MudBlazor
         private bool _filtersMenuVisible = false;
         private bool _columnsPanelVisible = false;
         private bool _pendingParameterDrivenColumnOrderNormalization;
+        private int _columnOrderParameterGeneration;
         private readonly HashSet<Column<T>> _columnsWithInitialOrderPlacement = [];
         internal HashSet<T> _openHierarchies;
         private HashSet<T> _initialExpansions;
@@ -3143,6 +3144,8 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
+            // Advancing the generation lets an in-flight user write-back detect that this parent update supersedes it.
+            _columnOrderParameterGeneration++;
             _pendingParameterDrivenColumnOrderNormalization = true;
             return Task.CompletedTask;
         }
@@ -3262,11 +3265,17 @@ namespace MudBlazor
             if (origin != ColumnOrderChangeOrigin.ParameterUpdate)
             {
                 var orderedColumns = GetColumnsToNormalize();
+                // A parent-driven update observed during an awaited write supersedes this user reorder, so stop writing stale indices.
+                var generation = _columnOrderParameterGeneration;
                 for (var i = 0; i < orderedColumns.Count; i++)
                 {
                     if (orderedColumns[i]._orderState.Value != i)
                     {
                         await orderedColumns[i]._orderState.SetValueAsync(i);
+                        if (generation != _columnOrderParameterGeneration)
+                        {
+                            break;
+                        }
                     }
                 }
             }

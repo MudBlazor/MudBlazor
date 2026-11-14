@@ -7156,7 +7156,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// An awaited binding overlapping a silent parent restore retains the user notification (#11570).
+        /// An awaited binding overlapping a silent parent restore retains the user notification while the parent layout wins (#11570).
         /// </summary>
         [Test]
         [CancelAfter(10000)]
@@ -7199,11 +7199,23 @@ namespace MudBlazor.UnitTests.Components
 
             await move;
             comp.Instance.CallbackCount.Should().Be(1);
-            comp.Instance.CallbackValues.Should().Be("2,2,0", "the remaining awaited user binding completes after the parent restore");
+            comp.Instance.CallbackValues.Should().Be("2,1,0", "the parent restore supersedes the in-flight user write-back");
             grid.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Status", "Age", "Name");
+            grid.RenderedColumns.Select(x => x._orderState.Value).Should().Equal(0, 1, 2);
             comp.Instance.LastArgs!.PreviousIndex.Should().Be(2);
             comp.Instance.LastArgs.CurrentIndex.Should().Be(0);
             comp.Instance.LastArgs.Columns.Select(x => x.PropertyName).Should().Equal("Status", "Age", "Name");
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(0, 1, 2));
+            await comp.WaitForAssertionAsync(() =>
+            {
+                grid.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Name", "Age", "Status");
+                grid.RenderedColumns.Select(x => x._orderState.Value).Should().Equal(0, 1, 2);
+            });
+            comp.Instance.NameOrder.Should().Be(0);
+            comp.Instance.AgeOrder.Should().Be(1);
+            comp.Instance.StatusOrder.Should().Be(2);
+            comp.Instance.CallbackCount.Should().Be(1, "a subsequent parent restore is silent");
         }
 
         /// <summary>
