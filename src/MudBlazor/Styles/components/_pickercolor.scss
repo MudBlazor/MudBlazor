@@ -222,12 +222,18 @@
 }
 
 .mud-picker-color-view {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+  // In normal flow so the picker is only as tall as the palette (#9131).
+  // max-height matches the old fixed box (250px color field + default controls), so large palettes still scroll.
+  width: 312px;
+  max-height: 393px;
   overflow: auto;
   padding: 6px;
   background-color: var(--mud-palette-surface);
+
+  // A static picker fills its container, so its palette does too.
+  .mud-picker-static & {
+    width: 100%;
+  }
 
   .mud-picker-color-view-collection {
     display: flex;

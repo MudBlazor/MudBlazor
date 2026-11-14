@@ -424,8 +424,8 @@ namespace MudBlazor
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
                     .When(CanHandleKeys, builder => builder
-                        .OnKeyDown("ArrowUp", Increment)
-                        .OnKeyDown("ArrowDown", Decrement)));
+                        .OnKeyDownLiteral("ArrowUp", Increment)
+                        .OnKeyDownLiteral("ArrowDown", Decrement)));
             }
 
             await base.OnAfterRenderAsync(firstRender);
