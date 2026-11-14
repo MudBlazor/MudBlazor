@@ -25,9 +25,9 @@ namespace MudBlazor
         private bool _closeOnPointerLeave;
         private bool _initial = true;
         private bool _isBrowserViewportSubscribed;
-        private bool _lastNotifiedBreakpointInitialized;
         private bool _keepInitialState;
-        private Breakpoint _lastNotifiedBreakpoint = Breakpoint.None;
+        private Breakpoint? _lastObservedBreakpoint;
+        private Breakpoint? _lastNotifiedBreakpoint;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
 
         /// <summary>
@@ -324,6 +324,9 @@ namespace MudBlazor
             if (!_disposed)
             {
                 await UpdateBrowserViewportSubscriptionAsync();
+
+                // A callback assigned after the drawer subscribed missed the immediate notification, so it receives the last observed breakpoint once.
+                await NotifyBreakpointChangedAsync();
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -529,11 +532,15 @@ namespace MudBlazor
 
         async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
         {
-            if (!_lastNotifiedBreakpointInitialized || _lastNotifiedBreakpoint != browserViewportEventArgs.Breakpoint)
-            {
-                await NotifyBreakpointChangedAsync(browserViewportEventArgs.Breakpoint);
-            }
+            _lastObservedBreakpoint = browserViewportEventArgs.Breakpoint;
+            await HandleBrowserViewportChangeAsync(browserViewportEventArgs);
 
+            // Notify after the drawer's own handling so a consumer that sets Open in the callback is not overridden.
+            await NotifyBreakpointChangedAsync();
+        }
+
+        private async Task HandleBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+        {
             if (browserViewportEventArgs.IsImmediate)
             {
                 var previousEffectiveVariant = EffectiveVariant;
@@ -601,15 +608,16 @@ namespace MudBlazor
             };
         }
 
-        private async Task NotifyBreakpointChangedAsync(Breakpoint breakpoint)
+        private async Task NotifyBreakpointChangedAsync()
         {
-            _lastNotifiedBreakpoint = breakpoint;
-            _lastNotifiedBreakpointInitialized = true;
-
-            if (OnBreakpointChanged.HasDelegate)
+            if (!OnBreakpointChanged.HasDelegate || _lastObservedBreakpoint is not { } breakpoint || breakpoint == _lastNotifiedBreakpoint)
             {
-                await OnBreakpointChanged.InvokeAsync(breakpoint);
+                return;
             }
+
+            // Marked before invoking because the callback can re-render this drawer and re-enter this method.
+            _lastNotifiedBreakpoint = breakpoint;
+            await OnBreakpointChanged.InvokeAsync(breakpoint);
         }
     }
 }
