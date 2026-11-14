@@ -1479,16 +1479,16 @@ namespace MudBlazor
                     .HookKeyUp(args => OnKeyUp.InvokeAsync(args))
                     .HookKeyDown(args => OnKeyDown.InvokeAsync(args))
                     .When(CanHandleKeys, builder => builder
-                        .OnKeyDown("Tab", () => CloseMenu(false))
-                        .OnKeyDown("ArrowUp", HandleArrowUpAsync)
-                        .OnKeyDown("ArrowDown", HandleArrowDownAsync)
-                        .OnKeyDown(" ", ToggleMenu)
-                        .OnKeyDown("Escape", () => CloseMenu(true))
-                        .OnKeyDown("Home", () => SelectFirstItem())
-                        .OnKeyDown("End", SelectLastItem)
-                        .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)
-                        .OnKeyDownAny(["a", "A"], HandleKeyAAsync)
-                        .OnKeyDown("/^[^ ]$/", HandleCharacterSearchAsync)));
+                        .OnKeyDownLiteral("Tab", () => CloseMenu(false))
+                        .OnKeyDownLiteral("ArrowUp", HandleArrowUpAsync)
+                        .OnKeyDownLiteral("ArrowDown", HandleArrowDownAsync)
+                        .OnKeyDownLiteral(" ", ToggleMenu)
+                        .OnKeyDownLiteral("Escape", () => CloseMenu(true))
+                        .OnKeyDownLiteral("Home", () => SelectFirstItem())
+                        .OnKeyDownLiteral("End", SelectLastItem)
+                        .OnKeyDownAnyLiteral(["Enter", "NumpadEnter"], HandleEnterAsync)
+                        .OnKeyDownAnyLiteral(["a", "A"], HandleKeyAAsync)
+                        .OnKeyDownWhere(KeyMapBuilder.IsSingleNonSpaceCharacter, HandleCharacterSearchAsync)));
             }
 
             await base.OnAfterRenderAsync(firstRender);

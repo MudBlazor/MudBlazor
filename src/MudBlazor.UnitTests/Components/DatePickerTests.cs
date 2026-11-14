@@ -527,6 +527,213 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.Date?.Date.Should().Be(new DateTime(DateTime.Now.Year, 4, 23));
         }
 
+        /// <summary>
+        /// Opens the month view in the column whose header was clicked when several months are shown (#6270).
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_ClickSecondHeader_ShowsMonthsInSecondColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 2)
+                .Add(p => p.StartMonth, new DateTime(2024, 1, 1)));
+
+            await comp.FindAll("button.mud-button-month")[1].ClickAsync();
+
+            var columns = comp.FindAll("div.mud-picker-calendar-container");
+            columns[0].QuerySelector("div.mud-picker-month-container").Should().BeNull();
+            columns[0].QuerySelector("button.mud-button-month")!.TextContent.Trim().Should().Be("2024 January");
+            columns[1].QuerySelector("div.mud-picker-month-container").Should().NotBeNull();
+            columns[1].QuerySelector("div.mud-picker-calendar-header")!.ClassList.Should().NotContain("mud-picker-calendar-header-1");
+            comp.FindAll("div.mud-picker-calendar-header-1").Should().ContainSingle();
+        }
+
+        /// <summary>
+        /// Keeps the selected month in the column where the month view was opened (#6270).
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_ClickSecondHeader_SelectMonth_KeepsMonthInSecondColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 2)
+                .Add(p => p.StartMonth, new DateTime(2024, 1, 1)));
+
+            await comp.FindAll("button.mud-button-month")[1].ClickAsync();
+            await comp.FindAll("button.mud-picker-month")[5].ClickAsync();
+
+            comp.Instance.PickerMonth.Should().Be(new DateTime(2024, 5, 1));
+            var headers = comp.FindAll("button.mud-button-month");
+            headers.Select(header => header.TextContent.Trim()).Should().Equal("2024 May", "2024 June");
+
+            // Opening the month view from the first header still uses the first column.
+            await headers[0].ClickAsync();
+            comp.FindAll("div.mud-picker-calendar-container")[0].QuerySelector("div.mud-picker-month-container").Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// Shows the year view in the same column and keeps the selected month there after picking a year (#6270).
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_ClickSecondHeader_ClickYear_ShowsYearsInSecondColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 3)
+                .Add(p => p.StartMonth, new DateTime(2024, 1, 1)));
+
+            await comp.FindAll("button.mud-button-month")[1].ClickAsync();
+            await comp.FindAll("div.mud-picker-calendar-container")[1].QuerySelector("button.mud-picker-calendar-header-transition")!.ClickAsync();
+
+            var columns = comp.FindAll("div.mud-picker-calendar-container");
+            columns[0].QuerySelector("div.mud-picker-year-container").Should().BeNull();
+            columns[1].QuerySelector("div.mud-picker-year-container").Should().NotBeNull();
+            columns[2].QuerySelector("button.mud-button-month")!.TextContent.Trim().Should().Be("2024 March");
+
+            await comp.FindAll("div.mud-picker-year").First(year => year.TextContent.Trim() == "2026").ClickAsync();
+            await comp.FindAll("button.mud-picker-month")[9].ClickAsync();
+
+            comp.FindAll("button.mud-button-month").Select(header => header.TextContent.Trim()).Should().Equal("2026 September", "2026 October", "2026 November");
+            comp.Instance.PickerMonth.Should().Be(new DateTime(2026, 9, 1));
+        }
+
+        /// <summary>
+        /// Moves the open month view to another column when that column's header is clicked (#6270).
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_MonthViewOpen_ClickThirdHeader_MovesMonthsToThirdColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 3)
+                .Add(p => p.StartMonth, new DateTime(2024, 1, 1)));
+
+            await comp.FindAll("button.mud-button-month")[1].ClickAsync();
+            await comp.FindAll("div.mud-picker-calendar-container")[2].QuerySelector("button.mud-button-month")!.ClickAsync();
+
+            var columns = comp.FindAll("div.mud-picker-calendar-container");
+            columns[1].QuerySelector("div.mud-picker-month-container").Should().BeNull();
+            columns[1].QuerySelector("button.mud-button-month")!.TextContent.Trim().Should().Be("2024 February");
+            columns[2].QuerySelector("div.mud-picker-month-container").Should().NotBeNull();
+
+            await comp.FindAll("button.mud-picker-month")[3].ClickAsync();
+
+            comp.FindAll("button.mud-button-month").Select(header => header.TextContent.Trim()).Should().Equal("2024 February", "2024 March", "2024 April");
+            comp.Instance.PickerMonth.Should().Be(new DateTime(2024, 2, 1));
+        }
+
+        /// <summary>
+        /// Keeps the adjacent days of the outer columns visible while the month view is open in a middle column (#6270).
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_ShowAdjacentMonthDays_ClickSecondHeader_KeepsOuterAdjacentDays()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 3)
+                .Add(p => p.ShowAdjacentMonthDays, true)
+                .Add(p => p.StartMonth, new DateTime(2024, 1, 1)));
+
+            await comp.FindAll("button.mud-button-month")[1].ClickAsync();
+
+            var columns = comp.FindAll("div.mud-picker-calendar-container");
+            // December 31 leads the January grid and April 1 to 6 trail the March grid; no panel shows those months.
+            var leadingDays = columns[0].QuerySelectorAll("button.mud-picker-calendar-day.mud-adjacent-month")
+                .Where(day => int.Parse(day.TextContent.Trim(), CultureInfo.InvariantCulture) > 15).ToList();
+            var trailingDays = columns[2].QuerySelectorAll("button.mud-picker-calendar-day.mud-adjacent-month")
+                .Where(day => int.Parse(day.TextContent.Trim(), CultureInfo.InvariantCulture) < 15).ToList();
+            leadingDays.Should().NotBeEmpty().And.OnlyContain(day => !day.ClassList.Contains("mud-hidden"));
+            trailingDays.Should().NotBeEmpty().And.OnlyContain(day => !day.ClassList.Contains("mud-hidden"));
+        }
+
+        /// <summary>
+        /// Moves the month view to the first column when the columns to its left would show months before the first supported month (#6270).
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_ClickSecondHeader_SelectFirstYear_ShowsMonthsInFirstColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 2)
+                .Add(p => p.MinDate, DateTime.MinValue)
+                .Add(p => p.StartMonth, new DateTime(2023, 12, 1)));
+
+            await comp.FindAll("button.mud-button-month")[1].ClickAsync();
+            await comp.FindAll("div.mud-picker-calendar-container")[1].QuerySelector("button.mud-picker-calendar-header-transition")!.ClickAsync();
+            await comp.FindAll("div.mud-picker-year").First(year => year.TextContent.Trim() == "1").ClickAsync();
+
+            var columns = comp.FindAll("div.mud-picker-calendar-container");
+            columns[0].QuerySelector("div.mud-picker-month-container").Should().NotBeNull();
+            columns[1].QuerySelector("div.mud-picker-month-container").Should().BeNull();
+
+            await comp.FindAll("button.mud-picker-month")[2].ClickAsync();
+
+            comp.Instance.PickerMonth.Should().Be(new DateTime(1, 3, 1));
+        }
+
+        /// <summary>
+        /// With several months displayed, starting on the last supported month leaves the later columns empty instead of throwing.
+        /// </summary>
+        [Test]
+        public void DisplayMonths_StartAtLastSupportedMonth_LeavesLaterColumnsEmpty()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 3)
+                .Add(p => p.StartMonth, new DateTime(9999, 12, 1)));
+
+            comp.FindAll("div.mud-picker-calendar-container").Should().HaveCount(3);
+            comp.FindAll("button.mud-button-month").Select(header => header.TextContent.Trim()).Should().Equal("9999 December");
+            comp.FindAll("div.mud-picker-calendar-container")[2].ChildElementCount.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Moving to the next month while a later column would pass the last supported month does not throw.
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_NextMonthNearLastSupportedMonth_ShowsRemainingMonths()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 3)
+                .Add(p => p.StartMonth, new DateTime(9999, 10, 1)));
+
+            await comp.FindAll("button.mud-picker-nav-button-next").Last().ClickAsync();
+
+            comp.Instance.PickerMonth.Should().Be(new DateTime(9999, 11, 1));
+            comp.FindAll("button.mud-button-month").Select(header => header.TextContent.Trim()).Should().Equal("9999 November", "9999 December");
+        }
+
+        /// <summary>
+        /// Picking December 9999 from the month view in the second column keeps it there without throwing.
+        /// </summary>
+        [Test]
+        public async Task DisplayMonths_ClickSecondHeader_SelectLastSupportedMonth_KeepsMonthInSecondColumn()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.DisplayMonths, 3)
+                .Add(p => p.MaxDate, DateTime.MaxValue)
+                .Add(p => p.StartMonth, new DateTime(2024, 1, 1)));
+
+            await comp.FindAll("button.mud-button-month")[1].ClickAsync();
+            await comp.FindAll("div.mud-picker-calendar-container")[1].QuerySelector("button.mud-picker-calendar-header-transition")!.ClickAsync();
+            await comp.FindAll("div.mud-picker-year").First(year => year.TextContent.Trim() == "9999").ClickAsync();
+            await comp.FindAll("button.mud-picker-month")[11].ClickAsync();
+
+            comp.Instance.PickerMonth.Should().Be(new DateTime(9999, 11, 1));
+            comp.FindAll("button.mud-button-month").Select(header => header.TextContent.Trim()).Should().Equal("9999 November", "9999 December");
+        }
+
         [Test]
         public async Task DatePickerStaticWithPickerActionsDayClick()
         {

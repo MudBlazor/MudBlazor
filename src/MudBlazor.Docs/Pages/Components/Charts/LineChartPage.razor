@@ -21,7 +21,7 @@
 
         <DocsPageSection>
             <SectionHeader Title="Y-Axis Ticks">
-                <Description>Using the <CodeInline>ChartOptions</CodeInline> you can also change tick interval of the Y-axis by setting parameter <CodeInline>YAxisTicks</CodeInline>. </Description>
+                <Description>Using the <CodeInline>ChartOptions</CodeInline> you can also change tick interval of the Y-axis by setting parameter <CodeInline>YAxisTicks</CodeInline>. Set it to <CodeInline>0</CodeInline> to have the chart pick a round interval that fits the data.</Description>
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(LineExampleYAxisTicks)">
                 <LineExampleYAxisTicks />
@@ -59,6 +59,20 @@
             </SectionHeader>
             <SectionContent ShowCode="false" Code="@nameof(LineExampleNullDataPoints)">
                 <LineExampleNullDataPoints />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Tooltips on Touch">
+                <Description>
+                    Tooltips open when the mouse hovers a point. Set <CodeInline>ShowToolTipsOnTouch</CodeInline> in <CodeInline>ChartOptions</CodeInline> to open them with a finger too:
+                    drag sideways across the chart, or press and hold and then move in any direction, to walk the tooltip from point to point, and lift to hide it. A tap opens the nearest point.
+                    Dragging up or down still scrolls the page, but a sideways drag that starts on the chart moves the tooltip instead of scrolling a horizontal container around it.
+                    Time series and scatter charts have the same option.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(LineExampleTouch)">
+                <LineExampleTouch />
             </SectionContent>
         </DocsPageSection>
 

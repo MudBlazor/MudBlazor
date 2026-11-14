@@ -226,29 +226,18 @@ namespace MudBlazor
             return ApplyChangesAsync();
         }
 
-        // The column filter menu's keyboard shortcuts: Enter applies the filter and Escape clears it.
-        // Both paths refresh the grid themselves, but they close the menu only after an await when the grid loads server data or FilterChanged is asynchronous.
-        // This receiver renders nothing, so the header cell that owns the menu is rendered once they finish.
+        // Enter in the column filter menu's value box applies the filter; Escape is handled by the menu itself so it works from every control.
+        // Applying refreshes the grid itself, but it closes the menu only after an await when the grid loads server data or FilterChanged is asynchronous.
+        // This receiver renders nothing, so the header cell that owns the menu is rendered once it finishes.
         private async Task KeyDownAsync(KeyboardEventArgs args)
         {
             var headerCell = _column?.FilterContext.HeaderCell;
-            if (headerCell is null)
+            if (headerCell is null || args.Key != "Enter")
             {
                 return;
             }
 
-            switch (args.Key)
-            {
-                case "Enter":
-                    await headerCell.ApplyFilterAsync();
-                    break;
-                case "Escape":
-                    await headerCell.ClearFilterAsync();
-                    break;
-                default:
-                    return;
-            }
-
+            await headerCell.ApplyFilterAsync();
             ((IMudStateHasChanged)headerCell).StateHasChanged();
         }
 

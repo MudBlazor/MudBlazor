@@ -2,6 +2,8 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -2785,6 +2787,59 @@ namespace MudBlazor.UnitTests.Components
             dataGrid.FindAll(".column-header .sortable-column-header").Should().BeEmpty();
         }
 
+        /// <summary>
+        /// Rows loaded through <c>ServerData</c> keep the order the server sorted them in, with or without a pager (#10824).
+        /// </summary>
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        public async Task ServerDataRowsKeepTheServerSortOrder(bool withPager, bool virtualize)
+        {
+            // The server sorts the names by their number, so "File 2" comes before "File 10".
+            // The grid's own comparison puts "File 10" before "File 2", so sorting the rows again would change their order.
+            var serverItems = new List<TestDataItem>
+            {
+                new() { Name = "File 2" },
+                new() { Name = "File 10" },
+                new() { Name = "File 1" }
+            };
+
+            Task<GridData<TestDataItem>> ServerData(GridState<TestDataItem> state, CancellationToken token)
+            {
+                IEnumerable<TestDataItem> items = serverItems;
+                var sortDefinition = state.SortDefinitions.SingleOrDefault();
+                if (sortDefinition is not null)
+                {
+                    Func<TestDataItem, int> fileNumber = item => int.Parse(item.Name["File ".Length..], CultureInfo.InvariantCulture);
+                    items = sortDefinition.Descending ? items.OrderByDescending(fileNumber) : items.OrderBy(fileNumber);
+                }
+
+                return Task.FromResult(new GridData<TestDataItem> { Items = items.ToList(), TotalItems = serverItems.Count });
+            }
+
+            RenderFragment pager = builder =>
+            {
+                builder.OpenComponent<MudDataGridPager<TestDataItem>>(0);
+                builder.CloseComponent();
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.ServerData, ServerData)
+                .Add(p => p.Virtualize, virtualize)
+                .Add(p => p.PagerContent, withPager ? pager : null)
+                .Add(p => p.Columns, NamePropertyColumn));
+
+            string[] RowNames() => comp.FindAll("tbody tr.mud-table-row td").Select(cell => cell.TextContent).ToArray();
+
+            RowNames().Should().Equal("File 2", "File 10", "File 1");
+
+            await comp.Find("th .sortable-column-header").ClickAsync();
+            RowNames().Should().Equal("File 1", "File 2", "File 10");
+
+            await comp.Find("th .sortable-column-header").ClickAsync();
+            RowNames().Should().Equal("File 10", "File 2", "File 1");
+        }
+
         [Test]
         public async Task FilterDefinitionString()
         {
@@ -4372,6 +4427,27 @@ namespace MudBlazor.UnitTests.Components
             await SelectFilterOperator(7, 1); // "is not empty"
         }
 
+        /// <summary>
+        /// Escape from any control in the Simple filters panel closes it and drops the incomplete filter (#13253).
+        /// </summary>
+        [Test]
+        public async Task DataGridSimpleFilter_Escape_ClosesPanel()
+        {
+            var comp = Context.Render<DataGridFiltersTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridFiltersTest.Model>>();
+
+            await comp.Find(".filter-button").ClickAsync();
+            dataGrid.Instance.FilterDefinitions.Should().ContainSingle();
+
+            await comp.Find(".filters-panel .filter-operator").KeyDownAsync(new KeyboardEventArgs { Key = "a" });
+            comp.FindAll(".filters-panel").Count.Should().Be(1);
+
+            await comp.Find(".filters-panel .filter-operator").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
+
+            comp.FindAll(".filters-panel").Should().BeEmpty();
+            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
+        }
+
         [Test]
         public async Task DataGridFilters()
         {
@@ -4468,7 +4544,7 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(7);
 
             // click the Add Filter button in the filters panel to add a filter
-            await comp.FindAll(".filters-panel > button")[0].ClickAsync();
+            await comp.FindAll(".filters-panel-content > button")[0].ClickAsync();
 
             // check the number of filters displayed in the filters panel is 1 more because we added a filter
             comp.FindAll(".filters-panel .mud-grid-item.d-flex").Count.Should().Be(8);
@@ -4912,6 +4988,44 @@ namespace MudBlazor.UnitTests.Components
             button.GetAttribute("aria-label").Should().Be("Collapse group");
         }
 
+        /// <summary>
+        /// Verifies that HierarchyColumn applies Class to its header and the cell class and style parameters to its body cells (#7529).
+        /// </summary>
+        [Test]
+        public void DataGrid_HierarchyColumn_AppliesClassAndCellStyles()
+        {
+            var items = new List<TestDataItem>
+            {
+                new() { Id = 1, Name = "First" },
+                new() { Id = 2, Name = "Second" }
+            };
+
+            var comp = Context.Render<MudDataGrid<TestDataItem>>(parameters => parameters
+                .Add(p => p.Items, items)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<HierarchyColumn<TestDataItem>>(0);
+                    builder.AddAttribute(1, nameof(HierarchyColumn<TestDataItem>.Class), "hierarchy-class");
+                    builder.AddAttribute(2, nameof(HierarchyColumn<TestDataItem>.CellClass), "hierarchy-cell");
+                    builder.AddAttribute(3, nameof(HierarchyColumn<TestDataItem>.CellClassFunc), (Func<TestDataItem, string>)(x => $"cell-{x.Id}"));
+                    builder.AddAttribute(4, nameof(HierarchyColumn<TestDataItem>.CellStyle), "width:56px");
+                    builder.AddAttribute(5, nameof(HierarchyColumn<TestDataItem>.CellStyleFunc), (Func<TestDataItem, string>)(x => $"--row-id:{x.Id}"));
+                    builder.CloseComponent();
+                    builder.OpenComponent<PropertyColumn<TestDataItem, string>>(6);
+                    builder.AddAttribute(7, nameof(PropertyColumn<TestDataItem, string>.Property), (Expression<Func<TestDataItem, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                }));
+
+            comp.Find("thead th").ClassList.Should().Contain("hierarchy-class");
+
+            var hierarchyCells = comp.FindAll("tbody tr td:first-child");
+            hierarchyCells.Should().HaveCount(2);
+            hierarchyCells[0].ClassList.Should().Contain(["hierarchy-cell", "cell-1"]);
+            hierarchyCells[1].ClassList.Should().Contain(["hierarchy-cell", "cell-2"]);
+            hierarchyCells[0].GetAttribute("style").Should().Contain("width:56px").And.Contain("--row-id:1");
+            hierarchyCells[1].GetAttribute("style").Should().Contain("width:56px").And.Contain("--row-id:2");
+        }
+
         [Test]
         public void DataGridChildRowContent()
         {
@@ -4971,6 +5085,59 @@ namespace MudBlazor.UnitTests.Components
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridNoRecordsContentTest.Model>>();
 
             dataGrid.Find("th.mud-table-empty-row div").TextContent.Trim().Should().Be("There are no records to view.");
+        }
+
+        /// <summary>
+        /// Full-width rows span the displayed columns so that `table-layout: fixed` keeps the column widths (#11460).
+        /// </summary>
+        [Test]
+        public void FullWidthRowsSpanDisplayedColumns()
+        {
+            DataGridColumnSpanTest.Model[] items = [new("Sam", 56, "Oslo")];
+            var comp = Context.Render<DataGridColumnSpanTest>();
+
+            comp.Find("th.mud-table-empty-row").GetAttribute("colspan").Should().Be("3");
+
+            comp.Render(p => p.Add(x => x.HideAge, true));
+            comp.Find("th.mud-table-empty-row").GetAttribute("colspan").Should().Be("2");
+
+            comp.Render(p => p.Add(x => x.NameHeaderColSpan, 2));
+            comp.Find("th.mud-table-empty-row").GetAttribute("colspan").Should().Be("3");
+
+            comp.Render(p => p.Add(x => x.Loading, true));
+            comp.Find("th.mud-table-loading").GetAttribute("colspan").Should().Be("3");
+
+            comp.Render(p => p
+                .Add(x => x.Loading, false)
+                .Add(x => x.NameHeaderColSpan, 1)
+                .Add(x => x.Virtualize, true));
+            comp.WaitForAssertion(() => comp.Find("th.mud-table-empty-row").GetAttribute("colspan").Should().Be("2"));
+
+            comp.Render(p => p
+                .Add(x => x.Virtualize, false)
+                .Add(x => x.Items, items)
+                .Add(x => x.ShowChildRows, true));
+            comp.Find("td.mud-table-child-content").GetAttribute("colspan").Should().Be("2");
+
+            comp.Render(p => p.Add(x => x.Grouped, true));
+            comp.WaitForAssertion(() => comp.Find("td.mud-datagrid-group").GetAttribute("colspan").Should().Be("2"));
+        }
+
+        /// <summary>
+        /// The filters and columns panel rows span the displayed columns when a column is hidden (#11460).
+        /// </summary>
+        [Test]
+        public async Task PanelRowsSpanDisplayedColumns()
+        {
+            var comp = Context.Render<DataGridColumnSpanTest>(p => p.Add(x => x.HideAge, true));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnSpanTest.Model>>();
+
+            await comp.InvokeAsync(() => dataGrid.Instance.OpenFilters());
+            comp.Find("th.mud-filter-panel-cell").GetAttribute("colspan").Should().Be("2");
+
+            await comp.InvokeAsync(() => dataGrid.Instance.ToggleFiltersMenu());
+            await comp.InvokeAsync(() => dataGrid.Instance.ShowColumnsPanel());
+            comp.Find("th.mud-filter-panel-cell").GetAttribute("colspan").Should().Be("2");
         }
 
         [Test]
@@ -5361,15 +5528,18 @@ namespace MudBlazor.UnitTests.Components
             });
         }
 
+        /// <summary>
+        /// Escape in the column filter menu's value box closes the menu without applying what was typed.
+        /// </summary>
         [Test]
-        public async Task DataGridColumnPopupFilteringEscapeClearsFilter()
+        public async Task DataGridColumnPopupFilteringEscapeClosesWithoutApplying()
         {
             var comp = Context.Render<DataGridColumnPopupFilteringTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnPopupFilteringTest.Model>>();
             await comp.Find(".filter-button").ClickAsync();
-            var input = comp.FindComponent<MudTextField<string>>();
-            await input.Find("input").InputAsync("Sam");
-            await input.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape", Type = "keydown" });
+            await comp.Find(".column-filter-popup .filter-input input").InputAsync("Sam");
+            // Query from the root so the keydown bubbles to the menu; a component-scoped Find has no ancestors.
+            await comp.Find(".column-filter-popup .filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape", Type = "keydown" });
 
             await comp.WaitForAssertionAsync(() =>
             {
@@ -5578,13 +5748,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Enter in the column filter menu's value box applies the filter, and Escape clears it.
+        /// Enter in the column filter menu's value box applies the filter, and Escape from another control closes the menu but keeps the applied filter (#13253).
         /// </summary>
         /// <remarks>
-        /// These shortcuts share the value box's keydown handler, which deliberately does not re-render the grid (#13639).
+        /// Enter shares the value box's keydown handler, which deliberately does not re-render the grid (#13639).
         /// </remarks>
         [Test]
-        public async Task DataGridColumnFilterMenu_EnterApplies_EscapeClears()
+        public async Task DataGridColumnFilterMenu_EnterApplies_EscapeKeepsAppliedFilter()
         {
             var comp = Context.Render<DataGridColumnFilterMenuTest>();
             var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuTest.Model>>();
@@ -5598,10 +5768,13 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
 
             await comp.Find(".filter-button").ClickAsync();
-            await comp.Find(".filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
+            await comp.Find(".column-filter-popup .filter-operator").KeyDownAsync(new KeyboardEventArgs { Key = "a" });
+            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Count.Should().Be(1);
 
-            dataGrid.Instance.FilterDefinitions.Should().BeEmpty();
-            dataGrid.FindAll("tbody tr").Count.Should().Be(4);
+            await comp.Find(".column-filter-popup .filter-operator").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
+
+            dataGrid.Instance.FilterDefinitions.Should().ContainSingle().Which.Value.Should().Be("Ira");
+            dataGrid.FindAll("tbody tr").Count.Should().Be(1);
             comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
         }
 
@@ -5626,34 +5799,6 @@ namespace MudBlazor.UnitTests.Components
             await keyDown;
 
             comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(1));
-            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
-        }
-
-        /// <summary>
-        /// Escape in the column filter menu closes the menu when clearing the filter reloads server data after an await.
-        /// </summary>
-        [Test]
-        public async Task DataGridColumnFilterMenu_EscapeAfterServerLoad_ClosesMenu()
-        {
-            var comp = Context.Render<DataGridColumnFilterMenuGateTest>(parameters => parameters.Add(x => x.ServerSide, true));
-            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnFilterMenuGateTest.Model>>();
-            comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(4));
-
-            await comp.Find(".filter-button").ClickAsync();
-            await comp.Find(".filter-input input").InputAsync(new ChangeEventArgs { Value = "Ira" });
-            await comp.Find(".apply-filter-button").ClickAsync();
-            comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(1));
-
-            await comp.Find(".filter-button").ClickAsync();
-            comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Count.Should().Be(1);
-
-            var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            comp.Instance.Gate = gate;
-            var keyDown = comp.Find(".filter-input input").KeyDownAsync(new KeyboardEventArgs { Key = "Escape" });
-            gate.SetResult();
-            await keyDown;
-
-            comp.WaitForAssertion(() => dataGrid.FindAll("tbody tr").Count.Should().Be(4));
             comp.FindAll(".mud-popover.column-filter-popup.mud-popover-open").Should().BeEmpty();
         }
 
@@ -9340,6 +9485,74 @@ namespace MudBlazor.UnitTests.Components
 
         #region Selection Cleanup Tests (ObservableCollection)
 
+        /// <summary>
+        /// The grid tracks only its current Items collection, so a replaced collection no longer holds the grid or reaches its selection (found while triaging #10173).
+        /// </summary>
+        [Test]
+        public async Task DataGrid_ItemsReplaced_StopsTrackingOldCollection()
+        {
+            var first = new SubscriberCountingCollection<string> { "Espresso", "Latte" };
+            var second = new SubscriberCountingCollection<string> { "Mocha" };
+            var comp = Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.Items, first));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Items, second));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Items, first));
+
+            first.Subscribers.Should().Be(1);
+            second.Subscribers.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A disposed grid stops tracking its Items collection, so a collection that outlives the grid doesn't keep it alive (found while triaging #10173).
+        /// </summary>
+        [Test]
+        public async Task DataGrid_Disposed_StopsTrackingItemsCollection()
+        {
+            var items = new SubscriberCountingCollection<string> { "Espresso", "Latte" };
+            Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.Items, items));
+
+            await Context.DisposeComponentsAsync();
+
+            items.Subscribers.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A disposed grid ignores later changes to its collection, so removing a selected item neither throws nor reaches the grid's selection callback.
+        /// </summary>
+        [Test]
+        public async Task DataGrid_Disposed_IgnoresLaterCollectionChanges()
+        {
+            var items = new ObservableCollection<string> { "Espresso", "Latte" };
+            var selectionChanges = 0;
+            Context.Render<MudDataGrid<string>>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.SelectedItems, new HashSet<string> { "Espresso" })
+                .Add(x => x.SelectedItemsChanged, _ => selectionChanges++));
+
+            await Context.DisposeComponentsAsync();
+            var remove = () => items.Remove("Espresso");
+
+            remove.Should().NotThrow();
+            selectionChanges.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A list that counts its CollectionChanged subscribers.
+        /// </summary>
+        private sealed class SubscriberCountingCollection<T> : List<T>, INotifyCollectionChanged
+        {
+            public int Subscribers { get; private set; }
+
+            public event NotifyCollectionChangedEventHandler CollectionChanged
+            {
+                add => Subscribers++;
+                remove => Subscribers--;
+            }
+        }
+
         [Test]
         public async Task DataGrid_SelectedItems_ShouldUpdateWhenSingleItemRemoved()
         {
@@ -10409,6 +10622,55 @@ namespace MudBlazor.UnitTests.Components
 
             dataGrid.Instance.SortDefinitions.Should().BeEmpty();
             dataGrid.FindAll("th").Should().OnlyContain(header => !header.HasAttribute("aria-sort"));
+        }
+
+        public class PricedItem
+        {
+            public decimal Price { get; set; }
+
+            public decimal? Discount { get; set; }
+        }
+
+        /// <summary>
+        /// A number filter holds a double, which has to match a decimal column holding the same number as written.
+        /// </summary>
+        [Test]
+        public void FilterDefinitionNumber_DecimalColumn_MatchesFractions()
+        {
+#pragma warning disable BL0005
+            var column = new PropertyColumn<PricedItem, decimal> { Property = x => x.Price };
+            var nullableColumn = new PropertyColumn<PricedItem, decimal?> { Property = x => x.Discount };
+#pragma warning restore BL0005
+            var item = new PricedItem { Price = 0.1m, Discount = 19.99m };
+
+            Func<PricedItem, bool> Filter(Column<PricedItem> filterColumn, string filterOperator, double value) =>
+                new FilterDefinition<PricedItem> { Column = filterColumn, Operator = filterOperator, Value = value }.GenerateFilterFunction();
+
+            Filter(column, FilterOperator.Number.Equal, 0.1)(item).Should().BeTrue();
+            Filter(column, FilterOperator.Number.NotEqual, 0.1)(item).Should().BeFalse();
+            Filter(column, FilterOperator.Number.GreaterThanOrEqual, 0.1)(item).Should().BeTrue();
+            Filter(column, FilterOperator.Number.LessThan, 0.1)(item).Should().BeFalse();
+            Filter(nullableColumn, FilterOperator.Number.Equal, 19.99)(item).Should().BeTrue();
+            Filter(nullableColumn, FilterOperator.Number.LessThanOrEqual, 19.99)(item).Should().BeTrue();
+        }
+
+        /// <summary>
+        /// Editing a decimal cell stores the number as typed, although the editor hands the column a double.
+        /// </summary>
+        [Test]
+        public void PropertyColumn_SetProperty_DecimalKeepsTypedValue()
+        {
+#pragma warning disable BL0005
+            var column = new PropertyColumn<PricedItem, decimal> { Property = x => x.Price };
+            var nullableColumn = new PropertyColumn<PricedItem, decimal?> { Property = x => x.Discount };
+#pragma warning restore BL0005
+            var item = new PricedItem();
+
+            column.SetProperty(item, 19.99d);
+            nullableColumn.SetProperty(item, 0.1d);
+
+            item.Price.Should().Be(19.99m);
+            item.Discount.Should().Be(0.1m);
         }
     }
 }

@@ -13,8 +13,7 @@
 @inject InternalMudLocalizer Localizer
 
 @_css
-<div role="alert"
-     aria-live="polite"
+<div role="@Role"
      class="@SnackbarClass"
      style="@AnimationStyle"
      @onclick="this.AsNonRenderingEventHandler(SnackbarClicked)"

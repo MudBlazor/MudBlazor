@@ -47,7 +47,7 @@
 ## Environment Requirements
 
 - `global.json` pins the .NET SDK feature band; use an SDK from that band to restore, build, and test this repository. If commands fail with SDK resolution errors, compare `dotnet --version` against `global.json`.
-- The library targets `net8.0`, `net9.0`, and `net10.0`.
+- The library targets `net8.0`, `net9.0`, `net10.0`, and `net11.0`.
 
 ## Scoped Commands and Verification
 
@@ -60,7 +60,7 @@
 ### Choose the smallest valid verification loop
 - For repository metadata or prose-only changes outside the build inputs, such as `README.md`, `CHANGELOG.md`, or `.github/` text-only edits: do not run `dotnet`.
 - For component `.cs` or `.razor` changes with behavior coverage: use the default local loop below, a single filtered `dotnet test` against `src/MudBlazor.UnitTests/MudBlazor.UnitTests.csproj` with `-p:SkipBunCompile=true`.
-- For component `.cs` or `.razor` changes that only need compile validation: build one framework with `dotnet build src/MudBlazor/MudBlazor.csproj -f net10.0 -p:SkipBunCompile=true`. The library multi-targets net8.0/net9.0/net10.0; `-f` compiles just one for a faster check, and PR CI also compiles only net10.0.
+- For component `.cs` or `.razor` changes that only need compile validation: build one framework with `dotnet build src/MudBlazor/MudBlazor.csproj -f net11.0 -p:SkipBunCompile=true`. The library multi-targets net8.0/net9.0/net10.0/net11.0; `-f` compiles just one for a faster check, and PR CI compiles all of them.
 - For `TScripts` or `Styles`: run a normal scoped project build.
 - For docs changes: build the relevant docs project. Avoid docs host run loops during agent verification.
 - To check whether current `dev` already contains a fix, use https://dev.mudblazor.com, which is continuously deployed from `dev`, before building anything locally. mudblazor.com tracks the latest release.
@@ -74,7 +74,7 @@ Run restore only when restore inputs changed (`*.csproj`, `src/Directory.Build.*
 
 If `.config/dotnet-tools.json` changes, run `dotnet tool restore --tool-manifest .config/dotnet-tools.json`.
 
-If `src/package.json`, `src/bun.lock`, `src/eslint.config.ts`, `src/Directory.Build.props`, any `tsconfig.json`, `src/MudBlazor/bunfig.toml`, `src/MudBlazor/test-setup.ts`, or a project's build script (`build.mjs` or `build.mts`) changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
+If `src/package.json`, `src/bun.lock`, `src/.oxlintrc.json`, `src/Directory.Build.props`, any `tsconfig.json`, `src/MudBlazor/bunfig.toml`, `src/MudBlazor/test-setup.ts`, or a project's build script (`build.mjs` or `build.mts`) changes, run a normal scoped build without `SkipBunCompile` for the affected project so the frontend asset pipeline runs.
 
 ### Default local loop for C# or Razor component changes
 

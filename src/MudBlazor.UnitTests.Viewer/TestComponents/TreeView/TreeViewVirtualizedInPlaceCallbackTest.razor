@@ -1,0 +1,26 @@
+@* A virtualized tree whose parent re-renders from the raised selection, so a test can change the items in place inside the callback. *@
+<MudTreeView T="string" Items="@Items" Virtualize="true" Height="200px" SelectionMode="SelectionMode.MultiSelection"
+             SelectedValues="@SelectedValues" SelectedValuesChanged="OnSelectedValuesChanged">
+    <ItemTemplate>
+        <MudTreeViewItem Value="@context.Value" Text="@context.Text" Items="@context.Children" Expanded="@context.Expanded"
+                         @bind-Selected="context.Selected" />
+    </ItemTemplate>
+</MudTreeView>
+
+@code {
+    [Parameter]
+    public IReadOnlyCollection<ITreeItemData<string>> Items { get; set; } = [];
+
+    [Parameter]
+    public IReadOnlyCollection<string>? SelectedValues { get; set; }
+
+    /// <summary>Runs inside the tree's selected-values callback, before the parent re-renders with the handed-back selection.</summary>
+    [Parameter]
+    public Action<IReadOnlyCollection<string>>? InsideSelectedValuesChanged { get; set; }
+
+    private void OnSelectedValuesChanged(IReadOnlyCollection<string>? values)
+    {
+        SelectedValues = values;
+        InsideSelectedValuesChanged?.Invoke(values!);
+    }
+}

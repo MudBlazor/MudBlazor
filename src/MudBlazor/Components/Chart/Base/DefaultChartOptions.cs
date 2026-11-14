@@ -30,6 +30,7 @@ public abstract class DefaultChartOptions : IChartOptions
     /// </summary>
     /// <remarks>
     /// Defaults to "{{Y_VALUE}} - {{X_VALUE}}"
+    /// Axis charts also accept <c>{{Y_AXIS_VALUE}}</c>, the value written the way the Y axis labels it with <c>YAxisToStringFunc</c> or <c>YAxisFormat</c>.
     /// </remarks>
     public virtual string TooltipTitleFormat { get; set; } = "{{Y_VALUE}} - {{X_VALUE}}";
 
