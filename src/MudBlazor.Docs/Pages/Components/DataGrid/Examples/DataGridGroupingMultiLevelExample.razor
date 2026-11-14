@@ -28,18 +28,14 @@
 
 @code {
 #nullable enable
-    private IReadOnlyCollection<Company> _org = [];
+    private List<Company>? _org;
 
     private MudDataGrid<Company> _dataGrid = null!;
     private string? _search;
 
-    protected override async Task OnInitializedAsync()
+    private async Task<GridData<Company>> ServerReload(GridState<Company> state, CancellationToken token)
     {
-        _org = await HttpClient.GetFromJsonAsync<List<Company>>("webapi/company") ?? [];
-    }
-
-    private Task<GridData<Company>> ServerReload(GridState<Company> state, CancellationToken _)
-    {
+        _org ??= await HttpClient.GetFromJsonAsync<List<Company>>("webapi/company", token) ?? [];
         var data = _org.AsEnumerable();
 
         if (!string.IsNullOrWhiteSpace(_search))
@@ -77,11 +73,11 @@
         }
 
         var list = data.ToList();
-        return Task.FromResult(new GridData<Company>
+        return new GridData<Company>
         {
             TotalItems = list.Count,
             Items = list.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray()
-        });
+        };
     }
 
     private Task OnSearch(string value)

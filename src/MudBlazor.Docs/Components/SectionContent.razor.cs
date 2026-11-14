@@ -187,6 +187,12 @@ public partial class SectionContent
                 var serverCodeFile = "Server.cs" + (char)31 + Snippets.GetCode("Server");
                 codeFiles = codeFiles + (char)31 + serverCodeFile;
             }
+
+            if (CompanyRegularExpression().IsMatch(codeFiles))
+            {
+                var companyCodeFile = "Company.cs" + (char)31 + Snippets.GetCode("Company");
+                codeFiles = codeFiles + (char)31 + companyCodeFile;
+            }
         }
 
         var codeFileEncoded = codeFiles.ToCompressedEncodedUrl();
@@ -204,4 +210,7 @@ public partial class SectionContent
 
     [GeneratedRegex(@"\bServer\b")]
     private static partial Regex ServerRegularExpression();
+
+    [GeneratedRegex(@"\bCompany\b")]
+    private static partial Regex CompanyRegularExpression();
 }

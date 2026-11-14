@@ -52,5 +52,17 @@ namespace MudBlazor.Examples.Data.Models
         public string IpAddress { get; set; }
     }
 }";
+
+        public const string Company = @"namespace MudBlazor.Examples.Data.Models
+{
+    public class Company
+    {
+        public string Department { get; set; }
+        public string Team { get; set; }
+        public string Role { get; set; }
+        public string Name { get; set; }
+        public int Score { get; set; }
+    }
+}";
     }
 }
