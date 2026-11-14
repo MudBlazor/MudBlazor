@@ -16,16 +16,13 @@
     <PackageReference Include="coverlet.MTP" Version="10.1.0" />
     <PackageReference Include="JunitXml.TestLogger" Version="8.1.0" />
     <PackageReference Include="AwesomeAssertions" Version="9.6.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="5.9.0">
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="5.12.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <!--
-      TODO(net11): Bump both Workspaces packages to 5.12.0 once it is on nuget.org.
-      The Razor source generator in SDK 11.0.100 references Roslyn 5.12, so MSBuildWorkspace on 5.9 cannot load it and RazorMigrationHintTests sees no generated code.
-    -->
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.9.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="5.9.0" />
+    <!-- MSBuildWorkspace must be at least the SDK's Roslyn version, or it cannot load the Razor source generator and RazorMigrationHintTests sees no generated code. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.12.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="5.12.0" />
     <!-- Microsoft.CodeAnalysis.Analyzer.Testing is provided transitively by the two packages below
          (CSharp.Analyzer.Testing -> Analyzer.Testing; CSharp.CodeFix.Testing -> CodeFix.Testing ->
          Analyzer.Testing), so it is not referenced directly. -->
