@@ -171,6 +171,9 @@ public static class FilterExpressionGenerator
 
         if (fieldType.IsGuid)
         {
+            if (filter.Value is null)
+                return x => true;
+
             return filter.Operator switch
             {
                 FilterOperator.Guid.Equal => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, filter.Value),
