@@ -5,6 +5,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MudBlazor
 {
@@ -29,7 +31,7 @@ namespace MudBlazor
         /// This keeps dialog content stable while the parent fragment re-renders.
         /// See: https://github.com/MudBlazor/MudBlazor/issues/10659#issuecomment-2602911059
         /// </remarks>
-        private class DialogHelperComponent : IComponent
+        private sealed class DialogHelperComponent : IComponent
         {
             private const string ChildContent = nameof(ChildContent);
             private RenderFragment? _renderFragment;
@@ -54,6 +56,33 @@ namespace MudBlazor
                     builder.AddAttribute(2, ChildContent, renderFragment);
                     builder.CloseComponent();
                 };
+        }
+
+        internal const string MissingProviderMessage =
+            "Missing <MudDialogProvider /> in the active render scope, so dialogs cannot be displayed. " +
+            "Add <MudDialogProvider /> within the same interactive render mode as the components that open dialogs: in your layout for global interactivity, or on each page for per-page interactivity. " +
+            "See https://mudblazor.com/getting-started/installation#manual-install-add-components";
+
+        private readonly ILogger<DialogService> _logger;
+        private bool _missingProviderLogged;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DialogService"/> class.
+        /// </summary>
+        /// <remarks>
+        /// Declared explicitly rather than as an optional parameter on the logger constructor to preserve source compatibility.
+        /// </remarks>
+        public DialogService() : this(null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DialogService"/> class.
+        /// </summary>
+        /// <param name="logger">The logger used to surface configuration problems such as a missing provider.</param>
+        public DialogService(ILogger<DialogService>? logger)
+        {
+            _logger = logger ?? NullLogger<DialogService>.Instance;
         }
 
         /// <inheritdoc />
@@ -81,6 +110,18 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogOptions options) where T : IComponent
+        {
+            return ShowAsync<T>(string.Empty, DialogParameters.Default, options);
+        }
+
+        /// <inheritdoc />
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogParameters parameters) where T : IComponent
+        {
+            return ShowAsync<T>(string.Empty, parameters, DialogOptions.Default);
+        }
+
+        /// <inheritdoc />
         public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string? title, DialogParameters parameters) where T : IComponent
         {
             return ShowAsync<T>(title, parameters, DialogOptions.Default);
@@ -94,34 +135,40 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
-        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent)
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogParameters parameters, DialogOptions options) where T : IComponent
         {
-            return ShowAsync(contentComponent, string.Empty, DialogParameters.Default, DialogOptions.Default);
+            return ShowAsync<T>(string.Empty, parameters, options);
         }
 
         /// <inheritdoc />
-        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title)
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component)
         {
-            return ShowAsync(contentComponent, title, DialogParameters.Default, DialogOptions.Default);
+            return ShowAsync(component, string.Empty, DialogParameters.Default, DialogOptions.Default);
         }
 
         /// <inheritdoc />
-        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title, DialogOptions options)
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title)
         {
-            return ShowAsync(contentComponent, title, DialogParameters.Default, options);
+            return ShowAsync(component, title, DialogParameters.Default, DialogOptions.Default);
         }
 
         /// <inheritdoc />
-        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title, DialogParameters parameters)
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogOptions options)
         {
-            return ShowAsync(contentComponent, title, parameters, DialogOptions.Default);
+            return ShowAsync(component, title, DialogParameters.Default, options);
         }
 
         /// <inheritdoc />
-        public async Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type contentComponent, string? title,
+        public Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title, DialogParameters parameters)
+        {
+            return ShowAsync(component, title, parameters, DialogOptions.Default);
+        }
+
+        /// <inheritdoc />
+        public async Task<IDialogReference> ShowAsync([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] Type component, string? title,
             DialogParameters parameters, DialogOptions options)
         {
-            var dialogReference = await ShowCoreAsync(contentComponent, title, parameters, options);
+            var dialogReference = await ShowCoreAsync(component, title, parameters, options);
 
             //Do not wait forever, what if render fails because of some internal exception and we will never release the method.
             var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -246,6 +293,13 @@ namespace MudBlazor
             if (dialogInstanceAddedAsync is not null)
             {
                 await dialogInstanceAddedAsync(dialogReference);
+            }
+            else if (!_missingProviderLogged)
+            {
+                // No MudDialogProvider is subscribed, so this dialog will never render (ShowAsync then blocks until its render timeout).
+                // Log once with actionable guidance instead of failing silently.
+                _missingProviderLogged = true;
+                _logger.LogError(MissingProviderMessage);
             }
 
             return dialogReference;

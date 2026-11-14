@@ -36,6 +36,6 @@ internal partial class BoolConverter
             return value;
         }
 
-        public static readonly ObjectBoolConverter Instance = new();
+        public static ObjectBoolConverter Instance { get; } = new();
     }
 }

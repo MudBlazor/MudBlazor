@@ -5,7 +5,7 @@
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents the options for a line chart that has axes.
+/// Line and area chart options such as stroke width, data markers, interpolation, and per-series display overrides.
 /// </summary>
 public interface IAxisLineChartOptions : IAxisChartOptions
 {
@@ -31,6 +31,14 @@ public interface IAxisLineChartOptions : IAxisChartOptions
     public bool YAxisRequireZeroPoint { get; set; }
 
     /// <summary>
+    /// Prevent negative overshoots if all Y values are non-negative
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>
+    /// </remarks>
+    public bool ClampToZero { get; set; }
+
+    /// <summary>
     /// The style of line to use for the chart <see cref="LineDisplayType.Line"/> or <see cref="LineDisplayType.Area"/>
     /// </summary>
     public LineDisplayType LineDisplayType { get; set; }
@@ -47,6 +55,22 @@ public interface IAxisLineChartOptions : IAxisChartOptions
     /// Optional per-series display overrides.
     /// </summary>
     public IDictionary<IChartSeries, SeriesDisplayOverride> SeriesDisplayOverrides { get; set; }
+
+    /// <summary>
+    /// When <c>true</c>, lines connect across null data points instead of showing gaps.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// </remarks>
+    public bool ConnectNullPoints { get; set; }
+
+    /// <summary>
+    /// When <c>true</c>, a finger opens tooltips too: dragging sideways across the chart, or pressing and holding first, moves the tooltip from point to point, and a tap opens the nearest point.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>. A sideways drag that starts on the chart moves the tooltip instead of scrolling a horizontal container around it. Has no effect when <see cref="IChartOptions.ShowToolTips"/> is <c>false</c>.
+    /// </remarks>
+    public bool ShowToolTipsOnTouch { get; set; }
 }
 
 /// <summary>

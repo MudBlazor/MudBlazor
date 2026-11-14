@@ -17,8 +17,23 @@
 }
 
 .mud-drop-item:not(.mud-drop-item-preview-start) {
+  cursor: default;
+  user-select: none;
+}
+
+.mud-drop-item.mud-drop-item-draggable:not(.mud-drop-item-preview-start) {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.mud-drag-handle {
   cursor: grab;
   user-select: none;
+  display: inline-flex;
+  align-items: center;
 
   &:active {
     cursor: grabbing;
@@ -42,4 +57,9 @@
       transform: none;
     }
   }
+}
+
+.mud-drop-item[draggable="true"],
+.mud-drag-handle[draggable="true"] {
+  touch-action: none;
 }

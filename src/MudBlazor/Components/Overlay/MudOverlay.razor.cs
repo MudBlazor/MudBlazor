@@ -210,10 +210,10 @@ public partial class MudOverlay : MudComponentBase, IPointerEventsNoneObserver, 
             .WithChangeHandler(HandleVisibleChanged);
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstTime)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         // set initial handlelockscrollchanges
-        if (firstTime)
+        if (firstRender)
         {
             _previousLockScroll = LockScroll;
             _previousAbsolute = Absolute;

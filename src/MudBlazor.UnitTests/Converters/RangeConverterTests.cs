@@ -80,4 +80,44 @@ public class RangeConverterTests
         parsed!.Start.Should().Be("abc");
         parsed.End.Should().Be("xyz");
     }
+
+    [Test]
+    public void Convert_BothElementsNull_ReturnsEmptyString()
+    {
+        var conv = new RangeConverter<int?>();
+        // Non-null range whose elements both stringify to null collapses to empty, like a null range.
+        conv.Convert(new Range<int?>(null, null)).Should().BeEmpty();
+    }
+
+    [Test]
+    public void ConvertBack_NullableEmptyParts_ParsesToNullElements()
+    {
+        var conv = new RangeConverter<int?>();
+        // Unlike non-nullable int (empty -> 0), nullable elements parse empty parts back to null.
+        var parsed = conv.ConvertBack("[;]");
+        parsed.Should().NotBeNull();
+        parsed!.Start.Should().BeNull();
+        parsed.End.Should().BeNull();
+    }
+
+    [TestCase("5;10")]      // missing surrounding brackets
+    [TestCase("[5]")]       // missing separator
+    [TestCase("[;")]        // missing closing bracket
+    [TestCase("5;10]")]     // missing opening bracket
+    public void ConvertBack_StructurallyInvalid_ReturnsNull(string input)
+    {
+        var conv = new RangeConverter<int>();
+        conv.ConvertBack(input).Should().BeNull();
+    }
+
+    [Test]
+    public void ConvertBack_MultipleSeparators_SplitsOnFirst()
+    {
+        var conv = new RangeConverter<string?>();
+        // Split uses the first ';', so the remainder (including further separators) belongs to the end.
+        var parsed = conv.ConvertBack("[a;b;c]");
+        parsed.Should().NotBeNull();
+        parsed!.Start.Should().Be("a");
+        parsed.End.Should().Be("b;c");
+    }
 }

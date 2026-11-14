@@ -1,0 +1,20 @@
+﻿<MudDrawerContainer id="drawer-container">
+    <MudDrawer id="drawer" Open="true" Fixed="false" Variant="@Variant" Anchor="@Anchor" Width="@Width" MiniWidth="@MiniWidth" Height="@Height" />
+</MudDrawerContainer>
+
+@code {
+    [Parameter]
+    public DrawerVariant Variant { get; set; } = DrawerVariant.Persistent;
+
+    [Parameter]
+    public Anchor Anchor { get; set; } = Anchor.Start;
+
+    [Parameter]
+    public string? Width { get; set; }
+
+    [Parameter]
+    public string? MiniWidth { get; set; }
+
+    [Parameter]
+    public string? Height { get; set; }
+}

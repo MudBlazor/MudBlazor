@@ -33,8 +33,10 @@ namespace MudBlazor
             .Build();
 
         protected override string IconClassname => new CssBuilder("mud-button-root mud-icon-button")
-            .AddClass($"mud-{Color.ToStringFast(true)}-text hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor == null || (UncheckedColor != null && BoolValue == true))
-            .AddClass($"mud-{UncheckedColor?.ToStringFast(true)}-text hover:mud-{UncheckedColor?.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue == false)
+            .AddClass($"mud-{Color.ToStringFast(true)}-text", !GetDisabledState() && (UncheckedColor == null || BoolValue == true))
+            .AddClass($"mud-{UncheckedColor?.ToStringFast(true)}-text", !GetDisabledState() && UncheckedColor != null && BoolValue != true)
+            .AddClass($"hover:mud-{Color.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && (UncheckedColor == null || BoolValue == true))
+            .AddClass($"hover:mud-{UncheckedColor?.ToStringFast(true)}-hover", !GetReadOnlyState() && !GetDisabledState() && UncheckedColor != null && BoolValue != true)
             .AddClass($"mud-checkbox-dense", Dense)
             .AddClass($"mud-ripple mud-ripple-checkbox", Ripple && !GetReadOnlyState() && !GetDisabledState())
             .AddClass($"mud-disabled", GetDisabledState())
@@ -172,10 +174,10 @@ namespace MudBlazor
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
                     .When(CanHandleKeys, builder => builder
-                        .OnKeyDown("Delete", () => SetBoolValueAsync(false, true))
-                        .OnKeyDownAny(["Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
-                        .OnKeyDown("Backspace", HandleBackspaceAsync)
-                        .OnKeyDown(" ", HandleSpaceAsync)));
+                        .OnKeyDownLiteral("Delete", () => SetBoolValueAsync(false, true))
+                        .OnKeyDownAnyLiteral(["Enter", "NumpadEnter"], () => SetBoolValueAsync(true, true))
+                        .OnKeyDownLiteral("Backspace", HandleBackspaceAsync)
+                        .OnKeyDownLiteral(" ", HandleSpaceAsync)));
             }
             await base.OnAfterRenderAsync(firstRender);
         }

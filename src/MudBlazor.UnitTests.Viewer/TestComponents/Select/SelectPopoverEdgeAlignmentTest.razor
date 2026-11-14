@@ -1,0 +1,29 @@
+﻿@* Visual regression for #11894. Field dropdowns pinned within the overflow-padding
+   gutter (24px) of the viewport edge must stay aligned with their input box, not shift inward. *@
+<div style="position:fixed; left:8px; top:120px; width:300px; z-index:10;">
+    <MudSelect T="string" @bind-Value="_value" Label="Select 8px from left edge" Variant="Variant.Outlined"
+               PopoverClass="edge-select-popover">
+        @foreach (var state in _states)
+        {
+            <MudSelectItem Value="@state">@state</MudSelectItem>
+        }
+    </MudSelect>
+</div>
+
+<div style="position:fixed; left:8px; top:320px; width:300px; z-index:10;">
+    <MudDatePicker Label="DatePicker 8px from left edge" Variant="Variant.Outlined"
+                   PopoverClass="edge-picker-popover" />
+</div>
+
+@code {
+    public static string __description__ =
+        "Field dropdowns near the left viewport edge should stay left-aligned with their input box (#11894), " +
+        "instead of being pushed to the overflow-padding gutter. The popover left should match the input left.";
+
+    private string? _value;
+
+    private readonly string[] _states =
+    {
+        "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado"
+    };
+}

@@ -26,7 +26,7 @@ public partial class MudColor
         // which makes it difficult to compare two colors accurately in real-world scenarios.
         return new MudColor(r, g, b, alpha: aPercentage);
 
-        int InterpolateValue(byte start, byte end) => (int)(start * (1.0f - t) + end * t);
+        int InterpolateValue(byte start, byte end) => (int)((start * (1.0f - t)) + (end * t));
     }
 
     /// <summary>
@@ -110,7 +110,7 @@ public partial class MudColor
         yield return baseColor;
         for (var i = 1; i < numberOfColors; i++)
         {
-            yield return baseColor.SetH((baseColor.H + i * angle) % 360);
+            yield return baseColor.SetH((baseColor.H + (i * angle)) % 360);
         }
     }
 

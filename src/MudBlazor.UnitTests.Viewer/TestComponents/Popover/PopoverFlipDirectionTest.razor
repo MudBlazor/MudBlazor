@@ -91,20 +91,20 @@
     private Origin _anchor = Origin.BottomLeft;
     private Origin _transform = Origin.TopLeft;
 
-	private void OnExpandCollapseClick() => _expanded = !_expanded;
+    private void OnExpandCollapseClick() => _expanded = !_expanded;
 
     private async Task OnExpandCollapseFor5sClickAsync()
-	{
-		var expanded = _expanded;
+    {
+        var expanded = _expanded;
         _expanded = !expanded;
         await Task.Delay(5000);
         _expanded = expanded;
     }
 
-	private async Task OnExpandListIn5sAsync()
-	{
-		_expandList = false;
-		await Task.Delay(5000);
-		_expandList = true;
-	}
+    private async Task OnExpandListIn5sAsync()
+    {
+        _expandList = false;
+        await Task.Delay(5000);
+        _expandList = true;
+    }
 }

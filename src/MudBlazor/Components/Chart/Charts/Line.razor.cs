@@ -34,7 +34,10 @@ namespace MudBlazor.Charts
 
         public override void RebuildChart()
         {
-            if (IsOverlayChart && SharedData is null) return;
+            if (IsOverlayChart && SharedData is null)
+            {
+                return;
+            }
 
             Series = (ChartContainer != null && ChartReference is MudChart<T>)
                 ? ChartContainer.ChartSeries
@@ -69,13 +72,16 @@ namespace MudBlazor.Charts
             SetBounds();
             ComputeUnitsAndNumberOfLines(out gridYUnits, out numHorizontalLines, out lowestHorizontalLine, out var numVerticalLines);
 
-            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount : numHorizontalLines - 1;
+            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines - 1;
 
             horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, numVerticalLines - 1);
             verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
 
             // If this is an overlay chart, we do not generate the grid lines
-            if (IsOverlayChart) return;
+            if (IsOverlayChart)
+            {
+                return;
+            }
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, 0, horizontalSpace);
@@ -83,24 +89,56 @@ namespace MudBlazor.Charts
 
         private void ComputeUnitsAndNumberOfLines(out T gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
         {
-            var yAxisTicks = ChartOptions?.YAxisTicks;
-            if (yAxisTicks.HasValue && yAxisTicks.Value > 0)
-                gridYUnits = T.CreateSaturating(yAxisTicks.Value);
-            else
-                gridYUnits = T.CreateSaturating(20);
-
             var visibleSeries = Series.Where(series => series.Visible).ToArray();
-            var values = visibleSeries.SelectMany(series => series.Data.Values);
 
-            if (visibleSeries.Length > 0 && values.Any())
+            // One pass over the readings, which a chart rebuilds on every render of its parent.
+            var hasValues = false;
+            T minValue = T.Zero, maxValue = T.Zero;
+            foreach (var series in visibleSeries)
             {
-                var minY = values.Min();
+                if (series.Data is null)
+                {
+                    continue;
+                }
+
+                foreach (var point in series.Data.Points)
+                {
+                    if (!point.HasValue)
+                    {
+                        continue;
+                    }
+
+                    if (!hasValues)
+                    {
+                        minValue = maxValue = point.Y;
+                        hasValues = true;
+                    }
+                    else
+                    {
+                        // Compared the way Enumerable.Min and Max compare, so a NaN reading is handled as before.
+                        if (Comparer<T>.Default.Compare(point.Y, minValue) < 0)
+                        {
+                            minValue = point.Y;
+                        }
+
+                        if (Comparer<T>.Default.Compare(point.Y, maxValue) > 0)
+                        {
+                            maxValue = point.Y;
+                        }
+                    }
+                }
+            }
+
+            if (visibleSeries.Length > 0 && hasValues)
+            {
+                var minY = minValue;
                 var maxY = ChartOptions?.YAxisSuggestedMax is null
-                    ? values.Max()
-                    : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), values.Max());
+                    ? maxValue
+                    : T.Max(T.CreateSaturating(ChartOptions.YAxisSuggestedMax.Value), maxValue);
 
                 var hasAreaDisplay = ChartOptions?.LineDisplayType == LineDisplayType.Area || visibleSeries.Any(series => GetSeriesDisplayOverride(series)?.LineDisplayType == LineDisplayType.Area);
-                var includeYAxisZeroPoint = ChartOptions?.YAxisRequireZeroPoint is true || hasAreaDisplay;
+                var clampToZeroCanApply = ChartOptions?.ClampToZero is true && minValue >= T.Zero;
+                var includeYAxisZeroPoint = ChartOptions?.YAxisRequireZeroPoint is true || hasAreaDisplay || clampToZeroCanApply;
 
                 if (includeYAxisZeroPoint)
                 {
@@ -108,8 +146,9 @@ namespace MudBlazor.Charts
                     maxY = T.Max(maxY, T.Zero); // we want to include the 0 in the grid
                 }
 
-                lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY / gridYUnits));
-                var highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits));
+                gridYUnits = GetGridYUnits(minY, maxY);
+                lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits));
+                var highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits));
                 numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
 
                 // this is a safeguard against millions of gridlines which might arise with very high values
@@ -117,15 +156,16 @@ namespace MudBlazor.Charts
                 while (numHorizontalLines > maxYTicks)
                 {
                     gridYUnits *= T.CreateSaturating(2);
-                    lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY / gridYUnits));
-                    highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits));
+                    lowestHorizontalLine = (int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits));
+                    highestHorizontalLine = (int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits));
                     numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
                 }
 
-                numVerticalLines = visibleSeries.Max(series => series.Data.Values.Count);
+                numVerticalLines = visibleSeries.Max(series => series.Data?.Count ?? 0);
             }
             else
             {
+                gridYUnits = GetGridYUnits(T.Zero, T.Zero);
                 numHorizontalLines = 1;
                 lowestHorizontalLine = 0;
                 numVerticalLines = 1;
@@ -139,8 +179,16 @@ namespace MudBlazor.Charts
 
         protected override TReturn GetDataValue<TReturn>(int seriesIndex, int dataPointIndex)
         {
-            return (TReturn)Convert.ChangeType(Series[seriesIndex].Data.Values[dataPointIndex], typeof(T));
+            return (TReturn)Convert.ChangeType(Series[seriesIndex].Data.GetValue(dataPointIndex), typeof(TReturn));
         }
+
+        protected override string GetDataValueAsString(int seriesIndex, int dataPointIndex)
+        {
+            return GetDataValueAsDouble(seriesIndex, dataPointIndex).ToString(Series[seriesIndex].TooltipYValueFormat);
+        }
+
+        // Converting through Convert.ChangeType boxes the value twice for every point on every rebuild.
+        internal override double GetDataValueAsDouble(int seriesIndex, int dataPointIndex) => double.CreateSaturating(Series[seriesIndex].Data[dataPointIndex].Y);
 
         protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)
         {
@@ -151,37 +199,10 @@ namespace MudBlazor.Charts
         {
             var data = Series[seriesIndex].Data;
             var x = HorizontalStartSpace + (dataPointIndex * horizontalSpace);
-            var gridValue = (double.CreateSaturating(data[dataPointIndex].Y / gridYUnits) - lowestHorizontalLine) * verticalSpace;
+            var gridValue = ((double.CreateSaturating(data[dataPointIndex].Y) / double.CreateSaturating(gridYUnits)) - lowestHorizontalLine) * verticalSpace;
             var y = _boundHeight - VerticalStartSpace - double.CreateSaturating(gridValue);
             return (x, y);
         }
 
-        internal override ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
-        {
-            var series = Series[seriesIndex];
-            var data = series.Data;
-            var interpolationResolution = 10;
-
-            var xValues = new double[data.Values.Count];
-            var yValues = new double[data.Values.Count];
-
-            for (var j = 0; j < data.Values.Count; j++)
-            {
-                (xValues[j], yValues[j]) = GetXYForDataPoint(seriesIndex, j, lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
-            }
-
-            var overrideSettings = GetSeriesDisplayOverride(series);
-            var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;
-
-            ILineInterpolator interpolator = interpolationOption switch
-            {
-                InterpolationOption.NaturalSpline => new NaturalSpline(xValues, yValues, interpolationResolution),
-                InterpolationOption.EndSlope => new EndSlopeSpline(xValues, yValues, interpolationResolution),
-                InterpolationOption.Periodic => new PeriodicSpline(xValues, yValues, interpolationResolution),
-                _ => throw new NotImplementedException("Interpolation option not implemented yet")
-            };
-
-            return interpolator;
-        }
     }
 }

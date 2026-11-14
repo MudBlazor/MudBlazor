@@ -1,0 +1,112 @@
+<MudPopoverProvider />
+
+<style>
+    .popover-layout-shift-host {
+        display: flex;
+        min-height: 420px;
+        border: 1px solid var(--mud-palette-lines-default);
+        border-radius: var(--mud-default-borderradius);
+        overflow: hidden;
+        background:
+            linear-gradient(135deg, rgba(0, 0, 0, 0.02), transparent 45%),
+            var(--mud-palette-surface);
+    }
+
+    .popover-layout-shift-sidebar {
+        flex: 0 0 var(--layout-rail-width);
+        width: var(--layout-rail-width);
+        transition: width 220ms ease, flex-basis 220ms ease;
+        background:
+            linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.01)),
+            var(--mud-palette-background-grey);
+        border-right: 1px solid var(--mud-palette-lines-default);
+    }
+
+    .popover-layout-shift-sidebar.popover-layout-shift-sidebar-collapsed {
+        --layout-rail-width: 84px;
+    }
+
+    .popover-layout-shift-sidebar:not(.popover-layout-shift-sidebar-collapsed) {
+        --layout-rail-width: 272px;
+    }
+
+    .popover-layout-shift-content {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+    }
+
+    .popover-layout-shift-card {
+        width: min(100%, 560px);
+    }
+</style>
+
+<MudStack Spacing="2">
+    <MudText Typo="Typo.subtitle1">Responsive layout shift popover repro</MudText>
+    <MudText Typo="Typo.body2">
+        Open the select, then toggle the rail. The popover should continue to look attached while the layout animates.
+    </MudText>
+</MudStack>
+
+<div class="popover-layout-shift-host mt-4">
+    <div class="@SidebarClassname">
+        <MudStack Class="pa-4" Spacing="2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@ToggleRail">
+                Toggle Rail
+            </MudButton>
+            <MudText Typo="Typo.body2">
+                Rail width: @_railWidthLabel
+            </MudText>
+        </MudStack>
+    </div>
+
+    <div class="popover-layout-shift-content">
+        <MudPaper Class="popover-layout-shift-card pa-6" Elevation="2">
+            <MudStack Spacing="3">
+                <MudText Typo="Typo.h6">Fixed-width select inside moving layout</MudText>
+                <MudText Typo="Typo.body2">
+                    This reproduces the case where an open popover must follow its anchor while surrounding layout width changes.
+                </MudText>
+                <MudSelect T="string"
+                           Label="State"
+                           Style="width: 280px"
+                           PopoverClass="layout-shift-popover"
+                           @bind-Value="_value">
+                    @foreach (var item in _items)
+                    {
+                        <MudSelectItem T="string" Value="@item">@item</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudStack>
+        </MudPaper>
+    </div>
+</div>
+
+@code {
+    public static string __description__ = "Open a fixed-width select and change surrounding layout width to verify the popover stays aligned during responsive shifts.";
+
+    private bool _collapsed;
+    private string _value = "Illinois";
+
+    private readonly string[] _items =
+    [
+        "Illinois",
+        "Iowa",
+        "Kansas",
+        "Nebraska",
+        "Wisconsin"
+    ];
+
+    private string SidebarClassname => _collapsed
+        ? "popover-layout-shift-sidebar popover-layout-shift-sidebar-collapsed"
+        : "popover-layout-shift-sidebar";
+
+    private string _railWidthLabel => _collapsed ? "84px" : "272px";
+
+    private void ToggleRail()
+    {
+        _collapsed = !_collapsed;
+    }
+}

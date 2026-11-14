@@ -13,7 +13,7 @@ internal class SpaceBetweenStrategy : IBarGroupPositionStrategy
         if (ctx.ColumnsPerDataSet == 1)
         {
             positions[0] = ctx.HorizontalStartSpace + (ctx.BarGroupWidth / 2) +
-                           (ctx.HorizontalSpace - (ctx.BarWidth * ctx.DataSetCount) - (ctx.BarGap * ctx.SpacesPerGroup)) / 2;
+                           ((ctx.HorizontalSpace - (ctx.BarWidth * ctx.DataSetCount) - (ctx.BarGap * ctx.SpacesPerGroup)) / 2);
             return positions;
         }
 
@@ -25,7 +25,7 @@ internal class SpaceBetweenStrategy : IBarGroupPositionStrategy
 
         for (var i = 0; i < ctx.ColumnsPerDataSet; i++)
         {
-            positions[i] = start + i * ((ctx.BarWidth * ctx.DataSetCount) + (ctx.BarGap * ctx.SpacesPerGroup) + spaceBetween);
+            positions[i] = start + (i * ((ctx.BarWidth * ctx.DataSetCount) + (ctx.BarGap * ctx.SpacesPerGroup) + spaceBetween));
         }
 
         return positions;

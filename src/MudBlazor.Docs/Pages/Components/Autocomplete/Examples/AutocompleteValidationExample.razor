@@ -40,7 +40,7 @@
              CloseIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Tertiary"
              Validation="@(new Func<string, IEnumerable<string>>(Validate))" />
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto mt-3 mb-3" 
-             OnClick="@(()=>form.Validate())">Validate</MudButton>
+             OnClick="@(()=>form.ValidateAsync())">Validate</MudButton>
                     @if (form.IsTouched && form.IsValid)
                     {
                         <MudText Color="Color.Success">Success</MudText>
@@ -50,7 +50,7 @@
                         <MudText>IsTouched: @form.IsTouched, IsValid: @form.IsValid</MudText>
                     }
         </MudForm>
-	</MudItem>
+    </MudItem>
     <MudItem xs="12" md="12">
         <MudText Class="mb-n3" Typo="Typo.body2">
             <MudChip T="string">@(choice1.State ?? "Not selected")</MudChip><MudChip T="string">@(choice2.State ?? "Not selected")</MudChip><MudChip T="string">@(choice3.State ?? "Not selected")</MudChip>

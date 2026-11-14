@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text.RegularExpressions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
@@ -49,6 +50,18 @@ public partial class DateMask : PatternMask
     }
 
     /// <inheritdoc />
+    public override void Insert(string? input)
+    {
+        // _year and _month may still hold values from a previous text, for instance after SetText
+        // replaced the text entirely. Reset them so day validation only uses what is re-extracted
+        // from the current text during alignment, otherwise a valid day like 31 could be clamped
+        // or padded based on the previous month (#10772).
+        _year = 0;
+        _month = 0;
+        base.Insert(input);
+    }
+
+    /// <inheritdoc />
     protected override void ModifyPartiallyAlignedMask(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
     {
         if (alignedText.IsEmpty())
@@ -57,8 +70,8 @@ public partial class DateMask : PatternMask
         }
 
         _year = ExtractYear(mask, alignedText, maskOffset);
-        MonthLogic(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
-        DayLogic(mask, text, maskOffset, ref textIndex, ref maskIndex, ref alignedText);
+        MonthLogic(mask, maskOffset, ref maskIndex, ref alignedText);
+        DayLogic(mask, maskOffset, ref maskIndex, ref alignedText);
     }
 
     private int ExtractYear(string mask, string alignedText, int maskOffset)
@@ -84,7 +97,7 @@ public partial class DateMask : PatternMask
         return 0;
     }
 
-    private void MonthLogic(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
+    private void MonthLogic(string mask, int maskOffset, ref int maskIndex, ref string alignedText)
     {
         var monthPattern = new string(_monthChar, 2);
         var (monthString, index) = Extract(monthPattern, mask, maskOffset, alignedText);
@@ -110,7 +123,7 @@ public partial class DateMask : PatternMask
         }
     }
 
-    private void DayLogic(string mask, string text, int maskOffset, ref int textIndex, ref int maskIndex, ref string alignedText)
+    private void DayLogic(string mask, int maskOffset, ref int maskIndex, ref string alignedText)
     {
         var dayPattern = new string(_dayChar, 2);
         var (dayString, index) = Extract(dayPattern, mask, maskOffset, alignedText);
@@ -167,8 +180,6 @@ public partial class DateMask : PatternMask
             var monthFound = monthIndex >= 0;
             var monthComplete = monthString?.Length == 2;
             var y = ExtractYear(Mask, text, 0);
-            //if (maskHasYear && y < 0 || maskHasMonth && (!monthFound || !monthComplete) || maskHasDay && (!dayFound || !dayComplete))
-            //    return text; // we have incomplete input, no final check necessary/possible
             int.TryParse(dayString ?? "", out var d);
             int.TryParse(monthString ?? "", out var m);
             if (!maskHasYear)
@@ -249,7 +260,6 @@ public partial class DateMask : PatternMask
         }
     }
 
-    [GeneratedRegex(@"^\d+$")]
+    [GeneratedRegex(@"^\d+$", RegexOptions.None, RegexDefaults.MatchTimeoutMilliseconds)]
     private static partial Regex ValidDigitRegularExpression();
 }
-

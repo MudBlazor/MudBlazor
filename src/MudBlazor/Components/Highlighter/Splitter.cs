@@ -1,16 +1,24 @@
 ﻿using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor.Components.Highlighter;
 
+/// <summary>
+/// The kind of text fragment produced when splitting text for highlighting.
+/// </summary>
 public enum FragmentType { Text, HighlightedText, Markup }
+/// <summary>
+/// One segment of text produced when <see cref="MudHighlighter"/> splits a string, tagged by its <see cref="FragmentType"/>.
+/// </summary>
 public record FragmentInfo(string Content, FragmentType Type);
 
+/// <summary>
+/// Splits text into fragments for <see cref="MudHighlighter"/>, marking which parts match the search terms.
+/// </summary>
 public static partial class Splitter
 {
-    private static readonly TimeSpan _regexTimeout = TimeSpan.FromSeconds(5);
-
     private static readonly Regex _htmlTagRegex = HtmlTagMatcher();
 
     private static readonly Regex _tagParser = HtmlTagParser();
@@ -42,7 +50,7 @@ public static partial class Splitter
         }
 
         regex = BuildRegexPattern(highlightTerms, untilNextBoundary);
-        var splits = Regex.Split(text, regex, GetRegexOptions(caseSensitive) | RegexOptions.NonBacktracking, _regexTimeout);
+        var splits = Regex.Split(text, regex, GetRegexOptions(caseSensitive) | RegexOptions.NonBacktracking, RegexDefaults.MatchTimeout);
         var nonEmpty = splits.Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
         return new Memory<string>(nonEmpty);
@@ -125,11 +133,11 @@ public static partial class Splitter
     {
         regex = string.Empty;
 
-        if (terms.Count == 0) return new Regex("^$", RegexOptions.NonBacktracking, _regexTimeout);
+        if (terms.Count == 0) return new Regex("^$", RegexOptions.NonBacktracking, RegexDefaults.MatchTimeout);
 
         regex = BuildRegexPattern(terms, untilNextBoundary);
 
-        return new Regex(regex, GetRegexOptions(caseSensitive) | RegexOptions.Singleline | RegexOptions.NonBacktracking, _regexTimeout);
+        return new Regex(regex, GetRegexOptions(caseSensitive) | RegexOptions.Singleline | RegexOptions.NonBacktracking, RegexDefaults.MatchTimeout);
     }
 
     private static List<FragmentInfo> ProcessRawFragments(
@@ -351,9 +359,9 @@ public static partial class Splitter
 
     private readonly record struct TagInfo(string Name, bool IsClosing, bool IsSelfClosing);
 
-    [GeneratedRegex(@"(<\s*/?\s*\w+[^>]*?/?>)", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline, "en-US")]
+    [GeneratedRegex(@"(<\s*/?\s*\w+[^>]*?/?>)", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline, RegexDefaults.MatchTimeoutMilliseconds, "en-US")]
     private static partial Regex HtmlTagMatcher();
 
-    [GeneratedRegex(@"^<\s*(/)?\s*(\w+)[^>]*?(\/)?\s*>$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "en-US")]
+    [GeneratedRegex(@"^<\s*(/)?\s*(\w+)[^>]*?(\/)?\s*>$", RegexOptions.IgnoreCase | RegexOptions.Compiled, RegexDefaults.MatchTimeoutMilliseconds, "en-US")]
     private static partial Regex HtmlTagParser();
 }

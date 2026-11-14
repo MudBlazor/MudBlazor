@@ -1,0 +1,75 @@
+﻿<MudPopoverProvider />
+
+<MudDataGrid Items="@_items" Filterable="true" FilterMode="DataGridFilterMode.Simple">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Age" />
+        <PropertyColumn Property="x => x.Department">
+            <FilterTemplate>
+                @* Custom filter template - each filter gets its own independent FilterContext *@
+                <MudStack Row Spacing="1" Style="width: 100%">
+                    <MudSelect @bind-Value="context.FilterDefinition!.Operator" FullWidth="true" Dense="true" Margin="@Margin.Dense" 
+                               Class="filter-operator" Label="Operator">
+                        @foreach (var o in context.FilterDefinition.Column!.GetFilterOperators(context.FilterDefinition.FieldType))
+                        {
+                            <MudSelectItem Value="@o">@o</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudSelect T="string" MultiSelection="true" 
+                               SelectedValues="@GetFilterValues(context.FilterDefinition!)" 
+                               SelectedValuesChanged="@(values => SetFilterValues(context, values))" 
+                               FullWidth="true" Dense="true" Margin="@Margin.Dense" 
+                               Class="filter-input department-filter" 
+                               Label="Value" Clearable="true">
+                        @foreach (var dept in _departments)
+                        {
+                            <MudSelectItem T="string" Value="@dept">@dept</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudStack>
+            </FilterTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Model(string Name, int Age, string Department);
+
+    private readonly List<Model> _items = new()
+    {
+        new("Sam", 30, "Engineering"),
+        new("Alicia", 25, "Marketing"),
+        new("Ira", 27, "Engineering"),
+        new("John", 32, "Sales")
+    };
+
+    private readonly List<string> _departments = new() { "Engineering", "Marketing", "Sales" };
+
+    private IReadOnlyCollection<string> GetFilterValues(IFilterDefinition<Model> filterDefinition)
+    {
+        return filterDefinition.Value as IReadOnlyCollection<string> ?? Array.Empty<string>();
+    }
+
+    private async Task SetFilterValues(FilterContext<Model> context, IEnumerable<string> values)
+    {
+        var filterDefinition = context.FilterDefinition!;
+        var selectedValues = values?.ToList() ?? [];
+        filterDefinition.Value = selectedValues.Count > 0 ? selectedValues : null;
+
+        // Set custom FilterFunction to handle multiple values
+        if (filterDefinition is FilterDefinition<Model> filterDef)
+        {
+            if (selectedValues.Count > 0)
+            {
+                filterDef.FilterFunction = item => selectedValues.Contains(item.Department);
+            }
+            else
+            {
+                filterDef.FilterFunction = null;
+            }
+        }
+
+        // Use the context's Apply action to trigger the filter
+        await context.Actions.ApplyFilterAsync(filterDefinition);
+    }
+}

@@ -8,6 +8,10 @@ using static MudBlazor.BoolConverter;
 
 namespace MudBlazor;
 
+/// <summary>
+/// Converts a value of type T to and from a nullable bool.
+/// </summary>
+/// <typeparam name="T">The value type converted to and from a nullable boolean.</typeparam>
 public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
 {
     private static readonly SafeType[] _numericTypes =
@@ -22,7 +26,7 @@ public sealed class BoolConverter<T> : IReversibleConverter<T?, bool?>
 
     private BoolConverter()
     {
-        var builder = ReversibleTypeDispatcher.Create<T?, bool?>()
+        var builder = ReversibleTypeDispatcher.Create<T?, bool?>(DispatcherRegistrationPolicy.FirstWins)
             .Add(StringConverter.Instance)      // string <-> bool?
             .Add<bool>(BoolIdentity.Instance)   // bool <-> bool?
             .Add<bool?>(BoolIdentity.Instance)  // bool? <-> bool?

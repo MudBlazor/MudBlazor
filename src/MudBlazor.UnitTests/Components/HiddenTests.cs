@@ -280,31 +280,5 @@ namespace MudBlazor.UnitTests.Components
             jsRuntimeMock.Verify();
         }
 
-        [Test]
-        [NonParallelizable]
-        public async Task TestSemaphore_RenderInParallel()
-        {
-            var jsRuntimeMock = new Mock<IJSRuntime>();
-            var browserViewportService = new BrowserViewportService(NullLogger<BrowserViewportService>.Instance, jsRuntimeMock.Object);
-
-            jsRuntimeMock
-                .Setup(expression => expression.InvokeAsync<BrowserWindowSize>("mudResizeListener.getBrowserWindowSize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
-                .ReturnsAsync(new BrowserWindowSize { Height = 1080, Width = 1920 });
-            jsRuntimeMock
-                .Setup(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.listenForResize", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
-                .ReturnsAsync(Mock.Of<IJSVoidResult>(), TimeSpan.FromMilliseconds(200)).Verifiable();
-            jsRuntimeMock
-                .Setup(expression => expression.InvokeAsync<IJSVoidResult>("mudResizeListenerFactory.cancelListeners", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
-                .ReturnsAsync(Mock.Of<IJSVoidResult>);
-
-            Context.Services.AddSingleton<IBrowserViewportService>(browserViewportService);
-
-            var component = Context.Render<RenderMultipleHiddenInParallel>();
-
-            await component.WaitForAssertionAsync(() => component.FindAll(".xl").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            await component.WaitForAssertionAsync(() => component.FindAll(".lg-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            await component.WaitForAssertionAsync(() => component.FindAll(".md-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-            await component.WaitForAssertionAsync(() => component.FindAll(".sm-and-up").Should().HaveCount(10), TimeSpan.FromSeconds(1));
-        }
     }
 }

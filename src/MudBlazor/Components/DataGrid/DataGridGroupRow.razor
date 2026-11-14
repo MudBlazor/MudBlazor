@@ -5,7 +5,7 @@
 @typeparam T
 
 <tr class="mud-table-row">
-    <td class="@GroupClassname" colspan="1000" style="@GroupStylename">
+    <td class="@GroupClassname" colspan="@DataGrid.VisibleColumnSpan" style="@GroupStylename">
         <div style="display:flex; align-items:center;">
             <MudIconButton Class="mud-table-row-expander" Icon="@(DataGrid.GetGroupIcon(_expanded))" OnClick="@GroupExpandClick"
                            aria-label="@(_expanded ? @Localizer[LanguageResource.MudDataGrid_CollapseGroup] : @Localizer[LanguageResource.MudDataGrid_ExpandGroup])" />
@@ -41,8 +41,8 @@
                                 GroupClassFunc="@GroupClassFunc"
                                 GroupStyleFunc="@GroupStyleFunc"
                                 DataGrid="@DataGrid"
-                                RowClick="@((args) => RowClick.InvokeAsync((args.args, args.item, args.index)))"
-                                ContextRowClick="@((args) => ContextRowClick.InvokeAsync((args.args, args.item, args.index)))"/>
+                                RowClick="@GetRowClickCallback()"
+                                ContextRowClick="@GetContextRowClickCallback()"/>
         }
     }
     else
@@ -52,11 +52,11 @@
             <DataGridVirtualizeRow T="T"
                                     DataGrid="@DataGrid"
                                     GroupedItems="@Items"
-                                    RowClick="@((args) => RowClick.InvokeAsync((args.args, args.item, args.index)))"
-                                    ContextRowClick="@((args) => ContextRowClick.InvokeAsync((args.args, args.item, args.index)))"/>
+                                    RowClick="@GetRowClickCallback()"
+                                    ContextRowClick="@GetContextRowClickCallback()"/>
             <!-- Group Footer -->
             <tr class="mud-table-row">
-                @DataGrid.FooterCells(Items)
+                @DataGrid.FooterCells(Items, Items)
             </tr>
         }
     }

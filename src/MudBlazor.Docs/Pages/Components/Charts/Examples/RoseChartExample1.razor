@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor.Docs.Examples
 
 <MudPaper Class="doc-section-component-container">
-    <MudChart ChartType="ChartType.Rose" ChartSeries="@_series" @bind-SelectedIndex="_selectedIndex" ChartOptions="@_options" Width="100%" Height="300px">
+    <MudChart T="double" ChartType="ChartType.Rose" ChartSeries="@_series" @bind-SelectedIndex="_selectedIndex" ChartOptions="@_options" Width="100%" Height="300px">
         <CustomGraphics>
             <text x="50"
                   y="25"

@@ -22,7 +22,7 @@ namespace MudBlazor
     public partial class MudDropContainer<T> : MudComponentBase where T : notnull
     {
         private MudDragAndDropItemTransaction<T>? _transaction;
-        private Dictionary<string, MudDropZone<T>> _mudDropZones = new();
+        private readonly Dictionary<string, MudDropZone<T>> _mudDropZones = new();
 
         protected string Classname =>
             new CssBuilder("mud-drop-container")

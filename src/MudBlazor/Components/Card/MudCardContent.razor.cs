@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents the primary content displayed within a <see cref="MudCard"/>.
+    /// The primary content area of a <see cref="MudCard"/>, holding its text and body elements.
     /// </summary>
     /// <seealso cref="MudCard" />
     /// <seealso cref="MudCardActions" />

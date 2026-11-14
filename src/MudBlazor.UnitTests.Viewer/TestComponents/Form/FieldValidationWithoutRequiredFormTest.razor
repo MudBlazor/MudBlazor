@@ -5,8 +5,8 @@
     private DateTime? _birthDate = DateTime.Now;
 
     private static Func<object, string, Task<IEnumerable<string>>> ValidateValueAsync => (_, _) => 
-        Task.FromResult<IEnumerable<string>>(Array.Empty<string>());
+        Task.FromResult<IEnumerable<string>>([]);
     
     private static Func<object, string, IEnumerable<string>> ValidateValue => (_, _) => 
-        Array.Empty<string>();
+        [];
 }

@@ -105,6 +105,7 @@
   overflow: hidden;
   flex-direction: column;
   justify-content: center;
+  cursor: default;
 
   &.mud-picker-content-landscape {
     padding: 0 8px;

@@ -4,9 +4,6 @@ namespace MudBlazor.Interpolation
 {
     internal abstract class SplineInterpolator : ILineInterpolator
     {
-        protected Matrix? _matrix;
-        protected MatrixSolver? _gauss;
-
         protected readonly int n;
         protected double[]? a, b, c, d, h;
 
@@ -19,13 +16,19 @@ namespace MudBlazor.Interpolation
         public SplineInterpolator(double[] xs, double[] ys, int resolution = 10)
         {
             if (xs.Length != ys.Length)
+            {
                 throw new ArgumentException("xs and ys must have the same length");
+            }
 
-            if (xs.Length < 4)
-                throw new ArgumentException("xs and ys must have a length of 4 or greater");
+            if (xs.Length < 1)
+            {
+                throw new ArgumentException("xs and ys must have a length of 1 or greater");
+            }
 
             if (resolution < 1)
+            {
                 throw new ArgumentException("resolution must be 1 or greater");
+            }
 
             GivenXs = xs;
             GivenYs = ys;
@@ -36,8 +39,6 @@ namespace MudBlazor.Interpolation
         }
         public void Interpolate()
         {
-            Debug.Assert(_matrix != null);
-            Debug.Assert(_gauss != null);
             Debug.Assert(a != null);
             Debug.Assert(b != null);
             Debug.Assert(c != null);
@@ -45,6 +46,7 @@ namespace MudBlazor.Interpolation
             Debug.Assert(h != null);
 
             var resolution = InterpolatedXs.Length / n;
+
             for (var i = 0; i < h.Length; i++)
             {
                 for (var k = 0; k < resolution; k++)
@@ -76,8 +78,6 @@ namespace MudBlazor.Interpolation
 
         public double Integrate()
         {
-            Debug.Assert(_matrix != null);
-            Debug.Assert(_gauss != null);
             Debug.Assert(a != null);
             Debug.Assert(b != null);
             Debug.Assert(c != null);
@@ -93,6 +93,7 @@ namespace MudBlazor.Interpolation
                 var termD = d[i] * Math.Pow(h[i], 4) / 4.0;
                 integral += termA + termB + termC + termD;
             }
+
             return integral;
         }
     }

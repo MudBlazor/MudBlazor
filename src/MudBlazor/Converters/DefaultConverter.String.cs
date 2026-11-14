@@ -12,6 +12,6 @@ internal partial class DefaultConverter
 
         public string? ConvertBack(string? input) => input;
 
-        public static readonly StringConverter Instance = new();
+        public static StringConverter Instance { get; } = new();
     }
 }

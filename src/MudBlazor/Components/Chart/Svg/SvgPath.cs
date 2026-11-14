@@ -3,7 +3,7 @@
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents an arbitrary SVG path.
+    /// Base class for chart shapes rendered as SVG paths, such as <see cref="SvgCircle" />, <see cref="SvgPetal" />, and <see cref="SvgPathPoint" />.
     /// </summary>
     public class SvgPath : IEquatable<SvgPath>
     {
@@ -26,6 +26,11 @@ namespace MudBlazor
         /// The label text for on hover.
         /// </summary>
         public string LabelYValue { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The number behind <see cref="LabelYValue"/>, kept so a tooltip can write it the way the Y axis does.
+        /// </summary>
+        internal double YValue { get; set; }
 
         /// <summary>
         /// The label X position for on hover.

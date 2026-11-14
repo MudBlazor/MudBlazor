@@ -3,13 +3,13 @@
 @inherits MudComponentBase
 
 <tr class="@Classname" @onclick="@OnRowClick" style="@Style" @attributes="@UserAttributes">
-	@if (Context.DisplayApplyButtonAtStart(IgnoreEditable) || Context.DisplayEditButtonAtStart(IgnoreEditable))
-	{
-		<MudTh />
-	}
-	@if (Expandable || ((Context?.Table?.MultiSelection ?? false) && !IgnoreCheckbox))
+    @if (Context.DisplayApplyButtonAtStart(IgnoreEditable) || Context.DisplayEditButtonAtStart(IgnoreEditable))
     {
-        <MudTd>
+        <MudTh />
+    }
+    @if (Expandable || ((Context?.Table?.MultiSelection ?? false) && !IgnoreCheckbox))
+    {
+        <MudTd Class="mud-table-cell-fit">
             @if (Expandable)
             {
                 <div class="ml-4 mr-5"></div>
@@ -23,6 +23,6 @@
     @ChildContent
     @if (Context.DisplayApplyButtonAtEnd(IgnoreEditable) || Context.DisplayEditButtonAtEnd(IgnoreEditable))
     {
-		<MudTh />
-	}
+        <MudTh />
+    }
 </tr>

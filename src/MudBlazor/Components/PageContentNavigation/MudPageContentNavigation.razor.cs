@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interfaces;
+using MudBlazor.Resources;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -14,11 +15,14 @@ namespace MudBlazor
     /// </summary>
     public partial class MudPageContentNavigation : IAsyncDisposable, IMudStateHasChanged
     {
-        private List<MudPageContentSection> _sections = new();
+        private readonly List<MudPageContentSection> _sections = new();
         private IScrollSpy? _scrollSpy;
 
         [Inject]
         private IScrollSpyFactory ScrollSpyFactory { get; set; } = null!;
+
+        [Inject]
+        private InternalMudLocalizer Localizer { get; set; } = null!;
 
         /// <summary>
         /// The displayed section within the MudPageContentNavigation
@@ -34,7 +38,7 @@ namespace MudBlazor
         /// The text displayed about the section links. Defaults to "Contents"
         /// </summary>
         [Parameter]
-        public string Headline { get; set; } = "Contents";
+        public string Headline { get; set; } = string.Empty;
 
         /// <summary>
         /// The CSS selector used to identify the scroll container
@@ -103,6 +107,8 @@ namespace MudBlazor
 
         private string GetPanelClass() => new CssBuilder("page-content-navigation").AddClass(Class).Build();
 
+        private string ResolvedHeadline() => string.IsNullOrEmpty(Headline) ? Localizer[LanguageResource.MudPageContentNavigation_NavMenu] : Headline;
+
         /// <summary>
         /// Scrolls to a section based on the fragment of the uri. If there is no fragment, no scroll will occurred
         /// </summary>
@@ -123,7 +129,7 @@ namespace MudBlazor
         /// <param name="forceUpdate">If true, StateHasChanged is called, forcing a re-render of the component</param>
         public void AddSection(string sectionName, string sectionId, bool forceUpdate) => AddSection(new MudPageContentSection(sectionName, sectionId), forceUpdate);
 
-        private Dictionary<MudPageContentSection, MudPageContentSection> _parentMapper = new();
+        private readonly Dictionary<MudPageContentSection, MudPageContentSection> _parentMapper = new();
 
         /// <summary>
         /// Add a section to the content navigation

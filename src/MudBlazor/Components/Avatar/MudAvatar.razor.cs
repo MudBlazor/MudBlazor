@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Utilities;
 
@@ -12,6 +13,15 @@ namespace MudBlazor
     {
         [CascadingParameter]
         protected MudAvatarGroup? AvatarGroup { get; set; }
+
+        /// <summary>
+        /// Whether the consumer supplied a non-blank accessible name; <c>role="img"</c> is only valid with one.
+        /// </summary>
+        private bool HasAccessibleName() =>
+            UserAttributes.Any(attribute =>
+                (attribute.Key.Equals("aria-label", StringComparison.OrdinalIgnoreCase)
+                 || attribute.Key.Equals("aria-labelledby", StringComparison.OrdinalIgnoreCase))
+                && !string.IsNullOrWhiteSpace(attribute.Value?.ToString()));
 
         protected string Classname => new CssBuilder("mud-avatar")
             .AddClass($"mud-avatar-{Size.ToStringFast(true)}")
@@ -113,6 +123,21 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this component.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
             AvatarGroup?.RemoveAvatar(this);
         }
     }

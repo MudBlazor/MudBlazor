@@ -8,7 +8,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a palette of colors used throughout the application.
+    /// Base class for a MudBlazor color palette, defining the primary, secondary, surface, text, and status colors shared by <see cref="PaletteLight"/> and <see cref="PaletteDark"/>.
     /// </summary>
     [JsonDerivedType(typeof(PaletteLight), typeDiscriminator: nameof(PaletteLight))]
     [JsonDerivedType(typeof(PaletteDark), typeDiscriminator: nameof(PaletteDark))]
@@ -224,7 +224,7 @@ namespace MudBlazor
         /// <summary>
         /// The light color for dividers.
         /// </summary>
-        public virtual MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.8).ToString(MudColorOutputFormats.RGBA);
+        public virtual MudColor DividerLight { get; set; } = new MudColor(Colors.Shades.Black).SetAlpha(0.06).ToString(MudColorOutputFormats.RGBA);
 
         /// <summary>
         /// The color for skeletons.

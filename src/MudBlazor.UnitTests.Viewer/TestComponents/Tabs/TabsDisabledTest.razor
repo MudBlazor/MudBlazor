@@ -1,0 +1,9 @@
+﻿<MudTabs Disabled="@Disabled" TabButtonsClass="test-tab-button">
+    <MudTabPanel Text="One">One</MudTabPanel>
+    <MudTabPanel Text="Two">Two</MudTabPanel>
+</MudTabs>
+
+@code {
+    [Parameter]
+    public bool Disabled { get; set; } = true;
+}

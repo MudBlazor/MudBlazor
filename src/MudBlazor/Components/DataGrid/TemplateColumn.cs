@@ -4,13 +4,18 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents an additional column for a <see cref="MudDataGrid{T}"/> which isn't tied to data.
+    /// Renders custom template content in a <see cref="MudDataGrid{T}"/> column instead of binding to a data property, useful for action buttons or computed cells.
     /// </summary>
     /// <typeparam name="T">The type of data represented by this column.</typeparam>
+    /// <seealso cref="Column{T}" />
+    /// <seealso cref="MudDataGrid{T}" />
+    /// <seealso cref="PropertyColumn{T, TProperty}" />
+    /// <seealso cref="SelectColumn{T}" />
     public partial class TemplateColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : Column<T>
     {
         protected internal override object? CellContent(T item)
@@ -78,6 +83,12 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public Func<T, bool>? InitiallyExpandedFunc { get; set; }
+
+        /// <summary>
+        /// Occurs when hierarchy visibility is toggled if used as a Hierarchy Column.
+        /// </summary>
+        [Parameter]
+        public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
 
         /// <summary>
         /// Sets the function which determines whether buttons are disabled if used in a Hierarchy Column.

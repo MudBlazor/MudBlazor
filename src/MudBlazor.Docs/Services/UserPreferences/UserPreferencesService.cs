@@ -2,10 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Threading.Tasks;
-using Blazored.LocalStorage;
-
 namespace MudBlazor.Docs.Services.UserPreferences
 {
     public interface IUserPreferencesService
@@ -14,33 +10,33 @@ namespace MudBlazor.Docs.Services.UserPreferences
         /// Saves UserPreferences in local storage
         /// </summary>
         /// <param name="userPreferences">The userPreferences to save in the local storage</param>
-        public Task SaveUserPreferences(UserPreferences userPreferences);
+        Task SaveUserPreferences(UserPreferences userPreferences);
 
         /// <summary>
         /// Loads UserPreferences in local storage
         /// </summary>
         /// <returns>UserPreferences object. Null when no settings were found.</returns>
-        public Task<UserPreferences> LoadUserPreferences();
+        Task<UserPreferences> LoadUserPreferences();
     }
 
     public class UserPreferencesService : IUserPreferencesService
     {
-        private readonly ILocalStorageService _localStorage;
+        private readonly IBrowserStorage _browserStorage;
         private const string Key = "userPreferences";
 
-        public UserPreferencesService(ILocalStorageService localStorage)
+        public UserPreferencesService(IBrowserStorage browserStorage)
         {
-            _localStorage = localStorage;
+            _browserStorage = browserStorage;
         }
 
         public async Task SaveUserPreferences(UserPreferences userPreferences)
         {
-            await _localStorage.SetItemAsync(Key, userPreferences);
+            await _browserStorage.SetAsync(Key, userPreferences);
         }
 
         public async Task<UserPreferences> LoadUserPreferences()
         {
-            return await _localStorage.GetItemAsync<UserPreferences>(Key);
+            return await _browserStorage.GetAsync<UserPreferences>(Key);
         }
     }
 }

@@ -50,7 +50,7 @@ namespace MudBlazor.Charts
         /// </summary>
         public HashSet<SankeyEdge<T>> Edges { get; set; } = [];
 
-        private Dictionary<string, NodeRect> NodeRects { get; set; } = [];
+        private Dictionary<string, NodeRect> NodeRects { get; } = [];
         private Dictionary<string, double> NodeValues { get; set; } = [];
         private List<EdgePath> EdgePaths { get; } = [];
         private string? ActiveNode { get; set; }
@@ -105,13 +105,16 @@ namespace MudBlazor.Charts
             }
 
             // Assert input data
-            var nodeGroups = Nodes.GroupBy(e => e.Name).ToList();
-            if (nodeGroups.Any(grp => grp.Count() > 1))
+            var nodeNames = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var node in Nodes)
             {
-                throw new ArgumentException("All nodes must have unique names");
+                if (!nodeNames.Add(node.Name))
+                {
+                    throw new ArgumentException("All nodes must have unique names");
+                }
             }
 
-            var edgeWithInvalidNode = Edges.FirstOrDefault(e => Nodes.All(n => n.Name != e.Source) || Nodes.All(n => n.Name != e.Target));
+            var edgeWithInvalidNode = Edges.FirstOrDefault(e => !nodeNames.Contains(e.Source) || !nodeNames.Contains(e.Target));
             if (edgeWithInvalidNode != null)
             {
                 throw new ArgumentException($"Edge {edgeWithInvalidNode.Source} {ChartOptions!.EdgeLabelSymbol} {edgeWithInvalidNode.Target} specifies a non-existing node");
@@ -139,9 +142,7 @@ namespace MudBlazor.Charts
 
             if (Nodes.Count == 0)
             {
-                NodeRects.Clear();
-                EdgePaths.Clear();
-                NodeValues.Clear();
+                ClearChart();
                 return;
             }
 
@@ -150,15 +151,31 @@ namespace MudBlazor.Charts
             var edges = GetAllEdgesToDraw(nodes);
             if (ChartOptions!.HideNodesWithNoEdges) nodes = RemoveNodesWithNoEdges(nodes, edges);
 
+            // HideNodesSmallerThan and HideNodesWithNoEdges can empty the draw set even when Nodes is not.
+            // The layout below aggregates over it with Max, which throws on an empty sequence.
+            if (nodes.Length == 0)
+            {
+                ClearChart();
+                return;
+            }
+
             GenerateNodeRects(nodes, out var maxColumnValue, out var boundHeightRelativeToNodeHeight);
             GenerateEdgePaths(edges, maxColumnValue, boundHeightRelativeToNodeHeight);
+        }
+
+        private void ClearChart()
+        {
+            NodeRects.Clear();
+            EdgePaths.Clear();
+            NodeValues.Clear();
         }
 
         private SankeyNode[] GetAllNodesToDraw()
         {
             NodeValues = GetAllNodeValues();
             var nodes = Nodes.Where(n => NodeValues[n.Name] >= ChartOptions!.HideNodesSmallerThan).ToList();
-            NodeValues = NodeValues.Where(kv => nodes.Any(n => n.Name == kv.Key)).ToDictionary();
+            var retainedNodeNames = nodes.Select(n => n.Name).ToHashSet(StringComparer.Ordinal);
+            NodeValues = NodeValues.Where(kv => retainedNodeNames.Contains(kv.Key)).ToDictionary();
 
             if (ChartOptions!.OrderNodesByValue) nodes = nodes.OrderByDescending(n => NodeValues[n.Name]).ToList();
 
@@ -167,8 +184,9 @@ namespace MudBlazor.Charts
 
         private SankeyEdge<T>[] GetAllEdgesToDraw(SankeyNode[] nodes)
         {
+            var nodeNames = nodes.Select(n => n.Name).ToHashSet(StringComparer.Ordinal);
             return Edges
-                .Where(e => nodes.Any(n => n.Name == e.Source) && nodes.Any(n => n.Name == e.Target))
+                .Where(e => nodeNames.Contains(e.Source) && nodeNames.Contains(e.Target))
                 .ToArray();
         }
 
@@ -184,10 +202,8 @@ namespace MudBlazor.Charts
                     _boundWidth = _elementSize.Width;
                     _boundHeight = _elementSize.Height;
                 }
-                else if (Width.EndsWith("px")
-                    && Height.EndsWith("px")
-                    && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
-                    && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
+                else if (StringHelpers.TryParsePixels(Width, out var width)
+                    && StringHelpers.TryParsePixels(Height, out var height))
                 {
                     _boundWidth = width;
                     _boundHeight = height;
@@ -264,8 +280,15 @@ namespace MudBlazor.Charts
                 {
                     var targetColumn = currentColumn + 1;
 
-                    // Always enqueue to ensure we find the longest path
-                    queue.Enqueue((target, targetColumn));
+                    // Only follow an edge when it pushes the target into a deeper column, and never
+                    // past the node count (the longest path in a graph of N nodes spans at most N-1
+                    // edges). Without this guard, circular edge definitions (e.g. A->B, B->A) keep
+                    // enqueueing with an ever-increasing column and hang the render.
+                    if (targetColumn < allNodes.Count && targetColumn > nodeColumns[target])
+                    {
+                        nodeColumns[target] = targetColumn;
+                        queue.Enqueue((target, targetColumn));
+                    }
                 }
             }
 
@@ -285,10 +308,9 @@ namespace MudBlazor.Charts
                     : ChartSeries.Count;
 
             var aggregated = new ChartSeries<T>[maxCategoryLength];
-
             return aggregation switch
             {
-                AggregationOption.GroupByLabel => AggregateByLabel(aggregated),
+                AggregationOption.GroupByLabel => AggregateByLabel(),
                 AggregationOption.GroupByDataSet => AggregateByDataSet(aggregated),
                 _ => throw new ArgumentOutOfRangeException(nameof(aggregation), $"Unsupported aggregation: {aggregation}")
             };
@@ -299,11 +321,11 @@ namespace MudBlazor.Charts
             if (ChartLabels.Length > 0)
                 return ChartLabels.Length;
 
-            return ChartSeries.Where(x => x.Data?.Values != null).DefaultIfEmpty()
-                              .Max(x => x?.Data?.Values.Count ?? 0);
+            return ChartSeries.Where(x => x.Data is not null).DefaultIfEmpty()
+                              .Max(x => x?.Data?.Count ?? 0);
         }
 
-        private List<ChartSeries<T>> AggregateByLabel(ChartSeries<T>[] aggregated)
+        private List<ChartSeries<T>> AggregateByLabel()
         {
             var result = new List<ChartSeries<T>>();
             var visibleSeries = ChartSeries.Where(s => s.Visible).ToList();
@@ -318,12 +340,12 @@ namespace MudBlazor.Charts
 
                 foreach (var series in visibleSeries)
                 {
-                    var values = series.Data?.Values ?? [];
+                    var values = series.Data;
 
-                    if (i < values.Count)
+                    if (values is not null && i < values.Count)
                     {
                         var link = new SankeyLink(label, series.Name);
-                        data.Add((link, values[i]));
+                        data.Add((link, values.GetValue(i)));
                     }
                 }
 
@@ -343,17 +365,17 @@ namespace MudBlazor.Charts
             var result = new List<ChartSeries<T>>();
             var chartSeries = ChartSeries.Take(aggregated.Length);
 
-            foreach (var (series, index) in chartSeries.Select((s, i) => (s, i)))
+            foreach (var series in chartSeries)
             {
                 var data = new List<(SankeyLink, T)>();
-                var values = series.Data?.Values ?? [];
-
                 if (!series.Visible) continue;
 
-                for (var i = 0; i < values.Count; i++)
+                if (series.Data is null) continue;
+
+                for (var i = 0; i < series.Data.Count; i++)
                 {
                     var link = new SankeyLink(series.Name, ChartLabels[i]);
-                    data.Add((link, values[i]));
+                    data.Add((link, series.Data.GetValue(i)));
                 }
 
                 result.Add(new ChartSeries<T>
@@ -389,8 +411,15 @@ namespace MudBlazor.Charts
 
         private static SankeyNode[] RemoveNodesWithNoEdges(SankeyNode[] nodes, SankeyEdge<T>[] edges)
         {
+            var connectedNodeNames = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var edge in edges)
+            {
+                connectedNodeNames.Add(edge.Source);
+                connectedNodeNames.Add(edge.Target);
+            }
+
             return nodes
-                .Where(n => edges.Any(e => e.Source == n.Name || e.Target == n.Name))
+                .Where(n => connectedNodeNames.Contains(n.Name))
                 .ToArray();
         }
 
@@ -419,7 +448,10 @@ namespace MudBlazor.Charts
         {
             NodeRects.Clear();
 
-            var nodesPerColumn = NormaliseNodeColumnIndices(nodes)
+            // Mutates in place: the value mapping below is keyed by node, and record equality covers Column, so every read of nodes has to see the same normalised records.
+            NormaliseNodeColumnIndices(nodes);
+
+            var nodesPerColumn = nodes
                 .GroupBy(x => x.Column)
                 .OrderBy(grp => grp.Key)
                 .ToArray();
@@ -432,17 +464,20 @@ namespace MudBlazor.Charts
             // Calculate grid sizes
             var maxRows = nodesPerColumn.Max(n => n.Count());
             var maxColumns = nodesPerColumn.Length - 1;
-            var boundWidthRelativeToNodeWidth = _boundWidth - ChartOptions!.NodeWidth * maxColumns - 2 * HorizontalPadding;
+            var boundWidthRelativeToNodeWidth = _boundWidth - (ChartOptions!.NodeWidth * maxColumns) - (2 * HorizontalPadding);
 
-            boundHeightRelativeToNodeHeight = _boundHeight - ChartOptions!.MinVerticalSpacing * maxRows;
+            boundHeightRelativeToNodeHeight = _boundHeight - (ChartOptions!.MinVerticalSpacing * maxRows);
 
             // Draw all nodes column per column
-            var nodeRects = new Dictionary<string, NodeRect>();
             foreach (var column in nodesPerColumn)
             {
-                var x = column.First().Column / (double)maxColumns * boundWidthRelativeToNodeWidth + HorizontalPadding;
+                // A single-column chart has no horizontal span to spread across, and after normalisation its sole column is always 0.
+                // Dividing by zero here yields NaN, which never settles in ChartTooltip's change check and spins the renderer forever.
+                var x = maxColumns == 0
+                    ? HorizontalPadding
+                    : (column.First().Column / (double)maxColumns * boundWidthRelativeToNodeWidth) + HorizontalPadding;
                 var totalRelativeColumnValue = column.Sum(n => relativeNodesValuesMapping[n]);
-                var totalVerticalSpace = _boundHeight - double.CreateSaturating(totalRelativeColumnValue) * boundHeightRelativeToNodeHeight;
+                var totalVerticalSpace = _boundHeight - (double.CreateSaturating(totalRelativeColumnValue) * boundHeightRelativeToNodeHeight);
                 var verticalSpacing = Math.Max(totalVerticalSpace / (column.Count() + 1), ChartOptions!.MinVerticalSpacing);
 
                 double currentY = 0;
@@ -469,18 +504,27 @@ namespace MudBlazor.Charts
             }
         }
 
-        private SankeyNode[] NormaliseNodeColumnIndices(SankeyNode[] nodes)
+        /// <summary>
+        /// Rewrites the column indices of <paramref name="nodes"/> in place so they run 0..n-1 with no gaps.
+        /// </summary>
+        /// <remarks>
+        /// Column overrides and node filtering can leave gaps between indices.
+        /// Horizontal placement divides the index by the number of distinct columns, so an un-normalised index puts the node past the right edge of the chart bounds.
+        /// </remarks>
+        private static void NormaliseNodeColumnIndices(SankeyNode[] nodes)
         {
-            // Normalise column indices
             var columnMap = nodes
                 .Select(n => n.Column)
                 .Distinct()
                 .OrderBy(c => c)
                 .Select((c, index) => new { Old = c, New = index })
                 .ToDictionary(x => x.Old, x => x.New);
-            Array.ForEach(nodes, node => node = node with { Column = columnMap[node.Column] });
 
-            return nodes;
+            // SankeyNode is a record class, so the with-copy has to be written back into the array.
+            for (var i = 0; i < nodes.Length; i++)
+            {
+                nodes[i] = nodes[i] with { Column = columnMap[nodes[i].Column] };
+            }
         }
 
         private Dictionary<SankeyNode, double> GetNormalisedNodeValuesMapping(SankeyNode[] nodes, double maxColumnValue)
@@ -514,7 +558,7 @@ namespace MudBlazor.Charts
             EdgePaths.Clear();
 
             var index = 0;
-            var edgesPerSources = Edges.GroupBy(e => e.Source).ToList();
+            var edgesPerSources = edges.GroupBy(e => e.Source).ToList();
             foreach (var sourceGrp in edgesPerSources)
             {
                 if (!NodeRects.TryGetValue(sourceGrp.Key, out var rectSource)) continue;
@@ -546,8 +590,8 @@ namespace MudBlazor.Charts
                         ),
                         LabelXValue = rectSource.Name,
                         LabelYValue = rectTarget.Name,
-                        LabelX = startX + Math.Abs(startX - endX) / 2,
-                        LabelY = startY + (endY - startY) / 2 + height / 2
+                        LabelX = startX + (Math.Abs(startX - endX) / 2),
+                        LabelY = startY + ((endY - startY) / 2) + (height / 2)
                     });
 
                     startYOffset += height;
@@ -566,8 +610,8 @@ namespace MudBlazor.Charts
             var ty1 = targetY + targetHeight;
 
             // Control points for cubic Bezier curve
-            var cx0 = sourceX + (targetX - sourceX) * curvature;
-            var cx1 = targetX - (targetX - sourceX) * curvature;
+            var cx0 = sourceX + ((targetX - sourceX) * curvature);
+            var cx1 = targetX - ((targetX - sourceX) * curvature);
 
             return $"M{ToS(sourceX)},{ToS(sy0)} " + // Top-left of source
                    $"C{ToS(cx0)},{ToS(sy0)} " + // Control point 1
@@ -612,29 +656,29 @@ namespace MudBlazor.Charts
             RebuildChart();
         }
 
-        private void OnNodeMouseOver(MouseEventArgs _, NodeRect rect)
+        private void OnNodeMouseOver(NodeRect rect)
         {
             if (ChartOptions!.HighlightOnHover) ActiveNode = rect.Name;
         }
 
-        private void OnNodeMouseOut(MouseEventArgs _)
+        private void OnNodeMouseOut()
         {
             ActiveNode = null;
         }
 
-        private async Task OnNodeClick(MouseEventArgs _, NodeRect rect)
+        private async Task OnNodeClick(NodeRect rect)
         {
             var index = Nodes.ToList().IndexOf(Nodes.First(n => n.Name == rect.Name));
 
             await SetSelectedIndexAsync(index);
         }
 
-        private void OnEdgeMouseOver(MouseEventArgs _, EdgePath edge)
+        private void OnEdgeMouseOver(EdgePath edge)
         {
             if (ChartOptions!.HighlightOnHover) ActiveEdge = edge.Name;
         }
 
-        private void OnEdgeMouseOut(MouseEventArgs _)
+        private void OnEdgeMouseOut()
         {
             ActiveEdge = null;
         }

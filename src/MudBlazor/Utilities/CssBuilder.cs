@@ -7,7 +7,7 @@ using System.Text;
 namespace MudBlazor.Utilities
 {
     /// <summary>
-    /// Represents a builder for creating CSS classes used in a component.
+    /// Builds a space-separated CSS class string with conditionally added classes for a component's markup.
     /// </summary>
     public readonly struct CssBuilder
     {
@@ -150,11 +150,17 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="CssBuilder"/> instance.</returns>
         public CssBuilder AddClassFromAttributes(IReadOnlyDictionary<string, object>? additionalAttributes)
         {
-            return additionalAttributes is null
-                ? this
-                : additionalAttributes.TryGetValue("class", out var result)
-                    ? AddClass(result.ToString())
-                    : this;
+            if (additionalAttributes is null)
+            {
+                return this;
+            }
+
+            if (additionalAttributes.TryGetValue("class", out var result))
+            {
+                return AddClass(result.ToString());
+            }
+
+            return this;
         }
 
         /// <summary>

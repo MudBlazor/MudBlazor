@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Globalization;
 using MudBlazor.Resources;
 using MudBlazor.Utilities.Exceptions;
 
@@ -9,8 +10,10 @@ namespace MudBlazor;
 
 internal partial class DefaultConverter
 {
-    internal sealed class GuidConverter : IReversibleConverter<Guid, string?>, IReversibleConverter<Guid?, string?>
+    internal sealed class GuidConverter(Func<CultureInfo> culture, Func<string?> format) : IReversibleConverter<Guid, string?>, IReversibleConverter<Guid?, string?>
     {
+        private const string DefaultGuidFormat = "D";
+
         public Guid ConvertBack(string? input)
         {
             if (string.IsNullOrEmpty(input))
@@ -18,7 +21,7 @@ internal partial class DefaultConverter
                 return Guid.Empty;
             }
 
-            if (Guid.TryParse(input, out var guid))
+            if (Guid.TryParseExact(input, format.Invoke() ?? DefaultGuidFormat, out var guid))
             {
                 return guid;
             }
@@ -26,9 +29,9 @@ internal partial class DefaultConverter
             throw new ConversionException(LanguageResource.Converter_InvalidGUID);
         }
 
-        public string Convert(Guid value) => value.ToString();
+        public string Convert(Guid value) => value.ToString(format.Invoke(), culture.Invoke());
 
-        public string? Convert(Guid? value) => value is null ? null : value.ToString();
+        public string? Convert(Guid? value) => value?.ToString(format.Invoke(), culture.Invoke());
 
         Guid? IReversibleConverter<Guid?, string?>.ConvertBack(string? input)
         {
@@ -39,7 +42,5 @@ internal partial class DefaultConverter
 
             return ConvertBack(input);
         }
-
-        public static GuidConverter Instance { get; } = new();
     }
 }

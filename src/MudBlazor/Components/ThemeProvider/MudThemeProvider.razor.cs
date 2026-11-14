@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -15,7 +16,6 @@ namespace MudBlazor;
 /// <seealso cref="MudTheme"/>
 partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
 {
-    // private const string Breakpoint = "mud-breakpoint";
     private bool _disposed;
     private bool _observing;
     private const string Palette = "mud-palette";
@@ -33,8 +33,17 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
 
     private event Func<bool, Task>? DarkModeChanged;
 
+    internal const string MissingScriptMessage =
+        "MudBlazor's JavaScript was not found, so interactive features will not work. " +
+        "Reference the script in your host page (App.razor or index.html) after the Blazor script: <script src=\"_content/MudBlazor/MudBlazor.min.js\"></script>. " +
+        "If it is already referenced, confirm it returns HTTP 200 in the browser's Network tab and hard-refresh to rule out a stale cache. " +
+        "See https://mudblazor.com/getting-started/installation";
+
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
+
+    [Inject]
+    private ILogger<MudThemeProvider> Logger { get; set; } = null!;
 
     /// <summary>
     /// The theme used by the application.
@@ -154,6 +163,8 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
     {
         if (firstRender)
         {
+            await WarnIfScriptMissingAsync();
+
             if (_observeSystemDarkModeChangeState.Value && !_observing)
             {
                 _observing = true;
@@ -162,6 +173,17 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
         }
 
         await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task WarnIfScriptMissingAsync()
+    {
+        // Positive presence probe through a browser built-in, so a genuine error inside the script is never mislabeled as a missing script.
+        // Interop calls degrade silently when the script is absent; this surfaces the one actionable hint.
+        var (ran, present) = await JsRuntime.InvokeAsyncWithErrorHandling(true, "window.hasOwnProperty", "mudElementRef");
+        if (ran && !present)
+        {
+            Logger.LogError(MissingScriptMessage);
+        }
     }
 
     // <inheritdoc />
@@ -388,14 +410,6 @@ partial class MudThemeProvider : ComponentBaseWithState, IAsyncDisposable
         themeStringBuilder.AppendLine(
             $"--{LayoutProperties}-drawer-width-mini-right: {theme.LayoutProperties.DrawerMiniWidthRight};");
         themeStringBuilder.AppendLine($"--{LayoutProperties}-appbar-height: {theme.LayoutProperties.AppbarHeight};");
-
-        //Breakpoint
-        //theme.AppendLine($"--{Breakpoint}-xs: {Theme.Breakpoints.xs};");
-        //theme.AppendLine($"--{Breakpoint}-sm: {Theme.Breakpoints.sm};");
-        //theme.AppendLine($"--{Breakpoint}-md: {Theme.Breakpoints.md};");
-        //theme.AppendLine($"--{Breakpoint}-lg: {Theme.Breakpoints.lg};");
-        //theme.AppendLine($"--{Breakpoint}-xl: {Theme.Breakpoints.xl};");
-        //theme.AppendLine($"--{Breakpoint}-xxl: {Theme.Breakpoints.xxl};");
 
         //Typography
         themeStringBuilder.AppendLine(

@@ -3,7 +3,7 @@
 @namespace MudBlazor.Docs.Examples
 @inject HttpClient httpClient
 
-<MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<Element,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+<MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<Element,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1" PagerPosition="@pagerPosition">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Periodic Elements</MudText>
         <MudSpacer />
@@ -33,6 +33,11 @@
     <MudSwitch @bind-Value="dense" Color="Color.Secondary">Dense</MudSwitch>
     <MudSwitch @bind-Value="striped" Color="Color.Tertiary">Striped</MudSwitch>
     <MudSwitch @bind-Value="bordered" Color="Color.Warning">Bordered</MudSwitch>
+    <MudSelect @bind-Value="pagerPosition" Label="Pager position" Class="ml-4">
+        <MudSelectItem Value="PagerPosition.Top">Top</MudSelectItem>
+        <MudSelectItem Value="PagerPosition.Bottom">Bottom</MudSelectItem>
+        <MudSelectItem Value="PagerPosition.TopAndBottom">Top And Bottom</MudSelectItem>
+    </MudSelect>
     <MudSpacer />
     <div style="min-width:200px;">
         <MudText Class="align-self-center d-inline">Selected1: @selectedItem1?.Name</MudText>
@@ -47,6 +52,7 @@
     private string searchString1 = "";
     private Element selectedItem1 = null;
     private HashSet<Element> selectedItems = new HashSet<Element>();
+    private PagerPosition pagerPosition = PagerPosition.Bottom;
 
     private IEnumerable<Element> Elements = new List<Element>();
 

@@ -4,7 +4,7 @@
         <MudTextField T="string" Required="true" Label="Last Name" />
     </MudForm>
     <div class="d-flex mt-5">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => _form1.Validate())">Validate</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => _form1.ValidateAsync())">Validate</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@(() => _form1.ResetAsync())" Class="mx-2">Reset</MudButton>
         <MudButton Variant="Variant.Filled" OnClick="@(() => _form1.ResetValidationAsync())">Reset Validation</MudButton>
     </div>

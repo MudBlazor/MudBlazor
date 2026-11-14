@@ -13,14 +13,11 @@ namespace MudBlazor.Interpolation
            int resolution = 10, double firstSlopeDegrees = 0, double lastSlopeDegrees = 0) :
            base(xs, ys, resolution)
         {
-            _matrix = new Matrix(n);
-            _gauss = new MatrixSolver(n, _matrix);
-
             a = new double[n];
             b = new double[n];
             c = new double[n];
             d = new double[n];
-            h = new double[n];
+            h = new double[n - 1];
 
             CalcParameters(firstSlopeDegrees, lastSlopeDegrees);
             Interpolate();
@@ -28,8 +25,6 @@ namespace MudBlazor.Interpolation
 
         private void CalcParameters(double alpha, double beta)
         {
-            Debug.Assert(_matrix != null);
-            Debug.Assert(_gauss != null);
             Debug.Assert(a != null);
             Debug.Assert(b != null);
             Debug.Assert(c != null);
@@ -37,42 +32,57 @@ namespace MudBlazor.Interpolation
             Debug.Assert(h != null);
 
             for (var i = 0; i < n; i++)
+            {
                 a[i] = GivenYs[i];
+            }
 
             for (var i = 0; i < n - 1; i++)
+            {
                 h[i] = GivenXs[i + 1] - GivenXs[i];
+            }
 
-            _matrix.a[0, 0] = 2.0 * h[0];
-            _matrix.a[0, 1] = h[0];
-            _matrix.y[0] = 3 * (((a[1] - a[0]) / h[0]) - Math.Tan(alpha * Math.PI / 180));
+            if (n == 1)
+            {
+                return;
+            }
+
+            var sub = new double[n];
+            var diag = new double[n];
+            var sup = new double[n];
+            var rhs = new double[n];
+
+            diag[0] = 2.0 * h[0];
+            sup[0] = h[0];
+            rhs[0] = 3 * (((a[1] - a[0]) / h[0]) - Math.Tan(alpha * Math.PI / 180));
 
             for (var i = 0; i < n - 2; i++)
             {
-                _matrix.a[i + 1, i] = h[i];
-                _matrix.a[i + 1, i + 1] = 2.0 * (h[i] + h[i + 1]);
-                if (i < n - 2)
-                    _matrix.a[i + 1, i + 2] = h[i + 1];
+                sub[i + 1] = h[i];
+                diag[i + 1] = 2.0 * (h[i] + h[i + 1]);
+                sup[i + 1] = h[i + 1];
 
                 if ((h[i] != 0.0) && (h[i + 1] != 0.0))
-                    _matrix.y[i + 1] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
+                {
+                    rhs[i + 1] = (((a[i + 2] - a[i + 1]) / h[i + 1]) - ((a[i + 1] - a[i]) / h[i])) * 3.0;
+                }
                 else
-                    _matrix.y[i + 1] = 0.0;
+                {
+                    rhs[i + 1] = 0.0;
+                }
             }
 
-            _matrix.a[n - 1, n - 2] = h[n - 2];
-            _matrix.a[n - 1, n - 1] = 2.0 * h[n - 2];
-            _matrix.y[n - 1] = 3.0 * (Math.Tan(beta * Math.PI / 180) - ((a[n - 1] - a[n - 2]) / h[n - 2]));
+            sub[n - 1] = h[n - 2];
+            diag[n - 1] = 2.0 * h[n - 2];
+            rhs[n - 1] = 3.0 * (Math.Tan(beta * Math.PI / 180) - ((a[n - 1] - a[n - 2]) / h[n - 2]));
 
-            if (_gauss.Eliminate() == false)
-                throw new InvalidOperationException();
-
-            _gauss.Solve();
+            var xValues = TridiagonalSolver.Solve(sub, diag, sup, rhs);
 
             for (var i = 0; i < n; i++)
             {
-                c[i] = _matrix.x[i];
+                c[i] = xValues[i];
             }
-            for (var i = 0; i < n; i++)
+
+            for (var i = 0; i < n - 1; i++)
             {
                 if (h[i] != 0.0)
                 {

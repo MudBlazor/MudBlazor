@@ -132,6 +132,15 @@ namespace MudBlazor
         /// </summary>
         public List<MudTableSortLabel<T>> SortLabels { get; set; } = new();
 
+        internal bool? GetGroupCheckedState(IEnumerable<T>? items)
+        {
+            var rowGroupItems = items?.ToList() ?? new List<T>();
+            var itemsCount = Selection.Intersect(rowGroupItems).Count();
+            var selectAll = itemsCount == rowGroupItems.Count;
+            var indeterminate = !selectAll && itemsCount > 0 && Selection.Count > 0;
+            return indeterminate ? null : selectAll;
+        }
+
         /// <inheritdoc />
         public override void UpdateRowCheckBoxes(bool updateGroups = true, bool updateHeaderFooter = true)
         {
@@ -158,12 +167,7 @@ namespace MudBlazor
                 // Update group checkboxes
                 foreach (var groupRow in GroupRows)
                 {
-                    var rowGroupItems = groupRow.Items?.ToList() ?? new List<T>();
-                    var itemsCount = Selection.Intersect(rowGroupItems).Count();
-                    var selectAll = itemsCount == rowGroupItems.Count;
-                    var indeterminate = !selectAll && itemsCount > 0 && Selection.Count > 0;
-                    var state = indeterminate && !selectAll ? (bool?)null : selectAll;
-                    groupRow.SetChecked(state, notify: false);
+                    groupRow.SetChecked(GetGroupCheckedState(groupRow.Items), notify: false);
                 }
             }
 

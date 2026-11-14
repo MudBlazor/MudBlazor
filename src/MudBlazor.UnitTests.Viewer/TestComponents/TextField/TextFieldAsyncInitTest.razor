@@ -1,0 +1,19 @@
+﻿<MudTextField T="string"
+              @bind-Value="_value"
+              DebounceInterval="500"
+              Label="Debounced" />
+
+<MudTextField T="string"
+              @bind-Value="_value"
+              Label="Immediate" />
+
+@code {
+    private string? _value = "i";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Yield();
+        _value = "init value";
+        await InvokeAsync(StateHasChanged);
+    }
+}

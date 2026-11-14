@@ -1,0 +1,177 @@
+﻿@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid @ref="_dataGrid" T="Element" Items="@_elements" Filterable="true" FilterMode="DataGridFilterMode.Simple" RowsPerPage="5"
+             FilterTemplate="@(_useCustomGridTemplate ? GridFilterTemplate : null)">
+    <Columns>
+        <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" />
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position" Filterable="false" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+        <PropertyColumn Property="x => x.Group" Title="Category">
+            <FilterTemplate>
+                <MudSelect T="string" MultiSelection="true"
+                            SelectedValues="@GetFilterValues(context.FilterDefinition!)"
+                            SelectedValuesChanged="@(values => SetColumnFilterValues(context, values))"
+                            FullWidth="true" Dense="true" Margin="@Margin.Dense"
+                            Class="filter-input category-filter"
+                            Label="Categories" Clearable="true" Placeholder="Select categories">
+                    @foreach (var category in _categories)
+                    {
+                        <MudSelectItem T="string" Value="@category">@category</MudSelectItem>
+                    }
+                </MudSelect>
+            </FilterTemplate>
+        </PropertyColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" PageSizeOptions="new[] { 5 }" />
+    </PagerContent>
+</MudDataGrid>
+
+<div class="d-flex justify-start mt-4">
+    <MudRadioGroup T="bool" Value="@_useCustomGridTemplate" ValueChanged="@FilterTemplateModeChanged">
+        <MudRadio Dense="true" Value="false" Color="Color.Primary">Column FilterTemplate</MudRadio>
+        <MudRadio Dense="true" Value="true" Color="Color.Tertiary">MudDataGrid FilterTemplate</MudRadio>
+    </MudRadioGroup>
+</div>
+
+@code {
+    private RenderFragment<MudDataGrid<Element>> GridFilterTemplate => grid => @<MudStack Spacing="2" Class="pa-2">
+        <MudText Typo="Typo.subtitle2">Custom Grid Filter Panel</MudText>
+        <MudTextField T="string" Label="Name Contains" Clearable="true" Margin="@Margin.Dense"
+                      @bind-Value="_nameFilter"
+                      @bind-Value:after="() => SyncGridFiltersAsync(grid)"
+                      Immediate="true" DebounceInterval="250" />
+        <MudSelect T="string" MultiSelection="true"
+                   SelectedValues="@_gridCategories"
+                   SelectedValuesChanged="@(values => SetGridCategoriesAsync(grid, values))"
+                   Label="Categories" Clearable="true" Margin="@Margin.Dense">
+            @foreach (var category in _categories)
+            {
+                <MudSelectItem T="string" Value="@category">@category</MudSelectItem>
+            }
+        </MudSelect>
+        <MudStack Row="true" Justify="Justify.FlexEnd">
+            <MudButton OnClick="@(async () => await ClearGridFiltersAsync(grid))">Clear</MudButton>
+            <MudButton Color="@Color.Primary" OnClick="@(async () => await grid.CloseFilterAsync())">Close</MudButton>
+        </MudStack>
+    </MudStack>
+    ;
+
+    private MudDataGrid<Element> _dataGrid = null!;
+    private readonly List<Element> _elements = CreateElements();
+    private readonly List<string> _categories = [];
+    private HashSet<string> _gridCategories = [];
+    private bool _useCustomGridTemplate;
+    private string _nameFilter = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _categories.AddRange(_elements.Select(x => x.Group).Distinct().OrderBy(x => x).ToList());
+    }
+
+    private Task FilterTemplateModeChanged(bool value)
+    {
+        // Example toggle: switches between the column-level template and the grid-level template.
+        _useCustomGridTemplate = value;
+        _nameFilter = string.Empty;
+        _gridCategories = [];
+        return _dataGrid.ClearFiltersAsync();
+    }
+
+    private IReadOnlyCollection<string> GetFilterValues(IFilterDefinition<Element> filterDefinition)
+    {
+        // Column FilterTemplate: reads the current values from the built-in simple filter row.
+        return filterDefinition.Value as IReadOnlyCollection<string> ?? Array.Empty<string>();
+    }
+
+    private Task SetColumnFilterValues(FilterContext<Element> context, IEnumerable<string> values)
+    {
+        // Column FilterTemplate: maps selected values to the active filter row and custom predicate.
+        var filterDefinition = context.FilterDefinition!;
+        var selectedValues = values?.ToList() ?? [];
+        filterDefinition.Value = selectedValues.Count > 0 ? selectedValues : null;
+
+        if (filterDefinition is FilterDefinition<Element> filterDef)
+        {
+            if (selectedValues.Count > 0)
+            {
+                filterDef.FilterFunction = item => item.Group is not null && selectedValues.Contains(item.Group);
+            }
+            else
+            {
+                filterDef.FilterFunction = null;
+            }
+        }
+
+        return context.Actions.ApplyFilterAsync(filterDefinition);
+    }
+
+    private Task SetGridCategoriesAsync(MudDataGrid<Element> grid, IEnumerable<string> values)
+    {
+        // MudDataGrid FilterTemplate: updates the selected categories and resyncs the curated filters.
+        _gridCategories = values?.ToHashSet() ?? [];
+        return SyncGridFiltersAsync(grid);
+    }
+
+    private async Task SyncGridFiltersAsync(MudDataGrid<Element> grid)
+    {
+        // MudDataGrid FilterTemplate: rebuilds the curated grid filters from the custom panel state.
+        await grid.ClearFiltersAsync();
+
+        if (!string.IsNullOrWhiteSpace(_nameFilter))
+        {
+            var nameColumn = GetRenderedColumn(grid, nameof(Element.Name));
+            await grid.AddFilterAsync(new FilterDefinition<Element>
+            {
+                Column = nameColumn,
+                Operator = FilterOperator.String.Contains,
+                Title = nameColumn.Title,
+                Value = _nameFilter
+            });
+        }
+
+        if (_gridCategories.Any())
+        {
+            var categoryColumn = GetRenderedColumn(grid, nameof(Element.Group));
+            await grid.AddFilterAsync(new FilterDefinition<Element>
+            {
+                Column = categoryColumn,
+                Operator = FilterOperator.String.Equal,
+                Title = categoryColumn.Title,
+                Value = _gridCategories.ToList(),
+                FilterFunction = item => item.Group is not null && _gridCategories.Contains(item.Group)
+            });
+        }
+    }
+
+    private static Column<Element> GetRenderedColumn(MudDataGrid<Element> grid, string propertyName)
+    {
+        // MudDataGrid FilterTemplate: resolves the rendered column used to create custom filter definitions.
+        return grid.RenderedColumns.First(x => x.PropertyName == propertyName);
+    }
+
+    private async Task ClearGridFiltersAsync(MudDataGrid<Element> grid)
+    {
+        // MudDataGrid FilterTemplate: clears the custom panel state and the grid filters together.
+        _nameFilter = string.Empty;
+        _gridCategories = [];
+        await grid.ClearFiltersAsync();
+    }
+
+    private static List<Element> CreateElements() =>
+    [
+        new() { Number = 1, Sign = "H", Name = "Hydrogen", Position = 1, Molar = 1.008, Group = "Nonmetal" },
+        new() { Number = 2, Sign = "He", Name = "Helium", Position = 18, Molar = 4.0026, Group = "Noble Gas" },
+        new() { Number = 3, Sign = "Li", Name = "Lithium", Position = 1, Molar = 6.94, Group = "Alkali Metal" },
+        new() { Number = 4, Sign = "Be", Name = "Beryllium", Position = 2, Molar = 9.0122, Group = "Alkaline Earth Metal" },
+        new() { Number = 5, Sign = "B", Name = "Boron", Position = 13, Molar = 10.81, Group = "Metalloid" },
+        new() { Number = 6, Sign = "C", Name = "Carbon", Position = 14, Molar = 12.011, Group = "Nonmetal" },
+        new() { Number = 7, Sign = "N", Name = "Nitrogen", Position = 15, Molar = 14.007, Group = "Nonmetal" },
+        new() { Number = 8, Sign = "O", Name = "Oxygen", Position = 16, Molar = 15.999, Group = "Nonmetal" },
+        new() { Number = 9, Sign = "F", Name = "Fluorine", Position = 17, Molar = 18.998, Group = "Halogen" },
+        new() { Number = 10, Sign = "Ne", Name = "Neon", Position = 18, Molar = 20.180, Group = "Noble Gas" }
+    ];
+}

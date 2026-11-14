@@ -12,7 +12,7 @@ internal class SpaceBetweenStrategy : IStackedBarPositionStrategy
 
         if (ctx.MaxColumns == 1)
         {
-            positions[0] = ctx.HorizontalStartSpace + (ctx.BarWidth / 2) + (ctx.HorizontalSpace - ctx.BarWidth) / 2;
+            positions[0] = ctx.HorizontalStartSpace + (ctx.BarWidth / 2) + ((ctx.HorizontalSpace - ctx.BarWidth) / 2);
             return positions;
         }
 
@@ -21,7 +21,7 @@ internal class SpaceBetweenStrategy : IStackedBarPositionStrategy
         var start = ctx.HorizontalStartSpace + (ctx.BarWidth / 2);
 
         for (var i = 0; i < ctx.MaxColumns; i++)
-            positions[i] = start + i * (ctx.BarWidth + spaceBetween);
+            positions[i] = start + (i * (ctx.BarWidth + spaceBetween));
 
         return positions;
     }

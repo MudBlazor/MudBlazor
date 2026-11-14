@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents.Select
+
+@* Guards the #13086 fix: forwarding consumer attributes to the presenter must not
+   duplicate the id (owned by the hidden input) nor add tabindex to a disabled presenter. *@
+<MudSelect T="string" Value="@("car")" id="select-with-id" Label="With id">
+    <MudSelectItem Value="@("car")"><span>Car</span></MudSelectItem>
+    <MudSelectItem Value="@("van")"><span>Van</span></MudSelectItem>
+</MudSelect>
+
+<MudSelect T="string" Value="@("car")" Disabled="true" tabindex="0" data-scenario="disabled" Label="Disabled">
+    <MudSelectItem Value="@("car")"><span>Car</span></MudSelectItem>
+    <MudSelectItem Value="@("van")"><span>Van</span></MudSelectItem>
+</MudSelect>

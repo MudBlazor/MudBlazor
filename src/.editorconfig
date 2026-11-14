@@ -20,14 +20,45 @@ charset = utf-8-bom
 # XML project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
 indent_size = 2
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
 
 # XML config files
-[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
+[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct,xml}]
 indent_size = 2
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# The Visual Studio resource designer owns the layout of .resx files: it re-emits the ResX schema comment with trailing whitespace and no final newline on every save. Leave those two alone so the designer and the repo do not fight.
+[*.resx]
+insert_final_newline = unset
+trim_trailing_whitespace = false
 
 # JSON files
 [*.json]
 indent_size = 2
+# RFC 8259 says an implementation must not add a byte order mark to JSON text.
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# TOML files
+[*.toml]
+indent_size = 2
+# The TOML spec requires a valid UTF-8 document, a BOM is not needed to produce one, and the EditorConfig spec discourages utf-8-bom.
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# HTML files
+[*.html]
+indent_size = 4
+# UTF-8 needs no BOM to be read as UTF-8, and most of these are charset-less fragments.
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
 
 # Powershell files
 [*.ps1]
@@ -40,6 +71,7 @@ indent_size = 2
 
 # Sassy CSS - CSS preprocessor
 [*.scss]
+# charset is utf-8 without a BOM: Sass already decodes stylesheets as UTF-8, so a BOM is redundant, and the EditorConfig spec discourages utf-8-bom.
 charset = utf-8
 indent_size = 2
 end_of_line = lf
@@ -47,7 +79,9 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 
 # JavaScript / TypeScript files
-[*.{js,mjs,ts}]
+[*.{js,cjs,mjs,ts,cts,mts}]
+# charset is utf-8 without a BOM: the EditorConfig spec discourages utf-8-bom, and unlike C# nothing in this toolchain expects one here.
+charset = utf-8
 indent_size = 4
 end_of_line = lf
 insert_final_newline = true
@@ -192,7 +226,7 @@ csharp_style_var_elsewhere = true:suggestion
 # Code style defaults
 csharp_using_directive_placement = outside_namespace:suggestion
 dotnet_sort_system_directives_first = true
-csharp_prefer_braces = true:silent
+csharp_prefer_braces = true:suggestion
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
 csharp_prefer_static_local_function = true:suggestion
@@ -267,10 +301,10 @@ csharp_space_between_square_brackets = false
 dotnet_separate_import_directive_groups = false
 
 # Parentheses preferences
-dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity:suggestion
-dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:suggestion
+dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity:warning
+dotnet_style_parentheses_in_other_binary_operators = always_for_clarity:warning
 dotnet_style_parentheses_in_other_operators = never_if_unnecessary:suggestion
-dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:suggestion
+dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:warning
 
 # Modifier preferences
 dotnet_style_require_accessibility_modifiers = for_non_interface_members
@@ -309,7 +343,7 @@ csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimenta
 csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = true
 csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental = true
 csharp_style_allow_blank_lines_between_consecutive_braces_experimental = false:suggestion
-csharp_style_allow_embedded_statements_on_same_line_experimental = false:silent
+csharp_style_allow_embedded_statements_on_same_line_experimental = false:suggestion
 
 ############################################################################
 #                                                                          #

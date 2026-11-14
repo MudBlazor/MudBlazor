@@ -103,7 +103,7 @@ public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
     /// <inheritdoc />
     public override int GetHashCode() => _elementId.GetHashCode();
 
-    private class KeyDownLambdaObserver : IKeyDownObserver
+    private sealed class KeyDownLambdaObserver : IKeyDownObserver
     {
         private readonly Action<KeyboardEventArgs>? _lambda;
 
@@ -118,7 +118,7 @@ public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
         }
     }
 
-    private class KeyDownLambdaTaskObserver : IKeyDownObserver
+    private sealed class KeyDownLambdaTaskObserver : IKeyDownObserver
     {
         private readonly Func<KeyboardEventArgs, Task>? _lambda;
 
@@ -128,7 +128,7 @@ public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
         public Task NotifyOnKeyDownAsync(KeyboardEventArgs args) => _lambda is null ? Task.CompletedTask : _lambda(args);
     }
 
-    private class KeyUpLambdaObserver : IKeyUpObserver
+    private sealed class KeyUpLambdaObserver : IKeyUpObserver
     {
         private readonly Action<KeyboardEventArgs>? _lambda;
 
@@ -143,7 +143,7 @@ public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
         }
     }
 
-    private class KeyUpLambdaTaskObserver : IKeyUpObserver
+    private sealed class KeyUpLambdaTaskObserver : IKeyUpObserver
     {
         private readonly Func<KeyboardEventArgs, Task>? _lambda;
 
@@ -153,5 +153,5 @@ public class KeyObserver : IKeyInterceptorObserver, IEquatable<KeyObserver>
         public Task NotifyOnKeyUpAsync(KeyboardEventArgs args) => _lambda is null ? Task.CompletedTask : _lambda(args);
     }
 
-    private class KeyObserverIgnore : IKeyDownObserver, IKeyUpObserver;
+    private sealed class KeyObserverIgnore : IKeyDownObserver, IKeyUpObserver;
 }

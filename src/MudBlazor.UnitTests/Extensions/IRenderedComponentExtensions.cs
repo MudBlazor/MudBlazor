@@ -66,14 +66,20 @@ public static class IRenderedComponentExtensions
             {
                 var param = enumerator.Current;
                 if (param is null)
+                {
                     continue;
+                }
 
                 if (ComponentParameterRefAccessors.GetIsCascadingValue(param))
+                {
                     throw new InvalidOperationException("Cannot provide cascading values here.");
+                }
 
                 var name = ComponentParameterRefAccessors.GetName(param);
                 if (name is null)
+                {
                     throw new InvalidOperationException("Parameter name is required.");
+                }
 
                 var value = ComponentParameterRefAccessors.GetValue(param);
                 paramDict.Add(name, value);

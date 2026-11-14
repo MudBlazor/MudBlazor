@@ -75,19 +75,19 @@ internal sealed class KeyInterceptorService : IKeyInterceptorService
     }
 
     /// <inheritdoc />
-    public Task SubscribeAsync(string elementId, KeyInterceptorOptions options, IKeyDownObserver? keyDown, IKeyUpObserver? keyUp)
+    public Task SubscribeAsync(string elementId, KeyInterceptorOptions options, IKeyDownObserver? keyDown = null, IKeyUpObserver? keyUp = null)
     {
         return SubscribeAsync(new KeyObserver(elementId, keyDown, keyUp), options);
     }
 
     /// <inheritdoc />
-    public Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Action<KeyboardEventArgs>? keyDown, Action<KeyboardEventArgs>? keyUp)
+    public Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Action<KeyboardEventArgs>? keyDown = null, Action<KeyboardEventArgs>? keyUp = null)
     {
         return SubscribeAsync(new KeyObserver(elementId, KeyObserver.KeyDown(keyDown), KeyObserver.KeyUp(keyUp)), options);
     }
 
     /// <inheritdoc />
-    public Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Func<KeyboardEventArgs, Task>? keyDown, Func<KeyboardEventArgs, Task>? keyUp)
+    public Task SubscribeAsync(string elementId, KeyInterceptorOptions options, Func<KeyboardEventArgs, Task>? keyDown = null, Func<KeyboardEventArgs, Task>? keyUp = null)
     {
         return SubscribeAsync(new KeyObserver(elementId, KeyObserver.KeyDown(keyDown), KeyObserver.KeyUp(keyUp)), options);
     }

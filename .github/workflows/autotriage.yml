@@ -1,0 +1,51 @@
+name: AutoTriage
+
+on:
+  issues:
+    types: [opened, reopened]
+  pull_request_target:
+    types: [opened, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+# Manual runs go through autotriage-backlog.yml, which loads and saves the triage history.
+
+permissions:
+  contents: read
+
+jobs:
+  triage:
+    # Only in MudBlazor's own repository, skipping draft PRs, and issues and comments from bots.
+    if: >-
+      github.repository_owner == 'MudBlazor' && (
+      (github.event_name == 'pull_request_target' && !github.event.pull_request.draft) ||
+      (github.event_name != 'pull_request_target' && github.event.sender.type != 'Bot'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # Queue every run instead of keeping only the newest pending one, so a burst of new items all get triaged, and event runs wait for the backlog sweep.
+    concurrency:
+      group: autotriage-db
+      queue: max
+    steps:
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.MUDBOT_APP_ID }}
+          private-key: ${{ secrets.MUDBOT_PRIVATE_KEY }}
+
+      # AutoTriage reads the policy and README from the checkout, so MudBot doesn't need contents access.
+      - uses: actions/checkout@v7
+
+      - name: AutoTriage - triage item
+        uses: danielchalmers/AutoTriage@v5
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY_TRIAGE }}
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: triage-artifacts-${{ github.run_number }}
+          path: artifacts/
+          if-no-files-found: ignore

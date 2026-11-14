@@ -9,8 +9,7 @@
 @code {
 
     protected override RenderFragment PickerContent =>
-    @<CascadingValue Value="@this" IsFixed="true">
-        <MudPickerToolbar ShowToolbar="@ShowToolbar" Class="mud-picker-color-toolbar">
+    @<text><MudPickerToolbar ShowToolbar="@ShowToolbar" Class="mud-picker-color-toolbar">
             @if (PickerVariant != PickerVariant.Static)
             {
                 <MudIconButton Class="pa-1 mud-close-picker-button"
@@ -50,7 +49,8 @@
         </MudTooltip>
         </MudPickerToolbar>
         <MudPickerContent Class="mud-picker-color-content">
-            @if (ShowColorField)
+            @* The palette view replaces the color field and controls, so they aren't rendered underneath it (#9131). *@
+            @if (ShowColorField && _colorPickerViewState.Value != ColorPickerView.Palette)
             {
                 <div class="mud-picker-color-picker">
                     @if (_colorPickerViewState.Value == ColorPickerView.Spectrum)
@@ -62,7 +62,7 @@
                                          id="@_id"
                                          @onpointerdown="OnColorOverlayClick"
                                          @onpointerup="OnColorOverlayClick"
-                                         @onpointermove="OnPointerMoveAsync"
+                                         @onpointermove="@(DragEffect ? EventCallback.Factory.Create<PointerEventArgs>(this, OnPointerMoveAsync) : default)"
                                          @onpointerleave="OnPointerLeaveAsync">
                                         <svg class="mud-picker-color-selector"
                                              height="26"
@@ -103,7 +103,7 @@
             }
             @if (_colorPickerViewState.Value != ColorPickerView.GridCompact)
             {
-                @if (ShowSliders || ShowInputs || ShowPreview)
+                @if ((ShowSliders || ShowInputs || ShowPreview) && _colorPickerViewState.Value != ColorPickerView.Palette)
                 {
                     <div class="mud-picker-color-controls">
                         @if (ShowSliders || ShowPreview)
@@ -236,7 +236,7 @@
                                         case ColorPickerMode.HEX:
                                             <MudTextField T="string"
                                                           @key="@_inputResetKey"
-                                                          Value="@GetColorTextValue(_valueState.Value)"
+                                                          Value="@GetColorTextValue(ValueOrDefault)"
                                                           ValueChanged="SetInputStringAsync"
                                                           Class="mud-picker-color-inputfield"
                                                           Variant="Variant.Outlined"
@@ -291,6 +291,5 @@
                     </div>
                 }
             }
-        </MudPickerContent>
-    </CascadingValue>;
+        </MudPickerContent></text>;
 }

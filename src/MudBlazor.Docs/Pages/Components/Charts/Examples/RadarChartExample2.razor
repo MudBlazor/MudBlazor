@@ -2,7 +2,7 @@
 @using MudBlazor.Charts
 
 <MudPaper Class="doc-section-component-container mx-8">
-    <MudChart ChartType="ChartType.Radar" ChartSeries="@_series" ChartLabels="@_chartLabels" ChartOptions="@_options" Width="100%" Height="500px" MatchBoundsToSize CanHideSeries />
+    <MudChart T="double" ChartType="ChartType.Radar" ChartSeries="@_series" ChartLabels="@_chartLabels" ChartOptions="@_options" Width="100%" Height="500px" MatchBoundsToSize CanHideSeries />
 </MudPaper>
 
 @code {

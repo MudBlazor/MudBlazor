@@ -242,9 +242,11 @@ namespace MudBlazor.Services
         /// <returns>Continues the IServiceCollection chain.</returns>
         public static IServiceCollection AddMudLocalization(this IServiceCollection services)
         {
-            services.TryAddTransient<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
-            services.TryAddTransient<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
-            services.TryAddTransient<InternalMudLocalizer>();
+            // Scoped, not transient: the default interceptor builds a ResourceManagerStringLocalizerFactory and its resource cache.
+            // Every form component injects the localizer, so a transient registration rebuilt all of that per component instance.
+            services.TryAddScoped<ILocalizationInterceptor, DefaultLocalizationInterceptor>();
+            services.TryAddScoped<ILocalizationEnumInterceptor, DefaultLocalizationEnumInterceptor>();
+            services.TryAddScoped<InternalMudLocalizer>();
 
             return services;
         }

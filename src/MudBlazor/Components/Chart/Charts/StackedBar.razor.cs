@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.Justification.StackedBars;
@@ -22,11 +21,14 @@ namespace MudBlazor.Charts
         private const double BarOverlapAmountFix = 0.5; // used to trigger slight overlap so the bars don't have gaps due to floating point rounding
 
         private readonly List<SvgPath> _bars = [];
+        private readonly List<SvgText> _valueLabels = [];
         private double _barWidth;
         private double _barWidthStroke;
         private SvgPath? _hoveredBar;
 
         private const double MinBarWidth = 6;
+        private const double ValueLabelOffset = 5;
+        private const double ValueLabelFontSize = 12;
 
         protected override void OnInitialized()
         {
@@ -45,7 +47,10 @@ namespace MudBlazor.Charts
         public override void RebuildChart()
         {
             // shared plot points should be initialized before generating overlay charts
-            if (IsOverlayChart && SharedData is null) return;
+            if (IsOverlayChart && SharedData is null)
+            {
+                return;
+            }
 
             Series = (ChartContainer != null && ChartReference is MudChart<T>)
                 ? ChartContainer.ChartSeries
@@ -83,13 +88,16 @@ namespace MudBlazor.Charts
             SetBounds();
             ComputeStackedUnitsAndNumberOfLines(out lowestHorizontalLine, out gridYUnits, out numHorizontalLines, out var numVerticalLines);
 
-            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines;
+            var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines - 1;
 
             horizontalSpace = _boundWidth - HorizontalStartSpace - HorizontalEndSpace;
             verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
 
             // If this is an overlay chart, we do not generate the grid lines
-            if (IsOverlayChart) return;
+            if (IsOverlayChart)
+            {
+                return;
+            }
 
             GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
             GenerateVerticalGridLines(numVerticalLines, horizontalSpace);
@@ -100,16 +108,14 @@ namespace MudBlazor.Charts
         /// </summary>
         private void ComputeStackedUnitsAndNumberOfLines(out int lowestHorizontalLine, out T gridYUnits, out int numHorizontalLines, out int numVerticalLines)
         {
-            var yAxisTicks = ChartOptions?.YAxisTicks;
-
-            gridYUnits = T.CreateSaturating(yAxisTicks.HasValue && yAxisTicks.Value > 0 ? yAxisTicks.Value : 20);
-            numVerticalLines = Series.Count == 0 ? 0 : Series.Max(series => series.Data.Values.Count);
+            numVerticalLines = Series.Count == 0 ? 0 : Series.Max(series => series.Data.Count);
 
             CalculateStrokeWidth(numVerticalLines);
 
             var (stackedPos, stackedNeg) = ComputeStackedColumnTotals(numVerticalLines);
             var (maxY, minY) = GetYAxisExtremes(stackedPos, stackedNeg);
 
+            gridYUnits = GetGridYUnits(minY, maxY);
             numHorizontalLines = StackedBar<T>.CalculateNumHorizontalLines(gridYUnits, maxY, minY, out lowestHorizontalLine);
 
             ClampNumHorizontalLines(ref gridYUnits, ref numHorizontalLines, ref lowestHorizontalLine, maxY, minY);
@@ -124,15 +130,21 @@ namespace MudBlazor.Charts
             {
                 foreach (var seriesData in Series.Select(x => x.Data))
                 {
-                    if (j >= seriesData.Values.Count)
+                    if (j >= seriesData.Count)
+                    {
                         continue;
+                    }
 
                     var value = seriesData[j].Y;
 
                     if (value < T.Zero)
+                    {
                         negTotals[j] += value;
+                    }
                     else
+                    {
                         posTotals[j] += value;
+                    }
                 }
             }
 
@@ -144,7 +156,9 @@ namespace MudBlazor.Charts
             var maxY = stackedPositiveTotals.Length == 0 ? T.Zero : stackedPositiveTotals.Max();
 
             if (ChartOptions?.YAxisSuggestedMax is { } suggestedMax)
+            {
                 maxY = T.Max(T.CreateSaturating(suggestedMax), maxY);
+            }
 
             var minY = stackedNegativeTotals.Length == 0 ? T.Zero : stackedNegativeTotals.Min();
 
@@ -153,8 +167,8 @@ namespace MudBlazor.Charts
 
         private static int CalculateNumHorizontalLines(T gridYUnits, T maxY, T minY, out int lowestLine)
         {
-            var highestLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY / gridYUnits)), 0);
-            lowestLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY / gridYUnits)), 0);
+            var highestLine = Math.Max((int)Math.Ceiling(double.CreateSaturating(maxY) / double.CreateSaturating(gridYUnits)), 0);
+            lowestLine = Math.Min((int)Math.Floor(double.CreateSaturating(minY) / double.CreateSaturating(gridYUnits)), 0);
             return highestLine - lowestLine + 1;
         }
 
@@ -177,7 +191,7 @@ namespace MudBlazor.Charts
                 return;
             }
 
-            var barWidth = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? (numVerticalLines) : 1), 1);
+            var barWidth = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? numVerticalLines : 1), 1);
 
             _barWidthStroke = _barWidth = Math.Max(MinBarWidth, barWidth * ChartOptions!.BarWidthRatio);
 
@@ -205,7 +219,7 @@ namespace MudBlazor.Charts
             VerticalLines.Clear();
             VerticalValues.Clear();
 
-            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Values.Count) : 0;
+            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Count) : 0;
             var barPositions = CalculateBarGroupPositions(horizontalSpace, maxSeriesLength);
 
             for (var j = 0; j < numVerticalLines; j++)
@@ -219,7 +233,7 @@ namespace MudBlazor.Charts
                 };
                 VerticalLines.Add(line);
 
-                var label = j < ChartLabels.Length ? ChartLabels[j] : "";
+                var label = j < ChartLabels.Length && ShouldLabelVerticalGridLine(j) ? ChartLabels[j] : "";
                 var text = new SvgText()
                 {
                     X = x,
@@ -236,8 +250,9 @@ namespace MudBlazor.Charts
         private void GenerateStackedBars(int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
         {
             _bars.Clear();
+            _valueLabels.Clear();
 
-            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Values.Count) : 0;
+            var maxSeriesLength = Series.Count != 0 ? Series.Max(series => series.Data.Count) : 0;
             var barPositions = CalculateBarGroupPositions(horizontalSpace, maxSeriesLength);
 
             for (var dataIndex = 0; dataIndex < maxSeriesLength; dataIndex++)
@@ -246,18 +261,30 @@ namespace MudBlazor.Charts
                 var baseY = _boundHeight - VerticalStartSpace + (lowestHorizontalLine * verticalSpace);
                 var positiveStack = baseY;
                 var negativeStack = baseY;
+                var barTotal = T.Zero;
+                var hasVisibleSegment = false;
 
                 foreach (var (series, seriesIndex) in Series.Select((s, i) => (s, i)))
                 {
-                    if (dataIndex >= series.Data.Values.Count)
+                    if (dataIndex >= series.Data.Count)
+                    {
                         continue;
+                    }
+
+                    if (series.Visible)
+                    {
+                        hasVisibleSegment = true;
+                    }
 
                     var dataValue = series.Visible ? series.Data[dataIndex].Y : T.Zero;
+                    barTotal += dataValue;
 
                     if (dataValue == T.Zero && !ChartOptions!.ShowZeroValues)
+                    {
                         continue;
+                    }
 
-                    var segmentHeight = (dataValue / T.CreateSaturating(gridYUnits)) * T.CreateSaturating(verticalSpace);
+                    var segmentHeight = double.CreateSaturating(dataValue) / double.CreateSaturating(gridYUnits) * verticalSpace;
                     var isNegative = dataValue < T.Zero;
 
                     var yStart = isNegative ? negativeStack : positiveStack;
@@ -269,21 +296,44 @@ namespace MudBlazor.Charts
                         Data = $"M {ToS(x)} {ToS(yStart)} L {ToS(x)} {ToS(isNegative ? yEnd + BarOverlapAmountFix : yEnd - BarOverlapAmountFix)}",
                         LabelXValue = ChartLabels.Length > dataIndex ? ChartLabels[dataIndex] : string.Empty,
                         LabelYValue = dataValue.ToString(series.TooltipYValueFormat, null),
+                        YValue = double.CreateSaturating(dataValue),
                         LabelX = x,
                         LabelY = isNegative ? yStart : yEnd
                     });
 
                     if (isNegative)
+                    {
                         negativeStack = yEnd;
+                    }
                     else
+                    {
                         positiveStack = yEnd;
+                    }
+                }
+
+                if (ChartOptions!.ShowValues && hasVisibleSegment)
+                {
+                    // Positive totals render above the stack, negative totals below it.
+                    var labelY = barTotal < T.Zero
+                        ? negativeStack + ValueLabelOffset + ValueLabelFontSize
+                        : positiveStack - ValueLabelOffset;
+
+                    _valueLabels.Add(new SvgText
+                    {
+                        X = x,
+                        Y = labelY,
+                        Value = BuildYAxisValueString(barTotal),
+                    });
                 }
             }
         }
 
         private double[] CalculateBarGroupPositions(double horizontalSpace, int maxColumns)
         {
-            if (Series.Count == 0) return [];
+            if (Series.Count == 0)
+            {
+                return [];
+            }
 
             var context = new StackedBarContext
             {
@@ -302,7 +352,10 @@ namespace MudBlazor.Charts
 
         private int CalculateSpaceWidth(double horizontalSpace, int maxColumns)
         {
-            if (maxColumns <= 1) return 0;
+            if (maxColumns <= 1)
+            {
+                return 0;
+            }
 
             var spaceCount = maxColumns - 1;
             var remainingWidth = horizontalSpace - (_barWidth * maxColumns);
@@ -312,12 +365,14 @@ namespace MudBlazor.Charts
             return (int)Math.Max(0, spaceBetweenBars);
         }
 
-        private void OnBarMouseOver(MouseEventArgs _, SvgPath bar)
+        private void OnBarMouseOver(SvgPath bar)
         {
             _hoveredBar = bar;
 
             if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
+            {
                 chart.StateHasChanged();
+            }
         }
 
         private void OnBarMouseOut()
@@ -325,7 +380,9 @@ namespace MudBlazor.Charts
             _hoveredBar = null;
 
             if (IsOverlayChart && ChartReference is IMudStateHasChanged chart)
+            {
                 chart.StateHasChanged();
+            }
         }
     }
 }

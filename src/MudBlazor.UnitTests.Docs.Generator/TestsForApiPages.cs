@@ -352,7 +352,10 @@ public partial class TestsForApiPages
 
     private static bool ImplementsConverterInterface(Type type)
     {
-        if (!type.IsClass) return false;
+        if (!type.IsClass)
+        {
+            return false;
+        }
 
         return type
             .GetInterfaces()

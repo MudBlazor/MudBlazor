@@ -15,7 +15,7 @@ internal class SpaceAroundStrategy : IBarGroupPositionStrategy
 
         for (var i = 0; i < ctx.ColumnsPerDataSet; i++)
         {
-            positions[i] = offset + i * spaceAround * 2;
+            positions[i] = offset + (i * spaceAround * 2);
         }
 
         return positions;

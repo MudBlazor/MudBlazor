@@ -15,6 +15,47 @@ namespace MudBlazor
     /// <seealso cref="MudNavLink"/>
     public partial class MudNavMenu : MudComponentBase
     {
+        private readonly List<MudNavGroup> _groups = [];
+
+        /// <summary>
+        /// When <c>true</c>, multiple top-level <see cref="MudNavGroup"/> can be expanded at a time.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>true</c>. When set to <c>false</c>, expanding one group collapses the other top-level groups; nested groups are unaffected.
+        /// Only applies when a group is expanded by the user; setting <see cref="MudNavGroup.Expanded"/> programmatically bypasses this.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.NavMenu.Behavior)]
+        public bool MultiExpansion { get; set; } = true;
+
+        internal void RegisterGroup(MudNavGroup group)
+        {
+            if (!_groups.Contains(group))
+            {
+                _groups.Add(group);
+            }
+        }
+
+        internal void UnregisterGroup(MudNavGroup group)
+        {
+            _groups.Remove(group);
+        }
+
+        internal async Task NotifyGroupExpandedAsync(MudNavGroup expandedGroup)
+        {
+            if (MultiExpansion)
+            {
+                return;
+            }
+
+            foreach (MudNavGroup group in _groups)
+            {
+                if (!ReferenceEquals(group, expandedGroup))
+                {
+                    await group.CollapseAsync();
+                }
+            }
+        }
         protected string Classname =>
             new CssBuilder("mud-navmenu")
                 .AddClass($"mud-navmenu-{Color.ToStringFast(true)}")

@@ -141,6 +141,20 @@ public class ExpressionNullTests
         value.Should().BeNull();
     }
 
+    [Test]
+    public void AddNullChecks_ShouldReturnDefaultWhenMidChainMemberIsNull()
+    {
+        // Deep chain where the intermediate (Nested.Deep) is null; every level must be guarded, not just the last.
+        Expression<Func<TestClass, string?>> expression = x => x.Nested!.Deep!.Property;
+        var instance = new TestClass { Nested = new NestedClass { Deep = null } };
+
+        var result = ExpressionNull.AddNullChecks(expression);
+        var compiled = result.Compile();
+        var value = compiled(instance);
+
+        value.Should().BeNull();
+    }
+
     private class TestClass
     {
         public string? Property { get; set; }
@@ -158,6 +172,13 @@ public class ExpressionNullTests
     {
         public string? Property { get; set; }
 
+        public DeepNestedClass? Deep { get; set; }
+
         public string? GetProperty() => Property;
+    }
+
+    private class DeepNestedClass
+    {
+        public string? Property { get; set; }
     }
 }

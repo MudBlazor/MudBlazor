@@ -4,6 +4,9 @@
 
 namespace MudBlazor.State;
 
+/// <summary>
+/// Marks a component parameter that is managed by MudBlazor's ParameterState framework so the analyzer can verify it is registered correctly.
+/// </summary>
 [AttributeUsage(AttributeTargets.Property)]
 public class ParameterStateAttribute : Attribute
 {

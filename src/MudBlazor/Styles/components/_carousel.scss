@@ -1,4 +1,4 @@
-﻿@import '../abstracts/variables';
+@import '../abstracts/variables';
 
 .mud-carousel {
   display: flex !important;
@@ -16,6 +16,12 @@
 
 .mud-carousel-elements-rtl {
   transform: rotate(180deg) !important;
+}
+
+.mud-carousel-custom-button {
+  &:focus-visible {
+    outline: auto;
+  }
 }
 
 .mud-carousel-item {

@@ -1,12 +1,8 @@
-﻿.scroll-locked {
+.scroll-locked {
   padding-right: 8px;
   overflow: hidden;
 
   .mud-layout {
-    .mud-appbar {
-      padding-right: 8px;
-    }
-
     .mud-main-content {
       .mud-scroll-to-top {
         padding-right: 8px;
@@ -24,10 +20,6 @@
     padding-right: 17px; //the width of scroll-bar in firefox
 
     .mud-layout {
-      .mud-appbar {
-        padding-right: 17px;
-      }
-
       .mud-main-content {
         .mud-scroll-to-top {
           padding-right: 17px;

@@ -3,7 +3,8 @@
 <MudAutocomplete id="autocompleteLabelTest" T="string?" Label="US States"
                  @bind-Value:get="Value" @bind-Value:set="ValueChanged" ResetValueOnEmptyText="ResetValueOnEmptyText"
                  SearchFunc="@SearchStates" DebounceInterval="DebounceInterval"
-                 CoerceText="CoerceText" CoerceValue="CoerceValue" Immediate="Immediate"/>
+                 CoerceText="CoerceText" CoerceValue="CoerceValue" Immediate="Immediate"
+                 OnDebounceIntervalElapsed="OnDebounceIntervalElapsed" />
 
 @code {
     public static string __description__ = "Autocomplete to input a US state";
@@ -28,6 +29,9 @@
 
     [Parameter]
     public bool Immediate { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnDebounceIntervalElapsed { get; set; }
 
     public int SearchFuncCallCount { get; private set; }
 
@@ -54,7 +58,7 @@
         SearchFuncCallCount++;
 
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(50, token);
+        await Task.Yield();
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))

@@ -67,7 +67,7 @@
     private async Task OnCloseDoSomethingExpensiveAsync(Snackbar snackbar)
     {
         Snackbar.Add("Sure, I'll tell the database you closed me. No big deal...");
-        await Task.Delay(5000);
+        await Task.Yield();
         Snackbar.Add("All sorted. The database is thrilled.");
     }
 }

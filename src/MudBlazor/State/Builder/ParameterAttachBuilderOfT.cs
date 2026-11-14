@@ -185,9 +185,12 @@ internal class ParameterAttachBuilder<T>
     /// <exception cref="ArgumentNullException">Thrown when required parameters are not provided.</exception>
     public ParameterStateInternal<T> Attach()
     {
+        ArgumentNullException.ThrowIfNull(_metadata);
+        ArgumentNullException.ThrowIfNull(_getParameterValueFunc);
+
         return ParameterStateInternal<T>.Attach(
-            _metadata ?? throw new ArgumentNullException(nameof(_metadata)),
-            _getParameterValueFunc ?? throw new ArgumentNullException(nameof(_getParameterValueFunc)),
+            _metadata,
+            _getParameterValueFunc,
             _eventCallbackFunc,
             _parameterChangedHandler,
             _comparer

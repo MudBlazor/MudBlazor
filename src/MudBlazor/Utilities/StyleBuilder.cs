@@ -7,7 +7,7 @@ using System.Text;
 namespace MudBlazor.Utilities
 {
     /// <summary>
-    /// Represents a builder for creating in-line styles used in a component.
+    /// Builds an inline CSS style string with conditionally added declarations for a component's markup.
     /// </summary>
     public readonly struct StyleBuilder
     {
@@ -212,11 +212,17 @@ namespace MudBlazor.Utilities
         /// <returns>The <see cref="StyleBuilder"/> instance.</returns>
         public StyleBuilder AddStyleFromAttributes(IReadOnlyDictionary<string, object>? additionalAttributes)
         {
-            return additionalAttributes is null
-                ? this
-                : additionalAttributes.TryGetValue("style", out var result)
-                    ? AddRaw(result.ToString())
-                    : this;
+            if (additionalAttributes is null)
+            {
+                return this;
+            }
+
+            if (additionalAttributes.TryGetValue("style", out var result))
+            {
+                return AddRaw(result.ToString());
+            }
+
+            return this;
         }
 
         /// <summary>

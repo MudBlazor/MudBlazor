@@ -79,6 +79,8 @@ namespace MudBlazor.Docs.Services
             .AddItem("Collapse", typeof(MudCollapse))
             .AddItem("Stepper", typeof(MudStepper), typeof(MudStep))
             .AddItem("Split Panel", typeof(MudSplitPanel))
+            .AddItem("Exit Prompt", typeof(MudExitPrompt))
+            .AddItem("Hotkey", typeof(MudHotkey))
 
             //GROUPS
 
@@ -128,13 +130,8 @@ namespace MudBlazor.Docs.Services
                 .AddItem("Radar Chart", typeof(Radar<T>), typeof(RadarChartOptions), typeof(Legend<T>))
                 .AddItem("Rose Chart", typeof(Rose<T>), typeof(RoseChartOptions), typeof(Legend<T>))
                 .AddItem("Sankey Chart", typeof(Sankey<T>), typeof(SankeyChartOptions), typeof(Legend<T>))
+                .AddItem("Scatter Plot Chart", typeof(ScatterPlot<T>), typeof(ScatterPlotChartOptions), typeof(Legend<T>))
                 .AddItem("Universal Chart", typeof(MudChart<T>), typeof(MudAxisChartBase<,>), typeof(ChartOptions))
-            )
-
-            // Functional
-            .AddNavGroup("Functional", false, new DocsComponents()
-                .AddItem("Exit Prompt", typeof(MudExitPrompt))
-                .AddItem("Hotkey", typeof(MudHotkey))
             )
 
             // this must be last!
@@ -156,7 +153,6 @@ namespace MudBlazor.Docs.Services
             new DocsLink { Title = "Localization", Href = "features/localization" },
             new DocsLink { Title = "Analyzers", Href = "features/analyzers" },
             new DocsLink { Title = "Services", Href = "features/services" },
-            new DocsLink { Title = "Chat (deprecated)", Href = "components/chat" }, // TODO: there is no component to reference so it's added under features instead so the page is still searchable. remove this in v10.
         }.OrderBy(x => x.Title);
 
         /// <summary>

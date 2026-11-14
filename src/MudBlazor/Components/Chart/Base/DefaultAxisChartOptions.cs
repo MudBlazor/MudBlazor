@@ -2,29 +2,29 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Microsoft.AspNetCore.Components;
-
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents the default options for a chart with axes.
+/// Default option values for axis-based charts, including Y-axis ticks, number formats, grid lines, and axis titles.
 /// </summary>
 public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartOptions
 {
     private int _yAxisTicks = 20;
     private int _maxNumYAxisTicks = 20;
+    private int _xAxisLabelInterval = 1;
 
     /// <summary>
     /// The spacing between vertical tick marks.
     /// </summary>
     /// <remarks>
     /// Defaults to <c>20</c>.
-    /// Value must be greater than or equal to <c>1</c>.
+    /// Set it to <c>0</c> to pick a round spacing (1, 2 or 5 times a power of ten) that fits the values in about five steps, or fewer when <see cref="MaxNumYAxisTicks"/> is lower.
+    /// Values below <c>0</c> are treated as <c>0</c>.
     /// </remarks>
     public int YAxisTicks
     {
         get => _yAxisTicks;
-        set => _yAxisTicks = Math.Max(1, value);
+        set => _yAxisTicks = Math.Max(0, value);
     }
 
     /// <summary>
@@ -63,6 +63,9 @@ public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartO
     /// If set, this function will be used to convert Y-axis values to strings for display purposes.
     /// If not provided, <see cref="YAxisFormat"/> will be used instead.
     /// </summary>
+    /// <remarks>
+    /// Tooltips can write values the same way with <c>{{Y_AXIS_VALUE}}</c> in <see cref="DefaultChartOptions.TooltipTitleFormat"/> or <see cref="DefaultChartOptions.TooltipSubtitleFormat"/>.
+    /// </remarks>
     public Func<double, string>? YAxisToStringFunc { get; set; }
 
     /// <summary>
@@ -85,6 +88,21 @@ public abstract class DefaultAxisChartOptions : DefaultChartOptions, IAxisChartO
     /// Rotation angle to rotate the labels in degrees.
     /// </summary>
     public int XAxisLabelRotation { get; set; }
+
+    /// <summary>
+    /// Draws every nth label on the X-axis, leaving the ones in between blank.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>1</c>, which labels every point.
+    /// Raise it when there are more points than the axis has room for.
+    /// Only the axis is thinned out, so a tooltip still carries its own point's label.
+    /// Values below <c>1</c> are treated as <c>1</c>.
+    /// </remarks>
+    public int XAxisLabelInterval
+    {
+        get => _xAxisLabelInterval;
+        set => _xAxisLabelInterval = Math.Max(1, value);
+    }
 
     /// <summary>
     /// The title of the X-axis.

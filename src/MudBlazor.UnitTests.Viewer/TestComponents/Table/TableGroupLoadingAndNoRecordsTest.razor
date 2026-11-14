@@ -28,10 +28,10 @@
     private string _searchString = string.Empty;
 
     private readonly TableGroupDefinition<RacingCar> _groupDefinition = new()
-	{
-		GroupName = "Brand",
-		Selector = e => e.Brand
-	};
+    {
+        GroupName = "Brand",
+        Selector = e => e.Brand
+    };
 
     protected override Task OnInitializedAsync()
     {

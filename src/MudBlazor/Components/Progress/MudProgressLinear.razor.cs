@@ -31,8 +31,18 @@ namespace MudBlazor
                 .AddClass("mud-progress-linear-background", ShowBackground)
                 .AddClass("horizontal", !Vertical)
                 .AddClass("vertical", Vertical)
-                .AddClass("mud-flip-x-rtl")
                 .AddClass(Class)
+                .Build();
+
+        /// <summary>
+        /// The CSS classes for the internal bars container.
+        /// </summary>
+        /// <remarks>
+        /// Horizontal progress bars are mirrored in RTL layouts so the fill direction remains correct, while vertical bars do not require mirroring.
+        /// </remarks>
+        protected string BarsClassname =>
+            new CssBuilder("mud-progress-linear-bars")
+                .AddClass("mud-flip-x-rtl", !Vertical)
                 .Build();
 
         /// <summary>
@@ -49,7 +59,7 @@ namespace MudBlazor
         /// The size of this component.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Size.Medium"/>.
+        /// Defaults to <see cref="Size.Small"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.ProgressLinear.Appearance)]

@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor
+@inherits MudComponentBase
+@typeparam T
+
+<div class="@Classname"
+     style="@Style"
+     draggable="@((DropItem?.Disabled is false).ToString().ToLowerInvariant())"
+     @ondragstart="OnDragStartedAsync"
+     @ondragstart:stopPropagation="true"
+     @ondragend="OnDragEndedAsync"
+     @ondragend:stopPropagation="true"
+     @ontouchstart="OnTouchStartedAsync"
+     @ontouchstart:stopPropagation="true"
+     @ontouchmove="OnTouchMovedAsync"
+     @ontouchmove:stopPropagation="true"
+     @ontouchend="OnTouchEndedAsync"
+     @ontouchend:stopPropagation="true"
+     @attributes="UserAttributes">
+    @ChildContent
+</div>

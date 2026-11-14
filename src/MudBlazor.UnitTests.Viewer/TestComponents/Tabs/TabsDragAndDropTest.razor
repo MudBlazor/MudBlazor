@@ -1,5 +1,10 @@
-﻿<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pa-6" 
-         EnableDragAndDrop="true" OnItemDropped="@ItemDroppedFired">
+<MudRadioGroup T="Position" Value="@_selectedPosition" ValueChanged="@OnPositionChanged">
+    <MudRadio T="Position" Value="@Position.Top">Horizontal</MudRadio>
+    <MudRadio T="Position" Value="@Position.Left">Vertical</MudRadio>
+</MudRadioGroup>
+
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pa-6"
+         EnableDragAndDrop="true" OnItemDropped="@ItemDroppedFired" Position="@_selectedPosition">
     <MudTabPanel Text="Tab One">
         <MudText>Content One</MudText>
     </MudTabPanel>
@@ -16,7 +21,22 @@
 
 @code {
     public static string __description__ = "Viewer for MudTabs. Drag and drop tabs to reorder them.";
+    private Position _selectedPosition;
+
+    [Parameter]
+    public Position Position { get; set; } = Position.Top;
 
     [Parameter]
     public EventCallback<MudItemDropInfo<MudTabPanel>> ItemDroppedFired { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _selectedPosition = Position;
+    }
+
+    private Task OnPositionChanged(Position position)
+    {
+        _selectedPosition = position;
+        return Task.CompletedTask;
+    }
 }

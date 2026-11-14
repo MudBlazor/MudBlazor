@@ -51,7 +51,9 @@ namespace MudBlazor.UnitTests.UserAttributes
         public IRenderedComponent<IComponent> Create(Type componentType, BunitContext testContext)
         {
             if (_customFactories.TryGetValue(componentType, out var factory))
+            {
                 return factory(testContext);
+            }
 
             factory = BuildDefaultFactory(componentType)
                 ?? throw new InvalidOperationException($"Failed to create default factory for component {componentType.Name}");
@@ -104,7 +106,9 @@ namespace MudBlazor.UnitTests.UserAttributes
             where TComponent : MudComponentBase
         {
             if (UserAttributes != null)
+            {
                 builder = builder.Add(x => x.UserAttributes, UserAttributes);
+            }
 
             return builder;
         }

@@ -30,13 +30,15 @@
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
-        <TemplateColumn Hidden="@_readOnly" CellClass="d-flex justify-between">
+        <TemplateColumn Hidden="@_readOnly">
             <CellTemplate>
+                <MudStack Row Spacing="0" Justify="Justify.SpaceBetween">
                     @if (!_isCellEditMode && !_editTriggerRowClick)
                     {
                         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
                     }
                     <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="@(() => DeleteItem(context.Item))" />
+                </MudStack>
             </CellTemplate>
             <EditTemplate>
                     @if (!_isCellEditMode && !_editTriggerRowClick)

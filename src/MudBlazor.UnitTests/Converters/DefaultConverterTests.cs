@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Numerics;
 using AwesomeAssertions;
 using MudBlazor.Resources;
+using MudBlazor.Utilities;
 using MudBlazor.Utilities.Exceptions;
 using NUnit.Framework;
 
@@ -16,6 +17,95 @@ namespace MudBlazor.UnitTests.Converters;
 public class DefaultConverterTests
 {
     #region DefeultConverter
+
+    /// <summary>
+    /// Every type in the built-in table must resolve to its own converter, including the nullable variants.
+    /// </summary>
+    /// <remarks>
+    /// A type that resolves to nothing falls through to the ToString fallback, whose ConvertBack silently returns default, so only a round trip catches a wrong entry in the table.
+    /// </remarks>
+    [Test]
+    public void DefaultConverter_ShouldRoundTripEveryBuiltInType()
+    {
+        AssertRoundTrip("hello world");
+        AssertRoundTrip('Z');
+        AssertNullableRoundTrip<char>('Z');
+        AssertRoundTrip(true);
+        AssertNullableRoundTrip(true);
+        AssertRoundTrip(new Guid("8a1f0f3c-6f2e-4a1d-9c3b-0d5a6e7f8b90"));
+        AssertNullableRoundTrip(new Guid("8a1f0f3c-6f2e-4a1d-9c3b-0d5a6e7f8b90"));
+        AssertNumberRoundTrip<sbyte>(-12, 12);
+        AssertNumberRoundTrip<byte>(200, 12);
+        AssertNumberRoundTrip<short>(-1234, 12);
+        AssertNumberRoundTrip<ushort>(60000, 12);
+        AssertNumberRoundTrip(123456, 12);
+        AssertNumberRoundTrip(4000000000u, 12u);
+        AssertNumberRoundTrip(-123456789012345L, 12L);
+        AssertNumberRoundTrip(123456789012345ul, 12ul);
+        AssertNumberRoundTrip(1.25f, 12f);
+        AssertNumberRoundTrip(3.5d, 12d);
+        AssertNumberRoundTrip(12345.6789m, 12m);
+        AssertRoundTrip(BigInteger.Parse("123456789012345678901234567890", CultureInfo.InvariantCulture));
+        AssertNullableRoundTrip(BigInteger.Parse("123456789012345678901234567890", CultureInfo.InvariantCulture));
+        AssertRoundTrip(new DateTime(2025, 11, 30, 13, 45, 12, DateTimeKind.Unspecified), "o");
+        AssertNullableRoundTrip(new DateTime(2025, 11, 30, 13, 45, 12, DateTimeKind.Unspecified), "o");
+        AssertRoundTrip(new DateTimeOffset(2025, 11, 30, 13, 45, 12, TimeSpan.FromHours(2)), "o");
+        AssertNullableRoundTrip(new DateTimeOffset(2025, 11, 30, 13, 45, 12, TimeSpan.FromHours(2)), "o");
+        AssertRoundTrip(new DateOnly(2025, 11, 30), "yyyy-MM-dd");
+        AssertNullableRoundTrip(new DateOnly(2025, 11, 30), "yyyy-MM-dd");
+        AssertRoundTrip(new TimeOnly(14, 5, 6), "HH:mm:ss");
+        AssertNullableRoundTrip(new TimeOnly(14, 5, 6), "HH:mm:ss");
+        AssertRoundTrip(new TimeSpan(1, 2, 3, 4, 567), "c");
+        AssertNullableRoundTrip(new TimeSpan(1, 2, 3, 4, 567), "c");
+    }
+
+    /// <summary>
+    /// Converts a value to text and back, and asserts the value survives the trip.
+    /// </summary>
+    private static void AssertRoundTrip<TValue>(TValue value, string? format = null)
+    {
+        var converter = new DefaultConverter<TValue>
+        {
+            Culture = () => CultureInfo.InvariantCulture,
+            Format = () => format
+        };
+
+        converter.ConvertBack(converter.Convert(value)).Should().Be(value);
+    }
+
+    /// <summary>
+    /// Round-trips a number and asserts the built-in number converter handled it rather than the IParsable fallback.
+    /// </summary>
+    /// <remarks>
+    /// The built-in converter parses with <see cref="NumberStyles.Any"/>, so it accepts the invariant currency symbol.
+    /// The fallback parses through <c>IParsable</c> and rejects it, which is how a wrong entry in the table shows up.
+    /// </remarks>
+    private static void AssertNumberRoundTrip<TValue>(TValue value, TValue currencyParsed) where TValue : struct
+    {
+        AssertRoundTrip(value);
+        AssertNullableRoundTrip(value);
+
+        const string Currency = "¤12";
+        new DefaultConverter<TValue> { Culture = () => CultureInfo.InvariantCulture }.ConvertBack(Currency).Should().Be(currencyParsed);
+        new DefaultConverter<TValue?> { Culture = () => CultureInfo.InvariantCulture }.ConvertBack(Currency).Should().Be(currencyParsed);
+    }
+
+    /// <summary>
+    /// Runs <see cref="AssertRoundTrip{TValue}"/> against the nullable form of a value type, including the null case.
+    /// </summary>
+    private static void AssertNullableRoundTrip<TValue>(TValue value, string? format = null) where TValue : struct
+    {
+        AssertRoundTrip<TValue?>(value, format);
+
+        var converter = new DefaultConverter<TValue?>
+        {
+            Culture = () => CultureInfo.InvariantCulture,
+            Format = () => format
+        };
+
+        converter.Convert(null).Should().BeNull();
+        converter.ConvertBack(null).Should().BeNull();
+    }
 
     [Test]
     public void DefaultConverter_Roundtrip_AllSupportedTypes_ForwardAndBack()
@@ -244,14 +334,16 @@ public class DefaultConverterTests
         conv.ConvertBack("Wednesday").Should().Be(Value);
         conv.ConvertBack(string.Empty).Should().Be(default);
 
-        // invalid should throw ConversionException with expected key
+        // invalid should throw ConversionException with expected key and the enum type name as argument
         Action act = () => conv.ConvertBack("NotAValue");
 
-        act.Should()
+        var exception = act.Should()
             .Throw<ConversionException>()
-            .Which.ErrorMessageKey
-            .Should()
-            .Be(LanguageResource.Converter_NotValueOf);
+            .Which;
+
+        exception.ErrorMessageKey.Should().Be(LanguageResource.Converter_NotValueOf);
+        exception.ErrorMessageArgs.Should().ContainSingle();
+        exception.ErrorMessageArgs[0].Should().Be(nameof(DayOfWeek));
     }
 
     [Test]
@@ -269,13 +361,16 @@ public class DefaultConverterTests
         conv.ConvertBack(string.Empty).Should().BeNull();
         conv.ConvertBack(null).Should().BeNull();
 
-        // invalid back should throw ConversionException
+        // invalid back should throw ConversionException carrying the enum type name as argument
         Action act = () => conv.ConvertBack("NoSuchDay");
-        act.Should()
+
+        var exception = act.Should()
             .Throw<ConversionException>()
-            .Which.ErrorMessageKey
-            .Should()
-            .Be(LanguageResource.Converter_NotValueOf);
+            .Which;
+
+        exception.ErrorMessageKey.Should().Be(LanguageResource.Converter_NotValueOf);
+        exception.ErrorMessageArgs.Should().ContainSingle();
+        exception.ErrorMessageArgs[0].Should().Be(nameof(DayOfWeek));
     }
 
     #endregion
@@ -377,7 +472,9 @@ public class DefaultConverterTests
         var trueInputs = new[] { "true", "True", "TrUe", "1", "on", "ON" };
 
         foreach (var input in trueInputs)
+        {
             conv.ConvertBack(input).Should().BeTrue();
+        }
     }
 
     [Test]
@@ -387,7 +484,9 @@ public class DefaultConverterTests
         var falseInputs = new[] { "false", "0", "off", "OFF", "random", string.Empty, null };
 
         foreach (var input in falseInputs)
+        {
             conv.ConvertBack(input).Should().BeFalse();
+        }
     }
 
     [Test]
@@ -398,15 +497,21 @@ public class DefaultConverterTests
 
         // true variants -> true
         foreach (var input in new[] { "true", "1", "on", "TrUe" })
+        {
             nullableConv.ConvertBack(input).Should().BeTrue();
+        }
 
         // false variants -> false
         foreach (var input in new[] { "false", "0", "off", "OFF" })
+        {
             nullableConv.ConvertBack(input).Should().BeFalse();
+        }
 
         // unknown / empty / null -> null
         foreach (var input in new[] { "maybe", string.Empty, null })
+        {
             nullableConv.ConvertBack(input).Should().BeNull();
+        }
     }
 
     #endregion
@@ -722,26 +827,50 @@ public class DefaultConverterTests
 
     #region Guid
 
+    private static DefaultConverter.GuidConverter CreateGuidConverter(Func<CultureInfo>? culture = null, Func<string?>? format = null)
+    {
+        return new DefaultConverter.GuidConverter(culture ?? (() => CultureInfo.InvariantCulture), format ?? (() => null));
+    }
+
     [Test]
     public void Guid_Convert_ShouldReturnString()
     {
-        var conv = DefaultConverter.GuidConverter.Instance;
+        var conv = CreateGuidConverter();
         var guid = Guid.NewGuid();
 
-        conv.Convert(guid).Should().Be(guid.ToString());
+        conv.Convert(guid).Should().Be(guid.ToString("D", CultureInfo.InvariantCulture));
+    }
+
+    [Test]
+    public void Guid_Convert_WithCustomFormat_ShouldReturnFormattedString()
+    {
+        var conv = CreateGuidConverter(() => CultureInfo.InvariantCulture, () => "B");
+        var guid = Guid.NewGuid();
+
+        conv.Convert(guid).Should().Be(guid.ToString("B", CultureInfo.InvariantCulture));
+    }
+
+    [Test]
+    public void Guid_Convert_WithCustomFormat_AndNonInvariantCulture_ShouldReturnFormattedString()
+    {
+        var culture = new CultureInfo("tr-TR");
+        var conv = CreateGuidConverter(() => culture, () => "N");
+        var guid = Guid.NewGuid();
+
+        conv.Convert(guid).Should().Be(guid.ToString("N", culture));
     }
 
     [Test]
     public void Guid_Convert_NullableNull_ReturnsNull()
     {
-        var conv = DefaultConverter.GuidConverter.Instance;
+        var conv = CreateGuidConverter();
         conv.Convert(null).Should().BeNull();
     }
 
     [Test]
     public void Guid_ConvertBack_NullOrEmpty_ReturnsEmptyGuid()
     {
-        var conv = DefaultConverter.GuidConverter.Instance;
+        var conv = CreateGuidConverter();
         conv.ConvertBack(null).Should().Be(Guid.Empty);
         conv.ConvertBack(string.Empty).Should().Be(Guid.Empty);
     }
@@ -749,17 +878,53 @@ public class DefaultConverterTests
     [Test]
     public void Guid_ConvertBack_ValidGuidString_ReturnsParsedGuid()
     {
-        var conv = DefaultConverter.GuidConverter.Instance;
+        var conv = CreateGuidConverter();
         var guid = Guid.NewGuid();
-        var text = guid.ToString();
+        var text = guid.ToString("D");
 
         conv.ConvertBack(text).Should().Be(guid);
     }
 
     [Test]
+    public void Guid_ConvertBack_WithCustomFormat_ReturnsParsedGuid()
+    {
+        var conv = CreateGuidConverter(() => CultureInfo.InvariantCulture, () => "N");
+        var guid = Guid.NewGuid();
+        var text = guid.ToString("N");
+
+        conv.ConvertBack(text).Should().Be(guid);
+    }
+
+    [Test]
+    public void Guid_ConvertBack_WithCustomFormat_AndNonInvariantCulture_ReturnsParsedGuid()
+    {
+        var conv = CreateGuidConverter(() => new CultureInfo("de-DE"), () => "N");
+        var guid = Guid.NewGuid();
+        var text = guid.ToString("N");
+
+        conv.ConvertBack(text).Should().Be(guid);
+    }
+
+    [Test]
+    public void Guid_ConvertBack_WhenInputFormatDiffersFromConfigured_ThrowsConversionException()
+    {
+        var conv = CreateGuidConverter(() => CultureInfo.InvariantCulture, () => "N");
+        var guid = Guid.NewGuid();
+        var text = guid.ToString("D");
+
+        Action act = () => conv.ConvertBack(text);
+
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_InvalidGUID);
+    }
+
+    [Test]
     public void Guid_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKey()
     {
-        var conv = DefaultConverter.GuidConverter.Instance;
+        var conv = CreateGuidConverter();
 
         Action act = () => conv.ConvertBack("not-a-guid");
 
@@ -773,14 +938,14 @@ public class DefaultConverterTests
     [Test]
     public void Guid_NullableInterfaceConvertBack_EmptyOrNull_ReturnsNull_And_ParsesValidValue()
     {
-        var conv = DefaultConverter.GuidConverter.Instance;
+        var conv = CreateGuidConverter();
         IReversibleConverter<Guid?, string?> nullableConv = conv;
 
         nullableConv.ConvertBack(null).Should().BeNull();
         nullableConv.ConvertBack(string.Empty).Should().BeNull();
 
         var guid = Guid.NewGuid();
-        nullableConv.ConvertBack(guid.ToString()).Should().Be(guid);
+        nullableConv.ConvertBack(guid.ToString("D")).Should().Be(guid);
     }
 
     #endregion
@@ -960,6 +1125,38 @@ public class DefaultConverterTests
 
     #endregion
 
+    #region ToStringFallback
+
+    // A type with no built-in converter, that is not an enum and does not implement IParsable,
+    // falls through to the ToString fallback: Convert uses ToString, ConvertBack always returns default.
+    private sealed class UnconvertibleBox(string value)
+    {
+        public override string ToString() => value;
+    }
+
+    [Test]
+    public void DefaultConverter_UnsupportedType_Convert_UsesToString()
+    {
+        var conv = new DefaultConverter<UnconvertibleBox>();
+        var value = new UnconvertibleBox("boxed-payload");
+
+        conv.Convert(value).Should().Be("boxed-payload");
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void DefaultConverter_UnsupportedType_ConvertBack_AlwaysReturnsDefault()
+    {
+        var conv = new DefaultConverter<UnconvertibleBox>();
+
+        // The fallback cannot reconstruct the value, so it returns default regardless of input.
+        conv.ConvertBack("boxed-payload").Should().BeNull();
+        conv.ConvertBack(string.Empty).Should().BeNull();
+        conv.ConvertBack(null).Should().BeNull();
+    }
+
+    #endregion
+
     #region TimeOnly
 
     private static DefaultConverter.TimeOnlyConverter CreateTimeOnlyConverter(Func<CultureInfo>? culture = null, Func<string?>? format = null)
@@ -1000,6 +1197,54 @@ public class DefaultConverterTests
         var expected = new TimeOnly(8, 30, 15);
 
         conv.ConvertBack(Text).Should().Be(expected);
+    }
+
+    /// <summary>
+    /// Without a Format, ConvertBack reads back the text Convert produced for the culture.
+    /// </summary>
+    [TestCase("")]
+    [TestCase("en-US")]
+    [TestCase("en-GB")]
+    [TestCase("de-DE")]
+    [TestCase("fr-CA")]
+    public void TimeOnly_ConvertBack_WhenFormatIsNull_RoundTripsConvertOutput(string cultureName)
+    {
+        var culture = CultureInfo.GetCultureInfo(cultureName);
+        var conv = CreateTimeOnlyConverter(() => culture, () => null);
+        var value = new TimeOnly(12, 30);
+
+        conv.ConvertBack(conv.Convert(value)).Should().Be(value);
+    }
+
+    /// <summary>
+    /// Without a Format, ConvertBack accepts a typed time in the culture.
+    /// </summary>
+    [TestCase("", "14:05")]
+    [TestCase("en-US", "14:05")]
+    [TestCase("en-US", "2:05 PM")]
+    public void TimeOnly_ConvertBack_WhenFormatIsNull_ParsesTypedTime(string cultureName, string text)
+    {
+        var culture = CultureInfo.GetCultureInfo(cultureName);
+        var conv = CreateTimeOnlyConverter(() => culture, () => null);
+
+        conv.ConvertBack(text).Should().Be(new TimeOnly(14, 5));
+    }
+
+    /// <summary>
+    /// Without a Format, text that is not a time still raises the conversion error.
+    /// </summary>
+    [Test]
+    public void TimeOnly_ConvertBack_WhenFormatIsNull_Invalid_ThrowsConversionException()
+    {
+        var conv = CreateTimeOnlyConverter(() => CultureInfo.InvariantCulture, () => null);
+
+        Action act = () => conv.ConvertBack("not-a-time");
+
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_InvalidDateTime);
     }
 
     [Test]
@@ -1108,6 +1353,273 @@ public class DefaultConverterTests
 
         var parsed = nullableConv.ConvertBack("09:30");
         parsed.Should().Be(new TimeSpan(9, 30, 0));
+    }
+
+    #endregion
+
+    #region IParsable
+
+    [Test]
+    public void DefaultConverter_IParsable_ConvertBack_ValidValue_UsesCulture()
+    {
+        var conv = new DefaultConverter<ParsableTemperature>
+        {
+            Culture = () => new CultureInfo("fr-FR")
+        };
+
+        var parsed = conv.ConvertBack("12,5");
+
+        parsed.Value.Should().Be(12.5m);
+    }
+
+    [Test]
+    public void DefaultConverter_IParsable_Convert_ReturnsStringRepresentation()
+    {
+        var conv = new DefaultConverter<ParsableTemperature>();
+        var value = new ParsableTemperature(12.5m);
+
+        conv.Convert(value).Should().Be(value.ToString());
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableFormattable_Convert_UsesFormatAndCulture()
+    {
+        var conv = new DefaultConverter<ParsableFormattableTemperature>
+        {
+            Culture = () => new CultureInfo("fr-FR"),
+            Format = () => "0.00"
+        };
+        var value = new ParsableFormattableTemperature(12.5m);
+
+        conv.Convert(value).Should().Be("12,50");
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableReference_Convert_Null_ReturnsNull()
+    {
+        var conv = new DefaultConverter<ParsableLabel>();
+
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableNullable_ConvertBack_NullOrEmpty_ReturnsNull()
+    {
+        var conv = new DefaultConverter<ParsableTemperature?>();
+
+        conv.ConvertBack(null).Should().BeNull();
+        conv.ConvertBack(string.Empty).Should().BeNull();
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableNullable_Convert_ReturnsStringRepresentation()
+    {
+        var conv = new DefaultConverter<ParsableTemperature?>();
+        var value = new ParsableTemperature(7.25m);
+
+        conv.Convert(value).Should().Be(value.ToString());
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableFormattableNullable_Convert_UsesFormatAndCulture()
+    {
+        var conv = new DefaultConverter<ParsableFormattableTemperature?>
+        {
+            Culture = () => new CultureInfo("fr-FR"),
+            Format = () => "0.00"
+        };
+        ParsableFormattableTemperature? value = new ParsableFormattableTemperature(7.25m);
+
+        conv.Convert(value).Should().Be("7,25");
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableFormattable_MudColor_Convert_UsesConfiguredFormat()
+    {
+        var culture = new CultureInfo("tr-TR");
+        var conv = new DefaultConverter<MudColor>
+        {
+            Culture = () => culture,
+            Format = () => "hex"
+        };
+        var value = new MudColor("#12ab34ff");
+
+        var converted = conv.Convert(value);
+
+        converted.Should().Be("#12ab34");
+        converted.Should().Be(value.ToString("hex", culture));
+        converted.Should().NotBe(value.ToString());
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableFormattableNullable_MudColor_Convert_UsesConfiguredFormat()
+    {
+        var culture = new CultureInfo("de-DE");
+        var conv = new DefaultConverter<MudColor?>
+        {
+            Culture = () => culture,
+            Format = () => "hexa"
+        };
+        var value = new MudColor("#12ab34cd");
+
+        conv.Convert(value).Should().Be("#12ab34cd");
+        conv.Convert(value).Should().Be(value.ToString("hexa", culture));
+        conv.Convert(null).Should().BeNull();
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableFormattable_MudColor_ConvertBack_ParsesConfiguredFormatOutput()
+    {
+        var conv = new DefaultConverter<MudColor>
+        {
+            Culture = () => new CultureInfo("fr-FR"),
+            Format = () => "rgba"
+        };
+        var value = new MudColor("#12ab34ff");
+        var text = conv.Convert(value);
+
+        conv.ConvertBack(text).Should().Be(value);
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableNullable_ConvertBack_ValidValue_UsesCulture()
+    {
+        var conv = new DefaultConverter<ParsableTemperature?>
+        {
+            Culture = () => new CultureInfo("fr-FR")
+        };
+
+        var parsed = conv.ConvertBack("7,25");
+
+        parsed.Should().Be(new ParsableTemperature(7.25m));
+    }
+
+    [Test]
+    public void DefaultConverter_IParsable_ConvertBack_NullOrEmpty_ReturnsDefault()
+    {
+        var conv = new DefaultConverter<ParsableTemperature>();
+
+        conv.ConvertBack(null).Should().Be(default(ParsableTemperature));
+        conv.ConvertBack(string.Empty).Should().Be(default(ParsableTemperature));
+    }
+
+    [Test]
+    public void DefaultConverter_IParsableNullable_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKeyAndTypeName()
+    {
+        var conv = new DefaultConverter<ParsableTemperature?>();
+
+        Action act = () => conv.ConvertBack("not-a-temperature");
+
+        var exception = act.Should()
+            .Throw<ConversionException>()
+            .Which;
+
+        exception.ErrorMessageKey.Should().Be(LanguageResource.Converter_InvalidType);
+        exception.ErrorMessageArgs.Should().ContainSingle();
+        exception.ErrorMessageArgs[0].Should().Be(nameof(ParsableTemperature));
+    }
+
+    [Test]
+    public void DefaultConverter_IParsable_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKeyAndTypeName()
+    {
+        var conv = new DefaultConverter<ParsableTemperature>();
+
+        Action act = () => conv.ConvertBack("not-a-temperature");
+
+        var exception = act.Should()
+            .Throw<ConversionException>()
+            .Which;
+
+        exception.ErrorMessageKey.Should().Be(LanguageResource.Converter_InvalidType);
+        exception.ErrorMessageArgs.Should().ContainSingle();
+        exception.ErrorMessageArgs[0].Should().Be(nameof(ParsableTemperature));
+    }
+
+    private readonly record struct ParsableTemperature(decimal Value) : IParsable<ParsableTemperature>
+    {
+        public static ParsableTemperature Parse(string s, IFormatProvider? provider)
+        {
+            if (!TryParse(s, provider, out var result))
+            {
+                throw new FormatException();
+            }
+
+            return result;
+        }
+
+        public static bool TryParse(string? s, IFormatProvider? provider, out ParsableTemperature result)
+        {
+            if (decimal.TryParse(s, NumberStyles.Any, provider, out var value))
+            {
+                result = new ParsableTemperature(value);
+                return true;
+            }
+
+            result = default;
+            return false;
+        }
+    }
+
+    private readonly record struct ParsableFormattableTemperature(decimal Value)
+        : IParsable<ParsableFormattableTemperature>, IFormattable
+    {
+        public static ParsableFormattableTemperature Parse(string s, IFormatProvider? provider)
+        {
+            if (!TryParse(s, provider, out var result))
+            {
+                throw new FormatException();
+            }
+
+            return result;
+        }
+
+        public static bool TryParse(string? s, IFormatProvider? provider, out ParsableFormattableTemperature result)
+        {
+            if (decimal.TryParse(s, NumberStyles.Any, provider, out var value))
+            {
+                result = new ParsableFormattableTemperature(value);
+                return true;
+            }
+
+            result = default;
+            return false;
+        }
+
+        public string ToString(string? format, IFormatProvider? formatProvider)
+        {
+            return Value.ToString(format, formatProvider);
+        }
+    }
+
+    private sealed class ParsableLabel(string value) : IParsable<ParsableLabel>
+    {
+        public string Value { get; } = value;
+
+        public override string ToString() => Value;
+
+        public static ParsableLabel Parse(string s, IFormatProvider? provider)
+        {
+            if (TryParse(s, provider, out var result))
+            {
+                return result;
+            }
+
+            throw new FormatException();
+        }
+
+        public static bool TryParse(string? s, IFormatProvider? provider, out ParsableLabel result)
+        {
+            if (!string.IsNullOrWhiteSpace(s))
+            {
+                result = new ParsableLabel(s);
+                return true;
+            }
+
+            result = null!;
+            return false;
+        }
     }
 
     #endregion

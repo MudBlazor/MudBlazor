@@ -128,6 +128,18 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void GetFragments_NullOrEmptyText_ReturnsEmpty()
+        {
+            var nullResult = GetFragments(null, "test", null, out var nullRegex).ToArray();
+            nullResult.Should().BeEmpty();
+            nullRegex.Should().Be(string.Empty);
+
+            var emptyResult = GetFragments(string.Empty, "test", null, out var emptyRegex).ToArray();
+            emptyResult.Should().BeEmpty();
+            emptyRegex.Should().Be(string.Empty);
+        }
+
+        [Test]
         public void GetHtmlAwareFragments_NullOrEmptyText_ReturnsEmptyList()
         {
             var resultNull = GetHtmlAwareFragments(null, "any", null, out var outRegex, false, false);
@@ -215,6 +227,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void GetHtmlAwareFragments_UnmatchedTag_ConvertsTagToTextAndPreservesText()
+        {
+            var text = "<b>unclosed text";
+            var fragments = GetHtmlAwareFragments(text, "missing", null, out var outRegex, caseSensitive: false, untilNextBoundary: false);
+
+            outRegex.Should().Be("((?:missing))");
+            var expectedSequence = new[]
+            {
+                new FragmentInfo("<b>", FragmentType.Text),
+                new FragmentInfo("unclosed text", FragmentType.Text)
+            };
+            fragments.Should().BeEquivalentTo(expectedSequence, options => options.WithStrictOrdering());
+        }
+
+        [Test]
+        public void GetHtmlAwareFragments_VoidElementWithoutTrailingSlash_RemainsMarkup()
+        {
+            var text = "Hi<br>there<img src='x'>";
+            var fragments = GetHtmlAwareFragments(text, "there", null, out var outRegex, caseSensitive: false, untilNextBoundary: false);
+
+            outRegex.Should().Be("((?:there))");
+            var expectedSequence = new[]
+            {
+                new FragmentInfo("Hi", FragmentType.Text),
+                new FragmentInfo("<br>", FragmentType.Markup),
+                new FragmentInfo("there", FragmentType.HighlightedText),
+                new FragmentInfo("<img src='x'>", FragmentType.Markup)
+            };
+            fragments.Should().BeEquivalentTo(expectedSequence, options => options.WithStrictOrdering());
+        }
+
+        [Test]
         public void GetFragments_WithManyTerms_ExercisesStringBuilderCaching()
         {
             var text = "The quick brown fox jumps over the lazy dog and repeats.";
@@ -225,7 +269,7 @@ namespace MudBlazor.UnitTests.Components
             fragments1.Should().NotBeEmpty();
             outRegex1.Should().NotBeEmpty();
             outRegex1.Should().ContainAll(highlightedTexts1);
-            fragments1.Length.Should().Be(highlightedTexts1.Length * 2 - 1 + 2);
+            fragments1.Length.Should().Be((highlightedTexts1.Length * 2) - 1 + 2);
 
             var text2 = "Another test sentence with new words like example and cache.";
             var highlightedTexts2 = new[] { "sentence", "words", "example", "cache" };
@@ -234,7 +278,7 @@ namespace MudBlazor.UnitTests.Components
             fragments2.Should().NotBeEmpty();
             outRegex2.Should().NotBeEmpty();
             outRegex2.Should().ContainAll(highlightedTexts2);
-            fragments2.Length.Should().Be(highlightedTexts2.Length * 2 - 1 + 2);
+            fragments2.Length.Should().Be((highlightedTexts2.Length * 2) - 1 + 2);
 
             var text3 = "No highlights here.";
             var fragments3 = GetFragments(text3, null, [], out var outRegex3, caseSensitive: false, untilNextBoundary: false).ToArray();
@@ -599,6 +643,26 @@ namespace MudBlazor.UnitTests.Components
             );
 
             comp.Markup.Should().Contain("<mark class=\"my-custom-class\" >Highlight</mark> this");
+        }
+
+        [Test]
+        public void MudHighlighter_MarkupTrue_WithStyleAndUserAttributes_RendersEncodedAttributes()
+        {
+            var comp = Context.Render<MudHighlighter>(parameters => parameters
+                .Add(p => p.Text, "Hello world")
+                .Add(p => p.HighlightedText, "Hello")
+                .Add(p => p.Markup, true)
+                .Add(p => p.Class, "custom-highlight")
+                .Add(p => p.Style, "background:red")
+                .AddUnmatched("data-test", "x&y")
+                .AddUnmatched("aria-label", "a&b"));
+
+            comp.Markup.Should().Contain("<mark");
+            comp.Markup.Should().Contain("class=\"custom-highlight\"");
+            comp.Markup.Should().Contain("style=\"background:red\"");
+            comp.Markup.Should().Contain("data-test=\"x&amp;y\"");
+            comp.Markup.Should().Contain("aria-label=\"a&amp;b\"");
+            comp.Markup.Should().Contain(">Hello</mark> world");
         }
 
         [Test]

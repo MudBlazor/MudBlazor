@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
@@ -16,6 +17,7 @@ public partial class MudText : MudComponentBase
             .AddClass("mud-typography-gutterbottom", GutterBottom)
             .AddClass($"mud-typography-align-{ConvertAlign(Align).ToStringFast(true)}", Align != Align.Inherit)
             .AddClass("d-inline", Inline)
+            .AddClass("mud-typography-nowrap", Truncate)
             .AddClass(Class)
             .Build();
 
@@ -69,7 +71,10 @@ public partial class MudText : MudComponentBase
     /// Whether this text continues on the same line.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.  When <c>false</c>, text will start on a new line.
+    /// Defaults to <c>false</c>.
+    /// When <c>true</c>, the <c>d-inline</c> class is added so block elements such as headings and paragraphs stay on the same line.
+    /// When <c>false</c>, the element keeps its default display, so typos rendered as <c>span</c> (such as <see cref="Typo.caption"/>) remain inline.
+    /// Use <see cref="HtmlTag"/> to render those as a block element.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Behavior)]
@@ -96,7 +101,36 @@ public partial class MudText : MudComponentBase
     [Category(CategoryTypes.Text.Behavior)]
     public string? HtmlTag { get; set; }
 
+    /// <summary>
+    /// Truncates the text with an ellipsis if it overflows its container.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Text.Behavior)]
+    public bool Truncate { get; set; }
+
+    /// <inheritdoc />
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        builder.OpenElement(0, GetActualTag());
+        builder.AddMultipleAttributes(1, UserAttributes!);
+        builder.AddAttribute(2, "class", Classname);
+        builder.AddAttribute(3, "style", Style);
+        builder.AddContent(4, ChildContent);
+        builder.CloseElement();
+    }
+
     private string GetActualTag() => string.IsNullOrEmpty(HtmlTag) ? GetTagName(Typo) : HtmlTag;
+
+    // Renders the element a MudText with only a typo, a class and text would render, for library components that repeat it per item.
+    // It is a fragment so its hardcoded sequence numbers get their own region inside the caller's markup.
+    internal static RenderFragment RenderText(Typo typo, string? className, string? text, string? elementId = null) => builder =>
+    {
+        builder.OpenElement(0, GetTagName(typo));
+        builder.AddAttribute(1, "id", elementId);
+        builder.AddAttribute(2, "class", new CssBuilder("mud-typography").AddClass($"mud-typography-{typo.ToStringFast(true)}").AddClass(className).Build());
+        builder.AddContent(3, text);
+        builder.CloseElement();
+    };
 
     private static string GetTagName(Typo typo) => typo switch
     {

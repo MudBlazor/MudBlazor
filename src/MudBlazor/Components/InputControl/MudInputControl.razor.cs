@@ -5,14 +5,14 @@ namespace MudBlazor
 {
 
     /// <summary>
-    /// A base class for designing input components.
+    /// Wraps a form input with its label, helper text, and validation message.
     /// </summary>
     public partial class MudInputControl : MudComponentBase
     {
         protected string Classname =>
             new CssBuilder("mud-input-control")
-                .AddClass("mud-input-required", when: () => Required)
-                .AddClass($"mud-input-control-margin-{Margin.ToStringFast(true)}", when: () => Margin != Margin.None)
+                .AddClass("mud-input-required", Required)
+                .AddClass($"mud-input-control-margin-{Margin.ToStringFast(true)}", Margin != Margin.None)
                 .AddClass("mud-input-control-full-width", FullWidth)
                 .AddClass("mud-input-error", Error)
                 .AddClass($"mud-input-{Variant.ToStringFast(true)}-with-label", !string.IsNullOrEmpty(Label))

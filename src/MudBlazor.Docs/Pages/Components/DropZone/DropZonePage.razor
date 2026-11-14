@@ -107,27 +107,34 @@
         </DocsPageSection>
 
         <DocsPageSection>
-            <SectionHeader Title="Dragging Styles">
+            <SectionHeader Title="Dragging Overrides">
                 <Description>
-                    Its possible to style the drop zone from which the dragged item starts from as well as the item itself with the <CodeInline>DraggingClass</CodeInline> parameter and the <CodeInline>ItemDraggingClass</CodeInline> property.
+                    Dragging behavior can be customized to control which elements are draggable as well as how the source zone and items are styled during a drag operation.
                 </Description>
             </SectionHeader>
-            <SectionContent ShowCode="false" Code="@nameof(DropZoneDraggingStyleExample)">
-                <DropZoneDraggingStyleExample />
-            </SectionContent>
+
             <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Dragging Styles">
+                        <Description>
+                            Its possible to style the drop zone from which the dragged item starts from as well as the item itself with the <CodeInline>DraggingClass</CodeInline> parameter and the <CodeInline>ItemDraggingClass</CodeInline> property.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(DropZoneDraggingStyleExample)">
+                        <DropZoneDraggingStyleExample />
+                    </SectionContent>
+                </DocsPageSection>
 
                 <DocsPageSection>
-                    <SectionHeader Title="Override Values">
+                    <SectionHeader Title="Custom Drag Handle">
                         <Description>
-                            Like the selector functions, the container also provides other values, like <CodeInline>DraggingClass</CodeInline>, that act as default values for all drop zones but can be overridden by the drop zone itself.
+                            By default, the whole item will be draggable but you can specify a custom drag handle by using the <CodeInline>MudDragHandle</CodeInline> component.
                         </Description>
                     </SectionHeader>
                     <SectionContent ShowCode="false" Code="@nameof(DropZoneOverrideExample)">
                         <DropZoneOverrideExample />
                     </SectionContent>
                 </DocsPageSection>
-
             </SectionSubGroups>
         </DocsPageSection>
 

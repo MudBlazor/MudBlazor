@@ -77,6 +77,11 @@ public sealed partial class ApiText : ComponentBase
                             switch (reader.Name)
                             {
                                 case "cref":
+                                    if (string.IsNullOrWhiteSpace(link) || link.Length < 3)
+                                    {
+                                        continue;
+                                    }
+
                                     // Get the link type
                                     var linkType = link.Substring(0, 1);
                                     var linkRef = link.Substring(2);

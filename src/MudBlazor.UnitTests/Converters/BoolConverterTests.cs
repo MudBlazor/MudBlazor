@@ -2,7 +2,6 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Reflection;
 using AwesomeAssertions;
 using NUnit.Framework;
 
@@ -28,6 +27,19 @@ public class BoolConverterTests
     }
 
     [Test]
+    public void StringConverter_ParsesBoolLiterals_CaseInsensitive()
+    {
+        var conv = BoolConverter<string>.Instance;
+
+        // bool.TryParse branch: "true"/"false" (and any casing) parse before the on/off switch.
+        conv.Convert("true").Should().BeTrue();
+        conv.Convert("True").Should().BeTrue();
+        conv.Convert("TRUE").Should().BeTrue();
+        conv.Convert("false").Should().BeFalse();
+        conv.Convert("False").Should().BeFalse();
+    }
+
+    [Test]
     public void BoolConverter()
     {
         var conv = BoolConverter<bool>.Instance;
@@ -37,6 +49,8 @@ public class BoolConverterTests
 
         conv.ConvertBack(true).Should().BeTrue();
         conv.ConvertBack(false).Should().BeFalse();
+        // For the non-nullable bool converter, a null bool? maps back to false (value == true).
+        conv.ConvertBack(null).Should().BeFalse();
     }
 
     [Test]
@@ -516,8 +530,7 @@ public class BoolConverterTests
         Action act = () => conv.Convert(new object());
 
         act.Should()
-            .Throw<TargetInvocationException>()
-            .WithInnerException<InvalidOperationException>()
+            .Throw<InvalidOperationException>()
             .WithMessage("Cannot convert type System.Object to bool?");
     }
 }

@@ -32,7 +32,9 @@ internal class ExpectedDiagnostic
         {
             if (diagnostic.Properties.TryGetValue(MudBlazorAnalyzer::MudBlazor.Analyzers.MudComponentUnknownParametersAnalyzer.ClassNamePropertyKey, out var cn)
                 && string.Equals(cn, className))
+            {
                 results.Add(diagnostic);
+            }
         }
 
         return results;
@@ -45,22 +47,14 @@ internal class ExpectedDiagnostic
             .ThenBy(x => x.AdditionalLocations.First().GetLineSpan().StartLinePosition.Character);
     }
 
-    private static IOrderedEnumerable<ExpectedDiagnostic> SortToFileOrder(IReadOnlyList<ExpectedDiagnostic> expectedDiagnostics)
-    {
-        return expectedDiagnostics
-            .OrderBy(x => x.Position.StartLinePosition.Line)
-            .ThenBy(x => x.Position.StartLinePosition.Character);
-    }
-
     internal static void Compare(IReadOnlyList<Diagnostic> diagnostics, IReadOnlyList<ExpectedDiagnostic> expectedDiagnostics)
     {
         diagnostics.Count.Should().Be(expectedDiagnostics.Count);
         var orderedDiagnostics = SortToFileOrder(diagnostics);
-        var orderedExpectedDiagnostics = SortToFileOrder(expectedDiagnostics);
 
         for (var i = 0; i < orderedDiagnostics.Count(); i++)
         {
-            TestMessage(orderedDiagnostics.ElementAt(i), orderedExpectedDiagnostics.ElementAt(i));
+            TestMessage(orderedDiagnostics.ElementAt(i), expectedDiagnostics[i]);
         }
     }
 

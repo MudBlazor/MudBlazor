@@ -3,6 +3,9 @@ using NetEscapades.EnumGenerators;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// A direction used to orient or position an element.
+    /// </summary>
     [EnumExtensions]
     public enum Direction
     {

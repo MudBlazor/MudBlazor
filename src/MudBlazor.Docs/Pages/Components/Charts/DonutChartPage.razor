@@ -3,15 +3,14 @@
 @page "/components/chart-types/donutchart"
 
 <DocsPage>
-    <DocsPageHeader Title="Donut Chart" Component="@nameof(MudBlazor.Charts.Donut<T>)" />
+    <DocsPageHeader Title="Donut Chart" Component="@nameof(MudBlazor.Charts.Donut<>)"/>
     <DocsPageContent>
-
         <DocsPageSection>
             <SectionHeader Title="Basic Donut">
                 <Description></Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DonutExample1)" ShowCode="false" Block="true">
-                <DonutExample1 />
+                <DonutExample1/>
             </SectionContent>
         </DocsPageSection>
 
@@ -20,16 +19,17 @@
                 <Description></Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DonutExample2)" ShowCode="false" Block="true">
-                <DonutExample2 />
+                <DonutExample2/>
             </SectionContent>
         </DocsPageSection>
-		 <DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Custom SVG Content">
                 <Description></Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DonutCustomGraphicsExample)" Block="true">
-                <DonutCustomGraphicsExample />
+                <DonutCustomGraphicsExample/>
             </SectionContent>
-         </DocsPageSection>
+        </DocsPageSection>
     </DocsPageContent>
 </DocsPage>

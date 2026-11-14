@@ -10,10 +10,10 @@ internal class CenterStrategy : IStackedBarPositionStrategy
     {
         var positions = new double[ctx.MaxColumns];
         var totalWidth = (ctx.MaxColumns * ctx.BarWidth) + (ctx.SpaceBetweenBars * (ctx.MaxColumns - 1));
-        var start = ctx.HorizontalStartSpace + (ctx.HorizontalSpace - totalWidth) / 2 + (ctx.BarWidth / 2);
+        var start = ctx.HorizontalStartSpace + ((ctx.HorizontalSpace - totalWidth) / 2) + (ctx.BarWidth / 2);
 
         for (var i = 0; i < ctx.MaxColumns; i++)
-            positions[i] = start + i * (ctx.SpaceBetweenBars + ctx.BarWidth);
+            positions[i] = start + (i * (ctx.SpaceBetweenBars + ctx.BarWidth));
 
         return positions;
     }

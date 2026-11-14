@@ -6,14 +6,16 @@
 @typeparam T
 @typeparam TChartOptions
 
-<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" width="@Width" height="@Height" viewBox="0 0 @ViewBoxWidth.ToStr() @ViewBoxHeight.ToStr()" style="@HoveredStylename">
+<svg @ref="_svgRef" @attributes="UserAttributes" class="@($"{ChartClass} mud-ltr")" 
+     width="@(MatchBoundsToSize ? "100%" : Width)" height="@Height" viewBox="0 0 @ViewBoxWidth.ToStr() @ViewBoxHeight.ToStr()"
+     style="@HoveredStylename">
     <Filters />
 
     <g class="mud-charts-grid">
         @if (XAxisTitle is not null)
         {
-            <g transform="translate(@(ToS(ViewBoxWidth / 2)), 10)">
-                <text class="mud-charts-yaxis axis-title" font-size="14px" text-anchor="middle" dominant-baseline="hanging">@XAxisTitle</text>
+            <g transform="translate(@(ToS(ViewBoxWidth / 2)), @AxisTitleOffset)">
+                <text class="mud-charts-xaxis" font-size="14px" text-anchor="middle" dominant-baseline="hanging">@XAxisTitle</text>
             </g>
         }
         @if (ChartOptions?.YAxisLines is true)
@@ -21,7 +23,7 @@
             <g class="mud-charts-gridlines-yaxis">
                 @foreach (var horizontalLine in HorizontalLines)
                 {
-                    <path stroke="#e0e0e0" stroke-width="0.3" d="@horizontalLine.Data"></path>
+                    <path d="@horizontalLine.Data"></path>
                 }
             </g>
         }
@@ -30,7 +32,7 @@
             <g class="mud-charts-gridlines-xaxis-lines">
                 @foreach (var verticalLine in VerticalLines)
                 {
-                    <path stroke="gray" stroke-width="0.3" d="@verticalLine.Data"></path>
+                    <path d="@verticalLine.Data"></path>
                 }
             </g>
         }
@@ -38,23 +40,40 @@
     <g @ref="_yAxisGroupElementReference" class="mud-charts-yaxis">
         @foreach (var horizontalLineValue in HorizontalValues)
         {
-            @((MarkupString)$"<text x='{horizontalLineValue.X.ToStr()}' y='{horizontalLineValue.Y.ToStr()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value}</text>")
+            // A label with no text draws nothing, so don't put a node in the document for it.
+            if (!string.IsNullOrEmpty(horizontalLineValue.Value))
+            {
+                @((MarkupString)$"<text x='{horizontalLineValue.X.ToStr()}' y='{horizontalLineValue.Y.ToStr()}' font-size='12px' text-anchor='end' dominant-baseline='auto'>{horizontalLineValue.Value}</text>")
+            }
         }
     </g>
     @if (YAxisTitle is not null)
     {
-        <g transform="translate(10, @(ToS(ViewBoxHeight / 2)))">
-            <text class="mud-charts-yaxis axis-title" transform="rotate(-90)" font-size="14px" text-anchor="middle" dominant-baseline="hanging">@YAxisTitle</text>
+        <g transform="translate(@AxisTitleOffset, @(ToS(ViewBoxHeight / 2)))">
+            <text class="mud-charts-yaxis" transform="rotate(-90)" font-size="14px" text-anchor="middle" dominant-baseline="hanging">@YAxisTitle</text>
         </g>
     }
     <g @ref="_xAxisGroupElementReference" class="mud-charts-xaxis">
         @for (var i = 0; i < VerticalValues.Count; i++)
         {
             var verticalLineValue = VerticalValues[i];
+
+            if (string.IsNullOrEmpty(verticalLineValue.Value))
+            {
+                continue;
+            }
+
             var x = verticalLineValue.X.ToStr();
             var y = verticalLineValue.Y.ToStr();
-            var rotation = (-ChartOptions?.XAxisLabelRotation ?? 0).ToString();
-            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value}</text>")
+            var rotationValue = ChartOptions?.XAxisLabelRotation ?? 0;
+            var rotation = (-rotationValue).ToString(CultureInfo.InvariantCulture);
+            var textAnchor = Math.Sign(rotationValue) switch
+            {
+                1 => "end",
+                -1 => "start",
+                _ => "middle"
+            };
+            @((MarkupString)$"<text x='{x}' y='{y}' font-size='12px' text-anchor='{textAnchor}' dominant-baseline='middle' transform='rotate({rotation} {x} {y})'>{verticalLineValue.Value}</text>")
         }
     </g>
     <g class="@($"mud-charts-{ChartType?.ToString().ToLower()}-series")">

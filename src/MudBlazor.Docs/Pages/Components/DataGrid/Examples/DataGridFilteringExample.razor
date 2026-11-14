@@ -1,9 +1,9 @@
-﻿@using System.Net.Http.Json
-@using MudBlazor.Examples.Data.Models
+﻿@using MudBlazor.Examples.Data.Models
 @namespace MudBlazor.Docs.Examples
-@inject HttpClient httpClient
 
-<MudDataGrid Items="@Elements" Filterable="true" FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity">
+<MudDataGrid @ref="_dataGrid" Items="@_elements" Filterable="true" 
+             FilterMode="@_filterMode" FilterCaseSensitivity="@_caseSensitivity" 
+             RowsPerPage="5">
     <Columns>
         <PropertyColumn Property="x => x.Number" Title="Nr" Filterable="false" />
         <PropertyColumn Property="x => x.Sign" />
@@ -13,12 +13,12 @@
         <PropertyColumn Property="x => x.Group" Title="Category" />
     </Columns>
     <PagerContent>
-        <MudDataGridPager T="Element" />
+        <MudDataGridPager T="Element" PageSizeOptions="new[] { 5 }" />
     </PagerContent>
 </MudDataGrid>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudRadioGroup T="DataGridFilterMode" @bind-Value="@_filterMode">
+    <MudRadioGroup T="DataGridFilterMode" @bind-Value="_filterMode">
         <MudRadio Dense="true" Value="@DataGridFilterMode.Simple" Color="Color.Primary">Simple</MudRadio>
         <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterMenu" Color="Color.Tertiary">Column Menu</MudRadio>
         <MudRadio Dense="true" Value="@DataGridFilterMode.ColumnFilterRow">Column Row</MudRadio>
@@ -26,20 +26,47 @@
 </div>
 
 <div class="d-flex flex-wrap mt-4">
-    <MudRadioGroup T="DataGridFilterCaseSensitivity" @bind-Value="@_caseSensitivity">
-        <MudRadio Dense="true" Value="@DataGridFilterCaseSensitivity.Default" Color="Color.Primary">Default Case Sensitivity</MudRadio>
+    <MudRadioGroup T="DataGridFilterCaseSensitivity" @bind-Value="_caseSensitivity">
+        <MudRadio Dense="true" Value="@DataGridFilterCaseSensitivity.Default" Color="Color.Primary"><b>(Default)</b> Case Sensitivity</MudRadio>
         <MudRadio Dense="true" Value="@DataGridFilterCaseSensitivity.CaseInsensitive" Color="Color.Tertiary">Case Insensitive</MudRadio>
     </MudRadioGroup>
 </div>
 
+<div class="d-flex flex-wrap mt-4">
+    <MudButton Variant="Variant.Filled" OnClick="ResetGridAndFilters" Color="Color.Default">Reset</MudButton>
+</div>
 
 @code {
-    IEnumerable<Element> Elements = new List<Element>();
-    DataGridFilterMode _filterMode = DataGridFilterMode.Simple;
-    DataGridFilterCaseSensitivity _caseSensitivity = DataGridFilterCaseSensitivity.Default;
+    private readonly List<Element> _elements = CreateElements();
+    private DataGridFilterMode _filterMode = DataGridFilterMode.Simple;
+    private DataGridFilterCaseSensitivity _caseSensitivity = DataGridFilterCaseSensitivity.Default;
+    private MudDataGrid<Element> _dataGrid = default!;
 
-    protected override async Task OnInitializedAsync()
+    private static List<Element> CreateElements() =>
+    [
+        new() { Number = 1, Sign = "H", Name = "Hydrogen", Position = 1, Molar = 1.008, Group = "Nonmetal" },
+        new() { Number = 2, Sign = "He", Name = "Helium", Position = 18, Molar = 4.0026, Group = "Noble Gas" },
+        new() { Number = 3, Sign = "Li", Name = "Lithium", Position = 1, Molar = 6.94, Group = "Alkali Metal" },
+        new() { Number = 4, Sign = "Be", Name = "Beryllium", Position = 2, Molar = 9.0122, Group = "Alkaline Earth Metal" },
+        new() { Number = 5, Sign = "B", Name = "Boron", Position = 13, Molar = 10.81, Group = "Metalloid" },
+        new() { Number = 6, Sign = "C", Name = "Carbon", Position = 14, Molar = 12.011, Group = "Nonmetal" },
+        new() { Number = 7, Sign = "N", Name = "Nitrogen", Position = 15, Molar = 14.007, Group = "Nonmetal" },
+        new() { Number = 8, Sign = "O", Name = "Oxygen", Position = 16, Molar = 15.999, Group = "Nonmetal" },
+        new() { Number = 9, Sign = "F", Name = "Fluorine", Position = 17, Molar = 18.998, Group = "Halogen" },
+        new() { Number = 10, Sign = "Ne", Name = "Neon", Position = 18, Molar = 20.180, Group = "Noble Gas" }
+    ];
+
+    private async Task ResetGridAndFilters()
     {
-        Elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+        // reset external options
+        _filterMode = DataGridFilterMode.Simple;
+        _caseSensitivity = DataGridFilterCaseSensitivity.Default;
+        // reset all active filters and sorting
+        await _dataGrid.ClearFiltersAsync();        
+        foreach (var field in _dataGrid.SortDefinitions.Keys.ToList())
+        {
+            await _dataGrid.RemoveSortAsync(field);
+        }
     }
+
 }

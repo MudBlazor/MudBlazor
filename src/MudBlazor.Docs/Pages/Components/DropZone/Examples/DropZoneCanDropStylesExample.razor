@@ -29,38 +29,38 @@
 </MudDropContainer>
 
 @code {
-	private bool _applyDropClassesOnDragStarted = false;
+    private bool _applyDropClassesOnDragStarted = false;
 
-	private void Reset()
-	{
-		foreach (var item in _items)
-		{
-			item.Place = "Fridge";
-			item.IsPicked = false;
-		}
-	}
+    private void Reset()
+    {
+        foreach (var item in _items)
+        {
+            item.Place = "Fridge";
+            item.IsPicked = false;
+        }
+    }
 
-	private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
-	{
-		dropItem.Item.IsPicked = true;
-		dropItem.Item.Place = dropItem.DropzoneIdentifier;
-	}
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        dropItem.Item.IsPicked = true;
+        dropItem.Item.Place = dropItem.DropzoneIdentifier;
+    }
 
-	private List<DropItem> _items = new()
-		{
-			new DropItem() { Icon = @Icons.Custom.Uncategorized.FoodApple, Color = Color.Error, IsRotten = false, Place = "Fridge" },
-		    new DropItem() { Icon = @Icons.Custom.Uncategorized.Baguette, Color = Color.Warning, IsRotten = false, Place = "Fridge" },
-		    new DropItem() { Icon = @Icons.Custom.Uncategorized.Sausage, Color = Color.Secondary, IsRotten = true, Place = "Fridge" },
-		    new DropItem() { Icon = @Icons.Custom.Uncategorized.WaterMelon, Color = Color.Success, IsRotten = false, Place = "Fridge" },
-		    new DropItem() { Icon = @Icons.Custom.Uncategorized.Fish, Color = Color.Info, IsRotten = true, Place = "Fridge" },
-		};
+    private List<DropItem> _items = new()
+        {
+            new DropItem() { Icon = @Icons.Custom.Uncategorized.FoodApple, Color = Color.Error, IsRotten = false, Place = "Fridge" },
+            new DropItem() { Icon = @Icons.Custom.Uncategorized.Baguette, Color = Color.Warning, IsRotten = false, Place = "Fridge" },
+            new DropItem() { Icon = @Icons.Custom.Uncategorized.Sausage, Color = Color.Secondary, IsRotten = true, Place = "Fridge" },
+            new DropItem() { Icon = @Icons.Custom.Uncategorized.WaterMelon, Color = Color.Success, IsRotten = false, Place = "Fridge" },
+            new DropItem() { Icon = @Icons.Custom.Uncategorized.Fish, Color = Color.Info, IsRotten = true, Place = "Fridge" },
+        };
 
-	public class DropItem
-	{
-		public string Icon { get; init; }
-	    public Color Color { get; init; }
-	    public bool IsRotten { get; set; }
-		public bool IsPicked { get; set; }
-		public string Place { get; set; }
-	}
+    public class DropItem
+    {
+        public string Icon { get; init; }
+        public Color Color { get; init; }
+        public bool IsRotten { get; set; }
+        public bool IsPicked { get; set; }
+        public string Place { get; set; }
+    }
 }

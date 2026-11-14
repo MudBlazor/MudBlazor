@@ -6,9 +6,10 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a picker for dates.
+    /// Selects a single date from a calendar shown in a drop-down, dialog, or inline.
     /// </summary>
-    /// <seealso cref="MudDateRangePicker"/>
+    /// <seealso cref="MudDateRangePicker" />
+    /// <seealso cref="MudTimePicker" />
     public class MudDatePicker : MudBaseDatePicker
     {
         private DateTime? _selectedDate;
@@ -27,13 +28,19 @@ namespace MudBlazor
         public DateTime? Date
         {
             get => _value;
-            set => SetDateAsync(value, true).CatchAndLog();
+            // Assigning Date from the parameter is programmatic, not user interaction. Pass the suppression
+            // as an explicit argument (NOT an instance flag) so it cannot leak across the awaits inside
+            // SetDateAsync into a concurrent user calendar pick on Blazor Server (PR #13328 review).
+            set => SetDateAsync(value, updateValue: true, forceUpdate: false, suppressInteraction: true).CatchAndLog();
         }
 
         private DateTimeOffset _lastSetTime = DateTimeOffset.MinValue;
         private const int DebounceTimeoutMs = 100;
 
-        protected async Task SetDateAsync(DateTime? date, bool updateValue)
+        protected Task SetDateAsync(DateTime? date, bool updateValue)
+            => SetDateAsync(date, updateValue, false);
+
+        protected async Task SetDateAsync(DateTime? date, bool updateValue, bool forceUpdate, bool suppressInteraction = false)
         {
             if (_value != null && date != null && date.Value.Kind == DateTimeKind.Unspecified)
             {
@@ -44,9 +51,10 @@ namespace MudBlazor
 
             /* See #7866 for more details
              * When the date is set in the UI, this method gets called with the same value multiple time. This guard
-             * debounces the value to the same value in a short time frame is ignored
+             * debounces the value to the same value in a short time frame is ignored. The debounce is ignored if
+             * forceUpdate is true
              */
-            if (_value == date && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs)
+            if (_value == date && (now - _lastSetTime).TotalMilliseconds < DebounceTimeoutMs && !forceUpdate)
             {
                 return;
             }
@@ -56,9 +64,18 @@ namespace MudBlazor
             // When the _value is null and an invalid date is entered into the UI, the data value passed to this method
             // will be null. We need to check if the text has been set my the user and if so handle tha validation
             // without this the UI doesn't display a validation error correctly
-            if (_value != date || (date is null && Text != null))
+            // Empty text is not user input that failed to convert, so it must not re-enter this branch.
+            // A clear-button click empties the text before ClearAsync runs, so re-entering would overwrite Text with null once the debounce window above had closed.
+            // That would leave the observable result dependent on the wall clock.
+            // Only the user can produce text the converter rejects, so the programmatic parameter write is excluded too.
+            // Blazor runs the Date setter on every render, even when the parent supplies the same value, so leaving it in
+            // let any unrelated re-render mid-typing (a form's bound Errors, for instance) wipe the half-typed date (#13887).
+            if (_value != date || (date is null && !suppressInteraction && !string.IsNullOrEmpty(Text)))
             {
-                Touched = true;
+                if (!suppressInteraction)
+                {
+                    Touched = true;
+                }
 
                 HighlightedDate = date;
 
@@ -84,7 +101,16 @@ namespace MudBlazor
 
                 await DateChanged.InvokeAsync(_value);
                 await BeginValidateAsync();
-                FieldChanged(_value);
+                if (!suppressInteraction)
+                {
+                    FieldChanged(_value);
+                }
+            }
+            else if (forceUpdate)
+            {
+                // If the field is quickly cleared after an error: just reset and resubmit.
+                ResetConverterErrors();
+                await BeginValidateAsync();
             }
         }
 
@@ -97,15 +123,19 @@ namespace MudBlazor
         protected override Task StringValueChangedAsync(string? value)
         {
             Touched = true;
+            var hadConversionError = ConversionError;
+            var date = ConvertGet(value);
             // Update the date property (without updating back the Value property)
-            return SetDateAsync(ConvertGet(value), false);
+            // If the date had a conversion error and is now null or empty forceUpdate is true
+            return SetDateAsync(date, false, forceUpdate: string.IsNullOrEmpty(value) && hadConversionError);
         }
 
         protected override string GetDayClasses(int month, DateTime day)
         {
             var b = new CssBuilder("mud-day");
             b.AddClass(AdditionalDateClassesFunc?.Invoke(day) ?? string.Empty);
-            if (day < GetMonthStart(month) || day > GetMonthEnd(month))
+            b.AddClass("mud-adjacent-month", IsAdjacentMonthDay(month, day));
+            if (IsHiddenAdjacentMonthDay(month, day))
                 return b.AddClass("mud-hidden").Build();
             if ((Date?.Date == day && _selectedDate == null) || _selectedDate?.Date == day)
                 return b.AddClass("mud-selected").AddClass($"mud-theme-{Color.ToStringFast(true)}").Build();
@@ -119,11 +149,13 @@ namespace MudBlazor
 
         protected override async Task OnDayClickedAsync(DateTime dateTime)
         {
+            if (GetReadOnlyState())
+                return;
             await FocusAsync();
             _selectedDate = dateTime;
             if (PickerActions == null || AutoClose || PickerVariant == PickerVariant.Static)
             {
-                await Task.Run(() => InvokeAsync(SubmitAsync));
+                await SubmitAsync();
 
                 if (PickerVariant != PickerVariant.Static)
                 {
@@ -139,9 +171,11 @@ namespace MudBlazor
         /// <param name="month"></param>
         protected override async Task OnMonthSelectedAsync(DateTime month)
         {
+            if (GetReadOnlyState())
+                return;
             await FocusAsync();
-            PickerMonth = month;
             var nextView = GetNextView();
+            PickerMonth = nextView == OpenTo.Date ? GetFirstMonthKeepingColumn(month) : month;
             if (nextView == null)
             {
                 var culture = GetCulture();
@@ -178,6 +212,8 @@ namespace MudBlazor
         /// <param name="year"></param>
         protected override async Task OnYearClickedAsync(int year)
         {
+            if (GetReadOnlyState())
+                return;
             await FocusAsync();
             var current = GetMonthStart(0);
             var culture = GetCulture();
@@ -251,6 +287,16 @@ namespace MudBlazor
             {
                 await CloseAsync(false);
             }
+        }
+
+        protected override async Task ResetValueAsync()
+        {
+            // The base reset raises DateChanged only through the input field, which a static picker doesn't have, so clear through ClearAsync first.
+            await ClearAsync();
+            // The base reset still clears the input field, even inside the debounce window that ClearAsync is subject to, and puts Touched back to false.
+            await base.ResetValueAsync();
+            // Clearing keeps the month the user was looking at, but a reset should reopen the calendar where an empty picker starts.
+            ResetCalendarToStart();
         }
 
         protected override string GetTitleDateString()
@@ -373,7 +419,7 @@ namespace MudBlazor
 
                     break;
                 case "ArrowDown":
-                    if (Open == false && Editable == false)
+                    if (!Open && !Editable)
                     {
                         Open = true;
                     }

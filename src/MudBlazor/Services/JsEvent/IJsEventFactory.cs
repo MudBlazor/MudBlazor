@@ -5,7 +5,7 @@
 namespace MudBlazor.Services;
 
 /// <summary>
-/// Provides a factory for creating instances of <see cref="IJsEvent"/>.
+/// Creates <see cref="IJsEvent"/> instances that subscribe to an element's DOM events such as paste, text selection, and caret position changes.
 /// </summary>
 public interface IJsEventFactory
 {

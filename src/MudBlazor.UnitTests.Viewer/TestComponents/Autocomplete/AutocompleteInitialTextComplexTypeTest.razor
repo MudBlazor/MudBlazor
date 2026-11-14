@@ -1,0 +1,22 @@
+﻿<MudPopoverProvider />
+
+<MudAutocomplete T="ComplexItem"
+                 Text="InitialValue"
+                 SearchFunc="@Search"
+                 ToStringFunc="@(item => item?.Name)" />
+
+@code {
+    public static string __description__ = "Autocomplete with complex type should preserve initial Text";
+
+    private static Task<IEnumerable<ComplexItem?>> Search(string? value, CancellationToken token)
+    {
+        var items = new List<ComplexItem>
+        {
+            new("One"), new("Two"), new("Three")
+        };
+        return Task.FromResult<IEnumerable<ComplexItem?>>(
+            items.Where(x => x.Name.Contains(value ?? "", StringComparison.OrdinalIgnoreCase)));
+    }
+
+    private record ComplexItem(string Name);
+}
