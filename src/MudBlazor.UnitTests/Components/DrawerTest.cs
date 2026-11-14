@@ -978,7 +978,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that a closed drawer moved off-screen is inert, so its content leaves the tab order and the accessibility tree, and that opening it restores interaction.
+        /// A closed off-screen drawer is inert until opened.
         /// </summary>
         [Test]
         [TestCase(DrawerVariant.Temporary)]
@@ -1000,7 +1000,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that a closed mini drawer docked above its breakpoint stays interactive, because its icon rail is still visible.
+        /// A closed mini drawer docked above its breakpoint keeps its visible icon rail interactive.
         /// </summary>
         [Test]
         public async Task MiniLargeScreen_ClosedRailIsNotInert()
@@ -1016,7 +1016,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that a closed mini drawer below its breakpoint, which renders as a temporary drawer and is moved off-screen, is inert until opened.
+        /// A closed mini drawer below its breakpoint renders as a temporary drawer and is inert until opened.
         /// </summary>
         [Test]
         public async Task MiniSmallScreen_ClosedDrawerIsInertUntilOpened()
@@ -1032,7 +1032,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that resizing a mini drawer across its breakpoint makes the closed drawer inert while it is temporary and interactive again once it is a docked rail.
+        /// Resizing a mini drawer across its breakpoint makes it inert only while it renders as a closed temporary drawer.
         /// </summary>
         [Test]
         public async Task Mini_ResizeAcrossBreakpoint_TogglesInert()
@@ -1056,7 +1056,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that a caller's own <c>inert</c> in <see cref="MudComponentBase.UserAttributes"/> takes precedence over the generated value, so an open drawer can still be made inert and the attribute is rendered once.
+        /// A caller's own <c>inert</c> in <see cref="MudComponentBase.UserAttributes"/> overrides the generated value and renders once.
         /// </summary>
         [Test]
         public void UserAttributesInert_OverridesGeneratedValue()
@@ -1070,6 +1070,36 @@ namespace MudBlazor.UnitTests.Components
             var aside = comp.Find("aside.mud-drawer--open");
             aside.HasAttribute("inert").Should().BeTrue();
             aside.Attributes.Count(a => a.Name == "inert").Should().Be(1);
+        }
+
+        /// <summary>
+        /// A caller's boolean false <c>inert</c> removes the attribute from a closed off-screen drawer.
+        /// </summary>
+        [Test]
+        public void UserAttributesInertFalse_OptsOutOfGeneratedValue()
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<MudDrawer>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Persistent)
+                .AddUnmatched("inert", false));
+
+            comp.Find("aside.mud-drawer--closed").HasAttribute("inert").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The string "false" is not the boolean opt-out, so a closed drawer still renders the <c>inert</c> attribute.
+        /// </summary>
+        [Test]
+        public void UserAttributesInertStringFalse_StillRendersAttribute()
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<MudDrawer>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Persistent)
+                .AddUnmatched("inert", "false"));
+
+            var aside = comp.Find("aside.mud-drawer--closed");
+            aside.HasAttribute("inert").Should().BeTrue();
+            aside.GetAttribute("inert").Should().Be("false");
         }
     }
 }
