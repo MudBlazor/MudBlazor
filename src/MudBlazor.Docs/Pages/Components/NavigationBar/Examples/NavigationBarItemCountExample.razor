@@ -1,0 +1,35 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudStack>
+    <div style="transform: translateZ(0); height: 500px; width: 320px; background-color: var(--mud-palette-gray-lighter)">
+        <MudNavigationBar>
+            @if (_itemCount > 0)
+            {
+                <MudNavigationBarItem Icon="@Icons.Material.Filled.Flight" Text="Flight" />
+            }
+            @if (_itemCount > 1)
+            {
+                <MudNavigationBarItem Icon="@Icons.Material.Filled.Explore" Text="Explore" />
+            }
+            @if (_itemCount > 2)
+            {
+                <MudNavigationBarItem Icon="@Icons.Material.Filled.ManageAccounts" Text="Account" />
+            }
+            @if (_itemCount > 3)
+            {
+                <MudNavigationBarItem Icon="@Icons.Material.Filled.Search" Text="Search" />
+            }
+            @if (_itemCount > 4)
+            {
+                <MudNavigationBarItem Icon="@Icons.Material.Filled.People" Text="Friends" />
+            }
+        </MudNavigationBar>
+    </div>
+    <MudStack>
+        <MudNumericField @bind-Value="_itemCount" Min="0" Max="5" Label="Item Count" Variant="Variant.Outlined" Margin="Margin.Dense" />
+    </MudStack>
+</MudStack>
+
+@code {
+    private int _itemCount = 3;
+}

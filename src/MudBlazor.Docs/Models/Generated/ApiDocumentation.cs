@@ -351,6 +351,8 @@ public static partial class ApiDocumentation
         { "menuitem", "MudBlazor.MudMenuItem" },
         { "messagebox", "MudBlazor.MudMessageBox" },
         { "navgroup", "MudBlazor.MudNavGroup" },
+        { "navigationbar", "MudBlazor.MudNavigationBar" },
+        { "navigationbaritem", "MudBlazor.MudNavigationBarItem" },
         { "navlink", "MudBlazor.MudNavLink" },
         { "navmenu", "MudBlazor.MudNavMenu" },
         { "numericfield", "MudBlazor.MudNumericField`1" },
