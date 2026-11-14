@@ -66,6 +66,11 @@ namespace MudBlazor
                 ? DrawerVariant.Temporary
                 : Variant;
 
+        // A closed drawer is moved off-screen, so inert keeps its content out of the tab order and the accessibility tree.
+        // A docked mini drawer still shows its rail while closed, so it stays interactive.
+        // The attribute is rendered before UserAttributes so a caller's own inert takes precedence.
+        private bool Inert => !_openState.Value && EffectiveVariant != DrawerVariant.Mini;
+
         private bool OverlayVisible => _openState.Value && Overlay && (EffectiveVariant == DrawerVariant.Temporary || (EffectiveVariant == DrawerVariant.Responsive && IsBelowCurrentBreakpoint()));
 
         protected string Classname =>
