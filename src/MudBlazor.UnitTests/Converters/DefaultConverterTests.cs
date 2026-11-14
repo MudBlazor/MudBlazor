@@ -1199,6 +1199,54 @@ public class DefaultConverterTests
         conv.ConvertBack(Text).Should().Be(expected);
     }
 
+    /// <summary>
+    /// Without a Format, ConvertBack reads back the text Convert produced for the culture.
+    /// </summary>
+    [TestCase("")]
+    [TestCase("en-US")]
+    [TestCase("en-GB")]
+    [TestCase("de-DE")]
+    [TestCase("fr-CA")]
+    public void TimeOnly_ConvertBack_WhenFormatIsNull_RoundTripsConvertOutput(string cultureName)
+    {
+        var culture = CultureInfo.GetCultureInfo(cultureName);
+        var conv = CreateTimeOnlyConverter(() => culture, () => null);
+        var value = new TimeOnly(12, 30);
+
+        conv.ConvertBack(conv.Convert(value)).Should().Be(value);
+    }
+
+    /// <summary>
+    /// Without a Format, ConvertBack accepts a typed time in the culture.
+    /// </summary>
+    [TestCase("", "14:05")]
+    [TestCase("en-US", "14:05")]
+    [TestCase("en-US", "2:05 PM")]
+    public void TimeOnly_ConvertBack_WhenFormatIsNull_ParsesTypedTime(string cultureName, string text)
+    {
+        var culture = CultureInfo.GetCultureInfo(cultureName);
+        var conv = CreateTimeOnlyConverter(() => culture, () => null);
+
+        conv.ConvertBack(text).Should().Be(new TimeOnly(14, 5));
+    }
+
+    /// <summary>
+    /// Without a Format, text that is not a time still raises the conversion error.
+    /// </summary>
+    [Test]
+    public void TimeOnly_ConvertBack_WhenFormatIsNull_Invalid_ThrowsConversionException()
+    {
+        var conv = CreateTimeOnlyConverter(() => CultureInfo.InvariantCulture, () => null);
+
+        Action act = () => conv.ConvertBack("not-a-time");
+
+        act.Should()
+            .Throw<ConversionException>()
+            .Which.ErrorMessageKey
+            .Should()
+            .Be(LanguageResource.Converter_InvalidDateTime);
+    }
+
     [Test]
     public void TimeOnly_ConvertBack_Invalid_ThrowsConversionException_WithExpectedKey()
     {

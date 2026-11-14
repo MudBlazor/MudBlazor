@@ -489,8 +489,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
         return KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keys => keys
             .When(CanHandleKeys, builder => builder
-                .OnKeyDown(" ", () => OnClickAsync(new MouseEventArgs()))
-                .OnKeyDownAny(["Backspace", "Delete"], OnCloseKeyDownAsync)));
+                .OnKeyDownLiteral(" ", () => OnClickAsync(new MouseEventArgs()))
+                .OnKeyDownAnyLiteral(["Backspace", "Delete"], OnCloseKeyDownAsync)));
     }
 
     private async Task OnCloseKeyDownAsync()

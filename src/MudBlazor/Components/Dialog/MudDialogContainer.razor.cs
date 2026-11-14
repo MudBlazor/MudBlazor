@@ -140,9 +140,9 @@ namespace MudBlazor
                     ]);
 
                 await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
-                    .OnKeyDown("Escape", HandleEscapeAsync)
-                    .OnKeyDown("/./", HandleAnyKeyDownAsync)
-                    .OnKeyUp("/./", HandleAnyKeyUpAsync));
+                    .OnKeyDownLiteral("Escape", HandleEscapeAsync)
+                    .OnKeyDownWhere(KeyMapBuilder.IsAnyKey, HandleAnyKeyDownAsync)
+                    .OnKeyUpWhere(KeyMapBuilder.IsAnyKey, HandleAnyKeyUpAsync));
             }
             await base.OnAfterRenderAsync(firstRender);
         }

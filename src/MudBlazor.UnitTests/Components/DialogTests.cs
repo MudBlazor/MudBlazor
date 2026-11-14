@@ -1184,6 +1184,28 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// An inline dialog receives its key events through <see cref="MudDialog.OnKeyDown"/> and <see cref="MudDialog.OnKeyUp"/>, as a dialog shown by the service does.
+        /// </summary>
+        [Test]
+        public async Task InlineDialog_KeyEvents_ShouldReachOnKeyDownAndOnKeyUp()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var keys = new List<string>();
+            var provider = Context.Render<MudDialogProvider>();
+            var dialog = Context.Render<MudDialog>(parameters => parameters
+                .Add(p => p.OnKeyDown, (KeyboardEventArgs args) => keys.Add("down:" + args.Key))
+                .Add(p => p.OnKeyUp, (KeyboardEventArgs args) => keys.Add("up:" + args.Key))
+                .Add(p => p.DialogContent, "Inline content"));
+
+            await dialog.InvokeAsync(() => dialog.Instance.ShowAsync("Inline"));
+            var elementId = ((IMudDialogInstance)provider.FindComponent<MudDialogContainer>().Instance).ElementId;
+            await provider.InvokeAsync(() => keyInterceptorService.OnKeyDown(elementId, new KeyboardEventArgs { Key = "Enter", Type = "keydown" }));
+            await provider.InvokeAsync(() => keyInterceptorService.OnKeyUp(elementId, new KeyboardEventArgs { Key = "Enter", Type = "keyup" }));
+
+            keys.Should().Equal("down:Enter", "up:Enter");
+        }
+
+        /// <summary>
         /// A dialog whose own <see cref="MudDialog.Options"/> set CloseOnNavigation to false stays open on navigation (#13608).
         /// </summary>
         [Test]
