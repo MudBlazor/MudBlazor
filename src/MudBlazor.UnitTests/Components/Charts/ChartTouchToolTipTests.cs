@@ -5,6 +5,7 @@
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Charts;
 using MudBlazor.Interop;
 using NUnit.Framework;
@@ -84,6 +85,23 @@ namespace MudBlazor.UnitTests.Charts
 
             Invocations("mudChartTouch.attach").Should().HaveCount(2);
             Invocations("mudChartTouch.detach").Should().ContainSingle();
+        }
+
+        /// <summary>
+        /// A lost circuit while attaching or detaching the touch script leaves the chart rendering.
+        /// </summary>
+        [Test]
+        public async Task TouchScriptDisconnectedIsSwallowed()
+        {
+            Context.JSInterop.SetupVoid("mudChartTouch.attach", _ => true).SetException(new JSDisconnectedException("disconnected"));
+            Context.JSInterop.SetupVoid("mudChartTouch.detach", _ => true).SetException(new JSDisconnectedException("disconnected"));
+
+            var comp = RenderLine(new LineChartOptions { ShowToolTipsOnTouch = true });
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ChartOptions, new LineChartOptions()));
+
+            Invocations("mudChartTouch.attach").Should().ContainSingle();
+            Invocations("mudChartTouch.detach").Should().ContainSingle();
+            comp.FindAll("circle.mud-chart-hover-point").Should().HaveCount(4);
         }
 
         /// <summary>

@@ -121,6 +121,36 @@ public class ScrollSpyTests
         scrollSpy.Should().BeOfType<ScrollSpy>();
     }
 
+    /// <summary>
+    /// Starting to spy after the circuit is gone completes without throwing.
+    /// </summary>
+    [Test]
+    public async Task StartSpying_Disconnected_Swallowed()
+    {
+        _runtimeMock
+            .Setup(x => x.InvokeAsync<IJSVoidResult>("mudScrollSpy.spying", It.IsAny<object[]>()))
+            .Throws(new JSDisconnectedException("disconnected"));
+
+        var act = async () => await _service.StartSpying("#container", "section-class");
+
+        await act.Should().NotThrowAsync();
+    }
+
+    /// <summary>
+    /// Starting to spy still surfaces JavaScript errors to the caller.
+    /// </summary>
+    [Test]
+    public async Task StartSpying_JSException_Rethrown()
+    {
+        _runtimeMock
+            .Setup(x => x.InvokeAsync<IJSVoidResult>("mudScrollSpy.spying", It.IsAny<object[]>()))
+            .Throws(new JSException("failed"));
+
+        var act = async () => await _service.StartSpying("#container", "section-class");
+
+        await act.Should().ThrowAsync<JSException>();
+    }
+
     private void SetupVoidInvocation(string identifier, Func<object[], bool> argumentMatcher)
     {
         _runtimeMock

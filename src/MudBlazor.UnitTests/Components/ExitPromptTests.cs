@@ -385,6 +385,26 @@ public class ExitPromptTests : BunitTest
     }
 
     /// <summary>
+    /// A native prompt that cannot be shown allows the navigation instead of trapping the user.
+    /// </summary>
+    [Test]
+    public async Task NativePrompt_AllowsNavigationWhenInteropIsDisconnected()
+    {
+        // Arrange
+        var js = UseJsInteropRecorder();
+        js.JsRuntimeMock.Setup(x => x.InvokeAsync<bool>("mudExitPrompt.handleBeforeNavigation", It.IsAny<object[]>()))
+            .Throws(new JSDisconnectedException("disconnected"));
+        var component = RenderExitPrompt(useNativePrompt: true);
+        var navigationManager = Context.Services.GetRequiredService<NavigationManager>();
+
+        // Act
+        await component.InvokeAsync(() => navigationManager.NavigateTo("/allowed-navigation"));
+
+        // Assert
+        navigationManager.Uri.Should().EndWith("/allowed-navigation");
+    }
+
+    /// <summary>
     /// Centralizes prompt rendering so test setup changes are made in one place.
     /// </summary>
     private IRenderedComponent<MudExitPrompt> RenderExitPrompt(

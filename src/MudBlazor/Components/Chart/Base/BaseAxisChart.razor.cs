@@ -270,8 +270,8 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
 
         _measuredLabels = labels;
 
-        var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
-        var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
+        var yAxisLabelSize = _yAxisGroupElementReference != null ? (await JsRuntime.InvokeAsyncWithErrorHandling<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference)).value : null;
+        var xAxisLabelSize = _xAxisGroupElementReference != null ? (await JsRuntime.InvokeAsyncWithErrorHandling<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference)).value : null;
 
         var axisChanged = false;
 
@@ -325,11 +325,11 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
         if (touchToolTips)
         {
             // Line and time series points are read left to right, so a finger picks the nearest point along x; scatter points have no such order.
-            await JsRuntime.InvokeVoidAsync("mudChartTouch.attach", _svgRef, ChartOptions is not ScatterPlotChartOptions);
+            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudChartTouch.attach", _svgRef, ChartOptions is not ScatterPlotChartOptions);
         }
         else
         {
-            await JsRuntime.InvokeVoidAsync("mudChartTouch.detach", _svgRef);
+            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudChartTouch.detach", _svgRef);
         }
     }
 }

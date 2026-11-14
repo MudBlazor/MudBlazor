@@ -1096,8 +1096,8 @@ namespace MudBlazor
                     await ScrollManager.ScrollIntoViewAsync($"#{targetItemId}", ScrollBehavior.Auto);
                 }
 
-                await JSRuntime.InvokeVoidAsync("mudTableCell.focusCell", targetItemId, cellIndex);
-                await JSRuntime.InvokeVoidAsync("mudTableCell.selectCell", targetItemId, cellIndex);
+                await JSRuntime.InvokeVoidAsyncIgnoreDisconnected("mudTableCell.focusCell", targetItemId, cellIndex);
+                await JSRuntime.InvokeVoidAsyncIgnoreDisconnected("mudTableCell.selectCell", targetItemId, cellIndex);
             }
         }
     }

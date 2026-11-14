@@ -37,16 +37,16 @@ namespace MudBlazor
             elementReference.GetJSRuntime()?.InvokeVoidAsyncIgnoreErrors("mudElementRef.restoreFocus", elementReference) ?? ValueTask.CompletedTask;
 
         public static ValueTask MudBlurAsync(this ElementReference elementReference) =>
-            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.blur", elementReference) ?? ValueTask.CompletedTask;
+            elementReference.GetJSRuntime()?.InvokeVoidAsyncIgnoreDisconnected("mudElementRef.blur", elementReference) ?? ValueTask.CompletedTask;
 
         public static ValueTask MudSelectAsync(this ElementReference elementReference) =>
-            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.select", elementReference) ?? ValueTask.CompletedTask;
+            elementReference.GetJSRuntime()?.InvokeVoidAsyncIgnoreDisconnected("mudElementRef.select", elementReference) ?? ValueTask.CompletedTask;
 
         public static ValueTask MudSelectRangeAsync(this ElementReference elementReference, int pos1, int pos2) =>
-            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.selectRange", elementReference, pos1, pos2) ?? ValueTask.CompletedTask;
+            elementReference.GetJSRuntime()?.InvokeVoidAsyncIgnoreDisconnected("mudElementRef.selectRange", elementReference, pos1, pos2) ?? ValueTask.CompletedTask;
 
         public static ValueTask MudChangeCssAsync(this ElementReference elementReference, string css) =>
-            elementReference.GetJSRuntime()?.InvokeVoidAsync("mudElementRef.changeCss", elementReference, css) ?? ValueTask.CompletedTask;
+            elementReference.GetJSRuntime()?.InvokeVoidAsyncIgnoreDisconnected("mudElementRef.changeCss", elementReference, css) ?? ValueTask.CompletedTask;
 
         public static async ValueTask<BoundingClientRect> MudGetBoundingClientRectAsync(this ElementReference elementReference)
         {
