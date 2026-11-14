@@ -242,6 +242,8 @@ namespace MudBlazor
                     [nameof(DialogContent)] = DialogContent,
                     [nameof(DialogActions)] = DialogActions,
                     [nameof(OnBackdropClick)] = OnBackdropClick,
+                    [nameof(OnKeyDown)] = OnKeyDown,
+                    [nameof(OnKeyUp)] = OnKeyUp,
                     [nameof(Gutters)] = Gutters,
                     [nameof(TitleClass)] = TitleClass,
                     [nameof(ContentClass)] = ContentClass,

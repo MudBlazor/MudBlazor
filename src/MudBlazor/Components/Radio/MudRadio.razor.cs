@@ -237,7 +237,7 @@ namespace MudBlazor
 
                 await KeyInterceptorService.SubscribeAsync(_elementId, options, keys => keys
                     .When(CanHandleKeys, builder => builder
-                        .OnKeyDownAny(["Enter", "NumpadEnter", " "], SelectAsync)));
+                        .OnKeyDownAnyLiteral(["Enter", "NumpadEnter", " "], SelectAsync)));
             }
 
             await base.OnAfterRenderAsync(firstRender);

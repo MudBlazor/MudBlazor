@@ -47,6 +47,7 @@ namespace MudBlazor
         private MudDropContainer<Column<T>>? _columnsPanelDropContainer;
         private readonly PropertyInfo[] _properties = typeof(T).GetProperties();
         private CancellationTokenSource? _serverDataCancellationTokenSource;
+        private INotifyCollectionChanged? _trackedCollection;
         private IEnumerable<T>? _currentRenderFilteredItemsCache = null;
         internal GroupDefinition<T>? _groupDefinition;
         internal Dictionary<GroupKey, bool> _groupExpansionsDict = [];
@@ -319,8 +320,6 @@ namespace MudBlazor
 
                 Debug.Assert(dragAndDropSource.HeaderCell is not null);
                 Debug.Assert(dragAndDropDestination.HeaderCell is not null);
-
-                StateHasChanged();
             }
             return Task.CompletedTask;
         }
@@ -897,7 +896,7 @@ namespace MudBlazor
         /// Controls how cell values are edited.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DataGridEditMode.Cell"/>.  Only works when <see cref="ReadOnly"/> is <c>false</c>.
+        /// Defaults to <c>null</c>.  Only works when <see cref="ReadOnly"/> is <c>false</c>.
         /// </remarks>
         [Parameter]
         public DataGridEditMode? EditMode { get; set; }
@@ -949,23 +948,38 @@ namespace MudBlazor
 
         private void SetupCollectionChangeTracking()
         {
-            if (Items is INotifyCollectionChanged changed)
+            var collection = Items as INotifyCollectionChanged;
+            if (ReferenceEquals(collection, _trackedCollection))
+                return;
+
+            // Only the current Items is tracked, so a replaced collection can't change this grid's selection or keep it alive.
+            StopCollectionChangeTracking();
+            _trackedCollection = collection;
+            if (collection is not null)
+                collection.CollectionChanged += OnItemsCollectionChanged;
+        }
+
+        private void StopCollectionChangeTracking()
+        {
+            if (_trackedCollection is not null)
+                _trackedCollection.CollectionChanged -= OnItemsCollectionChanged;
+
+            _trackedCollection = null;
+        }
+
+        private void OnItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            InvokeAsync(async () =>
             {
-                changed.CollectionChanged += (s, e) =>
-                {
-                    InvokeAsync(async () =>
-                    {
-                        _currentRenderFilteredItemsCache = null;
+                _currentRenderFilteredItemsCache = null;
 
-                        if (Groupable)
-                            GroupItems();
+                if (Groupable)
+                    GroupItems();
 
-                        ApplyInitialExpansionForNewItems(e);
-                        await CleanupRemovedItemsAsync(e);
-                        StateHasChanged();
-                    });
-                };
-            }
+                ApplyInitialExpansionForNewItems(e);
+                await CleanupRemovedItemsAsync(e);
+                StateHasChanged();
+            });
         }
 
         private async Task CleanupRemovedItemsAsync(NotifyCollectionChangedEventArgs e)
@@ -2136,6 +2150,12 @@ namespace MudBlazor
         /// </summary>
         public void AddFilter()
         {
+            AddFilterDefinition();
+            StateHasChanged();
+        }
+
+        private void AddFilterDefinition()
+        {
             var column = RenderedColumns.FirstOrDefault(x => x.filterable);
             var filterDefinition = CreateFilterDefinitionInstance();
             filterDefinition.Id = Guid.NewGuid();
@@ -2144,7 +2164,6 @@ namespace MudBlazor
             FilterDefinitions.Add(filterDefinition);
             _filterDefinitionIdToFocus = filterDefinition.Id;
             _filtersMenuVisible = true;
-            StateHasChanged();
         }
 
         internal Task ApplyFiltersAsync()
@@ -2958,7 +2977,6 @@ namespace MudBlazor
                     await column.HideAsync();
             }
             DropContainerHasChanged();
-            StateHasChanged();
         }
 
         internal async Task ShowAllColumnsAsync()
@@ -2969,7 +2987,6 @@ namespace MudBlazor
                     await column.ShowAsync();
             }
             DropContainerHasChanged();
-            StateHasChanged();
         }
 
         /// <summary>
@@ -2977,12 +2994,17 @@ namespace MudBlazor
         /// </summary>
         public void ShowColumnsPanel(MouseEventArgs? args = null)
         {
+            OpenColumnsPanel(args);
+            StateHasChanged();
+        }
+
+        private void OpenColumnsPanel(MouseEventArgs? args)
+        {
             if (args != null)
             {
                 _columnsPanelPosition = (args.PageY, args.PageX);
             }
             _columnsPanelVisible = true;
-            StateHasChanged();
         }
 
         /// <summary>
@@ -3384,6 +3406,9 @@ namespace MudBlazor
 
         protected virtual void Dispose(bool disposing)
         {
+            // A collection that outlives the grid, such as one held by a service, would otherwise keep the grid alive.
+            StopCollectionChangeTracking();
+
             // Cancel a load still in flight so its data source can stop and its result is discarded.
             var source = _serverDataCancellationTokenSource;
             try

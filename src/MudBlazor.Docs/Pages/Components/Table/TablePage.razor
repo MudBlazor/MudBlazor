@@ -282,6 +282,12 @@
             <SectionHeader Title="Table Virtualization">
                 <Description>
                     You can virtualize the results of a table to increase rendering speed.
+                    @* TODO(net11): Remove once a .NET 11 servicing release fixes dotnet/aspnetcore#70553 and #70554. *@
+                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">
+                        Two bugs in the framework's <CodeInline>Virtualize</CodeInline> in .NET 11.0.0 affect virtualized tables.
+                        Home and End typed in a text input inside the table jump it to its first or last row instead of moving the caret (<MudLink Href="https://github.com/dotnet/aspnetcore/issues/70554" Target="_blank">dotnet/aspnetcore#70554</MudLink>).
+                        Rows with a fractional height make it render rows a little off after each scroll; raising <CodeInline>OverscanCount</CodeInline> above the default 3 helps (<MudLink Href="https://github.com/dotnet/aspnetcore/issues/70553" Target="_blank">dotnet/aspnetcore#70553</MudLink>).
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(TableVirtualizationExample)" ShowCode="false" Block="true" FullWidth="true">

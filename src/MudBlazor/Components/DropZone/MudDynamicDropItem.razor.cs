@@ -180,7 +180,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         }
 
         _dragOperationIsInProgress = true;
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.makeDropZonesNotRelative");
+        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudDragAndDrop.makeDropZonesNotRelative");
         Container.StartTransaction(Item, ZoneIdentifier ?? string.Empty, Index, OnDroppedSucceeded,
             OnDroppedCanceled);
         await OnDragStarted.InvokeAsync();
@@ -189,7 +189,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     private async Task OnDroppedSucceeded()
     {
         _dragOperationIsInProgress = false;
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", ResolvedElementId);
+        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudDragAndDrop.resetItem", ResolvedElementId);
         await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
@@ -197,7 +197,7 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
     private async Task OnDroppedCanceled()
     {
         _dragOperationIsInProgress = false;
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.resetItem", ResolvedElementId);
+        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudDragAndDrop.resetItem", ResolvedElementId);
         await OnDragEnded.InvokeAsync(Item);
         StateHasChanged();
     }
@@ -230,11 +230,11 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         _onTouchLastY = e.ChangedTouches[0].ClientY;
 
         //Send to JS to move DOM element
-        await JsRuntime.InvokeVoidAsync("mudDragAndDrop.moveItemByDifference", ResolvedElementId, x, y);
+        await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudDragAndDrop.moveItemByDifference", ResolvedElementId, x, y);
 
         if (Container is not null && Container.TransactionInProgress())
         {
-            var dropIndexOnPositionString = await JsRuntime.InvokeAsync<string>("mudDragAndDrop.getDropIndexOnPosition", _onTouchLastX, _onTouchLastY, ResolvedElementId);
+            var (_, dropIndexOnPositionString) = await JsRuntime.InvokeAsyncWithErrorHandling<string>("mudDragAndDrop.getDropIndexOnPosition", _onTouchLastX, _onTouchLastY, ResolvedElementId);
             if (int.TryParse(dropIndexOnPositionString, out var dropIndex))
             {
                 Container.UpdateTransactionIndex(dropIndex);
@@ -254,8 +254,9 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         {
             _onTouchLastX = e.ChangedTouches[0].ClientX;
             _onTouchLastY = e.ChangedTouches[0].ClientY;
-            var dropZoneIdentifier =
-                await JsRuntime.InvokeAsync<string>("mudDragAndDrop.getDropZoneIdentifierOnPosition", _onTouchLastX,
+            // A failed lookup leaves no zone to drop on, so the empty identifier cancels the transaction below.
+            var (_, dropZoneIdentifier) =
+                await JsRuntime.InvokeAsyncWithErrorHandling(string.Empty, "mudDragAndDrop.getDropZoneIdentifierOnPosition", _onTouchLastX,
                     _onTouchLastY);
 
             var (_, isValidZone) = ItemCanBeDropped(dropZoneIdentifier);

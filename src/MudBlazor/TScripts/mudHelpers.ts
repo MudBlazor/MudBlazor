@@ -123,9 +123,14 @@ export function hasDefinedParentHeight(element: Element | null | undefined) {
 
     const style = window.getComputedStyle(parent);
 
-    // Explicit height via inline or computed (not auto)
-    const hasExplicitHeight =
-        parent.style.height && parent.style.height !== 'auto';
+    // getComputedStyle resolves height to the used pixel value even when the author never set one, so the specified value has to come from the typed model.
+    // Where that isn't available an inline style is all there is to go on, which is why a height coming from a stylesheet used to be missed entirely.
+    const specifiedHeight = typeof parent.computedStyleMap === 'function'
+        ? parent.computedStyleMap().get('height')?.toString()
+        : parent.style.height;
+
+    // Explicit height via inline style or stylesheet (not auto)
+    const hasExplicitHeight = !!specifiedHeight && specifiedHeight !== 'auto';
 
     // Check for flex/grid constraints
     const isFlexOrGrid =

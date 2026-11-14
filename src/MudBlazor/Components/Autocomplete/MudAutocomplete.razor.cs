@@ -166,7 +166,7 @@ namespace MudBlazor
         /// The "close" Autocomplete icon.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="Icons.Material.Filled.ArrowDropDown"/>.
+        /// Defaults to <see cref="Icons.Material.Filled.ArrowDropUp"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Appearance)]

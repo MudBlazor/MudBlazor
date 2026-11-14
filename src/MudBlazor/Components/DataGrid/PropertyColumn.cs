@@ -135,7 +135,9 @@ namespace MudBlazor
                     else
                     {
                         var actualType = Nullable.GetUnderlyingType(propertyInfo.PropertyType) ?? PropertyType;
-                        propertyInfo.SetValue(item, Convert.ChangeType(value, actualType), null);
+                        // The number editor works in double, which a decimal property has to take as typed.
+                        var converted = actualType == typeof(decimal) ? Num.ToDecimal(value) : Convert.ChangeType(value, actualType);
+                        propertyInfo.SetValue(item, converted, null);
                     }
                 }
             }

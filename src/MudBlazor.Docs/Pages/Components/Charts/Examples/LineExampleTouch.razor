@@ -1,0 +1,19 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudChart ChartType="ChartType.Line" ChartSeries="@Series" ChartLabels="@ChartLabels" Width="100%" Height="350px" ChartOptions="_options" />
+
+@code {
+    private readonly LineChartOptions _options = new()
+    {
+        ShowDataMarkers = true,
+        ShowToolTipsOnTouch = true,
+    };
+
+    public List<ChartSeries<double>> Series = new()
+    {
+        new() { Name = "Rainfall", Data = new double[] { 78, 61, 66, 52, 48, 40, 35, 44, 57, 79, 88, 84 } },
+        new() { Name = "Sunshine", Data = new double[] { 45, 70, 104, 150, 190, 186, 192, 178, 130, 92, 55, 40 } },
+    };
+
+    public string[] ChartLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+}

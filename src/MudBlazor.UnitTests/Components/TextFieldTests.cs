@@ -127,6 +127,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A TimeOnly field without a Format accepts a typed time instead of showing a conversion error.
+        /// </summary>
+        [Test]
+        public async Task TextField_TimeOnly_WithoutFormat_AcceptsTypedTime()
+        {
+            var bound = default(TimeOnly);
+            var comp = Context.Render<MudTextField<TimeOnly>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Bind(x => x.Value, bound, v => bound = v));
+
+            await comp.Find("input").ChangeAsync("14:05");
+            await comp.Find("input").BlurAsync();
+
+            comp.Instance.ConversionError.Should().BeFalse();
+            bound.Should().Be(new TimeOnly(14, 5));
+        }
+
+        /// <summary>
         /// After ResetValidationAsync, blurring an empty required field must re-run validation and show the required error again (#11503).
         /// </summary>
         [Test]

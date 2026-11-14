@@ -263,6 +263,24 @@ test.each([
     expect(hasDefinedParentHeight(document.querySelector("svg"))).toBe(expected);
 });
 
+test("hasDefinedParentHeight reads a height set by a stylesheet, not only an inline one", () => {
+    document.body.innerHTML = `<div style="max-height: none"><svg></svg></div>`;
+
+    const parent = document.querySelector("div")!;
+
+    // Stand in for the typed model, which happy-dom doesn't implement.
+    // A real browser reports the specified keyword here, while getComputedStyle would have already resolved it to pixels.
+    const stubHeight = (height: string) => {
+        parent.computedStyleMap = (() => ({ get: () => height })) as unknown as typeof parent.computedStyleMap;
+    };
+
+    stubHeight("160px");
+    expect(hasDefinedParentHeight(document.querySelector("svg"))).toBe(true);
+
+    stubHeight("auto");
+    expect(hasDefinedParentHeight(document.querySelector("svg"))).toBe(false);
+});
+
 test("hasDefinedParentHeight is false for an element without a parent", () => {
     expect(hasDefinedParentHeight(document.createElement("div"))).toBe(false);
     expect(hasDefinedParentHeight(null)).toBe(false);
