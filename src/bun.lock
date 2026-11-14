@@ -5,7 +5,7 @@
     "": {
       "dependencies": {
         "@happy-dom/global-registrator": "21.0.4",
-        "@microsoft/dotnet-js-interop": "10.0.11",
+        "@microsoft/dotnet-js-interop": "11.0.0",
         "@types/bun": "1.4.4",
         "@types/node": "26.6.6",
         "oxlint": "1.93.0",
@@ -20,7 +20,7 @@
   "packages": {
     "@happy-dom/global-registrator": ["@happy-dom/global-registrator@21.0.4", "", { "dependencies": { "@types/node": ">=20.0.0", "happy-dom": "^21.0.4" } }, "sha512-Bbr0hW9hhDhBf3Jp0EyDlkCbFgbr0z2jd3BMKYOYW+fOkPM4Nx195GMXyCtRCGEgoNn6i09FabXrSkNFm2ONzg=="],
 
-    "@microsoft/dotnet-js-interop": ["@microsoft/dotnet-js-interop@10.0.11", "", {}, "sha512-0Ep12vR4n5kIPctxcrtTW8qBS0bupX1VKbeW4i0F6i0zk3wZ6kNR72F2AVsywTHi1NaAucND7gcrGfWPwk8LVw=="],
+    "@microsoft/dotnet-js-interop": ["@microsoft/dotnet-js-interop@11.0.0", "", {}, "sha512-4uxodSBMlBUhMLi3Tgjwchh1bRAnPETK4hr/2tCspB2l8+5rrD7GVFATf6e5rATtM5hKmhj4O+VI9RD/sAqBZw=="],
 
     "@oxlint/binding-android-arm-eabi": ["@oxlint/binding-android-arm-eabi@1.93.0", "", { "os": "android", "cpu": "arm" }, "sha512-KKw70pbD5Pvq3G2lJ+WQ71XPMjCmg37rkSe2+mDqCRP3PoTSdDMuEi4UOnE8JBtyNM7bek61EC2s0Jt7S7u+Sg=="],
 

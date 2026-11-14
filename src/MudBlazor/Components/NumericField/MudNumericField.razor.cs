@@ -350,14 +350,15 @@ namespace MudBlazor
                     return false;
                 try
                 {
-                    // Convert from the value's own type: a float widened to double first would re-expose the binary noise the decimal step is meant to remove (float 0.01 stepping would show 0.16000001).
+                    // Num.ToDecimal keeps the digits earlier runtimes kept: from .NET 11 on, a cast gives the exact binary value (0.1 becomes 0.1000000000000000055511151231), which is the noise the decimal step is meant to remove.
+                    // Convert from the value's own type, because a float widened to double first would show that noise too (float 0.01 stepping would show 0.16000001).
                     if (value is float f)
                     {
-                        result = (decimal)f;
+                        result = Num.ToDecimal(f);
                         // Reject lossy conversions: a value that comes back from decimal even slightly lower than it went in would trip the overflow clamp in Change and jump to Max.
                         return (float)result == f;
                     }
-                    result = (decimal)d;
+                    result = Num.ToDecimal(d);
                     return (double)result == d;
                 }
                 catch (OverflowException)

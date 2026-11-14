@@ -191,7 +191,7 @@ namespace MudBlazor.Charts
                 return;
             }
 
-            var barWidth = Math.Round((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? numVerticalLines : 1), 1);
+            var barWidth = ((_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / (numVerticalLines > 1 ? numVerticalLines : 1)).RoundToDigits(1);
 
             _barWidthStroke = _barWidth = Math.Max(MinBarWidth, barWidth * ChartOptions!.BarWidthRatio);
 
