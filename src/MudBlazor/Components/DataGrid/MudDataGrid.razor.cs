@@ -2001,6 +2001,7 @@ namespace MudBlazor
             if (_isFirstRendered)
             {
                 PlaceAddedColumn(column);
+                AnchorRegistrationIndexToPlacement(column);
                 if (column._orderState.Value is not null)
                 {
                     _columnsWithInitialOrderPlacement.Add(column);
@@ -3261,6 +3262,23 @@ namespace MudBlazor
                 ? order
                 : reorderableCount;
             RenderedColumns.Insert(hierarchyCount + defaultSelectCount + insertIndex, column);
+        }
+
+        private void AnchorRegistrationIndexToPlacement(Column<T> column)
+        {
+            // A column re-added after the first render carries the highest lifetime counter value, which would rank it behind columns declared after it in markup and break the declaration-order fallback on an all-null reset.
+            // Anchoring its rank at the placed slot keeps the fallback aligned with the position the column re-entered.
+            var placedIndex = RenderedColumns.IndexOf(column);
+            var anchor = placedIndex > 0 ? RenderedColumns[placedIndex - 1].RegistrationIndex + 1 : 0;
+            foreach (var existing in RenderedColumns)
+            {
+                if (!ReferenceEquals(existing, column) && existing.RegistrationIndex >= anchor)
+                {
+                    existing.RegistrationIndex++;
+                }
+            }
+
+            column.RegistrationIndex = anchor;
         }
 
         private async Task UpdateColumnOrderStateAsync(Column<T> changedColumn, int previousIndex)

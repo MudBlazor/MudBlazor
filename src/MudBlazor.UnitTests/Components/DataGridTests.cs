@@ -7501,6 +7501,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Resetting every order to null restores declaration placement after a conditional column instance was replaced (#11570).
+        /// </summary>
+        [Test]
+        public async Task DataGridAllNullResetRestoresDeclarationPlacementAfterConditionalReplacement()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Name", "Age", "Status");
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(nameOrder: 0, ageOrder: 1, statusOrder: 2));
+            await comp.WaitForAssertionAsync(() =>
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Name", "Age", "Status"));
+
+            // Swapping the @if branch replaces the Age column instance, so it re-registers after Name and Status.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.BindAgeOrder, false));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.BindAgeOrder, true));
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Name", "Age", "Status");
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(null, null, null));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Name", "Age", "Status");
+                comp.Instance.NameOrder.Should().BeNull();
+                comp.Instance.AgeOrder.Should().BeNull();
+                comp.Instance.StatusOrder.Should().BeNull();
+                comp.Instance.CallbackCount.Should().Be(0);
+            });
+        }
+
+        /// <summary>
         /// Columns-panel drag-and-drop updates bound order state and raises one callback (#11570).
         /// </summary>
         [Test]
