@@ -448,7 +448,13 @@
                 <Description>
                     The items in the <CodeInline>&lt;MudDataGrid></CodeInline> can be virtualized to provide better rendering performance. Setting the <CodeInline>Virtualize</CodeInline> property
                     to <CodeInline>true</CodeInline> will cause the items to be rendered virtually. You must restrict the height for virtualization to work.
-
+                    @* TODO(net11): Remove once a .NET 11 servicing release fixes dotnet/aspnetcore#70553 and #70554. *@
+                    <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">
+                        Two bugs in the framework's <CodeInline>Virtualize</CodeInline> in .NET 11.0.0 affect virtualized grids.
+                        Rows with a fractional height, such as the grid's default rows, make it render rows a little off after each scroll, and a grid scrolling through slow <CodeInline>VirtualizeServerData</CodeInline> can stay blank (<MudLink Href="https://github.com/dotnet/aspnetcore/issues/70553" Target="_blank">dotnet/aspnetcore#70553</MudLink>).
+                        Setting <CodeInline>OverscanCount</CodeInline> to 8 instead of the default 3 avoided it in our tests with 20,000 rows; longer lists may need more.
+                        Home and End typed in a text input inside the grid, such as cell editing or the filter row, jump it to its first or last row instead of moving the caret (<MudLink Href="https://github.com/dotnet/aspnetcore/issues/70554" Target="_blank">dotnet/aspnetcore#70554</MudLink>).
+                    </MudAlert>
                 </Description>
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridVirtualizationExample)" ShowCode="false" Block="true" FullWidth="true">
