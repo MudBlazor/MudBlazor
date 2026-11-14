@@ -62,5 +62,22 @@ public class VirtualizeTests : BunitTest
         var innerVirtualize = comp.FindComponent<Virtualize<string>>();
         innerVirtualize.Instance.ItemComparer.Should().BeSameAs(comparer);
     }
+
+    /// <summary>
+    /// Clearing the comparer on MudVirtualize puts the inner Virtualize back on the default comparer.
+    /// </summary>
+    [Test]
+    public async Task VirtualizeItemComparer_ClearingRestoresDefault()
+    {
+        var comp = Context.Render<MudVirtualize<string>>(p => p
+            .Add(x => x.ItemsProvider, _ => ValueTask.FromResult(new ItemsProviderResult<string>(["a"], 1)))
+            .Add(x => x.Enabled, true)
+            .Add(x => x.ItemComparer, StringComparer.OrdinalIgnoreCase));
+
+        await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ItemComparer, null));
+
+        var innerVirtualize = comp.FindComponent<Virtualize<string>>();
+        innerVirtualize.Instance.ItemComparer.Should().BeSameAs(EqualityComparer<string>.Default);
+    }
 #endif
 }
