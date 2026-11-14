@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -76,6 +77,7 @@ namespace MudBlazor
         private double? valueNumber => fieldType.IsNumber ? (double?)Column.FilterContext.FilterDefinition?.Value : default;
         private bool? valueBool => fieldType.IsBoolean && Column.FilterContext.FilterDefinition?.Value is not null ? (bool?)Column.FilterContext.FilterDefinition.Value : default;
         private Enum? valueEnum => fieldType.IsEnum && Column.FilterContext.FilterDefinition?.Value is not null ? (Enum)Column.FilterContext.FilterDefinition.Value : default;
+        private IReadOnlyCollection<Enum?>? valueEnums => Filter<T>.ToEnumValues(Column.FilterContext.FilterDefinition?.Value);
         private DateTime? valueDateTimeForPicker => fieldType.IsDateTime ? (DateTime?)Column.FilterContext.FilterDefinition?.Value : default;
         private DateTime? valueDateOnlyForPicker => fieldType.IsDateOnly && Column.FilterContext.FilterDefinition?.Value != null ? ((DateOnly)Column.FilterContext.FilterDefinition.Value).ToDateTime(TimeOnly.MinValue) : null;
         private TimeSpan? valueTime => fieldType.IsDateTime && Column.FilterContext.FilterDefinition?.Value is not null ? ((DateTime?)Column.FilterContext.FilterDefinition.Value).Value.TimeOfDay : null;
@@ -93,6 +95,11 @@ namespace MudBlazor
         private async Task ChangeOperatorAsync(string o)
         {
             Debug.Assert(Column.FilterContext.FilterDefinition is not null);
+            if (FilterOperator.ChangesValueShape(Column.FilterContext.FilterDefinition.Operator, o))
+            {
+                Column.FilterContext.FilterDefinition.Value = null;
+            }
+
             Column.FilterContext.FilterDefinition.Operator = o;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
@@ -115,6 +122,13 @@ namespace MudBlazor
         {
             Debug.Assert(Column.FilterContext.FilterDefinition is not null);
             Column.FilterContext.FilterDefinition.Value = value;
+            await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
+        }
+
+        internal async Task EnumValuesChangedAsync(IReadOnlyCollection<Enum?>? values)
+        {
+            Debug.Assert(Column.FilterContext.FilterDefinition is not null);
+            Column.FilterContext.FilterDefinition.Value = values is { Count: > 0 } ? values : null;
             await ApplyFilterAsync(Column.FilterContext.FilterDefinition);
         }
 

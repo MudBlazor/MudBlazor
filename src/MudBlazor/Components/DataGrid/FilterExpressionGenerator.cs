@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 using System;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
@@ -161,6 +162,7 @@ public static class FilterExpressionGenerator
             {
                 FilterOperator.Enum.Is => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, filter.Value),
                 FilterOperator.Enum.IsNot => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, filter.Value),
+                FilterOperator.Enum.IsAnyOf => propertyExpression.GenerateAnyOf<T>(filter.Value as IEnumerable ?? new[] { filter.Value }),
                 FilterOperator.Enum.Empty => propertyExpression.GenerateBinary<T>(ExpressionType.Equal, null),
                 FilterOperator.Enum.NotEmpty => propertyExpression.GenerateBinary<T>(ExpressionType.NotEqual, null),
                 _ => x => true

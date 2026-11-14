@@ -14,10 +14,13 @@ namespace MudBlazor
         private bool _hasBeenCanceled;
         private bool _hasBeenCommitted;
         private bool _hasBeenClickedFirstTime;
+        private RowLink? _link;
+        private MudTd? _linkCell;
 
         protected string Classname => new CssBuilder("mud-table-row")
             .AddClass(Class)
             .AddClass(DisabledClass, Disabled)
+            .AddClass("mud-table-row-link", _link is not null)
             .Build();
 
         protected string ActionsStylename => new StyleBuilder()
@@ -129,6 +132,57 @@ namespace MudBlazor
                     CheckedChanged.InvokeAsync(value);
                 }
             }
+        }
+
+        /// <summary>
+        /// A row link: the URL from <see cref="MudTable{T}.RowHref"/> and the target from <see cref="MudTable{T}.RowTarget"/>.
+        /// </summary>
+        internal readonly record struct RowLink(string Href, string? Target);
+
+        /// <summary>
+        /// Works out this row's link for the current render and lets the first cell rendered claim it.
+        /// </summary>
+        /// <remarks>
+        /// No link while the row is disabled or being edited, so it never covers inputs or disabled content.
+        /// No link either when a row click already edits or selects the row, so a click never does both and navigates away.
+        /// Clearing the claim on every render keeps the link on the leftmost cell when columns are hidden or shown again.
+        /// </remarks>
+        private void ResolveLink()
+        {
+            _linkCell = null;
+            _link = null;
+
+            var table = Context?.Table;
+            if (table is null || Disabled || (table.Editable && ReferenceEquals(table._editingItem, Item)) || RowClickHasAction(table))
+            {
+                return;
+            }
+
+            var href = table.GetRowHref(Item);
+            if (!string.IsNullOrWhiteSpace(href))
+            {
+                _link = new RowLink(href, table.RowLinkTarget);
+            }
+        }
+
+        // Mirrors the row-click behavior in OnRowClickedAsync and StartEditingItem.
+        private bool RowClickHasAction(MudTableBase table) =>
+            (Editable && table.EditTrigger == TableEditTrigger.RowClick) ||
+            table is { MultiSelection: true, SelectionChangeable: true, SelectOnRowClick: true, Editable: false };
+
+        /// <summary>
+        /// Returns the row link when <paramref name="cell"/> is the first cell rendered in this row, so the row renders one link.
+        /// </summary>
+        internal RowLink? ClaimLink(MudTd cell)
+        {
+            // Cells of a table nested in this row see this row too, but belong to the other table.
+            if (_link is null || !ReferenceEquals(cell.Context, Context))
+            {
+                return null;
+            }
+
+            _linkCell ??= cell;
+            return ReferenceEquals(_linkCell, cell) ? _link : null;
         }
 
         /// <summary>

@@ -126,6 +126,14 @@ namespace MudBlazor
             public const string IsNot = "is not";
 
             /// <summary>
+            /// Find values matching any of the filter values.
+            /// </summary>
+            /// <remarks>
+            /// The filter value is a collection of enum values, and an empty collection matches every row.
+            /// </remarks>
+            public const string IsAnyOf = "is any of";
+
+            /// <summary>
             /// Find rows where the nullable enum column is <c>null</c>.
             /// </summary>
             public const string Empty = "is empty";
@@ -255,7 +263,16 @@ namespace MudBlazor
             public const string NotEqual = "not equals";
         }
 
-        internal static string[] GetOperatorByDataType(Type? type)
+        /// <summary>
+        /// Returns the built-in filter operators for the specified data type.
+        /// </summary>
+        /// <param name="type">The data type of the column to filter.</param>
+        /// <returns>The supported operators, or an empty array if <paramref name="type"/> is <see langword="null"/> or unsupported.</returns>
+        /// <remarks>
+        /// Use this method to populate operator choices in a custom filter template.
+        /// Nullable value types return the same operators as their underlying types.
+        /// </remarks>
+        public static string[] GetOperatorByDataType(Type? type)
         {
             var fieldType = FieldType.Identify(type);
             return GetOperatorByDataType(fieldType);
@@ -296,6 +313,7 @@ namespace MudBlazor
                 return new[] {
                     Enum.Is,
                     Enum.IsNot,
+                    Enum.IsAnyOf,
                     Enum.Empty,
                     Enum.NotEmpty,
                 };
@@ -348,6 +366,9 @@ namespace MudBlazor
             return Array.Empty<string>();
         }
 
+        // IsAnyOf holds a collection of values while every other operator holds one, so a value kept across that boundary has the wrong shape.
+        internal static bool ChangesValueShape(string? from, string? to) => from != to && (from == Enum.IsAnyOf || to == Enum.IsAnyOf);
+
         internal static string GetTranslationKeyByOperatorName(string operatorName) => operatorName switch
         {
             // All these operator constants should be refactored to be enums, this is a temporary solution.
@@ -370,6 +391,7 @@ namespace MudBlazor
             //Number.NotEmpty => LanguageResource.MudDataGrid_IsNotEmpty,
             Enum.Is => LanguageResource.MudDataGrid_Is,
             Enum.IsNot => LanguageResource.MudDataGrid_IsNot,
+            Enum.IsAnyOf => LanguageResource.MudDataGrid_IsAnyOf,
             //Boolean.Is => LanguageResource.MudDataGrid_Is,
             //DateTime.Is => LanguageResource.MudDataGrid_Is,
             //DateTime.IsNot => LanguageResource.MudDataGrid_IsNot,

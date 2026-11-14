@@ -38,7 +38,7 @@ namespace MudBlazor
 
         /// <inheritdoc />
         public async Task StartSpying(string containerSelector, string sectionClassSelector) =>
-            await _js.InvokeVoidAsync("mudScrollSpy.spying", _dotNetRef, containerSelector, sectionClassSelector);
+            await _js.InvokeVoidAsyncIgnoreDisconnected("mudScrollSpy.spying", _dotNetRef, containerSelector, sectionClassSelector);
 
         /// <inheritdoc />
         public async Task ScrollToSection(string id)

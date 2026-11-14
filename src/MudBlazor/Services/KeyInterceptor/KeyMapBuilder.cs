@@ -263,6 +263,55 @@ public sealed class KeyMapBuilder
         return this;
     }
 
+    // MudBlazor's own components register keys through the internal methods below, which never build a Regex.
+    // Only the public string methods accept "/pattern/" keys, so an app whose code never calls them can trim the regular expression engine away.
+
+    internal KeyMapBuilder OnKeyDownLiteral(string key, Func<Task> action)
+    {
+        _commands.Add(new LiteralKeyCommand(KeyEventKind.Down, key, null, action, null));
+        return this;
+    }
+
+    internal KeyMapBuilder OnKeyDownLiteral(string key, Func<KeyboardEventArgs, Task> action)
+    {
+        _commands.Add(new LiteralKeyCommand(KeyEventKind.Down, key, null, null, action));
+        return this;
+    }
+
+    internal KeyMapBuilder OnKeyDownAnyLiteral(string[] keys, Func<Task> action)
+    {
+        _commands.Add(new LiteralKeyCommand(KeyEventKind.Down, null, keys, action, null));
+        return this;
+    }
+
+    internal KeyMapBuilder OnKeyDownAnyLiteral(string[] keys, Func<KeyboardEventArgs, Task> action)
+    {
+        _commands.Add(new LiteralKeyCommand(KeyEventKind.Down, null, keys, null, action));
+        return this;
+    }
+
+    internal KeyMapBuilder OnKeyDownWhere(Func<string, bool> matches, Func<KeyboardEventArgs, Task> action)
+    {
+        _commands.Add(new PredicateKeyCommand(KeyEventKind.Down, matches, action));
+        return this;
+    }
+
+    internal KeyMapBuilder OnKeyUpWhere(Func<string, bool> matches, Func<KeyboardEventArgs, Task> action)
+    {
+        _commands.Add(new PredicateKeyCommand(KeyEventKind.Up, matches, action));
+        return this;
+    }
+
+    /// <summary>
+    /// Matches the keys the pattern <c>/./</c> matches: any key name with a character other than a line feed.
+    /// </summary>
+    internal static bool IsAnyKey(string key) => key.AsSpan().IndexOfAnyExcept('\n') >= 0;
+
+    /// <summary>
+    /// Matches the browser key names the pattern <c>/^[^ ]$/</c> matches: a single character that is not a space.
+    /// </summary>
+    internal static bool IsSingleNonSpaceCharacter(string key) => key.Length == 1 && key[0] != ' ';
+
     public (IKeyDownObserver, IKeyUpObserver) Build()
     {
         if (_commands.Count == 0)
@@ -419,6 +468,34 @@ public sealed class KeyMapBuilder
 
         public Task ExecuteAsync(KeyboardEventArgs args)
             => inner.ExecuteAsync(args);
+    }
+
+    // One class covers a single key or a small key set, with either action shape.
+    // Components register several keys per instance, so each registration stays a single allocation.
+    private sealed class LiteralKeyCommand(KeyEventKind kind, string? key, string[]? keys, Func<Task>? action, Func<KeyboardEventArgs, Task>? actionWithArgs) : IKeyCommand
+    {
+        public KeyEventKind Kind { get; } = kind;
+
+        public bool IsHook => false;
+
+        public bool CanExecute(KeyboardEventArgs args)
+            => keys is null ? args.Key == key : Array.IndexOf(keys, args.Key) >= 0;
+
+        public Task ExecuteAsync(KeyboardEventArgs args)
+            => action is not null ? action() : actionWithArgs!(args);
+    }
+
+    private sealed class PredicateKeyCommand(KeyEventKind kind, Func<string, bool> matches, Func<KeyboardEventArgs, Task> action) : IKeyCommand
+    {
+        public KeyEventKind Kind { get; } = kind;
+
+        public bool IsHook => false;
+
+        public bool CanExecute(KeyboardEventArgs args)
+            => args.Key is not null && matches(args.Key);
+
+        public Task ExecuteAsync(KeyboardEventArgs args)
+            => action(args);
     }
 
     private sealed class HookCommand(KeyEventKind kind, Func<KeyboardEventArgs, Task> hook) : IKeyCommand

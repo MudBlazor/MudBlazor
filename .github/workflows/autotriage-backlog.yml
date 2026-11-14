@@ -6,34 +6,14 @@ on:
   workflow_dispatch:
     inputs:
       issues:
-        description: "Space-separated issue numbers"
+        description: "Issue or PR numbers (blank = backlog)"
         type: string
         required: false
       dry-run:
-        description: "Run in dry-run mode (true = no writes)"
+        description: "Plan without applying"
         type: boolean
         required: false
         default: true
-      max-fast-runs:
-        description: "Max number of runs"
-        type: number
-        required: false
-        default: 30
-      extended:
-        description: "Enable extended analysis"
-        type: boolean
-        required: false
-        default: true
-      model-fast:
-        description: "Fast model"
-        type: string
-        required: false
-        default: gemini-3.5-flash-lite
-      model-pro:
-        description: "Pro model"
-        type: string
-        required: false
-        default: gemini-3.8-flash
 
 permissions:
   contents: read
@@ -42,6 +22,7 @@ jobs:
   triage:
     if: ${{ github.repository_owner == 'MudBlazor' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     # Queue every run instead of keeping only the newest pending one, so event runs wait for the sweep instead of being cancelled.
     concurrency:
       group: autotriage-db
@@ -65,19 +46,15 @@ jobs:
             ${{ runner.os }}-triage-db-
 
       - name: AutoTriage - triage backlog
-        uses: danielchalmers/AutoTriage@v4
+        uses: danielchalmers/AutoTriage@v5
         with:
-          issues: ${{ github.event.inputs.issues }}
-          prompt-path: .github/AutoTriage.prompt
-          dry-run: ${{ github.event_name != 'schedule' && inputs['dry-run'] }}
-          max-fast-runs: ${{ github.event_name == 'workflow_dispatch' && inputs['max-fast-runs'] || 30 }}
-          extended: ${{ github.event_name == 'workflow_dispatch' && inputs['extended'] || true }}
-          model-fast: ${{ github.event_name == 'workflow_dispatch' && inputs['model-fast'] || 'gemini-3.5-flash-lite' }}
-          model-pro: ${{ github.event_name == 'workflow_dispatch' && inputs['model-pro'] || 'gemini-3.8-flash' }}
+          issues: ${{ inputs.issues }}
+          # The nightly sweep is live, while a manual run only plans unless dry-run is unticked.
+          dry-run: ${{ inputs.dry-run }}
           db-path: triage-db.json
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY_TRIAGE }}
 
       # Saved even when the run fails, so the items it did triage aren't sent again tomorrow.
       # The key includes the attempt, so a re-run can save too.

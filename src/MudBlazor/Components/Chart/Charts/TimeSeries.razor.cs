@@ -205,10 +205,9 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
     private void ComputeUnitsAndNumberOfLines(out T gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
     {
-        gridYUnits = GetInitialGridUnit();
-
         if (!HasSeriesData())
         {
+            gridYUnits = GetGridYUnits(T.Zero, T.Zero);
             numHorizontalLines = 1;
             lowestHorizontalLine = 0;
             numVerticalLines = 1;
@@ -219,6 +218,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
         AdjustSuggestedMax(ref maxY);
 
+        gridYUnits = GetGridYUnits(minY, maxY);
         lowestHorizontalLine = GetLowestLine(minY, gridYUnits);
         var highestHorizontalLine = GetHighestLine(maxY, gridYUnits);
         numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
@@ -226,14 +226,6 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         ClampHorizontalLines(ref gridYUnits, minY, maxY, ref numHorizontalLines, ref lowestHorizontalLine);
 
         numVerticalLines = CalculateVerticalLines();
-    }
-
-    private T GetInitialGridUnit()
-    {
-        var yAxisTicks = ChartOptions?.YAxisTicks;
-        return yAxisTicks is > 0
-            ? T.CreateSaturating(yAxisTicks.Value)
-            : T.CreateSaturating(20);
     }
 
     private bool HasSeriesData() =>
@@ -363,6 +355,8 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         var dataValue = GetDataValue<TimeValue<T>>(seriesIndex, dataPointIndex);
         return dataValue.Value.ToString(Series[seriesIndex].TooltipYValueFormat, CultureInfo.CurrentCulture);
     }
+
+    internal override double GetDataValueAsDouble(int seriesIndex, int dataPointIndex) => double.CreateSaturating(GetDataValue<TimeValue<T>>(seriesIndex, dataPointIndex).Value);
 
     protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)
     {

@@ -882,6 +882,38 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Multi-select options use the select's CheckedIcon and UncheckedIcon (#14035).
+        /// </summary>
+        [Test]
+        public async Task MultiSelect_Options_UseCustomCheckboxIcons()
+        {
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.MultiSelection, true)
+                .Add(x => x.SelectedValues, ["Latte"])
+                .Add(x => x.CheckedIcon, Icons.Material.Rounded.CheckBox)
+                .Add(x => x.UncheckedIcon, Icons.Material.Rounded.CheckBoxOutlineBlank)
+                .Add(x => x.ChildContent, builder =>
+                {
+                    foreach (var item in new[] { "Espresso", "Latte" })
+                    {
+                        builder.OpenComponent<MudSelectItem<string>>(0);
+                        builder.AddComponentParameter(1, nameof(MudSelectItem<string>.Value), item);
+                        builder.CloseComponent();
+                    }
+                }));
+
+            await comp.InvokeAsync(() => comp.Instance.OpenMenu());
+            await provider.WaitForAssertionAsync(() => provider.FindAll("div.mud-list-item").Should().HaveCount(2));
+
+            var options = provider.FindAll("div.mud-list-item");
+            Icons.Material.Rounded.CheckBoxOutlineBlank.Should().Contain(IconPath(options[0]));
+            Icons.Material.Rounded.CheckBox.Should().Contain(IconPath(options[1]));
+
+            static string IconPath(IElement option) => $"d=\"{option.QuerySelectorAll("path").Last().GetAttribute("d")}\"";
+        }
+
+        /// <summary>
         /// Select all skips disabled options, and clicking it again clears the selection.
         /// </summary>
         [Test]
@@ -1380,6 +1412,38 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.WaitForAssertionAsync(() => select.Instance.Value.Should().Be("1"));
             await comp.WaitForAssertionAsync(() => comp.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+        }
+
+        /// <summary>
+        /// Enter closes the open list when arrow navigation has already committed the highlighted option, without a parent re-render (#14079).
+        /// </summary>
+        [Test]
+        public async Task Select_Enter_ClosesWhenHighlightedOptionIsAlreadyValue()
+        {
+            var keys = Context.AddKeyInterceptorService();
+            var provider = Context.Render<MudPopoverProvider>();
+            var select = Context.Render<MudSelect<string>>(parameters => parameters
+                .Add(x => x.Value, "Urgent")
+                .Add(x => x.ChildContent, builder =>
+                {
+                    foreach (var value in new[] { "Low", "Normal", "Urgent" })
+                    {
+                        builder.OpenComponent<MudSelectItem<string>>(0);
+                        builder.AddComponentParameter(1, nameof(MudSelectItem<string>.Value), value);
+                        builder.CloseComponent();
+                    }
+                }));
+
+            await PressAsync(select, keys, "Enter");
+            await provider.WaitForAssertionAsync(() => provider.Find("div.mud-popover").ClassList.Should().Contain("mud-popover-open"));
+            await PressAsync(select, keys, "ArrowUp");
+            await select.WaitForAssertionAsync(() => select.Instance.ReadValue.Should().Be("Normal"));
+
+            await PressAsync(select, keys, "Enter");
+
+            await provider.WaitForAssertionAsync(() => provider.Find("div.mud-popover").ClassList.Should().NotContain("mud-popover-open"));
+            select.Find("[aria-expanded]").GetAttribute("aria-expanded").Should().Be("false");
+            select.Instance.ReadValue.Should().Be("Normal");
         }
 
         /// <summary>

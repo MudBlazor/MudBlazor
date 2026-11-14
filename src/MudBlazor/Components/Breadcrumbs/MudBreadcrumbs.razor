@@ -11,7 +11,7 @@
 
 @* Not fixed: separators have no parameters of their own, so the cascade is what tells them Separator or SeparatorTemplate changed. *@
 <CascadingValue Value="this">
-    <nav aria-label="@Localizer[LanguageResource.MudBreadcrumbs_Label]">
+    <nav aria-label="@(AriaLabel ?? Localizer[LanguageResource.MudBreadcrumbs_Label])">
         <ol @attributes="UserAttributes" class="@Classname" style="@Style">
             @if (MaxItems != null && Collapsed && Items.Count > MaxItems)
             {

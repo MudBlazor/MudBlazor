@@ -9,6 +9,25 @@ namespace MudBlazor.UnitTests.Components;
 public class AvatarTests : BunitTest
 {
     /// <summary>
+    /// Avatar variants retain the requested color classes, including Text for issue #13982.
+    /// </summary>
+    [Test]
+    public void Avatar_VariantAndColorClasses(
+        [Values(Variant.Text, Variant.Filled, Variant.Outlined)] Variant variant,
+        [Values(Color.Default, Color.Primary, Color.Error)] Color color)
+    {
+        var comp = Context.Render<MudAvatar>(parameters => parameters
+            .Add(p => p.Variant, variant)
+            .Add(p => p.Color, color)
+            .AddChildContent("MK"));
+
+        var avatar = comp.Find(".mud-avatar");
+        avatar.ClassList.Should().Contain($"mud-avatar-{variant.ToStringFast(true)}");
+        avatar.ClassList.Should().Contain($"mud-avatar-{variant.ToStringFast(true)}-{color.ToStringFast(true)}");
+        avatar.TextContent.Should().Be("MK");
+    }
+
+    /// <summary>
     /// An avatar without an accessible name must not claim role="img", which would hide its initials.
     /// </summary>
     [Test]

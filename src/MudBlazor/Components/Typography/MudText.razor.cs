@@ -71,7 +71,10 @@ public partial class MudText : MudComponentBase
     /// Whether this text continues on the same line.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.  When <c>false</c>, text will start on a new line.
+    /// Defaults to <c>false</c>.
+    /// When <c>true</c>, the <c>d-inline</c> class is added so block elements such as headings and paragraphs stay on the same line.
+    /// When <c>false</c>, the element keeps its default display, so typos rendered as <c>span</c> (such as <see cref="Typo.caption"/>) remain inline.
+    /// Use <see cref="HtmlTag"/> to render those as a block element.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Behavior)]
@@ -120,11 +123,12 @@ public partial class MudText : MudComponentBase
 
     // Renders the element a MudText with only a typo, a class and text would render, for library components that repeat it per item.
     // It is a fragment so its hardcoded sequence numbers get their own region inside the caller's markup.
-    internal static RenderFragment RenderText(Typo typo, string? className, string? text) => builder =>
+    internal static RenderFragment RenderText(Typo typo, string? className, string? text, string? elementId = null) => builder =>
     {
         builder.OpenElement(0, GetTagName(typo));
-        builder.AddAttribute(1, "class", new CssBuilder("mud-typography").AddClass($"mud-typography-{typo.ToStringFast(true)}").AddClass(className).Build());
-        builder.AddContent(2, text);
+        builder.AddAttribute(1, "id", elementId);
+        builder.AddAttribute(2, "class", new CssBuilder("mud-typography").AddClass($"mud-typography-{typo.ToStringFast(true)}").AddClass(className).Build());
+        builder.AddContent(3, text);
         builder.CloseElement();
     };
 

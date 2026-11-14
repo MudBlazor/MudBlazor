@@ -63,6 +63,14 @@ public interface IAxisLineChartOptions : IAxisChartOptions
     /// Defaults to <c>false</c>.
     /// </remarks>
     public bool ConnectNullPoints { get; set; }
+
+    /// <summary>
+    /// When <c>true</c>, a finger opens tooltips too: dragging sideways across the chart, or pressing and holding first, moves the tooltip from point to point, and a tap opens the nearest point.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>. A sideways drag that starts on the chart moves the tooltip instead of scrolling a horizontal container around it. Has no effect when <see cref="IChartOptions.ShowToolTips"/> is <c>false</c>.
+    /// </remarks>
+    public bool ShowToolTipsOnTouch { get; set; }
 }
 
 /// <summary>

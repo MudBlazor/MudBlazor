@@ -301,6 +301,32 @@ namespace MudBlazor
         }
 
         /// <summary>
+        /// Invokes the specified JavaScript function asynchronously and catches only <see cref="JSDisconnectedException"/> and <see cref="TaskCanceledException"/>.
+        /// </summary>
+        /// <remarks>
+        /// For public APIs whose callers expect JavaScript and pre-rendering errors to surface in every build configuration.
+        /// </remarks>
+        /// <param name="jsRuntime">The <see cref="IJSRuntime"/>.</param>
+        /// <param name="identifier">An identifier for the function to invoke. For example, the value <c>"someScope.someFunction"</c> will invoke the function <c>window.someScope.someFunction</c>.</param>
+        /// <param name="args">JSON-serializable arguments.</param>
+        /// <returns>A <see cref="ValueTask"/> that represents the asynchronous invocation operation.</returns>
+        internal static async ValueTask InvokeVoidAsyncIgnoreDisconnected(this IJSRuntime jsRuntime, string identifier, params object?[] args)
+        {
+            try
+            {
+                await jsRuntime.InvokeVoidAsync(identifier, args);
+            }
+            catch (JSDisconnectedException)
+            {
+                // The circuit is already gone, so there is nothing left to invoke the function on.
+            }
+            catch (TaskCanceledException)
+            {
+                // The invocation was cancelled or hit the interop timeout, and a void call leaves nothing to recover.
+            }
+        }
+
+        /// <summary>
         /// Checks if the IJSRuntime instance is of type UnsupportedJavaScriptRuntime or RemoteJSRuntime.
         /// </summary>
         /// <param name="jsRuntime">The IJSRuntime instance to check.</param>

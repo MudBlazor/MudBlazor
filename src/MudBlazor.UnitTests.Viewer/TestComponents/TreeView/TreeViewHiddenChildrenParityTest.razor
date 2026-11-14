@@ -1,0 +1,49 @@
+@* The folder has no value and every direct child is hidden, so only the folder itself renders. Its checkbox must still work in both modes. *@
+<MudTreeView T="int?" Items="_items" Virtualize="@Virtualize" SelectionMode="SelectionMode.MultiSelection" ReadOnly="@ReadOnly" Height="200px" @bind-SelectedValues="SelectedValues">
+    <ItemTemplate Context="item">
+        <MudTreeViewItem T="int?" Class="@GetClass(item)" Value="@item.Value" Text="@item.Text" Visible="@item.Visible" Expanded="@item.Expanded"
+                         Selected="@item.Selected" SelectedChanged="@(selected => OnItemSelectedChangedAsync(item, selected))" Items="@item.Children" />
+    </ItemTemplate>
+</MudTreeView>
+
+<p class="selected-values">@string.Join(",", (SelectedValues ?? []).Order())</p>
+<p class="folder-selected">@Folder.Selected</p>
+<p class="child-1-selected">@Child1.Selected</p>
+<p class="child-2-selected">@Child2.Selected</p>
+
+@code {
+    [Parameter]
+    public bool Virtualize { get; set; }
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    [Parameter]
+    public IReadOnlyCollection<int?>? SelectedValues { get; set; }
+
+    public TreeItemData<int?> Folder { get; private set; } = null!;
+    public TreeItemData<int?> Child1 { get; private set; } = null!;
+    public TreeItemData<int?> Child2 { get; private set; } = null!;
+    public TreeItemData<int?> Leaf { get; private set; } = null!;
+
+    private readonly List<ITreeItemData<int?>> _items = [];
+
+    protected override void OnInitialized()
+    {
+        Child1 = new TreeItemData<int?> { Value = 1, Text = "Child 1", Visible = false };
+        Child2 = new TreeItemData<int?> { Value = 2, Text = "Child 2", Visible = false };
+        Folder = new TreeItemData<int?> { Text = "Folder", Expanded = true, Children = [Child1, Child2] };
+        Leaf = new TreeItemData<int?> { Text = "Leaf" };
+
+        _items.Add(Folder);
+        _items.Add(Leaf);
+    }
+
+    private static string GetClass(ITreeItemData<int?> item) => item.Text!.Replace(' ', '-').ToLowerInvariant();
+
+    private Task OnItemSelectedChangedAsync(ITreeItemData<int?> item, bool selected)
+    {
+        item.Selected = selected;
+        return Task.CompletedTask;
+    }
+}
