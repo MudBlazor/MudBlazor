@@ -882,6 +882,21 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A drawer removed by its breakpoint callback during the immediate viewport notification does not stay subscribed (#11541).
+        /// </summary>
+        [Test]
+        public void BreakpointCallbackRemovesDrawerDuringSubscription_UnsubscribesFromViewport()
+        {
+            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerBreakpointEventTest>(parameters => parameters
+                .Add(x => x.RemoveDrawerOnBreakpoint, true));
+
+            comp.Instance.BreakpointNotifications.Should().Be(1);
+            comp.FindComponents<MudDrawer>().Should().BeEmpty();
+            comp.WaitForAssertion(() => browserViewportService.ObserversCount.Should().Be(0));
+        }
+
+        /// <summary>
         /// A breakpoint callback that closes a responsive drawer is not overridden by the drawer opening itself above its breakpoint (#11541).
         /// </summary>
         [Test]

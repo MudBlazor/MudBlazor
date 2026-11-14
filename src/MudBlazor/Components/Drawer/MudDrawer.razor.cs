@@ -395,13 +395,20 @@ namespace MudBlazor
 
             if (shouldSubscribe && !_isBrowserViewportSubscribed)
             {
-                await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+                // Marked before awaiting so a dispose or re-render during the immediate notification sees the pending subscription.
                 _isBrowserViewportSubscribed = true;
+                await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+
+                // A dispose that ran before registration finished could not remove the observer, so it is removed here.
+                if (_disposed)
+                {
+                    await BrowserViewportService.UnsubscribeAsync(this);
+                }
             }
             else if (!shouldSubscribe && _isBrowserViewportSubscribed)
             {
-                await BrowserViewportService.UnsubscribeAsync(this);
                 _isBrowserViewportSubscribed = false;
+                await BrowserViewportService.UnsubscribeAsync(this);
             }
         }
 
