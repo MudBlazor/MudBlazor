@@ -107,7 +107,6 @@ namespace MudBlazor
             }
 
             Collapsed = false;
-            StateHasChanged();
         }
     }
 }

@@ -41,6 +41,54 @@ namespace MudBlazor.UnitTests
             runtimeMock.Verify();
         }
 
+        /// <summary>
+        /// The disconnect-only helper swallows a lost circuit and a cancelled call.
+        /// </summary>
+        [Test]
+        public async Task InvokeVoidAsyncIgnoreDisconnected_DisconnectOrCancel_Swallowed([Values] bool cancelled)
+        {
+            Exception exception = cancelled ? new TaskCanceledException() : new JSDisconnectedException("only testing");
+            var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
+            runtimeMock
+                .Setup(x => x.InvokeAsync<IJSVoidResult>("myMethod", It.IsAny<object[]>()))
+                .Throws(exception)
+                .Verifiable();
+
+            var act = async () => await runtimeMock.Object.InvokeVoidAsyncIgnoreDisconnected("myMethod", 42, "blub");
+
+            await act.Should().NotThrowAsync();
+            runtimeMock.Verify();
+        }
+
+        /// <summary>
+        /// The disconnect-only helper lets JavaScript errors reach the caller in every build configuration.
+        /// </summary>
+        [Test]
+        public async Task InvokeVoidAsyncIgnoreDisconnected_JSException_Rethrown()
+        {
+            var runtimeMock = new Mock<IJSRuntime>(MockBehavior.Strict);
+            runtimeMock
+                .Setup(x => x.InvokeAsync<IJSVoidResult>("myMethod", It.IsAny<object[]>()))
+                .Throws(new JSException("only testing"));
+
+            var act = async () => await runtimeMock.Object.InvokeVoidAsyncIgnoreDisconnected("myMethod", 42, "blub");
+
+            await act.Should().ThrowAsync<JSException>();
+        }
+
+        /// <summary>
+        /// The disconnect-only helper lets the pre-rendering error reach the caller, unlike the other helpers.
+        /// </summary>
+        [Test]
+        public async Task InvokeVoidAsyncIgnoreDisconnected_UnsupportedJavaScriptRuntime_Rethrown()
+        {
+            var jsRuntime = new UnsupportedJavaScriptRuntime();
+
+            var act = async () => await jsRuntime.InvokeVoidAsyncIgnoreDisconnected("myMethod", 42, "blub");
+
+            await act.Should().ThrowAsync<InvalidOperationException>();
+        }
+
         [Test]
         public async Task InvokeVoidAsyncIgnoreErrors_ShouldSwallow_WhenUnsupportedJavaScriptRuntime()
         {
