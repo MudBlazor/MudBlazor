@@ -320,8 +320,6 @@ namespace MudBlazor
 
                 Debug.Assert(dragAndDropSource.HeaderCell is not null);
                 Debug.Assert(dragAndDropDestination.HeaderCell is not null);
-
-                StateHasChanged();
             }
             return Task.CompletedTask;
         }
@@ -2152,6 +2150,12 @@ namespace MudBlazor
         /// </summary>
         public void AddFilter()
         {
+            AddFilterDefinition();
+            StateHasChanged();
+        }
+
+        private void AddFilterDefinition()
+        {
             var column = RenderedColumns.FirstOrDefault(x => x.filterable);
             var filterDefinition = CreateFilterDefinitionInstance();
             filterDefinition.Id = Guid.NewGuid();
@@ -2160,7 +2164,6 @@ namespace MudBlazor
             FilterDefinitions.Add(filterDefinition);
             _filterDefinitionIdToFocus = filterDefinition.Id;
             _filtersMenuVisible = true;
-            StateHasChanged();
         }
 
         internal Task ApplyFiltersAsync()
@@ -2974,7 +2977,6 @@ namespace MudBlazor
                     await column.HideAsync();
             }
             DropContainerHasChanged();
-            StateHasChanged();
         }
 
         internal async Task ShowAllColumnsAsync()
@@ -2985,7 +2987,6 @@ namespace MudBlazor
                     await column.ShowAsync();
             }
             DropContainerHasChanged();
-            StateHasChanged();
         }
 
         /// <summary>
@@ -2993,12 +2994,17 @@ namespace MudBlazor
         /// </summary>
         public void ShowColumnsPanel(MouseEventArgs? args = null)
         {
+            OpenColumnsPanel(args);
+            StateHasChanged();
+        }
+
+        private void OpenColumnsPanel(MouseEventArgs? args)
+        {
             if (args != null)
             {
                 _columnsPanelPosition = (args.PageY, args.PageX);
             }
             _columnsPanelVisible = true;
-            StateHasChanged();
         }
 
         /// <summary>

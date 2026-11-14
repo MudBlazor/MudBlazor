@@ -490,7 +490,15 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         return KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keys => keys
             .When(CanHandleKeys, builder => builder
                 .OnKeyDownLiteral(" ", () => OnClickAsync(new MouseEventArgs()))
-                .OnKeyDownAnyLiteral(["Backspace", "Delete"], () => OnCloseAsync(new MouseEventArgs()))));
+                .OnKeyDownAnyLiteral(["Backspace", "Delete"], OnCloseKeyDownAsync)));
+    }
+
+    private async Task OnCloseKeyDownAsync()
+    {
+        await OnCloseAsync(new MouseEventArgs());
+
+        // A key interceptor callback is not a Blazor event, so nothing renders the chip afterwards.
+        StateHasChanged();
     }
 
     private bool CanHandleKeys() => !GetDisabled() && !GetReadOnly();
@@ -524,8 +532,6 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         {
             await ChipSet.OnChipDeletedAsync(this);
         }
-
-        StateHasChanged();
     }
 
     /// <summary>
