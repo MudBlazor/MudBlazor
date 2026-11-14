@@ -84,7 +84,11 @@ public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, 
 
         if (firstRender)
         {
-            _hasFixedParent = await JsRuntime.InvokeAsync<bool>("hasDefinedParentHeight", _containerRef);
+            var (success, hasFixedParent) = await JsRuntime.InvokeAsyncWithErrorHandling<bool>("hasDefinedParentHeight", _containerRef);
+            if (success)
+            {
+                _hasFixedParent = hasFixedParent;
+            }
         }
 
         if (_hasFixedParent != previousHasFixedParent)

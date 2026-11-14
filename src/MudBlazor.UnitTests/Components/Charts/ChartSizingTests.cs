@@ -5,6 +5,7 @@
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Charts;
 using MudBlazor.Interop;
 using NUnit.Framework;
@@ -362,6 +363,59 @@ public class ChartSizingTests : BunitTest
             var svg = comp.Find("svg");
             svg.GetAttribute("viewBox").Should().Be("0 0 800 400");
         });
+    }
+
+    /// <summary>
+    /// A chart still renders when its size measurements hit a lost circuit.
+    /// </summary>
+    [TestCase(ChartType.Line)]
+    [TestCase(ChartType.Pie)]
+    [TestCase(ChartType.HeatMap)]
+    [TestCase(ChartType.Sankey)]
+    public void MudChart_SizeMeasurementDisconnected_StillRenders(ChartType chartType)
+    {
+        Context.JSInterop.Setup<ElementSize>("mudObserveElementSize", _ => true).SetException(new JSDisconnectedException("disconnected"));
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetException(new JSDisconnectedException("disconnected"));
+
+        var comp = Context.Render<MudChart<double>>(parameters =>
+        {
+            parameters
+                .Add(p => p.ChartType, chartType)
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>
+                {
+                    new() { Name = "Alpha", Data = new double[] { 5, 3 } },
+                    new() { Name = "Beta", Data = new double[] { 2, 8 } },
+                })
+                .Add(p => p.ChartLabels, new[] { "L1", "L2" });
+
+            if (chartType == ChartType.Sankey)
+            {
+                parameters.Add(p => p.ChartOptions, new SankeyChartOptions { AggregationOption = AggregationOption.GroupByDataSet });
+            }
+        });
+
+        comp.Find("svg").Should().NotBeNull();
+        Context.JSInterop.VerifyInvoke("mudObserveElementSize");
+    }
+
+    /// <summary>
+    /// A failed parent height check keeps the assumption that the parent has a fixed height.
+    /// </summary>
+    [Test]
+    public async Task MudChart_MatchBoundsToSize_ParentCheckDisconnected_ShouldNotUseFallbackHeight()
+    {
+        var series = new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20 } } };
+        Context.JSInterop.Setup<bool>("hasDefinedParentHeight", _ => true).SetException(new JSDisconnectedException("disconnected"));
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Height, "100%")
+            .Add(p => p.ChartSeries, series));
+
+        await comp.WaitForAssertionAsync(() => Context.JSInterop.Invocations["hasDefinedParentHeight"].Should().HaveCount(1));
+
+        comp.FindAll("div[style*='height:350px']").Should().BeEmpty();
     }
 
     [Test]

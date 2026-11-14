@@ -144,6 +144,31 @@ namespace MudBlazor.UnitTests.Components
             Context.JSInterop.VerifyInvoke("mudDragAndDrop.moveItemByDifference").Arguments[0].Should().Be("custom-item");
         }
 
+        /// <summary>
+        /// A touch drag that loses its circuit midway completes without throwing and ends the drag.
+        /// </summary>
+        [Test]
+        public async Task DynamicDropItem_TouchDrag_Disconnected_Swallowed()
+        {
+            var disconnected = new JSDisconnectedException("disconnected");
+            Context.JSInterop.SetupVoid("mudDragAndDrop.makeDropZonesNotRelative", _ => true).SetException(disconnected);
+            Context.JSInterop.SetupVoid("mudDragAndDrop.moveItemByDifference", _ => true).SetException(disconnected);
+            Context.JSInterop.SetupVoid("mudDragAndDrop.resetItem", _ => true).SetException(disconnected);
+            Context.JSInterop.Setup<string>("mudDragAndDrop.getDropIndexOnPosition", _ => true).SetException(disconnected);
+            Context.JSInterop.Setup<string>("mudDragAndDrop.getDropZoneIdentifierOnPosition", _ => true).SetException(disconnected);
+            var comp = Context.Render<DropZoneDynamicItemTouchTest>();
+            var container = comp.FindComponent<MudDropContainer<string>>().Instance;
+
+            await comp.Find(".mud-drop-item").TouchStartAsync(new TouchEventArgs { ChangedTouches = [new TouchPoint { ClientX = 0, ClientY = 0 }] });
+            await comp.Find(".mud-drop-item").TouchMoveAsync(new TouchEventArgs { ChangedTouches = [new TouchPoint { ClientX = 5, ClientY = 5 }] });
+            container.TransactionInProgress().Should().BeTrue();
+            await comp.Find(".mud-drop-item").TouchEndAsync(new TouchEventArgs { ChangedTouches = [new TouchPoint { ClientX = 5, ClientY = 5 }] });
+
+            // The failed zone lookup cancels the transaction, which resets the item.
+            container.TransactionInProgress().Should().BeFalse();
+            Context.JSInterop.VerifyInvoke("mudDragAndDrop.resetItem");
+        }
+
         [Test]
         public void DropZone_DropZoneOverrideContainerRendered()
         {
