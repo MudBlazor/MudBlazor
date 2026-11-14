@@ -10,18 +10,23 @@ using MudBlazor.Interfaces;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents the validation logic for a <see cref="MudDataGrid{T}"/> row.
+    /// Validates the input fields of a <see cref="MudDataGrid{T}"/> row during inline or form editing.
     /// </summary>
     public class DataGridRowValidator : IForm
     {
         /// <summary>
         /// Indicates whether the row is valid.
         /// </summary>
+        /// <remarks>
+        /// Reading this drives a validation pass that only completes inline for synchronous validators.
+        /// Callers that must respect asynchronous validators should await <see cref="ValidateAsync"/> and read <see cref="Errors"/>.
+        /// </remarks>
         public bool IsValid
         {
             get
             {
-                Validate();
+                // IForm.IsValid must remain synchronous, so drive validation without awaiting; exceptions are forwarded to MudGlobal.UnhandledExceptionHandler.
+                ValidateAsync().CatchAndLog();
                 return Errors.Length <= 0;
             }
         }
@@ -67,19 +72,27 @@ namespace MudBlazor
         /// <summary>
         /// Checks this row for any validation errors.
         /// </summary>
+        [Obsolete("Use ValidateAsync instead.")]
         [ExcludeFromCodeCoverage]
         public void Validate()
+        {
+            ValidateAsync().CatchAndLog();
+        }
+
+        /// <summary>
+        /// Checks this row for any validation errors, awaiting asynchronous validators before collecting their errors.
+        /// </summary>
+        public async Task ValidateAsync()
         {
             _errors.Clear();
             foreach (var formControl in _formControls.ToArray())
             {
-                formControl.ValidateAsync();
+                await formControl.ValidateAsync();
                 foreach (var err in formControl.ValidationErrors)
                 {
                     _errors.Add(err);
                 }
             }
         }
-
     }
 }

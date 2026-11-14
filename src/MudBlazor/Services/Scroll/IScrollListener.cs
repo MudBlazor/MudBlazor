@@ -5,7 +5,7 @@
 namespace MudBlazor;
 
 /// <summary>
-/// Interface for a scroll listener that listens to scroll events on a specified element.
+/// Reports scroll-position changes for a target element at a throttled interval.
 /// </summary>
 public interface IScrollListener : IAsyncDisposable
 {
@@ -18,7 +18,7 @@ public interface IScrollListener : IAsyncDisposable
     /// The rate at which the <see cref="IScrollListener"/> will report scroll position changes (in milliseconds).
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>100</c>.
+    /// Defaults to <c>10</c>.
     /// </remarks>
     public int ReportRateMs { get; set; }
 

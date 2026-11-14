@@ -1,0 +1,11 @@
+﻿@attribute [ViewerHidden]
+
+@code {
+    /// <summary>
+    /// Called while the render batch that creates this component is still running.
+    /// </summary>
+    [Parameter]
+    public Action? Initialized { get; set; }
+
+    protected override void OnInitialized() => Initialized?.Invoke();
+}

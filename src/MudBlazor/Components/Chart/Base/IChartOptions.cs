@@ -5,7 +5,7 @@
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents the options for a chart.
+/// Common chart options shared by every chart type, including legend visibility, tooltips, and the color palette.
 /// </summary>
 public interface IChartOptions
 {

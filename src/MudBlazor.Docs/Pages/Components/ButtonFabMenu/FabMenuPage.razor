@@ -21,5 +21,60 @@
                 <FabMenuExampleDirection />
             </SectionContent>
         </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Default Variant">
+                <Description>When no <CodeInline>Variant</CodeInline> is set, the menu and its items use <CodeInline>Variant.Filled</CodeInline> by default.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(FabMenuExampleVariantDefault)">
+                <FabMenuExampleVariantDefault />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Filled Variant">
+                <Description>Filled menus have elevation and a solid background. Use <CodeInline>DropShadow="false"</CodeInline> to remove the elevation.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(FabMenuExampleVariantFilled)">
+                <FabMenuExampleVariantFilled />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Outlined Variant">
+                <Description>Outlined menus and items have a border that inherits its color from the <CodeInline>Color</CodeInline> property, with no background fill.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(FabMenuExampleVariantOutlined)">
+                <FabMenuExampleVariantOutlined />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Text Variant">
+                <Description>Text menus and items have no background, border, or drop shadow. Only a hover effect is applied. Contrast against the underlying surface is the consumer's responsibility.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(FabMenuExampleVariantText)">
+                <FabMenuExampleVariantText />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Inherited Variant">
+                <Description>Menu items inherit the <CodeInline>Variant</CodeInline> from the parent <CodeInline>MudFabMenu</CodeInline> when no <CodeInline>Variant</CodeInline> is set on the item itself. This example shows all three variants applied at the menu level so items inherit accordingly.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(FabMenuExampleVariantInherited)">
+                <FabMenuExampleVariantInherited />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Mixed Variants">
+                <Description>Each <CodeInline>MudFabMenuItem</CodeInline> can have its own explicit <CodeInline>Variant</CodeInline>, allowing different styles within the same menu.</Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(FabMenuExampleVariantMixed)">
+                <FabMenuExampleVariantMixed />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>

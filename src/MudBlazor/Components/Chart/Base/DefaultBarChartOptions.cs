@@ -5,7 +5,7 @@
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents the default options for a bar chart.
+/// Default bar chart options such as justification, group spacing, bar width, and tooltip format.
 /// </summary>
 public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
 {
@@ -57,6 +57,7 @@ public abstract class DefaultBarChartOptions : DefaultAxisChartOptions
     /// </summary>
     /// <remarks>
     /// Defaults to "{{Y_VALUE}}"
+    /// <c>{{Y_AXIS_VALUE}}</c> writes the value the way the Y axis labels it with <c>YAxisToStringFunc</c> or <c>YAxisFormat</c>.
     /// </remarks>
     public override string TooltipTitleFormat { get; set; } = "{{Y_VALUE}}";
 }

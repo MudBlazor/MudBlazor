@@ -19,7 +19,7 @@
     }
   }
 
-  &:focus-within, &:active {
+  &:focus-visible, &:has(:focus-visible), &:active {
     background-color: var(--mud-palette-action-default-hover);
 
     @each $color in $mud-palette-colors {
@@ -48,7 +48,7 @@
     }
   }
 
-  &:focus-within, &:active {
+  &:focus-visible, &:has(:focus-visible), &:active {
     background-color: var(--mud-palette-action-default-hover);
   }
 }

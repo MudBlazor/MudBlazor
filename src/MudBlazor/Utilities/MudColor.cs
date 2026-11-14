@@ -37,6 +37,9 @@ namespace MudBlazor.Utilities
         ColorElements
     }
 
+    /// <summary>
+    /// Which color values are compared when testing two <see cref="MudColor"/> values for equality.
+    /// </summary>
     public enum MudColorComparison
     {
         Rgba = 0,
@@ -45,7 +48,7 @@ namespace MudBlazor.Utilities
     }
 
     /// <summary>
-    /// Represents a color with methods to manipulate color values.
+    /// Color value with RGB, HSL, hex, and alpha components, plus methods to convert, adjust, parse, and compare colors.
     /// </summary>
     [Serializable]
     public partial class MudColor : ISerializable, IEquatable<MudColor>, IParsable<MudColor>, IFormattable
@@ -153,8 +156,8 @@ namespace MudBlazor.Utilities
         public MudColor(double h, double s, double l, int a)
         {
             h = Math.Round(h.EnsureRange(360), 0);
-            s = Math.Round(s.EnsureRange(1), 2);
-            l = Math.Round(l.EnsureRange(1), 2);
+            s = s.EnsureRange(1).RoundToDigits(2);
+            l = l.EnsureRange(1).RoundToDigits(2);
             a = a.EnsureRange(255);
 
             var hsl = new HSL(h, s, l);
@@ -613,9 +616,9 @@ namespace MudBlazor.Utilities
         /// <returns><c>true</c> if the string was successfully parsed; otherwise, <c>false</c>.</returns>
         public static bool TryParse([NotNullWhen(true)] string? s, [MaybeNullWhen(false)] out MudColor result) => TryParse(s, null, out result);
 
-        private static double NormalizeAlpha(byte a, int digit = 2) => Math.Round(a / 255.0, digit);
+        private static double NormalizeAlpha(byte a, int digit = 2) => (a / 255.0).RoundToDigits(digit);
 
-        private static double NormalizeAlpha(int a, int digit = 2) => Math.Round(a / 255.0, digit);
+        private static double NormalizeAlpha(int a, int digit = 2) => (a / 255.0).RoundToDigits(digit);
 
         private static byte GetByteFromValuePart(string input, int index) => byte.Parse(new string(new[] { input[index], input[index + 1] }), NumberStyles.HexNumber);
 
@@ -791,7 +794,7 @@ namespace MudBlazor.Utilities
                 s = (max - min) / (2D - (max + min)); //(max-min > 0)?
             }
 
-            return new HSL(Math.Round(h.EnsureRange(360), 0), Math.Round(s.EnsureRange(1), 2), Math.Round(l.EnsureRange(1), 2));
+            return new HSL(Math.Round(h.EnsureRange(360), 0), s.EnsureRange(1).RoundToDigits(2), l.EnsureRange(1).RoundToDigits(2));
         }
 
         /// <inheritdoc />

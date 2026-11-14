@@ -5,6 +5,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Resources;
 using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -26,11 +27,13 @@ namespace MudBlazor
         private MudSelectItem<T>? _longestItem;
         private bool _needsHighlightAfterRender;
         private bool _needsFitContentRefresh;
+        private int _parentUpdateCount;
         private MudInput<string> _elementReference = null!;
         private HashSet<T?> _selectedValues = [];
         private string _searchText = string.Empty;
         private string? _lastSelectedId = string.Empty;
         private DateTimeOffset _lastSearchTime = DateTimeOffset.MinValue;
+        private readonly string _listboxId = Identifier.Create("select-listbox");
         private readonly ParameterState<bool> _openState;
         private readonly ParameterState<IReadOnlyCollection<T?>?> _selectedValuesState;
         private readonly MudSelectContext<T> _context;
@@ -43,6 +46,9 @@ namespace MudBlazor
         /// <inheritdoc />
         object IMudShadowSelect.SelectContext => _context;
 
+        [Inject]
+        private InternalMudLocalizer Localizer { get; set; } = null!;
+
         public MudSelect()
         {
             _context = new MudSelectContext<T>(this);
@@ -51,7 +57,7 @@ namespace MudBlazor
             using var registerScope = CreateRegisterScope();
             registerScope.RegisterParameter<bool>(nameof(MultiSelection))
                 .WithParameter(() => MultiSelection)
-                .WithChangeHandler(() => UpdateTextPropertyAsync(false));
+                .WithChangeHandler(() => SuppressInteractionEffectsWhileAsync(() => UpdateTextPropertyAsync(false)));
             registerScope.RegisterParameter<IEqualityComparer<T?>?>(nameof(Comparer))
                 .WithParameter(() => Comparer)
                 .WithChangeHandler(OnComparerChangedAsync);
@@ -273,7 +279,7 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.ListAppearance)]
-        public string SelectAllText { get; set; } = "Select all";
+        public string SelectAllText { get; set; } = string.Empty;
 
         /// <summary>
         /// The icon used for selected items.
@@ -498,6 +504,79 @@ namespace MudBlazor
         protected bool IsValueInList => _context.TryGetShadowItemByValue(ReadValue, out _);
 
         /// <summary>
+        /// Whether the clear button has something to clear.
+        /// </summary>
+        /// <remarks>
+        /// Clearing resets the selection to <c>default(T)</c>, so there is nothing to clear while the
+        /// selection already equals it. For a non-nullable value type the default (e.g. <c>0</c> or the
+        /// zero enum member) is that cleared state, so the button stays hidden until a different value is
+        /// selected. For nullable and reference types the default is <c>null</c>, so any non-null selection
+        /// (including a value type's zero) is clearable. Uses the same equality as the clear operation (#13372).
+        /// </remarks>
+        private bool HasClearableValue()
+        {
+            if (MultiSelection)
+            {
+                return _selectedValues.Count > 0;
+            }
+
+            return !EqualityComparer<T?>.Default.Equals(ReadValue, default);
+        }
+
+        /// <summary>
+        /// Builds fallback accessibility attributes for the focused select trigger.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="MudSelect{T}"/> keeps focus on its trigger while the popup is open, so the trigger publishes the combobox relationship to the popup list.
+        /// </remarks>
+        private Dictionary<string, object?> GetInputUserAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
+            attributes.TryAdd("role", "combobox");
+            attributes.TryAdd("aria-autocomplete", "none");
+            attributes.TryAdd("aria-expanded", _openState.Value ? "true" : "false");
+            if (_openState.Value)
+            {
+                // Only reference the listbox while it is rendered; a dangling IDREF is an invalid aria-controls value.
+                attributes.TryAdd("aria-controls", _listboxId);
+            }
+            attributes.TryAdd("aria-haspopup", "listbox");
+
+            if (!attributes.ContainsKey("aria-label") && !attributes.ContainsKey("aria-labelledby") && !string.IsNullOrWhiteSpace(Label))
+            {
+                attributes["aria-label"] = Label;
+            }
+
+            if (_openState.Value && _activeItemId is not null)
+            {
+                attributes.TryAdd("aria-activedescendant", _activeItemId);
+            }
+
+            return attributes;
+        }
+
+        /// <summary>
+        /// Builds the attributes applied to the internal popup list.
+        /// </summary>
+        /// <remarks>
+        /// Provides the stable list identifier and list-level semantics owned by <see cref="MudSelect{T}"/>.
+        /// </remarks>
+        private Dictionary<string, object?> GetListUserAttributes()
+        {
+            var attributes = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["id"] = _listboxId
+            };
+
+            if (MultiSelection)
+            {
+                attributes["aria-multiselectable"] = "true";
+            }
+
+            return attributes;
+        }
+
+        /// <summary>
         /// The icon to display whether all, none, or some items are selected.
         /// </summary>
         /// <remarks>
@@ -571,7 +650,6 @@ namespace MudBlazor
                 }
 
                 UpdateSelectAllChecked();
-                await BeginValidateAsync();
             }
             else
             {
@@ -583,7 +661,10 @@ namespace MudBlazor
                 // Early exit if unchanged
                 if (comparer.Equals(ReadValue, value))
                 {
-                    await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, comparer));
+                    await UpdateSelectedValuesStateAsync(comparer);
+
+                    // CloseMenu(false) does not render, and a key interceptor callback is not a UI event that renders afterwards, so the list would stay visible.
+                    await InvokeAsync(StateHasChanged);
                     return;
                 }
 
@@ -600,9 +681,16 @@ namespace MudBlazor
                 await HighlightItemForValueAsync(value);
             }
 
-            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, comparer));
+            await UpdateSelectedValuesStateAsync(comparer);
 
             FieldChanged(_selectedValues);
+
+            if (MultiSelection)
+            {
+                // Validate only now that SelectedValuesChanged has committed the new selection,
+                // so validation functions observe the updated binding (#11796).
+                await BeginValidateAsync();
+            }
 
             if (MultiSelection && typeof(T) == typeof(string))
             {
@@ -648,21 +736,12 @@ namespace MudBlazor
                 return;
             }
 
+            // Opening rebuilds the options once, so items added since the last parent render are also registered as shadow items and their selected content resolves.
+            unchecked { _parentUpdateCount++; }
             await _openState.SetValueAsync(true);
             _needsHighlightAfterRender = true;
             UpdateIcon();
             StateHasChanged();
-
-            //Scroll the active item on each opening
-            if (_activeItemId != null)
-            {
-                var index = Items.FindIndex(x => x.ItemId == _activeItemId);
-                if (index > 0)
-                {
-                    var item = Items[index];
-                    await ScrollToItemAsync(item);
-                }
-            }
 
             //disable escape propagation: if selectmenu is open, only the select popover should close and underlying components should not handle escape key
             await KeyInterceptorService.UpdateKeyAsync(ElementId, new("Escape", stopDown: "key+none"));
@@ -681,7 +760,6 @@ namespace MudBlazor
             if (focusAgain)
             {
                 StateHasChanged();
-                await OnBlur.InvokeAsync(new FocusEventArgs());
                 _elementReference.FocusAsync().CatchAndLog(ignoreExceptions: true);
                 StateHasChanged();
             }
@@ -701,18 +779,21 @@ namespace MudBlazor
             await SetValueAndUpdateTextAsync(default, false);
             await SetTextAndUpdateValueAsync(null, false);
             _selectedValues.Clear();
-            await BeginValidateAsync();
             StateHasChanged();
-            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
+            await UpdateSelectedValuesStateAsync();
             FieldChanged(_selectedValues);
+            await BeginValidateAsync();
         }
 
         /// <summary>
         /// Sets the focus to this component.
         /// </summary>
-        public override ValueTask FocusAsync()
+        public override ValueTask FocusAsync() => FocusAsync(preventScroll: false);
+
+        /// <inheritdoc />
+        internal override ValueTask FocusAsync(bool preventScroll)
         {
-            return _elementReference.FocusAsync();
+            return _elementReference.FocusAsync(preventScroll);
         }
 
         /// <summary>
@@ -741,53 +822,67 @@ namespace MudBlazor
             return _elementReference.SelectRangeAsync(pos1, pos2);
         }
 
-        private async Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>?> arg)
+        private Task OnComparerChangedAsync(ParameterChangedEventArgs<IEqualityComparer<T?>?> arg)
         {
-            // Apply comparer and refresh selected values
+            // Rebuild the internal HashSet so future equality checks use the new comparer.
+            // Do NOT push to _selectedValuesState here: during initial parameter processing,
+            // this handler fires before OnSelectedValuesChangedAsync has populated _selectedValues,
+            // so SetValueAsync would publish an empty snapshot and invoke SelectedValuesChanged,
+            // silently overwriting the parent's @bind-SelectedValues binding to empty.
             _selectedValues = new HashSet<T?>(_selectedValues, arg.Value);
-            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, arg.Value));
+            return Task.CompletedTask;
         }
 
-        private async Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> arg)
+        private Task OnSelectedValuesChangedAsync(ParameterChangedEventArgs<IReadOnlyCollection<T?>?> arg)
         {
-            var value = arg.Value;
-
-            // Update internal HashSet with new values - make a defensive copy to avoid shared references
-            // The HashSet uses the Comparer for equality checks and ensures uniqueness
-            _selectedValues = value != null ? new HashSet<T?>(value, Comparer) : new HashSet<T?>(Comparer);
-
-            // Notify all subscribed items of the selection change
-            await _context.NotifySelectionChangedAsync();
-
-            if (!MultiSelection)
+            // A SelectedValues parameter change is always programmatic; user selection goes through
+            // SelectOption, not this handler. The whole handler therefore runs suppressed.
+            return SuppressInteractionEffectsWhileAsync(async () =>
             {
-                await SetValueAndUpdateTextAsync(_selectedValues.FirstOrDefault());
-            }
-            else
-            {
-                //Warning. Here the Converter was not set yet
-                if (MultiSelectionTextFunc != null)
+                var wasTouched = Touched;
+                var value = arg.Value;
+
+                // Update internal HashSet with new values - make a defensive copy to avoid shared references
+                // The HashSet uses the Comparer for equality checks and ensures uniqueness
+                _selectedValues = value != null ? new HashSet<T?>(value, Comparer) : new HashSet<T?>(Comparer);
+
+                // Notify all subscribed items of the selection change
+                await _context.NotifySelectionChangedAsync();
+
+                if (!MultiSelection)
                 {
-                    await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                        selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
-                        multiSelectionTextFunc: MultiSelectionTextFunc);
+                    await SetValueAndUpdateTextAsync(_selectedValues.FirstOrDefault());
                 }
                 else
                 {
-                    await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
+                    //Warning. Here the Converter was not set yet
+                    if (MultiSelectionTextFunc != null)
+                    {
+                        var convertedValues = _selectedValues.Select(ConvertSet).ToList();
+                        await SetCustomizedTextAsync(string.Join(Delimiter, convertedValues),
+                            selectedConvertedValues: convertedValues,
+                            multiSelectionTextFunc: MultiSelectionTextFunc);
+                    }
+                    else
+                    {
+                        await SetTextAndUpdateValueAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)), updateValue: false);
+                    }
                 }
-            }
 
-            // Only fire FieldChanged after the first render to avoid triggering during initialization
-            if (HasRendered)
-            {
-                FieldChanged(_selectedValues);
-            }
+                // Mirror MudBaseInput.OnValueParameterChangedAsync's wasTouched gate: an external change
+                // only notifies the form if the select was already touched (an initial/async-loaded
+                // selection on an untouched select must not fire FieldChanged). User selection notifies
+                // via SelectOption.
+                if (HasRendered && wasTouched && !arg.IsChildOriginatedChange)
+                {
+                    FieldChanged(_selectedValues);
+                }
 
-            if (MultiSelection && typeof(T) == typeof(string))
-            {
-                await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
-            }
+                if (MultiSelection && typeof(T) == typeof(string))
+                {
+                    await SetValueAndUpdateTextAsync((T?)(object?)ReadText, updateText: false);
+                }
+            });
         }
 
         internal void UpdateFitContent()
@@ -865,15 +960,22 @@ namespace MudBlazor
             return InvokeAsync(StateHasChanged);
         }
 
+        private string ResolvedSelectAllText() => string.IsNullOrEmpty(SelectAllText) ? Localizer[LanguageResource.MudSelect_SelectAll] : SelectAllText;
+
         private void UpdateSelectAllChecked()
         {
             if (MultiSelection && SelectAll)
             {
-                if (_selectedValues.Count == 0)
+                var enabledValues = new HashSet<T?>(Items
+                    .Where(x => !x.Disabled && HasNonNullValue(x.Value))
+                    .Select(x => x.Value), Comparer);
+                var selectedEnabledValuesCount = _selectedValues.Count(enabledValues.Contains);
+
+                if (selectedEnabledValuesCount == 0)
                 {
                     _selectAllChecked = false;
                 }
-                else if (Items.Count(x => !x.Disabled) == _selectedValues.Count)
+                else if (selectedEnabledValuesCount == enabledValues.Count)
                 {
                     _selectAllChecked = true;
                 }
@@ -900,31 +1002,40 @@ namespace MudBlazor
                 _selectAllChecked = true;
             }
 
-            // Define the items selection
-            if (_selectAllChecked.Value)
-            {
-                await SelectAllItems();
-            }
-            else
-            {
-                await ClearAsync();
-            }
+            await UpdateSelectAllSelectionAsync(_selectAllChecked.Value);
         }
 
-        private async Task SelectAllItems()
+        private async Task UpdateSelectAllSelectionAsync(bool selectAll)
         {
             if (!MultiSelection)
             {
                 return;
             }
 
-            var selectedValues = new HashSet<T?>(Items.Where(x => !x.Disabled && x.Value != null).Select(x => x.Value), Comparer);
+            var disabledValues = new HashSet<T?>(Items
+                .Where(x => x.Disabled)
+                .Select(x => x.Value), Comparer);
+            var selectedValues = new HashSet<T?>(_selectedValues.Where(disabledValues.Contains), Comparer);
+
+            if (selectAll)
+            {
+                selectedValues.UnionWith(Items
+                    .Where(x => !x.Disabled && HasNonNullValue(x.Value))
+                    .Select(x => x.Value));
+            }
+            else if (selectedValues.Count == 0)
+            {
+                await ClearAsync();
+                return;
+            }
+
             _selectedValues = new HashSet<T?>(selectedValues, Comparer);
 
             if (MultiSelectionTextFunc != null)
             {
-                await SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                    selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
+                var convertedValues = _selectedValues.Select(ConvertSet).ToList();
+                await SetCustomizedTextAsync(string.Join(Delimiter, convertedValues),
+                    selectedConvertedValues: convertedValues,
                     multiSelectionTextFunc: MultiSelectionTextFunc);
             }
             else
@@ -934,9 +1045,9 @@ namespace MudBlazor
 
             UpdateSelectAllChecked();
             _selectedValues = selectedValues; // need to force selected values because Blazor overwrites it under certain circumstances due to changes of Text or Value
-            await BeginValidateAsync();
-            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
+            await UpdateSelectedValuesStateAsync();
             FieldChanged(_selectedValues);
+            await BeginValidateAsync();
 
             if (MultiSelection && typeof(T) == typeof(string))
             {
@@ -944,13 +1055,19 @@ namespace MudBlazor
             }
         }
 
-        private async Task OnFocusOutAsync()
+        private static bool HasNonNullValue(T? value) => !ReferenceEquals(value, null);
+
+        private async Task OnFocusOutAsync(FocusEventArgs args)
         {
             if (_openState.Value)
             {
                 // when the menu is open we immediately get back the focus if we lose it (i.e. because of checkboxes in multi-select)
                 // otherwise we can't receive key strokes any longer
                 await FocusAsync();
+            }
+            else
+            {
+                await OnBlurredAsync(args);
             }
         }
 
@@ -1156,7 +1273,7 @@ namespace MudBlazor
                 _selectedValues.Clear();
                 _selectedValues.Add(item.Value);
                 await SetValueAndUpdateTextAsync(item.Value, updateText: true);
-                await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
+                await UpdateSelectedValuesStateAsync();
             }
 
             await HighlightItemAsync(item);
@@ -1311,15 +1428,19 @@ namespace MudBlazor
             await FocusAsync();
         }
 
-        internal Task OnBlurAsync(FocusEventArgs obj)
-        {
-            return base.OnBlur.InvokeAsync(obj);
-        }
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
             UpdateIcon();
+        }
+
+        /// <inheritdoc />
+        public override Task SetParametersAsync(ParameterView parameters)
+        {
+            // Opening, closing and highlighting only change the select's own state, so the options re-render when the parent does.
+            unchecked { _parentUpdateCount++; }
+
+            return base.SetParametersAsync(parameters);
         }
 
         protected override void OnParametersSet()
@@ -1356,18 +1477,18 @@ namespace MudBlazor
 
                 await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
                     .HookKeyUp(args => OnKeyUp.InvokeAsync(args))
+                    .HookKeyDown(args => OnKeyDown.InvokeAsync(args))
                     .When(CanHandleKeys, builder => builder
-                        .HookKeyDown(args => OnKeyDown.InvokeAsync(args))
-                        .OnKeyDown("Tab", () => CloseMenu(false))
-                        .OnKeyDown("ArrowUp", HandleArrowUpAsync)
-                        .OnKeyDown("ArrowDown", HandleArrowDownAsync)
-                        .OnKeyDown(" ", ToggleMenu)
-                        .OnKeyDown("Escape", () => CloseMenu(true))
-                        .OnKeyDown("Home", () => SelectFirstItem())
-                        .OnKeyDown("End", SelectLastItem)
-                        .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)
-                        .OnKeyDownAny(["a", "A"], HandleKeyAAsync)
-                        .OnKeyDown("/^[^ ]$/", HandleCharacterSearchAsync)));
+                        .OnKeyDownLiteral("Tab", () => CloseMenu(false))
+                        .OnKeyDownLiteral("ArrowUp", HandleArrowUpAsync)
+                        .OnKeyDownLiteral("ArrowDown", HandleArrowDownAsync)
+                        .OnKeyDownLiteral(" ", ToggleMenu)
+                        .OnKeyDownLiteral("Escape", () => CloseMenu(true))
+                        .OnKeyDownLiteral("Home", () => SelectFirstItem())
+                        .OnKeyDownLiteral("End", SelectLastItem)
+                        .OnKeyDownAnyLiteral(["Enter", "NumpadEnter"], HandleEnterAsync)
+                        .OnKeyDownAnyLiteral(["a", "A"], HandleKeyAAsync)
+                        .OnKeyDownWhere(KeyMapBuilder.IsSingleNonSpaceCharacter, HandleCharacterSearchAsync)));
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -1379,10 +1500,10 @@ namespace MudBlazor
             {
                 UpdateFitContent();
             }
-            else if (firstRender)
+            else if (firstRender && (CanRenderValue || IsValueInList))
             {
-                // we need to render the initial Value which is not possible without the items
-                // which supply the RenderFragment. So in this case, a second render is necessary
+                // The first render runs before the shadow items register, so the value presenter could not resolve then.
+                // Only render again when the value now resolves to an item; otherwise the second pass rebuilds every item to produce the same output.
                 StateHasChanged();
             }
 
@@ -1404,6 +1525,15 @@ namespace MudBlazor
                         await HighlightItemForValueAsync(ReadValue);
                     }
                 });
+
+                if (_openState.Value && _activeItemId is not null)
+                {
+                    var index = Items.FindIndex(x => x.ItemId == _activeItemId);
+                    if (index > 0)
+                    {
+                        await ScrollToItemAsync(Items[index]);
+                    }
+                }
             }
         }
 
@@ -1434,11 +1564,17 @@ namespace MudBlazor
             await SetValueAndUpdateTextAsync(default, false);
             await SetTextAndUpdateValueAsync(null, false);
             _selectedValues.Clear();
-            await BeginValidateAsync();
             StateHasChanged();
-            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, Comparer));
+            await UpdateSelectedValuesStateAsync();
             FieldChanged(_selectedValues);
+            await BeginValidateAsync();
             await OnClearButtonClick.InvokeAsync(e);
+        }
+
+        private async Task UpdateSelectedValuesStateAsync(IEqualityComparer<T?>? comparer = null)
+        {
+            await _selectedValuesState.SetValueAsync(new HashSet<T?>(_selectedValues, comparer ?? Comparer));
+            await _context.NotifySelectionChangedAsync();
         }
 
         protected async Task SetCustomizedTextAsync(string text, bool updateValue = true,
@@ -1453,7 +1589,7 @@ namespace MudBlazor
             if (_multiSelectionText != text)
             {
                 _multiSelectionText = text;
-                if (!string.IsNullOrWhiteSpace(_multiSelectionText))
+                if (!string.IsNullOrWhiteSpace(_multiSelectionText) && !_suppressInteractionEffects)
                 {
                     Touched = true;
                 }
@@ -1493,11 +1629,15 @@ namespace MudBlazor
             // a comma separated list of selected values
             if (MultiSelectionTextFunc != null)
             {
-                return MultiSelection
-                    ? SetCustomizedTextAsync(string.Join(Delimiter, _selectedValues.Select(ConvertSet)),
-                        selectedConvertedValues: _selectedValues.Select(ConvertSet).ToList(),
-                        multiSelectionTextFunc: MultiSelectionTextFunc)
-                    : base.UpdateTextPropertyAsync(updateValue);
+                if (MultiSelection)
+                {
+                    var convertedValues = _selectedValues.Select(ConvertSet).ToList();
+                    return SetCustomizedTextAsync(string.Join(Delimiter, convertedValues),
+                        selectedConvertedValues: convertedValues,
+                        multiSelectionTextFunc: MultiSelectionTextFunc);
+                }
+
+                return base.UpdateTextPropertyAsync(updateValue);
             }
 
             return MultiSelection

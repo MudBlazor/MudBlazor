@@ -1,5 +1,4 @@
 ﻿@namespace MudBlazor
-@using Microsoft.AspNetCore.Components.Rendering
 @using Microsoft.AspNetCore.Components.CompilerServices
 @using MudBlazor.Resources
 @inject InternalMudLocalizer Localizer
@@ -35,7 +34,6 @@
                                        Class="@CloseIconClass"
                                        Style="@CloseIconStyle"
                                        OnClick="() => CloseTab.InvokeAsync(context)"
-                                       @onkeydown="@(e => HandleTabKeyDownAsync(e, context))"
                                        aria-label="@Localizer[LanguageResource.MudTabs_CloseTab]"/>
                     </MudTooltip>
                 }
@@ -45,7 +43,6 @@
                                    Class="@CloseIconClass"
                                    Style="@CloseIconStyle"
                                    OnClick="() => CloseTab.InvokeAsync(context)"
-                                   @onkeydown="@(e => HandleTabKeyDownAsync(e, context))"
                                    aria-label="@Localizer[LanguageResource.MudTabs_CloseTab]" />
                 }
             }

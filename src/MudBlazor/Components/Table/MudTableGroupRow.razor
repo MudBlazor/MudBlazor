@@ -27,7 +27,7 @@
                 }
                 @if (Checkable)
                 {
-                    <MudCheckBox T="bool?" @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" Class="mud-table-cell-checkbox"/>
+                    <MudCheckBox T="bool?" @bind-Value="Checked" ReadOnly="!SelectionChangeable" Disabled="!SelectionChangeable" Class="mud-table-cell-checkbox" AriaLabel="@Localizer[LanguageResource.MudTable_SelectGroup]"/>
                 }
             </div>
         </MudTd>

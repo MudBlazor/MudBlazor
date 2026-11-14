@@ -55,6 +55,17 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public void ActionsClass_AppliesCustomClass_Issue13478()
+        {
+            var stepper = Context.Render<MudStepper>(self =>
+            {
+                self.Add(x => x.ActionsClass, "sticky-actions");
+            });
+
+            stepper.Find(".mud-stepper-actions").ClassList.Should().Contain("sticky-actions");
+        }
+
+        [Test]
         public async Task StepperStepContext_ShouldBeAvailableInsideChildContent()
         {
             MudStepContext? firstStepContext = null;
@@ -564,6 +575,32 @@ namespace MudBlazor.UnitTests.Components
             stepper.FindAll(".mud-step")[2].ClassList.Should().Contain("mud-step-completed");
         }
 
+        /// <summary>
+        /// Changing a step's Title or SecondaryText updates the stepper header without needing another render (#13925).
+        /// </summary>
+        [Test]
+        public async Task StepTitleAndSecondaryText_UpdateHeaderInSameRender_Issue13925()
+        {
+            var stepper = Context.Render<MudStepper>(self =>
+            {
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "Hello");
+                    step.Add(x => x.SecondaryText, "Greeting");
+                });
+            });
+
+            stepper.Find(".mud-step-label-content .mud-typography-subtitle2").TextContent.Trim().Should().Be("Hello");
+            stepper.Find(".mud-step-label-content .mud-typography-caption").TextContent.Trim().Should().Be("Greeting");
+
+            await stepper.FindComponent<MudStep>().SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Title, "Hallo")
+                .Add(x => x.SecondaryText, "Begrüßung"));
+
+            stepper.Find(".mud-step-label-content .mud-typography-subtitle2").TextContent.Trim().Should().Be("Hallo");
+            stepper.Find(".mud-step-label-content .mud-typography-caption").TextContent.Trim().Should().Be("Begrüßung");
+        }
+
         [Test]
         public async Task StepOnClick_ShouldFireForNonLinearStepper()
         {
@@ -994,6 +1031,41 @@ namespace MudBlazor.UnitTests.Components
             {
                 stepButton.ClassList.Should().NotContain("mud-clickable");
             }
+        }
+
+        [Test]
+        public async Task Stepper_ShouldOnlySetAriaControlsForRenderedStepPanel()
+        {
+            var stepper = Context.Render<MudStepper>(self =>
+            {
+                self.Add(x => x.NonLinear, true);
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "Configure Parameters");
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 1")));
+                });
+                self.AddChildContent<MudStep>(step =>
+                {
+                    step.Add(x => x.Title, "Review & Confirm");
+                    step.Add(x => x.ChildContent, StepContent(text => text.AddMarkupContent(0, "step 2")));
+                });
+            });
+
+            var stepButtons = stepper.FindAll(".mud-step");
+            var activePanel = stepper.Find("[role='tabpanel']");
+
+            stepButtons[0].GetAttribute("aria-controls").Should().Be(activePanel.Id);
+            stepButtons[1].HasAttribute("aria-controls").Should().BeFalse();
+            activePanel.GetAttribute("aria-labelledby").Should().Be(stepButtons[0].Id);
+
+            await stepButtons[1].ClickAsync();
+
+            stepButtons = stepper.FindAll(".mud-step");
+            activePanel = stepper.Find("[role='tabpanel']");
+
+            stepButtons[0].HasAttribute("aria-controls").Should().BeFalse();
+            stepButtons[1].GetAttribute("aria-controls").Should().Be(activePanel.Id);
+            activePanel.GetAttribute("aria-labelledby").Should().Be(stepButtons[1].Id);
         }
 
         private static RenderFragment StepContent(Action<RenderTreeBuilder> content)

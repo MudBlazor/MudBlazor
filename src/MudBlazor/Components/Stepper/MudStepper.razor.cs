@@ -26,10 +26,11 @@ public partial class MudStepper : MudComponentBase
     private MudStep? _activeStep;
     private readonly ParameterState<int> _activeIndex;
     private readonly List<MudStep> _steps = [];
+    private readonly string _componentId = Identifier.Create();
 
     protected string Classname =>
         new CssBuilder("mud-stepper")
-            .AddClass("mud-stepper__horizontal", Vertical == false)
+            .AddClass("mud-stepper__horizontal", !Vertical)
             .AddClass("mud-stepper__vertical", Vertical)
             .AddClass("mud-stepper__center-labels", CenterLabels && !Vertical)
             .AddClass(Class)
@@ -45,6 +46,30 @@ public partial class MudStepper : MudComponentBase
             .AddClass("mud-stepper-nav-scrollable", ScrollableNavigation)
             .AddClass(NavClass)
             .Build();
+
+    protected string ActionsClassname =>
+        new CssBuilder("mud-stepper-actions")
+            .AddClass(ActionsClass)
+            .Build();
+
+    internal string GetStepButtonId(MudStep step) => $"stepper-{_componentId}-tab-{step.FieldId}";
+
+    internal string GetStepPanelId(MudStep step) => $"stepper-{_componentId}-tabpanel-{step.FieldId}";
+
+    internal string? GetStepPanelIdIfRendered(MudStep step)
+    {
+        if (IsCompleted && CompletedContent is not null)
+        {
+            return null;
+        }
+
+        if (Vertical)
+        {
+            return GetStepPanelId(step);
+        }
+
+        return step == _activeStep ? GetStepPanelId(step) : null;
+    }
 
     /// <summary>
     /// The steps to step through.
@@ -201,6 +226,16 @@ public partial class MudStepper : MudComponentBase
     public string? NavClass { get; set; }
 
     /// <summary>
+    /// The CSS classes applied to the action bar.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>. Multiple classes must be separated by spaces.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.List.Appearance)]
+    public string? ActionsClass { get; set; }
+
+    /// <summary>
     /// Allows users to move between steps arbitrarily.
     /// </summary>
     /// <remarks>
@@ -251,7 +286,7 @@ public partial class MudStepper : MudComponentBase
     /// Displays a ripple effect when a step is clicked.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.  Only applies when <see cref="NonLinear"/> is <c>true</c>. 
+    /// Defaults to <c>true</c>.  Only applies when <see cref="NonLinear"/> is <c>true</c>.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.List.Appearance)]

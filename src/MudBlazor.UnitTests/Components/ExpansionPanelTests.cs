@@ -59,7 +59,7 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task MudExpansionPanel_Without_MultiExpansion_Doesnt_Crash_With_Multiple_Expanded_Tabs()
         {
-            var comp = Context.Render<ExpansionPanelExpandedMultipleWithoutMultipleExpansionSetTest>();
+            var comp = Context.Render<ExpansionPanelMultiUnsetTest>();
 
             //click in the three headers
             //foreach (var header in comp.FindAll(".mud-expand-panel-header"))
@@ -355,6 +355,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Tests that a disabled panel puts "mud-disabled" on the header only, so the global ".mud-disabled .mud-icon-root" rule cannot grey out icons the user nests in the panel body (#11453).
+        /// </summary>
+        [Test]
+        public async Task MudExpansionPanel_Disabled_AppliesDisabledClassToHeaderOnly()
+        {
+            var comp = Context.Render<MudExpansionPanel>(parameters => parameters
+                .Add(p => p.Text, "Panel"));
+
+            comp.Find(".mud-expand-panel").ClassList.Should().NotContain("mud-disabled");
+            comp.Find(".mud-expand-panel-header").ClassList.Should().NotContain("mud-disabled");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Disabled, true));
+
+            comp.Find(".mud-expand-panel").ClassList.Should().NotContain("mud-disabled");
+            comp.Find(".mud-expand-panel-header").ClassList.Should().Contain("mud-disabled");
+        }
+
+        /// <summary>
+        /// The header exposes button semantics, its expanded and disabled state, and the content it controls.
+        /// </summary>
+        [Test]
+        public async Task MudExpansionPanel_HeaderExposesButtonState()
+        {
+            var comp = Context.Render<MudExpansionPanel>(parameters => parameters.Add(p => p.Text, "Shipping"));
+
+            var header = comp.Find(".mud-expand-panel-header");
+            header.GetAttribute("role").Should().Be("button");
+            header.GetAttribute("aria-expanded").Should().Be("false");
+            header.HasAttribute("aria-disabled").Should().BeFalse();
+            var controls = header.GetAttribute("aria-controls");
+            controls.Should().NotBeNullOrEmpty();
+            comp.Find(".mud-collapse-container").Id.Should().Be(controls);
+
+            await comp.Find(".mud-expand-panel-header").ClickAsync();
+            comp.Find(".mud-expand-panel-header").GetAttribute("aria-expanded").Should().Be("true");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Disabled, true));
+            comp.Find(".mud-expand-panel-header").GetAttribute("aria-disabled").Should().Be("true");
+        }
+
+        /// <summary>
         /// Tests that content is rendered even when collapsed when KeepContentAlive is true.
         /// </summary>
         [Test]
@@ -415,6 +457,36 @@ namespace MudBlazor.UnitTests.Components
 
             var content = comp.Find(".mud-expand-panel-content");
             content.ClassList.Should().NotContain("mud-expand-panel-gutters");
+        }
+
+        /// <summary>
+        /// Changing the appearance parameters of the panels after the first render reaches a panel that has no content of its own.
+        /// </summary>
+        [Test]
+        public async Task MudExpansionPanels_AppearanceChanged_ShouldReachPanelsWithoutContent()
+        {
+            var comp = Context.Render<MudExpansionPanels>(parameters => parameters
+                .Add(x => x.Dense, false)
+                .Add(x => x.Outlined, true)
+                .Add(x => x.Gutters, true)
+                .Add(x => x.Elevation, 1)
+                .Add(x => x.ChildContent, builder =>
+                {
+                    builder.OpenComponent<MudExpansionPanel>(0);
+                    builder.AddAttribute(1, nameof(MudExpansionPanel.Text), "Panel");
+                    builder.CloseComponent();
+                }));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Dense, true)
+                .Add(x => x.Outlined, false)
+                .Add(x => x.Gutters, false)
+                .Add(x => x.Elevation, 4));
+
+            var panel = comp.Find(".mud-expand-panel");
+            panel.ClassList.Should().Contain("mud-elevation-4").And.NotContain("mud-elevation-1").And.NotContain("mud-expand-panel-border");
+            comp.Find(".mud-expand-panel-header").ClassList.Should().NotContain("mud-expand-panel-header-gutters");
+            comp.Find(".mud-expand-panel-content").ClassList.Should().Contain("mud-expand-panel-dense");
         }
 
         /// <summary>

@@ -129,6 +129,30 @@ namespace MudBlazor.UnitTests.Components
 
             img.GetAttribute("src").Should().Be(initialSrc);
         }
+
+        /// <summary>
+        /// A caller-supplied alt used to be erased by the trailing null literal, leaving the image with no alt at all.
+        /// </summary>
+        [Test]
+        public void Image_Should_KeepUserSuppliedAlt()
+        {
+            var comp = Context.Render<MudImage>(parameters => parameters
+                .Add(p => p.UserAttributes!, new Dictionary<string, object> { { "alt", "A red bicycle" } }));
+
+            comp.Find("img").GetAttribute("alt").Should().Be("A red bicycle");
+        }
+
+        /// <summary>
+        /// The Alt parameter still supplies the value when the caller does not.
+        /// </summary>
+        [Test]
+        public void Image_Should_UseAltParameterWhenUserAttributesAreAbsent()
+        {
+            var comp = Context.Render<MudImage>(parameters => parameters
+                .Add(p => p.Alt, "A red bicycle"));
+
+            comp.Find("img").GetAttribute("alt").Should().Be("A red bicycle");
+        }
     }
 }
 

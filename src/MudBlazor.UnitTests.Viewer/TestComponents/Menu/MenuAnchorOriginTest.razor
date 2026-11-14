@@ -1,0 +1,10 @@
+<MudPopoverProvider />
+
+<MudMenu Label="Anchored" AnchorOrigin="@AnchorOrigin">
+    <MudMenuItem Label="Item" />
+</MudMenu>
+
+@code {
+    [Parameter]
+    public Origin? AnchorOrigin { get; set; }
+}

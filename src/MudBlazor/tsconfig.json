@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["DOM"],
+    // Scripts are TypeScript only; importing a .js file fails instead of silently skipping the type check.
+    "allowJs": false
+  },
+  "include": [
+    "build.mts",
+    "test-setup.ts",
+    "TScripts/**/*"
+  ]
+}

@@ -9,7 +9,7 @@
 @{
 }
 
-<div @attributes="UserAttributes" id="mud-snackbar-container" class="@Classname" style="@Style">
+<div role="status" aria-atomic="false" @attributes="UserAttributes" id="mud-snackbar-container" class="@Classname" style="@Style">
     @foreach (var snackbar in Snackbar)
     {
         <MudSnackbarElement @key="snackbar" Snackbar="@snackbar"></MudSnackbarElement>

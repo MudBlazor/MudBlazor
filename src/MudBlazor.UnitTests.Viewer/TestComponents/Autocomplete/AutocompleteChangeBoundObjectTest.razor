@@ -1,6 +1,6 @@
 ﻿<MudGrid>
     <MudItem xs="12" sm="4">
-        <MudAutocomplete T="string" Label="US States" @bind-Value="@_activeStringHolder.StringValue" SearchFunc="@Search1"
+        <MudAutocomplete T="string" Label="US States" @bind-Value="@_activeStringHolder.StringValue" SearchFunc="@Search1" DebounceInterval="0"
                          ResetValueOnEmptyText="@_resetValueOnEmptyText"
                          CoerceText="@_coerceText" CoerceValue="@_coerceValue" />
     </MudItem>
@@ -51,7 +51,7 @@
     private async Task<IEnumerable<string>> Search1(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5, token);
+        await Task.Yield();
 
         // if text is null or empty, show complete list
         if (string.IsNullOrEmpty(value))

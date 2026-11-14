@@ -23,6 +23,19 @@ namespace MudBlazor
         public TableContext? Context { get; set; }
 
         /// <summary>
+        /// The data row containing this cell, when it is a cell of a <see cref="MudTr"/>.
+        /// </summary>
+        [CascadingParameter]
+        private MudTr? Row { get; set; }
+
+        private readonly string _linkCellId = Identifier.Create("mud-table-cell");
+
+        /// <summary>
+        /// The id of this cell, which the row link uses as its accessible name.
+        /// </summary>
+        private string LinkLabelId => GetEffectiveElementId(_linkCellId);
+
+        /// <summary>
         /// The content within this cell.
         /// </summary>
         [Parameter]
@@ -42,5 +55,10 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public bool HideSmall { get; set; }
+
+        /// <summary>
+        /// Suppresses the browser's default context menu when a custom <c>@oncontextmenu</c> handler is supplied via <see cref="MudComponentBase.UserAttributes"/>.
+        /// </summary>
+        protected bool PreventContextMenuDefault => UserAttributes is not null && UserAttributes.ContainsKey("oncontextmenu");
     }
 }

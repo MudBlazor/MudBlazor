@@ -89,6 +89,7 @@ namespace MudBlazor.Docs.Models
                 [typeof(Donut<T>)] = "donutchart",
                 [typeof(Line<T>)] = "linechart",
                 [typeof(TimeSeries<T>)] = "timeserieschart",
+                [typeof(ScatterPlot<T>)] = "scatterplotchart",
                 [typeof(Pie<T>)] = "piechart",
                 [typeof(MudChip<T>)] = "chips",
                 [typeof(ChartOptions)] = "options"

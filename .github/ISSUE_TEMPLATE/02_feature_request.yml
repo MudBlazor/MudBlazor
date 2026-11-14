@@ -7,13 +7,16 @@ body:
       value: |
         Suggest **new features** for MudBlazor. For questions, use [Discussions](https://github.com/MudBlazor/MudBlazor/discussions) or [Discord](https://discord.gg/mudblazor).
   - type: textarea
-    id: expected-behavior
+    id: problem
     attributes:
-      label: Describe your idea
+      label: Problem and use case
+      description: What are you trying to do, and why are the existing options insufficient?
     validations:
       required: true
   - type: textarea
-    id: examples
+    id: proposal
     attributes:
-      label: Example code and screenshots
-      description: Have you seen this feature elsewhere, or do you have a mockup? How would you implement it?
+      label: Proposed solution
+      description: Describe the API or behavior you have in mind, such as new parameters or a code sample of how it would be used. Mockups or examples from elsewhere help too.
+    validations:
+      required: true

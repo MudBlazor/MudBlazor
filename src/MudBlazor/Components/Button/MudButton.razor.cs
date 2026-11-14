@@ -4,7 +4,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a button for actions, links, and commands.
+    /// Buttons trigger actions, submit forms, or navigate to a link.
     /// </summary>
     /// <remarks>
     /// Creates a <see href="https://developer.mozilla.org/docs/Web/HTML/Element/Button">button</see> element,

@@ -1,0 +1,23 @@
+﻿<MudDataGrid T="Item" Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <TemplateColumn T="Item" Title="Actions">
+            <CellTemplate>
+                <MudText>@context.Item.Name</MudText>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Used for Unit Tests to verify GetCellContent on PropertyColumn and TemplateColumn";
+
+    private readonly IEnumerable<Item> _items = new List<Item>
+    {
+        new("Alice"),
+        new("Bob"),
+        new("Carol")
+    };
+
+    public record Item(string Name);
+}

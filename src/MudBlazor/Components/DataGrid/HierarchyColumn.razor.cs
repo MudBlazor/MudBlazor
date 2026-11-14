@@ -4,15 +4,19 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
 /// <summary>
-/// Represents a column in a <see cref="MudDataGrid{T}"/> which can be expanded to show additional information.
+/// Adds an expand or collapse button to each <see cref="MudDataGrid{T}"/> row, revealing nested detail content when expanded.
 /// </summary>
 /// <typeparam name="T">The kind of item managed by the column.</typeparam>
-/// <seealso cref="Column{T}"/>
-/// <seealso cref="MudDataGrid{T}"/>
+/// <seealso cref="Column{T}" />
+/// <seealso cref="MudDataGrid{T}" />
+/// <seealso cref="PropertyColumn{T, TProperty}" />
+/// <seealso cref="SelectColumn{T}" />
+/// <seealso cref="TemplateColumn{T}" />
 public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase
 {
     /// <summary>
@@ -55,7 +59,7 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// Allows this column to be reordered via drag-and-drop operations.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>. When set, this overrides the <see cref="MudDataGrid{T}.DragDropColumnReordering"/> property.
+    /// Defaults to <c>false</c>. When set, this overrides the <see cref="MudDataGrid{T}.DragDropColumnReordering"/> property.
     /// </remarks>
     [Parameter]
     public bool? DragAndDropEnabled { get; set; } = false;
@@ -134,15 +138,57 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     public RenderFragment<CellContext<T>>? CellTemplate { get; set; }
 
     /// <summary>
+    /// The CSS classes applied to this column's value cells.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
+    /// </remarks>
+    [Parameter]
+    public string? CellClass { get; set; }
+
+    /// <summary>
+    /// The function which calculates CSS classes for this column's value cells.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.  Separate multiple classes with spaces.
+    /// </remarks>
+    [Parameter]
+    public Func<T, string>? CellClassFunc { get; set; }
+
+    /// <summary>
+    /// The CSS styles applied to this column's value cells.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    public string? CellStyle { get; set; }
+
+    /// <summary>
+    /// The function which calculates CSS styles for this column's value cells.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>null</c>.
+    /// </remarks>
+    [Parameter]
+    public Func<T, string>? CellStyleFunc { get; set; }
+
+    /// <summary>
     /// The function which determines whether the row should be initially expanded.
     /// </summary>
     /// <remarks>
     /// This function takes an item of type <typeparamref name="T"/> as input and returns a boolean indicating
     /// whether the row should be expanded. Requires item to override the Equals and GetHashCode methods.
-    /// Defaults to a function that always returns <c>false</c>.
+    /// Defaults to <c>null</c>.
     /// </remarks>
     [Parameter]
     public Func<T, bool>? InitiallyExpandedFunc { get; set; }
+
+    /// <summary>
+    /// Occurs when hierarchy visibility is toggled for an item in this column.
+    /// </summary>
+    [Parameter]
+    public EventCallback<DataGridHierarchyVisibilityToggledEventArgs<T>> HierarchyVisibilityToggled { get; set; }
 #nullable disable
 
     private string GetGroupIcon(CellContext<T> context)

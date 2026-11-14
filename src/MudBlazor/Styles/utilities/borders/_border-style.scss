@@ -1,4 +1,4 @@
-﻿$border-styles: ( solid, dashed, dotted, double, hidden, none );
+$border-styles: ( solid, dashed, dotted, double, hidden, none );
 
 @each $value in $border-styles {
   .border-#{$value} {

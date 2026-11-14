@@ -15,12 +15,15 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a pager for navigating pages of a <see cref="MudDataGrid{T}"/>.
+    /// Pagination controls for navigating pages of a <see cref="MudDataGrid{T}"/>, with page-size selection and next and previous buttons.
     /// </summary>
     /// <typeparam name="T">The kind of data displayed in the grid.</typeparam>
-    /// <seealso cref="MudDataGrid{T}"/>
+    /// <seealso cref="MudDataGrid{T}" />
+    /// <seealso cref="MudTablePager" />
     public partial class MudDataGridPager<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
+        private readonly string _rowsPerPageLabelId = Identifier.Create("datagridpager-rows-per-page");
+
         /// <summary>
         /// The grid which contains this pager.
         /// </summary>

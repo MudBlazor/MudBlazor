@@ -43,5 +43,16 @@ namespace MudBlazor.UnitTests.Components
             await MudSwitch().Find("input").ChangeAsync(true);
             MudSwitch().Find("input").HasAttribute("checked").Should().BeTrue();
         }
+
+        [Test]
+        public async Task Collapse_OnAnimationEnd_ShouldIgnoreChildTransitionEnd()
+        {
+            var comp = Context.Render<CollapseAnimationEndChildTransitionTest>();
+            comp.Find("#animation_end_count").TextContent.Should().Be("0");
+
+            await comp.Find("#inner").TriggerEventAsync("ontransitionend", EventArgs.Empty);
+
+            comp.Find("#animation_end_count").TextContent.Should().Be("0");
+        }
     }
 }

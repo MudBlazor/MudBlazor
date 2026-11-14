@@ -33,7 +33,7 @@
                           Underline="@Underline"
                           Disabled="@GetDisabledState()"
                           ReadOnly="true"
-                          Error="@ErrorState.Value"
+                          Error="@HasErrors"
                           ErrorId="@ErrorIdState.Value"
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
@@ -44,11 +44,10 @@
                           IconSize="@IconSize"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           OnAdornmentClick="@OnAdornmentClick"
-                          Clearable="@(Clearable && !GetReadOnlyState())"
+                          Clearable="@(Clearable && !GetReadOnlyState() && HasClearableValue())"
                           ClearIcon="@ClearIcon"
                           OnClearButtonClick="@(async (e) => await SelectClearButtonClickHandlerAsync(e))"
-                          @attributes="UserAttributes"
-                          OnBlur="@OnBlurAsync"
+                          @attributes="GetInputUserAttributes()"
                           ShrinkLabel="@(ShrinkLabel || CanRenderValue)"
                           InputId="@InputElementId"
                           Required="@Required">
@@ -114,6 +113,7 @@
                             RelativeWidth="@RelativeWidth">
                     <CascadingValue Value="@((IMudSelect)this)" IsFixed="true">
                         <MudList T="string"
+                                 @attributes="GetListUserAttributes()"
                                  Class="@ListClass"
                                  Dense="@Dense"
                                  @bind-SelectedValue="_activeItemId">
@@ -121,14 +121,15 @@
                             {
                                 <MudListItem Value="@("__SelectAll__")"
                                              Icon="@SelectAllCheckBoxIcon"
-                                             Text="@SelectAllText"
+                                             Text="@ResolvedSelectAllText()"
                                              OnClick="SelectAllClickAsync"
                                              OnClickPreventDefault="true"
+                                             KeyboardEnabled="false"
                                              Dense="@Dense"
                                              Class="mb-2" />
                                 <MudDivider />
                             }
-                            @ChildContent
+                            <MudTooltipChildContainer ChildContent="@ChildContent" UpdateCount="@_parentUpdateCount" />
                         </MudList>
                     </CascadingValue>
                 </MudPopover>
@@ -137,8 +138,8 @@
     </div>
     @*Shadow select items for IsValueInList and CanRenderValue*@
     <CascadingValue Value="@((IMudShadowSelect)this)" IsFixed="true">
-        <CascadingValue Name="HideContent" Value="true">
-            @ChildContent
+        <CascadingValue Name="HideContent" Value="true" IsFixed="true">
+            <MudTooltipChildContainer ChildContent="@ChildContent" UpdateCount="@_parentUpdateCount" />
         </CascadingValue>
     </CascadingValue>
 </CascadingValue>

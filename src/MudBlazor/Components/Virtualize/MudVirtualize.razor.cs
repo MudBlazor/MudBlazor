@@ -7,6 +7,11 @@ using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 namespace MudBlazor
 {
+    /// <summary>
+    /// Renders a large list of items efficiently by creating DOM elements only for the rows currently in view.
+    /// Wraps Blazor's <see cref="Virtualize{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of item rendered in the list.</typeparam>
     public partial class MudVirtualize<T> : ComponentBase
     {
         /// <summary>

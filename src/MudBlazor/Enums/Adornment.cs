@@ -4,7 +4,7 @@ using NetEscapades.EnumGenerators;
 namespace MudBlazor;
 
 /// <summary>
-/// Specifies the position of an adornment in a field.
+/// Specifies where an adornment such as an icon, text, or button appears within a form field.
 /// </summary>
 /// <remarks>
 /// Adornments can be placed at the start or end of a field, or not displayed at all.

@@ -9,10 +9,15 @@ namespace MudBlazor
 {
 
     /// <summary>
-    /// A component which changes pages and page size for a <see cref="MudTable{T}"/>.
+    /// Pagination controls for a <see cref="MudTable{T}"/> that navigate between pages and change the number of rows shown per page.
     /// </summary>
-    public partial class MudTablePager : MudComponentBase
+    /// <seealso cref="MudDataGridPager{T}" />
+    /// <seealso cref="MudTable{T}" />
+    /// <seealso cref="MudTableBase" />
+    public partial class MudTablePager : MudComponentBase, IDisposable
     {
+        private readonly string _rowsPerPageLabelId = Identifier.Create("tablepager-rows-per-page");
+
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
                 .AddClass("mud-tablepager-left", !RightToLeft)
@@ -190,7 +195,7 @@ namespace MudBlazor
             if (Context != null)
             {
                 Context.HasPager = true;
-                Context.PagerStateHasChanged = StateHasChanged;
+                Context.PagerStateHasChanged += StateHasChanged;
                 var size = Table?._rowsPerPage ?? PageSizeOptions.FirstOrDefault();
                 SetRowsPerPage(size);
             }
@@ -208,6 +213,32 @@ namespace MudBlazor
             if (string.IsNullOrEmpty(AllItemsText))
             {
                 AllItemsText = Localizer[LanguageResource.MudDataGridPager_AllItems];
+            }
+        }
+
+        /// <summary>
+        /// Releases resources used by this pager.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Releases resources used by this pager.
+        /// </summary>
+        /// <param name="disposing">When <c>true</c>, managed resources should be released.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
+            if (Context != null)
+            {
+                Context.PagerStateHasChanged -= StateHasChanged;
             }
         }
     }

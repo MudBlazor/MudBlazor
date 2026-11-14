@@ -3,16 +3,21 @@
 // See the LICENSE file in the project root for more information.
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using MudBlazor.Utilities;
 
 namespace MudBlazor;
-
 
 /// <summary>
 /// Manages layout of its child items along the vertical or horizontal axis with optional spacing.
 /// </summary>
 public partial class MudStack : MudComponentBase
 {
+    private string? Role =>
+        string.Equals(HtmlTag, "div", StringComparison.OrdinalIgnoreCase)
+            ? "group"
+            : null;
+
     protected string Classname =>
         new CssBuilder("d-flex")
             .AddClass(getFlexDirection())
@@ -171,4 +176,26 @@ public partial class MudStack : MudComponentBase
     [Parameter]
     [Category(CategoryTypes.Stack.Behavior)]
     public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// The HTML tag rendered for this component.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>div</c>.
+    /// </remarks>
+    [Parameter]
+    [Category(CategoryTypes.Stack.Behavior)]
+    public string HtmlTag { get; set; } = "div";
+
+    /// <inheritdoc />
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        builder.OpenElement(0, HtmlTag);
+        builder.AddAttribute(1, "role", Role);
+        builder.AddMultipleAttributes(2, UserAttributes!);
+        builder.AddAttribute(3, "class", Classname);
+        builder.AddAttribute(4, "style", Style);
+        builder.AddContent(5, ChildContent);
+        builder.CloseElement();
+    }
 }

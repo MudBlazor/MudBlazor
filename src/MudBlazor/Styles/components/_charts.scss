@@ -84,10 +84,24 @@
       }
 
       & .mud-input-control {
-        width: 35px !important;
+        width: auto !important;
       }
     }
   }
+}
+
+.mud-chart-fill-bounds {
+  height: 100%;
+  width: 100%;
+  min-height: unset;
+  min-width: unset;
+}
+
+// Gridlines use the theme's divider colour at a whole pixel, since a hairline of a translucent colour antialiases away to nothing.
+.mud-charts-gridlines-yaxis path,
+.mud-charts-gridlines-xaxis-lines path {
+  stroke: var(--mud-palette-lines-default);
+  stroke-width: 1px;
 }
 
 .mud-charts-yaxis {
@@ -100,6 +114,11 @@
 
 .mud-chart-axis-label {
   fill: var(--mud-palette-text-primary);
+}
+
+.mud-chart-value-label {
+  fill: var(--mud-palette-text-primary);
+  user-select: none;
 }
 
 .mud-chart-donut {

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents the current state of a filter in a <see cref="MudDataGrid{T}"/>.
+    /// Filter state and actions passed to a <see cref="MudDataGrid{T}"/> column filter template, exposing the filter definition and apply, clear, and close commands.
     /// </summary>
     /// <typeparam name="T">The type of item managed by the <see cref="MudDataGrid{T}"/>.</typeparam>
     /// <seealso cref="MudDataGrid{T}"/>
@@ -29,6 +29,20 @@ namespace MudBlazor
         /// The items to filter.
         /// </summary>
         public IEnumerable<T>? Items => _dataGrid.Items;
+
+        /// <summary>
+        /// Indicates whether this filter currently has an applied value in the data grid.
+        /// </summary>
+        public bool IsFiltered => _dataGrid.HasFilter(FilterDefinition?.Column);
+
+        /// <summary>
+        /// The icon which reflects whether this filter is currently applied.
+        /// </summary>
+        /// <remarks>
+        /// Returns <see cref="MudDataGrid{T}.FilterIconFilled"/> when <see cref="IsFiltered"/> is <c>true</c>;
+        /// otherwise returns <see cref="MudDataGrid{T}.FilterIconEmpty"/>.
+        /// </remarks>
+        public string FilterIcon => IsFiltered ? _dataGrid.FilterIconFilled : _dataGrid.FilterIconEmpty;
 
         /// <summary>
         /// The definitions of all filters in the grid.
@@ -68,7 +82,7 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Represents the apply and clear behaviors for a filter of a<see cref="MudDataGrid{T}"/>.
+        /// Apply, clear, and close delegates for a <see cref="MudDataGrid{T}"/> column filter, exposed through <see cref="FilterContext{T}"/>.
         /// </summary>
         public class FilterActions
         {

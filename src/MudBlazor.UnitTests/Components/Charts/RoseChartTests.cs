@@ -126,6 +126,23 @@ public class RoseChartTests : BunitTest
         comp.FindAll("text.mud-chart-label-value tspan").Count(ts => ts.TextContent == "75%").Should().Be(1);
     }
 
+    /// <summary>
+    /// A share that falls halfway between two tenths rounds the same way on every runtime.
+    /// </summary>
+    [Test]
+    public void RoseChart_Option_ShowAsPercentage_RoundsTiesLikeEarlierRuntimes()
+    {
+        var comp = Context.Render<Rose<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series1", Data = new double[] { 3, 1997 } } }) // 0.15% and 99.85%
+            .Add(p => p.ChartOptions, new RoseChartOptions { ShowValues = true, ShowAsPercentage = true })
+            .Add(p => p.ChartLabels, new string[] { "A", "B" })
+            .Add(p => p.Width, "300px")
+            .Add(p => p.Height, "300px")
+        );
+
+        comp.FindAll("text.mud-chart-label-value tspan").Select(ts => ts.TextContent).Should().Contain("0.2%");
+    }
+
     [Test]
     public void RoseChart_Data_EmptySeries()
     {
@@ -787,5 +804,56 @@ public class RoseChartTests : BunitTest
             markup.Should().Contain($"stroke=\"{expectedColor}\"");
             markup.Should().Contain($"fill=\"{expectedColor}\"");
         }
+    }
+
+    [Test]
+    public void RoseChartOptions_ImplicitOperator_CopiesSharedProperties()
+    {
+        var source = new ChartOptions
+        {
+            ShowLegend = false,
+            ShowToolTips = true,
+            TooltipTitleFormat = "Rose:{{X_VALUE}}",
+            TooltipSubtitleFormat = "RoseSub:{{Y_VALUE}}",
+            ChartPalette = _baseChartPalette,
+        };
+
+        RoseChartOptions converted = source;
+
+        converted.ShowLegend.Should().BeFalse();
+        converted.ShowToolTips.Should().BeTrue();
+        converted.TooltipTitleFormat.Should().Be("Rose:{{X_VALUE}}");
+        converted.TooltipSubtitleFormat.Should().Be("RoseSub:{{Y_VALUE}}");
+        converted.ChartPalette.Should().BeSameAs(_baseChartPalette);
+        // Rose-specific defaults remain intact after conversion.
+        converted.ScaleFactor.Should().Be(0.9);
+        converted.ShowValues.Should().BeFalse();
+    }
+
+    [Test]
+    public void RoseChart_NegativeValue_UsesAbsoluteValueForNormalization()
+    {
+        // GetNormalizedData divides T.Abs(x) by the total, so the negative entry still
+        // contributes a petal. The negative data must yield the same petal geometry as the
+        // absolute-value equivalent, proving the abs() branch is taken.
+        var negative = Context.Render<Rose<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "N", Data = new double[] { -10, 20, 30 } } })
+            .Add(p => p.ChartLabels, new[] { "A", "B", "C" })
+            .Add(p => p.ChartOptions, new RoseChartOptions { ChartPalette = _baseChartPalette })
+            .Add(p => p.Width, "300px")
+            .Add(p => p.Height, "300px"));
+
+        var positive = Context.Render<Rose<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "N", Data = new double[] { 10, 20, 30 } } })
+            .Add(p => p.ChartLabels, new[] { "A", "B", "C" })
+            .Add(p => p.ChartOptions, new RoseChartOptions { ChartPalette = _baseChartPalette })
+            .Add(p => p.Width, "300px")
+            .Add(p => p.Height, "300px"));
+
+        var negativePaths = negative.FindAll("path.mud-chart-serie").Select(p => p.GetAttribute("d")).ToList();
+        var positivePaths = positive.FindAll("path.mud-chart-serie").Select(p => p.GetAttribute("d")).ToList();
+
+        negativePaths.Should().HaveCount(3);
+        negativePaths.Should().Equal(positivePaths);
     }
 }

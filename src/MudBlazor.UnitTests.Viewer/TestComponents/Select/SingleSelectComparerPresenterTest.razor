@@ -1,0 +1,33 @@
+<MudPopoverProvider />
+
+<MudSelect T="Coffee" Label="Coffee"
+           Value="_value"
+           Comparer="Comparer">
+    <MudSelectItem Value="@(new Coffee("cap", "Cappuccino"))">
+        <span class="coffee-template">Cappuccino template</span>
+    </MudSelectItem>
+    <MudSelectItem Value="@(new Coffee("lat", "Cafe Latte"))">
+        <span class="coffee-template">Latte template</span>
+    </MudSelectItem>
+</MudSelect>
+
+@code {
+    private static CoffeeComparer Comparer { get; } = new();
+
+    // A different instance than the matching item, but key-equal ("lat").
+    // Resolving the selected value's custom template requires honoring the comparer.
+    private readonly Coffee _value = new("lat", "Latte from server");
+
+    private class Coffee(string key, string name)
+    {
+        public string Key { get; } = key;
+        public string Name { get; } = name;
+    }
+
+    private class CoffeeComparer : IEqualityComparer<Coffee?>
+    {
+        public bool Equals(Coffee? a, Coffee? b) => a?.Key == b?.Key;
+
+        public int GetHashCode(Coffee? x) => HashCode.Combine(x?.Key);
+    }
+}

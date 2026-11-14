@@ -1,0 +1,52 @@
+﻿<MudDataGrid T="Item" Items="@_items">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Number" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Used to verify a cell reads its bound property only once per render";
+
+    public int Reads { get; set; }
+
+    private readonly List<Item> _items = new();
+
+    protected override void OnInitialized()
+    {
+        for (var i = 0; i < 3; i++)
+        {
+            _items.Add(new Item(this, i));
+        }
+    }
+
+    public class Item
+    {
+        private readonly DataGridCellValueReadsTest _owner;
+        private readonly int _index;
+
+        public Item(DataGridCellValueReadsTest owner, int index)
+        {
+            _owner = owner;
+            _index = index;
+        }
+
+        public string Name
+        {
+            get
+            {
+                _owner.Reads++;
+                return $"Name{_index}";
+            }
+        }
+
+        public int Number
+        {
+            get
+            {
+                _owner.Reads++;
+                return _index;
+            }
+        }
+    }
+}

@@ -1,0 +1,41 @@
+﻿<MudDataGrid T="Item" Items="@_items"
+             RowClick="@OnRowClick"
+             RowContextMenuClick="@OnRowContextMenuClick">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Used to verify cell click/context-menu events bubble to row events when no cell-level delegate is registered";
+
+    private readonly IEnumerable<Item> _items = new List<Item>
+    {
+        new Item("A"),
+        new Item("B"),
+        new Item("C")
+    };
+
+    public bool RowClicked { get; set; }
+    public bool RowContextMenuClicked { get; set; }
+
+    private void OnRowClick(DataGridRowClickEventArgs<Item> args)
+    {
+        RowClicked = true;
+    }
+
+    private void OnRowContextMenuClick(DataGridRowClickEventArgs<Item> args)
+    {
+        RowContextMenuClicked = true;
+    }
+
+    public class Item
+    {
+        public string Name { get; set; }
+
+        public Item(string name)
+        {
+            Name = name;
+        }
+    }
+}

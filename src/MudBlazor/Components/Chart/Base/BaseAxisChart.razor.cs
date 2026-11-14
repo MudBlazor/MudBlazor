@@ -11,7 +11,7 @@ using MudBlazor.Utilities;
 namespace MudBlazor.Charts;
 
 /// <summary>
-/// Represents a base component for charts with axes.
+/// Renders the SVG axes, grid lines, series paths, and tooltips shared by axis-based chart types.
 /// </summary>
 /// <typeparam name="T">The data type of the chart.</typeparam>
 /// <typeparam name="TChartOptions">The type of chart options.</typeparam>
@@ -20,6 +20,7 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     where TChartOptions : IAxisChartOptions, new()
 {
     private const int AxisTitleOffset = 0;
+    private static readonly DoubleEpsilonEqualityComparer _epsilonComparer = new(0.01);
 
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
@@ -27,16 +28,41 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
     private ElementReference _svgRef;
     private ElementReference? _xAxisGroupElementReference;
     private ElementReference? _yAxisGroupElementReference;
+    private ElementSize? _lastYAxisLabelSize;
+    private ElementSize? _lastXAxisLabelSize;
+    private bool _touchToolTips;
+    private MeasuredLabels? _measuredLabels;
+
+    // The labels as they were last measured, by count and by the first label of each axis, which is a new object each time the chart makes its labels.
+    private sealed record MeasuredLabels(int HorizontalCount, SvgText? FirstHorizontal, int VerticalCount, SvgText? FirstVertical);
 
     /// <summary>
     /// The size of the Y-axis labels.
     /// </summary>
-    protected ElementSize? _yAxisLabelSize;
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public ElementSize? YAxisLabelSize { get; set; }
+
+    /// <summary>
+    /// The event callback for when the Y-axis label size changes.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
+    public EventCallback<ElementSize?> YAxisLabelSizeChanged { get; set; }
 
     /// <summary>
     /// The size of the X-axis labels.
     /// </summary>
-    protected ElementSize? _xAxisLabelSize;
+    [Parameter]
+    [Category(CategoryTypes.Chart.Appearance)]
+    public ElementSize? XAxisLabelSize { get; set; }
+
+    /// <summary>
+    /// The event callback for when the X-axis label size changes.
+    /// </summary>
+    [Parameter]
+    [Category(CategoryTypes.Chart.Behavior)]
+    public EventCallback<ElementSize?> XAxisLabelSizeChanged { get; set; }
 
     /// <summary>
     /// The width of the chart.
@@ -228,27 +254,82 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
         await base.OnAfterRenderAsync(firstRender);
 
         if (firstRender)
+        {
             await ElementRefChanged.InvokeAsync(_svgRef);
+        }
+
+        await UpdateTouchToolTipsAsync();
+
+        // A chart makes new labels whenever it rebuilds, which a change of data, options, size or a parent render all do.
+        // Hovering renders the chart again with the same labels, so measuring them again would only cost two calls into the browser.
+        var labels = new MeasuredLabels(HorizontalValues.Count, HorizontalValues.FirstOrDefault(), VerticalValues.Count, VerticalValues.FirstOrDefault());
+        if (!firstRender && labels == _measuredLabels)
+        {
+            return;
+        }
+
+        _measuredLabels = labels;
 
         var yAxisLabelSize = _yAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference) : null;
         var xAxisLabelSize = _xAxisGroupElementReference != null ? await JsRuntime.InvokeAsync<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference) : null;
 
         var axisChanged = false;
-        var comparer = new DoubleEpsilonEqualityComparer(0.01);
 
-        if (yAxisLabelSize != null && (_yAxisLabelSize == null || !comparer.Equals(yAxisLabelSize.Width, _yAxisLabelSize.Width)))
+        if (yAxisLabelSize != null)
         {
-            _yAxisLabelSize = yAxisLabelSize;
-            axisChanged = true;
+            var baseline = YAxisLabelSize ?? _lastYAxisLabelSize;
+            if (baseline == null || !_epsilonComparer.Equals(yAxisLabelSize.Width, baseline.Width))
+            {
+                _lastYAxisLabelSize = yAxisLabelSize;
+                if (YAxisLabelSizeChanged.HasDelegate)
+                {
+                    await YAxisLabelSizeChanged.InvokeAsync(yAxisLabelSize);
+                }
+
+                axisChanged = true;
+            }
         }
 
-        if (xAxisLabelSize != null && (_xAxisLabelSize == null || !comparer.Equals(xAxisLabelSize.Height, _xAxisLabelSize.Height)))
+        if (xAxisLabelSize != null)
         {
-            _xAxisLabelSize = xAxisLabelSize;
-            axisChanged = true;
+            var baseline = XAxisLabelSize ?? _lastXAxisLabelSize;
+            if (baseline == null || !_epsilonComparer.Equals(xAxisLabelSize.Height, baseline.Height))
+            {
+                _lastXAxisLabelSize = xAxisLabelSize;
+                if (XAxisLabelSizeChanged.HasDelegate)
+                {
+                    await XAxisLabelSizeChanged.InvokeAsync(xAxisLabelSize);
+                }
+
+                axisChanged = true;
+            }
         }
 
         if (axisChanged && AxisChanged.HasDelegate)
+        {
             await AxisChanged.InvokeAsync();
+        }
+    }
+
+    // A touch listener can only stop the page scrolling if it was on the chart before the finger landed, so the chart attaches it as soon as the option is on rather than on the first touch.
+    private async Task UpdateTouchToolTipsAsync()
+    {
+        var touchToolTips = ChartOptions is IAxisLineChartOptions { ShowToolTips: true, ShowToolTipsOnTouch: true };
+        if (touchToolTips == _touchToolTips)
+        {
+            return;
+        }
+
+        _touchToolTips = touchToolTips;
+
+        if (touchToolTips)
+        {
+            // Line and time series points are read left to right, so a finger picks the nearest point along x; scatter points have no such order.
+            await JsRuntime.InvokeVoidAsync("mudChartTouch.attach", _svgRef, ChartOptions is not ScatterPlotChartOptions);
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("mudChartTouch.detach", _svgRef);
+        }
     }
 }

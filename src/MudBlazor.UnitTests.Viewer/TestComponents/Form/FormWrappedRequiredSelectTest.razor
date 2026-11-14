@@ -1,0 +1,15 @@
+﻿<MudPopoverProvider />
+
+<MudForm @ref="Form" ValidationDelay="0">
+    <RequiredSelectWrapper T="string" @bind-Value="_value" Required="true" RequiredError="required">
+        <MudSelectItem T="string" Value="@("1")">1</MudSelectItem>
+        <MudSelectItem T="string" Value="@("2")">2</MudSelectItem>
+    </RequiredSelectWrapper>
+</MudForm>
+
+@code {
+    public static string __description__ = "#13389: a Required MudSelect wrapped by a one-way forwarding component inside a MudForm.";
+
+    public MudForm Form { get; set; } = null!;
+    private string? _value;
+}

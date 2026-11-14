@@ -5,6 +5,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace MudBlazor
 {
@@ -56,6 +58,33 @@ namespace MudBlazor
                 };
         }
 
+        internal const string MissingProviderMessage =
+            "Missing <MudDialogProvider /> in the active render scope, so dialogs cannot be displayed. " +
+            "Add <MudDialogProvider /> within the same interactive render mode as the components that open dialogs: in your layout for global interactivity, or on each page for per-page interactivity. " +
+            "See https://mudblazor.com/getting-started/installation#manual-install-add-components";
+
+        private readonly ILogger<DialogService> _logger;
+        private bool _missingProviderLogged;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DialogService"/> class.
+        /// </summary>
+        /// <remarks>
+        /// Declared explicitly rather than as an optional parameter on the logger constructor to preserve source compatibility.
+        /// </remarks>
+        public DialogService() : this(null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DialogService"/> class.
+        /// </summary>
+        /// <param name="logger">The logger used to surface configuration problems such as a missing provider.</param>
+        public DialogService(ILogger<DialogService>? logger)
+        {
+            _logger = logger ?? NullLogger<DialogService>.Instance;
+        }
+
         /// <inheritdoc />
         public event Func<IDialogReference, Task>? DialogInstanceAddedAsync;
 
@@ -81,6 +110,18 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogOptions options) where T : IComponent
+        {
+            return ShowAsync<T>(string.Empty, DialogParameters.Default, options);
+        }
+
+        /// <inheritdoc />
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogParameters parameters) where T : IComponent
+        {
+            return ShowAsync<T>(string.Empty, parameters, DialogOptions.Default);
+        }
+
+        /// <inheritdoc />
         public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(string? title, DialogParameters parameters) where T : IComponent
         {
             return ShowAsync<T>(title, parameters, DialogOptions.Default);
@@ -91,6 +132,12 @@ namespace MudBlazor
             DialogOptions? options) where T : IComponent
         {
             return ShowAsync(typeof(T), title, parameters, options ?? DialogOptions.Default);
+        }
+
+        /// <inheritdoc />
+        public Task<IDialogReference> ShowAsync<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)] T>(DialogParameters parameters, DialogOptions options) where T : IComponent
+        {
+            return ShowAsync<T>(string.Empty, parameters, options);
         }
 
         /// <inheritdoc />
@@ -246,6 +293,13 @@ namespace MudBlazor
             if (dialogInstanceAddedAsync is not null)
             {
                 await dialogInstanceAddedAsync(dialogReference);
+            }
+            else if (!_missingProviderLogged)
+            {
+                // No MudDialogProvider is subscribed, so this dialog will never render (ShowAsync then blocks until its render timeout).
+                // Log once with actionable guidance instead of failing silently.
+                _missingProviderLogged = true;
+                _logger.LogError(MissingProviderMessage);
             }
 
             return dialogReference;

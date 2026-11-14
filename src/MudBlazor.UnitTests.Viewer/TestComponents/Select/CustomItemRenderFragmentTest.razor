@@ -1,0 +1,70 @@
+<MudSelect T="ExampleClass"  Class="mb-3" @bind-Value="_selectedItem" RelativeWidth="DropdownWidth.Adaptive">
+    @foreach (var item in _availableItems)
+    {
+        <MudSelectItem T="ExampleClass" Value="@item">
+
+            <MudText Inline="true"
+                     Color="Color.Primary"
+                     Typo="Typo.body2"
+                     Class="pr-2">
+                @item.Name
+            </MudText>
+
+            <MudText Inline="true"
+                     Typo="Typo.body2"
+                     Class="mr-9">
+                @item.CreatedOn.ToString("d")
+            </MudText>
+
+            <MudIcon Class="mr-3"
+                     Icon="@Icons.Material.Outlined.Block"
+                     Size="Size.Small"
+                     Color="Color.Error"/>
+
+        </MudSelectItem>
+
+    }
+</MudSelect>
+
+<MudButton id="switch_values" OnClick="SwitchValuesAndSelectDefault1">Switch Values 1</MudButton>
+
+@code {
+    private List<ExampleClass> _availableItems = 
+    [
+        new ("Initial Item 1"),    
+        new ("Initial Item 2"),
+        new ("Initial Item 3")
+    ];
+
+    public ExampleClass? _selectedItem;
+
+    public class ExampleClass
+    {
+        public ExampleClass(string name)
+        {
+            Name = name;
+        }
+
+        public string Name {get; set;}
+        public DateTime CreatedOn {get; set;} = DateTime.UtcNow;
+    }
+
+    protected override void OnInitialized()
+    {
+        _selectedItem = _availableItems.First();
+    }
+
+    private void SwitchValuesAndSelectDefault1()
+    {
+        _availableItems = 
+        [
+            new ("Item 1"),    
+            new ("Item 2"),
+            new ("Item 3")
+        ];
+
+        _selectedItem = _availableItems.First();
+
+        StateHasChanged();
+    }
+}

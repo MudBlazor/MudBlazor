@@ -1,0 +1,10 @@
+﻿@if (_open)
+{
+    <EventUtilRemovedCanceledChild OnRemove="() => _open = false" />
+}
+
+@code {
+    public static string __description__ = "Clicking Save removes the button and then cancels, which should stay silent like a canceled Blazor handler.";
+
+    private bool _open = true;
+}

@@ -9,9 +9,18 @@ namespace MudBlazor;
 /// <summary>
 /// Options specific to bar charts, extending <see cref="DefaultBarChartOptions"/>.
 /// </summary>
-public class BarChartOptions : DefaultBarChartOptions
+public class BarChartOptions : DefaultBarChartOptions, IHasValueLabelOptions
 {
     private double _barSpacingRatio = 0.20;
+
+    /// <summary>
+    /// Whether to show value labels above each bar.
+    /// </summary>
+    /// <remarks>
+    /// Defaults to <c>false</c>.
+    /// Labels are formatted using <see cref="DefaultAxisChartOptions.YAxisFormat"/> or <see cref="DefaultAxisChartOptions.YAxisToStringFunc"/>.
+    /// </remarks>
+    public bool ShowValues { get; set; }
     /// <summary>
     /// Defines the spacing between bars as a ratio of the group width, with a value between 0.0 and 1.0.
     /// </summary>

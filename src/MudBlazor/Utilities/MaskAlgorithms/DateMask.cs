@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text.RegularExpressions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor;
 
@@ -46,6 +47,18 @@ public partial class DateMask : PatternMask
         _dayChar = day;
         MaskChars = MaskChars.Concat(new[] { MaskChar.Digit(year), MaskChar.Digit(month), MaskChar.Digit(day), })
             .ToArray();
+    }
+
+    /// <inheritdoc />
+    public override void Insert(string? input)
+    {
+        // _year and _month may still hold values from a previous text, for instance after SetText
+        // replaced the text entirely. Reset them so day validation only uses what is re-extracted
+        // from the current text during alignment, otherwise a valid day like 31 could be clamped
+        // or padded based on the previous month (#10772).
+        _year = 0;
+        _month = 0;
+        base.Insert(input);
     }
 
     /// <inheritdoc />
@@ -247,6 +260,6 @@ public partial class DateMask : PatternMask
         }
     }
 
-    [GeneratedRegex(@"^\d+$")]
+    [GeneratedRegex(@"^\d+$", RegexOptions.None, RegexDefaults.MatchTimeoutMilliseconds)]
     private static partial Regex ValidDigitRegularExpression();
 }

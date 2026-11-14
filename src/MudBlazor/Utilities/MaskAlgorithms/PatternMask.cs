@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 
 namespace MudBlazor;
 
@@ -222,7 +221,7 @@ public class PatternMask : BaseMask
     protected virtual bool IsMatch(char maskChar, char textChar)
     {
         var maskDef = MaskDictionary[maskChar];
-        return Regex.IsMatch(textChar.ToString(), maskDef.Regex);
+        return maskDef.IsMatch(textChar);
     }
 
     /// <summary>

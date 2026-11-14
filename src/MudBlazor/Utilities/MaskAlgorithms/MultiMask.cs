@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Text.RegularExpressions;
+using MudBlazor.Utilities;
 
 namespace MudBlazor
 {
@@ -111,7 +112,7 @@ namespace MudBlazor
 
             foreach (var option in _options)
             {
-                if (option.Regex != null && Regex.IsMatch(text, option.Regex))
+                if (option.Regex != null && Regex.IsMatch(text, option.Regex, RegexOptions.None, RegexDefaults.MatchTimeout))
                 {
                     return option;
                 }

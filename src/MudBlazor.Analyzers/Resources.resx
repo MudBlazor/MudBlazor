@@ -127,7 +127,74 @@
     <value>https://mudblazor.com/features/analyzers</value>
   </data>
   <data name="MUD0002MessageFormat" xml:space="preserve">
-    <value>Illegal Attribute '{0}' on '{1}' using pattern '{2}' source location '{3}'</value>
+    <value>Illegal Attribute '{0}' on '{1}' using pattern '{2}' source location '{3}'{4}</value>
+    <comment>{4} is the migration hint for a parameter a past major version removed. It is empty for every other attribute, and each hint supplies its own leading space.</comment>
+  </data>
+  <data name="MUD0002MigrationHintRename" xml:space="preserve">
+    <value> '{0}' was removed in {1} and replaced by '{2}', which takes the same value. See {3}</value>
+    <comment>{0} is the removed parameter, {1} the major version that removed it such as v7, {2} the replacement parameter, and {3} a link. Keep the leading space.</comment>
+  </data>
+  <data name="MUD0002MigrationHintInversion" xml:space="preserve">
+    <value> '{0}' was removed in {1} and replaced by '{2}', which inverts the value: {0}="true" becomes {2}="false", {0}="false" becomes {2}="true", and {0}="@expression" becomes {2}="@(!expression)". See {3}</value>
+    <comment>{0} is the removed parameter, {1} the major version that removed it such as v7, {2} the replacement parameter, and {3} a link. Keep the markup examples and the leading space as they are.</comment>
+  </data>
+  <data name="MUD0002MigrationHintInversionWithNewDefault" xml:space="preserve">
+    <value> '{0}' was removed in {1} and replaced by '{2}', which inverts the value: {0}="true" becomes {2}="false", {0}="false" becomes {2}="true", and {0}="@expression" becomes {2}="@(!expression)". The default changed as well, so a {3} that never set '{0}' now needs {2}="true" to keep its old behavior. See {4}</value>
+    <comment>{0} is the removed parameter, {1} the major version that removed it such as v7, {2} the replacement parameter, {3} the component name, and {4} a link. Keep the markup examples and the leading space as they are.</comment>
+  </data>
+  <data name="MUD0002MigrationHintInheritedInversion" xml:space="preserve">
+    <value> '{0}' was removed in {1} and replaced by '{2}', which inverts the value: {0}="true" becomes {2}="false", and {0}="@expression" becomes {2}="@(expression ? false : null)". For {0}="false", leave '{2}' unset so it follows the parent {3}, because {2}="true" now overrides the parent. See {4}</value>
+    <comment>{0} is the removed parameter, {1} the major version that removed it such as v7, {2} the replacement parameter, {3} the parent component name, and {4} a link. Keep the markup examples and the leading space as they are.</comment>
+  </data>
+  <data name="MUD0002MigrationHintBinding" xml:space="preserve">
+    <value> '{0}' was removed in {1} and replaced by '{2}', which takes the same value. Its partner '{3}' became '{4}', so @bind-{5} becomes @bind-{6}. See {7}</value>
+    <comment>{0} is the removed parameter and {2} its replacement, {1} the major version that removed it such as v7, {3} and {4} the other half of the two-way binding before and after, {5} and {6} the bound value before and after, and {7} a link. Keep the leading space.</comment>
+  </data>
+  <data name="MUD0002MigrationHintInitialState" xml:space="preserve">
+    <value> '{0}' was removed in {1} and replaced by '{2}': {0}="true" becomes {2}="true". '{2}' holds the current state rather than a starting value, so merge it with any existing {2} or @bind-{2} instead of adding a second attribute. See {3}</value>
+    <comment>{0} is the removed parameter, {1} the major version that removed it such as v7, {2} the replacement parameter, and {3} a link. Keep the leading space.</comment>
+  </data>
+  <data name="MUD0002MigrationHintLabelPosition" xml:space="preserve">
+    <value> 'LabelPosition' was removed in v8 and replaced by 'LabelPlacement', which takes a Placement instead of a LabelPosition: LabelPosition="LabelPosition.Start" becomes LabelPlacement="Placement.Start", and LabelPosition="LabelPosition.End" becomes LabelPlacement="Placement.End". An expression has to produce a Placement instead. See https://github.com/MudBlazor/MudBlazor/discussions/12659</value>
+  </data>
+  <data name="MUD0002MigrationHintMudAlertAlertTextPosition" xml:space="preserve">
+    <value> 'AlertTextPosition' was removed in v7 and replaced by 'ContentAlignment', which takes a HorizontalAlignment with the same member names instead of an AlertTextPosition: AlertTextPosition="AlertTextPosition.Center" becomes ContentAlignment="HorizontalAlignment.Center". An expression has to produce a HorizontalAlignment instead. See https://github.com/MudBlazor/MudBlazor/discussions/12658</value>
+  </data>
+  <data name="MUD0002MigrationHintMudRadioPlacement" xml:space="preserve">
+    <value> 'Placement' was removed in v8 and replaced by 'LabelPlacement', which takes the same Placement value. Placement.Left and Placement.Right no longer swap sides in right-to-left layouts, so use Placement.Start or Placement.End there. See https://github.com/MudBlazor/MudBlazor/discussions/12659</value>
+  </data>
+  <data name="MUD0002MigrationHintMudAutocompleteSearchFuncWithCancel" xml:space="preserve">
+    <value> 'SearchFuncWithCancel' was removed in v7 and replaced by 'SearchFunc', which now takes the same cancellable delegate: SearchFuncWithCancel="Search" becomes SearchFunc="Search". Remove any old SearchFunc that has no CancellationToken parameter, because SearchFunc no longer accepts that signature. See https://github.com/MudBlazor/MudBlazor/discussions/12658</value>
+  </data>
+  <data name="MUD0002MigrationHintMudBaseInputOnKeyPress" xml:space="preserve">
+    <value> 'OnKeyPress' was removed in v7. Use 'OnKeyDown', which receives the same KeyboardEventArgs but also fires for keys that type no character, such as Tab, Shift, and the arrow keys, so check the key in the handler. See https://github.com/MudBlazor/MudBlazor/discussions/12658</value>
+  </data>
+  <data name="MUD0002MigrationHintMudInputAutoGrow" xml:space="preserve">
+    <value> 'AutoGrow' was removed in v9 and replaced by 'Sizing': AutoGrow="true" becomes Sizing="InputSizing.Auto", AutoGrow="false" becomes Sizing="InputSizing.Fixed", and AutoGrow="@expression" becomes Sizing="@(expression ? InputSizing.Auto : InputSizing.Fixed)". Lines and MaxLines keep their meaning. See https://mudblazor.com/features/analyzers#migration-hints</value>
+  </data>
+  <data name="MUD0002MigrationHintMudSelectOnClose" xml:space="preserve">
+    <value> 'OnClose' was removed in v9. Use 'OpenChanged', which receives true when the list opens and false when it closes: OnClose="Handler" becomes OpenChanged="@(open =&gt; { if (!open) Handler(); })", or OpenChanged="@(async open =&gt; { if (!open) await Handler(); })" when Handler returns a Task. It is raised only when the open state actually changes, and a component that also used OnOpen needs a single OpenChanged handler for both. See https://mudblazor.com/features/analyzers#migration-hints</value>
+  </data>
+  <data name="MUD0002MigrationHintMudSelectOnOpen" xml:space="preserve">
+    <value> 'OnOpen' was removed in v9. Use 'OpenChanged', which receives true when the list opens and false when it closes: OnOpen="Handler" becomes OpenChanged="@(open =&gt; { if (open) Handler(); })", or OpenChanged="@(async open =&gt; { if (open) await Handler(); })" when Handler returns a Task. It is raised only when the open state actually changes. See https://mudblazor.com/features/analyzers#migration-hints</value>
+  </data>
+  <data name="MUD0002MigrationHintMudTablePagerDisableRowsPerPage" xml:space="preserve">
+    <value> 'DisableRowsPerPage' was removed in v7 and replaced by 'HideRowsPerPage', which keeps the same value: DisableRowsPerPage="true" becomes HideRowsPerPage="true". Do not invert it; that only applies to MudDataGridPager. See https://mudblazor.com/features/analyzers#migration-hints</value>
+  </data>
+  <data name="MUD0002MigrationHintMudTabsPanelClass" xml:space="preserve">
+    <value> 'PanelClass' was removed in v9 and replaced by 'TabPanelsClass', which takes the same value and still styles the wrapper around all panels. MudTabPanel's own PanelClass is a different parameter that styles one panel. See https://github.com/MudBlazor/MudBlazor/issues/12666</value>
+  </data>
+  <data name="MUD0002MigrationHintMudTabsTabPanelClass" xml:space="preserve">
+    <value> 'TabPanelClass' was removed in v9 and replaced by 'TabButtonsClass', which takes the same value and still styles each tab button. TabPanelsClass and MudTabPanel's PanelClass style the panels instead. See https://github.com/MudBlazor/MudBlazor/issues/12666</value>
+  </data>
+  <data name="MUD0002MigrationHintMudTextFieldAutoGrow" xml:space="preserve">
+    <value> 'AutoGrow' was removed in v9 and replaced by 'Sizing': AutoGrow="true" becomes Sizing="InputSizing.Auto", AutoGrow="false" becomes Sizing="InputSizing.Fixed", and AutoGrow="@expression" becomes Sizing="@(expression ? InputSizing.Auto : InputSizing.Fixed)". Lines and MaxLines keep their meaning, and a masked MudTextField ignores Sizing just as it ignored AutoGrow. See https://mudblazor.com/features/analyzers#migration-hints</value>
+  </data>
+  <data name="MUD0002MigrationHintMudTooltipDelayed" xml:space="preserve">
+    <value> 'Delayed' was removed in v7 and replaced by 'Delay', which is in milliseconds instead of seconds: Delayed="0.5" becomes Delay="500", and Delayed="@seconds" becomes Delay="@(seconds * 1000)". See https://mudblazor.com/features/analyzers#migration-hints</value>
+  </data>
+  <data name="MUD0002MigrationHintMudTreeViewItemExpandedIcon" xml:space="preserve">
+    <value> 'ExpandedIcon' was removed in v7 and replaced by 'ExpandButtonIcon', which takes the same value and still sets the expand button's icon. It is not IconExpanded, which replaces the item's own icon while the item is expanded. See https://github.com/MudBlazor/MudBlazor/discussions/12658</value>
   </data>
   <data name="MUD0010Title" xml:space="preserve">
     <value>Reading ParameterState property</value>

@@ -136,32 +136,6 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public async Task ThrottleAsync_MultipleCallersWithinInterval_GetSameTask()
-    {
-        // Arrange
-        using var dispatcher = new ThrottleDispatcher(100);
-        var tcs = new TaskCompletionSource<bool>();
-
-        async Task SlowAction()
-        {
-            await tcs.Task;
-        }
-
-        // Act
-        var task1 = dispatcher.ThrottleAsync(SlowAction);
-        var task2 = dispatcher.ThrottleAsync(SlowAction);
-        var task3 = dispatcher.ThrottleAsync(SlowAction);
-
-        // Complete the action
-        tcs.SetResult(true);
-        await Task.WhenAll(task1, task2, task3);
-
-        // Assert - All should be the same task
-        task1.Should().BeSameAs(task2);
-        task2.Should().BeSameAs(task3);
-    }
-
-    [Test]
     public async Task ThrottleAsync_ZeroInterval_AllowsEveryCall()
     {
         // Arrange
@@ -252,12 +226,13 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public void ThrottleAsync_Dispose_DoesNotCancelRunningAction()
+    [CancelAfter(5000)]
+    public async Task ThrottleAsync_Dispose_DoesNotCancelRunningAction()
     {
         // Arrange
         var dispatcher = new ThrottleDispatcher(100);
-        var actionStarted = new TaskCompletionSource<bool>();
-        var actionCanComplete = new TaskCompletionSource<bool>();
+        var actionStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var actionCanComplete = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var actionCompleted = false;
 
         async Task LongRunningAction()
@@ -269,12 +244,12 @@ public class ThrottleDispatcherTests
 
         // Act
         var task = dispatcher.ThrottleAsync(LongRunningAction);
-        actionStarted.Task.Wait(); // Wait for action to start
+        await actionStarted.Task.WaitAsync(TestContext.CurrentContext.CancellationToken); // Wait for action to start
 
         dispatcher.Dispose(); // Dispose while action is running
 
         actionCanComplete.SetResult(true); // Allow action to complete
-        task.Wait();
+        await task.WaitAsync(TestContext.CurrentContext.CancellationToken);
 
         // Assert
         actionCompleted.Should().BeTrue();
@@ -295,12 +270,13 @@ public class ThrottleDispatcherTests
     }
 
     [Test]
-    public void ThrottleAsync_DisposeDuringLock_HandlesGracefully()
+    [CancelAfter(5000)]
+    public async Task ThrottleAsync_DisposeDuringLock_HandlesGracefully()
     {
         // Arrange
         using var dispatcher = new ThrottleDispatcher(100);
-        var firstStarted = new TaskCompletionSource<bool>();
-        var firstCanComplete = new TaskCompletionSource<bool>();
+        var firstStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var firstCanComplete = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         async Task SlowAction()
         {
@@ -310,7 +286,7 @@ public class ThrottleDispatcherTests
 
         // Act - Start a slow action to hold the task
         var task1 = dispatcher.ThrottleAsync(SlowAction);
-        firstStarted.Task.Wait();
+        await firstStarted.Task.WaitAsync(TestContext.CurrentContext.CancellationToken);
 
         // Now dispose and try to call again
         // ReSharper disable once DisposeOnUsingVariable
@@ -319,7 +295,7 @@ public class ThrottleDispatcherTests
 
         // Complete the first action
         firstCanComplete.SetResult(true);
-        task1.Wait();
+        await task1.WaitAsync(TestContext.CurrentContext.CancellationToken);
 
         // Assert - second task should complete immediately (disposed)
         task2.IsCompleted.Should().BeTrue();
@@ -342,6 +318,33 @@ public class ThrottleDispatcherTests
         // Act & Assert
         Assert.ThrowsAsync<ArgumentNullException>(
             async () => await dispatcher.ThrottleAsync(null!));
+    }
+
+    [Test]
+    public async Task ThrottleAsync_FaultedTaskWithinInterval_ReExecutesInsteadOfSuppressing()
+    {
+        // Arrange - a faulted current task must not suppress later calls within the interval.
+        var timeProvider = new FakeTimeProvider();
+        using var dispatcher = new ThrottleDispatcher(1000, timeProvider);
+        var counter = 0;
+
+        Task ThrowingAction()
+        {
+            Interlocked.Increment(ref counter);
+            return Task.FromException(new InvalidOperationException());
+        }
+
+        // Act - first call faults; second call is well within the interval but should still execute.
+        Func<Task> first = () => dispatcher.ThrottleAsync(ThrowingAction);
+        await first.Should().ThrowAsync<InvalidOperationException>();
+        counter.Should().Be(1);
+
+        timeProvider.Advance(TimeSpan.FromMilliseconds(1)); // far inside the 1000ms interval
+        Func<Task> second = () => dispatcher.ThrottleAsync(ThrowingAction);
+        await second.Should().ThrowAsync<InvalidOperationException>();
+
+        // Assert
+        counter.Should().Be(2);
     }
 
     [Test]

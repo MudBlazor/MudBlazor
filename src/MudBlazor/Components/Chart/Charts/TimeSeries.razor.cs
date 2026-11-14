@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Globalization;
+using System.Numerics;
 using Microsoft.AspNetCore.Components;
 using MudBlazor.Interpolation;
 
@@ -92,7 +93,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         ComputeMinAndMaxDateTimes();
         ComputeUnitsAndNumberOfLines(out gridYUnits, out numHorizontalLines, out lowestHorizontalLine, out var numVerticalLines);
 
-        var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount : numHorizontalLines - 1;
+        var horizontalLines = IsOverlayChart ? SharedData!.Value.HorizontalLineCount - 1 : numHorizontalLines - 1;
 
         horizontalSpace = (_boundWidth - HorizontalStartSpace - HorizontalEndSpace) / Math.Max(1, (_maxDateTime - _minDateTime) / ChartOptions!.TimeLabelSpacing);
         verticalSpace = (_boundHeight - VerticalStartSpace - VerticalEndSpace) / Math.Max(1, horizontalLines);
@@ -204,10 +205,9 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
     private void ComputeUnitsAndNumberOfLines(out T gridYUnits, out int numHorizontalLines, out int lowestHorizontalLine, out int numVerticalLines)
     {
-        gridYUnits = GetInitialGridUnit();
-
         if (!HasSeriesData())
         {
+            gridYUnits = GetGridYUnits(T.Zero, T.Zero);
             numHorizontalLines = 1;
             lowestHorizontalLine = 0;
             numVerticalLines = 1;
@@ -218,6 +218,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
         AdjustSuggestedMax(ref maxY);
 
+        gridYUnits = GetGridYUnits(minY, maxY);
         lowestHorizontalLine = GetLowestLine(minY, gridYUnits);
         var highestHorizontalLine = GetHighestLine(maxY, gridYUnits);
         numHorizontalLines = highestHorizontalLine - lowestHorizontalLine + 1;
@@ -225,14 +226,6 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         ClampHorizontalLines(ref gridYUnits, minY, maxY, ref numHorizontalLines, ref lowestHorizontalLine);
 
         numVerticalLines = CalculateVerticalLines();
-    }
-
-    private T GetInitialGridUnit()
-    {
-        var yAxisTicks = ChartOptions?.YAxisTicks;
-        return yAxisTicks is > 0
-            ? T.CreateSaturating(yAxisTicks.Value)
-            : T.CreateSaturating(20);
     }
 
     private bool HasSeriesData() =>
@@ -359,13 +352,15 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
     protected override string GetDataValueAsString(int seriesIndex, int dataPointIndex)
     {
-        var dataValue = GetDataValue<TimeValue<double>>(seriesIndex, dataPointIndex);
-        return dataValue.Value.ToString(Series[seriesIndex].TooltipYValueFormat);
+        var dataValue = GetDataValue<TimeValue<T>>(seriesIndex, dataPointIndex);
+        return dataValue.Value.ToString(Series[seriesIndex].TooltipYValueFormat, CultureInfo.CurrentCulture);
     }
+
+    internal override double GetDataValueAsDouble(int seriesIndex, int dataPointIndex) => double.CreateSaturating(GetDataValue<TimeValue<T>>(seriesIndex, dataPointIndex).Value);
 
     protected override string GetLabelXValue(int seriesIndex, int dataPointIndex)
     {
-        var dataValue = GetDataValue<TimeValue<double>>(seriesIndex, dataPointIndex);
+        var dataValue = GetDataValue<TimeValue<T>>(seriesIndex, dataPointIndex);
         return dataValue.DateTime.ToString(ChartOptions?.TooltipTimeLabelFormat ?? "G");
     }
 
@@ -382,13 +377,10 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         return (x, y);
     }
 
-    internal override ILineInterpolator CreateInterpolator(int seriesIndex, int lowestHorizontalLine, T gridYUnits, double horizontalSpace, double verticalSpace)
-    {
-        throw new NotImplementedException("Interpolation not implemented yet for timeseries charts");
-    }
 }
 
 /// <summary>
-/// Represents a data point in a time series chart, containing a DateTime and a value.
+/// A single data point in a <see cref="TimeSeries{T}" /> chart, pairing a <see cref="DateTime" /> timestamp with a numeric value.
 /// </summary>
-public readonly record struct TimeValue<TNumber>(DateTime DateTime, TNumber Value) where TNumber : INumber<TNumber>;
+/// <typeparam name="TNumber">The numeric type of the value at each timestamp.</typeparam>
+public readonly record struct TimeValue<TNumber>(DateTime DateTime, TNumber Value) where TNumber : INumber<TNumber>, IFormattable;

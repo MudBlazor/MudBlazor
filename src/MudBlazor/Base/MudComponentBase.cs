@@ -10,12 +10,15 @@ using MudBlazor.Interfaces;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a base class for designing MudBlazor components.
+    /// Base class for every MudBlazor component, supplying the shared <c>Class</c>, <c>Style</c>, <c>Tag</c>, and <c>UserAttributes</c> parameters.
     /// </summary>
     public abstract class MudComponentBase : ComponentBaseWithState, IMudStateHasChanged
     {
         private ILogger? _logger;
-        private readonly string _id = Identifier.Create("mudinput");
+        private string? _generatedId;
+
+        // Only inputs ever read this, so generating it per component instance would be wasted on most of the library.
+        private string Id => _generatedId ??= Identifier.Create("mudinput");
 
         [Inject]
         private ILoggerFactory LoggerFactory { get; set; } = null!;
@@ -79,8 +82,33 @@ namespace MudBlazor
         /// If the UserAttributes contain an ID make it accessible for WCAG labelling of input fields
         /// </summary>
         public string FieldId => UserAttributes.TryGetValue("id", out var id) && id is not null
-            ? id.ToString() ?? _id
-            : _id;
+            ? id.ToString() ?? Id
+            : Id;
+
+        /// <summary>
+        /// Resolves the element ID to use for JavaScript interop, honoring a consumer-supplied <c>id</c>.
+        /// </summary>
+        /// <param name="fallbackId">The internally generated ID used when no <c>id</c> is supplied via <see cref="UserAttributes"/>.</param>
+        /// <returns>The non-empty <c>id</c> from <see cref="UserAttributes"/> when present; otherwise <paramref name="fallbackId"/>.</returns>
+        /// <remarks>
+        /// When a consumer sets <c>id="..."</c> in Razor it is captured into <see cref="UserAttributes"/> and, depending on
+        /// attribute order, can override the generated ID on the rendered element. Components that subscribe JavaScript handlers
+        /// (such as the key interceptor) by element ID must target this effective ID so the subscription, dispatch, and disposal
+        /// all reference the element that is actually rendered, avoiding "no element found for id" lookup mismatches.
+        /// </remarks>
+        protected string GetEffectiveElementId(string fallbackId)
+        {
+            if (UserAttributes.TryGetValue("id", out var id) && id is not null)
+            {
+                var userId = id.ToString();
+                if (!string.IsNullOrWhiteSpace(userId))
+                {
+                    return userId;
+                }
+            }
+
+            return fallbackId;
+        }
 
         /// <inheritdoc />
         protected override void OnAfterRender(bool firstRender)

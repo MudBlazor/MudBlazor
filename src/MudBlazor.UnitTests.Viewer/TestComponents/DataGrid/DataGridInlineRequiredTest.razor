@@ -1,0 +1,53 @@
+@namespace MudBlazor.UnitTests.TestComponents.DataGrid
+
+@* No CommittedItemChanges callback, so the Required editors are the only thing gating the commit. *@
+<MudDataGrid @ref="_dataGrid" T="Model" Items="@_items" ReadOnly="false"
+             EditMode="@DataGridEditMode.Inline"
+             EditTrigger="@DataGridEditTrigger.Manual"
+             CommittedItemChanged="@(item => CommittedItems.Add(item.Name))">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Editable="true">
+            <EditTemplate>
+                <MudTextField @bind-Value="context.Item.Name" Required="true" Margin="Margin.Dense" Variant="Variant.Text" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Age" Editable="true">
+            <EditTemplate>
+                <MudNumericField @bind-Value="context.Item.Age" Margin="Margin.Dense" Variant="Variant.Text" />
+            </EditTemplate>
+        </PropertyColumn>
+        <TemplateColumn CellClass="d-flex justify-end">
+            <CellTemplate>
+                @if (context.IsEditing)
+                {
+                    <MudIconButton Class="commit-btn" Size="Size.Small" Icon="@Icons.Material.Filled.Check" OnClick="@context.Actions.CommitEditingItemAsync" />
+                }
+                else
+                {
+                    <MudIconButton Class="edit-btn" Size="Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                }
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private MudDataGrid<Model> _dataGrid = default!;
+
+    private readonly List<Model> _items =
+    [
+        new Model { Name = "John", Age = 45 },
+        new Model { Name = "Johanna", Age = 23 }
+    ];
+
+    public List<Model> Items => _items;
+
+    public List<string> CommittedItems { get; } = [];
+
+    public class Model
+    {
+        public string Name { get; set; } = string.Empty;
+
+        public int Age { get; set; }
+    }
+}

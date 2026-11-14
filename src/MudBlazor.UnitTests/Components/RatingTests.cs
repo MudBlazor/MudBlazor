@@ -222,6 +222,53 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task Rating_RippleOffByDefault()
+        {
+            var comp = Context.Render<MudRating>();
+            IReadOnlyList<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
+
+            RatingItemsSpans()[0].ClassName.Should().NotContain("mud-ripple");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Ripple, true));
+            RatingItemsSpans()[0].ClassName.Should().Contain("mud-ripple");
+        }
+
+        [Test]
+        public async Task Rating_RippleClass_SuppressedWhenReadOnly()
+        {
+            var comp = Context.Render<MudRating>(parameters => parameters.Add(p => p.Ripple, true));
+            IReadOnlyList<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
+
+            RatingItemsSpans()[0].ClassName.Should().Contain("mud-ripple");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(p => p.Ripple, true)
+                .Add(p => p.ReadOnly, true));
+            RatingItemsSpans()[0].ClassName.Should().NotContain("mud-ripple");
+        }
+
+        [Test]
+        public async Task Rating_RootGetsReadOnlyClassWhenReadOnly()
+        {
+            var comp = Context.Render<MudRating>();
+            comp.Find("span.mud-rating-root").ClassName.Should().NotContain("mud-readonly");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ReadOnly, true));
+            comp.Find("span.mud-rating-root").ClassName.Should().Contain("mud-readonly");
+        }
+
+        [Test]
+        public void Rating_ReadOnly_DoesNotActivateItemOnHover()
+        {
+            var comp = Context.Render<MudRating>(parameters => parameters.Add(p => p.ReadOnly, true));
+            IReadOnlyList<IElement> RatingItemsSpans() => comp.FindAll("span.mud-rating-item");
+
+            RatingItemsSpans()[2].PointerOver();
+            comp.Instance.HoveredValue.Should().BeNull();
+            RatingItemsSpans()[2].ClassName.Should().NotContain("mud-rating-item-active");
+        }
+
+        [Test]
         public async Task Rating_KeyboardNavigation()
         {
             var comp = Context.Render<MudRating>(parameters => parameters
@@ -266,6 +313,31 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => item.Instance.HandlePointerOutAsync(new PointerEventArgs()));
             await comp.InvokeAsync(() => item.Instance.HandlePointerOverAsync(new PointerEventArgs()));
+        }
+
+        /// <summary>
+        /// The rating group is named and its radios drop the unsupported aria-readonly.
+        /// </summary>
+        [Test]
+        public void Rating_ShouldExposeAccessibleNameAndValidRadioAttributes()
+        {
+            var comp = Context.Render<MudRating>();
+
+            comp.Find("span.mud-rating-root").GetAttribute("aria-label").Should().Be("Rating");
+            // aria-readonly is not supported on the radio role; it lives on the radiogroup instead.
+            comp.FindAll("input.mud-rating-input").Should().OnlyContain(input => !input.HasAttribute("aria-readonly"));
+            comp.Find("span.mud-rating-root").GetAttribute("aria-readonly").Should().Be("false");
+        }
+
+        /// <summary>
+        /// A user-supplied aria-label replaces the default rating name.
+        /// </summary>
+        [Test]
+        public void Rating_ShouldAllowUserAriaLabelOverride()
+        {
+            var comp = Context.Render<MudRating>(parameters => parameters.AddUnmatched("aria-label", "Quality"));
+
+            comp.Find("span.mud-rating-root").GetAttribute("aria-label").Should().Be("Quality");
         }
     }
 }

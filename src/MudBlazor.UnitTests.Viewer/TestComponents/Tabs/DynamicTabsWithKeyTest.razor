@@ -12,8 +12,11 @@
     private int _activePanel = 3;
     private readonly List<Item> _tabs = Enumerable.Range(0, 4).Select(x => new Item(x)).ToList();
 
+    public int CloseCalls { get; private set; }
+
     private void OnCloseTab(MudTabPanel panel)
     {
+        CloseCalls++;
         var idx = _tabs.FindIndex(x => x.Id.Equals(panel.ID));
         _tabs.RemoveAt(idx);
     }

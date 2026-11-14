@@ -130,10 +130,6 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedAttributes = new Dictionary<string, string>()
             {
-                { "aria-valuenow","120" },
-                { "aria-valuemin","100" },
-                { "aria-valuemax","200" },
-                { "role","slider" },
                 { "min","100" },
                 { "max","200" },
                 { "step","10" },
@@ -297,6 +293,9 @@ namespace MudBlazor.UnitTests.Components
 
         [TestCase(100.0, 200.0, 25.0, 5)]
         [TestCase(-200.0, -100.0, 25.0, 5)]
+        [TestCase(0.0, 1.0, 0.1, 11)]
+        [TestCase(0.0, 1.0, 0.2, 6)]
+        [TestCase(0.1, 0.9, 0.1, 9)]
         public void TickMarksEnabled_CheckAmount(double min, double max, double step, int expectedAmount)
         {
             var comp = Context.Render<MudSlider<double>>(x =>
@@ -423,6 +422,86 @@ namespace MudBlazor.UnitTests.Components
             Filling().GetAttribute("style").Should().Be($"width:80%;");
         }
 
+        /// <summary>
+        /// Input text sets int, decimal and long values without T.TryParse, keeping every digit (#14134).
+        /// </summary>
+        [Test]
+        public async Task InputSetsExactValues()
+        {
+            var intValue = 0;
+            var intSlider = Context.Render<MudSlider<int>>(x => x
+                .Add(p => p.Max, 360)
+                .Add(p => p.ValueChanged, value => intValue = value));
+            await intSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "181" });
+            intValue.Should().Be(181);
+
+            var decimalValue = 0m;
+            var decimalSlider = Context.Render<MudSlider<decimal>>(x => x
+                .Add(p => p.Step, 0.1m)
+                .Add(p => p.ValueChanged, value => decimalValue = value));
+            await decimalSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "0.3" });
+            decimalValue.Should().Be(0.3m);
+
+            // Converting a double to decimal keeps only 15 significant digits, so this 16-digit value would become 1234567890123460.
+            var largeValue = 0m;
+            var largeSlider = Context.Render<MudSlider<decimal>>(x => x
+                .Add(p => p.Min, 1234567890123450m)
+                .Add(p => p.Max, 1234567890123456m)
+                .Add(p => p.Step, 1m)
+                .Add(p => p.ValueChanged, value => largeValue = value));
+            await largeSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "1234567890123456" });
+            largeValue.Should().Be(1234567890123456m);
+
+            // A double would read this as 1000000000000000128, so the slider's maximum would publish Max + 28.
+            var longValue = 0L;
+            var longSlider = Context.Render<MudSlider<long>>(x => x
+                .Add(p => p.Min, 1000000000000000000L)
+                .Add(p => p.Max, 1000000000000000100L)
+                .Add(p => p.Step, 100L)
+                .Add(p => p.ValueChanged, value => longValue = value));
+            await longSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "1000000000000000100" });
+            longValue.Should().Be(1000000000000000100L);
+        }
+
+        /// <summary>
+        /// Input beyond decimal's range falls back to a double, so an Int128 slider still reaches its maximum.
+        /// </summary>
+        [Test]
+        public async Task InputBeyondDecimalRangeSetsValue()
+        {
+            // The browser holds the maximum as a double and sends it as "1e+30".
+            var max = Int128.CreateSaturating(1e30);
+            var value = Int128.Zero;
+            var slider = Context.Render<MudSlider<Int128>>(x => x
+                .Add(p => p.Max, max)
+                .Add(p => p.ValueChanged, v => value = v));
+            await slider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "1e+30" });
+            value.Should().Be(max);
+        }
+
+        /// <summary>
+        /// Input text that isn't a number leaves int and decimal values unchanged.
+        /// </summary>
+        [Test]
+        public async Task InputIgnoresUnparsableText()
+        {
+            var intChanged = false;
+            var intSlider = Context.Render<MudSlider<int>>(x => x
+                .Add(p => p.Value, 5)
+                .Add(p => p.ValueChanged, _ => intChanged = true));
+            await intSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "abc" });
+            intChanged.Should().BeFalse();
+            intSlider.Find(".mud-slider-input").GetAttribute("value").Should().Be("5");
+
+            var decimalChanged = false;
+            var decimalSlider = Context.Render<MudSlider<decimal>>(x => x
+                .Add(p => p.Value, 5m)
+                .Add(p => p.ValueChanged, _ => decimalChanged = true));
+            await decimalSlider.Find(".mud-slider-input").InputAsync(new ChangeEventArgs { Value = "abc" });
+            decimalChanged.Should().BeFalse();
+            decimalSlider.Find(".mud-slider-input").GetAttribute("value").Should().Be("5");
+        }
+
         [Test]
         [TestCase(null)]
         [TestCase(0.0)]
@@ -516,6 +595,61 @@ namespace MudBlazor.UnitTests.Components
             IElement AlertText() => MudAlert().Find("div.mud-alert-message");
             IRenderedComponent<MudAlert> MudAlert() => comp.FindComponent<MudAlert>();
             AlertText().InnerHtml.Should().Be("20");
+        }
+
+        /// <summary>
+        /// The range input is named by the visible label rendered from <c>ChildContent</c> (#13973).
+        /// </summary>
+        [Test]
+        public void ChildContent_LabelsInput()
+        {
+            var comp = Context.Render<MudSlider<double>>(x => x.AddChildContent("Volume"));
+
+            var label = comp.Find(".mud-slider > .mud-typography");
+            var input = comp.Find("input.mud-slider-input");
+
+            label.Id.Should().NotBeNullOrWhiteSpace();
+            input.GetAttribute("aria-labelledby").Should().Be(label.Id);
+        }
+
+        /// <summary>
+        /// Without <c>ChildContent</c> the range input does not reference a label.
+        /// </summary>
+        [Test]
+        public void NoChildContent_NoAriaLabelledBy()
+        {
+            var comp = Context.Render<MudSlider<double>>();
+
+            comp.Find("input.mud-slider-input").HasAttribute("aria-labelledby").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A caller-provided <c>aria-label</c> names the input instead of the visible label.
+        /// </summary>
+        [Test]
+        public void AriaLabel_TakesPrecedenceOverChildContent()
+        {
+            var comp = Context.Render<MudSlider<double>>(x => x
+                .AddChildContent("Volume")
+                .AddUnmatched("aria-label", "Master volume"));
+
+            var input = comp.Find("input.mud-slider-input");
+
+            input.GetAttribute("aria-label").Should().Be("Master volume");
+            input.HasAttribute("aria-labelledby").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A caller-provided <c>aria-labelledby</c> is kept instead of the generated label reference.
+        /// </summary>
+        [Test]
+        public void AriaLabelledBy_TakesPrecedenceOverChildContent()
+        {
+            var comp = Context.Render<MudSlider<double>>(x => x
+                .AddChildContent("Volume")
+                .AddUnmatched("aria-labelledby", "external-label"));
+
+            comp.Find("input.mud-slider-input").GetAttribute("aria-labelledby").Should().Be("external-label");
         }
     }
 }

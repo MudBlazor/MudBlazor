@@ -1,0 +1,21 @@
+@* #13096 repro A: formatting via the field's Converter. *@
+@using MudBlazor.Utilities.Converter.Chain
+
+<MudTextField T="string"
+              Value="@Value"
+              ValueChanged="@OnValueChangedAsync"
+              Converter="@Converter" />
+
+@code {
+    public string? Value { get; set; }
+
+    public ReversibleChain<string?, string?> Converter { get; } = Conversions.From<string?, string?>(
+        value => value == "10" ? "1.0" : value,   // Set: value -> display text
+        text => text == "1.0" ? "10" : text);      // Get: display text -> value
+
+    private Task OnValueChangedAsync(string? value)
+    {
+        Value = value;
+        return Task.CompletedTask;
+    }
+}

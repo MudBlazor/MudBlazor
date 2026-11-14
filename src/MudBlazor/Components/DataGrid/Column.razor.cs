@@ -14,10 +14,14 @@ using MudBlazor.Utilities;
 namespace MudBlazor
 {
     /// <summary>
-    /// Represents a vertical set of values.
+    /// Base class for columns in a <see cref="MudDataGrid{T}"/> such as <see cref="PropertyColumn{T, TProperty}"/>, <see cref="TemplateColumn{T}"/>, and <see cref="SelectColumn{T}"/>.
     /// </summary>
     /// <typeparam name="T">The kind of item for this column.</typeparam>
-    /// <seealso cref="MudDataGrid{T}"/>
+    /// <seealso cref="HierarchyColumn{T}" />
+    /// <seealso cref="MudDataGrid{T}" />
+    /// <seealso cref="PropertyColumn{T, TProperty}" />
+    /// <seealso cref="SelectColumn{T}" />
+    /// <seealso cref="TemplateColumn{T}" />
     public abstract partial class Column<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T> : MudComponentBase, IDisposable
     {
         private static readonly RenderFragment<CellContext<T>> EmptyChildContent = _ => builder => { };
@@ -303,10 +307,24 @@ namespace MudBlazor
         public SortDirection InitialDirection { get; set; } = SortDirection.None;
 
         /// <summary>
+        /// The sort direction applied when this column is unsorted and the header is clicked for the first time.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.Ascending"/>.
+        /// </remarks>
+        [Parameter]
+        public SortDirection InitialSortDirection { get; set; } = SortDirection.Ascending;
+
+        /// <summary>
         /// The icon shown when <see cref="Sortable"/> is <c>true</c>.
         /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which falls back to <see cref="MudDataGrid{T}.SortIcon"/>.
+        /// </remarks>
         [Parameter]
-        public string SortIcon { get; set; } = Icons.Material.Filled.ArrowUpward;
+        [Category(CategoryTypes.DataGrid.Appearance)]
+        [Obsolete("Column-level sort icon customization is no longer supported. Configure MudDataGrid.SortIcon or use HeaderTemplate for full header customization.", true)]
+        public string? SortIcon { get; set; }
 
         /// <summary>
         /// Allows values in this column to be grouped.
@@ -370,7 +388,7 @@ namespace MudBlazor
         /// The culture used to parse, filter, and display values in this column.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="MudDataGrid{T}.Culture"/>.
+        /// Defaults to <see cref="MudDataGrid{T}.Culture"/>.  When neither value is set, formatting uses the current culture.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Table.Appearance)]
@@ -510,6 +528,8 @@ namespace MudBlazor
             new CssBuilder("mud-table-cell")
                 .AddClass("footer-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
+                .AddClass("sticky-left", StickyLeft)
+                .AddClass("sticky-right", StickyRight)
                 .AddClass(Class)
                 .Build();
 
@@ -575,7 +595,6 @@ namespace MudBlazor
         // These are set in OnInitialized() so they can't be null
         internal HeaderContext<T> headerContext = null!;
         private FilterContext<T> filterContext = null!;
-        internal FooterContext<T> footerContext = null!;
 
         // Cached filter definition to avoid repeated lookups during rendering
         private IFilterDefinition<T>? _cachedFilterDefinition;
@@ -633,9 +652,11 @@ namespace MudBlazor
                 .WithChangeHandler(OnGroupingParameterChangedAsync);
             _groupExpandedState = registerScope.RegisterParameter<bool>(nameof(GroupExpanded))
                 .WithParameter(() => GroupExpanded)
+                .WithEventCallback(() => GroupExpandedChanged)
                 .WithChangeHandler(OnGroupExpandedChangedAsync);
             _groupByOrderState = registerScope.RegisterParameter<int>(nameof(GroupByOrder))
                 .WithParameter(() => GroupByOrder)
+                .WithEventCallback(() => GroupByOrderChanged)
                 .WithChangeHandler(OnGroupByOrderChangedAsync);
         }
 
@@ -671,9 +692,6 @@ namespace MudBlazor
 
             // Add the FilterContext
             filterContext = new FilterContext<T>(DataGrid);
-
-            // Add the FooterContext
-            footerContext = new FooterContext<T>(DataGrid);
         }
 
         internal IReadOnlyCollection<string> GetFilterOperators(FieldType fieldType)
@@ -804,6 +822,13 @@ namespace MudBlazor
         protected internal virtual string? ContentFormat { get; }
 
         protected internal abstract object? CellContent(T item);
+
+        /// <summary>
+        /// Gets the cell content value for the specified item.
+        /// </summary>
+        /// <param name="item">The item to retrieve the cell content for.</param>
+        /// <returns>The cell content value, or <c>null</c> if not available.</returns>
+        public object? GetCellContent(T item) => CellContent(item);
 
         protected internal abstract object? PropertyFunc(T item);
 

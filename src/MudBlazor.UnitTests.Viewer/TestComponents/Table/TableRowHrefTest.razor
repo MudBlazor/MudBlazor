@@ -1,0 +1,95 @@
+﻿<MudTable T="Person" Items="_people" RowHref="@RowHref" RowTarget="@RowTarget" OnRowClick="@(args => _clicked.Add(args.Item!.Name))"
+          RowEditingTemplate="@(Editable ? _editTemplate : null)" EditTrigger="@EditTrigger" MultiSelection="@MultiSelection" SelectOnRowClick="@SelectOnRowClick"
+          RowDisabledFunc="@RowDisabledFunc">
+    <HeaderContent>
+        @if (ShowName)
+        {
+            <MudTh>Name</MudTh>
+        }
+        <MudTh>Role</MudTh>
+        <MudTh>Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        @if (ShowName)
+        {
+            <MudTd DataLabel="Name" id="@FirstCellId">
+                @context.Name
+                @if (ButtonInFirstCell)
+                {
+                    <MudButton Class="first-cell-action">Open</MudButton>
+                }
+            </MudTd>
+        }
+        <MudTd DataLabel="Role">@context.Role</MudTd>
+        <MudTd DataLabel="Actions">
+            <MudButton Class="row-action">Archive</MudButton>
+            @if (Nested)
+            {
+                <MudTable T="string" Items="@(new[] { "inner" })" Class="inner-table">
+                    <RowTemplate Context="inner">
+                        <MudTd>@inner</MudTd>
+                    </RowTemplate>
+                    <FooterContent>
+                        <MudTd Class="inner-footer">inner footer</MudTd>
+                    </FooterContent>
+                </MudTable>
+            }
+        </MudTd>
+    </RowTemplate>
+    <FooterContent>
+        <MudTd Class="outer-footer" colspan="3">@_people.Length people</MudTd>
+    </FooterContent>
+</MudTable>
+
+<p class="clicked">@string.Join(",", _clicked)</p>
+
+@code {
+    public static string __description__ = "Rows link to RowHref; rows where it returns null stay plain rows.";
+
+    public record Person(int Id, string Name, string Role);
+
+    private readonly Person[] _people =
+    [
+        new(1, "Ada", "Engineer"),
+        new(2, "Grace", "Admiral"),
+        new(3, "Linus", "Maintainer"),
+    ];
+
+    private readonly List<string> _clicked = [];
+
+    private readonly RenderFragment<Person> _editTemplate = person => @<MudTd DataLabel="Name">@person.Name</MudTd>;
+
+    [Parameter]
+    public Func<Person, string?>? RowHref { get; set; } = person => person.Id == 3 ? null : $"/people/{person.Id}";
+
+    [Parameter]
+    public string? RowTarget { get; set; }
+
+    /// <summary>Makes the table editable by giving it a RowEditingTemplate.</summary>
+    [Parameter]
+    public bool Editable { get; set; }
+
+    [Parameter]
+    public TableEditTrigger EditTrigger { get; set; } = TableEditTrigger.RowClick;
+
+    [Parameter]
+    public bool MultiSelection { get; set; }
+
+    [Parameter]
+    public bool SelectOnRowClick { get; set; } = true;
+
+    [Parameter]
+    public Func<Person, bool>? RowDisabledFunc { get; set; }
+
+    [Parameter]
+    public bool ShowName { get; set; } = true;
+
+    [Parameter]
+    public string? FirstCellId { get; set; }
+
+    [Parameter]
+    public bool ButtonInFirstCell { get; set; }
+
+    [Parameter]
+    public bool Nested { get; set; }
+}

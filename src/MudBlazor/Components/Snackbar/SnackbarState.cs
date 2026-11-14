@@ -1,4 +1,4 @@
-﻿// Copyright (c) A//Copyright(c) Alessandro Ghidini.All rights reserved.
+﻿//Copyright(c) Alessandro Ghidini.All rights reserved.
 //Changes and improvements Copyright (c) The MudBlazor Team.
 
 namespace MudBlazor;

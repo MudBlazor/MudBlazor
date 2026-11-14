@@ -1,0 +1,26 @@
+﻿@namespace MudBlazor.UnitTests.Viewer.TestComponents.Charts
+
+<MudChart ChartType="ChartType.Radar"
+          ChartSeries="@_series"
+          ChartLabels="@_labels"
+          ChartOptions="@_options"
+          Width="400px"
+          Height="400px" />
+
+<MudChart ChartType="ChartType.Radar"
+          ChartSeries="@_series"
+          ChartLabels="@_labels"
+          ChartOptions="@_optionsGrid6"
+          Width="400px"
+          Height="400px"
+          id="radar-grid-6" />
+
+@code {
+    private List<ChartSeries<double>> _series = new()
+    {
+        new ChartSeries<double> { Name = "Series 1", Data = new double[] { 5, 5, 5, 5, 5 } }
+    };
+    private string[] _labels = { "A", "B", "C", "D", "E" };
+    private RadarChartOptions _options = new() { GridLevels = 1, ShowAxisValues = true };
+    private RadarChartOptions _optionsGrid6 = new() { GridLevels = 6, ShowAxisValues = true };
+}

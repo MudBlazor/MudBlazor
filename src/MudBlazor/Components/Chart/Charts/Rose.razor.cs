@@ -5,9 +5,17 @@
 using System.Globalization;
 using System.Numerics;
 using System.Text;
+using MudBlazor.Extensions;
 
 namespace MudBlazor.Charts;
 
+/// <summary>
+/// Rose chart, also called a polar area or Nightingale chart, that draws each value as a wedge radiating from the center with its radius scaled to the value.
+/// </summary>
+/// <typeparam name="T">The numeric type of the values being plotted.</typeparam>
+/// <seealso cref="Radar{T}"/>
+/// <seealso cref="Pie{T}"/>
+/// <seealso cref="Donut{T}"/>
 public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
 {
     protected override void OnInitialized()
@@ -59,7 +67,7 @@ public partial class Rose<T> : MudRadialChartBase<T, RoseChartOptions> where T :
                 LabelX = x,
                 LabelY = y,
                 LabelXValue = ChartOptions.ShowAsPercentage
-                    ? $"{ToS(Math.Round(data / sum * 100, 1))}%"
+                    ? $"{ToS((data / sum * 100).RoundToDigits(1))}%"
                     : value.ToString(null, CultureInfo.InvariantCulture),
                 LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty
             });

@@ -13,9 +13,12 @@ namespace MudBlazor
     {
         private SortDirection _direction = SortDirection.None;
 
+        private bool _firstSort = true;
+
         protected string Classname =>
             new CssBuilder("mud-table-sort-label")
                 .AddClass("mud-clickable", Enabled)
+                .AddClass("mud-table-sort-label-full-width", FullWidth)
                 .AddClass(Class)
                 .Build();
 
@@ -58,6 +61,15 @@ namespace MudBlazor
         public SortDirection InitialDirection { get; set; } = SortDirection.None;
 
         /// <summary>
+        /// The sort direction applied when this label is unsorted and clicked for the first time.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <see cref="SortDirection.Ascending"/>.
+        /// </remarks>
+        [Parameter]
+        public SortDirection InitialSortDirection { get; set; } = SortDirection.Ascending;
+
+        /// <summary>
         /// Allows sorting by this column.
         /// </summary>
         /// <remarks>
@@ -65,6 +77,16 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        /// Expands this sort label to fill the available header width.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Sorting)]
+        public bool FullWidth { get; set; }
 
         /// <summary>
         /// The icon for the sort button.
@@ -144,9 +166,12 @@ namespace MudBlazor
                 return Task.CompletedTask;
             }
 
+            var firstSort = _firstSort;
+            _firstSort = false;
+
             return SortDirection switch
             {
-                SortDirection.None => UpdateSortDirectionAsync(SortDirection.Ascending),
+                SortDirection.None => UpdateSortDirectionAsync(InitialSortDirection == SortDirection.None || !firstSort ? SortDirection.Ascending : InitialSortDirection),
                 SortDirection.Ascending => UpdateSortDirectionAsync(SortDirection.Descending),
                 SortDirection.Descending => UpdateSortDirectionAsync(Table?.AllowUnsorted ?? false
                     ? SortDirection.None

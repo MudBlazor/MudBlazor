@@ -1,0 +1,29 @@
+﻿<MudList T="string">
+    <MudListItem Text="Drinks"
+                 Expanded="_expanded"
+                 ExpandedChanged="OnExpandedChanged"
+                 ExpandMoreIcon="@Icons.Material.Filled.Add"
+                 ExpandLessIcon="@Icons.Material.Filled.Remove"
+                 ExpandIconColor="Color.Secondary">
+        <NestedList>
+            <MudListItem Text="Water" />
+            <MudListItem Text="Coffee" />
+        </NestedList>
+    </MudListItem>
+</MudList>
+
+<p class="expanded">@_expanded</p>
+<p class="changed-count">@_changedCount</p>
+
+@code {
+    public static string __description__ = "Expanding the parent reveals its nested list and raises ExpandedChanged.";
+
+    private bool _expanded;
+    private int _changedCount;
+
+    private void OnExpandedChanged(bool value)
+    {
+        _expanded = value;
+        _changedCount++;
+    }
+}
