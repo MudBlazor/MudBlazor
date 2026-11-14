@@ -132,6 +132,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>null</c>. When unset, the declaration order is used.
         /// A parameter-driven change to this value is applied when the grid next renders.
+        /// Values past the last position keep their order relative to other explicit columns rather than exact positions.
         /// </remarks>
         [Parameter, ParameterState]
         [Category(CategoryTypes.DataGrid.Behavior)]

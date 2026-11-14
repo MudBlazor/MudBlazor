@@ -3198,13 +3198,21 @@ namespace MudBlazor
 
                 var normalized = new Column<T>?[columns.Count];
                 var unresolvedExplicitColumns = new List<Column<T>>();
+                var overflowExplicitColumns = new List<Column<T>>();
                 foreach (var column in columns
                              .Where(x => x._orderState.Value is not null)
                              .OrderBy(x => x._orderState.Value)
                              .ThenBy(x => x.RegistrationIndex))
                 {
                     var desiredIndex = column._orderState.Value!.Value;
-                    if (desiredIndex < 0 || desiredIndex >= normalized.Length || normalized[desiredIndex] is not null)
+                    if (desiredIndex >= normalized.Length)
+                    {
+                        // Past-the-end values rank behind every in-range value, so a tail keeps sparse survivors of a conditional removal in relative order instead of jumping into earlier gaps.
+                        overflowExplicitColumns.Add(column);
+                        continue;
+                    }
+
+                    if (desiredIndex < 0 || normalized[desiredIndex] is not null)
                     {
                         unresolvedExplicitColumns.Add(column);
                         continue;
@@ -3226,7 +3234,7 @@ namespace MudBlazor
                     }
                 }
 
-                return normalized.OfType<Column<T>>();
+                return normalized.OfType<Column<T>>().Concat(overflowExplicitColumns);
             }
         }
 

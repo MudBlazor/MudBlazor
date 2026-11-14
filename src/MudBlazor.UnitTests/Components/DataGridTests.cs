@@ -7888,6 +7888,57 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Survivors of a conditional removal keep their relative order through the next parameter-driven normalization (#11570).
+        /// </summary>
+        [Test]
+        public async Task DataGridConditionalRemovalKeepsSparseSurvivorOrderOnNormalization()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>(parameters => parameters
+                .Add(x => x.InitialStatusOrder, 0)
+                .Add(x => x.InitialNameOrder, 1)
+                .Add(x => x.InitialAgeOrder, 2));
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().ContainInOrder("Status", "Name", "Age");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.ShowStatus, false));
+            dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Name", "Age");
+
+            // Any later parameter-driven change replays normalization over every column, so drive that exact path with the sparse survivor values (1, 2).
+            var pendingFlag = typeof(MudDataGrid<DataGridColumnOrderStateTest.Model>)
+                .GetField("_pendingParameterDrivenColumnOrderNormalization", BindingFlags.Instance | BindingFlags.NonPublic)!;
+            pendingFlag.SetValue(dataGrid.Instance, true);
+            await comp.InvokeAsync(() => comp.Instance.RefreshGrid());
+            await comp.WaitForAssertionAsync(() => pendingFlag.GetValue(dataGrid.Instance).Should().Be(false));
+
+            dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Name", "Age");
+            comp.Instance.NameOrder.Should().Be(1);
+            comp.Instance.AgeOrder.Should().Be(2);
+            comp.Instance.CallbackCount.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A null column mixed with sparse explicit values keeps the explicit columns in relative order (#11570).
+        /// </summary>
+        [Test]
+        public async Task DataGridSparseExplicitStateKeepsRelativeOrderWithNullColumn()
+        {
+            var comp = Context.Render<DataGridColumnOrderStateTest>();
+            var dataGrid = comp.FindComponent<MudDataGrid<DataGridColumnOrderStateTest.Model>>();
+
+            await comp.InvokeAsync(() => comp.Instance.SetOrders(nameOrder: null, ageOrder: 5, statusOrder: 2));
+
+            await comp.WaitForAssertionAsync(() =>
+            {
+                dataGrid.Instance.RenderedColumns.Select(x => x.PropertyName).Should().Equal("Name", "Status", "Age");
+                comp.Instance.NameOrder.Should().BeNull();
+                comp.Instance.AgeOrder.Should().Be(5);
+                comp.Instance.StatusOrder.Should().Be(2);
+                comp.Instance.CallbackCount.Should().Be(0);
+            });
+        }
+
+        /// <summary>
         /// Header column drag handles have an accessible name (#13979).
         /// </summary>
         [Test]
