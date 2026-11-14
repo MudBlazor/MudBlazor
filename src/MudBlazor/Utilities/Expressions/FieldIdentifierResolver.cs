@@ -76,12 +76,15 @@ internal static class FieldIdentifierResolver
         }
     }
 
+    // Reading an empty Nullable<T> throws the runtime's own exception, whose message changed in .NET 11.
+    private static object ThrowEmptyNullable() => default(int?)!.Value;
+
     private static object? ReadProperty(PropertyInfo property, object? owner)
     {
         // A Nullable<T> holding a value boxes as plain T, so the boxed owner already is .Value; NativeAOT also generates no code for reflective invocation of Nullable<T> members, and an empty one must fail like the compiled getter.
         if (property.DeclaringType is { } declaring && Nullable.GetUnderlyingType(declaring) is not null && property.Name == nameof(Nullable<int>.Value))
         {
-            return owner ?? throw new InvalidOperationException("Nullable object must have a value.");
+            return owner ?? ThrowEmptyNullable();
         }
 
         if (owner is null)

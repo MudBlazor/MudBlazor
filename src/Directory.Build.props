@@ -8,7 +8,18 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <PrimaryTargetFramework>net10.0</PrimaryTargetFramework>
+    <PrimaryTargetFramework>net11.0</PrimaryTargetFramework>
+  </PropertyGroup>
+
+  <!--
+    Blazor analyzers new in .NET 11.
+    BL0011 wants an ItemComparer on every Virtualize that uses ItemsProvider, and that parameter only exists on .NET 11.
+    BL0012 flags StateHasChanged in a method bound as an event handler, and removing a call changes when components render.
+    BL0016 wants every JS interop call in a try/catch, and adding one changes which exceptions reach callers.
+    TODO(net11): Enforce each one in the pull request that resolves it.
+  -->
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);BL0011;BL0012;BL0016</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -42,6 +42,11 @@ jobs:
     needs: get-version
     uses: MudBlazor/Workflows/.github/workflows/template-deploy-web-app.yml@main
     with:
+      # 10.0.x keeps redeploys of tags from before the .NET 11 SDK pin working.
+      # TODO(net11): Drop 10.0.x once no tag older than the pin needs redeploying.
+      dotnet-version: |
+        10.0.x
+        11.0.x
       web-app-name: mudblazor
       web-app-slot-name:  'staging'
       checkout-ref:  'refs/tags/v${{ needs.get-version.outputs.VERSION }}'

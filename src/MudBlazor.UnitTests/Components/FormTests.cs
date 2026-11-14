@@ -685,7 +685,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[0].BlurAsync();
 
             // Simulate submit: full-form validation runs the external DataAnnotationsValidator.
-            editContext.Validate().Should().BeFalse();
+            (await editContext.ValidateAsync()).Should().BeFalse();
             editContext.GetValidationMessages().Count(m => m == "Name is required")
                 .Should().Be(1, "the blur-staged message must be handed back to the external validator, not duplicated (#13381)");
         }
@@ -699,7 +699,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<FormRequiredValidationEditContextTest>();
             var editContext = comp.Instance.EditContext;
 
-            editContext.Validate().Should().BeFalse();
+            (await editContext.ValidateAsync()).Should().BeFalse();
             editContext.GetValidationMessages().Count(m => m == "Name is required").Should().Be(1);
 
             // The external message is still in its store; blur must defer to it instead of staging a copy.
@@ -852,7 +852,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[1].BlurAsync();
             await comp.WaitForAssertionAsync(() => otherField.HasErrors.Should().BeTrue());
 
-            comp.Instance.EditContext.Validate().Should().BeTrue("only external validators decide the submit verdict");
+            (await comp.Instance.EditContext.ValidateAsync()).Should().BeTrue("only external validators decide the submit verdict");
             await comp.WaitForAssertionAsync(() => otherField.HasErrors.Should().BeFalse("the staged error must be reconciled, not left as a stale display"));
         }
 
