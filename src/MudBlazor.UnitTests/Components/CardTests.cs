@@ -4,6 +4,7 @@
 
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using MudBlazor.UnitTests.TestComponents.Card;
 using NUnit.Framework;
 
@@ -36,16 +37,36 @@ namespace MudBlazor.UnitTests.Components
             comp.Find("div").GetAttribute("title").Should().Be("Cover art");
         }
 
+        /// <summary>
+        /// AsGrid renders a MudGrid inside the padded card-content element.
+        /// </summary>
         [Test]
         public void CardContent_AsGrid_Should_LayOutItemsInAGrid()
         {
-            var comp = Context.Render<CardContentAsGridTest>();
+            var comp = Context.Render<MudCardContent>(parameters => parameters
+                .Add(p => p.AsGrid, true)
+                .AddChildContent(childBuilder =>
+                {
+                    childBuilder.OpenComponent<MudItem>(0);
+                    childBuilder.AddAttribute(1, nameof(MudItem.xs), 6);
+                    childBuilder.AddAttribute(2, nameof(MudItem.ChildContent), (RenderFragment)(itemBuilder => itemBuilder.AddContent(0, "Left")));
+                    childBuilder.CloseComponent();
+
+                    childBuilder.OpenComponent<MudItem>(3);
+                    childBuilder.AddAttribute(4, nameof(MudItem.xs), 6);
+                    childBuilder.AddAttribute(5, nameof(MudItem.ChildContent), (RenderFragment)(itemBuilder => itemBuilder.AddContent(0, "Right")));
+                    childBuilder.CloseComponent();
+                }));
 
             var content = comp.Find(".mud-card-content");
-            content.ClassList.Should().Contain("mud-grid");
+            content.ClassList.Should().NotContain("mud-grid");
+            content.QuerySelector(".mud-grid").Should().NotBeNull();
             comp.FindAll(".mud-grid-item").Should().HaveCount(2);
         }
 
+        /// <summary>
+        /// Without AsGrid, the card content renders its children directly and no grid is added.
+        /// </summary>
         [Test]
         public void CardContent_WithoutAsGrid_Should_Not_RenderAGrid()
         {
@@ -53,6 +74,7 @@ namespace MudBlazor.UnitTests.Components
                 .AddChildContent("Card content"));
 
             comp.Find(".mud-card-content").ClassList.Should().NotContain("mud-grid");
+            comp.FindAll(".mud-grid").Should().BeEmpty();
         }
     }
 }
