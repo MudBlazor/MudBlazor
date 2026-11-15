@@ -29,6 +29,8 @@ namespace MudBlazor
         internal ParameterState<bool> GroupingState { get; }
         internal ParameterState<bool> _groupExpandedState;
         internal ParameterState<int> _groupByOrderState;
+        internal ParameterState<int?> _orderState;
+        internal int RegistrationIndex { get; set; }
 
         /// <summary>
         /// The data grid which owns this column.
@@ -123,6 +125,26 @@ namespace MudBlazor
         /// </summary>
         [Parameter]
         public Func<T, object>? GroupBy { get; set; }
+
+        /// <summary>
+        /// The display order of this column relative to other reorderable columns.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>. When unset, the declaration order is used.
+        /// A column added after the first render is ranked directly after the column that preceded it when it entered, so a reset to <c>null</c> does not restore its markup position.
+        /// A parameter-driven change to this value is applied when the grid next renders.
+        /// Values past the last position keep their order relative to other explicit columns rather than exact positions.
+        /// </remarks>
+        [Parameter, ParameterState]
+        [Category(CategoryTypes.DataGrid.Behavior)]
+        public int? Order { get; set; }
+
+        /// <summary>
+        /// Occurs when the <see cref="Order"/> property has changed.
+        /// </summary>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Behavior)]
+        public EventCallback<int?> OrderChanged { get; set; }
 
         /// <summary>
         /// The order in which values are grouped when there are more than one group
@@ -654,6 +676,10 @@ namespace MudBlazor
                 .WithParameter(() => GroupExpanded)
                 .WithEventCallback(() => GroupExpandedChanged)
                 .WithChangeHandler(OnGroupExpandedChangedAsync);
+            _orderState = registerScope.RegisterParameter<int?>(nameof(Order))
+                .WithParameter(() => Order)
+                .WithEventCallback(() => OrderChanged)
+                .WithChangeHandler(OnOrderChangedAsync);
             _groupByOrderState = registerScope.RegisterParameter<int>(nameof(GroupByOrder))
                 .WithParameter(() => GroupByOrder)
                 .WithEventCallback(() => GroupByOrderChanged)
@@ -665,6 +691,9 @@ namespace MudBlazor
         private void OnGroupByOrderChangedAsync() => DataGrid?.GroupItems();
 
         private void OnGroupExpandedChangedAsync() => DataGrid?.GroupItems();
+
+        private Task OnOrderChangedAsync(ParameterChangedEventArgs<int?> args)
+            => DataGrid?.OnColumnOrderParameterChangedAsync(this, args) ?? Task.CompletedTask;
 
         protected override void OnInitialized()
         {

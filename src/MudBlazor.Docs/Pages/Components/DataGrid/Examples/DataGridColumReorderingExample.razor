@@ -4,7 +4,8 @@
 @inject HttpClient httpClient
 
 <MudDataGrid T="Element" Items="@_elements" DragDropColumnReordering="@_reorderingEnabled" ApplyDropClassesOnDragStarted="@_applyDropClassesOnDragStarted" 
-                    DragIndicatorIcon="@_dragIndicatorIcon" Dense ColumnResizeMode="ResizeMode.Container" ColumnReorderMode="@_dragAndDropColumnReorderMode">
+                    DragIndicatorIcon="@_dragIndicatorIcon" Dense ColumnResizeMode="ResizeMode.Container" ColumnReorderMode="@_dragAndDropColumnReorderMode"
+                    ColumnOrderChanged="@((DataGridColumnOrderChangedEventArgs<Element> args) => OnColumnOrderChanged(args))">
     <Columns>
         <SelectColumn T="Element"/>
         <PropertyColumn Property="x => x.Number" Title="Nr (fixed)" DragAndDropEnabled="false"/>
@@ -19,6 +20,7 @@
     </PagerContent>
 </MudDataGrid>
 
+<MudText Class="mt-2" Typo="Typo.body2">@_status</MudText>
 <div class="d-flex flex-column mt-4">
     <MudSwitch @bind-Value="_reorderingEnabled" Color="Color.Primary">DragDropColumnReordering</MudSwitch>
     <MudRadioGroup T="DataGridDragAndDropColumnReorderMode" @bind-Value="_dragAndDropColumnReorderMode">
@@ -38,8 +40,27 @@
 
     DataGridDragAndDropColumnReorderMode _dragAndDropColumnReorderMode = DataGridDragAndDropColumnReorderMode.Swap;
 
+    private string _status = "Drag a header onto another header to reorder columns.";
+
     protected override async Task OnInitializedAsync()
     {
         _elements = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+    }
+
+    private void OnColumnOrderChanged(DataGridColumnOrderChangedEventArgs<Element> args)
+    {
+        _status = $"{GetColumnLabel(args.Column)} moved from {args.PreviousIndex} to {args.CurrentIndex}.";
+    }
+
+    private static string GetColumnLabel(Column<Element> column)
+    {
+        return column.Tag?.ToString() switch
+        {
+            "select-column" => "Select Column",
+            "hierarchy-column" => "Hierarchy Column",
+            _ when !string.IsNullOrWhiteSpace(column.Title) => column.Title,
+            _ when column is TemplateColumn<Element> => "Template Column",
+            _ => column.PropertyName ?? "Column"
+        };
     }
 }
