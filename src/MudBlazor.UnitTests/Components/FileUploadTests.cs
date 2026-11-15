@@ -946,11 +946,8 @@ namespace MudBlazor.UnitTests.Components
 
             var expectedInputId = method?.Invoke(comp.Instance, new object[] { 1 }) as string ?? "mud-file-input-1";
 
-            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
-                "mudInput.getFolderPaths",
-                invocation => invocation.Arguments.Count > 0 && (invocation.Arguments[0] as string) == expectedInputId
-            );
-            jsMock.SetResult(new List<string> { "folder/file1.txt", "folder/file2.txt" });
+            var jsMock = Context.JSInterop.Setup<string[]>("mudInput.getFolderPathChunk", inv => inv.Arguments.Count == 3)
+                .SetResult(new[] { "folder/file1.txt", "folder/file2.txt" });
 
             var inputFileComponent = comp.FindComponent<InputFile>();
             var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
@@ -960,7 +957,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() =>
             {
-                jsMock.VerifyInvoke("mudInput.getFolderPaths");
+                jsMock.VerifyInvoke("mudInput.getFolderPathChunk");
 
                 uploadedItems.Should().NotBeNull();
                 uploadedItems.Count.Should().Be(2);
@@ -976,10 +973,10 @@ namespace MudBlazor.UnitTests.Components
         public void FileUpload_Folder_ShouldReportFilesWhenInputCounterIsZero()
         {
             var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
-                "mudInput.getFolderPaths",
+                "mudInput.getFolderPathChunk",
                 checkedArguments => true
             );
-            jsMock.SetResult(new List<string> { "folder/file1.txt" });
+            jsMock.SetResult(new List<string> { "folder/file1.txt", "folder/file2.txt" });
 
             IReadOnlyList<MudFileWithFolderPath> uploadedItems = null;
 
@@ -1002,7 +999,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() =>
             {
-                jsMock.VerifyInvoke("mudInput.getFolderPaths");
+                jsMock.VerifyNotInvoke("mudInput.getFolderPathChunk");
                 uploadedItems.Should().NotBeNull();
             }, TimeSpan.FromSeconds(2));
         }
@@ -1088,7 +1085,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.MaximumFileCount, 1)
                 .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
 
-            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>("mudInput.getFolderPaths", invocation => true);
+            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>("mudInput.getFolderPathChunk", invocation => true);
             jsMock.SetResult(new List<string> { "folder/file1.txt", "folder/file2.txt" });
 
             var inputFileComponent = comp.FindComponent<InputFile>();
@@ -1140,7 +1137,7 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.OnFolderFilesChanged, args => uploadedItems = args));
 
             Context.JSInterop
-                .Setup<IReadOnlyList<string>>("mudInput.getFolderPaths", _ => true)
+                .Setup<IReadOnlyList<string>>("mudInput.getFolderPathChunk", _ => true)
                 .SetException(new InvalidOperationException("Simulated DOM interop failure"));
 
             var inputFileComponent = comp.FindComponent<InputFile>();
@@ -1172,11 +1169,9 @@ namespace MudBlazor.UnitTests.Components
                 .GetMethod("GetInputId", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var expectedInputId = method?.Invoke(comp.Instance, new object[] { 1 }) as string ?? "mud-file-input-1";
 
-            var jsMock = Context.JSInterop.Setup<IReadOnlyList<string>>(
-                "mudInput.getFolderPaths",
-                invocation => invocation.Arguments.Any(arg => arg is string str && str == expectedInputId)
-            );
-            jsMock.SetResult(new List<string> { "folder/file1.txt" });
+            var jsMock = Context.JSInterop.Setup<string[]>("mudInput.getFolderPathChunk", inv => inv.Arguments.Count == 3)
+                .SetResult(new[] { "folder/file1.txt", "folder/file2.txt" });
+
 
             var inputFileComponent = comp.FindComponent<InputFile>();
             var file1 = InputFileContent.CreateFromText("file1 content", "file1.txt");
@@ -1184,7 +1179,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() =>
             {
-                Context.JSInterop.Invocations.Any(i => i.Identifier == "mudInput.getFolderPaths").Should().BeFalse();
+                Context.JSInterop.Invocations.Any(i => i.Identifier == "mudInput.getFolderPathChunk").Should().BeFalse();
                 uploadedItems.Should().NotBeNull();
                 uploadedItems.Count.Should().Be(0);
             }, TimeSpan.FromSeconds(2));

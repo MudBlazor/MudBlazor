@@ -520,11 +520,13 @@ namespace MudBlazor
             if (GetDisabledState())
                 return;
 
+            bool hasFolderListener = Folder && OnFolderFilesChanged.HasDelegate;
+
             // Report an empty list so the consumer clears paths from the previous selection.
             if (args.FileCount > MaximumFileCount)
             {
                 await ProcessFileChangeAsync(args);
-                if (Folder && OnFolderFilesChanged.HasDelegate)
+                if (hasFolderListener)
                 {
                     await OnFolderFilesChanged.InvokeAsync(Array.Empty<MudFileWithFolderPath>());
                 }
@@ -533,26 +535,45 @@ namespace MudBlazor
 
             IReadOnlyList<MudFileWithFolderPath> combinedList = new List<MudFileWithFolderPath>();
 
-            if (Folder && typeof(T) != typeof(IBrowserFile))
+            // Only invoke JS interop if someone is actually listening to OnFolderFilesChanged
+            if (hasFolderListener && typeof(T) != typeof(IBrowserFile))
             {
                 var inputId = GetInputId(currentInputIndex);
+                var nativeFiles = args.GetMultipleFiles(MaximumFileCount);
+                var paths = new string[nativeFiles.Count];
 
-                IReadOnlyList<string> paths = Array.Empty<string>();
                 try
                 {
-                    paths = await JsRuntime.InvokeAsync<IReadOnlyList<string>>("mudInput.getFolderPaths", inputId);
+                    const int chunkSize = 100;
+                    int totalFiles = nativeFiles.Count;
+
+                    for (int i = 0; i < totalFiles; i += chunkSize)
+                    {
+                        int countToFetch = Math.Min(chunkSize, totalFiles - i);
+                        var pathChunk = await JsRuntime.InvokeAsync<string[]>(
+                            "mudInput.getFolderPathChunk",
+                            inputId,
+                            i,
+                            countToFetch);
+
+                        if (pathChunk != null)
+                        {
+                            for (int j = 0; j < pathChunk.Length; j++)
+                            {
+                                paths[i + j] = pathChunk[j];
+                            }
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogWarning(ex, "Failed to retrieve folder path structural metadata arrays natively.");
+                    Logger.LogWarning(ex, "Failed to retrieve folder path metadata.");
                 }
 
-                var nativeFiles = args.GetMultipleFiles(MaximumFileCount);
                 var list = new List<MudFileWithFolderPath>();
-
                 for (int i = 0; i < nativeFiles.Count; i++)
                 {
-                    string path = (paths != null && i < paths.Count) ? paths[i] : string.Empty;
+                    string path = (paths != null && i < paths.Length) ? paths[i] ?? string.Empty : string.Empty;
                     list.Add(new MudFileWithFolderPath(nativeFiles[i], path));
                 }
 
@@ -562,16 +583,14 @@ namespace MudBlazor
             await ProcessFileChangeAsync(args);
 
             // Only report files that passed validation.
-            if (Folder && OnFolderFilesChanged.HasDelegate)
+            if (hasFolderListener)
             {
                 object? currentFilesValue = _filesState.Value;
                 var acceptedList = new List<MudFileWithFolderPath>();
 
                 if (currentFilesValue != null && combinedList.Count > 0)
                 {
-                    System.Collections.IEnumerable? acceptedCollection = currentFilesValue as System.Collections.IEnumerable;
-
-                    if (acceptedCollection != null)
+                    if (currentFilesValue is System.Collections.IEnumerable acceptedCollection)
                     {
                         foreach (var item in combinedList)
                         {
