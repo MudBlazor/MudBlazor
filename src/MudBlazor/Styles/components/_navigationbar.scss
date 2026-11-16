@@ -9,10 +9,6 @@
     height: calc(var(--mud-appbar-height) - var(--mud-appbar-height) / 4);
   }
 
-  &:focus:not(.mud-disabled) {
-    outline: auto 2px var(--mud-palette-primary);
-  }
-
   &.mud-nav-bar-fixed {
     position: fixed;
     bottom: 0;

@@ -55,6 +55,7 @@ namespace MudBlazor
         private readonly List<MudNavigationBarItem> _items = new();
         protected internal string? _currentLocation;
         protected ElementReference _elementReference;
+        private MudNavigationBarItem? _selectedItem;
 
         protected string Classname =>
             new CssBuilder("mud-nav-bar mud-nav-bar-fixed")
@@ -178,26 +179,38 @@ namespace MudBlazor
             if (!_items.Remove(item))
                 return;
 
-            _ = InvokeAsync(RefreshSelectionAsync);
-            StateHasChanged();
-        }
+            if (!ReferenceEquals(_selectedItem, item))
+            {
+                _ = InvokeAsync(RefreshSelectionAsync);
+                StateHasChanged();
+                return;
+            }
 
+            _ = InvokeAsync(async () =>
+            {
+                var replacement = _items
+                    .Where(x => MatchesHref(x, _currentLocation ?? string.Empty))
+                    .OrderByDescending(x => GetMatchSpecificity(x, _currentLocation ?? string.Empty))
+                    .FirstOrDefault();
+
+                await SelectItemAsync(replacement);
+                StateHasChanged();
+            });
+        }
 
         protected internal Task RefreshSelectionAsync()
         {
             if (!_items.Any(x => !string.IsNullOrEmpty(x.GetState(x => x.Href))))
             {
-                // Preserve in-page selection unless its item is disabled.
-                var selected = _items.FirstOrDefault(x => x._isSelected);
-
-                if (selected is not null && selected.GetState(x => x.Disabled))
+                if (_selectedItem is not null && (!_items.Contains(_selectedItem) || _selectedItem.GetState(x => x.Disabled)))
+                {
                     return SelectItemAsync(null);
+                }
 
                 return Task.CompletedTask;
             }
 
-            return UpdateSelectionFromLocationAsync(
-                _currentLocation ?? string.Empty);
+            return UpdateSelectionFromLocationAsync(_currentLocation ?? string.Empty);
         }
 
         private Task UpdateSelectionFromLocationAsync(string location)
@@ -279,8 +292,7 @@ namespace MudBlazor
         /// <returns></returns>
         public string? GetSelectedItemId()
         {
-            var relatedItem = _items.FirstOrDefault(x => x._isSelected);
-            return relatedItem?.Id ?? relatedItem?.Text;
+            return _selectedItem?.Id ?? _selectedItem?.Text;
         }
 
         /// <summary>
@@ -309,9 +321,11 @@ namespace MudBlazor
 
         protected internal async Task SelectItemAsync(MudNavigationBarItem? selectedItem)
         {
-            var previous = _items.FirstOrDefault(x => x._isSelected);
+            if (selectedItem is not null && !_items.Contains(selectedItem))
+                return;
 
-            var selectionChanged = !ReferenceEquals(previous, selectedItem);
+            var selectionChanged = !ReferenceEquals(_selectedItem, selectedItem);
+            _selectedItem = selectedItem;
 
             foreach (var item in _items)
             {
@@ -319,9 +333,7 @@ namespace MudBlazor
             }
 
             if (selectionChanged)
-            {
                 await OnSelectionChange.InvokeAsync(selectedItem?.Id ?? selectedItem?.Text);
-            }
         }
 
         protected void OnParameterChanged()

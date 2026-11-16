@@ -44,11 +44,8 @@
         __builder.AddAttribute(9, "disabled", _disabledState.Value);
     }
 
-    if (!IsCustomContent)
-    {
-        __builder.AddAttribute(10, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, HandleClickAsync));
-    }
 
+    __builder.AddAttribute(10, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, HandleClickAsync));
     __builder.AddElementReferenceCapture(11, reference => _elementReference = reference);
 
     RenderContent(__builder);
