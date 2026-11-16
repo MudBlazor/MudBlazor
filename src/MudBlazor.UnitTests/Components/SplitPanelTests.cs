@@ -184,15 +184,6 @@ public class SplitPanelTests : BunitTest
     }
 
     [Test]
-    public void GetDividerPositionFromParentFirstRender_ThrowsClearException()
-    {
-        var action = () => Context.Render<SplitPanelGetOnFirstRenderTest>();
-
-        action.Should().Throw<InvalidOperationException>()
-            .WithMessage("The split panel has not been initialized yet.");
-    }
-
-    [Test]
     public void NoUserId_JsInteropTargetsRenderedContainerId()
     {
         var comp = Context.Render<MudSplitPanel>(parameters => parameters
