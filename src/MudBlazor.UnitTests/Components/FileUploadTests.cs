@@ -331,6 +331,32 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies that a selection over <c>MaximumFileCount</c> shows the error and keeps the earlier files only when appending (#14095).
+        /// </summary>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void FileUpload_OverMaximumFileCount_ShouldKeepEarlierFilesWhenAppending(bool appendMultiple)
+        {
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.AppendMultipleFiles, appendMultiple)
+                .Add(p => p.MaximumFileCount, 2));
+
+            comp.FindComponent<InputFile>().UploadFiles(CreateDummyFile("first.txt", 1), CreateDummyFile("second.txt", 1));
+            comp.FindComponents<InputFile>()[1].UploadFiles(CreateDummyFile("a.txt", 1), CreateDummyFile("b.txt", 1), CreateDummyFile("c.txt", 1));
+
+            comp.Instance.GetState(x => x.ErrorText).Should().Be("Selected 3 files, which exceeds the maximum of 2");
+            if (appendMultiple)
+            {
+                comp.Instance.GetState(x => x.Files).Select(f => f.Name).Should().Equal("first.txt", "second.txt");
+            }
+            else
+            {
+                comp.Instance.GetState(x => x.Files).Should().BeNull();
+            }
+        }
+
+        /// <summary>
         /// Optional FileUpload should not have required attribute and aria-required should be false.
         /// </summary>
         [Test]
