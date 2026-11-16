@@ -57,10 +57,20 @@ namespace MudBlazor
 
         private readonly List<MudListItem<T>> _items = [];
         private readonly HashSet<MudList<T>> _childLists = new();
+        private HashSet<MudListItem<T>>? _parentItems;
         private HashSet<T> _selection = new();
         private MudListItem<T>? _activeItem;
         private bool _hasSingleSelection;
+        private bool _disposed;
         internal MudList<T> TopLevelList { get; private set; }
+
+        /// <summary>
+        /// Whether this list uses tree semantics because a top-level item owns a nested list.
+        /// </summary>
+        /// <remarks>
+        /// An option allows no <c>aria-expanded</c> and a listbox allows no nested listbox, so expandable items need the tree pattern (#13981).
+        /// </remarks>
+        internal bool IsTree => TopLevelList._parentItems?.Count > 0;
 
         /// <summary>
         /// Whether a single selection actually exists, as opposed to <see cref="SelectedValue"/> merely sitting at its default.
@@ -328,6 +338,16 @@ namespace MudBlazor
         {
             // Items register once, from OnInitializedAsync, so checking for a duplicate would only make mounting n items cost n².
             _items.Add(item);
+            if (item.NestedList is not null && TopLevelList == this)
+            {
+                _parentItems ??= [];
+                if (_parentItems.Add(item) && _parentItems.Count == 1)
+                {
+                    // The container and any items that already rendered still carry listbox roles.
+                    Update();
+                }
+            }
+
             if (HasSingleSelection && _selectedValueState.Value is not null && Equals(item.GetValue(), _selectedValueState.Value))
             {
                 item.SetSelected(true);
@@ -347,6 +367,12 @@ namespace MudBlazor
             if (!_items.Remove(item))
             {
                 return;
+            }
+
+            if (_parentItems?.Remove(item) == true && _parentItems.Count == 0 && !_disposed)
+            {
+                // The remaining items still carry tree roles.
+                Update();
             }
 
             if (ReferenceEquals(_activeItem, item))
@@ -575,14 +601,15 @@ namespace MudBlazor
         /// Builds fallback accessibility attributes for the list container.
         /// </summary>
         /// <remarks>
-        /// <see cref="MudList{T}"/> derives its container semantics from its selection behavior.
+        /// <see cref="MudList{T}"/> derives its container semantics from its selection behavior and nesting.
         /// </remarks>
         private Dictionary<string, object?> GetUserAttributes()
         {
             var attributes = new Dictionary<string, object?>(UserAttributes, StringComparer.OrdinalIgnoreCase);
-            attributes.TryAdd("role", GetReadOnly() ? "list" : "listbox");
+            attributes.TryAdd("role", GetRole());
 
-            if (!GetReadOnly() && SelectionMode == SelectionMode.MultiSelection)
+            // A nested group can't carry aria-multiselectable, so only the outermost container does.
+            if (!GetReadOnly() && ParentList is null && SelectionMode == SelectionMode.MultiSelection)
             {
                 attributes.TryAdd("aria-multiselectable", "true");
             }
@@ -590,11 +617,27 @@ namespace MudBlazor
             return attributes;
         }
 
+        private string GetRole()
+        {
+            if (GetReadOnly())
+            {
+                return "list";
+            }
+
+            if (ParentList is not null)
+            {
+                return "group";
+            }
+
+            return IsTree ? "tree" : "listbox";
+        }
+
         /// <summary>
         /// Releases resources used by this component.
         /// </summary>
         public void Dispose()
         {
+            _disposed = true;
             ParentList?.Unregister(this);
         }
     }

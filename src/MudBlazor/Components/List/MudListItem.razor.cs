@@ -492,12 +492,18 @@ namespace MudBlazor
 
         private string? GetRole()
         {
-            return GetReadOnly() ? "listitem" : "option";
+            if (GetReadOnly())
+            {
+                return "listitem";
+            }
+
+            return TopLevelList?.IsTree == true ? "treeitem" : "option";
         }
 
         private string? GetAriaSelected()
         {
-            if (GetReadOnly())
+            // An item with a nested list only expands, so a selection state would announce a choice it can't make.
+            if (GetReadOnly() || NestedList is not null)
             {
                 return null;
             }

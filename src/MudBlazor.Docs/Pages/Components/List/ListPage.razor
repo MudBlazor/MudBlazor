@@ -114,7 +114,7 @@
         <DocsPageSection>
             <SectionHeader Title="Accessibility">
                 <Description>
-                    Interactive lists use listbox semantics and roving keyboard focus. When the list is read-only it falls back to list semantics for screen readers.
+                    Interactive lists use listbox semantics and roving keyboard focus. Lists with a <CodeInline>NestedList</CodeInline> use tree semantics instead, so screen readers announce expandable items and their nested items. When the list is read-only it falls back to list semantics for screen readers.
                     Use the following shortcuts when focus is inside an interactive list:
 
                     <MudList T="string" Dense="true" ReadOnly="true">
