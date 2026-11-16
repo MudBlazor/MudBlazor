@@ -1626,6 +1626,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The edit dialog reporting an open, or a close after the form already closed, doesn't cancel the edit again.
+        /// </summary>
+        [Test]
+        public async Task DataGridFormEdit_DialogVisibleChanged_CancelsOnlyWhileFormOpen()
+        {
+            var canceled = new List<DataGridFormEditTest.Model>();
+            var provider = Context.Render<MudDialogProvider>();
+            var dataGrid = RenderFormEditGrid(canceled, []);
+
+            await dataGrid.FindAll("tbody tr")[0].ClickAsync();
+            var dialog = dataGrid.FindComponent<MudDialog>().Instance;
+            await dataGrid.InvokeAsync(() => dialog.VisibleChanged.InvokeAsync(true));
+
+            canceled.Should().BeEmpty();
+            dataGrid.Instance._isEditFormOpen.Should().BeTrue();
+
+            await provider.Find(".mud-dialog-actions .mud-button-filled-default").ClickAsync();
+            await dataGrid.InvokeAsync(() => dialog.VisibleChanged.InvokeAsync(false));
+
+            canceled.Select(x => x.Name).Should().Equal("John");
+            dataGrid.Instance._isEditFormOpen.Should().BeFalse();
+        }
+
+        /// <summary>
         /// Renders a form edit grid that opens its dialog on row click and records canceled and committed items.
         /// </summary>
         private IRenderedComponent<MudDataGrid<DataGridFormEditTest.Model>> RenderFormEditGrid(List<DataGridFormEditTest.Model> canceled, List<DataGridFormEditTest.Model> committed, DialogOptions editDialogOptions = null)
