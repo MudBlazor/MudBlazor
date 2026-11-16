@@ -17,6 +17,7 @@
                        style="@InputStyle"
                        hidden="@(Hidden && !_draggingState.Value ? "" : null)"
                        multiple="@(typeof(T) == typeof(IReadOnlyList<IBrowserFile>) ? "" : null)"
+                       webkitdirectory="@(IsFolderMode ? "" : null)"
                        accept="@Accept"
                        disabled="@(GetDisabledState())"
                        aria-required="@Required.ToString().ToLowerInvariant()"
@@ -75,12 +76,12 @@
                 @if (!EqualityComparer<T>.Default.Equals(_filesState.Value, default))
                 {
                     <span class="mud-file-upload-filelist">
-                        @foreach (var file in GetFilenames())
+                        @foreach (var file in GetSelectedFiles())
                         {
                             <MudChip T="string"
                                      Color="Color.Secondary"
                                      Disabled="GetDisabledState()"
-                                     Text="@file"
+                                     Text="@file.Name"
                                      CloseIcon="@Icons.Material.Outlined.Close"
                                      OnClose="@(() => OnFileChipCloseAsync(file))" />
                         }

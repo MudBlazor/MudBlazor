@@ -50,6 +50,7 @@ exports[`window API surface is unchanged 1`] = `
     "setText": "function(2)",
   },
   "mudFileUpload": {
+    "getRelativePaths": "function(2)",
     "openFilePicker": "function(1)",
   },
   "mudGetSvgBBox": "function(1)",

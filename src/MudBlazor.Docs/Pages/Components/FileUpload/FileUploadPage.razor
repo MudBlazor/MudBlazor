@@ -119,6 +119,21 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Folder Upload">
+                <Description>
+                    Set <CodeInline>Folder</CodeInline> to let users choose a whole folder, including its subfolders. <CodeInline>OnFolderFilesChanged</CodeInline> pairs each
+                    accepted file with its path inside the folder, such as <CodeInline>Photos/2025/beach.jpg</CodeInline>, so you can rebuild the folder on the server.
+                    <CodeInline>MaximumFileCount</CodeInline> counts every file in the folder, so raise it to fit the folders you expect. Browsers ignore
+                    <CodeInline>Accept</CodeInline> in folder mode. Like <CodeInline>OnFilesChanged</CodeInline>, the callback reports each selection on its own; use
+                    <CodeInline>Files</CodeInline> for the current selection.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" ShowCode="false" Code="@nameof(FileUploadFolderExample)">
+                <FileUploadFolderExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Drag-and-Drop Examples">
                 <Description>
                     You can customize the look, feel, and behavior of <CodeInline>MudFileUpload</CodeInline> extensively. Use <CodeInline>CustomContent</CodeInline> to build your
