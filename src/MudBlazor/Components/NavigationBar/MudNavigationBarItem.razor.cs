@@ -21,8 +21,8 @@ namespace MudBlazor
         private ElementReference _elementReference;
 
         protected bool IsLink => !string.IsNullOrEmpty(_hrefState.Value);
-
-        protected string HtmlTag => IsLink ? "a" : "button";
+        protected bool IsCustomContent => !IsLink && ChildContent is not null;
+        protected string HtmlTag => IsLink ? "a" : IsCustomContent ? "div" : "button";
 
         protected string Classname =>
             new CssBuilder("mud-nav-bar-item")
@@ -81,8 +81,12 @@ namespace MudBlazor
         public string? SelectedClass { get; set; }
 
         /// <summary>
-        /// The custom content of the navigation item.
+        /// The custom content displayed inside the navigation item.
         /// </summary>
+        /// <remarks>
+        /// When <see cref="Href"/> is not set, custom content is rendered inside a non-interactive container, allowing interactive child components.
+        /// When <see cref="Href"/> is set, the item renders as a native link; avoid nesting buttons, links, or other interactive elements.
+        /// </remarks>
         [Parameter]
         [Category(CategoryTypes.List.Appearance)]
         public RenderFragment? ChildContent { get; set; }

@@ -549,5 +549,231 @@ namespace MudBlazor.UnitTests.Components
 
             comp.WaitForAssertion(() => comp.Instance.GetSelectedItemId().Should().BeNull());
         }
+
+        /// <summary>
+        /// Verifies that a custom Href comparison overrides default route matching.
+        /// </summary>
+        [Test]
+        public void NavigationBar_WhenCustomHrefComparisonProvided_UsesCustomResult()
+        {
+            var navigation = Context.Services.GetRequiredService<NavigationManager>();
+            navigation.NavigateTo("different");
+
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.Add(x => x.CustomHrefComparisonFunc,
+                    (Func<string?, string?, bool>)((location, href) =>
+                        location == "different" && href == "target"));
+
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Target");
+                    item.Add(x => x.Href, "target");
+                });
+            });
+
+            comp.WaitForAssertion(() => comp.Instance.GetSelectedItemId().Should().Be("Target"));
+        }
+
+        /// <summary>
+        /// Verifies that clicking a link invokes its callback without programmatic navigation.
+        /// </summary>
+        [Test]
+        public async Task NavigationBarItem_WhenLinkClicked_InvokesCallback()
+        {
+            var navigation = Context.Services.GetRequiredService<NavigationManager>();
+            var clickCount = 0;
+
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Target");
+                    item.Add(x => x.Href, "target");
+                    item.Add(x => x.OnClick, EventCallback.Factory.Create<MouseEventArgs>(this, _ => clickCount++));
+                });
+            });
+
+            await comp.Find("a.mud-nav-bar-item").ClickAsync();
+
+            clickCount.Should().Be(1);
+            navigation.Uri.Should().Be(navigation.BaseUri);
+            comp.Find("a.mud-nav-bar-item").GetAttribute("href").Should().Be("target");
+        }
+
+        /// <summary>
+        /// Verifies that modified link clicks do not invoke the normal click callback.
+        /// </summary>
+        [Test]
+        public async Task NavigationBarItem_WhenLinkClickIsModified_IgnoresCallback([Values(1, 2)] int button)
+        {
+            var clickCount = 0;
+
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Target");
+                    item.Add(x => x.Href, "target");
+                    item.Add(x => x.OnClick, EventCallback.Factory.Create<MouseEventArgs>(this, _ => clickCount++));
+                });
+            });
+
+            await comp.Find("a.mud-nav-bar-item")
+                .ClickAsync(new MouseEventArgs { Button = button });
+
+            clickCount.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Verifies that disabled links do not invoke click callbacks.
+        /// </summary>
+        [Test]
+        public async Task NavigationBarItem_WhenDisabledLinkClicked_DoesNotInvokeCallback()
+        {
+            var clickCount = 0;
+
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Target");
+                    item.Add(x => x.Href, "target");
+                    item.Add(x => x.Disabled, true);
+                    item.Add(x => x.OnClick, EventCallback.Factory.Create<MouseEventArgs>(this, _ => clickCount++));
+                });
+            });
+
+            var link = comp.Find("a.mud-nav-bar-item");
+
+            link.HasAttribute("href").Should().BeFalse();
+
+            await link.ClickAsync();
+
+            clickCount.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Verifies that custom content without Href uses a non-interactive container.
+        /// </summary>
+        [Test]
+        public void NavigationBarItem_WhenCustomContentWithoutHref_RendersDiv()
+        {
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Custom");
+                    item.Add(x => x.ChildContent,
+                        (RenderFragment)(content =>
+                        {
+                            content.OpenElement(0, "button");
+                            content.AddAttribute(1, "type", "button");
+                            content.AddContent(2, "Inner action");
+                            content.CloseElement();
+                        }));
+                });
+            });
+
+            var item = comp.Find("div.mud-nav-bar-item");
+
+            item.HasAttribute("type").Should().BeFalse();
+            item.HasAttribute("tabindex").Should().BeFalse();
+
+            item.QuerySelector("button").Should().NotBeNull();
+        }
+
+        /// <summary>
+        /// Verifies that modifier keys preserve native link-click behavior.
+        /// </summary>
+        [TestCase(true, false, false, false)]
+        [TestCase(false, true, false, false)]
+        [TestCase(false, false, true, false)]
+        [TestCase(false, false, false, true)]
+        public async Task NavigationBarItem_WhenLinkClickedWithModifier_IgnoresCallback(bool ctrl, bool meta, bool shift, bool alt)
+        {
+            var clickCount = 0;
+
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Target");
+                    item.Add(x => x.Href, "target");
+                    item.Add(x => x.OnClick, EventCallback.Factory.Create<MouseEventArgs>(this, _ => clickCount++));
+                });
+            });
+
+            await comp.Find("a.mud-nav-bar-item")
+                .ClickAsync(new MouseEventArgs
+                {
+                    CtrlKey = ctrl,
+                    MetaKey = meta,
+                    ShiftKey = shift,
+                    AltKey = alt
+                });
+
+            clickCount.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Verifies that navigation items are selected only for matching routes.
+        /// </summary>
+        [TestCase("settings", "settings", true)]
+        [TestCase("settings", "settings/profile", true)]
+        [TestCase("settings", "settings-other", false)]
+        [TestCase("settings", "other", false)]
+        [TestCase("settings/", "settings", true)]
+        [TestCase("settings", "settings/", true)]
+        [TestCase("/", "/", true)]
+        [TestCase("/", "settings", false)]
+        [TestCase("settings#details", "settings#details", true)]
+        [TestCase("settings#details", "settings#other", false)]
+        [TestCase("settings", "settings#details", true)]
+        [TestCase("settings#details", "settings", false)]
+        public void NavigationBar_WhenLocationChanges_MatchesExpectedRoute(string href, string location, bool expectedMatch)
+        {
+            var navigation = Context.Services.GetRequiredService<NavigationManager>();
+
+            navigation.NavigateTo(location);
+
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Target");
+                    item.Add(x => x.Href, href);
+                });
+            });
+
+            comp.WaitForAssertion(() =>
+            {
+                (comp.Instance.GetSelectedItemId() == "Target").Should().Be(expectedMatch);
+            });
+        }
+
+        /// <summary>
+        /// Verifies that links from a different origin do not match the current location.
+        /// </summary>
+        [TestCase("https://localhost/settings")]
+        [TestCase("http://example.com/settings")]
+        [TestCase("http://localhost:5001/settings")]
+        public void NavigationBar_WhenHrefOriginDiffers_DoesNotSelectItem(string href)
+        {
+            var navigation = Context.Services.GetRequiredService<NavigationManager>();
+            navigation.NavigateTo("settings");
+
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "External");
+                    item.Add(x => x.Href, href);
+                });
+            });
+
+            comp.WaitForAssertion(() =>
+                comp.Instance.GetSelectedItemId().Should().BeNull());
+        }
     }
 }

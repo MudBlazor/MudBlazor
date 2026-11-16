@@ -324,14 +324,6 @@ namespace MudBlazor
             }
         }
 
-        protected internal async Task DeselectAllAsync()
-        {
-            foreach (var item in _items)
-            {
-                await item.SetSelectedAsync(false);
-            }
-        }
-
         protected void OnParameterChanged()
         {
             foreach (IMudStateHasChanged mudComponent in _items)
