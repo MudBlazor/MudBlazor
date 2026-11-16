@@ -245,6 +245,15 @@ export default class MudElementReference {
     }
 
     /**
+     * Sets the selection while the element has focus, and does nothing otherwise, so it never takes focus from another element.
+     */
+    selectRangeIfFocused(element: ReferenceElement | null | undefined, pos1: number, pos2: number) {
+        if (element && document.activeElement === element) {
+            this.selectRange(element, pos1, pos2);
+        }
+    }
+
+    /**
      * Selects the element's full text content.
      */
     select(element: ReferenceElement | null | undefined) {

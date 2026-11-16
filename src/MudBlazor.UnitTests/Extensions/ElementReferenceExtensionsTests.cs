@@ -30,6 +30,7 @@ public class ElementReferenceExtensionsTests
     [TestCase("mudElementRef.blur")]
     [TestCase("mudElementRef.select")]
     [TestCase("mudElementRef.selectRange")]
+    [TestCase("mudElementRef.selectRangeIfFocused")]
     [TestCase("mudElementRef.changeCss")]
     public async Task Methods_Disconnected_Swallowed(string identifier)
     {
@@ -46,6 +47,7 @@ public class ElementReferenceExtensionsTests
     [TestCase("mudElementRef.blur")]
     [TestCase("mudElementRef.select")]
     [TestCase("mudElementRef.selectRange")]
+    [TestCase("mudElementRef.selectRangeIfFocused")]
     [TestCase("mudElementRef.changeCss")]
     public async Task Methods_JSException_Rethrown(string identifier)
     {
@@ -64,6 +66,7 @@ public class ElementReferenceExtensionsTests
         "mudElementRef.blur" => _element.MudBlurAsync(),
         "mudElementRef.select" => _element.MudSelectAsync(),
         "mudElementRef.selectRange" => _element.MudSelectRangeAsync(1, 2),
+        "mudElementRef.selectRangeIfFocused" => _element.MudSelectRangeIfFocusedAsync(1, 2),
         "mudElementRef.changeCss" => _element.MudChangeCssAsync("active"),
         _ => throw new ArgumentOutOfRangeException(nameof(identifier))
     };
