@@ -504,9 +504,7 @@ namespace MudBlazor
         /// </remarks>
         public async Task ClearAsync()
         {
-            ValidationErrors.RemoveAll(_validationErrors.Contains);
-
-            _validationErrors.Clear();
+            ClearFileErrors();
             _numberOfActiveFileInputs = 1;
 
             await NotifyValueChangedAsync(default);
@@ -577,9 +575,18 @@ namespace MudBlazor
             _ => []
         };
 
+        private void ClearFileErrors()
+        {
+            ValidationErrors.RemoveAll(_validationErrors.Contains);
+            _validationErrors.Clear();
+        }
+
         private async Task ProcessFileChangeAsync(InputFileChangeEventArgs args)
         {
             T? value;
+
+            // These errors describe one selection, so they shouldn't outlast it.
+            ClearFileErrors();
 
             if (args.FileCount > MaximumFileCount)
             {
