@@ -714,6 +714,10 @@ public class ChartSizingTests : BunitTest
 
         await comp.WaitForAssertionAsync(() => comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 60 "));
 
+        // Making room for the labels rebuilds them, and the render after that measures the new labels once more.
+        // That measurement can land after the plot moves, so wait for it before counting.
+        await comp.WaitForAssertionAsync(() => AxisMeasurements().Should().Be(8));
+
         // Once the labels have a real size, hovering again leaves them alone.
         var measured = AxisMeasurements();
         await comp.FindAll("circle.mud-chart-point")[1].MouseOutAsync(new());
