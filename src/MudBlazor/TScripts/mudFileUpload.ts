@@ -27,13 +27,35 @@ export default class MudFileUpload {
     }
 
     /**
-     * Retrieves the relative path paths from a folder upload input element.
+     * Returns the folder-relative paths of the input's files, starting at `start`.
+     * Callers read the rest with further calls until they have one path per file.
      */
-    getRelativePaths(id: string): string[] {
-        const element = document.getElementById(id) as HTMLInputElement | null;
-        if (!element || !element.files) {
-            return [];
+    getRelativePaths(id: string, start: number): string[] {
+        const files = (document.getElementById(id) as HTMLInputElement | null)?.files;
+        const paths: string[] = [];
+
+        if (!files) {
+            return paths;
         }
-        return Array.from(element.files).map(file => file.webkitRelativePath || "");
+
+        // Blazor Server drops the circuit when a message exceeds 32 KB, so each result stays well under it.
+        // The 5 bytes per path cover the JSON quotes and comma, which are escaped again inside the SignalR message.
+        const maxBytes = 16 * 1024;
+        const encoder = new TextEncoder();
+        let bytes = 0;
+
+        for (let i = start; i < files.length; i++) {
+            const path = files.item(i)?.webkitRelativePath ?? "";
+            bytes += encoder.encode(path).length + 5;
+
+            // Always return at least one path so the caller makes progress.
+            if (paths.length > 0 && bytes > maxBytes) {
+                break;
+            }
+
+            paths.push(path);
+        }
+
+        return paths;
     }
 }

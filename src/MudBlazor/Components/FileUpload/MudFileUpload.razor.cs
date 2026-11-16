@@ -156,7 +156,7 @@ namespace MudBlazor
         public RenderFragment<T?>? SelectedTemplate { get; set; }
 
         /// <summary>
-        /// Prevents raising <see cref="OnFilesChanged"/> when validation fails during an upload.
+        /// Prevents raising <see cref="OnFilesChanged"/> and <see cref="OnFolderFilesChanged"/> when validation fails during an upload.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
@@ -261,19 +261,24 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
-        /// Only applies when <c>T</c> is <c>IReadOnlyList&lt;IBrowserFile&gt;</c>.
+        /// Only applies when <c>T</c> is <see cref="IReadOnlyList{IBrowserFile}">IReadOnlyList&lt;IBrowserFile&gt;</see>.
         /// Browsers ignore <see cref="Accept"/> in folder mode, so every file in the folder is selected.
+        /// <see cref="MaximumFileCount"/> counts every file in the folder and its subfolders, so raise it to fit the folders you expect.
+        /// Use <see cref="OnFolderFilesChanged"/> to get each file's path within the folder.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
         public bool Folder { get; set; }
 
         /// <summary>
-        /// Occurs when a folder selection is processed, with each accepted file and its path relative to the selected folder.
+        /// Occurs when the user selects or drops a folder, with each accepted file and its path relative to the selected folder.
         /// </summary>
         /// <remarks>
-        /// Only raised when <see cref="Folder"/> is <c>true</c>.
+        /// Only raised when <see cref="Folder"/> applies.
+        /// Like <see cref="OnFilesChanged"/>, it reports each selection on its own: it isn't raised when files are cleared or removed, and with <see cref="AppendMultipleFiles"/> it reports only the new files.
+        /// Use <see cref="Files"/> for the current selection.
         /// Files rejected by validation are left out, and an empty list means none were accepted.
+        /// Not raised when <see cref="SuppressOnChangeWhenInvalid"/> is <c>true</c> and validation fails.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
@@ -352,14 +357,15 @@ namespace MudBlazor
             await OnDragEnter.InvokeAsync(args);
         }
 
-        private Task OnFileChipCloseAsync(string filename)
+        private Task OnFileChipCloseAsync(IBrowserFile file)
         {
             if (GetDisabledState())
             {
                 return Task.CompletedTask;
             }
 
-            return RemoveFileAsync(filename);
+            // Remove this file only; folders often hold several files with the same name.
+            return RemoveFileAsync(file);
         }
 
         private int _numberOfActiveFileInputs = 1;
@@ -513,113 +519,61 @@ namespace MudBlazor
 
         private async Task OnChangeAsync(InputFileChangeEventArgs args)
         {
-            // Capture the index before rotating so folder paths are read from the input that raised the change.
-            int currentInputIndex = _numberOfActiveFileInputs;
+            // Read the ID before rotating, so folder paths come from the input that raised the change.
+            var inputId = GetActiveInputId();
             _numberOfActiveFileInputs++;
 
             if (GetDisabledState())
                 return;
 
-            bool hasFolderListener = Folder && OnFolderFilesChanged.HasDelegate;
-
-            // Report an empty list so the consumer clears paths from the previous selection.
-            if (args.FileCount > MaximumFileCount)
-            {
-                await ProcessFileChangeAsync(args);
-                if (hasFolderListener)
-                {
-                    await OnFolderFilesChanged.InvokeAsync(Array.Empty<MudFileWithFolderPath>());
-                }
-                return;
-            }
-
-            IReadOnlyList<MudFileWithFolderPath> combinedList = new List<MudFileWithFolderPath>();
-
-            // Only invoke JS interop if someone is actually listening to OnFolderFilesChanged
-            if (hasFolderListener && typeof(T) != typeof(IBrowserFile))
-            {
-                var inputId = GetInputId(currentInputIndex);
-                var nativeFiles = args.GetMultipleFiles(MaximumFileCount);
-                var paths = new string[nativeFiles.Count];
-
-                try
-                {
-                    const int chunkSize = 100;
-                    int totalFiles = nativeFiles.Count;
-
-                    for (int i = 0; i < totalFiles; i += chunkSize)
-                    {
-                        int countToFetch = Math.Min(chunkSize, totalFiles - i);
-                        var pathChunk = await JsRuntime.InvokeAsync<string[]>(
-                            "mudInput.getFolderPathChunk",
-                            inputId,
-                            i,
-                            countToFetch);
-
-                        if (pathChunk != null)
-                        {
-                            for (int j = 0; j < pathChunk.Length; j++)
-                            {
-                                paths[i + j] = pathChunk[j];
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogWarning(ex, "Failed to retrieve folder path metadata.");
-                }
-
-                var list = new List<MudFileWithFolderPath>();
-                for (int i = 0; i < nativeFiles.Count; i++)
-                {
-                    string path = (paths != null && i < paths.Length) ? paths[i] ?? string.Empty : string.Empty;
-                    list.Add(new MudFileWithFolderPath(nativeFiles[i], path));
-                }
-
-                combinedList = list;
-            }
+            // Skip the interop when nobody listens for paths.
+            var folderFiles = IsFolderMode && OnFolderFilesChanged.HasDelegate
+                ? await GetFolderFilesAsync(args, inputId)
+                : null;
 
             await ProcessFileChangeAsync(args);
 
-            // Only report files that passed validation.
-            if (hasFolderListener)
+            if (folderFiles is not null && (!ErrorState.Value || !SuppressOnChangeWhenInvalid))
             {
-                object? currentFilesValue = _filesState.Value;
-                var acceptedList = new List<MudFileWithFolderPath>();
-
-                if (currentFilesValue != null && combinedList.Count > 0)
-                {
-                    if (currentFilesValue is System.Collections.IEnumerable acceptedCollection)
-                    {
-                        foreach (var item in combinedList)
-                        {
-                            foreach (var acceptedFile in acceptedCollection)
-                            {
-                                if (acceptedFile is IBrowserFile browserFile && browserFile == item.File)
-                                {
-                                    acceptedList.Add(item);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    else if (currentFilesValue is IBrowserFile singleBrowserFile)
-                    {
-                        foreach (var item in combinedList)
-                        {
-                            if (item.File == singleBrowserFile)
-                            {
-                                acceptedList.Add(item);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                await OnFolderFilesChanged.InvokeAsync(acceptedList);
+                // Leave out files that failed validation.
+                var accepted = GetSelectedFiles().ToHashSet();
+                await OnFolderFilesChanged.InvokeAsync(folderFiles.Where(f => accepted.Contains(f.File)).ToList());
             }
         }
+
+        private bool IsFolderMode => Folder && typeof(T) == typeof(IReadOnlyList<IBrowserFile>);
+
+        private async Task<IReadOnlyList<MudFileWithFolderPath>> GetFolderFilesAsync(InputFileChangeEventArgs args, string inputId)
+        {
+            // GetMultipleFiles throws over the limit, and ProcessFileChangeAsync reports that as a validation error.
+            if (args.FileCount > MaximumFileCount)
+                return [];
+
+            var files = args.GetMultipleFiles(MaximumFileCount);
+            var paths = new List<string>(files.Count);
+
+            // Large folders take several calls, because each result has to fit in one Blazor Server message.
+            while (paths.Count < files.Count)
+            {
+                var (success, chunk) = await JsRuntime.InvokeAsyncWithErrorHandling<string[]>("mudFileUpload.getRelativePaths", inputId, paths.Count);
+                if (!success || chunk is not { Length: > 0 })
+                {
+                    Logger.LogWarning("Could not read the relative paths of the selected folder.");
+                    break;
+                }
+
+                paths.AddRange(chunk);
+            }
+
+            return files.Select((file, i) => new MudFileWithFolderPath(file, i < paths.Count ? paths[i] : string.Empty)).ToList();
+        }
+
+        private IReadOnlyList<IBrowserFile> GetSelectedFiles() => _filesState.Value switch
+        {
+            IBrowserFile file => [file],
+            IReadOnlyList<IBrowserFile> files => files,
+            _ => []
+        };
 
         private async Task ProcessFileChangeAsync(InputFileChangeEventArgs args)
         {

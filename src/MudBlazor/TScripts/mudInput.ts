@@ -10,40 +10,6 @@ type TextInputElement = HTMLInputElement | HTMLTextAreaElement;
  */
 export default class MudInput {
     /**
-     * Extracts relative directory paths from a specific file input element by ID.
-     */
-    getFolderPaths(id: string): string[] {
-        const input = document.getElementById(id) as HTMLInputElement | null;
-        if (!input || !input.files) {
-            return [];
-        }
-
-        // webkitRelativePath contains the folder hierarchy structure
-        return Array.from(input.files).map(file => file.webkitRelativePath || "");
-    }
-
-        /**
-     * Extracts a bounded chunk of relative directory paths from a specific file input element by ID.
-     */
-    getFolderPathChunk(id: string, startIndex: number, count: number): string[] {
-        const input = document.getElementById(id) as HTMLInputElement | null;
-        if (!input || !input.files) {
-            return [];
-        }
-
-        const result: string[] = [];
-        const totalFiles = input.files.length;
-        const endIndex = Math.min(startIndex + count, totalFiles);
-
-        for (let i = startIndex; i < endIndex; i++) {
-            const file = input.files[i];
-            result.push(file ? (file.webkitRelativePath || "") : "");
-        }
-
-        return result;
-    }
-
-    /**
      * Clears the value of an input element by ID.
      */
     resetValue(id: string) {
