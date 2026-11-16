@@ -2,15 +2,61 @@
 @using MudBlazor.Extensions
 @inherits MudComponentBase
 
-<div @ref="_elementReference" class="@Classname" style="@Style" @attributes="@UserAttributes" tabindex="@(Disabled ? "-1" : "0")" @onclick="HandleClickAsync" @onkeydown="@HandleKeyDownAsync" role="@(string.IsNullOrEmpty(Href) ? "button" : "link")" aria-disabled="@(Disabled ? "true" : null)" aria-current="@(_isSelected ? (string.IsNullOrEmpty(Href) ? "true" : "page") : null)">
-    <MudBadge Class="@BadgeClassname" Dot="@BadgeParameters.Dot" Content="@BadgeParameters.Content" Overlap="@BadgeParameters.Overlap" Visible="@(BadgeParameters.Dot || BadgeParameters.Content != null)" Color="@BadgeParameters.Color">
-        @if (Icon != null)
-        {
-            <MudIcon Icon="@Icon" Color="@GetColor()" />
-        }
-        <div class="mud-nav-bar-item-content">
-            <MudText Color="@GetColor()" Typo="@(Parent?.GetState(x => x.Typo) ?? Typo.subtitle2)">@Text</MudText>
-            @ChildContent
-        </div>
-    </MudBadge>
-</div>
+@{
+    __builder.OpenElement(0, HtmlTag);
+    __builder.AddAttribute(1, "class", Classname);
+    __builder.AddAttribute(2, "style", Style);
+    foreach (var attribute in UserAttributes)
+    {
+        __builder.AddAttribute(3, attribute.Key, attribute.Value);
+    }
+    __builder.AddAttribute(4, "tabindex", _disabledState.Value ? "-1" : "0");
+
+    if (IsLink)
+    {
+        if (!_disabledState.Value)
+            __builder.AddAttribute(5, "href", _hrefState.Value);
+
+        __builder.AddAttribute(6, "aria-disabled", _disabledState.Value ? "true" : null);
+        __builder.AddAttribute(7, "aria-current", _isSelected ? "page" : null);
+    }
+    else
+    {
+        __builder.AddAttribute(8, "type", "button");
+        __builder.AddAttribute(9, "disabled", _disabledState.Value);
+        __builder.AddAttribute(10, "aria-current", _isSelected ? "true" : null);
+    }
+
+    __builder.AddAttribute(11, "onclick",
+        EventCallback.Factory.Create<MouseEventArgs>(this, HandleClickAsync));
+
+    __builder.AddElementReferenceCapture(12, reference => _elementReference = reference);
+
+    RenderContent(__builder);
+
+    __builder.CloseElement();
+}
+
+@code {
+    private void RenderContent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+    {
+        <MudBadge Class="@BadgeClassname"
+                  Dot="@BadgeParameters.Dot"
+                  Content="@BadgeParameters.Content"
+                  Overlap="@BadgeParameters.Overlap"
+                  Visible="@(BadgeParameters.Dot || BadgeParameters.Content != null)"
+                  Color="@BadgeParameters.Color">
+            @if (Icon != null)
+            {
+                <MudIcon Icon="@Icon" Color="@GetColor()" />
+            }
+            <div class="mud-nav-bar-item-content">
+                <MudText Color="@GetColor()"
+                         Typo="@(Parent?.GetState(x => x.Typo) ?? Typo.subtitle2)">
+                    @Text
+                </MudText>
+                @ChildContent
+            </div>
+        </MudBadge>
+    }
+}

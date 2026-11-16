@@ -198,24 +198,23 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that selecting the same item twice does not repeat the callback.
+        /// Verifies that selecting the same item twice raises the selection callback only once.
         /// </summary>
         [Test]
-        public void NavigationBarItem_WhenSelectedTwice_RaisesSingleSelectionChange()
+        public async Task NavigationBarItem_WhenSelectedTwice_RaisesSingleSelectionChange()
         {
             var selections = new List<string?>();
 
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
-                builder.Add(x => x.OnSelectionChange, EventCallback.Factory.Create<string?>(this, value => selections.Add(value)));
+                builder.Add(x => x.OnSelectionChange,
+                    EventCallback.Factory.Create<string?>(this, value => selections.Add(value)));
 
                 builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "First"));
             });
 
-            var item = comp.Find(".mud-nav-bar-item");
-
-            item.Click();
-            item.Click();
+            await comp.Find(".mud-nav-bar-item").ClickAsync();
+            await comp.Find(".mud-nav-bar-item").ClickAsync();
 
             selections.Should().ContainSingle().Which.Should().Be("First");
         }
@@ -429,6 +428,95 @@ namespace MudBlazor.UnitTests.Components
 
             items[0].HasAttribute("aria-current").Should().BeFalse();
             items[1].GetAttribute("aria-current").Should().Be("true");
+        }
+
+        /// <summary>
+        /// Verifies that navigation items use native HTML semantics.
+        /// </summary>
+        [Test]
+        public void NavigationBarItem_WhenRendered_UsesNativeElements()
+        {
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Home");
+                    item.Add(x => x.Href, "home");
+                });
+
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                    item.Add(x => x.Text, "Action"));
+            });
+
+            comp.Find("a.mud-nav-bar-item")
+                .GetAttribute("href").Should().Be("home");
+
+            comp.Find("button.mud-nav-bar-item")
+                .GetAttribute("type").Should().Be("button");
+        }
+
+        /// <summary>
+        /// Verifies that disabled links cannot navigate or receive keyboard focus.
+        /// </summary>
+        [Test]
+        public void NavigationBarItem_WhenLinkDisabled_RemovesHref()
+        {
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Home");
+                    item.Add(x => x.Href, "home");
+                    item.Add(x => x.Disabled, true);
+                });
+            });
+
+            var link = comp.Find("a.mud-nav-bar-item");
+
+            link.HasAttribute("href").Should().BeFalse();
+            link.GetAttribute("aria-disabled").Should().Be("true");
+            link.GetAttribute("tabindex").Should().Be("-1");
+        }
+
+        /// <summary>
+        /// Verifies that the most specific matching route is selected.
+        /// </summary>
+        [Test]
+        public void NavigationBar_WhenRoutesOverlap_SelectsMostSpecific()
+        {
+            var navigation = Context.Services
+                .GetRequiredService<NavigationManager>();
+
+            navigation.NavigateTo("settings/profile");
+
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Settings");
+                    item.Add(x => x.Href, "settings");
+                });
+
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "Profile");
+                    item.Add(x => x.Href, "settings/profile");
+                });
+            });
+
+            comp.WaitForAssertion(() =>
+            {
+                comp.Instance.GetSelectedItemId()
+                    .Should().Be("Profile");
+            });
+
+            navigation.NavigateTo("settings");
+
+            comp.WaitForAssertion(() =>
+            {
+                comp.Instance.GetSelectedItemId()
+                    .Should().Be("Settings");
+            });
         }
     }
 }

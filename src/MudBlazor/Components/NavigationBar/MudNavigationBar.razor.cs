@@ -4,6 +4,7 @@
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using MudBlazor.Extensions;
 using MudBlazor.Interfaces;
 using MudBlazor.State;
 using MudBlazor.Utilities;
@@ -163,21 +164,63 @@ namespace MudBlazor
 
         protected internal void Register(MudNavigationBarItem item)
         {
+            if (_items.Contains(item))
+                return;
+
             _items.Add(item);
 
-            if (!string.IsNullOrEmpty(item.Href) && MatchesHref(item, _currentLocation ?? string.Empty))
-            {
-                _ = InvokeAsync(() => SelectItemAsync(item));
-            }
-
+            _ = InvokeAsync(RefreshSelectionAsync);
             StateHasChanged();
         }
 
         protected internal void Unregister(MudNavigationBarItem item)
         {
-            _items.Remove(item);
+            if (!_items.Remove(item))
+                return;
+
+            _ = InvokeAsync(RefreshSelectionAsync);
             StateHasChanged();
         }
+
+
+        protected internal Task RefreshSelectionAsync()
+        {
+            if (!_items.Any(x => !string.IsNullOrEmpty(x.GetState(x => x.Href))))
+            {
+                // Preserve in-page selection unless its item is disabled.
+                var selected = _items.FirstOrDefault(x => x._isSelected);
+
+                if (selected is not null && selected.GetState(x => x.Disabled))
+                    return SelectItemAsync(null);
+
+                return Task.CompletedTask;
+            }
+
+            return UpdateSelectionFromLocationAsync(
+                _currentLocation ?? string.Empty);
+        }
+
+        private Task UpdateSelectionFromLocationAsync(string location)
+        {
+            var matchedItem = _items
+                .Where(item => MatchesHref(item, location))
+                .OrderByDescending(item => GetMatchSpecificity(item, location))
+                .FirstOrDefault();
+
+            return SelectItemAsync(matchedItem);
+        }
+
+        private int GetMatchSpecificity(MudNavigationBarItem item, string location)
+        {
+            if (CustomHrefComparisonFunc is not null)
+                return 0;
+
+            var target = NavigationManager.ToAbsoluteUri(item.GetState(x => x.Href)!);
+
+            return target.AbsolutePath.TrimEnd('/').Length +
+                (string.IsNullOrEmpty(target.Fragment) ? 0 : 10000);
+        }
+
 
         /// <summary>
         /// Releases resources used by this component.
@@ -220,7 +263,7 @@ namespace MudBlazor
                     if (targetIndex < 0 || targetIndex >= _items.Count)
                         return;
                 }
-                while (_items[targetIndex].Disabled);
+                while (_items[targetIndex].GetState(x => x.Disabled));
 
                 remaining--;
             }
@@ -303,43 +346,36 @@ namespace MudBlazor
         {
             _ = InvokeAsync(async () =>
             {
-                _currentLocation = NavigationManager.ToBaseRelativePath(args.Location);
-                await UpdateSelectionFromLocationAsync(_currentLocation);
+                _currentLocation =
+                    NavigationManager.ToBaseRelativePath(args.Location);
+
+                await RefreshSelectionAsync();
             });
         }
 
         protected internal async Task ActivateItemAsync(MudNavigationBarItem item)
         {
-            if (item.Disabled || !_items.Contains(item))
+            if (item.GetState(x => x.Disabled) || !_items.Contains(item))
                 return;
 
-            if (!string.IsNullOrEmpty(item.Href))
+            if (!string.IsNullOrEmpty(item.GetState(x => x.Href)))
             {
-                NavigationManager.NavigateTo(item.Href);
+                NavigationManager.NavigateTo(item.GetState(x => x.Href)!);
                 return;
             }
 
             await SelectItemAsync(item);
         }
 
-        private async Task UpdateSelectionFromLocationAsync(string location)
-        {
-            if (!_items.Any(x => !string.IsNullOrEmpty(x.Href)))
-                return;
-
-            var matchedItem = _items.FirstOrDefault(item => MatchesHref(item, location));
-            await SelectItemAsync(matchedItem);
-        }
-
         private bool MatchesHref(MudNavigationBarItem item, string location)
         {
-            if (string.IsNullOrEmpty(item.Href) || item.Disabled)
+            if (string.IsNullOrEmpty(item.GetState(x => x.Href)) || item.GetState(x => x.Disabled))
                 return false;
 
             if (CustomHrefComparisonFunc is not null)
-                return CustomHrefComparisonFunc(location, item.Href);
+                return CustomHrefComparisonFunc(location, item.GetState(x => x.Href));
 
-            var target = NavigationManager.ToAbsoluteUri(item.Href);
+            var target = NavigationManager.ToAbsoluteUri(item.GetState(x => x.Href));
             var current = NavigationManager.ToAbsoluteUri(location);
 
             if (!string.Equals(target.Scheme, current.Scheme, StringComparison.OrdinalIgnoreCase) ||

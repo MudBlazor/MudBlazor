@@ -5,6 +5,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -19,10 +20,14 @@ namespace MudBlazor
         protected internal bool _isSelected;
         private ElementReference _elementReference;
 
+        protected bool IsLink => !string.IsNullOrEmpty(_hrefState.Value);
+
+        protected string HtmlTag => IsLink ? "a" : "button";
+
         protected string Classname =>
             new CssBuilder("mud-nav-bar-item")
-                .AddClass("mud-ripple", Parent?.GetState(x => x.Ripple) == true && !Disabled)
-                .AddClass("mud-disabled", Disabled)
+                .AddClass("mud-ripple", Parent?.GetState(x => x.Ripple) == true && !_disabledState.Value)
+                .AddClass("mud-disabled", _disabledState.Value)
                 .AddClass("mud-hoverable", Parent?.GetState(x => x.Hover) == true)
                 .AddClass("mud-nav-bar-item-selected", _isSelected)
                 .AddClass("mud-nav-bar-item-underline", Parent?.GetState(x => x.Underline) == true && _isSelected)
@@ -32,6 +37,28 @@ namespace MudBlazor
                 .Build();
 
         protected string BadgeClassname => "mud-nav-bar-item-badge";
+
+        private readonly ParameterState<string?> _hrefState;
+        private readonly ParameterState<bool> _disabledState;
+
+        public MudNavigationBarItem()
+        {
+            using var registerScope = CreateRegisterScope();
+
+            _hrefState = registerScope.RegisterParameter<string?>(nameof(Href))
+                .WithParameter(() => Href)
+                .WithChangeHandler(OnNavigationParameterChangedAsync);
+
+            _disabledState = registerScope.RegisterParameter<bool>(nameof(Disabled))
+                .WithParameter(() => Disabled)
+                .WithChangeHandler(OnNavigationParameterChangedAsync);
+        }
+
+        private Task OnNavigationParameterChangedAsync()
+        {
+            return Parent?.RefreshSelectionAsync() ?? Task.CompletedTask;
+        }
+
 
         /// <summary>
         /// The grouped parameter that contains the badge parameters.
@@ -63,7 +90,7 @@ namespace MudBlazor
         /// <summary>
         /// If true, the navigation item will be disabled and not clickable or selectable.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Appearance)]
         public bool Disabled { get; set; }
 
@@ -94,7 +121,7 @@ namespace MudBlazor
         /// <summary>
         /// The navigation item href. If set, the navigation item will be treated as a link and will navigate to the specified href when clicked.
         /// </summary>
-        [Parameter]
+        [Parameter, ParameterState]
         [Category(CategoryTypes.List.Behavior)]
         public string? Href { get; set; }
 
@@ -152,8 +179,18 @@ namespace MudBlazor
 
         protected async Task HandleClickAsync(MouseEventArgs args)
         {
-            if (Disabled || Parent is null)
+            if (_disabledState.Value || Parent is null)
                 return;
+
+            if (IsLink)
+            {
+                if (args.Button != 0 || args.CtrlKey || args.MetaKey || args.ShiftKey || args.AltKey)
+                    return;
+
+                // The browser handles Href navigation.
+                await OnClick.InvokeAsync(args);
+                return;
+            }
 
             await Parent.ActivateItemAsync(this);
             await OnClick.InvokeAsync(args);
@@ -161,10 +198,10 @@ namespace MudBlazor
 
         protected internal async Task HandleKeyDownAsync(KeyboardEventArgs args)
         {
-            if (Disabled)
+            if (_disabledState.Value)
                 return;
 
-            if (args.Key is "Enter" or "NumpadEnter" || (string.IsNullOrEmpty(Href) && args.Key is " " or "Spacebar"))
+            if (args.Key is "Enter" or "NumpadEnter" || (string.IsNullOrEmpty(_hrefState.Value) && args.Key is " " or "Spacebar"))
             {
                 await HandleClickAsync(new MouseEventArgs());
             }
@@ -172,7 +209,7 @@ namespace MudBlazor
 
         protected Color GetColor()
         {
-            if (Disabled || !_isSelected)
+            if (_disabledState.Value || !_isSelected)
                 return Color.Inherit;
 
             if (string.IsNullOrEmpty(SelectedClass) &&
