@@ -231,6 +231,8 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>10</c>.  This does not limit the total number of files; enforce overall limits in <see cref="FilesChanged"/>.
+        /// A larger selection is rejected with a validation error.
+        /// With <see cref="AppendMultipleFiles"/>, the files already selected are kept; otherwise the selection is cleared.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FileUpload.Behavior)]
@@ -583,7 +585,9 @@ namespace MudBlazor
             {
                 // Notify the consumer about the exceeded file count
                 _validationErrors.Add(Localizer[LanguageResource.MudFileUpload_MaximumFileCountExceeded, args.FileCount, MaximumFileCount]);
-                await NotifyValueChangedAsync(default); // Reset the value to indicate no valid files were processed
+
+                // When appending, the rejected selection adds nothing, so the files already selected stay.
+                await NotifyValueChangedAsync(AppendMultipleFiles ? _filesState.Value : default);
                 return;
             }
 
