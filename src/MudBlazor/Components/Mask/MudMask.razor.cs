@@ -198,9 +198,8 @@ namespace MudBlazor
 
                 if (!_disposed)
                 {
-                    // Attach a JS blur fallback for cases where focus is dismissed without Blazor observing the native blur event,
-                    // e.g. a Hybrid host window losing focus. Otherwise _isFocused stays set and every render re-applies the caret,
-                    // pulling focus back to this input.
+                    // Attach a JS blur fallback for cases where focus is dismissed without Blazor observing the native blur event, e.g. a Hybrid host window losing focus.
+                    // Otherwise _isFocused stays set and every render re-applies the caret, pulling focus back to this input.
                     await _elementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
                 }
             }
