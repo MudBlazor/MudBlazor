@@ -1205,13 +1205,13 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.InvokeAsync(() => mask.OnFocused(new FocusEventArgs()));
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "12"));
-            var caretRestores = Context.JSInterop.Invocations["mudElementRef.selectRange"].Count;
+            var caretRestores = Context.JSInterop.Invocations["mudElementRef.selectRangeIfFocused"].Count;
             caretRestores.Should().BeGreaterThan(0, "a focused mask re-applies the caret after render");
 
             await comp.InvokeAsync(mask.CallOnBlurredAsync);
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "123"));
 
-            Context.JSInterop.Invocations["mudElementRef.selectRange"].Count.Should().Be(caretRestores);
+            Context.JSInterop.Invocations["mudElementRef.selectRangeIfFocused"].Count.Should().Be(caretRestores);
         }
 
         /// <summary>

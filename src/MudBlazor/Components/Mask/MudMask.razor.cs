@@ -463,14 +463,15 @@ namespace MudBlazor
             if (caret == 0)
                 _caret = 0;
             _selection = selection;
+            // Only while the input really has focus: _isFocused can be stale when a blur was missed, and moving focus back here would take it from another input.
             if (selection == null)
             {
-                await _elementReference.MudSelectRangeAsync(caret, caret);
+                await _elementReference.MudSelectRangeIfFocusedAsync(caret, caret);
             }
             else
             {
                 var sel = selection.Value;
-                await _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2);
+                await _elementReference.MudSelectRangeIfFocusedAsync(sel.Item1, sel.Item2);
             }
         }
 

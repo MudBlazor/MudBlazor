@@ -45,6 +45,9 @@ namespace MudBlazor
         public static ValueTask MudSelectRangeAsync(this ElementReference elementReference, int pos1, int pos2) =>
             elementReference.GetJSRuntime()?.InvokeVoidAsyncIgnoreDisconnected("mudElementRef.selectRange", elementReference, pos1, pos2) ?? ValueTask.CompletedTask;
 
+        public static ValueTask MudSelectRangeIfFocusedAsync(this ElementReference elementReference, int pos1, int pos2) =>
+            elementReference.GetJSRuntime()?.InvokeVoidAsyncIgnoreDisconnected("mudElementRef.selectRangeIfFocused", elementReference, pos1, pos2) ?? ValueTask.CompletedTask;
+
         public static ValueTask MudChangeCssAsync(this ElementReference elementReference, string css) =>
             elementReference.GetJSRuntime()?.InvokeVoidAsyncIgnoreDisconnected("mudElementRef.changeCss", elementReference, css) ?? ValueTask.CompletedTask;
 

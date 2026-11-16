@@ -245,6 +245,29 @@ test("selectRange selects text in text inputs and textareas", () => {
     expect([byId("notes").selectionStart, byId("notes").selectionEnd]).toEqual([0, 10]);
 });
 
+test("selectRangeIfFocused sets the selection of the focused element", () => {
+    const byId = renderForm();
+    byId("name").value = "Ada Lovelace";
+    byId("name").focus();
+
+    elementRef.selectRangeIfFocused(byId("name"), 4, 12);
+
+    expect([byId("name").selectionStart, byId("name").selectionEnd]).toEqual([4, 12]);
+    expect(document.activeElement).toBe(byId("name"));
+});
+
+test("selectRangeIfFocused leaves focus on another element", () => {
+    const byId = renderForm();
+    byId("name").value = "Ada Lovelace";
+    byId("notes").focus();
+    const setSelectionRange = spyOn(byId("name"), "setSelectionRange");
+
+    elementRef.selectRangeIfFocused(byId("name"), 4, 12);
+
+    expect(setSelectionRange).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(byId("notes"));
+});
+
 test("selectRange only focuses inputs whose type does not support selection", () => {
     const byId = renderForm();
     const email = byId("email");
