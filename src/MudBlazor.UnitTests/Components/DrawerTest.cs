@@ -922,6 +922,31 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("aside.mud-drawer--open").Count.Should().Be(0);
         }
 
+        /// <summary>
+        /// Switching an open drawer to Responsive or Mini below its breakpoint keeps it open over an overlay instead of closing it.
+        /// </summary>
+        [TestCase(DrawerVariant.Persistent, DrawerVariant.Responsive)]
+        [TestCase(DrawerVariant.Persistent, DrawerVariant.Mini)]
+        [TestCase(DrawerVariant.Temporary, DrawerVariant.Responsive)]
+        [TestCase(DrawerVariant.Temporary, DrawerVariant.Mini)]
+        public async Task OpenDrawerSwitchedToResponsiveOrMiniBelowBreakpoint_StaysOpen(DrawerVariant initialVariant, DrawerVariant switchedVariant)
+        {
+            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xs));
+            var openChanges = new List<bool>();
+            var comp = Context.Render<MudDrawer>(parameters => parameters
+                .Add(x => x.Variant, initialVariant)
+                .Add(x => x.Open, true)
+                .Add(x => x.OpenChanged, open => openChanges.Add(open)));
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Variant, switchedVariant));
+
+            browserViewportService.GetInternalSubscription(comp.Instance).Should().NotBeNull();
+            openChanges.Should().BeEmpty();
+            comp.FindAll("aside.mud-drawer--open").Count.Should().Be(1);
+            comp.FindAll(".mud-drawer-overlay").Count.Should().Be(1);
+        }
+
         [Test, Combinatorial]
         public async Task NonResponsiveKeepInitialOpen_AllBreakpointsAsync(
             [Values(
