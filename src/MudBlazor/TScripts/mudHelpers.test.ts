@@ -281,6 +281,34 @@ test("hasDefinedParentHeight reads a height set by a stylesheet, not only an inl
     expect(hasDefinedParentHeight(document.querySelector("svg"))).toBe(false);
 });
 
+test("hasDefinedParentHeight counts a stylesheet percentage only when an ancestor gives it a height to resolve against", () => {
+    document.body.innerHTML = `<div id="outer"><div id="middle"><div id="parent" style="max-height: none"><svg></svg></div></div></div>`;
+
+    // Stand in for the typed model, which happy-dom doesn't implement, with the height each element's stylesheet sets.
+    const stubHeight = (id: string, height: string) => {
+        const element = document.getElementById(id)!;
+        element.computedStyleMap = (() => ({ get: () => height })) as unknown as typeof element.computedStyleMap;
+    };
+
+    stubHeight("outer", "auto");
+    stubHeight("middle", "auto");
+    stubHeight("parent", "100%");
+    expect(hasDefinedParentHeight(document.querySelector("svg"))).toBe(false);
+
+    stubHeight("middle", "100%");
+    stubHeight("outer", "400px");
+    expect(hasDefinedParentHeight(document.querySelector("svg"))).toBe(true);
+
+    stubHeight("outer", "auto");
+    expect(hasDefinedParentHeight(document.querySelector("svg"))).toBe(false);
+});
+
+test("hasDefinedParentHeight still counts an inline percentage height", () => {
+    document.body.innerHTML = `<div><div style="height: 100%; max-height: none"><svg></svg></div></div>`;
+
+    expect(hasDefinedParentHeight(document.querySelector("svg"))).toBe(true);
+});
+
 test("hasDefinedParentHeight is false for an element without a parent", () => {
     expect(hasDefinedParentHeight(document.createElement("div"))).toBe(false);
     expect(hasDefinedParentHeight(null)).toBe(false);

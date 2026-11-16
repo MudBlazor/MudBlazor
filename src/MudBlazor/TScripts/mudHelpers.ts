@@ -123,14 +123,14 @@ export function hasDefinedParentHeight(element: Element | null | undefined) {
 
     const style = window.getComputedStyle(parent);
 
-    // getComputedStyle resolves height to the used pixel value even when the author never set one, so the specified value has to come from the typed model.
-    // Where that isn't available an inline style is all there is to go on, which is why a height coming from a stylesheet used to be missed entirely.
-    const specifiedHeight = typeof parent.computedStyleMap === 'function'
-        ? parent.computedStyleMap().get('height')?.toString()
-        : parent.style.height;
+    const inlineHeight = parent.style.height;
+    const specifiedHeight = getSpecifiedHeight(parent);
 
-    // Explicit height via inline style or stylesheet (not auto)
-    const hasExplicitHeight = !!specifiedHeight && specifiedHeight !== 'auto';
+    // An inline height has always counted, so it still does.
+    // A stylesheet percentage only gives the parent a height when an ancestor has one to resolve it against; otherwise the browser treats it as auto.
+    const hasExplicitHeight =
+        (!!inlineHeight && inlineHeight !== 'auto') ||
+        (!!specifiedHeight && specifiedHeight !== 'auto' && (!isPercentage(specifiedHeight) || percentageHeightResolves(parent)));
 
     // Check for flex/grid constraints
     const isFlexOrGrid =
@@ -143,6 +143,31 @@ export function hasDefinedParentHeight(element: Element | null | undefined) {
         style.maxHeight !== 'none';
 
     return hasExplicitHeight || (hasConstrainedHeight && isFlexOrGrid);
+}
+
+// getComputedStyle resolves height to the used pixel value even when the author never set one, so the specified value has to come from the typed model.
+// Where that isn't available an inline style is all there is to go on, which is why a height coming from a stylesheet used to be missed entirely.
+function getSpecifiedHeight(element: HTMLElement) {
+    return typeof element.computedStyleMap === 'function'
+        ? element.computedStyleMap().get('height')?.toString()
+        : element.style.height;
+}
+
+function isPercentage(height: string) {
+    return height.trim().endsWith('%');
+}
+
+// A chain of percentages resolves when it ends at an ancestor with a fixed height, or at the root, which takes its height from the viewport.
+function percentageHeightResolves(element: HTMLElement) {
+    for (let ancestor = element.parentElement; ancestor; ancestor = ancestor.parentElement) {
+        if (ancestor === document.documentElement) return true;
+
+        const height = getSpecifiedHeight(ancestor);
+        if (!height || height === 'auto') return false;
+        if (!isPercentage(height)) return true;
+    }
+
+    return true;
 }
 
 /**
