@@ -17,6 +17,7 @@ namespace MudBlazor
     public partial class MudListItem<T> : MudComponentBase, IDisposable
     {
         private bool _selected;
+        private bool _ownsNestedList;
         private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
         private ElementReference _elementReference = new();
         private string? _subscribedElementId;
@@ -308,6 +309,19 @@ namespace MudBlazor
             if (MudList is not null)
             {
                 await MudList.RegisterAsync(this);
+            }
+        }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            // A NestedList can appear or go away after registration, for example when children load later.
+            var ownsNestedList = NestedList is not null;
+            if (ownsNestedList != _ownsNestedList)
+            {
+                _ownsNestedList = ownsNestedList;
+                MudList?.SetOwnsNestedList(this, ownsNestedList);
             }
         }
 

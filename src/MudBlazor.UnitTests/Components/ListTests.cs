@@ -791,6 +791,35 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Setting or clearing NestedList on an item that already rendered switches the list between tree and listbox roles.
+        /// </summary>
+        [Test]
+        public async Task Interactive_NestedListParameterChanged_UpdatesRoles()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .Add(x => x.ChildContent, MailboxItems(withInbox: true, inboxNested: false)));
+            var inbox = comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Inbox").Instance;
+            comp.Find("div.mud-list").GetAttribute("role").Should().Be("listbox");
+            ItemRow(comp, "Inbox").GetAttribute("role").Should().Be("option");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ChildContent, MailboxItems(withInbox: true, inboxNested: true)));
+
+            comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Inbox").Instance.Should().BeSameAs(inbox);
+            comp.Find("div.mud-list:not(.mud-nested-list)").GetAttribute("role").Should().Be("tree");
+            ItemRow(comp, "Sent").GetAttribute("role").Should().Be("treeitem");
+            ItemRow(comp, "Inbox").GetAttribute("role").Should().Be("treeitem");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ChildContent, MailboxItems(withInbox: true, inboxNested: false)));
+
+            comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Inbox").Instance.Should().BeSameAs(inbox);
+            comp.Find("div.mud-list").GetAttribute("role").Should().Be("listbox");
+            ItemRow(comp, "Sent").GetAttribute("role").Should().Be("option");
+            ItemRow(comp, "Inbox").GetAttribute("role").Should().Be("option");
+        }
+
+        /// <summary>
         /// Renders a list with a leaf item, followed by an expanded item that owns a nested list unless <paramref name="withInbox"/> is <c>false</c>.
         /// </summary>
         private IRenderedComponent<MudList<string>> RenderMailboxList(SelectionMode selectionMode, bool withInbox = true)
@@ -801,9 +830,12 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Builds the mailbox items with fixed sequence numbers, so the Sent item keeps its instance when Inbox is left out.
+        /// Builds the mailbox items with fixed sequence numbers, so items keep their instances when Inbox or its nested list is left out.
         /// </summary>
-        private static RenderFragment MailboxItems(bool withInbox) => builder =>
+        /// <remarks>
+        /// NestedList is always passed, as <c>null</c> when <paramref name="inboxNested"/> is <c>false</c>, because an omitted parameter keeps its previous value.
+        /// </remarks>
+        private static RenderFragment MailboxItems(bool withInbox, bool inboxNested = true) => builder =>
         {
             builder.OpenComponent<MudListItem<string>>(0);
             builder.AddAttribute(1, nameof(MudListItem<string>.Text), "Sent");
@@ -811,15 +843,19 @@ namespace MudBlazor.UnitTests.Components
 
             if (withInbox)
             {
+                RenderFragment? nestedList = inboxNested
+                    ? nested =>
+                    {
+                        nested.OpenComponent<MudListItem<string>>(0);
+                        nested.AddAttribute(1, nameof(MudListItem<string>.Text), "Starred");
+                        nested.CloseComponent();
+                    }
+                : null;
+
                 builder.OpenComponent<MudListItem<string>>(2);
                 builder.AddAttribute(3, nameof(MudListItem<string>.Text), "Inbox");
                 builder.AddAttribute(4, nameof(MudListItem<string>.Expanded), true);
-                builder.AddAttribute(5, nameof(MudListItem<string>.NestedList), (RenderFragment)(nested =>
-                {
-                    nested.OpenComponent<MudListItem<string>>(0);
-                    nested.AddAttribute(1, nameof(MudListItem<string>.Text), "Starred");
-                    nested.CloseComponent();
-                }));
+                builder.AddAttribute(5, nameof(MudListItem<string>.NestedList), nestedList);
                 builder.CloseComponent();
             }
         };

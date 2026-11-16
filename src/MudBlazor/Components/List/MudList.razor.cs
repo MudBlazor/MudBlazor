@@ -338,16 +338,6 @@ namespace MudBlazor
         {
             // Items register once, from OnInitializedAsync, so checking for a duplicate would only make mounting n items cost n².
             _items.Add(item);
-            if (item.NestedList is not null && TopLevelList == this)
-            {
-                _parentItems ??= [];
-                if (_parentItems.Add(item) && _parentItems.Count == 1)
-                {
-                    // The container and any items that already rendered still carry listbox roles.
-                    Update();
-                }
-            }
-
             if (HasSingleSelection && _selectedValueState.Value is not null && Equals(item.GetValue(), _selectedValueState.Value))
             {
                 item.SetSelected(true);
@@ -369,16 +359,43 @@ namespace MudBlazor
                 return;
             }
 
-            if (_parentItems?.Remove(item) == true && _parentItems.Count == 0 && !_disposed)
-            {
-                // The remaining items still carry tree roles.
-                Update();
-            }
+            SetOwnsNestedList(item, false);
 
             if (ReferenceEquals(_activeItem, item))
             {
                 _activeItem = null;
                 EnsureActiveItem();
+            }
+        }
+
+        /// <summary>
+        /// Records whether a top-level item owns a nested list, which decides <see cref="IsTree"/>.
+        /// </summary>
+        /// <remarks>
+        /// Items report this from <c>OnParametersSet</c>, so a <see cref="MudListItem{T}.NestedList"/> that appears or goes away later is tracked too.
+        /// </remarks>
+        internal void SetOwnsNestedList(MudListItem<T> item, bool ownsNestedList)
+        {
+            if (TopLevelList != this)
+            {
+                return;
+            }
+
+            var wasTree = IsTree;
+            if (ownsNestedList)
+            {
+                _parentItems ??= [];
+                _parentItems.Add(item);
+            }
+            else
+            {
+                _parentItems?.Remove(item);
+            }
+
+            if (wasTree != IsTree && !_disposed)
+            {
+                // The container and any items that already rendered still carry the old roles.
+                Update();
             }
         }
 
