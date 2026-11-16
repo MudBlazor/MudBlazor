@@ -40,7 +40,6 @@ jobs:
         uses: danielchalmers/AutoTriage@v5
         with:
           # The first pass sets the labels, title and first request, so it gets the stronger model.
-          # Comments stay on Haiku.
           model: ${{ github.event_name != 'issue_comment' && 'claude-sonnet-5-5' || 'claude-haiku-5-5' }}
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
