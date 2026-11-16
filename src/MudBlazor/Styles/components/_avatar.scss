@@ -55,6 +55,17 @@
   height: 75%;
 }
 
+.mud-avatar-text {
+  color: var(--mud-palette-text-primary);
+  background-color: transparent;
+
+  @each $color in $mud-palette-colors {
+    &.mud-avatar-text-#{$color} {
+      color: var(--mud-palette-#{$color});
+    }
+  }
+}
+
 .mud-avatar-outlined {
   color: var(--mud-palette-text-primary);
   background-color: unset;

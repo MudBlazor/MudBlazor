@@ -41,12 +41,12 @@ public sealed class ChartSeries<T> : IChartSeries, IEquatable<ChartSeries<T>> wh
     public bool Visible { get; set; } = true;
 
     /// <summary>
-    /// Tooltip title format for the data set. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
+    /// Tooltip title format for the data set. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}, and axis charts also accept {{Y_AXIS_VALUE}}.
     /// </summary>
     public string? TooltipTitleFormat { get; set; }
 
     /// <summary>
-    /// Tooltip subtitle format for the data set. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}.
+    /// Tooltip subtitle format for the data set. Supported tags are {{SERIES_NAME}}, {{X_VALUE}} and {{Y_VALUE}}, and axis charts also accept {{Y_AXIS_VALUE}}.
     /// </summary>
     public string? TooltipSubtitleFormat { get; set; }
 

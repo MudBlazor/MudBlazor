@@ -1,0 +1,49 @@
+<MudLayout>
+    @if (_drawerVisible)
+    {
+        <MudDrawer Variant="@Variant"
+                   @bind-Open="@_open"
+                   OnBreakpointChanged="@BreakpointChangedCallback" />
+    }
+</MudLayout>
+
+@code {
+    private bool _open = false;
+    private bool _drawerVisible = true;
+
+    [Parameter]
+    public DrawerVariant Variant { get; set; } = DrawerVariant.Persistent;
+
+    [Parameter]
+    public bool ObserveBreakpoint { get; set; } = true;
+
+    [Parameter]
+    public Breakpoint? CloseOnBreakpoint { get; set; }
+
+    [Parameter]
+    public bool RemoveDrawerOnBreakpoint { get; set; }
+
+    public Breakpoint LastBreakpoint { get; private set; }
+
+    public int BreakpointNotifications { get; private set; }
+
+    private EventCallback<Breakpoint> BreakpointChangedCallback =>
+        ObserveBreakpoint ? EventCallback.Factory.Create<Breakpoint>(this, HandleBreakpointChanged) : default;
+
+    private async Task HandleBreakpointChanged(Breakpoint breakpoint)
+    {
+        LastBreakpoint = breakpoint;
+        BreakpointNotifications++;
+        if (breakpoint == CloseOnBreakpoint)
+        {
+            _open = false;
+        }
+        if (RemoveDrawerOnBreakpoint)
+        {
+            _drawerVisible = false;
+
+            // Yielding lets the parent re-render remove the drawer while its viewport subscription is still pending.
+            await Task.Yield();
+        }
+    }
+}

@@ -1,0 +1,39 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudTable T="Element" Items="@_elements" Hover="true" Breakpoint="Breakpoint.Sm"
+          RowHref="@(element => $"https://en.wikipedia.org/wiki/{element.Name}")" RowTarget="_blank">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Sign</MudTh>
+        <MudTh>Molar mass</MudTh>
+        <MudTh>Bookmark</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Sign">@context.Sign</MudTd>
+        <MudTd DataLabel="Molar mass">@context.Molar</MudTd>
+        <MudTd DataLabel="Bookmark">
+            <MudToggleIconButton @bind-Toggled="context.Bookmarked" Size="Size.Small"
+                                 Icon="@Icons.Material.Outlined.BookmarkBorder" ToggledIcon="@Icons.Material.Filled.Bookmark"
+                                 aria-label="@($"Bookmark {context.Name}")" />
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private class Element(string name, string sign, double molar)
+    {
+        public string Name { get; } = name;
+        public string Sign { get; } = sign;
+        public double Molar { get; } = molar;
+        public bool Bookmarked { get; set; }
+    }
+
+    private readonly Element[] _elements =
+    [
+        new("Hydrogen", "H", 1.00794),
+        new("Helium", "He", 4.002602),
+        new("Lithium", "Li", 6.941),
+        new("Beryllium", "Be", 9.012182),
+    ];
+}

@@ -82,10 +82,10 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new TimeSeriesChartOptions() { TimeLabelSpacing = TimeSpan.FromHours(1) }));
 
             // check the line path
-            comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"15\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 38 320 L 248.6667 320 L 459.3333 320 L 670 320\"></path>");
+            comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"1\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 38 320 L 248.6667 320 L 459.3333 320 L 670 320\"></path>");
 
             // check the axis
-            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 38 320 L 670 320\"></path></g></g>");
+            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path d=\"M 38 320 L 670 320\"></path></g></g>");
             comp.Markup.Should().ContainEquivalentOf("<text x='28' y='325' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>");
             comp.Markup.Should().ContainEquivalentOf("<text x='38' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 38 342.5)'>23:00</text><text x='248.6667' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 248.6667 342.5)'>00:00</text><text x='459.3333' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 459.3333 342.5)'>01:00</text><text x='670' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 670 342.5)'>02:00</text></g>");
         }
@@ -110,10 +110,10 @@ namespace MudBlazor.UnitTests.Charts
                 .Add(p => p.ChartOptions, new TimeSeriesChartOptions() { TimeLabelSpacing = TimeSpan.FromHours(1) }));
 
             // check the line path
-            comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"15\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 38 320 L 248.6667 320 L 459.3333 320 L 670 320\"></path>");
+            comp.Markup.Should().ContainEquivalentOf("<path class=\"mud-chart-serie mud-chart-line\" blazor:onclick=\"1\" fill=\"none\" stroke=\"#2979FF\" stroke-opacity=\"1\" stroke-width=\"3\" d=\"M 38 320 L 248.6667 320 L 459.3333 320 L 670 320\"></path>");
 
             // check the axis
-            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path stroke=\"#e0e0e0\" stroke-width=\"0.3\" d=\"M 38 320 L 670 320\"></path></g></g>");
+            comp.Markup.Should().ContainEquivalentOf("<g class=\"mud-charts-gridlines-yaxis\"><path d=\"M 38 320 L 670 320\"></path></g></g>");
             comp.Markup.Should().ContainEquivalentOf("<text x='28' y='325' font-size='12px' text-anchor='end' dominant-baseline='auto'>1000</text></g>");
             comp.Markup.Should().ContainEquivalentOf("<text x='38' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 38 342.5)'>23:00</text><text x='248.6667' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 248.6667 342.5)'>00:00</text><text x='459.3333' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 459.3333 342.5)'>01:00</text><text x='670' y='342.5' font-size='12px' text-anchor='middle' dominant-baseline='middle' transform='rotate(0 670 342.5)'>02:00</text></g>");
         }
@@ -327,15 +327,49 @@ namespace MudBlazor.UnitTests.Charts
             comp.FindComponents<ChartTooltip>().Count.Should().Be(0);
         }
 
+        /// <summary>
+        /// Verifies that the tooltip of a hovered data point is only shown once its text has been measured, on every hover (#13422).
+        /// </summary>
         [Test]
-        public void TimeSeriesChart_CreateInterpolator_Throws()
+        public async Task TimeSeriesChart_HoverDataPoint_ShowsTooltipOnceMeasured()
         {
-            var comp = Context.Render<TimeSeries<double>>();
-            var instance = comp.Instance;
+            SetupBBoxInterop();
+            var tooltipMeasurement = Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true);
+            var time = new DateTime(2000, 1, 1);
 
-            Action act = () => instance.CreateInterpolator(0, 0, 20d, 1d, 1d);
-            act.Should().Throw<NotImplementedException>()
-                .WithMessage("*not implemented*");
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(time, count: 4))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions
+                {
+                    TimeLabelSpacing = TimeSpan.FromHours(1),
+                    ShowToolTips = true,
+                }));
+
+            var point = comp.FindAll("circle.mud-chart-point").First();
+            await point.MouseOverAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            // until the text is measured the tooltip has no background and would sit at the origin
+            comp.Find("g.svg-tooltip").GetAttribute("visibility").Should().Be("hidden");
+
+            tooltipMeasurement.SetResult(new ChartTooltip.BBox(Width: 120, Height: 28));
+
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+            comp.Find("g.svg-tooltip rect").GetAttribute("width").Should().Be("130");
+
+            // leaving the point removes the tooltip, so hovering the next one renders a new tooltip that has to be measured again
+            await comp.FindAll("circle.mud-chart-point").First().MouseOutAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+            comp.FindComponents<ChartTooltip>().Should().BeEmpty();
+
+            var nextTooltipMeasurement = Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true);
+            await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            comp.Find("g.svg-tooltip").GetAttribute("visibility").Should().Be("hidden");
+
+            nextTooltipMeasurement.SetResult(new ChartTooltip.BBox(Width: 80, Height: 28));
+
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+            comp.Find("g.svg-tooltip rect").GetAttribute("width").Should().Be("90");
         }
 
         [Test]
@@ -444,6 +478,129 @@ namespace MudBlazor.UnitTests.Charts
             seriesCheckboxes[2].IsChecked().Should().BeTrue("Pressure checkbox should be checked after showing");
             chartSeries[2].Visible.Should().BeTrue("Pressure Visible property should be true after showing");
             comp.FindAll($"path.mud-chart-line{series3}").Count.Should().Be(1, "Pressure series path should be visible");
+        }
+
+        /// <summary>
+        /// A time series holding a single reading draws that reading as a dot.
+        /// </summary>
+        [Test]
+        public void TimeSeriesChartLonePointRendersAsDot()
+        {
+            SetupBBoxInterop();
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(new DateTime(2000, 1, 1), count: 1))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions { TimeLabelSpacing = TimeSpan.FromHours(1) }));
+
+            // One reading leaves the series line as a bare move, which paints nothing.
+            comp.Find("path.mud-chart-line:not(.mud-chart-dots)").GetAttribute("d").Should().NotContain("L");
+
+            var dots = comp.Find("path.mud-chart-dots");
+            (dots.GetAttribute("d")!.Split('L').Length - 1).Should().Be(1, because: "the lone reading gets drawn");
+            dots.GetAttribute("stroke-linecap").Should().Be("round", because: "a zero-length segment only paints under a round cap");
+        }
+
+        /// <summary>
+        /// Data markers are drawn as rings, and when tooltips are turned off.
+        /// </summary>
+        [Test]
+        public void TimeSeriesChartDataMarkersAreRingsAndRenderWithoutTooltips()
+        {
+            SetupBBoxInterop();
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(new DateTime(2000, 1, 1)))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions
+                {
+                    TimeLabelSpacing = TimeSpan.FromHours(1),
+                    ShowDataMarkers = true,
+                    ShowToolTips = false
+                }));
+
+            // With tooltips off the hover targets are left out, so each point is drawn exactly once.
+            var markers = comp.FindAll("circle.mud-chart-point");
+
+            markers.Should().HaveCount(4);
+            markers.Should().OnlyContain(x => x.GetAttribute("fill") == "none");
+        }
+
+        /// <summary>
+        /// Hovering a point keeps its marker under the hover circle instead of taking it out of the chart.
+        /// </summary>
+        [Test]
+        public async Task TimeSeriesChartHoverKeepsEveryMarker()
+        {
+            SetupBBoxInterop();
+            var time = new DateTime(2000, 1, 1);
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(time, count: 4))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions
+                {
+                    TimeLabelSpacing = TimeSpan.FromHours(1),
+                    ShowDataMarkers = true,
+                    ShowToolTips = true,
+                }));
+
+            int MarkerCount() => comp.FindAll("circle.mud-chart-point").Count(x => !x.HasAttribute("opacity"));
+            MarkerCount().Should().Be(4);
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            // Leaving the hovered marker out shifted the sequence numbers of every point drawn after it, so each hover rebuilt all of them.
+            MarkerCount().Should().Be(4);
+        }
+
+        /// <summary>
+        /// YAxisTicks = 0 picks a round step that fits the values.
+        /// </summary>
+        [Test]
+        public void TimeSeriesChartAutomaticYAxisStepIsRound()
+        {
+            SetupBBoxInterop();
+
+            var time = new DateTime(2000, 1, 1);
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, [
+                    new()
+                    {
+                        Name = "Series 1",
+                        Data = new double[] { 3, 7, 5, 2, 6 }.Select((y, i) => new TimeValue<double>(time.AddHours(i), y)).ToList(),
+                    }
+                ])
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions { TimeLabelSpacing = TimeSpan.FromHours(1), YAxisTicks = 0 }));
+
+            comp.FindAll("g.mud-charts-yaxis text").Select(x => x.TextContent).Should().Equal("2", "3", "4", "5", "6", "7");
+        }
+
+        /// <summary>
+        /// {{Y_AXIS_VALUE}} writes the hovered value with YAxisToStringFunc, while {{Y_VALUE}} stays as it was.
+        /// </summary>
+        [Test]
+        public async Task TimeSeriesChartTooltipYAxisValueUsesTheAxisFormatter()
+        {
+            SetupBBoxInterop();
+            var time = new DateTime(2000, 1, 1);
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(time, count: 4))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions
+                {
+                    TimeLabelSpacing = TimeSpan.FromHours(1),
+                    ShowToolTips = true,
+                    YAxisToStringFunc = value => $"{value / 1000}k",
+                    TooltipTitleFormat = "{{Y_AXIS_VALUE}} ({{Y_VALUE}})",
+                }));
+
+            await comp.FindAll("circle.mud-chart-point[opacity]")[1].MouseOverAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            comp.Find("g.svg-tooltip").TextContent.Should().Contain("1k (1000)");
         }
     }
 }

@@ -130,8 +130,11 @@ namespace MudBlazor.Charts
 
             if (firstRender)
             {
-                var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, _elementReference);
-                OnElementSizeChanged(elementSize);
+                var (success, elementSize) = await JsRuntime.InvokeAsyncWithErrorHandling<ElementSize>("mudObserveElementSize", _dotNetObjectReference, _elementReference);
+                if (success && elementSize is not null)
+                {
+                    OnElementSizeChanged(elementSize);
+                }
             }
         }
 
@@ -202,10 +205,8 @@ namespace MudBlazor.Charts
                     _boundWidth = _elementSize.Width;
                     _boundHeight = _elementSize.Height;
                 }
-                else if (Width.EndsWith("px")
-                    && Height.EndsWith("px")
-                    && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
-                    && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
+                else if (StringHelpers.TryParsePixels(Width, out var width)
+                    && StringHelpers.TryParsePixels(Height, out var height))
                 {
                     _boundWidth = width;
                     _boundHeight = height;

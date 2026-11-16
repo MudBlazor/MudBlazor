@@ -23,10 +23,12 @@
                 <MudSelectItem Value="@DrawerClipMode.Always">Always (DrawerClipMode.Always)</MudSelectItem>
             </MudSelect>
             <MudSelect Label="Select breakpoint" @bind-Value="_breakpoint">
+                <MudSelectItem Value="@Breakpoint.None">Breakpoint.None</MudSelectItem>
                 <MudSelectItem Value="@Breakpoint.Sm">Breakpoint.Sm</MudSelectItem>
                 <MudSelectItem Value="@Breakpoint.Md">Breakpoint.Md</MudSelectItem>
                 <MudSelectItem Value="@Breakpoint.Lg">Breakpoint.Lg</MudSelectItem>
                 <MudSelectItem Value="@Breakpoint.Xl">Breakpoint.Xl</MudSelectItem>
+                <MudSelectItem Value="@Breakpoint.Always">Breakpoint.Always</MudSelectItem>
             </MudSelect>
             <MudSwitch @bind-Value="_dense" Label="Dense appbar" Color="Color.Primary" Style="width:100%;" />
         </MudContainer>

@@ -198,7 +198,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
         if (firstRender)
         {
             _builtContainerId = GetEffectiveElementId(_containerId);
-            await JsRuntime.InvokeVoidAsync("mudSplitPanel.build", _builtContainerId, Horizontal, ResetOnDoubleClick, MinPanelSize, FirstPanelInitialSize, PanelGap);
+            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudSplitPanel.build", _builtContainerId, Horizontal, ResetOnDoubleClick, MinPanelSize, FirstPanelInitialSize, PanelGap);
             _isBuilt = true;
 
             if (_hasPendingDividerRequest)
@@ -224,7 +224,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
 
         if (IsJSRuntimeAvailable)
         {
-            await JsRuntime.InvokeVoidAsync("mudSplitPanel_update", ResolvedContainerId, Horizontal, ResetOnDoubleClick, MinPanelSize, PanelGap);
+            await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudSplitPanel_update", ResolvedContainerId, Horizontal, ResetOnDoubleClick, MinPanelSize, PanelGap);
         }
     }
 
@@ -243,7 +243,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
             return;
         }
 
-        await JsRuntime.InvokeVoidAsync("mudSplitPanel_resetDividerPosition", ResolvedContainerId);
+        await JsRuntime.InvokeVoidAsyncIgnoreDisconnected("mudSplitPanel_resetDividerPosition", ResolvedContainerId);
     }
 
     /// <summary>
@@ -263,7 +263,7 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
             return;
         }
 
-        await JsRuntime.InvokeVoidAsync("mudSplitPanel_setDividerPosition", ResolvedContainerId, offset);
+        await JsRuntime.InvokeVoidAsyncIgnoreDisconnected("mudSplitPanel_setDividerPosition", ResolvedContainerId, offset);
     }
 
     /// <summary>
@@ -277,7 +277,9 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
             throw new InvalidOperationException("The split panel has not been initialized yet.");
         }
 
+#pragma warning disable BL0016 // The caller needs the real value or the error, and there is no honest fallback to return.
         return await JsRuntime.InvokeAsync<int>("mudSplitPanel_getDividerPosition", ResolvedContainerId);
+#pragma warning restore BL0016
     }
 
     /// <inheritdoc/>

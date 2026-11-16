@@ -6,8 +6,7 @@
 
 @code {
     protected override RenderFragment PickerContent => 
-    @<CascadingValue Value="@this" IsFixed="true">
-        <MudPickerToolbar Class="@ToolbarClassname" Style="@Style" ShowToolbar="@ShowToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
+    @<text><MudPickerToolbar Class="@ToolbarClassname" Style="@Style" ShowToolbar="@ShowToolbar" Orientation="@Orientation" PickerVariant="@PickerVariant" Color="@Color">
             <div class="mud-timepicker-hourminute mud-ltr">
                 @if (TimeEditMode == TimeEditMode.Normal)
                 {
@@ -95,6 +94,5 @@
                     </div>
                 </div>
             </div>
-        </MudPickerContent>
-    </CascadingValue>;
+        </MudPickerContent></text>;
 }

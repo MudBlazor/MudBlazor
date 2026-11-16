@@ -52,7 +52,9 @@
 
     private async Task<GridData<Model>> ServerReload(GridState<Model> state, CancellationToken token)
     {
-        await Task.Delay(200, token);
+        // Complete asynchronously like a server call, without wall-clock latency that can outlast the test's render waits under load.
+        await Task.Yield();
+        token.ThrowIfCancellationRequested();
 
         IEnumerable<Model> data = _itemList;
 

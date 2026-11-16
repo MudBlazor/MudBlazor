@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using MudBlazor.Extensions;
 using MudBlazor.Interop;
+using MudBlazor.Utilities;
 using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor.Charts;
@@ -117,9 +118,11 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     /// <returns>A task representing the asynchronous operation.</returns>
     protected async Task SetElementReference(ElementReference elementRef)
     {
-        var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, elementRef);
-
-        OnElementSizeChanged(elementSize);
+        var (success, elementSize) = await JsRuntime.InvokeAsyncWithErrorHandling<ElementSize>("mudObserveElementSize", _dotNetObjectReference, elementRef);
+        if (success && elementSize is not null)
+        {
+            OnElementSizeChanged(elementSize);
+        }
     }
 
     /// <summary>
@@ -261,10 +264,8 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
                 _boundWidth = _elementSize.Width;
                 _boundHeight = _elementSize.Height;
             }
-            else if (Width.EndsWith("px")
-                && Height.EndsWith("px")
-                && double.TryParse(Width.AsSpan(0, Width.Length - 2), out var width)
-                && double.TryParse(Height.AsSpan(0, Height.Length - 2), out var height))
+            else if (StringHelpers.TryParsePixels(Width, out var width)
+                && StringHelpers.TryParsePixels(Height, out var height))
             {
                 _boundWidth = width;
                 _boundHeight = height;

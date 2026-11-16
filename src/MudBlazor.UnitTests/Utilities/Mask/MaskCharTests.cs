@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Text.RegularExpressions;
 using AwesomeAssertions;
 using NUnit.Framework;
 
@@ -96,5 +97,51 @@ public class MaskCharTests
         // Act & Assert
         (maskChar1 == maskChar2).Should().BeTrue();
         (maskChar1 != maskChar2).Should().BeFalse();
+    }
+
+    /// <summary>
+    /// Built-in mask characters accept exactly the characters their regular expression accepts, without using the regex engine.
+    /// </summary>
+    [Test]
+    public void BuiltInMaskChars_MatchExactlyWhatTheirExpressionMatches()
+    {
+        foreach (var maskChar in new[] { MaskChar.Letter('a'), MaskChar.Digit('0'), MaskChar.LetterOrDigit('*') })
+        {
+            for (var c = char.MinValue; ; c++)
+            {
+                maskChar.IsMatch(c).Should().Be(Regex.IsMatch(c.ToString(), maskChar.Regex), $"'{maskChar.Regex}' on U+{(int)c:X4}");
+                if (c == char.MaxValue)
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// A mask character created with a custom expression still matches through that expression.
+    /// </summary>
+    [Test]
+    public void CustomMaskChar_MatchesThroughItsExpression()
+    {
+        var maskChar = new MaskChar('x', "[a-c]");
+
+        maskChar.IsMatch('b').Should().BeTrue();
+        maskChar.IsMatch('d').Should().BeFalse();
+    }
+
+    /// <summary>
+    /// A mask character without an expression throws what the regex engine threw for it, parameter name included.
+    /// </summary>
+    [Test]
+    public void MaskCharWithoutExpression_IsMatch_ThrowsLikeRegexEngine()
+    {
+        var engineParamName = FluentActions.Invoking(() => Regex.IsMatch("a", null!))
+            .Should().Throw<ArgumentNullException>().Which.ParamName;
+
+        default(MaskChar).Invoking(x => x.IsMatch('a'))
+            .Should().Throw<ArgumentNullException>().WithParameterName(engineParamName);
+        new MaskChar('n', null!).Invoking(x => x.IsMatch('a'))
+            .Should().Throw<ArgumentNullException>().WithParameterName(engineParamName);
     }
 }

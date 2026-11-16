@@ -12,6 +12,8 @@
     private IEnumerable<int> _pagedData = [];
     private int _totalItems;
 
+    public bool LoadCancelled { get; private set; }
+
     private async Task<TableData<int>> ServerReload(TableState state, CancellationToken token)
     {
         List<int> data = [];
@@ -22,7 +24,7 @@
         }
         catch (TaskCanceledException)
         {
-            // ignored
+            LoadCancelled = true;
         }
         _totalItems = data.Count;
         _pagedData = data.ToArray();

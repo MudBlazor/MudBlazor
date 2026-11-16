@@ -1,6 +1,10 @@
 ﻿using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
+using Moq;
+using MudBlazor.Resources;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components
@@ -54,6 +58,83 @@ namespace MudBlazor.UnitTests.Components
             }));
 
             comp.Find("nav").GetAttribute("aria-label").Should().Be("Breadcrumb");
+        }
+
+        /// <summary>
+        /// Issue #13974: separate trails can have distinct navigation landmark names.
+        /// </summary>
+        [Test]
+        public void MudBreadcrumbs_AriaLabel_ShouldNameEachNavigationLandmark()
+        {
+            var items = new List<BreadcrumbItem> { new("Home", "/"), new("Books", "/books") };
+            var catalog = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.AriaLabel, "Catalog breadcrumb"));
+            var account = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, items)
+                .Add(x => x.AriaLabel, "Account breadcrumb"));
+
+            catalog.Find("nav").GetAttribute("aria-label").Should().Be("Catalog breadcrumb");
+            account.Find("nav").GetAttribute("aria-label").Should().Be("Account breadcrumb");
+            catalog.Find("ol").HasAttribute("aria-label").Should().BeFalse();
+            account.Find("ol").HasAttribute("aria-label").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Issue #13974: changing a label updates the landmark and null restores the localized default.
+        /// </summary>
+        [Test]
+        public async Task MudBreadcrumbs_AriaLabel_ShouldUpdateAndRestoreLocalizedDefault()
+        {
+            var interceptor = new Mock<ILocalizationInterceptor>();
+            interceptor.Setup(x => x.Handle(LanguageResource.MudBreadcrumbs_Label))
+                .Returns(new LocalizedString(LanguageResource.MudBreadcrumbs_Label, "Fil d’Ariane"));
+            Context.Services.AddSingleton(new InternalMudLocalizer(interceptor.Object));
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, new List<BreadcrumbItem> { new("Home", "/"), new("Books", "/books") }));
+
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Fil d’Ariane");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.AriaLabel, "Catalog breadcrumb"));
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Catalog breadcrumb");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.AriaLabel, "Book navigation"));
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Book navigation");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.AriaLabel, null));
+            comp.Find("nav").GetAttribute("aria-label").Should().Be("Fil d’Ariane");
+        }
+
+        /// <summary>
+        /// Issue #13974: naming the navigation preserves caller attributes and styling on the ordered list.
+        /// </summary>
+        [Test]
+        public void MudBreadcrumbs_AriaLabel_ShouldPreserveOrderedListAttributes()
+        {
+            var comp = Context.Render<MudBreadcrumbs>(parameters => parameters
+                .Add(x => x.Items, new List<BreadcrumbItem> { new("Home", "/"), new("Books", "/books") })
+                .Add(x => x.AriaLabel, "Catalog breadcrumb")
+                .Add(x => x.Class, "catalog-trail")
+                .Add(x => x.Style, "margin-top: 8px;")
+                .Add(x => x.UserAttributes, new Dictionary<string, object>
+                {
+                    ["data-trail"] = "catalog",
+                    ["aria-label"] = "Catalog list",
+                    ["title"] = "Book hierarchy"
+                }));
+
+            var nav = comp.Find("nav");
+            nav.GetAttribute("aria-label").Should().Be("Catalog breadcrumb");
+            nav.HasAttribute("data-trail").Should().BeFalse();
+            nav.HasAttribute("title").Should().BeFalse();
+            nav.HasAttribute("class").Should().BeFalse();
+            nav.HasAttribute("style").Should().BeFalse();
+            var list = comp.Find("ol");
+            list.GetAttribute("data-trail").Should().Be("catalog");
+            list.GetAttribute("aria-label").Should().Be("Catalog list");
+            list.GetAttribute("title").Should().Be("Book hierarchy");
+            list.ClassList.Should().Contain("catalog-trail");
+            list.GetAttribute("style").Should().Be("margin-top: 8px;");
         }
 
         [Test]

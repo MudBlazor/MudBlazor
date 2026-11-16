@@ -11,7 +11,7 @@
              AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
              For="@(() => choice1.State)"/>
             <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" 
-             Class="ml-auto mt-3 mb-3" OnClick="@(()=>success1=editContext1.Validate())">Validate</MudButton>
+             Class="ml-auto mt-3 mb-3" OnClick="@(async () => success1 = await editContext1.ValidateAsync())">Validate</MudButton>
                    @if (success1)
                    {
                        <MudText Color="Color.Success">Success</MudText>
@@ -26,7 +26,7 @@
              OpenIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Secondary"
              Validation="@(new Func<string, IEnumerable<string>>(Validate))" />
             <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" 
-                       Class="ml-auto mt-3 mb-3" OnClick="@(()=>success2=editContext2.Validate())">Validate</MudButton>
+                       Class="ml-auto mt-3 mb-3" OnClick="@(async () => success2 = await editContext2.ValidateAsync())">Validate</MudButton>
                    @if (success2)
                    {
                        <MudText Color="Color.Success">Success</MudText>

@@ -127,6 +127,24 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A TimeOnly field without a Format accepts a typed time instead of showing a conversion error.
+        /// </summary>
+        [Test]
+        public async Task TextField_TimeOnly_WithoutFormat_AcceptsTypedTime()
+        {
+            var bound = default(TimeOnly);
+            var comp = Context.Render<MudTextField<TimeOnly>>(parameters => parameters
+                .Add(x => x.Culture, CultureInfo.GetCultureInfo("en-US"))
+                .Bind(x => x.Value, bound, v => bound = v));
+
+            await comp.Find("input").ChangeAsync("14:05");
+            await comp.Find("input").BlurAsync();
+
+            comp.Instance.ConversionError.Should().BeFalse();
+            bound.Should().Be(new TimeOnly(14, 5));
+        }
+
+        /// <summary>
         /// After ResetValidationAsync, blurring an empty required field must re-run validation and show the required error again (#11503).
         /// </summary>
         [Test]
@@ -394,6 +412,45 @@ namespace MudBlazor.UnitTests.Components
 
             noMask.Markup.Should().Contain("mud-shrink");
             masked.Markup.Should().Contain("mud-shrink");
+        }
+
+        /// <summary>
+        /// A telephone field puts mud-ltr on the input slot, not the outer container, so the label still follows RTL (issue #12126).
+        /// </summary>
+        [Test]
+        public void TelephoneInput_Should_ApplyLtrClassToInputSlot()
+        {
+            var comp = Context.Render<TextFieldShrinkLabelTest>();
+            var noMask = comp.FindComponents<MudTextField<string>>()[0];
+
+            noMask.Find(".mud-input").ClassList.Should().NotContain("mud-ltr");
+            noMask.Find("input").ClassList.Should().Contain("mud-ltr");
+        }
+
+        /// <summary>
+        /// An email field puts mud-ltr on the input slot, not the outer container, so the label still follows RTL (issue #12126).
+        /// </summary>
+        [Test]
+        public void EmailInput_Should_ApplyLtrClassToInputSlot()
+        {
+            var comp = Context.Render<MudTextField<string>>(parameters => parameters
+                .Add(p => p.InputType, InputType.Email));
+
+            comp.Find(".mud-input").ClassList.Should().NotContain("mud-ltr");
+            comp.Find("input").ClassList.Should().Contain("mud-ltr");
+        }
+
+        /// <summary>
+        /// A masked telephone field puts mud-ltr on the input slot, not the outer container, so the label still follows RTL (issue #12126).
+        /// </summary>
+        [Test]
+        public void TelephoneInputWithMask_Should_ApplyLtrClassToInputSlot()
+        {
+            var comp = Context.Render<TextFieldShrinkLabelTest>();
+            var masked = comp.FindComponents<MudTextField<string>>()[1];
+
+            masked.Find(".mud-input").ClassList.Should().NotContain("mud-ltr");
+            masked.Find("input").ClassList.Should().Contain("mud-ltr");
         }
 
         /// <summary>
@@ -1548,9 +1605,12 @@ namespace MudBlazor.UnitTests.Components
 
             var comp = Context.Render<DebouncedTextFieldRerenderTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
+            // The debounce commit re-renders off the test thread after the clock advances, which can replace the input's event handler between a Find and the event dispatch.
+            // Looking up the input and dispatching on the renderer makes the two atomic.
+            Task InputAsync(string text) => comp.InvokeAsync(() => comp.Find("input").InputAsync(text));
             // The debounce timer is created after the input event returns, so wait for it before advancing the fake clock.
             var timers = timeProvider.TimersCreated;
-            await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "test" });
+            await InputAsync("test");
             await timeProvider.WaitForTimerAsync(timers);
 
             // trigger first value change
@@ -1563,7 +1623,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 currentText += "a";
                 timers = timeProvider.TimersCreated;
-                await comp.Find("input").InputAsync(new ChangeEventArgs { Value = currentText });
+                await InputAsync(currentText);
                 // Validation of the previous commit can commit this text right away instead of starting a timer.
                 var typedText = currentText;
                 await timeProvider.WaitForTimerAsync(timers, () => textField.ReadValue == typedText);

@@ -40,6 +40,9 @@ namespace MudBlazor
         private Color IconColor => Snackbar?.State.Options.IconColor ?? Color.Inherit;
         private Size IconSize => Snackbar?.State.Options.IconSize ?? Size.Medium;
 
+        // Only warnings and errors interrupt; the provider's status region announces the rest politely.
+        private string? Role => Snackbar?.Severity is Severity.Warning or Severity.Error ? "alert" : null;
+
         // behavior
         private void ActionClicked() => Snackbar?.Clicked(false);
         private void CloseIconClicked() => Snackbar?.Clicked(true);
