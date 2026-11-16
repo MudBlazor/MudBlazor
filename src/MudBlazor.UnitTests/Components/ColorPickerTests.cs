@@ -2077,5 +2077,25 @@ namespace MudBlazor.UnitTests.Components
             textChanges.Should().Equal(["#180f6fff", null]); // the initial color, then the clear
             comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
         }
+
+        /// <summary>
+        /// Each channel input has a localized accessible name, with the helper text left as its description (#13976).
+        /// </summary>
+        [Test]
+        [TestCase(ColorPickerMode.RGB, new[] { "Red", "Green", "Blue", "Alpha" })]
+        [TestCase(ColorPickerMode.HSL, new[] { "Hue", "Saturation", "Lightness", "Alpha" })]
+        [TestCase(ColorPickerMode.HEX, new[] { "Hex" })]
+        public void ColorPicker_ChannelInputs_ShouldHaveAccessibleName(ColorPickerMode mode, string[] expectedLabels)
+        {
+            var comp = Context.Render<MudColorPicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.ColorPickerMode, mode)
+                .Add(x => x.ShowAlpha, true));
+
+            var inputs = comp.FindAll($"{_colorInputCssSelector} input");
+
+            inputs.Select(i => i.GetAttribute("aria-label")).Should().Equal(expectedLabels);
+            inputs.Should().OnlyContain(i => i.HasAttribute("aria-describedby"));
+        }
     }
 }
