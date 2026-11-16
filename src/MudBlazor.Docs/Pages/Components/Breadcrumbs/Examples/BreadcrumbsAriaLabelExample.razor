@@ -1,0 +1,15 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudBreadcrumbs Items="_catalog" AriaLabel="Catalog breadcrumb" />
+<MudBreadcrumbs Items="_account" AriaLabel="Account breadcrumb" />
+
+@code {
+    private readonly List<BreadcrumbItem> _catalog =
+    [
+        new("Home", href: "#"), new("Catalog", href: "#"), new("Books", href: null, disabled: true)
+    ];
+    private readonly List<BreadcrumbItem> _account =
+    [
+        new("Home", href: "#"), new("Account", href: "#"), new("Settings", href: null, disabled: true)
+    ];
+}

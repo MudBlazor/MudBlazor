@@ -727,9 +727,9 @@ namespace MudBlazor
             await KeyInterceptorService.SubscribeAsync(ElementId, options, keys => keys
                 .HookKeyDown(OnHandleKeyDownAsync)
                 .When(CanHandleKeys, builder => builder
-                    .OnKeyDown("Backspace", HandleBackspaceAsync)
-                    .OnKeyDown("Escape", () => CloseAsync(false))
-                    .OnKeyDown("Tab", () => CloseAsync(Open && PickerActions == null))));
+                    .OnKeyDownLiteral("Backspace", HandleBackspaceAsync)
+                    .OnKeyDownLiteral("Escape", () => CloseAsync(false))
+                    .OnKeyDownLiteral("Tab", () => CloseAsync(Open && PickerActions == null))));
         }
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();

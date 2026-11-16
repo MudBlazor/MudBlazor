@@ -1,4 +1,6 @@
 ﻿using AwesomeAssertions;
+using Bunit;
+using Microsoft.JSInterop;
 using MudBlazor.Charts;
 using NUnit.Framework;
 
@@ -45,6 +47,171 @@ namespace MudBlazor.UnitTests.Charts
 
             // One initial render plus the one the recalculation asks for, then it settles.
             comp.RenderCount.Should().BeLessThanOrEqualTo(3);
+        }
+
+        /// <summary>
+        /// A tooltip whose text measurement hits a lost circuit renders without throwing.
+        /// </summary>
+        [Test]
+        public void TooltipMeasurementDisconnected_StillRenders()
+        {
+            Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetException(new JSDisconnectedException("disconnected"));
+
+            var comp = Context.Render<ChartTooltip>(parameters => parameters
+                    .Add(p => p.Title, "Some Title")
+                    .Add(p => p.X, 200)
+                    .Add(p => p.Y, 100)
+                );
+
+            comp.Find("g.svg-tooltip text").TextContent.Should().Contain("Some Title");
+            Context.JSInterop.VerifyInvoke("mudGetSvgBBox");
+        }
+
+        /// <summary>
+        /// Verifies that a tooltip stays hidden until its text has been measured, instead of showing the text at the origin without its background (#13422).
+        /// </summary>
+        [Test]
+        public async Task TooltipStaysHiddenUntilItsTextIsMeasured()
+        {
+            var measurement = Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true);
+
+            var comp = Context.Render<ChartTooltip>(parameters => parameters
+                    .Add(p => p.Title, "Some Title")
+                    .Add(p => p.X, 200)
+                    .Add(p => p.Y, 100)
+                );
+
+            // The text is still rendered because the browser has to measure it.
+            comp.Find("g.svg-tooltip").GetAttribute("visibility").Should().Be("hidden");
+            comp.Find("g.svg-tooltip text").TextContent.Should().Contain("Some Title");
+
+            // Another render before the measurement returns keeps it hidden too.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Color, "red"));
+            comp.Find("g.svg-tooltip").GetAttribute("visibility").Should().Be("hidden");
+
+            measurement.SetResult(new ChartTooltip.BBox(Width: 100, Height: 14));
+
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+            comp.Find("g.svg-tooltip rect").GetAttribute("width").Should().Be("110");
+            comp.Find("g.svg-tooltip text").GetAttribute("x").Should().Be("200");
+        }
+
+        /// <summary>
+        /// Verifies that a measurement started for an older text neither shows nor resizes the tooltip, whichever measurement returns first (#13422).
+        /// </summary>
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task TooltipIgnoresAMeasurementOfAnOlderText(bool olderMeasurementReturnsFirst)
+        {
+            var olderMeasurement = Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true);
+
+            var comp = Context.Render<ChartTooltip>(parameters => parameters
+                    .Add(p => p.Title, "Some Title")
+                    .Add(p => p.X, 200)
+                    .Add(p => p.Y, 100)
+                );
+
+            // The text changes before its first measurement returns, so a second measurement starts.
+            var currentMeasurement = Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                    .Add(p => p.Title, "A longer title")
+                    .Add(p => p.X, 50)
+                );
+
+            if (olderMeasurementReturnsFirst)
+            {
+                olderMeasurement.SetResult(new ChartTooltip.BBox(Width: 300, Height: 14));
+
+                // Lets the result of the older measurement be handled before checking that it changed nothing.
+                await comp.InvokeAsync(() => { });
+                comp.Find("g.svg-tooltip").GetAttribute("visibility").Should().Be("hidden");
+                comp.Find("g.svg-tooltip rect").GetAttribute("width").Should().Be("0");
+
+                currentMeasurement.SetResult(new ChartTooltip.BBox(Width: 60, Height: 14));
+                comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+            }
+            else
+            {
+                currentMeasurement.SetResult(new ChartTooltip.BBox(Width: 60, Height: 14));
+                comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+
+                olderMeasurement.SetResult(new ChartTooltip.BBox(Width: 300, Height: 14));
+
+                // Lets the result of the older measurement be handled before checking that it changed nothing.
+                await comp.InvokeAsync(() => { });
+            }
+
+            comp.Find("g.svg-tooltip rect").GetAttribute("width").Should().Be("70");
+            comp.Find("g.svg-tooltip text").GetAttribute("x").Should().Be("50");
+        }
+
+        /// <summary>
+        /// Verifies that a measured tooltip stays visible while it is measured again for a new text, so labels that update don't blink (#13422).
+        /// </summary>
+        [Test]
+        public async Task TooltipStaysVisibleWhileItIsMeasuredAgain()
+        {
+            Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 100, Height: 14));
+
+            var comp = Context.Render<ChartTooltip>(parameters => parameters
+                    .Add(p => p.Title, "Some Title")
+                    .Add(p => p.X, 200)
+                    .Add(p => p.Y, 100)
+                );
+
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+
+            // The latest setup takes precedence, so the next measurement stays pending until it gets a result.
+            var remeasurement = Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true);
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                    .Add(p => p.Title, "A longer title")
+                    .Add(p => p.X, 50)
+                );
+
+            comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse();
+            remeasurement.Invocations.Should().ContainSingle();
+
+            // Another render before the measurement returns keeps it visible too.
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Color, "red"));
+            comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse();
+
+            remeasurement.SetResult(new ChartTooltip.BBox(Width: 60, Height: 14));
+
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip rect").GetAttribute("width").Should().Be("70"));
+            comp.Find("g.svg-tooltip text").GetAttribute("x").Should().Be("50");
+            comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A tooltip with a subtitle keeps its height when it is measured again, instead of growing by a line each time.
+        /// </summary>
+        [Test]
+        public async Task TooltipWithASubtitleKeepsItsHeightWhenMeasuredAgain()
+        {
+            // One line of text measures 14 high, and both lines measure as one at first because the subtitle starts with no offset.
+            Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 60, Height: 14));
+
+            var comp = Context.Render<ChartTooltip>(parameters => parameters
+                    .Add(p => p.Title, "20")
+                    .Add(p => p.Subtitle, "Mon")
+                    .Add(p => p.X, 200)
+                    .Add(p => p.Y, 100)
+                );
+
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip").HasAttribute("visibility").Should().BeFalse());
+            var height = comp.Find("g.svg-tooltip rect").GetAttribute("height");
+            comp.FindAll("g.svg-tooltip tspan")[1].GetAttribute("dy").Should().Be("14");
+
+            // Now that the subtitle sits a line below the title, the browser measures both lines and the gap between them.
+            Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 60, Height: 28));
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                    .Add(p => p.Title, "30")
+                    .Add(p => p.X, 250)
+                );
+
+            comp.WaitForAssertion(() => comp.Find("g.svg-tooltip text").GetAttribute("x").Should().Be("250"));
+            comp.Find("g.svg-tooltip rect").GetAttribute("height").Should().Be(height);
+            comp.FindAll("g.svg-tooltip tspan")[1].GetAttribute("dy").Should().Be("14");
         }
     }
 }

@@ -1,3 +1,6 @@
+$divider-inset-margin: 72px;
+$divider-middle-margin: 16px;
+
 .mud-divider {
   margin: 0;
   flex-shrink: 0;
@@ -14,8 +17,8 @@
 }
 
 .mud-divider-inset {
-  margin-left: 72px;
-  margin-inline-start: 72px;
+  margin-left: $divider-inset-margin;
+  margin-inline-start: $divider-inset-margin;
   margin-inline-end: unset;
 }
 
@@ -24,8 +27,8 @@
 }
 
 .mud-divider-middle {
-  margin-left: 16px;
-  margin-right: 16px;
+  margin-left: $divider-middle-margin;
+  margin-right: $divider-middle-margin;
 }
 
 .mud-divider-vertical {
@@ -41,4 +44,52 @@
 .mud-divider-fullwidth {
   flex-grow: 1;
   width: 100%;
+}
+
+.mud-divider-with-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  &.mud-divider-with-content-vertical {
+    flex-direction: column;
+    width: auto;
+    height: 100%;
+    align-self: stretch;
+  }
+
+  &.mud-divider-flexitem {
+    height: auto;
+  }
+}
+
+.mud-divider-with-content-line {
+  flex: 1 1 16px;
+  width: auto;
+  min-width: 16px;
+  min-height: 0;
+  margin: 0;
+
+  .mud-divider-with-content-vertical > & {
+    flex-basis: 8px;
+    height: auto;
+    min-width: 0;
+  }
+}
+
+.mud-divider-with-content-text {
+  flex: 0 1 auto;
+  min-width: 0;
+  padding: 0 12px;
+  text-align: center;
+  overflow-wrap: anywhere;
+
+  .mud-divider-with-content-vertical > & {
+    padding: 4px 0;
+    white-space: nowrap;
+  }
+}
+
+.mud-divider-with-content-text:empty {
+  display: none;
 }

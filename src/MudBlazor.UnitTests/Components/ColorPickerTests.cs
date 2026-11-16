@@ -355,6 +355,34 @@ namespace MudBlazor.UnitTests.Components
             await CheckColorRelatedValues(comp, selectorX, selectorY, expectedColor, mode);
         }
 
+        /// <summary>
+        /// Blurring the channel inputs under a comma-decimal UI culture keeps the color instead of re-parsing "0,5" as 5 and clamping it.
+        /// </summary>
+        [Test]
+        [SetCulture("de-DE")]
+        [SetUICulture("de-DE")]
+        [TestCase(ColorPickerMode.RGB)]
+        [TestCase(ColorPickerMode.HSL)]
+        public async Task ChannelInputs_BlurWithoutTyping_CommaDecimalCulture_KeepsColor(ColorPickerMode mode)
+        {
+            var color = new MudColor("#594ae280");
+            var comp = Context.Render<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ColorValue, color);
+                p.Add(x => x.ColorPickerMode, mode);
+            });
+
+            for (var i = 0; i < 4; i++)
+            {
+                await GetColorInput(comp, i).BlurAsync(new FocusEventArgs());
+            }
+
+            comp.Instance.ColorValue.Should().Be(color);
+
+            // The channel inputs default to invariant text, so fractional channels show a dot.
+            GetColorInputs(comp).Select(x => x.Value).Should().OnlyContain(x => !x.Contains(','));
+        }
+
         [Test]
         public void ColorPickerOpenButtonDefaultAriaLabel()
         {
@@ -1137,6 +1165,60 @@ namespace MudBlazor.UnitTests.Components
             }
         }
 
+        /// <summary>
+        /// Palette view does not render the color field or controls underneath the palette (#9131).
+        /// </summary>
+        [Test]
+        public async Task PaletteView_DoesNotRenderHiddenFieldAndControls()
+        {
+            var comp = Context.Render<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.Palette);
+                p.Add(x => x.Variant, PickerVariant.Static);
+            });
+
+            comp.FindAll(".mud-picker-color-view-collection").Should().ContainSingle();
+            comp.FindAll(".mud-picker-color-picker").Should().BeEmpty();
+            comp.FindAll(".mud-picker-color-controls").Should().BeEmpty();
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ViewMode, ColorPickerView.Spectrum));
+
+            comp.FindAll(".mud-picker-color-view").Should().BeEmpty();
+            comp.FindAll(".mud-picker-color-picker").Should().ContainSingle();
+            comp.FindAll(".mud-picker-color-controls").Should().ContainSingle();
+        }
+
+        /// <summary>
+        /// A static picker's palette is inside .mud-picker-static so it can fill the container; popover and dialog palettes are not (#9131).
+        /// </summary>
+        [Test]
+        [TestCase(PickerVariant.Static, true)]
+        [TestCase(PickerVariant.Inline, false)]
+        [TestCase(PickerVariant.Dialog, false)]
+        public async Task PaletteView_StaticFillsContainer_PopoverAndDialogKeepFixedWidth(PickerVariant variant, bool insideStatic)
+        {
+            var comp = Context.Render<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.Palette);
+                p.Add(x => x.Variant, variant);
+            });
+
+            if (variant is PickerVariant.Dialog or PickerVariant.Inline)
+            {
+                await comp.Instance.OpenPicker();
+            }
+
+            var view = comp.Find(".mud-picker-color-view");
+            if (insideStatic)
+            {
+                view.Closest(".mud-picker-static").Should().NotBeNull();
+            }
+            else
+            {
+                view.Closest(".mud-picker-static").Should().BeNull();
+            }
+        }
+
         [Test]
         [TestCase(PickerVariant.Static, false)]
         [TestCase(PickerVariant.Inline, true)]
@@ -1593,7 +1675,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void StableHue_WhenColorSpectrumClicked()
+        public async Task StableHue_WhenColorSpectrumClicked()
         {
             var comp = Context.Render<MudColorPicker>(p =>
             {
@@ -1602,15 +1684,14 @@ namespace MudBlazor.UnitTests.Components
                 p.Add(x => x.Value, _defaultColor);
             });
 
-            var overlay = comp.Find(CssSelector);
-
             var expectedHue = _defaultColor.H;
 
             for (var x = 0; x < 312; x += 5)
             {
                 for (var y = 0; y < 250; y += 5)
                 {
-                    overlay.PointerDown(new PointerEventArgs { OffsetX = x, OffsetY = y });
+                    // Each click re-renders the picker, so re-query the overlay instead of dispatching on a detached element.
+                    await comp.Find(CssSelector).PointerDownAsync(new PointerEventArgs { OffsetX = x, OffsetY = y });
 
                     comp.Instance.ReadValue.H.Should().Be(expectedHue);
                 }
@@ -1995,6 +2076,26 @@ namespace MudBlazor.UnitTests.Components
             picker.GetState(x => x.Text).Should().BeNull();
             textChanges.Should().Equal(["#180f6fff", null]); // the initial color, then the clear
             comp.Find("input").GetAttribute("value").Should().BeNullOrEmpty();
+        }
+
+        /// <summary>
+        /// Each channel input has a localized accessible name, with the helper text left as its description (#13976).
+        /// </summary>
+        [Test]
+        [TestCase(ColorPickerMode.RGB, new[] { "Red", "Green", "Blue", "Alpha" })]
+        [TestCase(ColorPickerMode.HSL, new[] { "Hue", "Saturation", "Lightness", "Alpha" })]
+        [TestCase(ColorPickerMode.HEX, new[] { "Hex" })]
+        public void ColorPicker_ChannelInputs_ShouldHaveAccessibleName(ColorPickerMode mode, string[] expectedLabels)
+        {
+            var comp = Context.Render<MudColorPicker>(parameters => parameters
+                .Add(x => x.PickerVariant, PickerVariant.Static)
+                .Add(x => x.ColorPickerMode, mode)
+                .Add(x => x.ShowAlpha, true));
+
+            var inputs = comp.FindAll($"{_colorInputCssSelector} input");
+
+            inputs.Select(i => i.GetAttribute("aria-label")).Should().Equal(expectedLabels);
+            inputs.Should().OnlyContain(i => i.HasAttribute("aria-describedby"));
         }
     }
 }

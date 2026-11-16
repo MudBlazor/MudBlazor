@@ -231,6 +231,9 @@
   <data name="MudDataGrid_IsNot" xml:space="preserve">
     <value>is not</value>
   </data>
+  <data name="MudDataGrid_IsAnyOf" xml:space="preserve">
+    <value>is any of</value>
+  </data>
   <data name="MudDataGrid_IsAfter" xml:space="preserve">
     <value>is after</value>
   </data>
@@ -299,6 +302,30 @@
   </data>
   <data name="MudColorPicker_ModeSwitch" xml:space="preserve">
     <value>Switch mode</value>
+  </data>
+  <data name="MudColorPicker_Red" xml:space="preserve">
+    <value>Red</value>
+  </data>
+  <data name="MudColorPicker_Green" xml:space="preserve">
+    <value>Green</value>
+  </data>
+  <data name="MudColorPicker_Blue" xml:space="preserve">
+    <value>Blue</value>
+  </data>
+  <data name="MudColorPicker_Hue" xml:space="preserve">
+    <value>Hue</value>
+  </data>
+  <data name="MudColorPicker_Saturation" xml:space="preserve">
+    <value>Saturation</value>
+  </data>
+  <data name="MudColorPicker_Lightness" xml:space="preserve">
+    <value>Lightness</value>
+  </data>
+  <data name="MudColorPicker_Hex" xml:space="preserve">
+    <value>Hex</value>
+  </data>
+  <data name="MudColorPicker_Alpha" xml:space="preserve">
+    <value>Alpha</value>
   </data>
   <data name="MudBaseDatePicker_PrevYear" xml:space="preserve">
     <value>Previous year {0}</value>
@@ -473,6 +500,9 @@
   </data>
   <data name="MudDataGrid_ShowColumnOptions" xml:space="preserve">
     <value>Column options</value>
+  </data>
+  <data name="MudDataGrid_ReorderColumn" xml:space="preserve">
+    <value>Reorder column</value>
   </data>
   <data name="MudFileUpload_DragAndDrop" xml:space="preserve">
     <value>Drag files here or click to browse</value>

@@ -1,0 +1,78 @@
+﻿@namespace MudBlazor
+@using MudBlazor.Extensions
+@inherits MudComponentBase
+
+@{
+    __builder.OpenElement(0, HtmlTag);
+
+    __builder.AddAttribute(1, "class", Classname);
+    __builder.AddAttribute(2, "style", Style);
+
+    if (!IsCustomContent)
+    {
+        __builder.AddAttribute(3, "tabindex", _disabledState.Value ? "-1" : "0");
+
+        __builder.AddAttribute(4, "aria-current", _isSelected ? (IsLink ? "page" : "true") : null);
+
+        if (IsLink)
+        {
+            __builder.AddAttribute(5, "aria-disabled", _disabledState.Value ? "true" : null);
+        }
+    }
+
+    foreach (var attribute in UserAttributes)
+    {
+        if (attribute.Key.Equals("href", StringComparison.OrdinalIgnoreCase) ||
+            attribute.Key.Equals("disabled", StringComparison.OrdinalIgnoreCase) ||
+            attribute.Key.Equals("type", StringComparison.OrdinalIgnoreCase) ||
+            attribute.Key.Equals("onclick", StringComparison.OrdinalIgnoreCase))
+        {
+            continue;
+        }
+
+        __builder.AddAttribute(6, attribute.Key, attribute.Value);
+    }
+
+    if (IsLink)
+    {
+        if (!_disabledState.Value)
+            __builder.AddAttribute(7, "href", _hrefState.Value);
+    }
+    else if (!IsCustomContent)
+    {
+        __builder.AddAttribute(8, "type", "button");
+        __builder.AddAttribute(9, "disabled", _disabledState.Value);
+    }
+
+
+    __builder.AddAttribute(10, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, HandleClickAsync));
+    __builder.AddElementReferenceCapture(11, reference => _elementReference = reference);
+
+    RenderContent(__builder);
+
+    __builder.CloseElement();
+}
+
+@code {
+    private void RenderContent(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
+    {
+        <MudBadge Class="@BadgeClassname"
+                  Dot="@BadgeParameters.Dot"
+                  Content="@BadgeParameters.Content"
+                  Overlap="@BadgeParameters.Overlap"
+                  Visible="@(BadgeParameters.Dot || BadgeParameters.Content != null)"
+                  Color="@BadgeParameters.Color">
+            @if (Icon != null)
+            {
+                <MudIcon Icon="@Icon" Color="@GetColor()" />
+            }
+            <div class="mud-nav-bar-item-content">
+                <MudText Color="@GetColor()"
+                         Typo="@(Parent?.GetState(x => x.Typo) ?? Typo.subtitle2)">
+                    @Text
+                </MudText>
+                @ChildContent
+            </div>
+        </MudBadge>
+    }
+}

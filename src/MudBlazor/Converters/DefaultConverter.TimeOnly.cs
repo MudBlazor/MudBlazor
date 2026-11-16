@@ -25,7 +25,16 @@ internal partial class DefaultConverter
             }
 
             var currentCulture = culture.Invoke();
-            if (TimeOnly.TryParseExact(input, format.Invoke() ?? currentCulture.DateTimeFormat.ShortDatePattern, currentCulture, DateTimeStyles.None, out var result))
+            var currentFormat = format.Invoke();
+
+            // Without a Format, Convert writes the short time pattern, so read that back exactly before parsing leniently.
+            // Lenient parsing alone misreads some patterns, such as fr-CA "12 h 30" as 12:00.
+            var parsed = currentFormat is null
+                ? TimeOnly.TryParseExact(input, "t", currentCulture, DateTimeStyles.None, out var result)
+                    || TimeOnly.TryParse(input, currentCulture, DateTimeStyles.None, out result)
+                : TimeOnly.TryParseExact(input, currentFormat, currentCulture, DateTimeStyles.None, out result);
+
+            if (parsed)
             {
                 return result;
             }

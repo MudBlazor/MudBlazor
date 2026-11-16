@@ -171,6 +171,7 @@
         margin: 0 11px 0 11px;
         padding: 0;
         position: relative;
+        overflow: hidden;
       }
     }
 
@@ -342,6 +343,43 @@
 
   &::-ms-reveal, &::-ms-clear {
     display: none !important;
+  }
+}
+
+// An LTR value (email, telephone) inside an RTL field resolves its logical padding the other way round, so mirror it.
+.mud-input.mud-input-adorned-start:dir(rtl) {
+  > input.mud-ltr,
+  > textarea.mud-ltr,
+  > div.mud-input-slot.mud-ltr {
+    &.mud-input-root-filled.mud-input-root-adorned-start {
+      padding-left: 12px;
+      padding-inline-start: 12px;
+      padding-inline-end: 0;
+    }
+
+    &.mud-input-root-outlined.mud-input-root-adorned-start {
+      padding-left: 14px;
+      padding-inline-start: 14px;
+      padding-inline-end: 0;
+    }
+  }
+}
+
+.mud-input.mud-input-adorned-end:dir(rtl) {
+  > input.mud-ltr,
+  > textarea.mud-ltr,
+  > div.mud-input-slot.mud-ltr {
+    &.mud-input-root-filled.mud-input-root-adorned-end {
+      padding-right: 12px;
+      padding-inline-start: 0;
+      padding-inline-end: 12px;
+    }
+
+    &.mud-input-root-outlined.mud-input-root-adorned-end {
+      padding-right: 14px;
+      padding-inline-start: 0;
+      padding-inline-end: 14px;
+    }
   }
 }
 

@@ -364,5 +364,27 @@ namespace MudBlazor.UnitTests.Components
             valueIdMin.Should().Be($"Min {expectedIdMin}");
             valueSalaryMin.Should().Be($"Min {expectedSalaryMin}");
         }
+
+        public record MeasurementModel(double Weight, float Length, double? Width);
+
+        /// <summary>
+        /// Aggregates over double and float properties show the values as written, not their binary expansion.
+        /// </summary>
+        [Test]
+        public void AggregateDefinition_FloatingPoint_KeepsShortValues()
+        {
+            var items = new List<MeasurementModel> { new(0.1, 0.1f, 0.1), new(0.2, 0.2f, null), new(0.7, 0.7f, 0.7) };
+            Expression<Func<MeasurementModel, double>> weight = model => model.Weight;
+            Expression<Func<MeasurementModel, float>> length = model => model.Length;
+            Expression<Func<MeasurementModel, double?>> width = model => model.Width;
+            var culture = CultureInfo.InvariantCulture;
+
+            AggregateDefinition<MeasurementModel>.SimpleSum("0.############################", culture).GetValue(weight, items).Should().Be("Sum 1");
+            AggregateDefinition<MeasurementModel>.SimpleMax("0.############################", culture).GetValue(weight, items).Should().Be("Max 0.7");
+            AggregateDefinition<MeasurementModel>.SimpleMin("0.############################", culture).GetValue(weight, items).Should().Be("Min 0.1");
+            AggregateDefinition<MeasurementModel>.SimpleSum("0.############################", culture).GetValue(length, items).Should().Be("Sum 1");
+            AggregateDefinition<MeasurementModel>.SimpleMax("0.############################", culture).GetValue(length, items).Should().Be("Max 0.7");
+            AggregateDefinition<MeasurementModel>.SimpleSum("0.############################", culture).GetValue(width, items).Should().Be("Sum 0.8");
+        }
     }
 }

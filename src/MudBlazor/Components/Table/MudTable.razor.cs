@@ -338,6 +338,39 @@ namespace MudBlazor
         public Func<T, int, string>? RowStyleFunc { get; set; }
 
         /// <summary>
+        /// The function which returns the URL a row links to.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>.
+        /// When the function returns a URL, the first cell of the row renders a link that covers the whole row, so the browser handles navigation, opening in a new tab (Ctrl/Cmd+click or middle click) and copying the link.
+        /// The link is named after the first cell's content.
+        /// Return <c>null</c> to keep a row unlinked.
+        /// <see cref="OnRowClick"/> is still raised when a linked row is clicked.
+        /// Use <see cref="RowTarget"/> to control where the URL is opened.
+        /// No link is rendered for disabled rows, the row being edited, or when a row click already edits or selects the row (<see cref="RowEditingTemplate"/> with <see cref="TableEditTrigger.RowClick"/>, or <see cref="MudTableBase.MultiSelection"/> with <see cref="MudTableBase.SelectOnRowClick"/>).
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
+        public Func<T, string?>? RowHref { get; set; }
+
+        /// <summary>
+        /// The target to open row URLs in when <see cref="RowHref"/> is set.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which opens the URL in the current tab.
+        /// <c>_blank</c> adds <c>rel="noopener"</c>.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Table.Rows)]
+        public string? RowTarget { get; set; }
+
+        internal override bool HasRowLinks => RowHref is not null;
+
+        internal override string? GetRowHref(object? item) => RowHref is not null && item is T typedItem ? RowHref(typedItem) : null;
+
+        internal override string? RowLinkTarget => RowTarget;
+
+        /// <summary>
         /// The currently selected item when <c>MultiSelection</c> is <c>false</c>.
         /// </summary>
         /// <remarks>
@@ -798,11 +831,17 @@ namespace MudBlazor
         [Category(CategoryTypes.Table.Data)]
         public Func<TableState, CancellationToken, Task<TableData<T>>>? ServerData { get; set; }
 
-        private void CancelToken()
+        private CancellationToken CancelToken()
         {
+            // Swap in a fresh source before cancelling so the next load never observes the cancelled one.
+            // Cancelling can resume a superseded load whose caller starts another load and replaces this source, so its token is read first.
+            var next = new CancellationTokenSource();
+            var token = next.Token;
+            var previous = _cancellationTokenSrc;
+            _cancellationTokenSrc = next;
             try
             {
-                _cancellationTokenSrc?.Cancel();
+                previous?.Cancel();
             }
             catch
             {
@@ -810,8 +849,10 @@ namespace MudBlazor
             }
             finally
             {
-                _cancellationTokenSrc = new CancellationTokenSource();
+                previous?.Dispose();
             }
+
+            return token;
         }
 
         internal override async Task InvokeServerLoadFunc()
@@ -834,14 +875,38 @@ namespace MudBlazor
             };
 
             // Cancel any prior request
-            CancelToken();
+            var token = CancelToken();
 
             // Get data via the ServerData function
-            _serverData = await ServerData(state, _cancellationTokenSrc!.Token);
+            TableData<T> serverData;
+            try
+            {
+                serverData = await ServerData(state, token);
+            }
+            catch (Exception) when (token.IsCancellationRequested)
+            {
+                // A newer load cancelled this one, and it owns the data and the loading state.
+                // The outcome no longer matters, including a cancellation that the caller's API wrapped in its own exception type.
+                return;
+            }
 
-            if (CurrentPage * RowsPerPage > _serverData.TotalItems)
+            // Loads can finish out of order, so data from a load that a newer one replaced is stale (#13943).
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
+            _serverData = serverData;
+
+            if (CurrentPage * RowsPerPage >= _serverData.TotalItems)
             {
                 SetCurrentPage(0);
+
+                // The reset started a load for the first page, so that load ends the loading state and updates the pager.
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
             }
 
             Loading = false;
@@ -1031,8 +1096,8 @@ namespace MudBlazor
                     await ScrollManager.ScrollIntoViewAsync($"#{targetItemId}", ScrollBehavior.Auto);
                 }
 
-                await JSRuntime.InvokeVoidAsync("mudTableCell.focusCell", targetItemId, cellIndex);
-                await JSRuntime.InvokeVoidAsync("mudTableCell.selectCell", targetItemId, cellIndex);
+                await JSRuntime.InvokeVoidAsyncIgnoreDisconnected("mudTableCell.focusCell", targetItemId, cellIndex);
+                await JSRuntime.InvokeVoidAsyncIgnoreDisconnected("mudTableCell.selectCell", targetItemId, cellIndex);
             }
         }
     }

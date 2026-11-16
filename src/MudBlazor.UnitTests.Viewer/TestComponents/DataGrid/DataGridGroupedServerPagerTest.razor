@@ -1,0 +1,44 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents.DataGrid
+
+<MudDataGrid T="Item" ServerData="LoadAsync" Groupable="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Group" Grouping="true" GroupExpanded="true" />
+        <TemplateColumn T="Item" Title="Name">
+            <CellTemplate>
+                <DataGridCellProbe Text="@context.Item.Name" Created="@(() => CellsCreated++)" />
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Item" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "Grouped grid with ServerData and a pager: the first render after a load must already be grouped";
+
+    /// <summary>
+    /// Completes the pending server load.
+    /// </summary>
+    public TaskCompletionSource Gate { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    /// <summary>
+    /// Counts the cell components the grid created.
+    /// </summary>
+    public int CellsCreated { get; set; }
+
+    private readonly List<Item> _items =
+    [
+        new("Apple", "Pome"),
+        new("Pear", "Pome"),
+        new("Orange", "Citrus"),
+    ];
+
+    private async Task<GridData<Item>> LoadAsync(GridState<Item> state, CancellationToken token)
+    {
+        await Gate.Task;
+        return new GridData<Item> { Items = _items, TotalItems = _items.Count };
+    }
+
+    public record Item(string Name, string Group);
+}

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 using MudBlazor.Services;
 using MudBlazor.State;
@@ -23,7 +24,10 @@ namespace MudBlazor
         private ElementReference _contentRef;
         private bool _closeOnPointerLeave;
         private bool _initial = true;
+        private bool _isBrowserViewportSubscribed;
         private bool _keepInitialState;
+        private Breakpoint? _lastObservedBreakpoint;
+        private Breakpoint? _lastNotifiedBreakpoint;
         private Breakpoint _lastUpdatedBreakpoint = Breakpoint.None;
 
         /// <summary>
@@ -160,6 +164,12 @@ namespace MudBlazor
         [Parameter]
         [Category(CategoryTypes.Drawer.Behavior)]
         public DrawerVariant Variant { get; set; } = DrawerVariant.Responsive;
+
+        /// <summary>
+        /// Occurs when the current browser breakpoint observed by this drawer has changed.
+        /// </summary>
+        [Parameter]
+        public EventCallback<Breakpoint> OnBreakpointChanged { get; set; }
 
         /// <summary>
         /// The content within this drawer.
@@ -305,15 +315,18 @@ namespace MudBlazor
             if (firstRender)
             {
                 await UpdateHeightAsync();
-                if (!_disposed)
-                {
-                    _ = BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
-                }
-
                 if (string.IsNullOrWhiteSpace(Height) && Anchor is Anchor.Bottom or Anchor.Top)
                 {
                     StateHasChanged();
                 }
+            }
+
+            if (!_disposed)
+            {
+                await UpdateBrowserViewportSubscriptionAsync();
+
+                // A callback assigned after the drawer subscribed missed the immediate notification, so it receives the last observed breakpoint once.
+                await NotifyBreakpointChangedAsync();
             }
 
             await base.OnAfterRenderAsync(firstRender);
@@ -327,7 +340,7 @@ namespace MudBlazor
 
                 DrawerContainer?.Remove(this);
 
-                if (IsJSRuntimeAvailable)
+                if (IsJSRuntimeAvailable && _isBrowserViewportSubscribed)
                 {
                     await BrowserViewportService.UnsubscribeAsync(this);
                 }
@@ -375,6 +388,31 @@ namespace MudBlazor
         private void OnRightToLeftParameterChanged() => DrawerContainerUpdate();
 
         private void DrawerContainerUpdate() => (DrawerContainer as IMudStateHasChanged)?.StateHasChanged();
+
+        private async Task UpdateBrowserViewportSubscriptionAsync()
+        {
+            var shouldSubscribe = ShouldSubscribeToBrowserViewport();
+
+            if (shouldSubscribe && !_isBrowserViewportSubscribed)
+            {
+                // Marked before awaiting so a dispose or re-render during the immediate notification sees the pending subscription.
+                _isBrowserViewportSubscribed = true;
+                await BrowserViewportService.SubscribeAsync(this, fireImmediately: true);
+
+                // A dispose that ran before registration finished could not remove the observer, so it is removed here.
+                if (_disposed)
+                {
+                    await BrowserViewportService.UnsubscribeAsync(this);
+                }
+            }
+            else if (!shouldSubscribe && _isBrowserViewportSubscribed)
+            {
+                _isBrowserViewportSubscribed = false;
+                await BrowserViewportService.UnsubscribeAsync(this);
+            }
+        }
+
+        private bool ShouldSubscribeToBrowserViewport() => IsResponsiveOrMini() || OnBreakpointChanged.HasDelegate;
 
         private Task CloseDrawerAsync()
         {
@@ -448,6 +486,16 @@ namespace MudBlazor
 
         internal Breakpoint NormalizedBreakpoint => NormalizeBreakpoint(Breakpoint);
 
+        private EventCallback<PointerEventArgs> PointerEnterCallback =>
+            EffectiveVariant == DrawerVariant.Mini && OpenMiniOnHover
+                ? EventCallback.Factory.Create<PointerEventArgs>(this, this.AsNonRenderingEventHandler(OnPointerEnterAsync))
+                : default;
+
+        private EventCallback<PointerEventArgs> PointerLeaveCallback =>
+            EffectiveVariant == DrawerVariant.Mini && (OpenMiniOnHover || _closeOnPointerLeave)
+                ? EventCallback.Factory.Create<PointerEventArgs>(this, this.AsNonRenderingEventHandler(OnPointerLeaveAsync))
+                : default;
+
         private async Task OnPointerEnterAsync()
         {
             if (EffectiveVariant == DrawerVariant.Mini && !_openState.Value && OpenMiniOnHover)
@@ -490,6 +538,15 @@ namespace MudBlazor
         };
 
         async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
+        {
+            _lastObservedBreakpoint = browserViewportEventArgs.Breakpoint;
+            await HandleBrowserViewportChangeAsync(browserViewportEventArgs);
+
+            // Notify after the drawer's own handling so a consumer that sets Open in the callback is not overridden.
+            await NotifyBreakpointChangedAsync();
+        }
+
+        private async Task HandleBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
         {
             if (browserViewportEventArgs.IsImmediate)
             {
@@ -556,6 +613,18 @@ namespace MudBlazor
                 Breakpoint.XlAndUp or Breakpoint.XlAndDown => Breakpoint.Xl,
                 _ => breakpoint,
             };
+        }
+
+        private async Task NotifyBreakpointChangedAsync()
+        {
+            if (!OnBreakpointChanged.HasDelegate || _lastObservedBreakpoint is not { } breakpoint || breakpoint == _lastNotifiedBreakpoint)
+            {
+                return;
+            }
+
+            // Marked before invoking because the callback can re-render this drawer and re-enter this method.
+            _lastNotifiedBreakpoint = breakpoint;
+            await OnBreakpointChanged.InvokeAsync(breakpoint);
         }
     }
 }

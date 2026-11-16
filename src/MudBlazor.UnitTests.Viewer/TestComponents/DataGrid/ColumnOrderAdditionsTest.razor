@@ -1,0 +1,18 @@
+@attribute [ViewerHidden]
+<MudDataGrid T="int" Items="_items" @ref="Grid">
+    <Columns>
+        <TemplateColumn T="int" Title="Name" />
+        <TemplateColumn T="int" Title="Age" />
+        @if (_add)
+        {
+            <TemplateColumn T="int" Title="First" Order="0" />
+            <TemplateColumn T="int" Title="Last" Order="99" />
+        }
+    </Columns>
+</MudDataGrid>
+@code {
+    private readonly int[] _items = [1];
+    private bool _add;
+    public MudDataGrid<int>? Grid { get; private set; }
+    public void AddColumns() { _add = true; StateHasChanged(); }
+}

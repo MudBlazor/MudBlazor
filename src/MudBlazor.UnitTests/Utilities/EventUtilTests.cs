@@ -72,5 +72,22 @@ namespace MudBlazor.UnitTests.Utilities
             comp.Instance.ScreenX.Should().Be(66);
             comp.Instance.ScreenY.Should().Be(99);
         }
+
+        /// <summary>
+        /// A canceled handler that removed its component is still ignored, as the renderer ignores canceled handlers (#13952).
+        /// </summary>
+        [Test]
+        public async Task CanceledHandlerIsIgnoredAfterComponentIsRemoved()
+        {
+            var comp = Context.Render<ErrorBoundary>(parameters => parameters
+                .AddChildContent<EventUtilRemovedCanceledTest>()
+                .Add(p => p.ErrorContent, exception => $"<p class=\"error\">{exception.Message}</p>"));
+
+            await comp.Find("button").ClickAsync();
+
+            comp.FindAll("button").Should().BeEmpty();
+            comp.FindAll("p.error").Should().BeEmpty();
+            Context.Renderer.UnhandledException.IsCompleted.Should().BeFalse();
+        }
     }
 }

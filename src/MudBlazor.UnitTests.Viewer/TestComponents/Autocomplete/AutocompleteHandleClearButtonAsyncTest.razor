@@ -45,7 +45,7 @@
     // When set, ClearClicked stays pending until the test releases ClearGate, so keyups can be dispatched mid-transaction.
     [Parameter] public bool GateClear { get; set; }
 
-    public TaskCompletionSource ClearGate { get; } = new();
+    public TaskCompletionSource ClearGate { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     string StatusMessage { get { return $"State: Clear = {ClearCount} - Open = {OpenedCount} - Close = {ClosedCount} - Text = {_text ?? "null"}"; } }
 

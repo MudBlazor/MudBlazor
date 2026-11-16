@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
@@ -40,7 +41,7 @@ namespace MudBlazor
             if (Nullable.GetUnderlyingType(body.Type) is not null)
             {
                 // property type is nullable...
-                binaryExpression = Expression.MakeBinary(binaryOperation, body, Expression.Convert(Expression.Constant(value), body.Type));
+                binaryExpression = Expression.MakeBinary(binaryOperation, body, ConvertConstant(value, body.Type));
             }
             else
             {
@@ -50,10 +51,50 @@ namespace MudBlazor
                     return x => true;
                 }
 
-                binaryExpression = Expression.MakeBinary(binaryOperation, body, Expression.Convert(Expression.Constant(value), body.Type));
+                binaryExpression = Expression.MakeBinary(binaryOperation, body, ConvertConstant(value, body.Type));
             }
 
             return Expression.Lambda<Func<T, bool>>(binaryExpression, parameter);
+        }
+
+        // Chains equality checks with OrElse instead of calling Contains on a list, so the expression needs no generic method construction and query providers such as EF Core can translate it.
+        internal static Expression<Func<T, bool>> GenerateAnyOf<T>(this Expression expression, IEnumerable values)
+        {
+            var bodyIdentifier = new ExpressionBodyIdentifier();
+            var body = bodyIdentifier.Identify(expression);
+            var parameterIdentifier = new ExpressionParameterIdentifier();
+            var parameter = (ParameterExpression)parameterIdentifier.Identify(expression);
+            Expression? anyOf = null;
+
+            foreach (var value in values)
+            {
+                if (value is null)
+                {
+                    continue;
+                }
+
+                var equal = Expression.Equal(body, ConvertConstant(value, body.Type));
+                anyOf = anyOf is null ? equal : Expression.OrElse(anyOf, equal);
+            }
+
+            if (anyOf is null)
+            {
+                // Nothing is selected, so the filter does not narrow the rows.
+                return x => true;
+            }
+
+            return Expression.Lambda<Func<T, bool>>(anyOf, parameter);
+        }
+
+        // A number filter holds a double, which a decimal property has to compare as written: converted here, the constant is already a decimal when a query provider sees it.
+        private static Expression ConvertConstant(object? value, Type type)
+        {
+            if (value is double or float && (Nullable.GetUnderlyingType(type) ?? type) == typeof(decimal))
+            {
+                return Expression.Constant(Num.ToDecimal(value), type);
+            }
+
+            return Expression.Convert(Expression.Constant(value), type);
         }
 
         public static Expression<Func<T, U>> ChangeExpressionReturnType<T, U>(this Expression expression)
@@ -70,7 +111,13 @@ namespace MudBlazor
             }
 
             // Change parameter.
-            var converted = Expression.Convert(body, typeof(U));
+            // A double or float going to decimal converts through Num.ToDecimal, so an aggregate shows 0.1 and not its binary expansion.
+            var sourceType = Nullable.GetUnderlyingType(body.Type) ?? body.Type;
+            var toDecimal = (Nullable.GetUnderlyingType(typeof(U)) ?? typeof(U)) != typeof(decimal) ? null
+                : sourceType == typeof(double) ? ((Func<double, decimal>)Num.ToDecimal).Method
+                : sourceType == typeof(float) ? ((Func<float, decimal>)Num.ToDecimal).Method
+                : null;
+            var converted = Expression.Convert(body, typeof(U), toDecimal);
             return Expression.Lambda<Func<T, U>>(converted, parameter);
         }
     }

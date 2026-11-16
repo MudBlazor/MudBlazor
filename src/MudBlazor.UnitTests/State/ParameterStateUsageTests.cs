@@ -28,6 +28,24 @@ public class ParameterStateUsageTests : BunitTest
         comp.Instance.ParameterContainer.Count.Should().Be(2);
     }
 
+    /// <summary>
+    /// A component that registers no parameter states still runs the whole parameter lifecycle.
+    /// </summary>
+    [Test]
+    public async Task ComponentWithoutRegisteredParametersRunsTheParameterLifecycle()
+    {
+        var comp = Context.Render<ParameterStateNoScopeTestComp>(parameters => parameters.Add(x => x.Value, 1));
+
+        comp.Instance.ParameterContainer.Count.Should().Be(0);
+        comp.Find("span.value").InnerHtml.Trimmed().Should().Be("1");
+        comp.Find("span.parameters-set").InnerHtml.Trimmed().Should().Be("1");
+
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Value, 2));
+
+        comp.Find("span.value").InnerHtml.Trimmed().Should().Be("2");
+        comp.Find("span.parameters-set").InnerHtml.Trimmed().Should().Be("2");
+    }
+
     [Test]
     public void SharedHandlerIntegration()
     {

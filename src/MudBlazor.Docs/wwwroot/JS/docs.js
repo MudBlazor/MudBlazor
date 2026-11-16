@@ -13,6 +13,24 @@ class MudBlazorDocs {
         return element.innerText;
     }
 
+    // Local storage access for the docs' BrowserStorage service.
+    // Browsers can block storage, for example when site data is disabled, so reads fall back to null and writes are dropped instead of throwing.
+    getStorageItem(key) {
+        try {
+            return window.localStorage.getItem(key);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    setStorageItem(key, value) {
+        try {
+            window.localStorage.setItem(key, value);
+        } catch (e) {
+            // Storage is blocked or full; the value just won't persist.
+        }
+    }
+
     //scrolls to the active nav link in the NavMenu
     scrollToActiveNavLink() {
         let element = document.querySelector('.mud-nav-link.active');
@@ -79,7 +97,12 @@ if(typeof window.GoogleAnalyticsInterop === 'undefined') {
 
 // Updates the background colour of the loading screen.
 function setThemeForLoader(loadingScreen, observer) {
-    let darkLightThemeValue = (JSON.parse(localStorage.getItem('userPreferences') || '{}')).DarkLightTheme;
+    let darkLightThemeValue;
+    try {
+        darkLightThemeValue = JSON.parse(window.mudBlazorDocs.getStorageItem('userPreferences') || '{}').DarkLightTheme;
+    } catch (e) {
+        // An unreadable value falls back to the system theme.
+    }
 
     let useLightTheme = darkLightThemeValue === 1 ||
         (darkLightThemeValue !== 2 && window.matchMedia('(prefers-color-scheme: light)').matches);

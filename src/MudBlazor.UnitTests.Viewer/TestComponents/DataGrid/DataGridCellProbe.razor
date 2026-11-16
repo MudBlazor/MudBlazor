@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.UnitTests.TestComponents.DataGrid
+@attribute [ViewerHidden]
+
+@Text
+
+@code {
+    /// <summary>
+    /// The text to show in the cell.
+    /// </summary>
+    [Parameter]
+    public string? Text { get; set; }
+
+    /// <summary>
+    /// Called once per instance, so a test can count how often the grid builds the cell.
+    /// </summary>
+    [Parameter]
+    public Action? Created { get; set; }
+
+    protected override void OnInitialized() => Created?.Invoke();
+}

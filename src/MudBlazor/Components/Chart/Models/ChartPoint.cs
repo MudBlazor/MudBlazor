@@ -21,6 +21,10 @@ public class ChartPoint<T> where T : struct, INumber<T>, IMinMaxValue<T>, IForma
     /// The Y value of the data point.
     /// </summary>
     public T Y { get; set; }
+    /// <summary>
+    /// Flags whether the data point has a chartable Y value.
+    /// </summary>
+    public bool HasValue { get; set; } = true;
 
     public ChartPoint(T y) => Y = y;
 

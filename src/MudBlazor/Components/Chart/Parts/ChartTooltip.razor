@@ -1,6 +1,6 @@
 ﻿@namespace MudBlazor.Charts
 
-<g class="svg-tooltip" style="pointer-events: none;">
+<g class="svg-tooltip" style="pointer-events: none;" visibility="@Visibility">
     <defs>
         <filter id="text-shadow" x="-50%" y="-50%" width="200%" height="200%">
             <feDropShadow dx="0" dy="0" stdDeviation="1.0" flood-color="black" flood-opacity="1" />
@@ -21,8 +21,8 @@
           y="@ToS(_backgroundBBox.Y)"
           width="@ToS(_backgroundBBox.Width)"
           height="@ToS(_backgroundBBox.Height)"
-          rx="4"
-          ry="4"
+          rx="@ToS(CornerRadius)"
+          ry="@ToS(CornerRadius)"
           fill="@Color"
           stroke="white"
           stroke-width="@StrokeWidth"/>

@@ -6,6 +6,7 @@ using AwesomeAssertions.Execution;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Extensions;
 using MudBlazor.Resources;
@@ -486,8 +487,10 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<FormFieldChangedSubTest>();
             var textField = comp.FindComponent<MudTextField<string>>().Instance;
-            var input = () => comp.Find("input");
-            await input().InputAsync("test");
+            // Debounce commits and validation re-render off the test thread, which can replace the input's event handler between a Find and the event dispatch.
+            // Looking up the input and dispatching on the renderer makes the two atomic.
+            Task InputAsync(string text) => comp.InvokeAsync(() => comp.Find("input").InputAsync(text));
+            await InputAsync("test");
             // trigger validation
             await Task.Delay(comp.Instance.DebounceInterval);
             // imitate "typing in progress" by extending the debounce interval until the async validation terminates
@@ -497,7 +500,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 var delay = comp.Instance.DebounceInterval / 2;
                 currentText += "a";
-                await input().InputAsync(currentText);
+                await InputAsync(currentText);
                 await Task.Delay(delay);
                 elapsedTime += delay;
             }
@@ -683,7 +686,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[0].BlurAsync();
 
             // Simulate submit: full-form validation runs the external DataAnnotationsValidator.
-            editContext.Validate().Should().BeFalse();
+            (await editContext.ValidateAsync()).Should().BeFalse();
             editContext.GetValidationMessages().Count(m => m == "Name is required")
                 .Should().Be(1, "the blur-staged message must be handed back to the external validator, not duplicated (#13381)");
         }
@@ -697,7 +700,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<FormRequiredValidationEditContextTest>();
             var editContext = comp.Instance.EditContext;
 
-            editContext.Validate().Should().BeFalse();
+            (await editContext.ValidateAsync()).Should().BeFalse();
             editContext.GetValidationMessages().Count(m => m == "Name is required").Should().Be(1);
 
             // The external message is still in its store; blur must defer to it instead of staging a copy.
@@ -850,7 +853,7 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll("input")[1].BlurAsync();
             await comp.WaitForAssertionAsync(() => otherField.HasErrors.Should().BeTrue());
 
-            comp.Instance.EditContext.Validate().Should().BeTrue("only external validators decide the submit verdict");
+            (await comp.Instance.EditContext.ValidateAsync()).Should().BeTrue("only external validators decide the submit verdict");
             await comp.WaitForAssertionAsync(() => otherField.HasErrors.Should().BeFalse("the staged error must be reconciled, not left as a stale display"));
         }
 
@@ -2071,6 +2074,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => form.ResetAsync());
             datePicker.Date.Should().BeNull();
             datePicker.Text.Should().BeNullOrEmpty();
+            datePicker.Touched.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
 
             // input a date
             await datePickerComp.Find("input").ChangeAsync(testDateString);
@@ -2080,6 +2085,8 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("button.reset").ClickAsync();
             datePicker.Date.Should().BeNull();
             datePicker.Text.Should().BeNullOrEmpty();
+            datePicker.Touched.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
         }
 
         /// <summary>
@@ -2105,6 +2112,8 @@ namespace MudBlazor.UnitTests.Components
             // call reset directly
             await comp.InvokeAsync(() => form.ResetAsync());
             dateRangePicker.DateRange.Should().BeNull();
+            dateRangePicker.Touched.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
 
             // input a date
             await dateRangePickerComp.FindAll("input")[0].ChangeAsync(testStartDate.ToShortDateString());
@@ -2114,6 +2123,8 @@ namespace MudBlazor.UnitTests.Components
             // hit reset button
             await comp.Find("button.reset").ClickAsync();
             dateRangePicker.DateRange.Should().BeNull();
+            dateRangePicker.Touched.Should().BeFalse();
+            form.IsTouched.Should().BeFalse();
         }
 
         /// <summary>
@@ -2862,6 +2873,173 @@ namespace MudBlazor.UnitTests.Components
                 .Add(x => x.ValidationDelay, 0)
                 .AddChildContent<MudTextField<int?>>());
             return (comp.Instance, comp, comp.FindComponent<MudTextField<int?>>().Instance);
+        }
+
+        /// <summary>
+        /// #13769: OnEnterPressed waits for the Enter keyup so a value committed on change between keydown and keyup is already applied.
+        /// </summary>
+        [TestCase("Enter")]
+        [TestCase("NumpadEnter")]
+        public async Task OnEnterPressed_InvokedOnKeyUp_AfterValueCommitted(string key)
+        {
+            var observed = new List<string>();
+            string value = null;
+            var comp = RenderEnterForm(() => observed.Add(value), v => value = v);
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = key });
+            await comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "a" });
+            observed.Should().BeEmpty();
+
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = key });
+            observed.Should().Equal("a");
+        }
+
+        /// <summary>
+        /// OnEnterPressed does not wait for a change commit that is still awaiting an asynchronous TextChanged callback.
+        /// </summary>
+        [Test]
+        public async Task OnEnterPressed_PendingAsyncTextChanged_ValueNotYetApplied()
+        {
+            var observed = new List<string>();
+            string value = null;
+            var textChanged = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var comp = RenderEnterForm(() => observed.Add(value), v => value = v, _ => textChanged.Task);
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            var change = comp.Find("input").ChangeAsync(new ChangeEventArgs { Value = "a" });
+            change.IsCompleted.Should().BeFalse();
+            observed.Should().BeEmpty();
+
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+            observed.Should().ContainSingle().Which.Should().BeNull();
+
+            textChanged.SetResult();
+            await change;
+            value.Should().Be("a");
+        }
+
+        /// <summary>
+        /// An Enter keyup without a preceding Enter keydown does not invoke OnEnterPressed.
+        /// </summary>
+        [Test]
+        public async Task OnEnterPressed_KeyUpWithoutKeyDown_NotInvoked()
+        {
+            var invocations = 0;
+            var comp = RenderEnterForm(() => invocations++);
+
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            invocations.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A different key pressed while Enter is still held does not disarm OnEnterPressed, matching the keydown behavior it replaced.
+        /// </summary>
+        [Test]
+        public async Task OnEnterPressed_OtherKeyDownAfterEnter_Invoked()
+        {
+            var invocations = 0;
+            var comp = RenderEnterForm(() => invocations++);
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "a" });
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "a" });
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            invocations.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Key handlers passed to MudForm as attributes still run, with or without OnEnterPressed.
+        /// </summary>
+        [Test]
+        public async Task UserKeyHandler_Invoked(
+            [Values("onkeydown", "onkeyup")] string eventName,
+            [Values] bool withOnEnterPressed,
+            [Values("TypedCallback", "EventArgsCallback", "ObjectCallback", "UntypedCallback", "Action", "ActionWithArgs", "FuncTask", "FuncTaskWithArgs", "CustomDelegate")] string handlerShape)
+        {
+            var received = new List<object>();
+            object handler = handlerShape switch
+            {
+                "TypedCallback" => EventCallback.Factory.Create<KeyboardEventArgs>(this, received.Add),
+                "EventArgsCallback" => EventCallback.Factory.Create<EventArgs>(this, received.Add),
+                "ObjectCallback" => EventCallback.Factory.Create<object>(this, received.Add),
+                "UntypedCallback" => EventCallback.Factory.Create(this, () => received.Add(null)),
+                "Action" => new Action(() => received.Add(null)),
+                "ActionWithArgs" => new Action<KeyboardEventArgs>(received.Add),
+                "FuncTask" => new Func<Task>(() => { received.Add(null); return Task.CompletedTask; }),
+                "FuncTaskWithArgs" => new Func<KeyboardEventArgs, Task>(a => { received.Add(a); return Task.CompletedTask; }),
+                "CustomDelegate" => new KeyboardHandler(received.Add),
+                _ => throw new ArgumentOutOfRangeException(nameof(handlerShape)),
+            };
+            var takesArgs = handlerShape is not ("UntypedCallback" or "Action" or "FuncTask");
+            var comp = Context.Render<MudForm>(p =>
+            {
+                p.AddUnmatched(eventName, handler);
+                if (withOnEnterPressed)
+                {
+                    p.Add(x => x.OnEnterPressed, () => { });
+                }
+            });
+
+            var args = new KeyboardEventArgs { Key = "Enter" };
+            if (eventName == "onkeydown")
+            {
+                await comp.Find("form").KeyDownAsync(args);
+            }
+            else
+            {
+                await comp.Find("form").KeyUpAsync(args);
+            }
+
+            received.Should().ContainSingle();
+            if (takesArgs)
+            {
+                received[0].Should().BeSameAs(args);
+            }
+        }
+
+        /// <summary>
+        /// The keyup that started a dispatch calls the onkeyup handler it started with, even when OnEnterPressed rerenders the parent and replaces that handler.
+        /// </summary>
+        [Test]
+        public async Task UserKeyUpHandler_CapturedBeforeOnEnterPressed()
+        {
+            var comp = Context.Render<FormEnterPressedSwapsKeyUpHandlerTest>();
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            comp.Instance.Calls.Should().Equal("enter", "original");
+        }
+
+        /// <summary>
+        /// A user onkeyup handler still runs when OnEnterPressed throws.
+        /// </summary>
+        [Test]
+        public async Task UserKeyUpHandler_InvokedWhenOnEnterPressedThrows()
+        {
+            var userCalls = 0;
+            var comp = Context.Render<MudForm>(p => p
+                .AddUnmatched("onkeyup", EventCallback.Factory.Create<KeyboardEventArgs>(this, () => userCalls++))
+                .Add(x => x.OnEnterPressed, () => throw new InvalidOperationException()));
+
+            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter" });
+            var keyUp = () => comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
+
+            await keyUp.Should().ThrowAsync<InvalidOperationException>();
+            userCalls.Should().Be(1);
+        }
+
+        private delegate void KeyboardHandler(KeyboardEventArgs args);
+
+        private IRenderedComponent<MudForm> RenderEnterForm(Action onEnterPressed, Action<string> valueChanged = null, Func<string, Task> textChanged = null)
+        {
+            return Context.Render<MudForm>(p => p
+                .Add(x => x.OnEnterPressed, onEnterPressed)
+                .AddChildContent<MudTextField<string>>(field => field
+                    .Add(x => x.ValueChanged, valueChanged ?? (_ => { }))
+                    .Add(x => x.TextChanged, textChanged ?? (_ => Task.CompletedTask))));
         }
     }
 }

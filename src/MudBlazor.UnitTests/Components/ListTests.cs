@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -26,6 +27,65 @@ namespace MudBlazor.UnitTests.Components
                 .AddChildContent<MudListItem<string>>(item => item.Add(x => x.Text, "Cortado")));
 
             keyInterceptorService.ObserversCount.Should().Be(2);
+        }
+
+        /// <summary>
+        /// A row with an Href renders an anchor carrying its link attributes.
+        /// </summary>
+        [Test]
+        public void ListItemWithHref_RendersAnchorWithLinkAttributes()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Docs")
+                    .Add(x => x.Href, "/docs")
+                    .Add(x => x.Target, "_blank")));
+
+            var anchor = comp.Find("a.mud-list-item");
+            anchor.GetAttribute("href").Should().Be("/docs");
+            anchor.GetAttribute("target").Should().Be("_blank");
+        }
+
+        /// <summary>
+        /// A class or style supplied through UserAttributes still wins over the computed ones, on a div row.
+        /// </summary>
+        [Test]
+        public void ListItem_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Espresso")
+                    .Add(x => x.UserAttributes, new Dictionary<string, object?>
+                    {
+                        ["class"] = "user-class",
+                        ["style"] = "color:red",
+                    })));
+
+            var row = comp.FindComponent<MudListItem<string>>().Find("div");
+            row.GetAttribute("class").Should().Be("user-class");
+            row.GetAttribute("style").Should().Be("color:red");
+        }
+
+        /// <summary>
+        /// The same precedence holds on the anchor row.
+        /// </summary>
+        [Test]
+        public void ListItemWithHref_UserAttributes_OverrideComputedClassAndStyle()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Docs")
+                    .Add(x => x.Href, "/docs")
+                    .Add(x => x.UserAttributes, new Dictionary<string, object?>
+                    {
+                        ["class"] = "user-class",
+                        ["style"] = "color:red",
+                    })));
+
+            var row = comp.FindComponent<MudListItem<string>>().Find("a");
+            row.GetAttribute("class").Should().Be("user-class");
+            row.GetAttribute("style").Should().Be("color:red");
+            row.GetAttribute("href").Should().Be("/docs");
         }
 
         /// <summary>
@@ -65,6 +125,24 @@ namespace MudBlazor.UnitTests.Components
             comp.Markup.Should().NotContain("Sparkling Water");
             comp.Markup.Should().Contain("Latte");
             comp.Find(".mud-list-item-secondary-text").TextContent.Should().Contain("with oat milk");
+        }
+
+        /// <summary>
+        /// Item text uses body1 typography, or body2 in a dense list, and secondary text uses subtitle2.
+        /// </summary>
+        [Test]
+        [TestCase(false, "mud-typography mud-typography-body1")]
+        [TestCase(true, "mud-typography mud-typography-body2")]
+        public void ListItem_TextTypography_FollowsDense(bool dense, string expectedClass)
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .Add(x => x.Dense, dense)
+                .AddChildContent<MudListItem<string>>(item => item
+                    .Add(x => x.Text, "Latte")
+                    .Add(x => x.SecondaryText, "with oat milk")));
+
+            comp.Find("div.mud-list-item-text p:not(.mud-list-item-secondary-text)").ClassName.Should().Be(expectedClass);
+            comp.Find("p.mud-list-item-secondary-text").ClassName.Should().Be("mud-typography mud-typography-subtitle2 mud-list-item-secondary-text");
         }
 
         [Test]
@@ -227,6 +305,7 @@ namespace MudBlazor.UnitTests.Components
 
             comp.FindAll("div.mud-list-item").Count.Should().Be(9); // 7 drinks + 2 nested group headers
             comp.FindAll("div.mud-list-item-dense").Count.Should().Be(expectedDenseClassCount);
+            comp.FindAll("div.mud-list-item-text p.mud-typography-body2").Count.Should().Be(expectedDenseClassCount);
         }
 
         [Test]
@@ -649,6 +728,144 @@ namespace MudBlazor.UnitTests.Components
                 item.GetAttribute("role").Should().Be("listitem");
                 item.HasAttribute("aria-selected").Should().BeFalse();
             }
+        }
+
+        /// <summary>
+        /// An interactive list with a nested list uses tree roles, because option allows no aria-expanded and listbox allows no nested listbox (#13981).
+        /// </summary>
+        [Test]
+        [TestCase(SelectionMode.SingleSelection)]
+        [TestCase(SelectionMode.MultiSelection)]
+        public void Interactive_NestedList_UsesTreeRoles(SelectionMode selectionMode)
+        {
+            var comp = RenderMailboxList(selectionMode);
+
+            var tree = comp.Find("div.mud-list:not(.mud-nested-list)");
+            tree.GetAttribute("role").Should().Be("tree");
+            tree.GetAttribute("aria-multiselectable").Should().Be(selectionMode == SelectionMode.MultiSelection ? "true" : null);
+
+            var group = comp.Find("div.mud-nested-list");
+            group.GetAttribute("role").Should().Be("group");
+            group.HasAttribute("aria-multiselectable").Should().BeFalse();
+
+            // Sent registers before the item that turns the list into a tree, so its first render already needs the tree role.
+            var sent = ItemRow(comp, "Sent");
+            sent.GetAttribute("role").Should().Be("treeitem");
+            sent.GetAttribute("aria-selected").Should().Be("false");
+
+            var inbox = ItemRow(comp, "Inbox");
+            inbox.GetAttribute("role").Should().Be("treeitem");
+            inbox.GetAttribute("aria-expanded").Should().Be("true");
+            inbox.HasAttribute("aria-selected").Should().BeFalse(); // expanding is its only action
+
+            var starred = ItemRow(comp, "Starred");
+            starred.GetAttribute("role").Should().Be("treeitem");
+            starred.GetAttribute("aria-selected").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Adding or removing the only item with a nested list updates the roles of items that already rendered.
+        /// </summary>
+        [Test]
+        public async Task Interactive_NestedListAddedOrRemoved_UpdatesRenderedItemRoles()
+        {
+            var comp = RenderMailboxList(SelectionMode.SingleSelection, withInbox: false);
+            var sent = comp.FindComponent<MudListItem<string>>().Instance;
+            comp.Find("div.mud-list").GetAttribute("role").Should().Be("listbox");
+            ItemRow(comp, "Sent").GetAttribute("role").Should().Be("option");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ChildContent, MailboxItems(withInbox: true)));
+
+            // The same Sent instance survives each change, so its role changes only if the list re-renders it.
+            comp.FindComponents<MudListItem<string>>().First().Instance.Should().BeSameAs(sent);
+            comp.Find("div.mud-list").GetAttribute("role").Should().Be("tree");
+            ItemRow(comp, "Sent").GetAttribute("role").Should().Be("treeitem");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ChildContent, MailboxItems(withInbox: false)));
+
+            comp.FindComponents<MudListItem<string>>().Single().Instance.Should().BeSameAs(sent);
+            comp.Find("div.mud-list").GetAttribute("role").Should().Be("listbox");
+            ItemRow(comp, "Sent").GetAttribute("role").Should().Be("option");
+        }
+
+        /// <summary>
+        /// Setting or clearing NestedList on an item that already rendered switches the list between tree and listbox roles.
+        /// </summary>
+        [Test]
+        public async Task Interactive_NestedListParameterChanged_UpdatesRoles()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .Add(x => x.ChildContent, MailboxItems(withInbox: true, inboxNested: false)));
+            var inbox = comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Inbox").Instance;
+            comp.Find("div.mud-list").GetAttribute("role").Should().Be("listbox");
+            ItemRow(comp, "Inbox").GetAttribute("role").Should().Be("option");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ChildContent, MailboxItems(withInbox: true, inboxNested: true)));
+
+            comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Inbox").Instance.Should().BeSameAs(inbox);
+            comp.Find("div.mud-list:not(.mud-nested-list)").GetAttribute("role").Should().Be("tree");
+            ItemRow(comp, "Sent").GetAttribute("role").Should().Be("treeitem");
+            ItemRow(comp, "Inbox").GetAttribute("role").Should().Be("treeitem");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ChildContent, MailboxItems(withInbox: true, inboxNested: false)));
+
+            comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Inbox").Instance.Should().BeSameAs(inbox);
+            comp.Find("div.mud-list").GetAttribute("role").Should().Be("listbox");
+            ItemRow(comp, "Sent").GetAttribute("role").Should().Be("option");
+            ItemRow(comp, "Inbox").GetAttribute("role").Should().Be("option");
+        }
+
+        /// <summary>
+        /// Renders a list with a leaf item, followed by an expanded item that owns a nested list unless <paramref name="withInbox"/> is <c>false</c>.
+        /// </summary>
+        private IRenderedComponent<MudList<string>> RenderMailboxList(SelectionMode selectionMode, bool withInbox = true)
+        {
+            return Context.Render<MudList<string>>(builder => builder
+                .Add(x => x.SelectionMode, selectionMode)
+                .Add(x => x.ChildContent, MailboxItems(withInbox)));
+        }
+
+        /// <summary>
+        /// Builds the mailbox items with fixed sequence numbers, so items keep their instances when Inbox or its nested list is left out.
+        /// </summary>
+        /// <remarks>
+        /// NestedList is always passed, as <c>null</c> when <paramref name="inboxNested"/> is <c>false</c>, because an omitted parameter keeps its previous value.
+        /// </remarks>
+        private static RenderFragment MailboxItems(bool withInbox, bool inboxNested = true) => builder =>
+        {
+            builder.OpenComponent<MudListItem<string>>(0);
+            builder.AddAttribute(1, nameof(MudListItem<string>.Text), "Sent");
+            builder.CloseComponent();
+
+            if (withInbox)
+            {
+                RenderFragment? nestedList = inboxNested
+                    ? nested =>
+                    {
+                        nested.OpenComponent<MudListItem<string>>(0);
+                        nested.AddAttribute(1, nameof(MudListItem<string>.Text), "Starred");
+                        nested.CloseComponent();
+                    }
+                : null;
+
+                builder.OpenComponent<MudListItem<string>>(2);
+                builder.AddAttribute(3, nameof(MudListItem<string>.Text), "Inbox");
+                builder.AddAttribute(4, nameof(MudListItem<string>.Expanded), true);
+                builder.AddAttribute(5, nameof(MudListItem<string>.NestedList), nestedList);
+                builder.CloseComponent();
+            }
+        };
+
+        /// <summary>
+        /// Finds the row element of the list item with the given text.
+        /// </summary>
+        private static IElement ItemRow(IRenderedComponent<MudList<string>> comp, string text)
+        {
+            return comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == text).Find(".mud-list-item");
         }
 
         [Test]

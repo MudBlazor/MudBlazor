@@ -221,7 +221,9 @@ namespace MudBlazor
         {
             if (IsJSRuntimeAvailable && InputReference != null)
             {
+#pragma warning disable BL0016 // The caller needs the real value or the error, and there is no honest fallback to return.
                 return await JsRuntime.InvokeAsync<int>("mudInput.getCaretPosition", InputReference.ElementReference);
+#pragma warning restore BL0016
             }
 
             return -1;

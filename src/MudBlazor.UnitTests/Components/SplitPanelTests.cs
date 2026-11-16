@@ -1,5 +1,6 @@
 ﻿using AwesomeAssertions;
 using Bunit;
+using Microsoft.JSInterop;
 using MudBlazor.UnitTests.TestComponents.SplitPanel;
 using NUnit.Framework;
 
@@ -78,6 +79,40 @@ public class SplitPanelTests : BunitTest
         invocation.Arguments.Count.Should().Be(1);
     }
 
+    /// <summary>
+    /// Verifies that the final reset requested before initialization wins and runs after build (issue #13576).
+    /// </summary>
+    [TestCase(false)]
+    [TestCase(true)]
+    public void ResetDividerPositionFromParentFirstRender_RunsAfterBuild(bool queueSetFirst)
+    {
+        Context.Render<SplitPanelDeferredPositionTest>(parameters => parameters
+            .Add(p => p.QueueOppositeOperationFirst, queueSetFirst));
+
+        var invocations = Context.JSInterop.Invocations.ToArray();
+        invocations.Should().HaveCount(2);
+        invocations[0].Identifier.Should().Be("mudSplitPanel.build");
+        invocations[1].Identifier.Should().Be("mudSplitPanel_resetDividerPosition");
+    }
+
+    /// <summary>
+    /// Verifies that the final set requested before initialization wins and runs after build (issue #13576).
+    /// </summary>
+    [TestCase(false)]
+    [TestCase(true)]
+    public void SetDividerPositionFromParentFirstRender_RunsAfterBuild(bool queueResetFirst)
+    {
+        Context.Render<SplitPanelDeferredPositionTest>(parameters => parameters
+            .Add(p => p.QueueOppositeOperationFirst, queueResetFirst)
+            .Add(p => p.DividerPosition, 123));
+
+        var invocations = Context.JSInterop.Invocations.ToArray();
+        invocations.Should().HaveCount(2);
+        invocations[0].Identifier.Should().Be("mudSplitPanel.build");
+        invocations[1].Identifier.Should().Be("mudSplitPanel_setDividerPosition");
+        invocations[1].Arguments[1].Should().Be(123);
+    }
+
     [Test]
     public async Task ExecutesSetDividerPositionJsCall()
     {
@@ -86,6 +121,56 @@ public class SplitPanelTests : BunitTest
 
         var invocation = Context.JSInterop.VerifyInvoke("mudSplitPanel_setDividerPosition");
         invocation.Arguments.Count.Should().Be(2);
+    }
+
+    /// <summary>
+    /// The panel renders and takes parameter updates when its setup calls hit a lost circuit.
+    /// </summary>
+    [Test]
+    public async Task BuildAndUpdate_Disconnected_Swallowed()
+    {
+        Context.JSInterop.SetupVoid("mudSplitPanel.build", _ => true).SetException(new JSDisconnectedException("disconnected"));
+        Context.JSInterop.SetupVoid("mudSplitPanel_update", _ => true).SetException(new JSDisconnectedException("disconnected"));
+
+        var comp = Context.Render<SplitPanelTest>();
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(c => c.Horizontal, true));
+
+        comp.FindAll(".mud-split-panel").Count.Should().Be(1);
+        Context.JSInterop.VerifyInvoke("mudSplitPanel.build");
+    }
+
+    /// <summary>
+    /// Moving the divider after the circuit is gone completes without throwing.
+    /// </summary>
+    [Test]
+    public async Task DividerPositionMethods_Disconnected_Swallowed()
+    {
+        var comp = Context.Render<SplitPanelTest>();
+        Context.JSInterop.SetupVoid("mudSplitPanel_resetDividerPosition", _ => true).SetException(new JSDisconnectedException("disconnected"));
+        Context.JSInterop.SetupVoid("mudSplitPanel_setDividerPosition", _ => true).SetException(new JSDisconnectedException("disconnected"));
+
+        var reset = () => comp.InvokeAsync(() => comp.Instance.ResetDividerPositionAsync());
+        var set = () => comp.InvokeAsync(() => comp.Instance.SetDividerPositionAsync(123));
+
+        await reset.Should().NotThrowAsync();
+        await set.Should().NotThrowAsync();
+    }
+
+    /// <summary>
+    /// Moving the divider still surfaces JavaScript errors to the caller.
+    /// </summary>
+    [Test]
+    public async Task DividerPositionMethods_JSException_Rethrown()
+    {
+        var comp = Context.Render<SplitPanelTest>();
+        Context.JSInterop.SetupVoid("mudSplitPanel_resetDividerPosition", _ => true).SetException(new JSException("failed"));
+        Context.JSInterop.SetupVoid("mudSplitPanel_setDividerPosition", _ => true).SetException(new JSException("failed"));
+
+        var reset = () => comp.InvokeAsync(() => comp.Instance.ResetDividerPositionAsync());
+        var set = () => comp.InvokeAsync(() => comp.Instance.SetDividerPositionAsync(123));
+
+        await reset.Should().ThrowAsync<JSException>();
+        await set.Should().ThrowAsync<JSException>();
     }
 
     [Test]
