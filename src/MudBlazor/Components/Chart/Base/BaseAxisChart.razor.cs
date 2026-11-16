@@ -273,6 +273,13 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
         var yAxisLabelSize = _yAxisGroupElementReference != null ? (await JsRuntime.InvokeAsyncWithErrorHandling<ElementSize>("mudGetSvgBBox", _yAxisGroupElementReference)).value : null;
         var xAxisLabelSize = _xAxisGroupElementReference != null ? (await JsRuntime.InvokeAsyncWithErrorHandling<ElementSize>("mudGetSvgBBox", _xAxisGroupElementReference)).value : null;
 
+        // A chart inside a hidden container measures its labels as an empty box, and CSS can show it later without rendering it again.
+        // Forgetting those labels lets the next render, such as the first hover, measure them once the chart can be seen.
+        if (MeasuredWhileHidden(yAxisLabelSize, HorizontalValues) || MeasuredWhileHidden(xAxisLabelSize, VerticalValues))
+        {
+            _measuredLabels = null;
+        }
+
         var axisChanged = false;
 
         if (yAxisLabelSize != null)
@@ -310,6 +317,11 @@ public partial class BaseAxisChart<T, TChartOptions> : MudComponentBase
             await AxisChanged.InvokeAsync();
         }
     }
+
+    // Labels with text only measure as an empty box when the browser has not laid them out.
+    // A chart with no label text is left alone, so it keeps the saving on every hover.
+    private static bool MeasuredWhileHidden(ElementSize? size, IList<SvgText> labels) =>
+        size is { Width: 0d, Height: 0d } && labels.Any(label => !string.IsNullOrEmpty(label.Value));
 
     // A touch listener can only stop the page scrolling if it was on the chart before the finger landed, so the chart attaches it as soon as the option is on rather than on the first touch.
     private async Task UpdateTouchToolTipsAsync()
