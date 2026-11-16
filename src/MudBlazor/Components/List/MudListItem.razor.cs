@@ -341,12 +341,12 @@ namespace MudBlazor
 
                     await KeyInterceptorService.SubscribeAsync(effectiveElementId, options, keys => keys
                         .When(CanHandleKeys, builder => builder
-                            .OnKeyDown("ArrowDown", HandleArrowDownAsync)
-                            .OnKeyDown("ArrowUp", HandleArrowUpAsync)
-                            .OnKeyDown("Home", HandleHomeAsync)
-                            .OnKeyDown("End", HandleEndAsync)
-                            .OnKeyDown(" ", HandleSpaceAsync)
-                            .OnKeyDownAny(["Enter", "NumpadEnter"], HandleEnterAsync)));
+                            .OnKeyDownLiteral("ArrowDown", HandleArrowDownAsync)
+                            .OnKeyDownLiteral("ArrowUp", HandleArrowUpAsync)
+                            .OnKeyDownLiteral("Home", HandleHomeAsync)
+                            .OnKeyDownLiteral("End", HandleEndAsync)
+                            .OnKeyDownLiteral(" ", HandleSpaceAsync)
+                            .OnKeyDownAnyLiteral(["Enter", "NumpadEnter"], HandleEnterAsync)));
 
                     _subscribedElementId = effectiveElementId;
                 }

@@ -145,10 +145,10 @@ namespace MudBlazor
 
             if (_dateRange != range || (range is null && !string.IsNullOrEmpty(Text) && !isEditEcho))
             {
-                var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && Enumerable
-                    .Range(0, int.MaxValue)
+                // Count the days up front so the walk never steps past the end, which would throw when the end is the last supported day.
+                var doesRangeContainDisabledDates = !AllowDisabledDatesInRange && range is { Start: not null, End: not null } && range.Start.Value <= range.End.Value && Enumerable
+                    .Range(0, (range.End.Value - range.Start.Value).Days + 1)
                     .Select(index => range.Start.Value.AddDays(index))
-                    .TakeWhile(date => date <= range.End.Value)
                     .Any(date => IsDateDisabledFunc(date.Date));
 
                 if (doesRangeContainDisabledDates)

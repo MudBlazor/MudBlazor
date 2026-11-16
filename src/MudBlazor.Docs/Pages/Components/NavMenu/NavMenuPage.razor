@@ -108,6 +108,19 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Relative Links">
+                <Description>
+                    Set <CodeInline>RelativeToCurrentUri</CodeInline> to resolve a relative <CodeInline>Href</CodeInline> against the current page instead of the app's base path.
+                    This page is at <CodeInline>/components/navmenu</CodeInline>, so <CodeInline>drawer</CodeInline> leads to <CodeInline>/components/drawer</CodeInline>.
+                    Available on .NET 11 and later.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(NavMenuRelativeLinksExample)" DarkenBackground="true" ShowCode="true">
+                <NavMenuRelativeLinksExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="MultiExpansion">
                 <Description>
                     The <CodeInline>MultiExpansion</CodeInline> property controls whether only one navigation group can be expanded at a time.

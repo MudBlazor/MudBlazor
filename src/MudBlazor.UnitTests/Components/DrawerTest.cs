@@ -783,6 +783,145 @@ namespace MudBlazor.UnitTests.Components
             comp.FindAll("div.mud-drawer-open-responsive-md-right").Count.Should().Be(0);
         }
 
+        [Test]
+        public void PersistentWithoutBreakpointCallback_DoesNotSubscribeToViewport()
+        {
+            var browserViewportService = AddBrowserViewportService();
+            var comp = Context.Render<DrawerTest1>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Persistent));
+
+            var mudDrawerComponent = comp.FindComponent<MudDrawer>();
+            browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance).Should().BeNull();
+        }
+
+        [Test]
+        public async Task PersistentWithBreakpointCallback_SubscribesAndRaisesCallback()
+        {
+            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerBreakpointEventTest>();
+            var mudDrawerComponent = comp.FindComponent<MudDrawer>();
+            var subscription = browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance);
+
+            subscription.Should().NotBeNull();
+            comp.Instance.LastBreakpoint.Should().Be(Breakpoint.Lg);
+            comp.Instance.BreakpointNotifications.Should().Be(1);
+
+            await comp.InvokeAsync(async () =>
+                await browserViewportService.RaiseOnResized(
+                    new BrowserWindowSize { Height = 0, Width = 0 },
+                    Breakpoint.Xs,
+                    subscription!.JavaScriptListenerId));
+
+            comp.Instance.LastBreakpoint.Should().Be(Breakpoint.Xs);
+            comp.Instance.BreakpointNotifications.Should().Be(2);
+        }
+
+        /// <summary>
+        /// A breakpoint callback assigned after a responsive drawer subscribed receives the current breakpoint exactly once (#11541).
+        /// </summary>
+        [Test]
+        public async Task ResponsiveBreakpointCallbackAddedLater_ReceivesCurrentBreakpointOnce()
+        {
+            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerBreakpointEventTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Responsive)
+                .Add(x => x.ObserveBreakpoint, false));
+            var mudDrawerComponent = comp.FindComponent<MudDrawer>();
+
+            browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance).Should().NotBeNull();
+            comp.Instance.BreakpointNotifications.Should().Be(0);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ObserveBreakpoint, true));
+
+            comp.Instance.LastBreakpoint.Should().Be(Breakpoint.Lg);
+            comp.Instance.BreakpointNotifications.Should().Be(1);
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ObserveBreakpoint, true));
+
+            comp.Instance.BreakpointNotifications.Should().Be(1);
+        }
+
+        /// <summary>
+        /// Removing the breakpoint callback from a persistent drawer clears its viewport subscription (#11541).
+        /// </summary>
+        [Test]
+        public async Task PersistentBreakpointCallbackRemoved_UnsubscribesFromViewport()
+        {
+            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerBreakpointEventTest>();
+            var mudDrawerComponent = comp.FindComponent<MudDrawer>();
+
+            browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance).Should().NotBeNull();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ObserveBreakpoint, false));
+
+            browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance).Should().BeNull();
+        }
+
+        /// <summary>
+        /// Switching a responsive drawer without a breakpoint callback to persistent clears its viewport subscription (#11541).
+        /// </summary>
+        [Test]
+        public async Task ResponsiveWithoutBreakpointCallbackSwitchedToPersistent_UnsubscribesFromViewport()
+        {
+            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerBreakpointEventTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Responsive)
+                .Add(x => x.ObserveBreakpoint, false));
+            var mudDrawerComponent = comp.FindComponent<MudDrawer>();
+
+            browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance).Should().NotBeNull();
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Persistent));
+
+            browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance).Should().BeNull();
+        }
+
+        /// <summary>
+        /// A drawer removed by its breakpoint callback during the immediate viewport notification does not stay subscribed (#11541).
+        /// </summary>
+        [Test]
+        public void BreakpointCallbackRemovesDrawerDuringSubscription_UnsubscribesFromViewport()
+        {
+            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerBreakpointEventTest>(parameters => parameters
+                .Add(x => x.RemoveDrawerOnBreakpoint, true));
+
+            comp.Instance.BreakpointNotifications.Should().Be(1);
+            comp.FindComponents<MudDrawer>().Should().BeEmpty();
+            comp.WaitForAssertion(() => browserViewportService.ObserversCount.Should().Be(0));
+        }
+
+        /// <summary>
+        /// A breakpoint callback that closes a responsive drawer is not overridden by the drawer opening itself above its breakpoint (#11541).
+        /// </summary>
+        [Test]
+        public async Task ResponsiveBreakpointCallbackClosesDrawer_IsNotOverriddenByResponsiveOpen()
+        {
+            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xs));
+            var comp = Context.Render<DrawerBreakpointEventTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Responsive)
+                .Add(x => x.CloseOnBreakpoint, Breakpoint.Lg));
+            var mudDrawerComponent = comp.FindComponent<MudDrawer>();
+            var subscription = browserViewportService.GetInternalSubscription(mudDrawerComponent.Instance)!;
+
+            comp.FindAll("aside.mud-drawer--closed").Count.Should().Be(1);
+
+            await comp.InvokeAsync(async () =>
+                await browserViewportService.RaiseOnResized(
+                    new BrowserWindowSize { Height = 720, Width = 1280 },
+                    Breakpoint.Lg,
+                    subscription.JavaScriptListenerId));
+
+            comp.Instance.LastBreakpoint.Should().Be(Breakpoint.Lg);
+            comp.FindAll("aside.mud-drawer--closed").Count.Should().Be(1);
+            comp.FindAll("aside.mud-drawer--open").Count.Should().Be(0);
+        }
+
         [Test, Combinatorial]
         public async Task NonResponsiveKeepInitialOpen_AllBreakpointsAsync(
             [Values(
@@ -975,6 +1114,131 @@ namespace MudBlazor.UnitTests.Components
             // Verify the drawer loses the initial class after first interaction
             // This ensures the CSS transition will be applied (not skipped)
             comp.FindAll("aside.mud-drawer--initial").Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// A closed off-screen drawer is inert until opened.
+        /// </summary>
+        [Test]
+        [TestCase(DrawerVariant.Temporary)]
+        [TestCase(DrawerVariant.Persistent)]
+        [TestCase(DrawerVariant.Responsive)]
+        public async Task ClosedDrawer_IsInertUntilOpened(DrawerVariant variant)
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<DrawerTest1>(parameters => parameters
+                .Add(x => x.Variant, variant));
+
+            comp.Find("aside.mud-drawer--closed").HasAttribute("inert").Should().BeTrue();
+
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+            comp.Find("aside.mud-drawer--open").HasAttribute("inert").Should().BeFalse();
+
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+            comp.Find("aside.mud-drawer--closed").HasAttribute("inert").Should().BeTrue();
+        }
+
+        /// <summary>
+        /// A closed mini drawer docked above its breakpoint keeps its visible icon rail interactive.
+        /// </summary>
+        [Test]
+        public async Task MiniLargeScreen_ClosedRailIsNotInert()
+        {
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Mini));
+
+            comp.Find("aside.mud-drawer--closed.mud-drawer-mini").HasAttribute("inert").Should().BeFalse();
+
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+            comp.Find("aside.mud-drawer--open.mud-drawer-mini").HasAttribute("inert").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A closed mini drawer below its breakpoint renders as a temporary drawer and is inert until opened.
+        /// </summary>
+        [Test]
+        public async Task MiniSmallScreen_ClosedDrawerIsInertUntilOpened()
+        {
+            _ = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Xs));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Mini));
+
+            comp.Find("aside.mud-drawer--closed.mud-drawer-temporary").HasAttribute("inert").Should().BeTrue();
+
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+            comp.Find("aside.mud-drawer--open.mud-drawer-temporary").HasAttribute("inert").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Resizing a mini drawer across its breakpoint makes it inert only while it renders as a closed temporary drawer.
+        /// </summary>
+        [Test]
+        public async Task Mini_ResizeAcrossBreakpoint_TogglesInert()
+        {
+            var browserViewportService = AddBrowserViewportService(BreakpointBrowserAssociatedSize(Breakpoint.Lg));
+            var comp = Context.Render<DrawerResponsiveTest>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Mini));
+            var subscription = browserViewportService.GetInternalSubscription(comp.FindComponent<MudDrawer>().Instance)!;
+
+            comp.Find("aside.mud-drawer--closed.mud-drawer-mini").HasAttribute("inert").Should().BeFalse();
+
+            await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 0, Width = 0 }, Breakpoint.Xs, subscription.JavaScriptListenerId));
+            comp.Find("aside.mud-drawer--closed.mud-drawer-temporary").HasAttribute("inert").Should().BeTrue();
+
+            // Returning above the breakpoint opens the mini drawer, so close it to check the docked rail again.
+            await comp.InvokeAsync(async () => await browserViewportService.RaiseOnResized(new BrowserWindowSize { Height = 720, Width = 1280 }, Breakpoint.Lg, subscription.JavaScriptListenerId));
+            comp.Find("aside.mud-drawer--open.mud-drawer-mini").HasAttribute("inert").Should().BeFalse();
+
+            await comp.Find("#toggle-drawer-button").ClickAsync();
+            comp.Find("aside.mud-drawer--closed.mud-drawer-mini").HasAttribute("inert").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A caller's own <c>inert</c> in <see cref="MudComponentBase.UserAttributes"/> overrides the generated value and renders once.
+        /// </summary>
+        [Test]
+        public void UserAttributesInert_OverridesGeneratedValue()
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<MudDrawer>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Persistent)
+                .Add(x => x.Open, true)
+                .AddUnmatched("inert", true));
+
+            var aside = comp.Find("aside.mud-drawer--open");
+            aside.HasAttribute("inert").Should().BeTrue();
+            aside.Attributes.Count(a => a.Name == "inert").Should().Be(1);
+        }
+
+        /// <summary>
+        /// A caller's boolean false <c>inert</c> removes the attribute from a closed off-screen drawer.
+        /// </summary>
+        [Test]
+        public void UserAttributesInertFalse_OptsOutOfGeneratedValue()
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<MudDrawer>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Persistent)
+                .AddUnmatched("inert", false));
+
+            comp.Find("aside.mud-drawer--closed").HasAttribute("inert").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// The string "false" is not the boolean opt-out, so a closed drawer still renders the <c>inert</c> attribute.
+        /// </summary>
+        [Test]
+        public void UserAttributesInertStringFalse_StillRendersAttribute()
+        {
+            _ = AddBrowserViewportService();
+            var comp = Context.Render<MudDrawer>(parameters => parameters
+                .Add(x => x.Variant, DrawerVariant.Persistent)
+                .AddUnmatched("inert", "false"));
+
+            var aside = comp.Find("aside.mud-drawer--closed");
+            aside.HasAttribute("inert").Should().BeTrue();
+            aside.GetAttribute("inert").Should().Be("false");
         }
     }
 }

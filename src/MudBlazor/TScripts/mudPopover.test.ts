@@ -443,3 +443,78 @@ describe("MudPopover lifecycle", () => {
         expect(popover.getTrackingDuration("missing")).toBe(120);
     });
 });
+
+describe("popover body zoom", () => {
+    afterEach(() => {
+        document.body.style.zoom = "";
+        Object.defineProperty(window, "scrollX", { configurable: true, value: 0 });
+        Object.defineProperty(window, "scrollY", { configurable: true, value: 0 });
+        document.body.innerHTML = "";
+    });
+
+    test.each([
+        ["normal", 1],
+        ["1.25", 1.25],
+        ["80%", 0.8],
+    ])("converts body zoom %s to a scale factor", (zoom, expected) => {
+        document.body.style.zoom = zoom;
+        expect(mudpopoverHelper.getBodyZoom()).toBe(expected);
+    });
+
+    test.each([
+        ["0.6", "666.666667px", "2000px"],
+        ["1.5", "266.666667px", "800px"],
+    ])("converts viewport position and scroll into body CSS pixels at zoom %s", (zoom, expectedLeft, expectedTop) => {
+        document.body.style.zoom = zoom;
+        Object.defineProperty(window, "scrollX", { configurable: true, value: 300 });
+        Object.defineProperty(window, "scrollY", { configurable: true, value: 1000 });
+        const popoverNode = renderPopover("mud-popover-top-left mud-popover-anchor-top-left", { x: 100, y: 200, width: 300, height: 40 }, 100);
+        const content = document.getElementById("popovercontent-test") as HTMLElement;
+
+        mudpopoverHelper.placePopover(popoverNode);
+
+        expect(content.style.left).toBe(expectedLeft);
+        expect(content.style.top).toBe(expectedTop);
+    });
+
+    test("converts relative and adaptive widths into body CSS pixels", () => {
+        document.body.style.zoom = "0.5";
+        const relative = renderPopover("mud-popover-top-left mud-popover-anchor-top-left mud-popover-relative-width", { x: 100, y: 200, width: 300, height: 40 }, 100);
+        const relativeContent = document.getElementById("popovercontent-test") as HTMLElement;
+        mudpopoverHelper.placePopover(relative);
+        expect(relativeContent.style.maxWidth).toBe("600px");
+
+        const adaptive = renderPopover("mud-popover-top-left mud-popover-anchor-top-left mud-popover-adaptive-width", { x: 100, y: 200, width: 300, height: 40 }, 100);
+        const adaptiveContent = document.getElementById("popovercontent-test") as HTMLElement;
+        mudpopoverHelper.placePopover(adaptive);
+        expect(adaptiveContent.style.minWidth).toBe("600px");
+    });
+
+    test("converts clamped max-height into body CSS pixels", () => {
+        document.body.style.zoom = "1.5";
+        Object.defineProperty(window, "scrollX", { configurable: true, value: 0 });
+        Object.defineProperty(window, "scrollY", { configurable: true, value: 0 });
+        const popoverNode = renderPopover("mud-popover-top-left mud-popover-anchor-top-left mud-popover-overflow-flip-always", { x: 100, y: 200, width: 300, height: 40 }, 400);
+        const content = document.getElementById("popovercontent-test") as HTMLElement;
+
+        mudpopoverHelper.placePopover(popoverNode);
+
+        expect(content.style.maxHeight).toBe("362.6666666666667px");
+    });
+
+    test("keeps position-override coordinates in viewport space", () => {
+        document.body.style.zoom = "0.6";
+        Object.defineProperty(window, "scrollX", { configurable: true, value: 0 });
+        Object.defineProperty(window, "scrollY", { configurable: true, value: 0 });
+        const popoverNode = renderPopover("mud-popover-top-left mud-popover-anchor-top-left mud-popover-position-override", { x: 100, y: 200, width: 300, height: 40 }, 100);
+        const content = document.getElementById("popovercontent-test") as HTMLElement;
+        content.classList.remove("mud-popover-overflow-flip-onopen");
+        content.setAttribute("data-pc-x", "1000");
+        content.setAttribute("data-pc-y", "500");
+
+        mudpopoverHelper.placePopover(popoverNode);
+
+        expect(content.style.left).toBe("1666.666667px");
+        expect(content.style.top).toBe("833.333333px");
+    });
+});

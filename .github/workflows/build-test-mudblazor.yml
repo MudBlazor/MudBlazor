@@ -134,7 +134,8 @@ jobs:
       fail-fast: false
       matrix:
         # Project that are not covered by 'build-test' job
-        project-path: ["src/MudBlazor.Docs.WasmHost", "src/MudBlazor.Docs.Server"]
+        # The test projects build MudBlazor for the primary TFM only, so src/MudBlazor builds the others.
+        project-path: ["src/MudBlazor", "src/MudBlazor.Docs.WasmHost", "src/MudBlazor.Docs.Server"]
 
     steps:
       - uses: actions/checkout@v7

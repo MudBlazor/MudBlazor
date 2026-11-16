@@ -118,9 +118,11 @@ public abstract class MudRadialChartBase<T, TOptions> : MudChartBase<T, TOptions
     /// <returns>A task representing the asynchronous operation.</returns>
     protected async Task SetElementReference(ElementReference elementRef)
     {
-        var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, elementRef);
-
-        OnElementSizeChanged(elementSize);
+        var (success, elementSize) = await JsRuntime.InvokeAsyncWithErrorHandling<ElementSize>("mudObserveElementSize", _dotNetObjectReference, elementRef);
+        if (success && elementSize is not null)
+        {
+            OnElementSizeChanged(elementSize);
+        }
     }
 
     /// <summary>
