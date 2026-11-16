@@ -444,6 +444,7 @@ namespace MudBlazor
         /// <remarks>
         /// This event is raised instead of <see cref="CommittedItemChanges"/> and <see cref="CommittedItemChanged"/>
         /// when the edit operation is canceled.
+        /// In <see cref="DataGridEditMode.Form"/> mode, closing the edit dialog by clicking outside it or pressing Escape also cancels the edit.
         /// </remarks>
         [Parameter]
         public EventCallback<T> CanceledEditingItem { get; set; }
@@ -2956,6 +2957,18 @@ namespace MudBlazor
             await CanceledEditingItem.InvokeAsync(_editingItem);
             ClearEditingItem();
             _isEditFormOpen = false;
+        }
+
+        private Task OnEditFormVisibleChangedAsync(bool visible)
+        {
+            // Save and Cancel close the form before the dialog reports it, so a close reported while the form is still open came from the backdrop or Escape.
+            if (!visible && _isEditFormOpen)
+            {
+                return CancelEditingItemAsync();
+            }
+
+            _isEditFormOpen = visible;
+            return Task.CompletedTask;
         }
 
         /// <summary>
