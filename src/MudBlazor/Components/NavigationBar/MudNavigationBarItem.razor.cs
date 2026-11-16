@@ -196,17 +196,6 @@ namespace MudBlazor
             await OnClick.InvokeAsync(args);
         }
 
-        protected internal async Task HandleKeyDownAsync(KeyboardEventArgs args)
-        {
-            if (_disabledState.Value)
-                return;
-
-            if (args.Key is "Enter" or "NumpadEnter" || (string.IsNullOrEmpty(_hrefState.Value) && args.Key is " " or "Spacebar"))
-            {
-                await HandleClickAsync(new MouseEventArgs());
-            }
-        }
-
         protected Color GetColor()
         {
             if (_disabledState.Value || !_isSelected)

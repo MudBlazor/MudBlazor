@@ -42,9 +42,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that clicking enabled items updates the selection.
-        /// </summary>
-        /// <summary>
         /// Verifies that clicking enabled items updates the selection while disabled items are ignored.
         /// </summary>
         [Test]
@@ -78,36 +75,6 @@ namespace MudBlazor.UnitTests.Components
             await comp.FindAll(".mud-nav-bar-item")[2].ClickAsync();
 
             comp.Instance.GetSelectedItemId().Should().Be("c");
-        }
-
-        /// <summary>
-        /// Verifies that Enter activates navigation items.
-        /// </summary>
-        [Test]
-        public async Task NavigationBarItem_WhenEnterPressed_UpdatesSelection()
-        {
-            var comp = Context.Render<MudNavigationBar>(builder =>
-            {
-                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "a"));
-                builder.AddChildContent<MudNavigationBarItem>(item =>
-                {
-                    item.Add(x => x.Text, "b");
-                    item.Add(x => x.Disabled, true);
-                });
-                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "c"));
-            });
-            var items = comp.FindComponents<MudNavigationBarItem>();
-            items[0].Instance._isSelected.Should().BeFalse();
-            await comp.InvokeAsync(() => items[0].Instance.FocusAsync());
-            await comp.InvokeAsync(() => items[0].Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter" }));
-            items[0].Instance._isSelected.Should().BeTrue();
-            await comp.InvokeAsync(() => items[0].Instance.BlurAsync());
-            await comp.InvokeAsync(() => items[0].Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "Enter" }));
-            items[0].Instance._isSelected.Should().BeTrue();
-            await comp.InvokeAsync(() => items[2].Instance.FocusAsync());
-            await comp.InvokeAsync(() => items[2].Instance.HandleKeyDownAsync(new KeyboardEventArgs() { Key = "NumpadEnter" }));
-            items[0].Instance._isSelected.Should().BeFalse();
-            items[2].Instance._isSelected.Should().BeTrue();
         }
 
         /// <summary>
@@ -191,17 +158,19 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
-                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "First"));
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                    item.Add(x => x.Text, "First"));
             });
 
-            comp.Find(".mud-nav-bar-item").Click();
+            await comp.Find("button.mud-nav-bar-item").ClickAsync();
 
             comp.Instance.GetSelectedItemId().Should().Be("First");
 
             await comp.InvokeAsync(() => comp.Instance.ResetAsync());
 
             comp.Instance.GetSelectedItemId().Should().BeNull();
-            comp.Find(".mud-nav-bar-item").ClassList.Should().NotContain("mud-nav-bar-item-selected");
+
+            comp.Find("button.mud-nav-bar-item").ClassList.Should().NotContain("mud-nav-bar-item-selected");
         }
 
         /// <summary>
@@ -402,10 +371,10 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that the selected button item exposes its current state.
+        /// Verifies that the selected button exposes its current state.
         /// </summary>
         [Test]
-        public void NavigationBarItem_WhenButtonSelected_ExposesAriaCurrent()
+        public async Task NavigationBarItem_WhenButtonSelected_ExposesAriaCurrent()
         {
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
@@ -416,21 +385,21 @@ namespace MudBlazor.UnitTests.Components
                     item => item.Add(x => x.Text, "Second"));
             });
 
-            var items = comp.FindAll(".mud-nav-bar-item");
+            var items = comp.FindAll("button.mud-nav-bar-item");
 
             items[0].HasAttribute("aria-current").Should().BeFalse();
             items[1].HasAttribute("aria-current").Should().BeFalse();
 
-            items[0].Click();
+            await comp.FindAll("button.mud-nav-bar-item")[0].ClickAsync();
 
-            items = comp.FindAll(".mud-nav-bar-item");
+            items = comp.FindAll("button.mud-nav-bar-item");
 
             items[0].GetAttribute("aria-current").Should().Be("true");
             items[1].HasAttribute("aria-current").Should().BeFalse();
 
-            items[1].Click();
+            await comp.FindAll("button.mud-nav-bar-item")[1].ClickAsync();
 
-            items = comp.FindAll(".mud-nav-bar-item");
+            items = comp.FindAll("button.mud-nav-bar-item");
 
             items[0].HasAttribute("aria-current").Should().BeFalse();
             items[1].GetAttribute("aria-current").Should().Be("true");
@@ -523,6 +492,62 @@ namespace MudBlazor.UnitTests.Components
                 comp.Instance.GetSelectedItemId()
                     .Should().Be("Settings");
             });
+        }
+
+        /// <summary>
+        /// Verifies that changing an item's Href updates route selection.
+        /// </summary>
+        [Test]
+        public async Task NavigationBarItem_WhenHrefChanges_UpdatesSelection()
+        {
+            var navigation = Context.Services.GetRequiredService<NavigationManager>();
+            navigation.NavigateTo("second");
+
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "First");
+                    item.Add(x => x.Href, "first");
+                });
+            });
+
+            comp.Instance.GetSelectedItemId().Should().BeNull();
+
+            var item = comp.FindComponent<MudNavigationBarItem>();
+
+            await item.SetParametersAndRenderAsync(parameters =>
+                parameters.Add(x => x.Href, "second"));
+
+            comp.WaitForAssertion(() =>
+                comp.Instance.GetSelectedItemId().Should().Be("First"));
+        }
+
+        /// <summary>
+        /// Verifies that disabling the selected link clears selection.
+        /// </summary>
+        [Test]
+        public async Task NavigationBarItem_WhenSelectedLinkDisabled_ClearsSelection()
+        {
+            var navigation = Context.Services.GetRequiredService<NavigationManager>();
+            navigation.NavigateTo("first");
+
+            var comp = Context.Render<MudNavigationBar>(builder =>
+            {
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                {
+                    item.Add(x => x.Text, "First");
+                    item.Add(x => x.Href, "first");
+                });
+            });
+
+            comp.WaitForAssertion(() => comp.Instance.GetSelectedItemId().Should().Be("First"));
+
+            var item = comp.FindComponent<MudNavigationBarItem>();
+
+            await item.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
+
+            comp.WaitForAssertion(() => comp.Instance.GetSelectedItemId().Should().BeNull());
         }
     }
 }
