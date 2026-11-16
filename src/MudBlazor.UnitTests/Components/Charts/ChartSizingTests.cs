@@ -692,6 +692,40 @@ public class ChartSizingTests : BunitTest
         });
     }
 
+    /// <summary>
+    /// A chart first rendered while hidden measures empty axis labels, so hovering it after it is shown measures them again and makes room for them.
+    /// </summary>
+    [Test]
+    public async Task LineChartHiddenAtFirstRenderMeasuresTheAxisLabelsAgainOnHover()
+    {
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 0, Height = 0 });
+        Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 40, Height: 16));
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 20, 30 } }])
+            .Add(p => p.ChartLabels, ["Jan", "Feb", "Mar"]));
+
+        comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 30 ");
+
+        // The chart is now shown, which only CSS changed, so the browser reports the real label size from here on.
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 50, Height = 20 });
+        await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new());
+
+        await comp.WaitForAssertionAsync(() => comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 60 "));
+
+        // Making room for the labels rebuilds them, and the render after that measures the new labels once more.
+        // That measurement can land after the plot moves, so wait for it before counting.
+        await comp.WaitForAssertionAsync(() => AxisMeasurements().Should().Be(8));
+
+        // Once the labels have a real size, hovering again leaves them alone.
+        var measured = AxisMeasurements();
+        await comp.FindAll("circle.mud-chart-point")[1].MouseOutAsync(new());
+        await comp.FindAll("circle.mud-chart-point")[2].MouseOverAsync(new());
+
+        AxisMeasurements().Should().Be(measured);
+    }
+
     private int AxisMeasurements() =>
         Context.JSInterop.Invocations["mudGetSvgBBox"].Count(x => x.ResultType == typeof(ElementSize));
 }
