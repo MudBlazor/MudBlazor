@@ -129,9 +129,10 @@ These rules apply to an open issue when a comment says it duplicates a specific 
 ## 5. Titles
 
 Edit a title, with a `set_title` operation, when:
-- Typos, spelling, capitalization, grammar, or something similar can be improved
 - It is misleading, unclear/vague, or breaks the format below
 - New context was added since it was last edited (e.g., new reproduction, logs, confirmations, commits) that makes the current title no longer accurate
+
+When you edit a title for one of those reasons, also fix its typos, spelling, capitalization, and grammar. Never edit a title for those alone: an issue title that is clear and accurate stays as it is, even when it isn't in sentence case.
 
 Never edit a title when:
 - Thread is closed
