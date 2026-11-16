@@ -109,6 +109,8 @@ public static class EventUtil
                 if (ex is not OperationCanceledException)
                 {
                     // A removed component can no longer route the exception, so it goes to the nearest ancestor still in the tree.
+                    // The renderer does this itself from .NET 12, so the walk, FindParent and the Renderer accessors can go once .NET 12 is the minimum target.
+                    // https://github.com/dotnet/aspnetcore/issues/69765
                     for (var state = parent; state is not null; state = state.LogicalParentComponentState)
                     {
                         if (state.Component is ComponentBase ancestor && await TryDispatchExceptionAsync(ancestor, ex))
