@@ -357,6 +357,32 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Verifies that each selection shows only its own errors, so a valid selection clears the errors of the one before.
+        /// </summary>
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public void FileUpload_NewSelection_ShouldReplaceErrorsFromPreviousSelection(bool appendMultiple)
+        {
+            var comp = Context.Render<MudFileUpload<IReadOnlyList<IBrowserFile>>>(parameters => parameters
+                .Add(p => p.AppendMultipleFiles, appendMultiple)
+                .Add(p => p.MaximumFileCount, 2)
+                .Add(p => p.MaxFileSize, 100L));
+
+            comp.FindComponents<InputFile>()[0].UploadFiles(CreateDummyFile("a.txt", 1), CreateDummyFile("b.txt", 1), CreateDummyFile("c.txt", 1));
+            comp.Instance.ValidationErrors.Should().Equal("Selected 3 files, which exceeds the maximum of 2");
+
+            comp.FindComponents<InputFile>()[1].UploadFiles(CreateDummyFile("large.txt", 150));
+            comp.Instance.ValidationErrors.Should().Equal("File 'large.txt' exceeds the maximum allowed size of 100 bytes.");
+
+            comp.FindComponents<InputFile>()[2].UploadFiles(CreateDummyFile("valid.txt", 50));
+            comp.Instance.ValidationErrors.Should().BeEmpty();
+            comp.Instance.GetState(x => x.Error).Should().BeFalse();
+            comp.Instance.GetState(x => x.ErrorText).Should().BeNull();
+            comp.Instance.GetState(x => x.Files).Select(f => f.Name).Should().Equal("valid.txt");
+        }
+
+        /// <summary>
         /// Optional FileUpload should not have required attribute and aria-required should be false.
         /// </summary>
         [Test]
