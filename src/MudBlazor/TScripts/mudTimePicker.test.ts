@@ -115,3 +115,10 @@ test("destroyPointerEvents tolerates a missing or uninitialized clock", () => {
     expect(() => mudTimePicker.destroyPointerEvents(null)).not.toThrow();
     expect(() => mudTimePicker.destroyPointerEvents(document.createElement("div"))).not.toThrow();
 });
+
+test("initPointerEvents tolerates a clock removed before the call", () => {
+    const invokeMethodAsync = mock(async (_method: string, ..._args: unknown[]) => { });
+
+    // Blazor passes null for an element reference whose element was created and removed in the same render.
+    expect(() => mudTimePicker.initPointerEvents(null, { invokeMethodAsync } as unknown as DotNet.DotNetObject)).not.toThrow();
+});

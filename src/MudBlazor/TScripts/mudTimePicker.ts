@@ -15,7 +15,12 @@ export default class MudTimePicker {
     /**
      * Attaches pointer handlers for clock stick hover/select interactions.
      */
-    initPointerEvents(clock: ClockElement, dotNetHelper: DotNet.DotNetObject) {
+    initPointerEvents(clock: ClockElement | null | undefined, dotNetHelper: DotNet.DotNetObject) {
+        // The clock can be created and removed in one render, which leaves .NET holding a reference to an element that no longer exists.
+        if (clock == null) {
+            return;
+        }
+
         let isPointerDown = false;
 
         const startHandler = (event: PointerEvent) => {
