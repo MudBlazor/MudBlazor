@@ -157,23 +157,30 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that Space activates a navigation item without an Href.
+        /// Verifies that items without an Href render as native buttons.
         /// </summary>
         [Test]
-        public void NavigationBarItem_WhenSpacePressed_SelectsItem()
+        public void NavigationBarItem_WhenNoHref_UsesNativeButton()
         {
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
-                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "First"));
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                    item.Add(x => x.Text, "First"));
 
-                builder.AddChildContent<MudNavigationBarItem>(item => item.Add(x => x.Text, "Second"));
+                builder.AddChildContent<MudNavigationBarItem>(item =>
+                    item.Add(x => x.Text, "Second"));
             });
 
-            var items = comp.FindAll(".mud-nav-bar-item");
+            var buttons = comp.FindAll("button.mud-nav-bar-item");
 
-            items[1].KeyDown(new KeyboardEventArgs { Key = " " });
+            buttons.Should().HaveCount(2);
 
-            comp.Instance.GetSelectedItemId().Should().Be("Second");
+            foreach (var button in buttons)
+            {
+                button.GetAttribute("type").Should().Be("button");
+                button.HasAttribute("disabled").Should().BeFalse();
+                button.GetAttribute("tabindex").Should().Be("0");
+            }
         }
 
         /// <summary>
@@ -220,7 +227,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that adjacent navigation activates the target Href.
+        /// Verifies that adjacent navigation follows the target item's Href.
         /// </summary>
         [Test]
         public async Task NavigateAdjacentAsync_WhenTargetHasHref_Navigates()
@@ -242,13 +249,15 @@ namespace MudBlazor.UnitTests.Components
                 });
             });
 
-            comp.FindAll(".mud-nav-bar-item")[0].Click();
+            navigationManager.NavigateTo("first");
 
-            navigationManager.Uri.Should().EndWith("/first");
+            comp.WaitForAssertion(() => comp.Instance.GetSelectedItemId().Should().Be("First"));
 
             await comp.InvokeAsync(() => comp.Instance.NavigateAdjacentAsync(1));
 
             navigationManager.Uri.Should().EndWith("/second");
+
+            comp.WaitForAssertion(() => comp.Instance.GetSelectedItemId().Should().Be("Second"));
         }
 
         /// <summary>
@@ -289,17 +298,15 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Verifies that disabled items expose their state and are excluded from tab navigation.
+        /// Verifies that disabled buttons are not focusable or selectable.
         /// </summary>
         [Test]
-        public void NavigationBarItem_WhenDisabled_IsNotKeyboardFocusable()
+        public async Task NavigationBarItem_WhenDisabled_IsNotKeyboardFocusable()
         {
             var comp = Context.Render<MudNavigationBar>(builder =>
             {
                 builder.AddChildContent<MudNavigationBarItem>(item =>
-                {
-                    item.Add(x => x.Text, "Enabled");
-                });
+                    item.Add(x => x.Text, "Enabled"));
 
                 builder.AddChildContent<MudNavigationBarItem>(item =>
                 {
@@ -308,16 +315,15 @@ namespace MudBlazor.UnitTests.Components
                 });
             });
 
-            var items = comp.FindAll(".mud-nav-bar-item");
+            var items = comp.FindAll("button.mud-nav-bar-item");
 
-            items[0].GetAttribute("tabindex").Should().Be("0");
+            items.Should().HaveCount(2);
+
+            items[0].HasAttribute("disabled").Should().BeFalse();
+            items[1].HasAttribute("disabled").Should().BeTrue();
             items[1].GetAttribute("tabindex").Should().Be("-1");
 
-            items[1].GetAttribute("aria-disabled").Should().Be("true");
-            items[1].GetAttribute("role").Should().Be("button");
-
-            items[1].Click();
-            items[1].KeyDown(new KeyboardEventArgs { Key = "Enter" });
+            await comp.FindAll("button.mud-nav-bar-item")[1].ClickAsync();
 
             comp.Instance.GetSelectedItemId().Should().BeNull();
         }
