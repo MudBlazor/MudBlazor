@@ -1,7 +1,7 @@
 ﻿@namespace MudBlazor
 @inherits MudComponentBase
 
-<aside inert="@Inert" @onpointerenter="@PointerEnterCallback" @onpointerleave="@PointerLeaveCallback" @attributes="UserAttributes" class="@Classname" style="@Stylename">
+<aside @onpointerenter="@PointerEnterCallback" @onpointerleave="@PointerLeaveCallback" @attributes="UserAttributes" class="@Classname" style="@Stylename">
     <div @ref="_contentRef" class="mud-drawer-content">
         <CascadingValue Value="this" IsFixed="true">
             @ChildContent
