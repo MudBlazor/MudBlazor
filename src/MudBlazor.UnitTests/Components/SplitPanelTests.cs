@@ -79,6 +79,40 @@ public class SplitPanelTests : BunitTest
         invocation.Arguments.Count.Should().Be(1);
     }
 
+    /// <summary>
+    /// Verifies that the final reset requested before initialization wins and runs after build (issue #13576).
+    /// </summary>
+    [TestCase(false)]
+    [TestCase(true)]
+    public void ResetDividerPositionFromParentFirstRender_RunsAfterBuild(bool queueSetFirst)
+    {
+        Context.Render<SplitPanelDeferredPositionTest>(parameters => parameters
+            .Add(p => p.QueueOppositeOperationFirst, queueSetFirst));
+
+        var invocations = Context.JSInterop.Invocations.ToArray();
+        invocations.Should().HaveCount(2);
+        invocations[0].Identifier.Should().Be("mudSplitPanel.build");
+        invocations[1].Identifier.Should().Be("mudSplitPanel_resetDividerPosition");
+    }
+
+    /// <summary>
+    /// Verifies that the final set requested before initialization wins and runs after build (issue #13576).
+    /// </summary>
+    [TestCase(false)]
+    [TestCase(true)]
+    public void SetDividerPositionFromParentFirstRender_RunsAfterBuild(bool queueResetFirst)
+    {
+        Context.Render<SplitPanelDeferredPositionTest>(parameters => parameters
+            .Add(p => p.QueueOppositeOperationFirst, queueResetFirst)
+            .Add(p => p.DividerPosition, 123));
+
+        var invocations = Context.JSInterop.Invocations.ToArray();
+        invocations.Should().HaveCount(2);
+        invocations[0].Identifier.Should().Be("mudSplitPanel.build");
+        invocations[1].Identifier.Should().Be("mudSplitPanel_setDividerPosition");
+        invocations[1].Arguments[1].Should().Be(123);
+    }
+
     [Test]
     public async Task ExecutesSetDividerPositionJsCall()
     {

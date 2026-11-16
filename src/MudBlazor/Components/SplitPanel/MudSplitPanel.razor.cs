@@ -185,6 +185,12 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     // teardown unsubscribes the exact id that was built.
     private string? _builtContainerId;
 
+    // A parent's OnAfterRenderAsync runs before this panel's, so divider calls can arrive before build has registered the JS instance.
+    // The last such call is kept and applied once build returns.
+    private bool _isBuilt;
+    private bool _hasPendingDividerRequest;
+    private int? _pendingDividerPosition;
+
     private string ResolvedContainerId => _builtContainerId ?? GetEffectiveElementId(_containerId);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -195,6 +201,25 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
         {
             _builtContainerId = GetEffectiveElementId(_containerId);
             await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudSplitPanel.build", _builtContainerId, Horizontal, ResetOnDoubleClick, MinPanelSize, FirstPanelInitialSize, PanelGap);
+            _isBuilt = true;
+
+            if (_hasPendingDividerRequest)
+            {
+                var pendingDividerPosition = _pendingDividerPosition;
+                _hasPendingDividerRequest = false;
+                _pendingDividerPosition = null;
+
+                // The call that queued this request has already returned, so a failure here has no caller to reach.
+                // Handle it like build rather than letting it escape the render lifecycle.
+                if (pendingDividerPosition is { } offset)
+                {
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudSplitPanel_setDividerPosition", ResolvedContainerId, offset);
+                }
+                else
+                {
+                    await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudSplitPanel_resetDividerPosition", ResolvedContainerId);
+                }
+            }
         }
     }
 
@@ -211,8 +236,19 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     /// <summary>
     /// Resets the divider position to its initial value.
     /// </summary>
+    /// <remarks>
+    /// Calls made before the panel is ready, such as from a parent's first <c>OnAfterRenderAsync</c>, are applied once it is.
+    /// Only the last of those reset or set calls takes effect.
+    /// </remarks>
     public async Task ResetDividerPositionAsync()
     {
+        if (!_isBuilt)
+        {
+            _hasPendingDividerRequest = true;
+            _pendingDividerPosition = null;
+            return;
+        }
+
         await JsRuntime.InvokeVoidAsyncIgnoreDisconnected("mudSplitPanel_resetDividerPosition", ResolvedContainerId);
     }
 
@@ -221,10 +257,19 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     /// </summary>
     /// <remarks>
     /// Note that this function ignores <see cref="MinPanelSize"/>.
+    /// Calls made before the panel is ready, such as from a parent's first <c>OnAfterRenderAsync</c>, are applied once it is.
+    /// Only the last of those reset or set calls takes effect.
     /// </remarks>
     /// <param name="offset">The offset in pixels from the left or top border.</param>
     public async Task SetDividerPositionAsync(int offset)
     {
+        if (!_isBuilt)
+        {
+            _hasPendingDividerRequest = true;
+            _pendingDividerPosition = offset;
+            return;
+        }
+
         await JsRuntime.InvokeVoidAsyncIgnoreDisconnected("mudSplitPanel_setDividerPosition", ResolvedContainerId, offset);
     }
 
@@ -241,6 +286,8 @@ public partial class MudSplitPanel : MudComponentBase, IAsyncDisposable
     /// <inheritdoc/>
     public async ValueTask DisposeAsync()
     {
+        // A build still in flight would otherwise apply the queued request to the instance destroyed below.
+        _hasPendingDividerRequest = false;
         await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudSplitPanel_destroy", ResolvedContainerId);
         GC.SuppressFinalize(this);
     }
