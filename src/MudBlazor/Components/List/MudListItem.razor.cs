@@ -17,6 +17,7 @@ namespace MudBlazor
     public partial class MudListItem<T> : MudComponentBase, IDisposable
     {
         private bool _selected;
+        private bool _ownsNestedList;
         private bool MultiSelection => MudList?.SelectionMode == SelectionMode.MultiSelection;
         private ElementReference _elementReference = new();
         private string? _subscribedElementId;
@@ -311,6 +312,19 @@ namespace MudBlazor
             }
         }
 
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            // A NestedList can appear or go away after registration, for example when children load later.
+            var ownsNestedList = NestedList is not null;
+            if (ownsNestedList != _ownsNestedList)
+            {
+                _ownsNestedList = ownsNestedList;
+                MudList?.SetOwnsNestedList(this, ownsNestedList);
+            }
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             var effectiveElementId = KeyboardEnabled ? GetEffectiveElementId(ElementId) : null;
@@ -492,12 +506,18 @@ namespace MudBlazor
 
         private string? GetRole()
         {
-            return GetReadOnly() ? "listitem" : "option";
+            if (GetReadOnly())
+            {
+                return "listitem";
+            }
+
+            return TopLevelList?.IsTree == true ? "treeitem" : "option";
         }
 
         private string? GetAriaSelected()
         {
-            if (GetReadOnly())
+            // An item with a nested list only expands, so a selection state would announce a choice it can't make.
+            if (GetReadOnly() || NestedList is not null)
             {
                 return null;
             }

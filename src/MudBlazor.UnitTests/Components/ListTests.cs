@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
@@ -727,6 +728,144 @@ namespace MudBlazor.UnitTests.Components
                 item.GetAttribute("role").Should().Be("listitem");
                 item.HasAttribute("aria-selected").Should().BeFalse();
             }
+        }
+
+        /// <summary>
+        /// An interactive list with a nested list uses tree roles, because option allows no aria-expanded and listbox allows no nested listbox (#13981).
+        /// </summary>
+        [Test]
+        [TestCase(SelectionMode.SingleSelection)]
+        [TestCase(SelectionMode.MultiSelection)]
+        public void Interactive_NestedList_UsesTreeRoles(SelectionMode selectionMode)
+        {
+            var comp = RenderMailboxList(selectionMode);
+
+            var tree = comp.Find("div.mud-list:not(.mud-nested-list)");
+            tree.GetAttribute("role").Should().Be("tree");
+            tree.GetAttribute("aria-multiselectable").Should().Be(selectionMode == SelectionMode.MultiSelection ? "true" : null);
+
+            var group = comp.Find("div.mud-nested-list");
+            group.GetAttribute("role").Should().Be("group");
+            group.HasAttribute("aria-multiselectable").Should().BeFalse();
+
+            // Sent registers before the item that turns the list into a tree, so its first render already needs the tree role.
+            var sent = ItemRow(comp, "Sent");
+            sent.GetAttribute("role").Should().Be("treeitem");
+            sent.GetAttribute("aria-selected").Should().Be("false");
+
+            var inbox = ItemRow(comp, "Inbox");
+            inbox.GetAttribute("role").Should().Be("treeitem");
+            inbox.GetAttribute("aria-expanded").Should().Be("true");
+            inbox.HasAttribute("aria-selected").Should().BeFalse(); // expanding is its only action
+
+            var starred = ItemRow(comp, "Starred");
+            starred.GetAttribute("role").Should().Be("treeitem");
+            starred.GetAttribute("aria-selected").Should().Be("false");
+        }
+
+        /// <summary>
+        /// Adding or removing the only item with a nested list updates the roles of items that already rendered.
+        /// </summary>
+        [Test]
+        public async Task Interactive_NestedListAddedOrRemoved_UpdatesRenderedItemRoles()
+        {
+            var comp = RenderMailboxList(SelectionMode.SingleSelection, withInbox: false);
+            var sent = comp.FindComponent<MudListItem<string>>().Instance;
+            comp.Find("div.mud-list").GetAttribute("role").Should().Be("listbox");
+            ItemRow(comp, "Sent").GetAttribute("role").Should().Be("option");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ChildContent, MailboxItems(withInbox: true)));
+
+            // The same Sent instance survives each change, so its role changes only if the list re-renders it.
+            comp.FindComponents<MudListItem<string>>().First().Instance.Should().BeSameAs(sent);
+            comp.Find("div.mud-list").GetAttribute("role").Should().Be("tree");
+            ItemRow(comp, "Sent").GetAttribute("role").Should().Be("treeitem");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ChildContent, MailboxItems(withInbox: false)));
+
+            comp.FindComponents<MudListItem<string>>().Single().Instance.Should().BeSameAs(sent);
+            comp.Find("div.mud-list").GetAttribute("role").Should().Be("listbox");
+            ItemRow(comp, "Sent").GetAttribute("role").Should().Be("option");
+        }
+
+        /// <summary>
+        /// Setting or clearing NestedList on an item that already rendered switches the list between tree and listbox roles.
+        /// </summary>
+        [Test]
+        public async Task Interactive_NestedListParameterChanged_UpdatesRoles()
+        {
+            var comp = Context.Render<MudList<string>>(builder => builder
+                .Add(x => x.ChildContent, MailboxItems(withInbox: true, inboxNested: false)));
+            var inbox = comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Inbox").Instance;
+            comp.Find("div.mud-list").GetAttribute("role").Should().Be("listbox");
+            ItemRow(comp, "Inbox").GetAttribute("role").Should().Be("option");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ChildContent, MailboxItems(withInbox: true, inboxNested: true)));
+
+            comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Inbox").Instance.Should().BeSameAs(inbox);
+            comp.Find("div.mud-list:not(.mud-nested-list)").GetAttribute("role").Should().Be("tree");
+            ItemRow(comp, "Sent").GetAttribute("role").Should().Be("treeitem");
+            ItemRow(comp, "Inbox").GetAttribute("role").Should().Be("treeitem");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters
+                .Add(x => x.ChildContent, MailboxItems(withInbox: true, inboxNested: false)));
+
+            comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == "Inbox").Instance.Should().BeSameAs(inbox);
+            comp.Find("div.mud-list").GetAttribute("role").Should().Be("listbox");
+            ItemRow(comp, "Sent").GetAttribute("role").Should().Be("option");
+            ItemRow(comp, "Inbox").GetAttribute("role").Should().Be("option");
+        }
+
+        /// <summary>
+        /// Renders a list with a leaf item, followed by an expanded item that owns a nested list unless <paramref name="withInbox"/> is <c>false</c>.
+        /// </summary>
+        private IRenderedComponent<MudList<string>> RenderMailboxList(SelectionMode selectionMode, bool withInbox = true)
+        {
+            return Context.Render<MudList<string>>(builder => builder
+                .Add(x => x.SelectionMode, selectionMode)
+                .Add(x => x.ChildContent, MailboxItems(withInbox)));
+        }
+
+        /// <summary>
+        /// Builds the mailbox items with fixed sequence numbers, so items keep their instances when Inbox or its nested list is left out.
+        /// </summary>
+        /// <remarks>
+        /// NestedList is always passed, as <c>null</c> when <paramref name="inboxNested"/> is <c>false</c>, because an omitted parameter keeps its previous value.
+        /// </remarks>
+        private static RenderFragment MailboxItems(bool withInbox, bool inboxNested = true) => builder =>
+        {
+            builder.OpenComponent<MudListItem<string>>(0);
+            builder.AddAttribute(1, nameof(MudListItem<string>.Text), "Sent");
+            builder.CloseComponent();
+
+            if (withInbox)
+            {
+                RenderFragment? nestedList = inboxNested
+                    ? nested =>
+                    {
+                        nested.OpenComponent<MudListItem<string>>(0);
+                        nested.AddAttribute(1, nameof(MudListItem<string>.Text), "Starred");
+                        nested.CloseComponent();
+                    }
+                : null;
+
+                builder.OpenComponent<MudListItem<string>>(2);
+                builder.AddAttribute(3, nameof(MudListItem<string>.Text), "Inbox");
+                builder.AddAttribute(4, nameof(MudListItem<string>.Expanded), true);
+                builder.AddAttribute(5, nameof(MudListItem<string>.NestedList), nestedList);
+                builder.CloseComponent();
+            }
+        };
+
+        /// <summary>
+        /// Finds the row element of the list item with the given text.
+        /// </summary>
+        private static IElement ItemRow(IRenderedComponent<MudList<string>> comp, string text)
+        {
+            return comp.FindComponents<MudListItem<string>>().Single(x => x.Instance.Text == text).Find(".mud-list-item");
         }
 
         [Test]
