@@ -667,6 +667,12 @@ $header-height-with-filter-dense: 89px; // 39px + 50px (filter row height)
       text-align: start !important;
     }
 
+    // Stacked cells are flex boxes that should span the whole row.
+    // The desktop width of 0 would collapse the select cell to its padding and pull the checkbox to the start edge.
+    .mud-table-cell-fit {
+      width: auto;
+    }
+
     &.mud-table-dense {
       & .mud-table-cell {
         padding: 6px 16px;
