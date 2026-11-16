@@ -1,0 +1,156 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@*the current markup every hint and every documented example points at, which has to compile and stay silent*@
+
+@*buttons*@
+<MudButton Href="/button" Ripple="false" DropShadow="false">Button</MudButton>
+<MudIconButton Icon="@Icons.Material.Filled.Add" Href="/icon-button" Ripple="@(!_flag)" DropShadow="@_flag" />
+<MudFab StartIcon="@Icons.Material.Filled.Add" Href="/fab" Ripple="true" DropShadow="@(!(_flag && _other))" />
+<MudToggleIconButton Icon="@Icons.Material.Filled.AlarmOff" ToggledIcon="@Icons.Material.Filled.AlarmOn" Ripple="false" DropShadow="false" />
+<MudButtonGroup DropShadow="false" Vertical="true">
+    <MudButton>One</MudButton>
+</MudButtonGroup>
+
+@*selection controls, including a nullable checkbox*@
+<MudCheckBox @bind-Value="_flag" Ripple="false" LabelPlacement="Placement.Start" />
+<MudCheckBox T="bool?" Value="@_nullable" ValueChanged="@((bool? value) => _nullable = value)" TriState="true" />
+<MudSwitch @bind-Value="_flag" Ripple="@(!_flag)" LabelPlacement="Placement.End" />
+<MudRadioGroup @bind-Value="_text">
+    <MudRadio Value="@("a")" Ripple="false" LabelPlacement="Placement.End">A</MudRadio>
+</MudRadioGroup>
+<MudToggleGroup T="string" Ripple="false" Outlined="false" />
+<MudRating Ripple="true" />
+<MudRatingItem Ripple="true" />
+
+@*chips and lists: an unset Ripple or Gutters follows the parent*@
+<MudChipSet T="string" CheckMark="true" Ripple="false">
+    <MudChip T="string" Href="/chip" />
+    <MudChip T="string" Ripple="true" />
+    <MudChip T="string" Ripple="@(_flag ? false : null)" />
+</MudChipSet>
+<MudList T="string" Padding="true" ReadOnly="@(!_flag)" Gutters="false">
+    <MudListSubheader Gutters="false">Header</MudListSubheader>
+    <MudListItem T="string" Ripple="false" ExpandIconColor="Color.Primary" OnClickPreventDefault="true" Expanded="true" />
+    <MudListItem T="string" Gutters="true" />
+    <MudListItem T="string" Gutters="@(_flag ? false : null)" />
+</MudList>
+
+@*menus*@
+<MudMenu Ripple="false" DropShadow="@(!_flag)" OpenChanged="@((bool open) => _flag = open)" PositionAtCursor="true">
+    <MudMenuItem Href="/menu-item">Item</MudMenuItem>
+</MudMenu>
+
+@*alerts, dialogs, tooltips, and visibility*@
+<MudAlert ContentAlignment="HorizontalAlignment.Center">Alert</MudAlert>
+<MudDialog @bind-Visible="_flag" Gutters="false" ActionsClass="actions" ContentClass="content" />
+<MudMessageBox @bind-Visible="_flag" />
+<MudTooltip Text="Tooltip" @bind-Visible="_flag" Delay="500" />
+<MudTooltip Text="Tooltip" Delay="@(_seconds * 1000)" />
+<MudHidden Breakpoint="Breakpoint.Sm" @bind-Hidden="_flag" />
+
+@*layout*@
+<MudExpansionPanels Outlined="false" Gutters="false">
+    <MudExpansionPanel Text="Panel" @bind-Expanded="_flag" Gutters="false" />
+    <MudExpansionPanel Text="Starts expanded" Expanded="true" />
+</MudExpansionPanels>
+<MudAppBar Gutters="false" />
+<MudToolBar Gutters="false" />
+<MudDrawer Overlay="false" />
+
+@*inputs*@
+<MudTextField @bind-Value="_text" Underline="false" OnKeyDown="@((KeyboardEventArgs args) => _text = args.Key)" Sizing="InputSizing.Auto" />
+<MudNumericField @bind-Value="_number" Underline="false" OnKeyDown="@((KeyboardEventArgs args) => _text = args.Key)" />
+<MudSelect T="string" Underline="false" OpenChanged="@(open => { if (open) Handler(); })" />
+<MudSelect T="string" OpenChanged="@(open => { if (!open) Handler(); })" />
+<MudSelect T="string" OpenChanged="@(async open => { if (open) await HandlerAsync(); })" />
+<MudAutocomplete T="string" Underline="false" OpenChanged="@((bool open) => _flag = open)" SelectOnActivation="true" SearchFunc="@SearchAsync" />
+<MudField Underline="false" />
+<MudInput T="string" Sizing="@(_flag ? InputSizing.Auto : InputSizing.Fixed)" />
+
+@*pickers*@
+<MudDatePicker ShowToolbar="false" Underline="false" AdornmentIcon="@Icons.Material.Filled.Event" Variant="Variant.Outlined" />
+<MudDateRangePicker ShowToolbar="false" />
+<MudTimePicker ShowToolbar="true" ActionsClass="actions" />
+<MudColorPicker ShowToolbar="false" ShowSliders="false" ShowPreview="false" ShowModeSwitch="false" ShowInputs="false" DragEffect="false" ShowColorField="false" ShowAlpha="false" />
+<MudPickerToolbar ShowToolbar="false" />
+
+@*navigation, tabs, and progress*@
+<MudNavMenu>
+    <MudNavGroup Title="Group" Ripple="false">
+        <MudNavLink Href="/link" Ripple="false">Link</MudNavLink>
+    </MudNavGroup>
+</MudNavMenu>
+<MudTabs Ripple="false" SliderAnimation="false" TabButtonsClass="buttons" TabPanelsClass="panels">
+    <MudTabPanel Text="One" PanelClass="one-panel" />
+</MudTabs>
+<MudDynamicTabs TabPanelsClass="panels" />
+<MudTimeline Modifiers="false" />
+<MudProgressCircular Value="50" Min="0" Max="100" />
+<MudProgressLinear Value="50" Min="0" Max="100" />
+<MudCarousel TData="string" ShowBullets="true" BulletsColor="Color.Primary" BulletsClass="bullets" BulletTemplate="@_bulletTemplate" />
+<MudPagination Count="3" DropShadow="false" />
+
+@*tables and data grids*@
+<MudTablePager HideRowsPerPage="true" />
+<MudDataGridPager T="string" PageSizeSelector="false" />
+<MudDataGrid T="Row" Items="_rows" CanceledEditingItem="@((Row row) => _text = row.Name)">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" Editable="true" />
+        <TemplateColumn Editable="false" />
+    </Columns>
+</MudDataGrid>
+<MudTable T="string" Items="_items">
+    <HeaderContent>
+        <MudTHeadRow Checkable="true" Expandable="true" />
+    </HeaderContent>
+    <RowTemplate>
+        <MudTr Checkable="true" @bind-Checked="_flag" Expandable="true" Editable="true" />
+    </RowTemplate>
+    <FooterContent>
+        <MudTFootRow Checkable="true" Expandable="true" />
+    </FooterContent>
+</MudTable>
+<MudTableGroupRow T="string" Checkable="true" />
+
+@*trees, drag and drop, and charts*@
+<MudTreeView T="string" Hover="true" SelectedValueChanged="@((string? value) => _text = value ?? string.Empty)">
+    <MudTreeViewItem T="string" Value="@("item")" ExpandButtonIcon="@Icons.Material.Filled.ChevronRight" ExpandButtonIconColor="Color.Primary" />
+</MudTreeView>
+<MudDropContainer T="string" Items="_items" ItemsSelector="@((item, zone) => true)" ItemDisabled="@(item => item.Length == 0)">
+    <ChildContent>
+        <MudDropZone T="string" Identifier="zone" ItemDisabled="@(item => false)" />
+    </ChildContent>
+</MudDropContainer>
+<MudChart T="double" ChartLabels="@_labels" />
+
+@code
+{
+    public static string __description__ = "Current markup that the MUD0002 migration hints point at";
+
+    private bool _flag = true;
+
+    private bool _other = true;
+
+    private bool? _nullable;
+
+    private string _text = "a";
+
+    private int _number;
+
+    private double _seconds = 0.5;
+
+    private readonly string[] _items = ["a", "b"];
+
+    private readonly string[] _labels = ["Jan", "Feb"];
+
+    private readonly Row[] _rows = [new("a")];
+
+    private readonly RenderFragment<bool> _bulletTemplate = selected => builder => builder.AddContent(0, selected);
+
+    private void Handler() => _flag = !_flag;
+
+    private Task HandlerAsync() => Task.CompletedTask;
+
+    private Task<IEnumerable<string>> SearchAsync(string? value, CancellationToken token) => Task.FromResult<IEnumerable<string>>(_items);
+
+    public sealed record Row(string Name);
+}

@@ -26,7 +26,7 @@
         else
         {
             <tr class="mud-table-row">
-                <td class="mud-table-cell" colspan="1000">
+                <td class="mud-table-cell" colspan="@DataGrid.VisibleColumnSpan">
                     @Localizer[LanguageResource.MudDataGrid_Loading]
                 </td>
             </tr>
@@ -69,7 +69,7 @@
             @if (DataGrid.ChildRowContent != null)
             {
                 <tr class="mud-table-row">
-                    <td class="mud-table-cell mud-table-child-content" colspan="1000">
+                    <td class="mud-table-cell mud-table-child-content" colspan="@DataGrid.VisibleColumnSpan">
                         @DataGrid.ChildRowContent(new CellContext<T>(DataGrid, itemBag.Item, itemBag.Item))
                     </td>
                 </tr>
@@ -78,7 +78,7 @@
     </ChildContent>
     <NoRecordsContent>
         <tr>
-            <th colspan="1000" class="mud-table-empty-row">
+            <th colspan="@DataGrid.VisibleColumnSpan" class="mud-table-empty-row">
                 <div Class="my-3">
                     @DataGrid.NoRecordsContent
                 </div>

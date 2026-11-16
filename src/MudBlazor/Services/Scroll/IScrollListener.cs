@@ -18,7 +18,7 @@ public interface IScrollListener : IAsyncDisposable
     /// The rate at which the <see cref="IScrollListener"/> will report scroll position changes (in milliseconds).
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>100</c>.
+    /// Defaults to <c>10</c>.
     /// </remarks>
     public int ReportRateMs { get; set; }
 

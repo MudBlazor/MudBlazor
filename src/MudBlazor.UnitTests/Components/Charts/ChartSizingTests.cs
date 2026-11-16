@@ -4,6 +4,8 @@
 
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Charts;
 using MudBlazor.Interop;
 using NUnit.Framework;
@@ -12,6 +14,183 @@ namespace MudBlazor.UnitTests.Charts;
 
 public class ChartSizingTests : BunitTest
 {
+    /// <summary>
+    /// Pending and legacy overlays retain their local title margin until a host supplies a margin for issue #13606.
+    /// </summary>
+    [Test]
+    public async Task LineOverlay_PendingAndLegacyGridPreserveLocalMargin()
+    {
+        var host = Context.Render<AxisChartProbe>();
+        var context = Context.Render<CascadingValue<AxisGridData<double>?>>(parameters => parameters
+            .AddCascadingValue<IMudChart<double>>(host.Instance)
+            .Add(p => p.Value, null)
+            .AddChildContent<AxisChartProbe>(overlay => overlay
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>
+                {
+                    new() { Name = "Revenue", Data = new double[] { 40, 80 } }
+                })
+                .Add(p => p.ChartOptions, new LineChartOptions { YAxisTitle = "Revenue", ShowDataMarkers = true })));
+        var overlay = context.FindComponent<AxisChartProbe>();
+
+        overlay.Instance.IsOverlayChart.Should().BeTrue();
+        overlay.Instance.LocalStartSpace.Should().Be(50, "a pending overlay still reserves its minimum margin and title space");
+        host.Instance.SharedData.Should().BeNull();
+
+        await host.InvokeAsync(host.Instance.RenderPendingOverlay);
+
+        overlay.Instance.SharedData.Should().BeNull("an empty host must not fabricate shared grid data");
+        host.FindAll(".mud-charts-line-series path").Should().BeEmpty("the overlay waits for grid data before plotting");
+
+        await context.SetParametersAndRenderAsync(parameters => parameters
+            .Add(p => p.Value, new AxisGridData<double>(0, 5, 20, 700, 350)));
+
+        var content = Context.Render(host.Instance.OverlayContent!);
+        var markers = content.FindAll("circle.mud-chart-point:not([opacity])");
+        markers.Should().HaveCount(2);
+        markers[0].GetAttribute("cx").Should().Be("50", "legacy grid data preserves the overlay's own title margin");
+        markers[1].GetAttribute("cx").Should().Be("670", "the last point respects the shared width and right margin");
+        markers[0].GetAttribute("cy").Should().Be("172.5");
+        markers[1].GetAttribute("cy").Should().Be("25");
+    }
+
+    /// <summary>
+    /// Removing options from an empty standalone chart restores the minimum untitled margin for issue #13606.
+    /// </summary>
+    [Test]
+    public async Task LineChart_RemovingOptionsRestoresMinimumMargin()
+    {
+        var comp = Context.Render<Line<double>>(parameters => parameters
+            .Add(p => p.ChartOptions, new LineChartOptions { YAxisTitle = "Revenue" }));
+        comp.Find("g.mud-charts-yaxis text").GetAttribute("x").Should().Be("40");
+
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.ChartOptions, null));
+
+        comp.Find("g.mud-charts-yaxis text").GetAttribute("x").Should().Be("20");
+        comp.FindAll("text.mud-charts-yaxis").Should().BeEmpty();
+        comp.FindAll("path.mud-chart-line").Should().BeEmpty();
+    }
+
+    // Bar and Line rebuilds return before reading the margin when shared data is missing.
+    // Host rebuilds create grid data before calling RenderOverlay, even with no series.
+    private sealed class AxisChartProbe : Line<double>
+    {
+        public double LocalStartSpace => HorizontalStartSpace;
+
+        public void RenderPendingOverlay() => RenderOverlay();
+    }
+
+    /// <summary>
+    /// Identical host and overlay bars share measured margins after label growth and resizing for issue #13606.
+    /// </summary>
+    [TestCase(10)]
+    [TestCase(80)]
+    public async Task BarOverlay_MatchesHostGeometryAfterLabelMeasurementAndResize(double labelWidth)
+    {
+        var series = new List<ChartSeries<double>>
+        {
+            new() { Name = "Revenue", Data = new double[] { 40, 60, 80 } }
+        };
+        var options = new BarChartOptions();
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Bar)
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "800px")
+            .Add(p => p.Height, "400px")
+            .Add(p => p.ChartSeries, series)
+            .Add(p => p.ChartOptions, options)
+            .AddChildContent<Bar<double>>(overlay => overlay
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, options)));
+
+        var host = comp.FindComponents<Bar<double>>().Single(chart => !chart.Instance.IsOverlayChart);
+        host.Instance.OverlayChart.Should().NotBeNull();
+        var axis = comp.FindComponent<BaseAxisChart<double, BarChartOptions>>();
+
+        await comp.InvokeAsync(async () =>
+        {
+            await axis.Instance.YAxisLabelSizeChanged.InvokeAsync(new ElementSize { Width = labelWidth, Height = 20 });
+            host.Instance.OnElementSizeChanged(new ElementSize { Width = 800, Height = 400, Timestamp = 1 });
+            host.Instance.RebuildChart();
+        });
+
+        comp.Find("svg").GetAttribute("viewBox").Should().Be("0 0 800 400");
+        var grid = comp.Find(".mud-charts-gridlines-yaxis path").GetAttribute("d")!;
+        if (labelWidth == 10)
+        {
+            grid.Should().StartWith("M 30 ", "narrow labels retain the minimum margin");
+        }
+        else
+        {
+            grid.Should().NotStartWith("M 30 ", "wide labels expand the host margin");
+        }
+
+        AssertMatchingBarGeometry();
+
+        await comp.InvokeAsync(async () =>
+        {
+            await axis.Instance.YAxisLabelSizeChanged.InvokeAsync(new ElementSize { Width = 120, Height = 20 });
+            host.Instance.OnElementSizeChanged(new ElementSize { Width = 960, Height = 400, Timestamp = 2 });
+            host.Instance.RebuildChart();
+        });
+
+        comp.Find("svg").GetAttribute("viewBox").Should().Be("0 0 960 400");
+        comp.Find(".mud-charts-gridlines-yaxis path").GetAttribute("d").Should().NotBe(grid);
+        AssertMatchingBarGeometry();
+
+        void AssertMatchingBarGeometry()
+        {
+            var groups = comp.FindAll("svg > g.mud-charts-bar-series");
+            groups.Count.Should().Be(2);
+            var hostBars = groups[0].QuerySelectorAll("path.mud-chart-bar");
+            var overlayBars = groups[1].QuerySelectorAll("path.mud-chart-bar");
+            hostBars.Should().HaveCount(3);
+            overlayBars.Should().HaveCount(3);
+            for (var i = 0; i < hostBars.Length; i++)
+            {
+                overlayBars[i].GetAttribute("d").Should().Be(hostBars[i].GetAttribute("d"),
+                    "identical overlay bars must use the host's measured plot area");
+                overlayBars[i].GetAttribute("stroke-width").Should().Be(hostBars[i].GetAttribute("stroke-width"));
+            }
+        }
+    }
+
+    /// <summary>
+    /// A line overlay spans the host's measured horizontal grid bounds for issue #13606.
+    /// </summary>
+    [TestCase(10)]
+    [TestCase(80)]
+    public async Task LineOverlay_MatchesHostHorizontalBoundsAfterLabelMeasurement(double labelWidth)
+    {
+        var series = new List<ChartSeries<double>>
+        {
+            new() { Name = "Revenue", Data = new double[] { 40, 60, 80 } }
+        };
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Bar)
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "800px")
+            .Add(p => p.Height, "400px")
+            .Add(p => p.ChartSeries, series)
+            .AddChildContent<Line<double>>(overlay => overlay
+                .Add(p => p.ChartSeries, series)
+                .Add(p => p.ChartOptions, new LineChartOptions { ShowDataMarkers = true })));
+        var host = comp.FindComponent<Bar<double>>();
+        var axis = comp.FindComponent<BaseAxisChart<double, BarChartOptions>>();
+
+        await comp.InvokeAsync(async () =>
+        {
+            await axis.Instance.YAxisLabelSizeChanged.InvokeAsync(new ElementSize { Width = labelWidth, Height = 20 });
+            host.Instance.OnElementSizeChanged(new ElementSize { Width = 800, Height = 400, Timestamp = 1 });
+            host.Instance.RebuildChart();
+        });
+
+        var grid = comp.Find(".mud-charts-gridlines-yaxis path").GetAttribute("d")!.Split(' ');
+        var markers = comp.FindAll("circle.mud-chart-point:not([opacity])");
+        markers.Count.Should().Be(3);
+        markers[0].GetAttribute("cx").Should().Be(grid[1]);
+        markers[^1].GetAttribute("cx").Should().Be(grid[4]);
+    }
+
     [Test]
     public async Task MudAxisChartBase_MatchBoundsToSize_ShouldMatchMeasuredSizeExactly()
     {
@@ -186,6 +365,59 @@ public class ChartSizingTests : BunitTest
         });
     }
 
+    /// <summary>
+    /// A chart still renders when its size measurements hit a lost circuit.
+    /// </summary>
+    [TestCase(ChartType.Line)]
+    [TestCase(ChartType.Pie)]
+    [TestCase(ChartType.HeatMap)]
+    [TestCase(ChartType.Sankey)]
+    public void MudChart_SizeMeasurementDisconnected_StillRenders(ChartType chartType)
+    {
+        Context.JSInterop.Setup<ElementSize>("mudObserveElementSize", _ => true).SetException(new JSDisconnectedException("disconnected"));
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetException(new JSDisconnectedException("disconnected"));
+
+        var comp = Context.Render<MudChart<double>>(parameters =>
+        {
+            parameters
+                .Add(p => p.ChartType, chartType)
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>
+                {
+                    new() { Name = "Alpha", Data = new double[] { 5, 3 } },
+                    new() { Name = "Beta", Data = new double[] { 2, 8 } },
+                })
+                .Add(p => p.ChartLabels, new[] { "L1", "L2" });
+
+            if (chartType == ChartType.Sankey)
+            {
+                parameters.Add(p => p.ChartOptions, new SankeyChartOptions { AggregationOption = AggregationOption.GroupByDataSet });
+            }
+        });
+
+        comp.Find("svg").Should().NotBeNull();
+        Context.JSInterop.VerifyInvoke("mudObserveElementSize");
+    }
+
+    /// <summary>
+    /// A failed parent height check keeps the assumption that the parent has a fixed height.
+    /// </summary>
+    [Test]
+    public async Task MudChart_MatchBoundsToSize_ParentCheckDisconnected_ShouldNotUseFallbackHeight()
+    {
+        var series = new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20 } } };
+        Context.JSInterop.Setup<bool>("hasDefinedParentHeight", _ => true).SetException(new JSDisconnectedException("disconnected"));
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Height, "100%")
+            .Add(p => p.ChartSeries, series));
+
+        await comp.WaitForAssertionAsync(() => Context.JSInterop.Invocations["hasDefinedParentHeight"].Should().HaveCount(1));
+
+        comp.FindAll("div[style*='height:350px']").Should().BeEmpty();
+    }
+
     [Test]
     public async Task MudChart_MatchBoundsToSize_NoFixedParent_ShouldUseFallbackHeight()
     {
@@ -294,4 +526,172 @@ public class ChartSizingTests : BunitTest
         paths.Should().HaveCount(3);
         paths.Should().OnlyContain(p => p.Data.Contains($"A {expectedRadius} {expectedRadius}"));
     }
+
+    /// <summary>
+    /// Verifies a radial chart parses fractional pixel sizes with the invariant culture when the current culture uses a decimal comma.
+    /// </summary>
+    [Test]
+    [SetCulture("de-DE")]
+    public async Task MudRadialChartBase_SetBounds_ParsesFractionalPixelsInvariantly_DecimalCommaCulture()
+    {
+        var comp = Context.Render<Pie<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20, 30 } } })
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "200.5px")
+            .Add(p => p.Height, "160.5px"));
+
+        // Without a measured element size, RebuildChart -> SetBounds parses the px Width/Height.
+        // min(200.5, 160.5) / 2 = 80.25, rounded to a radius of 80.
+        List<SvgPath> paths = null!;
+        await comp.InvokeAsync(() =>
+        {
+            comp.Instance.RebuildChart();
+            paths = new List<SvgPath>(comp.Instance._paths);
+        });
+
+        paths.Should().HaveCount(3);
+        paths.Should().OnlyContain(p => p.Data.Contains("A 80 80"));
+    }
+
+    /// <summary>
+    /// Verifies a radial chart parses fractional pixel sizes with the invariant culture when the current culture uses a decimal comma and a space group separator, which would make parsing fail.
+    /// </summary>
+    [Test]
+    [SetCulture("sv-SE")]
+    public async Task MudRadialChartBase_SetBounds_ParsesFractionalPixelsInvariantly_SwedishCulture()
+    {
+        var comp = Context.Render<Pie<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20, 30 } } })
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "200.5px")
+            .Add(p => p.Height, "160.5px"));
+
+        // Without a measured element size, RebuildChart -> SetBounds parses the px Width/Height.
+        // min(200.5, 160.5) / 2 = 80.25, rounded to a radius of 80.
+        List<SvgPath> paths = null!;
+        await comp.InvokeAsync(() =>
+        {
+            comp.Instance.RebuildChart();
+            paths = new List<SvgPath>(comp.Instance._paths);
+        });
+
+        paths.Should().HaveCount(3);
+        paths.Should().OnlyContain(p => p.Data.Contains("A 80 80"));
+    }
+
+    /// <summary>
+    /// Verifies the heat map parses fractional pixel sizes with the invariant culture when the current culture uses a decimal comma.
+    /// </summary>
+    [Test]
+    [SetCulture("de-DE")]
+    public void HeatMap_SetBounds_ParsesFractionalPixelsInvariantly_DecimalCommaCulture()
+    {
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.HeatMap)
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Series 1", Data = new double[] { 1, 2, 3 } } })
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "640.5px")
+            .Add(p => p.Height, "320.5px"));
+
+        comp.Find("svg.mud-chart-heat").GetAttribute("viewBox").Should().Be("0 0 640.5 320.5");
+    }
+
+    /// <summary>
+    /// Verifies the Sankey chart parses fractional pixel sizes with the invariant culture when the current culture uses a decimal comma.
+    /// </summary>
+    [Test]
+    [SetCulture("de-DE")]
+    public void Sankey_SetBounds_ParsesFractionalPixelsInvariantly_DecimalCommaCulture()
+    {
+        var edges = new List<SankeyEdge<double>> { new("Source", "Target", 10) };
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Sankey)
+            .Add(p => p.ChartSeries, [new() { Name = "Flow", Data = edges }])
+            .Add(p => p.ChartOptions, new SankeyChartOptions())
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "640.5px")
+            .Add(p => p.Height, "320.5px"));
+
+        comp.Find("svg.mud-chart-sankey").GetAttribute("viewBox").Should().Be("0 0 640.5 320.5");
+    }
+
+    /// <summary>
+    /// Hovering a point renders the chart again but leaves its axis labels alone, so they aren't measured again.
+    /// </summary>
+    [Test]
+    public async Task LineChartHoverDoesNotMeasureTheAxisLabelsAgain()
+    {
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 50, Height = 20 });
+        Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 40, Height: 16));
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 20, 30 } }])
+            .Add(p => p.ChartLabels, ["Jan", "Feb", "Mar"]));
+
+        var measured = AxisMeasurements();
+
+        await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new());
+        await comp.FindAll("circle.mud-chart-point")[1].MouseOutAsync(new());
+
+        AxisMeasurements().Should().Be(measured);
+    }
+
+    /// <summary>
+    /// New data gives the chart new axis labels, so they are measured again and the plot moves over for wider ones.
+    /// </summary>
+    [Test]
+    public async Task LineChartMeasuresTheAxisLabelsAgainForNewData()
+    {
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 50, Height = 20 });
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 20, 30 } }])
+            .Add(p => p.ChartLabels, ["Jan", "Feb", "Mar"]));
+
+        comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 60 ");
+        var measured = AxisMeasurements();
+
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 80, Height = 20 });
+        await comp.SetParametersAndRenderAsync(parameters => parameters
+            .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10000, 20000, 30000 } }]));
+
+        AxisMeasurements().Should().BeGreaterThan(measured);
+        await comp.WaitForAssertionAsync(() => comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 90 "));
+    }
+
+    /// <summary>
+    /// A chart that fills its parent measures its axis labels again when the parent is resized, and makes room for them if they grew.
+    /// </summary>
+    [Test]
+    public async Task LineChartMeasuresTheAxisLabelsAgainAfterAResize()
+    {
+        Context.JSInterop.Setup<ElementSize>("mudObserveElementSize", _ => true).SetResult(new ElementSize { Width = 700, Height = 350, Timestamp = 1 });
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 50, Height = 20 });
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 20, 30 } }])
+            .Add(p => p.ChartLabels, ["Jan", "Feb", "Mar"])
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "700px")
+            .Add(p => p.Height, "350px"));
+
+        await comp.WaitForAssertionAsync(() => comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 60 "));
+
+        // The browser now reports wider labels, which only a fresh measurement after the resize can pick up.
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 80, Height = 20 });
+        var chart = comp.FindComponent<Line<double>>().Instance;
+        await comp.InvokeAsync(() => chart.OnElementSizeChanged(new ElementSize { Width = 800, Height = 400, Timestamp = 2 }));
+
+        await comp.WaitForAssertionAsync(() =>
+        {
+            comp.Find("svg").GetAttribute("viewBox").Should().Be("0 0 800 400");
+            comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 90 ");
+        });
+    }
+
+    private int AxisMeasurements() =>
+        Context.JSInterop.Invocations["mudGetSvgBBox"].Count(x => x.ResultType == typeof(ElementSize));
 }

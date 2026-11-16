@@ -22,6 +22,9 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     where T : struct, INumber<T>, IMinMaxValue<T>, IFormattable
     where TOptions : IAxisChartOptions
 {
+    // Written in a tooltip format, this is the Y value the way the axis labels it.
+    private const string YAxisValuePlaceholder = "{{Y_AXIS_VALUE}}";
+
     [Inject]
     private IJSRuntime JsRuntime { get; init; } = null!;
 
@@ -77,11 +80,55 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     protected readonly List<SvgText> VerticalValues = [];
 
     /// <summary>
+    /// Whether the X-axis label at this index is drawn, which <see cref="IAxisChartOptions.XAxisLabelInterval"/> decides.
+    /// </summary>
+    /// <remarks>
+    /// Only the axis is thinned out.
+    /// The label a tooltip shows is read separately, so a point whose axis label was skipped still names itself on hover.
+    /// </remarks>
+    /// <param name="index">The index of the vertical grid line.</param>
+    protected bool ShouldLabelVerticalGridLine(int index) =>
+        index % Math.Max(1, ChartOptions?.XAxisLabelInterval ?? 1) == 0;
+
+    /// <summary>
     /// The legends of the chart.
     /// </summary>
     protected readonly List<SvgLegend> Legends = [];
 
+    /// <summary>
+    /// Wraps a tooltip so the <see cref="ChartTooltip"/> inside it, including one from a <c>TooltipTemplate</c>, knows the room around the hovered point.
+    /// </summary>
+    /// <param name="tooltip">The tooltip to wrap.</param>
+    /// <param name="point">The hovered point the tooltip describes.</param>
+    /// <param name="labelOffset">How far above the point the tooltip is anchored.</param>
+    private protected RenderFragment WithTooltipRoom(RenderFragment tooltip, SvgPath? point, double labelOffset) => builder =>
+    {
+        // A tooltip placed by TooltipPositionFunc goes wherever the caller put it, so it gets no room to move into.
+        var room = point is not null && TooltipPositionFunc is null
+            ? new ChartTooltipRoom(
+                Above: point.LabelY - labelOffset,
+                Below: _boundHeight - point.LabelY - labelOffset,
+                FlipOffset: labelOffset * 2,
+                Left: point.LabelX,
+                Right: _boundWidth - point.LabelX)
+            : null;
+
+        builder.OpenComponent<CascadingValue<ChartTooltipRoom>>(0);
+        builder.AddComponentParameter(1, nameof(CascadingValue<ChartTooltipRoom>.Value), room);
+        builder.AddComponentParameter(2, nameof(CascadingValue<ChartTooltipRoom>.ChildContent), tooltip);
+        builder.CloseComponent();
+    };
+
     protected const double Epsilon = 1e-6;
+
+    // How many gaps between gridlines an axis aims for when it picks its own step.
+    private const int AutoGridGaps = 5;
+
+    private static ReadOnlySpan<double> RoundGridStepMultiples => [1, 2, 5, 10, 20];
+
+    // The step an axis takes when the chart has no options, the same one new options start with.
+    private protected const int DefaultGridStep = 20;
+
     /// <summary>
     /// The default width of the chart bounds.
     /// </summary>
@@ -106,8 +153,10 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// <summary>
     /// The horizontal start space for the chart.
     /// </summary>
-    protected double HorizontalStartSpace => Math.Max(HorizontalStartSpaceBuffer + Math.Ceiling(YAxisLabelSize?.Width ?? DefaultYAxisLabelWidth), MinHorizontalStartSpace)
-        + (!string.IsNullOrWhiteSpace(ChartOptions?.YAxisTitle) ? YAxisTitleSpace : 0);
+    protected double HorizontalStartSpace => IsOverlayChart && SharedData?.HorizontalStartSpace is { } horizontalStartSpace
+        ? horizontalStartSpace
+        : Math.Max(HorizontalStartSpaceBuffer + Math.Ceiling(YAxisLabelSize?.Width ?? DefaultYAxisLabelWidth), MinHorizontalStartSpace)
+            + (!string.IsNullOrWhiteSpace(ChartOptions?.YAxisTitle) ? YAxisTitleSpace : 0);
     /// <summary>
     /// The horizontal end space for the chart.
     /// </summary>
@@ -231,6 +280,11 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     {
         if (OverlayChart is IMudAxisChart<T> overlay)
         {
+            if (SharedData is { } sharedData)
+            {
+                SharedData = sharedData with { HorizontalStartSpace = HorizontalStartSpace };
+            }
+
             overlay.SharedData = SharedData;
             overlay.RebuildChart();
             StateHasChanged();
@@ -244,9 +298,11 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// <returns>A task representing the asynchronous operation.</returns>
     protected async Task SetElementReference(ElementReference elementRef)
     {
-        var elementSize = await JsRuntime.InvokeAsync<ElementSize>("mudObserveElementSize", _dotNetObjectReference, elementRef);
-
-        OnElementSizeChanged(elementSize);
+        var (success, elementSize) = await JsRuntime.InvokeAsyncWithErrorHandling<ElementSize>("mudObserveElementSize", _dotNetObjectReference, elementRef);
+        if (success && elementSize is not null)
+        {
+            OnElementSizeChanged(elementSize);
+        }
     }
 
     /// <summary>
@@ -293,6 +349,76 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
                 _boundHeight = height;
             }
         }
+    }
+
+    /// <summary>
+    /// Gets the spacing between horizontal gridlines from the chart's options.
+    /// </summary>
+    /// <param name="min">The lowest value the axis has to reach.</param>
+    /// <param name="max">The highest value the axis has to reach.</param>
+    /// <returns>The spacing between gridlines.</returns>
+    private protected T GetGridYUnits(T min, T max) => ChartOptions is { } options
+        ? GetGridUnits(options.YAxisTicks, options.MaxNumYAxisTicks, min, max)
+        : T.CreateSaturating(DefaultGridStep);
+
+    /// <summary>
+    /// Gets the spacing between gridlines on an axis.
+    /// </summary>
+    /// <param name="ticks">The spacing set in the options, where <c>0</c> picks a round one that fits the values.</param>
+    /// <param name="maxTicks">The most gridlines the axis may draw.</param>
+    /// <param name="min">The lowest value the axis has to reach.</param>
+    /// <param name="max">The highest value the axis has to reach.</param>
+    /// <returns>The spacing between gridlines.</returns>
+    private protected static T GetGridUnits(int ticks, int maxTicks, T min, T max)
+    {
+        if (ticks > 0)
+        {
+            return T.CreateSaturating(ticks);
+        }
+
+        var low = double.CreateSaturating(min);
+        var high = double.CreateSaturating(max);
+
+        if (high > low)
+        {
+            // Aim for about five gaps, or fewer when the axis may not draw that many lines.
+            var gaps = Math.Clamp(maxTicks - 1, 1, AutoGridGaps);
+            var step = RoundGridStep((high - low) / gaps, strictlyAbove: false);
+
+            // Lines start and end on whole steps, which can add one at each end, so move up through the round steps until they fit.
+            // Once the step is past every value the count can't shrink, and the chart's own limit takes over.
+            var reach = Math.Max(Math.Abs(low), Math.Abs(high));
+            while (step <= reach && Math.Ceiling(high / step) - Math.Floor(low / step) + 1 > maxTicks)
+            {
+                step = RoundGridStep(step, strictlyAbove: true);
+            }
+
+            return T.CreateSaturating(step);
+        }
+
+        // A series that never changes has no range to split, so the step goes past its value, which puts it between zero and one step instead of on the edge.
+        var value = Math.Max(Math.Abs(low), Math.Abs(high));
+
+        return T.CreateSaturating(value > 0 ? RoundGridStep(value, strictlyAbove: true) : 1);
+    }
+
+    // Steps are 1, 2 or 5 times a power of ten, and whole numbers because that's all the tick options can hold.
+    private static double RoundGridStep(double atLeast, bool strictlyAbove)
+    {
+        var magnitude = Math.Pow(10, Math.Floor(Math.Log10(atLeast)));
+
+        // 10 and 20 cover a logarithm that rounds just under a whole power of ten.
+        foreach (var multiple in RoundGridStepMultiples)
+        {
+            var step = multiple * magnitude;
+            if (strictlyAbove ? step > atLeast : step >= atLeast)
+            {
+                return Math.Max(1, Math.Round(step));
+            }
+        }
+
+        // Only an infinite value gets here.
+        return Math.Max(1, atLeast);
     }
 
     /// <summary>
@@ -369,10 +495,10 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
     /// </summary>
     /// <param name="value">The value to build the string for.</param>
     /// <returns>The string representation of the Y-axis value.</returns>
-    protected string BuildYAxisValueString(T value)
-    {
-        var doubleValue = double.CreateSaturating(value);
+    protected string BuildYAxisValueString(T value) => FormatYAxisValue(double.CreateSaturating(value));
 
+    private string FormatYAxisValue(double doubleValue)
+    {
         return ChartOptions?.YAxisToStringFunc is null
             ? ToS(doubleValue, ChartOptions?.YAxisFormat)
             : ChartOptions.YAxisToStringFunc(doubleValue);
@@ -396,6 +522,24 @@ public abstract class MudAxisChartBase<T, TOptions> : MudChartBase<T, TOptions>,
             .Replace("{{SERIES_NAME}}", series.Name)
             .Replace("{{X_VALUE}}", path.LabelXValue)
             .Replace("{{Y_VALUE}}", path.LabelYValue);
+    }
+
+    /// <summary>
+    /// Formats the tooltip text, including <c>{{Y_AXIS_VALUE}}</c> written the way the Y axis labels it.
+    /// </summary>
+    /// <param name="format">The format string.</param>
+    /// <param name="series">The chart series.</param>
+    /// <param name="path">The SVG path.</param>
+    /// <returns>The formatted tooltip text.</returns>
+    private protected string FormatTooltip(string? format, ChartSeries<T> series, SvgPath path)
+    {
+        // Only run the axis formatter when the format asks for it, since YAxisToStringFunc is the app's own code.
+        if (format?.Contains(YAxisValuePlaceholder, StringComparison.Ordinal) is true)
+        {
+            format = format.Replace(YAxisValuePlaceholder, FormatYAxisValue(path.YValue));
+        }
+
+        return FormatTooltipText(format, series, path);
     }
 
     /// <summary>

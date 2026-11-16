@@ -20,6 +20,7 @@ namespace MudBlazor
     public partial class MudMenu : MudComponentBase, IDisposable
     {
         private readonly ParameterState<bool> _openState;
+        private Action<MouseEventArgs>? _suppressContextMenuHandler;
         private readonly List<MudMenu> _subMenus = [];
         private (double Top, double Left) _openPosition;
         private bool _isPointerOver;
@@ -631,10 +632,13 @@ namespace MudBlazor
 
         // Only wire oncontextmenu when right-click actually activates this menu.
         // The no-op lambda this replaces was still a live delegate, so every menu registered a real DOM listener that did nothing, which on Blazor Server turns every right-click inside a menu into a wasted network round-trip.
-        private EventCallback<MouseEventArgs> ContextMenuCallback =>
-            ActivationEvent == MouseEvent.RightClick && ActivatorContent is null
-                ? EventCallback.Factory.Create<MouseEventArgs>(this, ToggleMenuAsync)
-                : default;
+        // With ActivatorContent the activator opens the menu, but the root still prevents the browser context menu, and before .NET 10 Blazor only honors that while a contextmenu listener is registered on the page.
+        private EventCallback<MouseEventArgs> ContextMenuCallback => ActivationEvent switch
+        {
+            MouseEvent.RightClick when ActivatorContent is null => EventCallback.Factory.Create<MouseEventArgs>(this, ToggleMenuAsync),
+            MouseEvent.RightClick => EventCallback.Factory.Create<MouseEventArgs>(this, _suppressContextMenuHandler ??= this.AsNonRenderingEventHandler<MouseEventArgs>(static _ => { })),
+            _ => default
+        };
 
         /// <summary>
         /// Toggles the menu's open or closed state.

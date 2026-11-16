@@ -26,6 +26,33 @@ public class RadarChartTests : BunitTest
         comp.FindAll("path.mud-chart-axis-line").Count.Should().Be(0); // No labels, no data, so no axes.
     }
 
+    /// <summary>
+    /// Verifies fractional radar stroke widths and marker radii are written with the invariant culture when the current culture uses a decimal comma.
+    /// </summary>
+    [Test]
+    [SetCulture("de-DE")]
+    public void RadarChart_FractionalStrokeAndRadius_UseInvariantCulture()
+    {
+        var options = new RadarChartOptions
+        {
+            StrokeWidth = 1.5,
+            GridLineWidth = 0.5,
+            AxisLineWidth = 0.75,
+            DataPointRadius = 2.5,
+            ShowDataMarkers = true
+        };
+
+        var comp = Context.Render<Radar<double>>(parameters => parameters
+            .Add(p => p.ChartSeries, new List<ChartSeries<double>> { new() { Name = "Skills", Data = new double[] { 10, 20, 30 } } })
+            .Add(p => p.ChartLabels, new[] { "Speed", "Power", "Range" })
+            .Add(p => p.ChartOptions, options));
+
+        comp.Find("path.mud-chart-serie").GetAttribute("stroke-width").Should().Be("1.5");
+        comp.Find("path.mud-chart-grid-line").GetAttribute("stroke-width").Should().Be("0.5");
+        comp.Find("path.mud-chart-axis-line").GetAttribute("stroke-width").Should().Be("0.75");
+        comp.Find("circle.mud-chart-series-point").GetAttribute("r").Should().Be("2.5");
+    }
+
     [Test]
     public async Task RadarChart_Should_UpdateSelectedPointIndex_OnDataMarkerClick()
     {

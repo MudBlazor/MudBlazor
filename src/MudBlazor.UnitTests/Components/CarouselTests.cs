@@ -1,5 +1,6 @@
 ﻿using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Time.Testing;
 using MudBlazor.UnitTests.TestComponents.Carousel;
@@ -130,6 +131,56 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Default navigation controls follow the natural document tab order (#13975).
+        /// </summary>
+        [Test]
+        public async Task Carousel_DefaultControls_UseNaturalTabOrder()
+        {
+            var comp = Context.Render<MudCarousel<object>>(parameters => parameters
+                .Add(p => p.AutoCycle, false));
+
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+
+            foreach (var button in comp.FindAll("button.mud-icon-button"))
+            {
+                button.HasAttribute("tabindex").Should().BeFalse();
+            }
+        }
+
+        /// <summary>
+        /// Custom navigation controls use native button semantics (#13975).
+        /// </summary>
+        [Test]
+        public async Task Carousel_CustomControls_ExposeButtonSemantics()
+        {
+            RenderFragment previousTemplate = builder => builder.AddContent(0, "Previous");
+            RenderFragment nextTemplate = builder => builder.AddContent(0, "Next");
+            RenderFragment<bool> bulletTemplate = isSelected => builder => builder.AddContent(0, isSelected ? "Selected" : "Not selected");
+            var comp = Context.Render<MudCarousel<object>>(parameters => parameters
+                .Add(p => p.AutoCycle, false)
+                .Add(p => p.NavigationButtonsClass, "custom-navigation")
+                .Add(p => p.BulletsClass, "custom-bullet")
+                .Add(p => p.PreviousButtonTemplate, previousTemplate)
+                .Add(p => p.NextButtonTemplate, nextTemplate)
+                .Add(p => p.BulletTemplate, bulletTemplate));
+
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+            await comp.InvokeAsync(() => comp.Instance.AddItem(Context.Render<MudCarouselItem>().Instance));
+
+            var controls = comp.FindAll(".custom-navigation, .custom-bullet");
+            controls.Should().HaveCount(4);
+            foreach (var control in controls)
+            {
+                control.TagName.Should().Be("BUTTON");
+                control.GetAttribute("type").Should().Be("button");
+                control.HasAttribute("tabindex").Should().BeFalse();
+                control.GetAttribute("aria-label").Should().NotBeNullOrEmpty();
+                control.ClassList.Should().Contain("mud-carousel-custom-button");
+            }
+        }
+
+        /// <summary>
         /// Testing some parameters
         /// </summary>
         [Test]
@@ -164,6 +215,23 @@ namespace MudBlazor.UnitTests.Components
                 .Add(p => p.NavigationButtonsClass, null));
             comp.FindAll("button.fake-delimiter-class").Count.Should().Be(0);
             comp.FindAll("button.fake-navigation-class").Count.Should().Be(0);
+        }
+
+        /// <summary>
+        /// Items do not rotate unless AutoCycle is set, since moving content needs a pause control (WCAG 2.2.2).
+        /// </summary>
+        [Test]
+        public async Task Carousel_DoesNotAutoCycleByDefault()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            var comp = Context.Render<MudCarousel<object>>();
+            comp.Instance.Items.Add(Context.Render<MudCarouselItem>().Instance);
+            comp.Instance.Items.Add(Context.Render<MudCarouselItem>().Instance);
+            await comp.InvokeAsync(() => comp.Instance.MoveTo(0));
+
+            timeProvider.Advance(TimeSpan.FromSeconds(30));
+
+            await comp.InvokeAsync(() => comp.Instance.SelectedIndex.Should().Be(0));
         }
 
         /// <summary>

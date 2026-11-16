@@ -1,0 +1,27 @@
+@attribute [ViewerHidden]
+<MudDataGrid T="int" Items="_items" @ref="Grid">
+    <Columns>
+        <TemplateColumn T="int" Title="Name" />
+        <TemplateColumn T="int" Title="Age" />
+        @if (_showStatus)
+        {
+            <TemplateColumn T="int" Title="Status" Order="_statusOrder" />
+            <ColumnOrderRenderUpdateTest Update="UpdateDuringRender" />
+        }
+    </Columns>
+</MudDataGrid>
+@code {
+    private readonly int[] _items = [1];
+    private bool _showStatus;
+    private int? _statusOrder = 2;
+    private bool _updated;
+    public MudDataGrid<int>? Grid { get; private set; }
+    public void AddStatus() { _showStatus = true; StateHasChanged(); }
+    private void UpdateDuringRender()
+    {
+        if (_updated) return;
+        _updated = true;
+        _statusOrder = 0;
+        StateHasChanged();
+    }
+}

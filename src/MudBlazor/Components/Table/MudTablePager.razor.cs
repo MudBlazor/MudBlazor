@@ -16,6 +16,8 @@ namespace MudBlazor
     /// <seealso cref="MudTableBase" />
     public partial class MudTablePager : MudComponentBase, IDisposable
     {
+        private readonly string _rowsPerPageLabelId = Identifier.Create("tablepager-rows-per-page");
+
         protected string Classname =>
             new CssBuilder("mud-table-pagination-toolbar")
                 .AddClass("mud-tablepager-left", !RightToLeft)

@@ -267,6 +267,10 @@
   }
 }
 
+// Day ids are integers, so each clamp is 1 or 0: the start side rounds when the hovered day is not earlier, and the end side when it is not later.
+$anchor-start: calc(50% * clamp(0, var(--selected-day) - var(--day-id) + 1, 1));
+$anchor-end: calc(50% * clamp(0, var(--day-id) - var(--selected-day) + 1, 1));
+
 .mud-picker-calendar-container {
   display: flex;
   width: 310px;
@@ -332,6 +336,11 @@
         border-radius: 0% 50% 50% 0%;
       }
 
+      // While the range is pending, the first date rounds only the side away from the hovered date, and both sides when it is hovered itself.
+      &.mud-range-selection-anchor {
+        border-radius: $anchor-start $anchor-end $anchor-end $anchor-start;
+      }
+
       &.mud-range-between {
         border-radius: 0;
         background-color: var(--mud-palette-action-default-hover);
@@ -346,6 +355,10 @@
           &:not(.mud-range-start-selected) {
             border-radius: 0% 50% 50% 0%;
           }
+
+          &.mud-range-selection-before {
+            border-radius: 50% 0% 0% 50%;
+          }
         }
       }
 
@@ -353,6 +366,11 @@
         border-radius: 0;
         background: linear-gradient(var(--mud-palette-action-default-hover) 100%, var(--mud-palette-action-default-hover) 100%, transparent 0%);
         background-size: 100% calc(100% * (var(--selected-day) - var(--day-id)));
+
+        // Earlier days fill from the hovered date up to the first date.
+        &.mud-range-selection-before {
+          background-size: 100% calc(100% * (var(--day-id) - var(--selected-day)));
+        }
       }
     }
   }
@@ -392,10 +410,18 @@
       border-radius: 50% 0% 0% 50%;
     }
 
+    &.mud-range-selection-anchor {
+      border-radius: $anchor-end $anchor-start $anchor-start $anchor-end;
+    }
+
     @media(hover: hover) and (pointer: fine) {
       &.mud-range-selection:hover {
         &:not(.mud-range-start-selected) {
           border-radius: 50% 0% 0% 50%;
+        }
+
+        &.mud-range-selection-before {
+          border-radius: 0% 50% 50% 0%;
         }
       }
     }

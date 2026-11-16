@@ -11,10 +11,19 @@ public class MockDocsMessageHandler : MockHttpMessageHandler
         this.When("https://localhost/webapi/periodictable")
             .Respond("application/json",
                 Encoding.UTF8.GetString(Encoding.Default.GetBytes(SampleElementsJson)));
+        // Company api
+        this.When("https://localhost/webapi/company")
+            .Respond("application/json", SampleCompanyJson);
         // DialogScrollableExample
         this.When("https://raw.githubusercontent.com/MudBlazor/MudBlazor/master/LICENSE")
             .Respond("text/plain", "Dummy License");
     }
+
+    private const string SampleCompanyJson = @"
+        [
+            { ""department"": ""Engineering"", ""team"": ""Platform"", ""role"": ""Backend"", ""name"": ""Alice"", ""score"": 120 },
+            { ""department"": ""Sales"", ""team"": ""SMB"", ""role"": ""Sales Dev"", ""name"": ""Jack"", ""score"": 125 }
+        ]";
 
     private const string SampleElementsJson = @"
         [

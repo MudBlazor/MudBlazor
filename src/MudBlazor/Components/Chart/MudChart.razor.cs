@@ -54,7 +54,9 @@ public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, 
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (firstRender && ChartReference is not null)
+        // The second render only exists to cascade the inner chart to overlay charts in ChildContent.
+        // Without overlays it would rebuild and redraw the inner chart for nothing.
+        if (firstRender && ChartReference is not null && ChildContent is not null)
         {
             StateHasChanged();
         }
@@ -82,7 +84,11 @@ public partial class MudChart<T> where T : struct, INumber<T>, IMinMaxValue<T>, 
 
         if (firstRender)
         {
-            _hasFixedParent = await JsRuntime.InvokeAsync<bool>("hasDefinedParentHeight", _containerRef);
+            var (success, hasFixedParent) = await JsRuntime.InvokeAsyncWithErrorHandling<bool>("hasDefinedParentHeight", _containerRef);
+            if (success)
+            {
+                _hasFixedParent = hasFixedParent;
+            }
         }
 
         if (_hasFixedParent != previousHasFixedParent)

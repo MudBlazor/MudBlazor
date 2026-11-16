@@ -28,7 +28,7 @@ internal class JsApiService : IJsApiService
     /// <inheritdoc />
     public ValueTask CopyToClipboardAsync(string? text)
     {
-        return _jsRuntime.InvokeVoidAsync("mudWindow.copyToClipboard", text);
+        return _jsRuntime.InvokeVoidAsyncIgnoreDisconnected("mudWindow.copyToClipboard", text);
     }
 
     /// <inheritdoc />
@@ -39,18 +39,18 @@ internal class JsApiService : IJsApiService
             return OpenInNewTabAsync(link);
         }
 
-        return _jsRuntime.InvokeVoidAsync("open", link, target);
+        return _jsRuntime.InvokeVoidAsyncIgnoreDisconnected("open", link, target);
     }
 
     /// <inheritdoc />
     public ValueTask OpenInNewTabAsync(string url)
     {
-        return _jsRuntime.InvokeVoidAsync("mudWindow.open", url, "_blank");
+        return _jsRuntime.InvokeVoidAsyncIgnoreDisconnected("mudWindow.open", url, "_blank");
     }
 
     /// <inheritdoc />
     public ValueTask UpdateStyleProperty(string elementId, string propertyName, object value)
     {
-        return _jsRuntime.InvokeVoidAsync("mudWindow.updateStyleProperty", elementId, propertyName, value);
+        return _jsRuntime.InvokeVoidAsyncIgnoreDisconnected("mudWindow.updateStyleProperty", elementId, propertyName, value);
     }
 }

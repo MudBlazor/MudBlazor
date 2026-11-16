@@ -70,7 +70,7 @@
     public async Task<IEnumerable<State?>> SearchStateAsync(string value, CancellationToken token)
     {
         // In real life use an asynchronous function for fetching data from an api.
-        await Task.Delay(5, token);
+        await Task.Yield();
 
         IEnumerable<State> list = string.IsNullOrEmpty(value)
             ? _stateList

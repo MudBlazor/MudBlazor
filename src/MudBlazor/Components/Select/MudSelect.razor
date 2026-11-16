@@ -129,7 +129,7 @@
                                              Class="mb-2" />
                                 <MudDivider />
                             }
-                            @ChildContent
+                            <MudTooltipChildContainer ChildContent="@ChildContent" UpdateCount="@_parentUpdateCount" />
                         </MudList>
                     </CascadingValue>
                 </MudPopover>
@@ -138,8 +138,8 @@
     </div>
     @*Shadow select items for IsValueInList and CanRenderValue*@
     <CascadingValue Value="@((IMudShadowSelect)this)" IsFixed="true">
-        <CascadingValue Name="HideContent" Value="true">
-            @ChildContent
+        <CascadingValue Name="HideContent" Value="true" IsFixed="true">
+            <MudTooltipChildContainer ChildContent="@ChildContent" UpdateCount="@_parentUpdateCount" />
         </CascadingValue>
     </CascadingValue>
 </CascadingValue>
