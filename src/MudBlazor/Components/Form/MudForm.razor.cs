@@ -482,7 +482,7 @@ namespace MudBlazor
             // Other keys leave the flag alone so typing ahead while Enter is held still fires, as it did on keydown.
             if (args.Key is "Enter" or "NumpadEnter")
             {
-                _enterKeyDown = !args.IsComposing;
+                _enterKeyDown = true;
             }
             UserAttributes.TryGetValue("onkeydown", out var userHandler);
             return InvokeUserKeyHandlerAsync(userHandler, args);

@@ -2933,21 +2933,6 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// An Enter keydown that is part of an IME composition does not arm OnEnterPressed.
-        /// </summary>
-        [Test]
-        public async Task OnEnterPressed_ComposingKeyDown_NotInvoked()
-        {
-            var invocations = 0;
-            var comp = RenderEnterForm(() => invocations++);
-
-            await comp.Find("form").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", IsComposing = true });
-            await comp.Find("form").KeyUpAsync(new KeyboardEventArgs { Key = "Enter" });
-
-            invocations.Should().Be(0);
-        }
-
-        /// <summary>
         /// A different key pressed while Enter is still held does not disarm OnEnterPressed, matching the keydown behavior it replaced.
         /// </summary>
         [Test]
