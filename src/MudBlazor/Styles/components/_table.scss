@@ -281,8 +281,7 @@
 
   & * .mud-table-root {
     .mud-table-head {
-      // The whole head sticks as one block, so every header row (a custom header row, the column titles,
-      // the filter row and the loading row) stays stacked in order whatever its height.
+      // The whole head sticks as one block, so every header row (a custom header row, the column titles, the filter row and the loading row) stays stacked in order whatever its height.
       position: sticky;
       top: 0;
       z-index: 2;
