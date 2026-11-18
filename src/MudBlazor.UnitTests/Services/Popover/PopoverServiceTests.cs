@@ -619,7 +619,7 @@ public class PopoverServiceTests
             .Verifiable();
 
         jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.connect", It.IsAny<CancellationToken>(),
-                It.Is<object[]>(y => y.Length == 2 && y[0] is string && (Guid)y[1] == popover.Id)))
+                It.Is<object[]>(y => y.Length == 5 && y[0] is string && (Guid)y[1] == popover.Id)))
             .ReturnsAsync(Mock.Of<IJSVoidResult>())
             .Verifiable();
 

@@ -425,8 +425,8 @@ describe("MudPopover lifecycle", () => {
 
         popover.initialize("server", "mud-popover-provider", 0, 24);
         popover.initialize("wasm", "mud-popover-provider", 0, 24);
-        popover.connect("server", "server-menu");
-        popover.connect("wasm", "wasm-menu");
+        popover.connect("server", "server-menu", "mud-popover-provider", 0, 24);
+        popover.connect("wasm", "wasm-menu", "mud-popover-provider", 0, 24);
 
         expect(mudpopoverHelper.countProviders("server")).toBe(1);
         expect(mudpopoverHelper.countProviders("wasm")).toBe(1);
@@ -446,7 +446,7 @@ describe("MudPopover lifecycle", () => {
             <div class="mud-menu"><div id="popover-server-menu"></div></div>`;
 
         popover.initialize("server", "mud-popover-provider", 0, 24);
-        popover.connect("server", "server-menu");
+        popover.connect("server", "server-menu", "mud-popover-provider", 0, 24);
         document.getElementById("server-provider")!.remove();
 
         document.body.insertAdjacentHTML("beforeend", `
@@ -456,10 +456,18 @@ describe("MudPopover lifecycle", () => {
             <div class="mud-menu"><div id="popover-wasm-menu"></div></div>`);
 
         popover.initialize("wasm", "mud-popover-provider", 0, 24);
-        popover.connect("wasm", "wasm-menu");
+        popover.connect("wasm", "wasm-menu", "mud-popover-provider", 0, 24);
 
         expect(popover.getAllObservedContainers()).toEqual(["wasm-menu"]);
         expect(popover.map["server-menu"]).toBeUndefined();
+
+        document.body.insertAdjacentHTML("beforeend", `
+            <div class="mud-popover-provider" data-mud-popover-provider-id="server">
+                <div id="popovercontent-server-menu" class="mud-popover"></div>
+            </div>`);
+        popover.connect("server", "server-menu", "mud-popover-provider", 0, 24);
+
+        expect(popover.getAllObservedContainers().sort()).toEqual(["server-menu", "wasm-menu"]);
     });
 
     test("connect rebinds a render scope whose provider element was replaced", () => {
@@ -471,14 +479,14 @@ describe("MudPopover lifecycle", () => {
         const observe = spyOn(MutationObserver.prototype, "observe");
 
         popover.initialize("scope", "mud-popover-provider", 0, 24);
-        popover.connect("scope", "menu");
+        popover.connect("scope", "menu", "mud-popover-provider", 0, 24);
         document.getElementById("old-provider")!.remove();
         document.body.insertAdjacentHTML("afterbegin", `
             <div id="new-provider" class="mud-popover-provider" data-mud-popover-provider-id="scope">
                 <div id="popovercontent-menu" class="mud-popover"></div>
             </div>`);
 
-        popover.connect("scope", "menu");
+        popover.connect("scope", "menu", "mud-popover-provider", 0, 24);
 
         const newProvider = document.getElementById("new-provider")!;
         expect(observe.mock.calls[observe.mock.calls.length - 1]?.[0]).toBe(newProvider);

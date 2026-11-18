@@ -22,9 +22,9 @@ internal class PopoverJsInterop
         return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.initialize", cancellationToken, _providerId, containerClass, flipMargin, overflowPadding);
     }
 
-    public ValueTask<bool> Connect(Guid id, CancellationToken cancellationToken = default)
+    public ValueTask<bool> Connect(Guid id, string containerClass, int flipMargin, int overflowPadding, CancellationToken cancellationToken = default)
     {
-        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.connect", cancellationToken, _providerId, id);
+        return _jsRuntime.InvokeVoidAsyncWithErrorHandling("mudPopover.connect", cancellationToken, _providerId, id, containerClass, flipMargin, overflowPadding);
     }
 
     public ValueTask<bool> Disconnect(Guid id, CancellationToken cancellationToken = default)

@@ -993,6 +993,27 @@ export default class MudPopover {
     }
 
     /**
+     * Attaches shared viewport listeners when at least one provider is active.
+     */
+    #attachEventListeners() {
+        if (this.#listenersAttached || this.#providers.size === 0) {
+            return;
+        }
+
+        window.addEventListener('resize', this.onResize, { passive: true });
+        window.addEventListener('scroll', this.onScroll, { passive: true });
+
+        // visualViewport catches mobile/browser chrome shifts that do not always surface as a normal
+        // layout resize, but still move what the user perceives as the anchor position.
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', this.onVisualViewportResize, { passive: true });
+            window.visualViewport.addEventListener('scroll', this.onVisualViewportScroll, { passive: true });
+        }
+
+        this.#listenersAttached = true;
+    }
+
+    /**
      * Schedules a reposition for one open popover on the next animation frame.
      */
     schedulePopoverUpdate(id: string, trackPosition = false) {
@@ -1514,20 +1535,7 @@ export default class MudPopover {
         window.mudpopoverHelper.flipMargin = flipMargin;
 
         this.#observeMainContainer(providerId, containerClass, flipMargin, resolvedOverflowPadding);
-
-        if (!this.#listenersAttached) {
-            window.addEventListener('resize', this.onResize, { passive: true });
-            window.addEventListener('scroll', this.onScroll, { passive: true });
-
-            // visualViewport catches mobile/browser chrome shifts that do not always surface as a normal
-            // layout resize, but still move what the user perceives as the anchor position.
-            if (window.visualViewport) {
-                window.visualViewport.addEventListener('resize', this.onVisualViewportResize, { passive: true });
-                window.visualViewport.addEventListener('scroll', this.onVisualViewportScroll, { passive: true });
-            }
-
-            this.#listenersAttached = true;
-        }
+        this.#attachEventListeners();
     }
 
     /**
@@ -1644,12 +1652,15 @@ export default class MudPopover {
      * Connects a popover element to the system, setting up all necessary event listeners and observers
      * @param {string} id - The ID of the popover to connect
      */
-    connect(providerId: string, id: string): void;
+    connect(providerId: string, id: string, containerClass: string, flipMargin: number, overflowPadding: number): void;
     connect(id: string): void;
     connect(providerIdOrId: string) {
         const scopedId = arguments[1] as string | undefined;
         const providerId = scopedId ? providerIdOrId : defaultProviderId;
         const id = scopedId ?? providerIdOrId;
+        const containerClass = arguments[2] as string | undefined;
+        const flipMargin = arguments[3] as number | undefined;
+        const overflowPadding = arguments[4] as number | undefined;
 
         this.#disposeDisconnectedProviders();
 
@@ -1659,7 +1670,8 @@ export default class MudPopover {
 
         // Re-check the provider on each connect. This preserves behavior for scenarios where the app
         // swaps layouts/providers after initialization, such as the existing PopoverTwoLayoutsTest.
-        this.#observeMainContainer(providerId);
+        this.#observeMainContainer(providerId, containerClass, flipMargin, overflowPadding);
+        this.#attachEventListeners();
 
         const popoverNode = document.getElementById('popover-' + id);
         const popoverContentNode = this.#findPopoverContent(providerId, id);
