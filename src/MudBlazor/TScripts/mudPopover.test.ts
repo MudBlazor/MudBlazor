@@ -462,6 +462,29 @@ describe("MudPopover lifecycle", () => {
         expect(popover.map["server-menu"]).toBeUndefined();
     });
 
+    test("connect rebinds a render scope whose provider element was replaced", () => {
+        document.body.innerHTML = `
+            <div id="old-provider" class="mud-popover-provider" data-mud-popover-provider-id="scope">
+                <div id="popovercontent-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-menu"></div></div>`;
+        const observe = spyOn(MutationObserver.prototype, "observe");
+
+        popover.initialize("scope", "mud-popover-provider", 0, 24);
+        popover.connect("scope", "menu");
+        document.getElementById("old-provider")!.remove();
+        document.body.insertAdjacentHTML("afterbegin", `
+            <div id="new-provider" class="mud-popover-provider" data-mud-popover-provider-id="scope">
+                <div id="popovercontent-menu" class="mud-popover"></div>
+            </div>`);
+
+        popover.connect("scope", "menu");
+
+        const newProvider = document.getElementById("new-provider")!;
+        expect(observe.mock.calls[observe.mock.calls.length - 1]?.[0]).toBe(newProvider);
+        expect(popover.map["menu"]?.popoverContentNode?.parentElement).toBe(newProvider);
+    });
+
     test("the overlay follows the z-index of the most recently opened popover", () => {
         const { content, childContent } = renderProvider(true);
         childContent.classList.add("mud-popover-open");

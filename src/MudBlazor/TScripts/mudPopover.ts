@@ -985,7 +985,8 @@ export default class MudPopover {
      */
     #disposeDisconnectedProviders() {
         for (const [providerId, provider] of Array.from(this.#providers)) {
-            if (!provider.element.isConnected) {
+            const replacement = this.#findProvider(providerId, provider.containerClass);
+            if (!provider.element.isConnected && !replacement) {
                 this.dispose(providerId);
             }
         }
