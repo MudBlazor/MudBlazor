@@ -14,13 +14,13 @@
 
     private IEnumerable<Item> _items = new List<Item>()
     {
-        new(1, "B"),
-        new(2, "A"),
-        new(3, "C"),
-        new(4, "C")
+        new Item("B"),
+        new Item("A"),
+        new Item("C"),
+        new Item("C")
     };
 
-    public record Item(int Id, string Name);
+    public record Item(string Name);
 
     private async Task<GridData<Item>> ServerDataFunc(GridStateVirtualize<Item> gridState, CancellationToken token)
     {

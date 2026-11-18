@@ -24,6 +24,8 @@ namespace MudBlazor
         // TODO: Remove splatting workaround when .NET 8 support is dropped and pass MaxItemCount directly as an attribute instead (#12701).
         private readonly Dictionary<string, object?> _virtualizeAttributes = new();
 
+        private RenderFragment? PlaceholderTemplate(PlaceholderContext context) => Placeholder;
+
         /// <summary>
         /// Set false to turn off virtualization
         /// </summary>
@@ -40,7 +42,7 @@ namespace MudBlazor
         /// Template for the items that have not yet been loaded in memory.
         /// </summary>
         [Parameter]
-        public RenderFragment<PlaceholderContext>? Placeholder { get; set; }
+        public RenderFragment? Placeholder { get; set; }
 
         /// <summary>
         /// The content shown when there are no rows to display.

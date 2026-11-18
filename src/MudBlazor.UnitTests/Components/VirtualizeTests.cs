@@ -1,6 +1,8 @@
 ﻿using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using MudBlazor.UnitTests.TestComponents.Virtualize;
 using NUnit.Framework;
@@ -80,4 +82,45 @@ public class VirtualizeTests : BunitTest
         innerVirtualize.Instance.ItemComparer.Should().BeSameAs(EqualityComparer<string>.Default);
     }
 #endif
+
+    /// <summary>
+    /// Keyed items already shown stay mounted when an item is inserted above them in a virtualized list.
+    /// </summary>
+    [Test]
+    public async Task Virtualize_KeepsKeyedItemsWhenItemInsertedAbove()
+    {
+        var created = 0;
+        Action onCreated = () => created++;
+        RenderFragment<int> keyedItem = item => builder =>
+        {
+            builder.OpenComponent<CreationCounter>(0);
+            builder.SetKey(item);
+            builder.AddComponentParameter(1, nameof(CreationCounter.Created), onCreated);
+            builder.CloseComponent();
+        };
+        var comp = Context.Render<MudVirtualize<int>>(p => p
+            .Add(x => x.Enabled, true)
+            .Add(x => x.Items, new List<int> { 1, 2, 3 })
+            .Add(x => x.ChildContent, keyedItem));
+
+        await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Items, new List<int> { 0, 1, 2, 3 }));
+
+        comp.FindComponents<CreationCounter>().Count.Should().Be(4);
+        created.Should().Be(4, "only the inserted item is new");
+    }
+
+    /// <summary>
+    /// Calls <see cref="Created"/> once when it is first mounted.
+    /// </summary>
+    private sealed class CreationCounter : ComponentBase
+    {
+        [Parameter]
+        public Action? Created { get; set; }
+
+        protected override void OnInitialized() => Created?.Invoke();
+
+        protected override void BuildRenderTree(RenderTreeBuilder builder)
+        {
+        }
+    }
 }

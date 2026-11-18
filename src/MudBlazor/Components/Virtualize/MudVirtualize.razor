@@ -5,33 +5,32 @@
 
 @if (Enabled)
 {
-@if (ItemsProvider is not null)
-{
-    <Virtualize TItem="T"
-                @ref="@_virtualizeContainerReference"
-                ItemsProvider="@ItemsProvider"
-                ChildContent="@ChildContent"
-                Placeholder="@Placeholder"
-                EmptyContent="@NoRecordsContent"
-                OverscanCount="@OverscanCount"
-                ItemSize="@ItemSize"
-                SpacerElement="@SpacerElement"
-                @attributes="@_virtualizeAttributes" />
-}
-else
-{
-    <Virtualize TItem="T"
-                @ref="@_virtualizeContainerReference"
-                Items="@Items"
-                ChildContent="@ChildContent"
-                Placeholder="@Placeholder"
-                EmptyContent="@NoRecordsContent"
-                OverscanCount="@OverscanCount"
-                ItemSize="@ItemSize"
-                SpacerElement="@SpacerElement"
-                @attributes="@_virtualizeAttributes" />
-}
-
+    if (ItemsProvider is not null)
+    {
+        <Virtualize TItem="T"
+                    @ref="@_virtualizeContainerReference"
+                    ItemsProvider="@ItemsProvider"
+                    ChildContent="@ChildContent"
+                    Placeholder="@PlaceholderTemplate"
+                    EmptyContent="@NoRecordsContent"
+                    OverscanCount="@OverscanCount"
+                    ItemSize="@ItemSize"
+                    SpacerElement="@SpacerElement"
+                    @attributes="@_virtualizeAttributes" />
+    }
+    else
+    {
+        <Virtualize TItem="T"
+                    @ref="@_virtualizeContainerReference"
+                    Items="@Items"
+                    ChildContent="@ChildContent"
+                    Placeholder="@PlaceholderTemplate"
+                    EmptyContent="@NoRecordsContent"
+                    OverscanCount="@OverscanCount"
+                    ItemSize="@ItemSize"
+                    SpacerElement="@SpacerElement"
+                    @attributes="@_virtualizeAttributes" />
+    }
 }
 else if (Items?.Any() != true)
 {

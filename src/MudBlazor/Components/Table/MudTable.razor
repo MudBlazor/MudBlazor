@@ -100,8 +100,9 @@
                         {
                             if (CurrentPageItems != null && CurrentPageItems.Any())
                             {
-                                <MudVirtualize Enabled="@Virtualize" Items="@CurrentPageItems?.ToList()" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="item">
+                                <MudVirtualize Enabled="@Virtualize" Items="@ToIndexBags(CurrentPageItems)" OverscanCount="@OverscanCount" ItemSize="@ItemSize" Context="bag">
                                     @{
+                                        var item = bag.Item;
                                         var itemIndex = GetFilteredItemIndex(item);
                                         var generatedRowId = itemIndex != -1 ? $"{_tableId}_row_{itemIndex}" : null;
                                         var rowClass = new CssBuilder(RowClass)
@@ -110,7 +111,7 @@
                                             .Build();
                                         var rowStyle = new StyleBuilder().AddStyle(RowStyle).AddStyle(RowStyleFunc?.Invoke(item, itemIndex)).Build();
                                     }
-                                    <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="item" RowId="@generatedRowId"
+                                    <MudTr Class="@rowClass" Style="@rowStyle" Item="item" @key="(bag.Index, item)" RowId="@generatedRowId"
                                            Checkable="MultiSelection" SelectionChangeable="SelectionChangeable" Editable="IsItemEditable(item)"
                                            Disabled="IsRowDisabled(item)" DisabledClass="@DisabledRowClass" Checked="@(IsCheckedRow(item))"
                                            CheckedChanged="@(value => OnRowCheckboxChanged(value, item))">

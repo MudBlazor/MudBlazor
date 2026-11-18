@@ -218,6 +218,42 @@ namespace MudBlazor.UnitTests.Components
             cells[18].TextContent.Should().Be("C"); cells[19].TextContent.Should().Be("55"); cells[20].TextContent.Should().Be("222222");
         }
 
+        /// <summary>
+        /// A virtualized grid keeps rendering when an edit makes a row's item equal to another row's item and the rows move.
+        /// </summary>
+        [Test]
+        public async Task DataGridVirtualize_RendersItemEditedToEqualAnother()
+        {
+            var ann = new EntityWithNameKey { Name = "Ann" };
+            var bob = new EntityWithNameKey { Name = "Bob" };
+            var comp = Context.Render<MudDataGrid<EntityWithNameKey>>(p => p
+                .Add(x => x.Items, new List<EntityWithNameKey> { ann, bob })
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<EntityWithNameKey, string>>(0);
+                    builder.AddComponentParameter(1, nameof(PropertyColumn<EntityWithNameKey, string>.Property), (Expression<Func<EntityWithNameKey, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                }));
+
+            bob.Name = "Ann";
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Items, new List<EntityWithNameKey> { new() { Name = "Cid" }, ann, bob }));
+
+            comp.FindAll("tbody tr.mud-table-row").Select(row => row.TextContent.Trim()).Should().Equal("Cid", "Ann", "Ann");
+        }
+
+        /// <summary>
+        /// An item whose equality reads a property that can change, like an entity compared by a business key.
+        /// </summary>
+        private sealed class EntityWithNameKey
+        {
+            public string Name { get; set; } = "";
+
+            public override bool Equals(object obj) => obj is EntityWithNameKey other && other.Name == Name;
+
+            public override int GetHashCode() => Name.GetHashCode();
+        }
+
         [Test]
         public void DataGridVirtualizeSpacerElementsAreTableRows()
         {
@@ -9160,9 +9196,9 @@ namespace MudBlazor.UnitTests.Components
         [Test]
         public async Task DataGrid_TwoWayBind_SelectedItem_SelectedItems()
         {
-            int selectedItem = 3;
+            var selectedItem = 3;
             var items = new List<int> { 1, 2, 3, 4, 5 };
-            HashSet<int> selectedItems = new HashSet<int> { selectedItem };
+            var selectedItems = new HashSet<int> { selectedItem };
             var comp = Context.Render<MudDataGrid<int>>(parameters =>
             {
                 parameters.Add(x => x.Items, items);
