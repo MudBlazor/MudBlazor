@@ -320,7 +320,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             return;
         }
 
-        holder.IsConnected = await _popoverJsInterop.Connect(holder.Id, PopoverOptions.ContainerClass, PopoverOptions.FlipMargin, PopoverOptions.OverflowPadding, _cancellationToken);
+        holder.IsConnected = await _popoverJsInterop.Connect(holder.Id, _cancellationToken);
     }
 
     private async Task InitializeServiceIfNeededAsync()

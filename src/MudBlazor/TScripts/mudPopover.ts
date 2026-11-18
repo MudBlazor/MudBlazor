@@ -29,8 +29,8 @@ type PopoverProviderEntry = {
     containerClass: string;
     flipMargin: number;
     overflowPadding: number;
-    element: Element;
-    observer: MutationObserver;
+    element: Element | null;
+    observer: MutationObserver | null;
 };
 
 const defaultProviderId = "mud-popover-provider-default";
@@ -42,10 +42,8 @@ function styleOf(element: Element) {
     return (element as HTMLElement).style as unknown as Record<string, string>;
 }
 
-function countProviders(): number;
-function countProviders(providerId: string): number;
-function countProviders(): number {
-    const providerId = arguments[0] as string | undefined;
+// The default parameter keeps the function's arity at 0, which apiSurface.test.ts pins.
+function countProviders(providerId: string | undefined = undefined): number {
     if (providerId) {
         return Array.from(document.querySelectorAll('[data-mud-popover-provider-id]'))
             .filter(provider => provider.getAttribute('data-mud-popover-provider-id') === providerId)
@@ -57,10 +55,8 @@ function countProviders(): number {
     return containerClass ? document.querySelectorAll(`.${containerClass}`).length : 0;
 }
 
-function popoverOverlayUpdates(): void;
-function popoverOverlayUpdates(popoverContentNode: Element | null): void;
-function popoverOverlayUpdates(): void {
-    const popoverContentNode = arguments[0] as Element | null | undefined;
+// The default parameter keeps the function's arity at 0, which apiSurface.test.ts pins.
+function popoverOverlayUpdates(popoverContentNode: Element | null | undefined = undefined): void {
     let highestTickItem: Element | null = null;
     let highestTickValue = -1;
 
@@ -985,9 +981,27 @@ export default class MudPopover {
      */
     #disposeDisconnectedProviders() {
         for (const [providerId, provider] of Array.from(this.#providers)) {
-            const replacement = this.#findProvider(providerId, provider.containerClass);
-            if (!provider.element.isConnected && !replacement) {
-                this.dispose(providerId);
+            if (provider.element?.isConnected) {
+                continue;
+            }
+
+            provider.observer?.disconnect();
+            provider.element = null;
+            provider.observer = null;
+            if (providerId === defaultProviderId) {
+                this.currentMainProvider = null;
+                this.contentObserver = null;
+            }
+
+            if (this.#findProvider(providerId, provider.containerClass)) {
+                this.#observeMainContainer(providerId);
+            }
+
+            for (const id of Object.keys(this.map)) {
+                const entry = this.map[id]!;
+                if (entry.providerId === providerId && !entry.popoverContentNode?.isConnected) {
+                    this.disconnect(providerId, id);
+                }
             }
         }
     }
@@ -1515,8 +1529,8 @@ export default class MudPopover {
      */
     initialize(providerId: string, containerClass: string, flipMargin: number, overflowPadding: number): void;
     initialize(containerClass: string, flipMargin: number, overflowPadding: number): void;
-    initialize(providerIdOrContainerClass: string, containerClassOrFlipMargin: string | number, flipMarginOrOverflowPadding: number) {
-        const overflowPadding = arguments[3] as number | undefined;
+    // The default parameter keeps the method's arity at 3, which apiSurface.test.ts pins.
+    initialize(providerIdOrContainerClass: string, containerClassOrFlipMargin: string | number, flipMarginOrOverflowPadding: number, overflowPadding: number | undefined = undefined) {
         const isScoped = typeof containerClassOrFlipMargin === 'string';
         const providerId = isScoped ? providerIdOrContainerClass : defaultProviderId;
         const containerClass = isScoped ? containerClassOrFlipMargin as string : providerIdOrContainerClass;
@@ -1559,7 +1573,7 @@ export default class MudPopover {
             return;
         }
 
-        existing?.observer.disconnect();
+        existing?.observer?.disconnect();
 
         const config: MutationObserverInit = {
             attributes: true,
@@ -1652,15 +1666,12 @@ export default class MudPopover {
      * Connects a popover element to the system, setting up all necessary event listeners and observers
      * @param {string} id - The ID of the popover to connect
      */
-    connect(providerId: string, id: string, containerClass: string, flipMargin: number, overflowPadding: number): void;
+    connect(providerId: string, id: string): void;
     connect(id: string): void;
-    connect(providerIdOrId: string) {
-        const scopedId = arguments[1] as string | undefined;
+    // The default parameter keeps the method's arity at 1, which apiSurface.test.ts pins.
+    connect(providerIdOrId: string, scopedId: string | undefined = undefined) {
         const providerId = scopedId ? providerIdOrId : defaultProviderId;
         const id = scopedId ?? providerIdOrId;
-        const containerClass = arguments[2] as string | undefined;
-        const flipMargin = arguments[3] as number | undefined;
-        const overflowPadding = arguments[4] as number | undefined;
 
         this.#disposeDisconnectedProviders();
 
@@ -1670,8 +1681,7 @@ export default class MudPopover {
 
         // Re-check the provider on each connect. This preserves behavior for scenarios where the app
         // swaps layouts/providers after initialization, such as the existing PopoverTwoLayoutsTest.
-        this.#observeMainContainer(providerId, containerClass, flipMargin, overflowPadding);
-        this.#attachEventListeners();
+        this.#observeMainContainer(providerId);
 
         const popoverNode = document.getElementById('popover-' + id);
         const popoverContentNode = this.#findPopoverContent(providerId, id);
@@ -1718,8 +1728,8 @@ export default class MudPopover {
      */
     disconnect(providerId: string, id: string): void;
     disconnect(id: string): void;
-    disconnect(providerIdOrId: string) {
-        const scopedId = arguments[1] as string | undefined;
+    // The default parameter keeps the method's arity at 1, which apiSurface.test.ts pins.
+    disconnect(providerIdOrId: string, scopedId: string | undefined = undefined) {
         const providerId = scopedId ? providerIdOrId : this.map[providerIdOrId]?.providerId ?? defaultProviderId;
         const id = scopedId ?? providerIdOrId;
         if (!this.map[id] || this.map[id]!.providerId !== providerId) {
@@ -1748,8 +1758,8 @@ export default class MudPopover {
      */
     dispose(providerId?: string): void;
     dispose(): void;
-    dispose() {
-        const providerId = arguments[0] as string | undefined;
+    // The default parameter keeps the method's arity at 0, which apiSurface.test.ts pins.
+    dispose(providerId: string | undefined = undefined) {
         try {
             const ids = Object.keys(this.map)
                 .filter(id => !providerId || this.map[id]?.providerId === providerId);
@@ -1758,7 +1768,7 @@ export default class MudPopover {
             }
 
             if (providerId) {
-                this.#providers.get(providerId)?.observer.disconnect();
+                this.#providers.get(providerId)?.observer?.disconnect();
                 this.#providers.delete(providerId);
                 if (providerId === defaultProviderId) {
                     this.currentMainProvider = null;
@@ -1767,7 +1777,7 @@ export default class MudPopover {
             }
             else {
                 for (const provider of this.#providers.values()) {
-                    provider.observer.disconnect();
+                    provider.observer?.disconnect();
                 }
                 this.#providers.clear();
                 this.currentMainProvider = null;

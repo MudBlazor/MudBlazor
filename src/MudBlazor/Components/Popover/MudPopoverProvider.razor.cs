@@ -20,14 +20,12 @@ namespace MudBlazor
     public partial class MudPopoverProvider : IDisposable, IPopoverObserver
     {
         private bool _isConnectedToService;
-        private readonly string _providerId = Guid.NewGuid().ToString("N");
 
         [Inject]
         internal IPopoverService PopoverService { get; set; } = null!;
 
-        internal string ProviderId => PopoverService is global::MudBlazor.PopoverService service
-            ? service.ProviderId
-            : _providerId;
+        // A custom IPopoverService has no scope id, so the attribute is omitted and the scripts fall back to the container class.
+        internal string? ProviderId => (PopoverService as global::MudBlazor.PopoverService)?.ProviderId;
 
         /// <summary>
         /// Controls whether this provider is enabled.

@@ -425,8 +425,8 @@ describe("MudPopover lifecycle", () => {
 
         popover.initialize("server", "mud-popover-provider", 0, 24);
         popover.initialize("wasm", "mud-popover-provider", 0, 24);
-        popover.connect("server", "server-menu", "mud-popover-provider", 0, 24);
-        popover.connect("wasm", "wasm-menu", "mud-popover-provider", 0, 24);
+        popover.connect("server", "server-menu");
+        popover.connect("wasm", "wasm-menu");
 
         expect(mudpopoverHelper.countProviders("server")).toBe(1);
         expect(mudpopoverHelper.countProviders("wasm")).toBe(1);
@@ -446,7 +446,7 @@ describe("MudPopover lifecycle", () => {
             <div class="mud-menu"><div id="popover-server-menu"></div></div>`;
 
         popover.initialize("server", "mud-popover-provider", 0, 24);
-        popover.connect("server", "server-menu", "mud-popover-provider", 0, 24);
+        popover.connect("server", "server-menu");
         document.getElementById("server-provider")!.remove();
 
         document.body.insertAdjacentHTML("beforeend", `
@@ -456,7 +456,7 @@ describe("MudPopover lifecycle", () => {
             <div class="mud-menu"><div id="popover-wasm-menu"></div></div>`);
 
         popover.initialize("wasm", "mud-popover-provider", 0, 24);
-        popover.connect("wasm", "wasm-menu", "mud-popover-provider", 0, 24);
+        popover.connect("wasm", "wasm-menu");
 
         expect(popover.getAllObservedContainers()).toEqual(["wasm-menu"]);
         expect(popover.map["server-menu"]).toBeUndefined();
@@ -465,9 +465,31 @@ describe("MudPopover lifecycle", () => {
             <div class="mud-popover-provider" data-mud-popover-provider-id="server">
                 <div id="popovercontent-server-menu" class="mud-popover"></div>
             </div>`);
-        popover.connect("server", "server-menu", "mud-popover-provider", 0, 24);
+        popover.connect("server", "server-menu");
 
         expect(popover.getAllObservedContainers().sort()).toEqual(["server-menu", "wasm-menu"]);
+    });
+
+    test("another scope's connect rebinds a replaced provider without dropping the scope", () => {
+        document.body.innerHTML = `
+            <div id="old-server" class="mud-popover-provider" data-mud-popover-provider-id="server"></div>
+            <div class="mud-popover-provider" data-mud-popover-provider-id="wasm">
+                <div id="popovercontent-wasm-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-wasm-menu"></div></div>`;
+        const observe = spyOn(MutationObserver.prototype, "observe");
+
+        popover.initialize("server", "mud-popover-provider", 0, 24);
+        popover.initialize("wasm", "mud-popover-provider", 0, 24);
+        document.getElementById("old-server")!.remove();
+        document.body.insertAdjacentHTML("afterbegin", `
+            <div id="new-server" class="mud-popover-provider" data-mud-popover-provider-id="server"></div>`);
+
+        popover.connect("wasm", "wasm-menu");
+
+        const newServer = document.getElementById("new-server")!;
+        expect(observe.mock.calls.some(call => call[0] === newServer)).toBe(true);
+        expect(popover.getAllObservedContainers()).toEqual(["wasm-menu"]);
     });
 
     test("connect rebinds a render scope whose provider element was replaced", () => {
@@ -479,14 +501,14 @@ describe("MudPopover lifecycle", () => {
         const observe = spyOn(MutationObserver.prototype, "observe");
 
         popover.initialize("scope", "mud-popover-provider", 0, 24);
-        popover.connect("scope", "menu", "mud-popover-provider", 0, 24);
+        popover.connect("scope", "menu");
         document.getElementById("old-provider")!.remove();
         document.body.insertAdjacentHTML("afterbegin", `
             <div id="new-provider" class="mud-popover-provider" data-mud-popover-provider-id="scope">
                 <div id="popovercontent-menu" class="mud-popover"></div>
             </div>`);
 
-        popover.connect("scope", "menu", "mud-popover-provider", 0, 24);
+        popover.connect("scope", "menu");
 
         const newProvider = document.getElementById("new-provider")!;
         expect(observe.mock.calls[observe.mock.calls.length - 1]?.[0]).toBe(newProvider);
