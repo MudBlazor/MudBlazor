@@ -46,6 +46,8 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     /// <inheritdoc />
     public PopoverOptions PopoverOptions { get; }
 
+    internal string ProviderId { get; }
+
     /// <summary>
     /// Gets the number of items currently queued in the <see cref="_batchExecutor"/> for processing in the <see cref="OnBatchTimerElapsedAsync"/> method.
     /// </summary>
@@ -69,8 +71,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     /// <param name="jsInterop">Instance of a JavaScript runtime to calls are dispatched.</param>
     /// <param name="timeProvider">The time provider for obtaining the current time.</param>
     /// <param name="options">The options for the popover service (optional).</param>
-    /// <param name="providerContext">The identity shared with the provider in this service scope (optional).</param>
-    public PopoverService(ILogger<PopoverService> logger, IJSRuntime jsInterop, TimeProvider timeProvider, IOptions<PopoverOptions>? options = null, PopoverProviderContext? providerContext = null)
+    public PopoverService(ILogger<PopoverService> logger, IJSRuntime jsInterop, TimeProvider timeProvider, IOptions<PopoverOptions>? options = null)
     {
         _timeProvider = timeProvider;
         _logger = logger;
@@ -79,7 +80,8 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         _cancellationTokenSource = new CancellationTokenSource();
         // Cache the token to avoid passing the CancellationTokenSource itself because it will throw once you access it after it's disposed
         _cancellationToken = _cancellationTokenSource.Token;
-        _popoverJsInterop = new PopoverJsInterop(jsInterop, (providerContext ?? new PopoverProviderContext()).Id);
+        ProviderId = Guid.NewGuid().ToString("N");
+        _popoverJsInterop = new PopoverJsInterop(jsInterop, ProviderId);
         _batchExecutor = new BatchPeriodicQueue<MudPopoverHolder>(this, PopoverOptions.QueueDelay, timeProvider);
         _observerManager = new ObserverManager<Guid, IPopoverObserver>(logger);
     }

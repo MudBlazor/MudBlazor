@@ -171,7 +171,6 @@ namespace MudBlazor.Services
         public static IServiceCollection AddMudPopoverService(this IServiceCollection services)
         {
             services.AddCommonServices();
-            services.TryAddScoped<PopoverProviderContext>();
             services.TryAddScoped<IPopoverService, PopoverService>();
 
             return services;

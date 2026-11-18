@@ -20,12 +20,14 @@ namespace MudBlazor
     public partial class MudPopoverProvider : IDisposable, IPopoverObserver
     {
         private bool _isConnectedToService;
+        private readonly string _providerId = Guid.NewGuid().ToString("N");
 
         [Inject]
         internal IPopoverService PopoverService { get; set; } = null!;
 
-        [Inject]
-        internal PopoverProviderContext ProviderContext { get; set; } = null!;
+        internal string ProviderId => PopoverService is global::MudBlazor.PopoverService service
+            ? service.ProviderId
+            : _providerId;
 
         /// <summary>
         /// Controls whether this provider is enabled.
