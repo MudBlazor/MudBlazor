@@ -981,6 +981,17 @@ export default class MudPopover {
     }
 
     /**
+     * Removes render scopes whose provider element has left the document without disposing cleanly.
+     */
+    #disposeDisconnectedProviders() {
+        for (const [providerId, provider] of Array.from(this.#providers)) {
+            if (!provider.element.isConnected) {
+                this.dispose(providerId);
+            }
+        }
+    }
+
+    /**
      * Schedules a reposition for one open popover on the next animation frame.
      */
     schedulePopoverUpdate(id: string, trackPosition = false) {
@@ -1490,6 +1501,8 @@ export default class MudPopover {
         const flipMargin = isScoped ? flipMarginOrOverflowPadding : containerClassOrFlipMargin as number;
         const resolvedOverflowPadding = isScoped ? overflowPadding! : flipMarginOrOverflowPadding;
 
+        this.#disposeDisconnectedProviders();
+
         if (this.#providers.has(providerId)) {
             this.dispose(providerId);
         }
@@ -1636,6 +1649,8 @@ export default class MudPopover {
         const scopedId = arguments[1] as string | undefined;
         const providerId = scopedId ? providerIdOrId : defaultProviderId;
         const id = scopedId ?? providerIdOrId;
+
+        this.#disposeDisconnectedProviders();
 
         if (this.map[id]) {
             this.disconnect(this.map[id]!.providerId, id);

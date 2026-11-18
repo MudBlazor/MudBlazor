@@ -438,6 +438,30 @@ describe("MudPopover lifecycle", () => {
         expect(popover.map["wasm-menu"]).toBeDefined();
     });
 
+    test("initializing a render scope removes disconnected providers", () => {
+        document.body.innerHTML = `
+            <div id="server-provider" class="mud-popover-provider" data-mud-popover-provider-id="server">
+                <div id="popovercontent-server-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-server-menu"></div></div>`;
+
+        popover.initialize("server", "mud-popover-provider", 0, 24);
+        popover.connect("server", "server-menu");
+        document.getElementById("server-provider")!.remove();
+
+        document.body.insertAdjacentHTML("beforeend", `
+            <div class="mud-popover-provider" data-mud-popover-provider-id="wasm">
+                <div id="popovercontent-wasm-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-wasm-menu"></div></div>`);
+
+        popover.initialize("wasm", "mud-popover-provider", 0, 24);
+        popover.connect("wasm", "wasm-menu");
+
+        expect(popover.getAllObservedContainers()).toEqual(["wasm-menu"]);
+        expect(popover.map["server-menu"]).toBeUndefined();
+    });
+
     test("the overlay follows the z-index of the most recently opened popover", () => {
         const { content, childContent } = renderProvider(true);
         childContent.classList.add("mud-popover-open");
