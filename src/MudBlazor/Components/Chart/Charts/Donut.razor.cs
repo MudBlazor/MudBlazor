@@ -60,7 +60,7 @@ namespace MudBlazor.Charts
                     LabelX = x,
                     LabelY = y,
                     LabelXValue = ChartOptions.ShowAsPercentage
-                        ? $"{Math.Round(data * 100, 1).ToInvariantString()}%"
+                        ? $"{(data * 100).RoundToDigits(1).ToInvariantString()}%"
                         : actualValue.ToString(null, CultureInfo.InvariantCulture),
                     LabelYValue = chartLabels.Length > i ? chartLabels[i] : string.Empty
                 });

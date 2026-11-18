@@ -5,6 +5,7 @@
 using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using MudBlazor.Charts;
 using MudBlazor.Interop;
 using NUnit.Framework;
@@ -364,6 +365,59 @@ public class ChartSizingTests : BunitTest
         });
     }
 
+    /// <summary>
+    /// A chart still renders when its size measurements hit a lost circuit.
+    /// </summary>
+    [TestCase(ChartType.Line)]
+    [TestCase(ChartType.Pie)]
+    [TestCase(ChartType.HeatMap)]
+    [TestCase(ChartType.Sankey)]
+    public void MudChart_SizeMeasurementDisconnected_StillRenders(ChartType chartType)
+    {
+        Context.JSInterop.Setup<ElementSize>("mudObserveElementSize", _ => true).SetException(new JSDisconnectedException("disconnected"));
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetException(new JSDisconnectedException("disconnected"));
+
+        var comp = Context.Render<MudChart<double>>(parameters =>
+        {
+            parameters
+                .Add(p => p.ChartType, chartType)
+                .Add(p => p.ChartSeries, new List<ChartSeries<double>>
+                {
+                    new() { Name = "Alpha", Data = new double[] { 5, 3 } },
+                    new() { Name = "Beta", Data = new double[] { 2, 8 } },
+                })
+                .Add(p => p.ChartLabels, new[] { "L1", "L2" });
+
+            if (chartType == ChartType.Sankey)
+            {
+                parameters.Add(p => p.ChartOptions, new SankeyChartOptions { AggregationOption = AggregationOption.GroupByDataSet });
+            }
+        });
+
+        comp.Find("svg").Should().NotBeNull();
+        Context.JSInterop.VerifyInvoke("mudObserveElementSize");
+    }
+
+    /// <summary>
+    /// A failed parent height check keeps the assumption that the parent has a fixed height.
+    /// </summary>
+    [Test]
+    public async Task MudChart_MatchBoundsToSize_ParentCheckDisconnected_ShouldNotUseFallbackHeight()
+    {
+        var series = new List<ChartSeries<double>> { new() { Data = new double[] { 10, 20 } } };
+        Context.JSInterop.Setup<bool>("hasDefinedParentHeight", _ => true).SetException(new JSDisconnectedException("disconnected"));
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Height, "100%")
+            .Add(p => p.ChartSeries, series));
+
+        await comp.WaitForAssertionAsync(() => Context.JSInterop.Invocations["hasDefinedParentHeight"].Should().HaveCount(1));
+
+        comp.FindAll("div[style*='height:350px']").Should().BeEmpty();
+    }
+
     [Test]
     public async Task MudChart_MatchBoundsToSize_NoFixedParent_ShouldUseFallbackHeight()
     {
@@ -560,4 +614,118 @@ public class ChartSizingTests : BunitTest
 
         comp.Find("svg.mud-chart-sankey").GetAttribute("viewBox").Should().Be("0 0 640.5 320.5");
     }
+
+    /// <summary>
+    /// Hovering a point renders the chart again but leaves its axis labels alone, so they aren't measured again.
+    /// </summary>
+    [Test]
+    public async Task LineChartHoverDoesNotMeasureTheAxisLabelsAgain()
+    {
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 50, Height = 20 });
+        Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 40, Height: 16));
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 20, 30 } }])
+            .Add(p => p.ChartLabels, ["Jan", "Feb", "Mar"]));
+
+        var measured = AxisMeasurements();
+
+        await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new());
+        await comp.FindAll("circle.mud-chart-point")[1].MouseOutAsync(new());
+
+        AxisMeasurements().Should().Be(measured);
+    }
+
+    /// <summary>
+    /// New data gives the chart new axis labels, so they are measured again and the plot moves over for wider ones.
+    /// </summary>
+    [Test]
+    public async Task LineChartMeasuresTheAxisLabelsAgainForNewData()
+    {
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 50, Height = 20 });
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 20, 30 } }])
+            .Add(p => p.ChartLabels, ["Jan", "Feb", "Mar"]));
+
+        comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 60 ");
+        var measured = AxisMeasurements();
+
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 80, Height = 20 });
+        await comp.SetParametersAndRenderAsync(parameters => parameters
+            .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10000, 20000, 30000 } }]));
+
+        AxisMeasurements().Should().BeGreaterThan(measured);
+        await comp.WaitForAssertionAsync(() => comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 90 "));
+    }
+
+    /// <summary>
+    /// A chart that fills its parent measures its axis labels again when the parent is resized, and makes room for them if they grew.
+    /// </summary>
+    [Test]
+    public async Task LineChartMeasuresTheAxisLabelsAgainAfterAResize()
+    {
+        Context.JSInterop.Setup<ElementSize>("mudObserveElementSize", _ => true).SetResult(new ElementSize { Width = 700, Height = 350, Timestamp = 1 });
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 50, Height = 20 });
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 20, 30 } }])
+            .Add(p => p.ChartLabels, ["Jan", "Feb", "Mar"])
+            .Add(p => p.MatchBoundsToSize, true)
+            .Add(p => p.Width, "700px")
+            .Add(p => p.Height, "350px"));
+
+        await comp.WaitForAssertionAsync(() => comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 60 "));
+
+        // The browser now reports wider labels, which only a fresh measurement after the resize can pick up.
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 80, Height = 20 });
+        var chart = comp.FindComponent<Line<double>>().Instance;
+        await comp.InvokeAsync(() => chart.OnElementSizeChanged(new ElementSize { Width = 800, Height = 400, Timestamp = 2 }));
+
+        await comp.WaitForAssertionAsync(() =>
+        {
+            comp.Find("svg").GetAttribute("viewBox").Should().Be("0 0 800 400");
+            comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 90 ");
+        });
+    }
+
+    /// <summary>
+    /// A chart first rendered while hidden measures empty axis labels, so hovering it after it is shown measures them again and makes room for them.
+    /// </summary>
+    [Test]
+    public async Task LineChartHiddenAtFirstRenderMeasuresTheAxisLabelsAgainOnHover()
+    {
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 0, Height = 0 });
+        Context.JSInterop.Setup<ChartTooltip.BBox>("mudGetSvgBBox", _ => true).SetResult(new ChartTooltip.BBox(Width: 40, Height: 16));
+
+        var comp = Context.Render<MudChart<double>>(parameters => parameters
+            .Add(p => p.ChartType, ChartType.Line)
+            .Add(p => p.ChartSeries, [new ChartSeries<double> { Name = "Series 1", Data = new double[] { 10, 20, 30 } }])
+            .Add(p => p.ChartLabels, ["Jan", "Feb", "Mar"]));
+
+        comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 30 ");
+
+        // The chart is now shown, which only CSS changed, so the browser reports the real label size from here on.
+        Context.JSInterop.Setup<ElementSize>("mudGetSvgBBox", _ => true).SetResult(new ElementSize { Width = 50, Height = 20 });
+        await comp.FindAll("circle.mud-chart-point")[1].MouseOverAsync(new());
+
+        await comp.WaitForAssertionAsync(() => comp.Find("path.mud-chart-line").GetAttribute("d").Should().StartWith("M 60 "));
+
+        // Making room for the labels rebuilds them, and the render after that measures the new labels once more.
+        // That measurement can land after the plot moves, so wait for it before counting.
+        await comp.WaitForAssertionAsync(() => AxisMeasurements().Should().Be(8));
+
+        // Once the labels have a real size, hovering again leaves them alone.
+        var measured = AxisMeasurements();
+        await comp.FindAll("circle.mud-chart-point")[1].MouseOutAsync(new());
+        await comp.FindAll("circle.mud-chart-point")[2].MouseOverAsync(new());
+
+        AxisMeasurements().Should().Be(measured);
+    }
+
+    private int AxisMeasurements() =>
+        Context.JSInterop.Invocations["mudGetSvgBBox"].Count(x => x.ResultType == typeof(ElementSize));
 }

@@ -1,0 +1,24 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<div class="d-flex flex-column align-center justify-center gap-2" style="transform: translateZ(0); height: 500px; width: 320px; background-color: var(--mud-palette-gray-lighter)">
+    <MudText>Selected Item</MudText>
+    <MudText Color="Color.Primary">@_selectedId</MudText>
+    <MudButton OnClick="@(async() => await _navBar.FocusAsync())" Color="Color.Primary" Variant="Variant.Outlined">Focus Component</MudButton>
+    <MudButton OnClick="@(async() => await _firstItem.FocusAsync())" Color="Color.Primary" Variant="Variant.Outlined">Focus First Item</MudButton>
+    <MudNavigationBar @ref="_navBar" OnSelectionChange="OnSelectionChange">
+        <MudNavigationBarItem @ref="_firstItem" Icon="@Icons.Material.Filled.Flight" Text="Flight" />
+        <MudNavigationBarItem Icon="@Icons.Material.Filled.Explore" Text="Explore" />
+        <MudNavigationBarItem Icon="@Icons.Material.Filled.ManageAccounts" Text="Account" />
+    </MudNavigationBar>
+</div>
+
+@code {
+    private string _selectedId;
+    private MudNavigationBar _navBar;
+    private MudNavigationBarItem _firstItem;
+
+    private void OnSelectionChange(string id)
+    {
+        _selectedId = id;
+    }
+}

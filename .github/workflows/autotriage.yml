@@ -38,6 +38,9 @@ jobs:
 
       - name: AutoTriage - triage item
         uses: danielchalmers/AutoTriage@v5
+        with:
+          # The first pass sets the labels, title and first request, so it gets the stronger model.
+          model: ${{ github.event_name != 'issue_comment' && 'claude-sonnet-5-5' || 'claude-haiku-5-5' }}
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY_TRIAGE }}

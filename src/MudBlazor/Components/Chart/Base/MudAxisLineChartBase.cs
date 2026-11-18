@@ -2,6 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Globalization;
 using System.Numerics;
 using System.Text;
 using Microsoft.AspNetCore.Components;
@@ -32,6 +33,22 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     protected Dictionary<int, SvgPath> ChartAreas { get; set; } = [];
 
     /// <summary>
+    /// The SVG paths for readings that have no neighbour to draw a segment to, keyed by series index.
+    /// </summary>
+    /// <remarks>
+    /// These are zero-length segments and only paint under a round line cap.
+    /// So they are kept apart from the series line, which keeps its own caps.
+    /// </remarks>
+    protected Dictionary<int, SvgPath> ChartDots { get; set; } = [];
+
+    private readonly StringBuilder _chartDots = new();
+    private readonly StringBuilder _chartLine = new();
+
+    private readonly List<EventCallback> _seriesClickCallbacks = [];
+    private readonly List<List<EventCallback<MouseEventArgs>>> _dataPointMouseOverCallbacks = [];
+    private EventCallback? _dataPointMouseOutCallback;
+
+    /// <summary>
     /// The SVG circles for the chart data points.
     /// </summary>
     protected Dictionary<int, List<SvgCircle>> ChartDataPoints { get; set; } = [];
@@ -40,6 +57,14 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     /// The SVG path for the hovered data point.
     /// </summary>
     protected SvgPath? HoveredDataPointPath { get; set; }
+
+    /// <summary>
+    /// Wraps a tooltip so the <see cref="ChartTooltip"/> inside it, including one from a <c>TooltipTemplate</c>, knows the room around the hovered point.
+    /// </summary>
+    /// <param name="tooltip">The tooltip to wrap.</param>
+    /// <param name="labelOffset">How far above the point the tooltip is anchored.</param>
+    private protected RenderFragment WithTooltipRoom(RenderFragment tooltip, double labelOffset) =>
+        WithTooltipRoom(tooltip, HoveredDataPointPath, labelOffset);
 
     /// <summary>
     /// Indicates whether the chart should be interpolated.
@@ -52,6 +77,17 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     /// that use <see cref="ChartDataPoints"/> to render visible markers, not only tooltips.
     /// </summary>
     protected virtual bool ShouldAlwaysPopulateDataPoints => false;
+
+    /// <summary>
+    /// Whether the data points behind the tooltips and the visible markers need to be collected on this render.
+    /// </summary>
+    /// <remarks>
+    /// The markers are drawn from the same data points as the tooltips, so a chart with markers on and tooltips off used to draw nothing.
+    /// </remarks>
+    private bool ShouldPopulateDataPoints =>
+        ChartOptions?.ShowToolTips == true
+        || ChartOptions?.ShowDataMarkers == true
+        || ShouldAlwaysPopulateDataPoints;
 
     /// <summary>
     /// Gets the data value for a specific series and data point.
@@ -121,7 +157,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             };
             VerticalLines.Add(line);
 
-            var xLabels = GetVerticalGridLineLabel(i);
+            var xLabels = ShouldLabelVerticalGridLine(i) ? GetVerticalGridLineLabel(i) : string.Empty;
 
             var lineValue = new SvgText
             {
@@ -144,6 +180,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     {
         ChartLines.Clear();
         ChartAreas.Clear();
+        ChartDots.Clear();
         ChartDataPoints.Clear();
 
         if (Series.Count == 0)
@@ -161,9 +198,10 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 continue;
             }
 
-            var chartLine = new StringBuilder();
+            var chartLine = _chartLine.Clear();
             var chartDataCircles = new List<SvgCircle>();
             ChartDataPoints[i] = chartDataCircles;
+            _chartDots.Clear();
 
             var overrideSettings = GetSeriesDisplayOverride(series);
             var interpolationOption = overrideSettings?.InterpolationOption ?? ChartOptions?.InterpolationOption;
@@ -181,6 +219,15 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             };
             ChartLines.Add(line);
 
+            if (_chartDots.Length > 0)
+            {
+                ChartDots[i] = new SvgPath
+                {
+                    Index = i,
+                    Data = _chartDots.ToString()
+                };
+            }
+
             var displayType = overrideSettings?.LineDisplayType ?? ChartOptions?.LineDisplayType;
 
             if (displayType == LineDisplayType.Area)
@@ -188,6 +235,22 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 GenerateAreaChart(i, chartLine, lowestHorizontalLine, firstPointX, firstPointY, lastPointX);
             }
         }
+    }
+
+    // Writes the number straight into the path, where ToS would make a string for every coordinate first.
+    private static void AppendNumber(StringBuilder builder, double value) =>
+        builder.Append(CultureInfo.InvariantCulture, $"{Math.Round(value, 4)}");
+
+    private void AppendDot(double x, double y)
+    {
+        _chartDots.Append(_chartDots.Length > 0 ? " M " : "M ");
+        AppendNumber(_chartDots, x);
+        _chartDots.Append(' ');
+        AppendNumber(_chartDots, y);
+        _chartDots.Append(" L ");
+        AppendNumber(_chartDots, x);
+        _chartDots.Append(' ');
+        AppendNumber(_chartDots, y);
     }
 
     /// <summary>
@@ -215,12 +278,28 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         var dataLength = series.Data.Points.Count;
         var needsMoveTo = true;
 
+        // A run of one point produces a bare move, which draws nothing at all.
+        // So the point goes to the dots path as well, where a zero-length segment under a round cap paints it.
+        double segmentX = 0, segmentY = 0;
+        var segmentLength = 0;
+
+        void CloseSegment()
+        {
+            if (segmentLength == 1)
+            {
+                AppendDot(segmentX, segmentY);
+            }
+
+            segmentLength = 0;
+        }
+
         for (var j = 0; j < dataLength; j++)
         {
             if (!series.Data[j].HasValue)
             {
                 if (ChartOptions?.ConnectNullPoints != true)
                 {
+                    CloseSegment();
                     needsMoveTo = true;
                 }
                 continue;
@@ -245,12 +324,15 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
             }
 
             lastPointX = x;
+            segmentX = x;
+            segmentY = y;
+            segmentLength++;
 
-            chartLine.Append(ToS(x));
+            AppendNumber(chartLine, x);
             chartLine.Append(' ');
-            chartLine.Append(ToS(y));
+            AppendNumber(chartLine, y);
 
-            if (ChartOptions?.ShowToolTips == true || ShouldAlwaysPopulateDataPoints)
+            if (ShouldPopulateDataPoints)
             {
                 chartDataCircles.Add(new SvgCircle
                 {
@@ -260,10 +342,13 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                     LabelX = x,
                     LabelXValue = GetLabelXValue(seriesIndex, j),
                     LabelY = y,
-                    LabelYValue = GetDataValueAsString(seriesIndex, j)
+                    LabelYValue = GetDataValueAsString(seriesIndex, j),
+                    YValue = GetDataValueAsDouble(seriesIndex, j)
                 });
             }
         }
+
+        CloseSegment();
 
         return (firstPointX, firstPointY, lastPointX);
     }
@@ -303,12 +388,13 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         {
             if (segment.Count <= 1)
             {
-                // Single point — just emit an M (no interpolation possible)
+                // Single point, so there is nothing to interpolate and the move below paints nothing on its own.
                 var (sx, sy) = GetXYForDataPoint(seriesIndex, segment[0], lowestHorizontalLine, gridYUnits, horizontalSpace, verticalSpace);
                 chartLine.Append(chartLine.Length > 0 ? " M " : "M ");
-                chartLine.Append(ToS(sx));
+                AppendNumber(chartLine, sx);
                 chartLine.Append(' ');
-                chartLine.Append(ToS(sy));
+                AppendNumber(chartLine, sy);
+                AppendDot(sx, sy);
 
                 if (firstPointX == 0 && firstPointY == 0)
                 {
@@ -317,7 +403,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                 }
                 lastPointX = sx;
 
-                if (ChartOptions?.ShowToolTips == true)
+                if (ShouldPopulateDataPoints)
                 {
                     chartDataCircles.Add(new SvgCircle
                     {
@@ -327,7 +413,8 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                         LabelX = sx,
                         LabelXValue = GetLabelXValue(seriesIndex, segment[0]),
                         LabelY = sy,
-                        LabelYValue = GetDataValueAsString(seriesIndex, segment[0])
+                        LabelYValue = GetDataValueAsString(seriesIndex, segment[0]),
+                        YValue = GetDataValueAsDouble(seriesIndex, segment[0])
                     });
                 }
 
@@ -364,13 +451,13 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
 
                 lastPointX = x;
 
-                chartLine.Append(ToS(x));
+                AppendNumber(chartLine, x);
                 chartLine.Append(' ');
-                chartLine.Append(ToS(y));
+                AppendNumber(chartLine, y);
 
                 var localIndex = j / InterpolationResolution;
-                // Add tooltip points for interpolated data if needed
-                if (j % InterpolationResolution == 0 && ChartOptions?.ShowToolTips == true &&
+                // Collect the data point that this stretch of the interpolated line came from
+                if (j % InterpolationResolution == 0 && ShouldPopulateDataPoints &&
                     localIndex < segment.Count)
                 {
                     var originalIndex = segment[localIndex];
@@ -382,7 +469,8 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
                         LabelX = x,
                         LabelXValue = GetLabelXValue(seriesIndex, originalIndex),
                         LabelY = y,
-                        LabelYValue = GetDataValueAsString(seriesIndex, originalIndex)
+                        LabelYValue = GetDataValueAsString(seriesIndex, originalIndex),
+                        YValue = GetDataValueAsDouble(seriesIndex, originalIndex)
                     });
                 }
             }
@@ -472,6 +560,14 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     }
 
     /// <summary>
+    /// Gets the data value as a number, so a tooltip can write it the way the Y axis does.
+    /// </summary>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="dataPointIndex">The index of the data point.</param>
+    /// <returns>The data value.</returns>
+    internal virtual double GetDataValueAsDouble(int seriesIndex, int dataPointIndex) => GetDataValue<double>(seriesIndex, dataPointIndex);
+
+    /// <summary>
     /// Adds a legend for a series.
     /// </summary>
     /// <param name="seriesIndex">The index of the series.</param>
@@ -508,21 +604,21 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
 
         // add an extra point based on the x of the last point and 0 to add the area to the bottom
         chartArea.Append(" L ");
-        chartArea.Append(ToS(lastPointX));
+        AppendNumber(chartArea, lastPointX);
         chartArea.Append(' ');
-        chartArea.Append(ToS(zeroPointY));
+        AppendNumber(chartArea, zeroPointY);
 
         // add an extra point based on the x of the first point and 0 to close the area
         chartArea.Append(" L ");
-        chartArea.Append(ToS(firstPointX));
+        AppendNumber(chartArea, firstPointX);
         chartArea.Append(' ');
-        chartArea.Append(ToS(zeroPointY));
+        AppendNumber(chartArea, zeroPointY);
 
         // add an the first point again to close the area
         chartArea.Append(" L ");
-        chartArea.Append(ToS(firstPointX));
+        AppendNumber(chartArea, firstPointX);
         chartArea.Append(' ');
-        chartArea.Append(ToS(firstPointY));
+        AppendNumber(chartArea, firstPointY);
         chartArea.Append(" Z");
 
         var area = new SvgPath
@@ -565,6 +661,63 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
         return ChartOptions?.SeriesDisplayOverrides?.TryGetValue(series, out var overrideData) is true
             ? overrideData
             : null;
+    }
+
+    /// <summary>
+    /// Gets the handler that selects a series when one of its paths or points is clicked.
+    /// </summary>
+    /// <remarks>
+    /// Each handler is made once and handed out on every render.
+    /// A handler made fresh on each render never equals the previous one, so the renderer would replace it on every point of the chart whenever it renders, hover included.
+    /// </remarks>
+    /// <param name="seriesIndex">The index of the series.</param>
+    private protected EventCallback GetSeriesClickCallback(int seriesIndex)
+    {
+        while (_seriesClickCallbacks.Count <= seriesIndex)
+        {
+            var index = _seriesClickCallbacks.Count;
+            _seriesClickCallbacks.Add(EventCallback.Factory.Create(this, () => SetSelectedIndexAsync(index)));
+        }
+
+        return _seriesClickCallbacks[seriesIndex];
+    }
+
+    /// <summary>
+    /// Gets the mouse over handler for a data point, by its position in <see cref="ChartDataPoints"/>.
+    /// </summary>
+    /// <remarks>
+    /// The handler looks the point up when it runs, so it stays the same when the chart is rebuilt and only the point behind it changes.
+    /// </remarks>
+    /// <param name="seriesIndex">The index of the series.</param>
+    /// <param name="pointIndex">The position of the point in the series' data points.</param>
+    private protected EventCallback<MouseEventArgs> GetDataPointMouseOverCallback(int seriesIndex, int pointIndex)
+    {
+        while (_dataPointMouseOverCallbacks.Count <= seriesIndex)
+        {
+            _dataPointMouseOverCallbacks.Add([]);
+        }
+
+        var callbacks = _dataPointMouseOverCallbacks[seriesIndex];
+        while (callbacks.Count <= pointIndex)
+        {
+            var index = callbacks.Count;
+            callbacks.Add(EventCallback.Factory.Create<MouseEventArgs>(this, e => OnDataPointMouseOver(e, seriesIndex, index)));
+        }
+
+        return callbacks[pointIndex];
+    }
+
+    /// <summary>
+    /// The mouse out handler shared by every data point.
+    /// </summary>
+    private protected EventCallback DataPointMouseOutCallback => _dataPointMouseOutCallback ??= EventCallback.Factory.Create(this, OnDataPointMouseOut);
+
+    private void OnDataPointMouseOver(MouseEventArgs e, int seriesIndex, int pointIndex)
+    {
+        if (ChartDataPoints.TryGetValue(seriesIndex, out var points) && pointIndex < points.Count)
+        {
+            OnDataPointMouseOver(e, points[pointIndex]);
+        }
     }
 
     /// <summary>

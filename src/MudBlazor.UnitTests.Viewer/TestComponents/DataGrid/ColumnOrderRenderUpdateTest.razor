@@ -1,0 +1,5 @@
+@attribute [ViewerHidden]
+@code {
+    [Parameter] public Action? Update { get; set; }
+    protected override void OnInitialized() => Update?.Invoke();
+}

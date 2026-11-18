@@ -71,7 +71,10 @@ public partial class MudText : MudComponentBase
     /// Whether this text continues on the same line.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>false</c>.  When <c>false</c>, text will start on a new line.
+    /// Defaults to <c>false</c>.
+    /// When <c>true</c>, the <c>d-inline</c> class is added so block elements such as headings and paragraphs stay on the same line.
+    /// When <c>false</c>, the element keeps its default display, so typos rendered as <c>span</c> (such as <see cref="Typo.caption"/>) remain inline.
+    /// Use <see cref="HtmlTag"/> to render those as a block element.
     /// </remarks>
     [Parameter]
     [Category(CategoryTypes.Text.Behavior)]

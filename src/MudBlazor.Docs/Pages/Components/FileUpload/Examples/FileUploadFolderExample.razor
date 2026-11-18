@@ -1,0 +1,36 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudFileUpload T="IReadOnlyList<IBrowserFile>" Folder MaximumFileCount="100" OnFolderFilesChanged="UploadFolder">
+    <CustomContent>
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="@context.OpenFilePickerAsync"
+                   StartIcon="@Icons.Material.Filled.DriveFolderUpload">
+            Choose folder
+        </MudButton>
+    </CustomContent>
+    <SelectedTemplate />
+</MudFileUpload>
+
+@if (_folderFiles.Count > 0)
+{
+    <MudList T="string">
+        @foreach (var file in _folderFiles)
+        {
+            <MudListItem Icon="@Icons.Material.Filled.InsertDriveFile" @key="@file.File">
+                @file.RelativePath <code>@file.File.Size bytes</code>
+            </MudListItem>
+        }
+    </MudList>
+}
+
+@code
+{
+    private IReadOnlyList<MudFileWithFolderPath> _folderFiles = [];
+
+    private void UploadFolder(IReadOnlyList<MudFileWithFolderPath> files)
+    {
+        _folderFiles = files;
+        //TODO upload each file, using RelativePath to rebuild the folder on the server
+    }
+}

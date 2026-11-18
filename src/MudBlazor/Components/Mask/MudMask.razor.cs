@@ -2,9 +2,11 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using MudBlazor.Services;
 using MudBlazor.Utilities;
 
@@ -27,6 +29,14 @@ namespace MudBlazor
         private ElementReference _elementReference;
         private ElementReference _elementReference1;
         private IMask _mask = new PatternMask("** **-** **");
+        private bool _disposed;
+        private readonly Lazy<DotNetObjectReference<MudMask>> _dotNetReferenceLazy;
+
+        [DynamicDependency(nameof(CallOnBlurredAsync))]
+        public MudMask()
+        {
+            _dotNetReferenceLazy = new Lazy<DotNetObjectReference<MudMask>>(DotNetObjectReference.Create(this));
+        }
 
         internal string ElementId { get; } = Identifier.Create("mask");
 
@@ -77,6 +87,9 @@ namespace MudBlazor
 
         [Inject]
         private IJsApiService JsApiService { get; set; } = null!;
+
+        [Inject]
+        private IJSRuntime JsRuntime { get; set; } = null!;
 
         /// <summary>
         /// The content within this input.
@@ -182,6 +195,13 @@ namespace MudBlazor
                     ]);
 
                 await KeyInterceptorService.SubscribeAsync(ElementId, options, keyDown: HandleKeyDown);
+
+                if (!_disposed)
+                {
+                    // Attach a JS blur fallback for cases where focus is dismissed without Blazor observing the native blur event, e.g. a Hybrid host window losing focus.
+                    // Otherwise _isFocused stays set and every render re-applies the caret, pulling focus back to this input.
+                    await _elementReference.MudAttachBlurEventWithJS(_dotNetReferenceLazy.Value);
+                }
             }
 
             if (_isFocused && Mask.Selection == null)
@@ -420,6 +440,21 @@ namespace MudBlazor
             _isFocused = false;
         }
 
+        /// <summary>
+        /// Called from JS when the input lost focus without Blazor observing the native blur event.
+        /// </summary>
+        [JSInvokable]
+        public async Task CallOnBlurredAsync()
+        {
+            // If native blur already ran, do not process the fallback callback again.
+            if (!_isFocused)
+            {
+                return;
+            }
+
+            await OnBlurredAsync(new FocusEventArgs { Type = "jsBlur.OnBlur" });
+        }
+
         private async Task SetCaretPositionAsync(int caret, (int, int)? selection = null)
         {
             if (!_isFocused)
@@ -428,14 +463,15 @@ namespace MudBlazor
             if (caret == 0)
                 _caret = 0;
             _selection = selection;
+            // Only while the input really has focus: _isFocused can be stale when a blur was missed, and moving focus back here would take it from another input.
             if (selection == null)
             {
-                await _elementReference.MudSelectRangeAsync(caret, caret);
+                await _elementReference.MudSelectRangeIfFocusedAsync(caret, caret);
             }
             else
             {
                 var sel = selection.Value;
-                await _elementReference.MudSelectRangeAsync(sel.Item1, sel.Item2);
+                await _elementReference.MudSelectRangeIfFocusedAsync(sel.Item1, sel.Item2);
             }
         }
 
@@ -492,10 +528,14 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
+            // Set before disposing the reference so a racing first-render blur attach skips.
+            _disposed = true;
+
             await base.DisposeAsyncCore();
 
             if (IsJSRuntimeAvailable)
             {
+                await JsRuntime.InvokeVoidAsyncWithErrorHandling("mudElementRef.removeOnBlurEvent", _elementReference);
                 await KeyInterceptorService.UnsubscribeAsync(ElementId);
                 if (_jsEvent is not null)
                 {
@@ -504,6 +544,11 @@ namespace MudBlazor
                     _jsEvent.Select -= OnSelect;
                     await _jsEvent.DisposeAsync();
                 }
+            }
+
+            if (_dotNetReferenceLazy.IsValueCreated)
+            {
+                _dotNetReferenceLazy.Value.Dispose();
             }
         }
 

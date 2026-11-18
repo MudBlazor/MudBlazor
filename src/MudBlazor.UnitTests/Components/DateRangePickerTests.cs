@@ -720,6 +720,37 @@ namespace MudBlazor.UnitTests.Components
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-popover-open").Count.Should().Be(0));
         }
 
+        /// <summary>
+        /// Starting on the last supported month renders that month alone instead of throwing for the month after it.
+        /// </summary>
+        [Test]
+        public void StartAtLastSupportedMonth_RendersWithoutNextMonth()
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.StartMonth, new DateTime(9999, 12, 1)));
+
+            comp.FindAll("button.mud-button-month").Select(header => header.TextContent.Trim()).Should().Equal("9999 December");
+        }
+
+        /// <summary>
+        /// Selecting a range that ends on the last supported day commits it instead of throwing.
+        /// </summary>
+        [Test]
+        public async Task SelectRangeEndingOnLastSupportedDay_SetsDateRange()
+        {
+            var comp = Context.Render<MudDateRangePicker>(parameters => parameters
+                .Add(p => p.Culture, CultureInfo.InvariantCulture)
+                .Add(p => p.PickerVariant, PickerVariant.Static)
+                .Add(p => p.StartMonth, new DateTime(9999, 12, 1)));
+
+            await comp.FindAll("button.mud-picker-calendar-day:not(.mud-hidden)").First(day => day.TextContent.Trim() == "1").ClickAsync();
+            await comp.FindAll("button.mud-picker-calendar-day:not(.mud-hidden)").First(day => day.TextContent.Trim() == "31").ClickAsync();
+
+            comp.Instance.DateRange.Should().Be(new DateRange(new DateTime(9999, 12, 1), new DateTime(9999, 12, 31)));
+        }
+
         [Test]
         public async Task CurrentDate_ShouldBeMarked()
         {

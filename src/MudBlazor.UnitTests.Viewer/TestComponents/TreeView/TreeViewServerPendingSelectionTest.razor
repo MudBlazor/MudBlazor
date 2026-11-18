@@ -1,0 +1,38 @@
+﻿@using MudBlazor.UnitTests.TestComponents
+<MudTreeView T="string" Items="_items" ServerData="LoadServerData" Virtualize="@Virtualize" Height="@Height" SelectedValue="@SelectedValue" SelectedValueChanged="OnSelectedValueChanged">
+    <ItemTemplate>
+        <MudTreeViewItem Items="@context.Children" Value="@context.Value" Text="@context.Text" CanExpand="@context.Expandable" Expanded="@context.Expanded" ExpandedChanged="expanded => context.Expanded = expanded" />
+    </ItemTemplate>
+</MudTreeView>
+<p class="selected-value">@SelectedValue</p>
+
+@code {
+    private readonly List<TreeItemData<string>> _items =
+    [
+        new TreeItemData<string> { Value = "A", Text = "A" },
+        new TreeItemData<string> { Value = "B", Text = "B" }
+    ];
+
+    [Parameter]
+    public bool Virtualize { get; set; }
+
+    [Parameter]
+    public string? Height { get; set; }
+
+    [Parameter]
+    public string? SelectedValue { get; set; } = "B1";
+
+    public int SelectedValueChangedCount { get; private set; }
+
+    private void OnSelectedValueChanged(string? value)
+    {
+        SelectedValueChangedCount++;
+        SelectedValue = value;
+    }
+
+    public Task<IReadOnlyCollection<TreeItemData<string>>> LoadServerData(string? parent)
+    {
+        IReadOnlyCollection<TreeItemData<string>> children = [new TreeItemData<string> { Value = parent + "1", Text = parent + "1" }];
+        return Task.FromResult(children);
+    }
+}

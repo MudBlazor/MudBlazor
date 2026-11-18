@@ -87,7 +87,7 @@ namespace MudBlazor
         /// The default options for this dialog.
         /// </summary>
         /// <remarks>
-        /// These options are used if none are provided during the <see cref="ShowAsync(string, DialogOptions)"/> method.  This is typically used for inline dialogs.
+        /// These options are the dialog's defaults.  Options passed when it is shown, through <see cref="ShowAsync(string, DialogOptions)"/> or <see cref="IDialogService"/>, are layered over them one property at a time, so a property left unset there falls back to the value here.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Misc)]  // Behavior and Appearance
@@ -242,12 +242,15 @@ namespace MudBlazor
                     [nameof(DialogContent)] = DialogContent,
                     [nameof(DialogActions)] = DialogActions,
                     [nameof(OnBackdropClick)] = OnBackdropClick,
+                    [nameof(OnKeyDown)] = OnKeyDown,
+                    [nameof(OnKeyUp)] = OnKeyUp,
                     [nameof(Gutters)] = Gutters,
                     [nameof(TitleClass)] = TitleClass,
                     [nameof(ContentClass)] = ContentClass,
                     [nameof(ActionsClass)] = ActionsClass,
                     [nameof(ContentStyle)] = ContentStyle,
                     [nameof(DefaultFocus)] = DefaultFocus,
+                    [nameof(Options)] = Options,
                     [nameof(AriaLabel)] = AriaLabel,
                     [nameof(AriaLabelledBy)] = AriaLabelledBy,
                 };

@@ -14,6 +14,9 @@ namespace MudBlazor;
 /// <typeparam name="T">The kind of item managed by the column.</typeparam>
 /// <seealso cref="Column{T}" />
 /// <seealso cref="MudDataGrid{T}" />
+/// <remarks>
+/// This column remains pinned before reorderable columns and does not expose configurable order state.
+/// </remarks>
 /// <seealso cref="PropertyColumn{T, TProperty}" />
 /// <seealso cref="SelectColumn{T}" />
 /// <seealso cref="TemplateColumn{T}" />
@@ -59,7 +62,7 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// Allows this column to be reordered via drag-and-drop operations.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>null</c>. When set, this overrides the <see cref="MudDataGrid{T}.DragDropColumnReordering"/> property.
+    /// Defaults to <c>false</c>. When set, this overrides the <see cref="MudDataGrid{T}.DragDropColumnReordering"/> property.
     /// </remarks>
     [Parameter]
     public bool? DragAndDropEnabled { get; set; } = false;
@@ -179,7 +182,7 @@ public partial class HierarchyColumn<[DynamicallyAccessedMembers(DynamicallyAcce
     /// <remarks>
     /// This function takes an item of type <typeparamref name="T"/> as input and returns a boolean indicating
     /// whether the row should be expanded. Requires item to override the Equals and GetHashCode methods.
-    /// Defaults to a function that always returns <c>false</c>.
+    /// Defaults to <c>null</c>.
     /// </remarks>
     [Parameter]
     public Func<T, bool>? InitiallyExpandedFunc { get; set; }

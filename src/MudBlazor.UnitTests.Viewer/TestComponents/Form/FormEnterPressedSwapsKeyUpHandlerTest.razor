@@ -1,0 +1,23 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+
+<MudForm OnEnterPressed="OnEnterPressedAsync" @onkeyup="_keyUp" />
+
+@code {
+    public static string __description__ = "An asynchronous OnEnterPressed rerenders the parent and replaces the onkeyup attribute; the keyup that started the dispatch must still call the original handler.";
+
+    public List<string> Calls { get; } = new();
+
+    private Action<KeyboardEventArgs> _keyUp;
+
+    public FormEnterPressedSwapsKeyUpHandlerTest()
+    {
+        _keyUp = _ => Calls.Add("original");
+    }
+
+    private async Task OnEnterPressedAsync()
+    {
+        Calls.Add("enter");
+        await Task.Yield();
+        _keyUp = _ => Calls.Add("replaced");
+    }
+}
