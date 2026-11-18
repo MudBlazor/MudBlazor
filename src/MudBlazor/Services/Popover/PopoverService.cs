@@ -69,7 +69,8 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     /// <param name="jsInterop">Instance of a JavaScript runtime to calls are dispatched.</param>
     /// <param name="timeProvider">The time provider for obtaining the current time.</param>
     /// <param name="options">The options for the popover service (optional).</param>
-    public PopoverService(ILogger<PopoverService> logger, IJSRuntime jsInterop, TimeProvider timeProvider, IOptions<PopoverOptions>? options = null)
+    /// <param name="providerContext">The identity shared with the provider in this service scope (optional).</param>
+    public PopoverService(ILogger<PopoverService> logger, IJSRuntime jsInterop, TimeProvider timeProvider, IOptions<PopoverOptions>? options = null, PopoverProviderContext? providerContext = null)
     {
         _timeProvider = timeProvider;
         _logger = logger;
@@ -78,7 +79,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         _cancellationTokenSource = new CancellationTokenSource();
         // Cache the token to avoid passing the CancellationTokenSource itself because it will throw once you access it after it's disposed
         _cancellationToken = _cancellationTokenSource.Token;
-        _popoverJsInterop = new PopoverJsInterop(jsInterop);
+        _popoverJsInterop = new PopoverJsInterop(jsInterop, (providerContext ?? new PopoverProviderContext()).Id);
         _batchExecutor = new BatchPeriodicQueue<MudPopoverHolder>(this, PopoverOptions.QueueDelay, timeProvider);
         _observerManager = new ObserverManager<Guid, IPopoverObserver>(logger);
     }

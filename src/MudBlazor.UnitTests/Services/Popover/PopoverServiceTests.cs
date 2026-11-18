@@ -614,17 +614,17 @@ public class PopoverServiceTests
             .Callback(() => batchCompletion.TrySetResult());
 
         jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.initialize", It.IsAny<CancellationToken>(),
-                It.Is<object[]>(y => y.Length == 3)))
+                It.Is<object[]>(y => y.Length == 4 && y[0] is string)))
             .ReturnsAsync(Mock.Of<IJSVoidResult>())
             .Verifiable();
 
         jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.connect", It.IsAny<CancellationToken>(),
-                It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == popover.Id)))
+                It.Is<object[]>(y => y.Length == 2 && y[0] is string && (Guid)y[1] == popover.Id)))
             .ReturnsAsync(Mock.Of<IJSVoidResult>())
             .Verifiable();
 
         jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.disconnect", It.IsAny<CancellationToken>(),
-                It.Is<object[]>(y => y.Length == 1 && (Guid)y[0] == popover.Id)))
+                It.Is<object[]>(y => y.Length == 2 && y[0] is string && (Guid)y[1] == popover.Id)))
             .Returns(new ValueTask<IJSVoidResult>())
             .Verifiable();
 

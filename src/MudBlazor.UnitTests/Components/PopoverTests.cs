@@ -378,6 +378,22 @@ namespace MudBlazor.UnitTests.Components
             Assert.Throws<ElementNotFoundException>(() => comp.Find("#my-content"));
         }
 
+        /// <summary>
+        /// A provider identifies the scoped popover service in both its markup and duplicate-provider check.
+        /// </summary>
+        [Test]
+        public void MudPopoverProvider_UsesScopedProviderId()
+        {
+            Context.JSInterop.Setup<int>("mudpopoverHelper.countProviders", _ => true).SetResult(1);
+
+            var comp = Context.Render<MudPopoverProvider>();
+            var providerId = comp.Find(".mud-popover-provider").GetAttribute("data-mud-popover-provider-id");
+            var invocation = Context.JSInterop.Invocations.Single(x => x.Identifier == "mudpopoverHelper.countProviders");
+
+            providerId.Should().NotBeNullOrWhiteSpace();
+            invocation.Arguments.Should().ContainSingle().Which.Should().Be(providerId);
+        }
+
         //[TestCase(false)] always blocks duplicate provider with latest change
         [TestCase(true)]
         public async Task MudPopoverProvider_ThrowOnDuplicate(bool throwOnDuplicateProvider)
@@ -388,7 +404,7 @@ namespace MudBlazor.UnitTests.Components
             };
 
             Context.Services.Configure<PopoverOptions>(x => x.ThrowOnDuplicateProvider = throwOnDuplicateProvider);
-            Context.JSInterop.Setup<int>("mudpopoverHelper.countProviders").SetResult(throwOnDuplicateProvider ? 2 : 1);
+            Context.JSInterop.Setup<int>("mudpopoverHelper.countProviders", _ => true).SetResult(throwOnDuplicateProvider ? 2 : 1);
 
             if (throwOnDuplicateProvider)
             {

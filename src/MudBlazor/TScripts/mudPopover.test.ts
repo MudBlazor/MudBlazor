@@ -412,6 +412,32 @@ describe("MudPopover lifecycle", () => {
         expect(mudpopoverHelper.countProviders()).toBe(2);
     });
 
+    test("separate render scopes coexist and dispose independently", () => {
+        document.body.innerHTML = `
+            <div class="mud-popover-provider" data-mud-popover-provider-id="server">
+                <div id="popovercontent-server-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-server-menu"></div></div>
+            <div class="mud-popover-provider" data-mud-popover-provider-id="wasm">
+                <div id="popovercontent-wasm-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-wasm-menu"></div></div>`;
+
+        popover.initialize("server", "mud-popover-provider", 0, 24);
+        popover.initialize("wasm", "mud-popover-provider", 0, 24);
+        popover.connect("server", "server-menu");
+        popover.connect("wasm", "wasm-menu");
+
+        expect(mudpopoverHelper.countProviders("server")).toBe(1);
+        expect(mudpopoverHelper.countProviders("wasm")).toBe(1);
+        expect(popover.getAllObservedContainers().sort()).toEqual(["server-menu", "wasm-menu"]);
+
+        popover.dispose("server");
+
+        expect(popover.getAllObservedContainers()).toEqual(["wasm-menu"]);
+        expect(popover.map["wasm-menu"]).toBeDefined();
+    });
+
     test("the overlay follows the z-index of the most recently opened popover", () => {
         const { content, childContent } = renderProvider(true);
         childContent.classList.add("mud-popover-open");

@@ -24,6 +24,9 @@ namespace MudBlazor
         [Inject]
         internal IPopoverService PopoverService { get; set; } = null!;
 
+        [Inject]
+        internal PopoverProviderContext ProviderContext { get; set; } = null!;
+
         /// <summary>
         /// Controls whether this provider is enabled.
         /// </summary>
