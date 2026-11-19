@@ -91,6 +91,8 @@ jobs:
       - name: Review
         id: claude
         if: ${{ steps.pr.outputs.run }}
+        # A step timeout is a failure, which still posts the notice below. The job timeout would cancel the job and skip it.
+        timeout-minutes: 15
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY_REVIEWS }}
           SCHEMA: '{"type":"object","additionalProperties":false,"required":["summary","findings","approve"],"properties":{"summary":{"type":"string"},"approve":{"type":"boolean"},"findings":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["path","line","body"],"properties":{"path":{"type":"string"},"line":{"type":"integer"},"body":{"type":"string"}}}}}}'
@@ -128,7 +130,7 @@ jobs:
           permission-pull-requests: write
 
       - name: Post the review
-        if: ${{ !cancelled() && steps.pr.outputs.run }}
+        if: ${{ !cancelled() && steps.app-token.outcome == 'success' }}
         uses: actions/github-script@v9
         env:
           REVIEW: ${{ steps.claude.outputs.review }}
