@@ -518,3 +518,64 @@ describe("popover body zoom", () => {
         expect(content.style.top).toBe("833.333333px");
     });
 });
+
+// #13588
+describe("popover containing block", () => {
+    afterEach(() => {
+        Object.defineProperty(window, "scrollX", { configurable: true, value: 0 });
+        Object.defineProperty(window, "scrollY", { configurable: true, value: 0 });
+        document.body.innerHTML = "";
+    });
+
+    // Reports `block` as the content's offsetParent, with the geometry a positioned ancestor offset from the viewport origin would have.
+    function useContainingBlock(content: HTMLElement, block: HTMLElement, rect: Rect, border = { left: 0, top: 0 }, scroll = { left: 0, top: 0 }) {
+        Object.defineProperty(content, "offsetParent", { configurable: true, get: () => block });
+        block.getBoundingClientRect = () => new DOMRect(rect.x, rect.y, rect.width, rect.height);
+        Object.defineProperty(block, "clientLeft", { configurable: true, value: border.left });
+        Object.defineProperty(block, "clientTop", { configurable: true, value: border.top });
+        Object.defineProperty(block, "scrollLeft", { configurable: true, value: scroll.left });
+        Object.defineProperty(block, "scrollTop", { configurable: true, value: scroll.top });
+    }
+
+    test.each([
+        ["without page scroll", 0, 0],
+        ["with page scroll", 300, 1000],
+    ])("positions against a relative ancestor of the provider %s", (_, scrollX, scrollY) => {
+        Object.defineProperty(window, "scrollX", { configurable: true, value: scrollX });
+        Object.defineProperty(window, "scrollY", { configurable: true, value: scrollY });
+        const popoverNode = renderPopover("mud-popover-top-left mud-popover-anchor-top-left", { x: 100, y: 200, width: 300, height: 40 }, 100);
+        const content = document.getElementById("popovercontent-test") as HTMLElement;
+        const outlet = document.createElement("div");
+        useContainingBlock(content, outlet, { x: 32, y: 24, width: 1000, height: 600 });
+
+        mudpopoverHelper.placePopover(popoverNode);
+
+        expect(content.style.left).toBe("68px");
+        expect(content.style.top).toBe("176px");
+    });
+
+    test("accounts for the border and internal scroll of the containing block", () => {
+        const popoverNode = renderPopover("mud-popover-top-left mud-popover-anchor-top-left", { x: 100, y: 200, width: 300, height: 40 }, 100);
+        const content = document.getElementById("popovercontent-test") as HTMLElement;
+        const outlet = document.createElement("div");
+        useContainingBlock(content, outlet, { x: 32, y: 24, width: 1000, height: 600 }, { left: 2, top: 3 }, { left: 10, top: 50 });
+
+        mudpopoverHelper.placePopover(popoverNode);
+
+        expect(content.style.left).toBe("76px");
+        expect(content.style.top).toBe("223px");
+    });
+
+    test("keeps viewport coordinates plus page scroll when the offsetParent is the static body fallback", () => {
+        Object.defineProperty(window, "scrollX", { configurable: true, value: 300 });
+        Object.defineProperty(window, "scrollY", { configurable: true, value: 1000 });
+        const popoverNode = renderPopover("mud-popover-top-left mud-popover-anchor-top-left", { x: 100, y: 200, width: 300, height: 40 }, 100);
+        const content = document.getElementById("popovercontent-test") as HTMLElement;
+        useContainingBlock(content, document.body, { x: -300, y: -1000, width: 1000, height: 3000 });
+
+        mudpopoverHelper.placePopover(popoverNode);
+
+        expect(content.style.left).toBe("400px");
+        expect(content.style.top).toBe("1200px");
+    });
+});
