@@ -170,8 +170,9 @@ jobs:
             } else if (replied) {
               await github.rest.pulls.createReview({ ...review, event: 'COMMENT' });
             }
+            // The summary says what is still open, including on a run that posts nothing else.
             for (const r of mine.filter(r => r.state === 'APPROVED')) {
-              await github.rest.pulls.dismissReview({ ...context.repo, pull_number: pr.number, review_id: r.id, message: 'A later push has unresolved findings.' });
+              await github.rest.pulls.dismissReview({ ...context.repo, pull_number: pr.number, review_id: r.id, message: review.body });
             }
 
       # A failed review may have been paid for, so it counts toward the cap.
