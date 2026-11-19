@@ -438,6 +438,20 @@ describe("MudPopover lifecycle", () => {
         expect(popover.map["wasm-menu"]).toBeDefined();
     });
 
+    test("scoped id with an attribute-less provider falls back to the container class", () => {
+        document.body.innerHTML = `
+            <div id="decorated-provider" class="mud-popover-provider">
+                <div id="popovercontent-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-menu"></div></div>`;
+
+        popover.initialize("decorated-scope", "mud-popover-provider", 0, 24);
+        popover.connect("decorated-scope", "menu");
+
+        expect(popover.getAllObservedContainers()).toEqual(["menu"]);
+        expect(popover.map["menu"]?.popoverContentNode?.parentElement?.id).toBe("decorated-provider");
+    });
+
     test("initializing a render scope removes disconnected providers", () => {
         document.body.innerHTML = `
             <div id="server-provider" class="mud-popover-provider" data-mud-popover-provider-id="server">

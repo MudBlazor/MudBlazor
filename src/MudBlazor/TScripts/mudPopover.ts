@@ -964,6 +964,8 @@ export default class MudPopover {
 
         return Array.from(document.querySelectorAll('[data-mud-popover-provider-id]'))
             .find(provider => provider.getAttribute('data-mud-popover-provider-id') === providerId)
+            ?? Array.from(document.body.getElementsByClassName(containerClass))
+                .find(provider => !provider.hasAttribute('data-mud-popover-provider-id'))
             ?? null;
     }
 
