@@ -41,6 +41,19 @@ namespace MudBlazor.UnitTests.Components
             openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open");
         }
 
+        /// <summary>
+        /// A non-editable picker suppresses the on-screen keyboard, while an editable one keeps it (#8549).
+        /// </summary>
+        [TestCase(false, "none")]
+        [TestCase(true, "text")]
+        public void TimePicker_InputMode_DependsOnEditable(bool editable, string expectedInputMode)
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.Editable, editable));
+
+            comp.Find("input").GetAttribute("inputmode").Should().Be(expectedInputMode);
+        }
+
         [Test]
         public async Task TimePicker_Should_Clear()
         {
