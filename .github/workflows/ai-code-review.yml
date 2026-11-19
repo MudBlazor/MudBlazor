@@ -57,7 +57,7 @@ jobs:
           # The pull request's version of each changed file, so Claude can read whole files. A CLAUDE.md there would load as instructions.
           git fetch --quiet --no-tags --depth=1 origin "pull/$PR/head"
           # After a newer push, the diff and files no longer match the commit this run posts on, and that push has its own run.
-          if [ "$(git rev-parse FETCH_HEAD)" != "$HEAD_SHA" ]; then echo "::notice::Skipped: a newer push has its own review."; exit 0; fi
+          if [ "$(git rev-parse FETCH_HEAD)" != "$HEAD_SHA" ]; then echo "::notice::Skipped: a newer push has its own run."; exit 0; fi
           gh pr diff "$PR" --repo "$REPO" --name-only | { grep -v -E '(^|/)(CLAUDE(\.local)?\.md$|\.claude/)' || true; } | while IFS= read -r f; do
             # A deleted file, a submodule or a path that became a directory has no file to copy.
             [ "$(git cat-file -t "FETCH_HEAD:$f" 2>/dev/null)" = blob ] || continue
@@ -151,7 +151,9 @@ jobs:
             // Every run posts one review, which the fetch step reads for the daily limit. Its hidden last line records the diff it saw.
             // The line goes on after the mentions are broken, since that check treats HTML as a hiding place.
             const mark = s => `${s}\n\n<!-- patch:${process.env.PATCH} -->`;
-            if (approve && !findings.length) return github.rest.pulls.createReview({ ...review, body: mark(unping(summary)), event: 'APPROVE' });
+            const approved = (await github.paginate(github.rest.pulls.listReviews, { ...context.repo, pull_number: pr.number })).filter(r => r.user?.login === 'mudbot[bot]' && r.state === 'APPROVED');
+            // An approval that still stands isn't repeated, so there's only ever one to withdraw.
+            if (approve && !findings.length) return github.rest.pulls.createReview({ ...review, body: mark(unping(summary)), event: approved.length ? 'COMMENT' : 'APPROVE' });
             // GitHub rejects the whole review if any comment is off the diff, so those go in the review text.
             const anchors = new Set();
             let file, line, header;
@@ -166,8 +168,6 @@ jobs:
             // If GitHub still rejects an anchor, everything goes in the review text. Any other error fails the step, since a retry could post twice.
             await github.rest.pulls.createReview({ ...review, body: text(findings.filter(f => !inline.includes(f))), event: 'COMMENT', comments: inline.map(({ path, line, body }) => ({ path, line, side: 'RIGHT', body: unping(body) })) })
               .catch(e => { if (e.status !== 422) throw e; return github.rest.pulls.createReview({ ...review, event: 'COMMENT', body: text(findings) }); });
-            // The summary says what is still open.
-            const mine = (await github.paginate(github.rest.pulls.listReviews, { ...context.repo, pull_number: pr.number })).filter(r => r.user?.login === 'mudbot[bot]');
-            for (const r of mine.filter(r => r.state === 'APPROVED')) {
-              await github.rest.pulls.dismissReview({ ...context.repo, pull_number: pr.number, review_id: r.id, message: unping(summary) });
+            for (const r of approved) {
+              await github.rest.pulls.dismissReview({ ...context.repo, pull_number: pr.number, review_id: r.id, message: 'A later push has unresolved findings.' });
             }
