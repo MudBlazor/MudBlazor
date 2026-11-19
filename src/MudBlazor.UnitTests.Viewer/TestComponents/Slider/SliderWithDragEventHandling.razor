@@ -1,0 +1,20 @@
+<MudSlider Value="_value" Min="0" Max="100" T="int" Step="1" Immediate="false" ValueChanged="ValueChanged" OnDragStart="OnDragStart" OnDragEnd="OnDragEnd" />
+<div class="mt-4">
+    @foreach(var ev in _events)
+    {
+        <MudText>@ev</MudText>
+    }
+</div>
+
+@code {
+    private List<string> _events = [];
+    private int _value = 0;
+
+    private void OnDragStart() => _events.Add($"DragStart({_value})");
+    private void OnDragEnd() => _events.Add($"DragEnd({_value})");
+    private void ValueChanged(int value)
+    {
+        _value = value;
+        _events.Add($"ValueChanged({_value})");
+    }
+}
