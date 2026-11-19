@@ -35,6 +35,8 @@ jobs:
           TITLE: ${{ github.event.pull_request.title }}
           BODY: ${{ github.event.pull_request.body }}
         run: |
+          # Without this, a failed API call in a pipeline would leave the review with missing context instead of failing the step.
+          set -o pipefail
           gh pr diff "$PR" --repo "$REPO" > "$RUNNER_TEMP/pr.diff"
           # The patch ID ignores line numbers, so rebasing a stack doesn't change it.
           patch=$(git patch-id --verbatim < "$RUNNER_TEMP/pr.diff" | cut -d' ' -f1)
@@ -69,7 +71,7 @@ jobs:
             gh api --paginate "repos/$REPO/pulls/$PR/reviews" --jq '.[] | select(.user.login == "mudbot[bot]") | .body // "" | sub("\\s*<!-- patch:[^\n]*$"; "")'
             # A finding that got a reply keeps its whole text, so the reply can be weighed against what it answers.
             gh api --paginate "repos/$REPO/pulls/$PR/comments" --jq '.[] | {id, to: .in_reply_to_id, mine: (.user.login == "mudbot[bot]"), at: "\(.path):\(.original_line)", body}' \
-              | jq -rs 'map(.to // empty) as $answered | .[] | select(.mine) | "\(.at) \(if IN(.id; $answered[]) then .body else .body | split("\n")[0] end)"'
+              | jq -rs 'map(.to // empty) as $answered | .[] | select(.mine) | "\(.at) \(if IN(.id; $answered[]) then .body + "\n" else .body | split("\n")[0] end)"'
           } > earlier-findings.md
           # What people wrote on the pull request, oldest first: replies to its findings, comments and other reviews, without bots.
           # Each body is quoted under its author's login, so text in one can't pass for someone else's entry.
