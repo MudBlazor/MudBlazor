@@ -135,7 +135,9 @@
                 <Description>
                     By default, text fields update on Enter or <MudLink href="https://developer.mozilla.org/en-US/docs/Web/API/Element/blur_event">blur</MudLink> using the OnChange event. 
                     To get input events instantly, set <MudLink href="https://www.mudblazor.com/api/mudtextfield#properties">Immediate</MudLink> to true and component will use OnInput events.
-                    To wait for a user to stop typing and then receive input events, set the <MudLink href="https://www.mudblazor.com/api/mudtextfield#properties">Debounce Interval</MudLink> to a non-zero value.
+                    Set <MudLink href="https://www.mudblazor.com/api/mudtextfield#properties">DebounceInterval</MudLink> to the number of milliseconds to wait after the last edit before updating the value.
+                    When the interval elapses, a changed value triggers <CodeInline>ValueChanged</CodeInline>, followed by <CodeInline>OnDebounceIntervalElapsed</CodeInline>.
+                    Pressing Enter in a standalone text field while the timer is running leaves the pending update on that same schedule.
                 </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DebouncedTextFieldExample)" ShowCode="false">
