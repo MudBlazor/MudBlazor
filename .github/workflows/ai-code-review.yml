@@ -63,15 +63,16 @@ jobs:
           } > earlier-findings.md
           # What people wrote since MudBot's first review, oldest first: replies to its findings, comments and other reviews, without bots.
           # Each body is quoted under its author's login, so text in one can't pass for someone else's entry.
+          # A file path is JSON-encoded and carriage returns become newlines, since either could otherwise start a fake header line.
           : > discussion.md
           first=$(gh api --paginate "repos/$REPO/pulls/$PR/reviews" --jq '.[] | select(.user.login == "mudbot[bot]") | .submitted_at' | sort | sed -n 1p)
           if [ -n "$first" ]; then
             {
               gh api --paginate "repos/$REPO/issues/$PR/comments" --jq '.[] | {t: .created_at, who: .user.login, bot: (.user.type == "Bot"), where: "comment", body}'
-              gh api --paginate "repos/$REPO/pulls/$PR/comments" --jq '.[] | {t: .created_at, who: .user.login, bot: (.user.type == "Bot"), where: "on \(.path):\(.original_line // "")\(if .in_reply_to_id then ", reply" else "" end)", body}'
+              gh api --paginate "repos/$REPO/pulls/$PR/comments" --jq '.[] | {t: .created_at, who: .user.login, bot: (.user.type == "Bot"), where: "on \(.path | tojson):\(.original_line // "")\(if .in_reply_to_id then ", reply" else "" end)", body}'
               gh api --paginate "repos/$REPO/pulls/$PR/reviews" --jq '.[] | select(.body != "") | {t: .submitted_at, who: .user.login, bot: (.user.type == "Bot"), where: "review, \(.state | ascii_downcase)", body}'
             } | jq -rs --arg first "$first" 'map(select(.t > $first and (.bot | not))) | sort_by(.t) | .[]
-              | "### \(.who), \(.where), \(.t)\n\n\(.body // "" | if length > 4000 then .[:4000] + " [cut]" else . end | split("\n") | map("> " + .) | join("\n"))\n"' > discussion.md
+              | "### \(.who), \(.where), \(.t)\n\n\(.body // "" | gsub("\r\n?"; "\n") | if length > 4000 then .[:4000] + " [cut]" else . end | split("\n") | map("> " + .) | join("\n"))\n"' > discussion.md
           fi
           touch "$RUNNER_TEMP/reviewed"
           echo "patch=$patch" >> "$GITHUB_OUTPUT"
