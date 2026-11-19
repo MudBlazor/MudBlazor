@@ -125,6 +125,11 @@ jobs:
             const pr = context.payload.pull_request;
             const review = { ...context.repo, pull_number: pr.number, commit_id: pr.head.sha, body: summary };
             const mine = (await github.paginate(github.rest.pulls.listReviews, { ...context.repo, pull_number: pr.number })).filter(r => r.user.login === 'mudbot[bot]');
+            // When someone wrote after MudBot's last review, the summary answers them, so it's posted even without new findings.
+            // Each discussion.md header ends with its entry's time, and quoted bodies can't start a header line.
+            const last = mine.at(-1)?.submitted_at ?? '';
+            const replied = require('fs').readFileSync(`${process.env.GITHUB_WORKSPACE}/discussion.md`, 'utf8').split('\n')
+              .some(l => l.startsWith('### ') && l.slice(l.lastIndexOf(', ') + 2) > last);
             if (approve && !findings.length) {
               if (mine.at(-1)?.state !== 'APPROVED') await github.rest.pulls.createReview({ ...review, event: 'APPROVE' });
               return;
@@ -144,6 +149,8 @@ jobs:
               // A push between the job starting and the diff fetch can still get the review rejected.
               await github.rest.pulls.createReview({ ...review, body, event: 'COMMENT', comments: inline.map(({ path, line, body }) => ({ path, line, side: 'RIGHT', body })) })
                 .catch(() => github.rest.pulls.createReview({ ...review, event: 'COMMENT', body: [summary, ...findings.map(f => `${f.body}\n\n\`${f.path}:${f.line}\``)].join('\n\n---\n\n') }));
+            } else if (replied) {
+              await github.rest.pulls.createReview({ ...review, event: 'COMMENT' });
             }
             for (const r of mine.filter(r => r.state === 'APPROVED')) {
               await github.rest.pulls.dismissReview({ ...context.repo, pull_number: pr.number, review_id: r.id, message: 'A later push has unresolved findings.' });
