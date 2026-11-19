@@ -167,7 +167,7 @@ Purpose: Capture essential details early on open threads so maintainers can act 
 ### When You May Ask
 - Post an information request, or a follow-up to one, only on an open thread where no maintainer is involved.
 - Once a maintainer is involved, post neither. Mirror the maintainer's explicit asks with `needs:` labels as section 7 describes, and let humans lead the discussion.
-- Do not revive dormant threads (no human comments for >=28 days); maintainers will decide whether to re-engage.
+- Start a new request only on a thread created, or marked ready for review, in the last 14 days. An older thread has been seen before, so leave its gaps to maintainers, even when someone has just commented on it, for example to add details or to offer to work on it. Following up on your own earlier request, mirroring a maintainer's request (section 7), and the duplicate and fixed claim rules (section 4) apply to threads of any age.
 
 ### What to Check
 - As the first triager, scan the issue/PR for objective blockers that prevent confirming, reproducing, scoping, or reviewing the change. Blockers include: missing reproduction, unknown environment, link-only reports without a written summary, visual-only reports without written expected vs. actual behavior, missing visual proof for a visually identifiable problem or change (see Visual Proof below), unclear enhancement scope/justification, missing PR rationale/problem statement, or a vague PR title/description that cannot be made specific from available context.
