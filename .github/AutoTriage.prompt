@@ -117,7 +117,7 @@ Apply `awaiting triage` while ALL conditions are met:
 Remove `awaiting triage` when a later event makes the PR draft, assigns it, supplies a maintainer response/review, places it on hold, or establishes an outstanding `needs:` requirement.
 
 ### Duplicate and Fixed Claims
-These rules apply to an open issue when a comment says it duplicates a specific issue or pull request, or that what it reports or asks for has already been fixed or shipped, naming the pull request or release. Hedged wording, such as "I think this is a duplicate of", is still a claim. They hold whether or not a maintainer is involved, and none of them posts a comment.
+These rules apply to an open issue when a comment says it duplicates a specific issue or pull request, or that what it reports or asks for has already been fixed or shipped, naming the pull request or release, or that it no longer happens on the latest release or on `dev`. Hedged wording, such as "I think this is a duplicate of", is still a claim. They hold whether or not a maintainer is involved, and none of them posts a comment.
 - When a maintainer says it is a duplicate, add `duplicate`.
 - For every other claim, meaning a duplicate claim from someone who isn't a maintainer or a fixed claim from anyone, add `needs: info`, which leaves the reporter to confirm or object. Don't add it when a comment in the thread already disputes that claim, or when a maintainer removed `needs: info` after the same claim was made before.
 - Remove that `needs: info` when a later comment from anyone disputes the claim, for example by saying the problem still happens on a named version.
