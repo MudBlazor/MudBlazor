@@ -32,6 +32,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           TITLE: ${{ github.event.pull_request.title }}
           BODY: ${{ github.event.pull_request.body }}
         run: |
@@ -52,9 +53,13 @@ jobs:
           } > pull-request.md
           # The pull request's version of each changed file, so Claude can read whole files. A CLAUDE.md there would load as instructions.
           git fetch --quiet --no-tags --depth=1 origin "pull/$PR/head"
-          gh pr diff "$PR" --repo "$REPO" --name-only | { grep -v -E '(^|/)(CLAUDE(\.local)?\.md$|\.claude/)' || true; } | while read -r f; do
+          # After a newer push, the diff and files no longer match the commit this run posts on, and that push has its own run.
+          if [ "$(git rev-parse FETCH_HEAD)" != "$HEAD_SHA" ]; then echo "::notice::Skipped: a newer push has its own review."; exit 0; fi
+          gh pr diff "$PR" --repo "$REPO" --name-only | { grep -v -E '(^|/)(CLAUDE(\.local)?\.md$|\.claude/)' || true; } | while IFS= read -r f; do
+            # A deleted file, a submodule or a path that became a directory has no file to copy.
+            [ "$(git cat-file -t "FETCH_HEAD:$f" 2>/dev/null)" = blob ] || continue
             mkdir -p "pr-files/$(dirname "$f")"
-            git show "FETCH_HEAD:$f" > "pr-files/$f" 2>/dev/null || rm "pr-files/$f"
+            git show "FETCH_HEAD:$f" > "pr-files/$f"
           done
           # Kept apart so the pull request text can't pose as earlier findings.
           {
@@ -101,9 +106,14 @@ jobs:
             The summary is posted as the review text, so keep it to one to three sentences.
             Don't describe how you reviewed, and mention earlier findings only to say which are fixed or, after a reply, why one still holds.
         run: |
-          npx --yes @anthropic-ai/claude-code@2.1.323 -p "$PROMPT" --model claude-opus-5-5 --restricted --tools "Read,Grep,Glob" \
-            --max-turns 40 --max-budget-usd 3 --output-format json --json-schema "$SCHEMA" < /dev/null > "$RUNNER_TEMP/result.json"
-          echo "review=$(jq -ce .structured_output "$RUNNER_TEMP/result.json")" >> "$GITHUB_OUTPUT"
+          # A failed command substitution inside echo wouldn't fail the step, so a run without a review would only fail later, in the posting script.
+          if ! npx --yes @anthropic-ai/claude-code@2.1.323 -p "$PROMPT" --model claude-opus-5-5 --restricted --tools "Read,Grep,Glob" \
+            --max-turns 40 --max-budget-usd 3 --output-format json --json-schema "$SCHEMA" < /dev/null > "$RUNNER_TEMP/result.json" \
+            || ! review=$(jq -ce .structured_output "$RUNNER_TEMP/result.json"); then
+            jq -r '"::error::The review ended without a result: \(.subtype), \(.terminal_reason)."' "$RUNNER_TEMP/result.json" || true
+            exit 1
+          fi
+          echo "review=$review" >> "$GITHUB_OUTPUT"
 
       # Created after Claude exits, so it can't reach the write token.
       - name: Generate app token
@@ -123,8 +133,13 @@ jobs:
         with:
           github-token: ${{ steps.app-token.outputs.token }}
           script: |
-            // Break @-mentions so the model can't ping anyone.
-            const { summary, findings, approve } = JSON.parse(process.env.REVIEW.replace(/@(?=\w)/g, '@\\u200b'));
+            // Break @-mentions so the model can't ping anyone, except in code, where GitHub doesn't ping and a break would corrupt a Razor snippet.
+            // Code is trusted only when every backtick belongs to a closed top-level fence or a one-line span, with no HTML, tilde fence or table cell to hide a mention in.
+            const code = /^(```+)[^`\n]*$[\s\S]*?^ {0,3}\1`*[ \t]*$|(?<![`\\])`[^`|\n]+`(?!`)/gm;
+            const unping = s => /`|<[a-z\/!?]|~~~/i.test(s.replace(code, '')) ? s.replace(/@(?=\w)/g, '@\u200b')
+              : s.replace(new RegExp(`${code.source}|@(?=\\w)`, 'gm'), m => m[0] === '@' ? '@\u200b' : m);
+            const result = JSON.parse(process.env.REVIEW), approve = result.approve;
+            const summary = unping(result.summary), findings = result.findings.map(f => ({ ...f, body: unping(f.body) }));
             const pr = context.payload.pull_request;
             const review = { ...context.repo, pull_number: pr.number, commit_id: pr.head.sha, body: summary };
             const mine = (await github.paginate(github.rest.pulls.listReviews, { ...context.repo, pull_number: pr.number })).filter(r => r.user.login === 'mudbot[bot]');
@@ -149,7 +164,7 @@ jobs:
               }
               const inline = findings.filter(f => anchors.has(`${f.path}:${f.line}`));
               const body = [summary, ...findings.filter(f => !inline.includes(f)).map(f => `${f.body}\n\n\`${f.path}:${f.line}\``)].join('\n\n---\n\n');
-              // A push between the job starting and the diff fetch can still get the review rejected.
+              // If GitHub still rejects the review, everything goes in the review text.
               await github.rest.pulls.createReview({ ...review, body, event: 'COMMENT', comments: inline.map(({ path, line, body }) => ({ path, line, side: 'RIGHT', body })) })
                 .catch(() => github.rest.pulls.createReview({ ...review, event: 'COMMENT', body: [summary, ...findings.map(f => `${f.body}\n\n\`${f.path}:${f.line}\``)].join('\n\n---\n\n') }));
             } else if (replied) {
