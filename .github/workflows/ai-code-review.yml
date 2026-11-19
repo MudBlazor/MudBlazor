@@ -120,7 +120,7 @@ jobs:
       # Created after Claude exits, so it can't reach the write token.
       - name: Generate app token
         id: app-token
-        if: ${{ steps.pr.outputs.run }}
+        if: ${{ !cancelled() && steps.pr.outputs.run }}
         uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ vars.MUDBOT_APP_ID }}
@@ -128,7 +128,7 @@ jobs:
           permission-pull-requests: write
 
       - name: Post the review
-        if: ${{ steps.pr.outputs.run }}
+        if: ${{ !cancelled() && steps.pr.outputs.run }}
         uses: actions/github-script@v9
         env:
           REVIEW: ${{ steps.claude.outputs.review }}
@@ -142,12 +142,15 @@ jobs:
             const code = /^(```+)[^`\n]*$[\s\S]*?^ {0,3}\1`*[ \t]*$|(?<![`\\])`[^`|\n]+`(?!`)/gm;
             const unping = s => /`|<[a-z\/!?]|~~~/i.test(s.replace(code, '')) ? s.replace(/@(?=\w)/g, '@\u200b')
               : s.replace(new RegExp(`${code.source}|@(?=\\w)`, 'gm'), m => m[0] === '@' ? '@\u200b' : m);
-            const { summary, findings, approve } = JSON.parse(process.env.REVIEW);
             const pr = context.payload.pull_request;
+            const review = { ...context.repo, pull_number: pr.number, commit_id: pr.head.sha };
+            // A review that didn't finish may have been paid for, so it's posted too and counts toward the daily limit.
+            // It has no hidden line, so the same diff is reviewed once the limit has passed.
+            if (!process.env.REVIEW) return github.rest.pulls.createReview({ ...review, body: "The review didn't finish, so this push wasn't reviewed. A maintainer can re-run the job to try again.", event: 'COMMENT' });
+            const { summary, findings, approve } = JSON.parse(process.env.REVIEW);
             // Every run posts one review, which the fetch step reads for the daily limit. Its hidden last line records the diff it saw.
             // The line goes on after the mentions are broken, since that check treats HTML as a hiding place.
             const mark = s => `${s}\n\n<!-- patch:${process.env.PATCH} -->`;
-            const review = { ...context.repo, pull_number: pr.number, commit_id: pr.head.sha };
             if (approve && !findings.length) return github.rest.pulls.createReview({ ...review, body: mark(unping(summary)), event: 'APPROVE' });
             // GitHub rejects the whole review if any comment is off the diff, so those go in the review text.
             const anchors = new Set();
