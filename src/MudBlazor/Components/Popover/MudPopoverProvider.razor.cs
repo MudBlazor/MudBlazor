@@ -24,6 +24,9 @@ namespace MudBlazor
         [Inject]
         internal IPopoverService PopoverService { get; set; } = null!;
 
+        // A custom IPopoverService has no scope id, so the attribute is omitted and the scripts fall back to the container class.
+        internal string? ProviderId => (PopoverService as global::MudBlazor.PopoverService)?.ProviderId;
+
         /// <summary>
         /// Controls whether this provider is enabled.
         /// </summary>

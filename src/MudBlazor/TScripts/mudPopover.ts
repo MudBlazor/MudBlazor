@@ -14,6 +14,7 @@ type PopoverContentNode = HTMLElement & {
 };
 
 type PopoverEntry = {
+    providerId: string;
     popoverNode: HTMLElement | null;
     popoverContentNode: PopoverContentNode | null;
     anchorNode: Element | null;
@@ -24,10 +25,62 @@ type PopoverEntry = {
     closeTimerId: ReturnType<typeof setTimeout> | null;
 };
 
+type PopoverProviderEntry = {
+    containerClass: string;
+    flipMargin: number;
+    overflowPadding: number;
+    element: Element | null;
+    observer: MutationObserver | null;
+};
+
+const defaultProviderId = "mud-popover-provider-default";
+const providerOptionsByPopoverId = new Map<string, Pick<PopoverProviderEntry, "flipMargin" | "overflowPadding">>();
+
 // The script reads and writes inline styles by their dashed CSS names (e.g. style['z-index']), which browsers support but the DOM typings do not.
 // Browsers convert assigned numbers to strings, so writes go through String() to keep the same values.
 function styleOf(element: Element) {
     return (element as HTMLElement).style as unknown as Record<string, string>;
+}
+
+// The default parameter keeps the function's arity at 0, which apiSurface.test.ts pins.
+function countProviders(providerId: string | undefined = undefined): number {
+    if (providerId) {
+        return Array.from(document.querySelectorAll('[data-mud-popover-provider-id]'))
+            .filter(provider => provider.getAttribute('data-mud-popover-provider-id') === providerId)
+            .length;
+    }
+
+    const containerClass = (globalThis as typeof globalThis & { mudpopoverHelper?: { mainContainerClass: string | null } })
+        .mudpopoverHelper?.mainContainerClass;
+    return containerClass ? document.querySelectorAll(`.${containerClass}`).length : 0;
+}
+
+// The default parameter keeps the function's arity at 0, which apiSurface.test.ts pins.
+function popoverOverlayUpdates(popoverContentNode: Element | null | undefined = undefined): void {
+    let highestTickItem: Element | null = null;
+    let highestTickValue = -1;
+
+    const containerClass = (globalThis as typeof globalThis & { mudpopoverHelper?: { mainContainerClass: string | null } })
+        .mudpopoverHelper?.mainContainerClass;
+    const parentNode = popoverContentNode?.closest('[data-mud-popover-provider-id]')
+        ?? (containerClass ? document.querySelector(`.${containerClass}`) : null);
+    if (!parentNode || !parentNode.children) { return; }
+    // Traverse children of target.parentNode that contain the class "mud-popover"
+    for (const child of parentNode.children) {
+        if (child?.classList?.contains("mud-popover-open")) {
+            const tickValue = Number(child.getAttribute("data-ticks")) || 0;
+
+            if (tickValue > highestTickValue) {
+                highestTickValue = tickValue;
+                highestTickItem = child;
+            }
+        }
+    }
+    if (highestTickItem && !highestTickItem.classList.contains('mud-popover-nested')) {
+        (globalThis as typeof globalThis & {
+            mudpopoverHelper?: { updatePopoverOverlay: (popoverContentNode: HTMLElement | null) => void }
+        }).mudpopoverHelper?.updatePopoverOverlay(highestTickItem as HTMLElement);
+    }
 }
 
 /**
@@ -323,6 +376,9 @@ export const mudpopoverHelper = {
             const zIndexAuto = popoverNodeStyle.getPropertyValue('z-index') === 'auto';
             const classListArray = Array.from(classList);
             const bodyZoom = window.mudpopoverHelper.getBodyZoom();
+            const providerOptions = providerOptionsByPopoverId.get(id);
+            const flipMargin = providerOptions?.flipMargin ?? window.mudpopoverHelper.flipMargin;
+            const overflowPadding = providerOptions?.overflowPadding ?? window.mudpopoverHelper.overflowPadding;
 
             if (isPositionOverride) {
                 const attrY = popoverContentNode.getAttribute('data-pc-y');
@@ -402,12 +458,12 @@ export const mudpopoverHelper = {
 
                     if (classList.contains('mud-popover-top-left')) {
                         // Space available in current direction
-                        const spaceBelow = window.innerHeight - anchorY - window.mudpopoverHelper.flipMargin; // Space below the anchor
-                        const spaceRight = window.innerWidth - anchorX - window.mudpopoverHelper.flipMargin; // Space to the right of the anchor
+                        const spaceBelow = window.innerHeight - anchorY - flipMargin; // Space below the anchor
+                        const spaceRight = window.innerWidth - anchorX - flipMargin; // Space to the right of the anchor
 
                         // Space available in opposite direction
-                        const spaceAbove = anchorY - window.mudpopoverHelper.flipMargin;
-                        const spaceLeft = anchorX - window.mudpopoverHelper.flipMargin;
+                        const spaceAbove = anchorY - flipMargin;
+                        const spaceLeft = anchorX - flipMargin;
 
                         // Check if popover exceeds available space AND if opposite side has more space
                         const shouldFlipVertical = popoverHeight > spaceBelow && spaceAbove > spaceBelow;
@@ -427,8 +483,8 @@ export const mudpopoverHelper = {
                     // For mud-popover-top-center
                     else if (classList.contains('mud-popover-top-center')) {
                         // Space available in current direction vs opposite direction
-                        const spaceBelow = window.innerHeight - anchorY - window.mudpopoverHelper.flipMargin;
-                        const spaceAbove = anchorY - window.mudpopoverHelper.flipMargin;
+                        const spaceBelow = window.innerHeight - anchorY - flipMargin;
+                        const spaceAbove = anchorY - flipMargin;
 
                         // Only flip if popover exceeds available space AND there's more space in opposite direction
                         if (popoverHeight > spaceBelow && spaceAbove > spaceBelow) {
@@ -439,12 +495,12 @@ export const mudpopoverHelper = {
                     // For mud-popover-top-right
                     else if (classList.contains('mud-popover-top-right')) {
                         // Space available in current direction
-                        const spaceBelow = window.innerHeight - anchorY - window.mudpopoverHelper.flipMargin;
-                        const spaceLeft = anchorX - window.mudpopoverHelper.flipMargin;
+                        const spaceBelow = window.innerHeight - anchorY - flipMargin;
+                        const spaceLeft = anchorX - flipMargin;
 
                         // Space available in opposite direction
-                        const spaceAbove = anchorY - window.mudpopoverHelper.flipMargin;
-                        const spaceRight = window.innerWidth - anchorX - window.mudpopoverHelper.flipMargin;
+                        const spaceAbove = anchorY - flipMargin;
+                        const spaceRight = window.innerWidth - anchorX - flipMargin;
 
                         // Check if popover exceeds available space AND if opposite side has more space
                         const shouldFlipVertical = popoverHeight > spaceBelow && spaceAbove > spaceBelow;
@@ -464,8 +520,8 @@ export const mudpopoverHelper = {
                     // For mud-popover-center-left
                     else if (classList.contains('mud-popover-center-left')) {
                         // Space available in current vs opposite direction
-                        const spaceRight = window.innerWidth - anchorX - window.mudpopoverHelper.flipMargin;
-                        const spaceLeft = anchorX - window.mudpopoverHelper.flipMargin;
+                        const spaceRight = window.innerWidth - anchorX - flipMargin;
+                        const spaceLeft = anchorX - flipMargin;
 
                         if (popoverWidth > spaceRight && spaceLeft > spaceRight) {
                             selector = 'left';
@@ -475,8 +531,8 @@ export const mudpopoverHelper = {
                     // For mud-popover-center-right
                     else if (classList.contains('mud-popover-center-right')) {
                         // Space available in current vs opposite direction
-                        const spaceLeft = anchorX - window.mudpopoverHelper.flipMargin;
-                        const spaceRight = window.innerWidth - anchorX - window.mudpopoverHelper.flipMargin;
+                        const spaceLeft = anchorX - flipMargin;
+                        const spaceRight = window.innerWidth - anchorX - flipMargin;
 
                         if (popoverWidth > spaceLeft && spaceRight > spaceLeft) {
                             selector = 'right';
@@ -486,12 +542,12 @@ export const mudpopoverHelper = {
                     // For mud-popover-bottom-left
                     else if (classList.contains('mud-popover-bottom-left')) {
                         // Space available in current direction
-                        const spaceAbove = anchorY - window.mudpopoverHelper.flipMargin;
-                        const spaceRight = window.innerWidth - anchorX - window.mudpopoverHelper.flipMargin;
+                        const spaceAbove = anchorY - flipMargin;
+                        const spaceRight = window.innerWidth - anchorX - flipMargin;
 
                         // Space available in opposite direction
-                        const spaceBelow = window.innerHeight - anchorY - window.mudpopoverHelper.flipMargin;
-                        const spaceLeft = anchorX - window.mudpopoverHelper.flipMargin;
+                        const spaceBelow = window.innerHeight - anchorY - flipMargin;
+                        const spaceLeft = anchorX - flipMargin;
 
                         // Check if popover exceeds available space AND if opposite side has more space
                         const shouldFlipVertical = popoverHeight > spaceAbove && spaceBelow > spaceAbove;
@@ -511,8 +567,8 @@ export const mudpopoverHelper = {
                     // For mud-popover-bottom-center
                     else if (classList.contains('mud-popover-bottom-center')) {
                         // Space available in current vs opposite direction
-                        const spaceAbove = anchorY - window.mudpopoverHelper.flipMargin;
-                        const spaceBelow = window.innerHeight - anchorY - window.mudpopoverHelper.flipMargin;
+                        const spaceAbove = anchorY - flipMargin;
+                        const spaceBelow = window.innerHeight - anchorY - flipMargin;
 
                         if (popoverHeight > spaceAbove && spaceBelow > spaceAbove) {
                             selector = 'bottom';
@@ -522,12 +578,12 @@ export const mudpopoverHelper = {
                     // For mud-popover-bottom-right
                     else if (classList.contains('mud-popover-bottom-right')) {
                         // Space available in current direction
-                        const spaceAbove = anchorY - window.mudpopoverHelper.flipMargin;
-                        const spaceLeft = anchorX - window.mudpopoverHelper.flipMargin;
+                        const spaceAbove = anchorY - flipMargin;
+                        const spaceLeft = anchorX - flipMargin;
 
                         // Space available in opposite direction
-                        const spaceBelow = window.innerHeight - anchorY - window.mudpopoverHelper.flipMargin;
-                        const spaceRight = window.innerWidth - anchorX - window.mudpopoverHelper.flipMargin;
+                        const spaceBelow = window.innerHeight - anchorY - flipMargin;
+                        const spaceRight = window.innerWidth - anchorX - flipMargin;
 
                         // Check if popover exceeds available space AND if opposite side has more space
                         const shouldFlipVertical = popoverHeight > spaceAbove && spaceBelow > spaceAbove;
@@ -566,8 +622,8 @@ export const mudpopoverHelper = {
                 }
 
                 // Anchor-aware floor for the edge clamp below: clamp no further than the anchor's own edge, so a dropdown near the viewport edge stays aligned with its box (#11894).
-                const minLeft = Math.max(0, Math.min(window.mudpopoverHelper.overflowPadding, boundingRect.left));
-                const minTop = Math.max(0, Math.min(window.mudpopoverHelper.overflowPadding, boundingRect.top));
+                const minLeft = Math.max(0, Math.min(overflowPadding, boundingRect.left));
+                const minTop = Math.max(0, Math.min(overflowPadding, boundingRect.top));
 
                 // ensure the left is inside bounds
                 if (left + offsetX < minLeft && // it's starting left of the anchor or gutter
@@ -605,7 +661,6 @@ export const mudpopoverHelper = {
                     const checkHeight = isUnset(popoverStyle.maxHeight) && isUnset(listStyle.maxHeight);
 
                     if (checkHeight) {
-                        const overflowPadding = window.mudpopoverHelper.overflowPadding;
                         const isCentered = Array.from(classList).some(cls =>
                             cls.includes('mud-popover-anchor-center')
                         );
@@ -692,7 +747,7 @@ export const mudpopoverHelper = {
             }
 
             // adjust overlays as needed with new zindex
-            window.mudpopoverHelper.popoverOverlayUpdates();
+            window.mudpopoverHelper.popoverOverlayUpdates(popoverContentNode);
         }
         else {
             //console.log(`popoverNode: ${popoverNode} ${popoverNode ? popoverNode.parentNode : ""}`);
@@ -716,9 +771,7 @@ export const mudpopoverHelper = {
     },
 
     // returns the count of providers
-    countProviders: function () {
-        return window.mudpopoverHelper.mainContainerClass ? document.querySelectorAll(`.${window.mudpopoverHelper.mainContainerClass}`).length : 0;
-    },
+    countProviders,
 
     // sets popoveroverlay to the right z-index
     updatePopoverOverlay: function (popoverContentNode: HTMLElement | null) {
@@ -727,7 +780,8 @@ export const mudpopoverHelper = {
             return;
         }
         // set any associated overlay to equal z-index
-        const provider = popoverContentNode.closest(`.${window.mudpopoverHelper.mainContainerClass}`);
+        const provider = popoverContentNode.closest('[data-mud-popover-provider-id]')
+            ?? popoverContentNode.closest(`.${window.mudpopoverHelper.mainContainerClass}`);
         if (provider && popoverContentNode.classList.contains("mud-popover")) {
             const overlay = provider.querySelector<HTMLElement>('.mud-overlay');
             // skip any overlay marked with mud-skip-overlay
@@ -828,30 +882,7 @@ export const mudpopoverHelper = {
         return maxZIndex;
     },
 
-    popoverOverlayUpdates: function () {
-        let highestTickItem: Element | null = null;
-        let highestTickValue = -1;
-
-        const parentNode = document.querySelector(`.${window.mudpopoverHelper.mainContainerClass}`);
-        if (!parentNode || !parentNode.children) { return; }
-        // Traverse children of target.parentNode that contain the class "mud-popover"
-        for (const child of parentNode.children) {
-            if (child?.classList?.contains("mud-popover-open")) {
-                const tickValue = Number(child.getAttribute("data-ticks")) || 0;
-
-                if (tickValue > highestTickValue) {
-                    highestTickValue = tickValue;
-                    highestTickItem = child;
-                }
-            }
-        }
-        if (highestTickItem) {
-            const isNested = highestTickItem.classList.contains('mud-popover-nested');
-            if (!isNested) {
-                window.mudpopoverHelper.updatePopoverOverlay(highestTickItem as HTMLElement);
-            }
-        }
-    },
+    popoverOverlayUpdates,
 
     debouncedResize: function () {
         // Preserve the historic "re-evaluate everything" safety net for global layout changes, but route it
@@ -886,6 +917,8 @@ export default class MudPopover {
     map: Record<string, PopoverEntry>;
     contentObserver: MutationObserver | null;
     currentMainProvider: Element | null;
+    #providers: Map<string, PopoverProviderEntry>;
+    #listenersAttached: boolean;
     pendingUpdateIds: Set<string>;
     pendingUpdateAll: boolean;
     updateFrameId: number;
@@ -901,6 +934,8 @@ export default class MudPopover {
         this.map = {};
         this.contentObserver = null;
         this.currentMainProvider = null;
+        this.#providers = new Map();
+        this.#listenersAttached = false;
         // Coalesce every external signal into a single RAF flush so many open popovers still
         // behave well on WASM/Server during resize, drawer animation, or nested scroll.
         this.pendingUpdateIds = new Set();
@@ -917,6 +952,81 @@ export default class MudPopover {
         this.onScroll = () => this.handleWindowScroll();
         this.onVisualViewportResize = () => this.scheduleUpdateAll(true);
         this.onVisualViewportScroll = () => this.handleWindowScroll();
+    }
+
+    /**
+     * Finds the provider element for one render scope.
+     */
+    #findProvider(providerId: string, containerClass: string) {
+        if (providerId === defaultProviderId) {
+            return document.body.getElementsByClassName(containerClass)[0] ?? null;
+        }
+
+        return Array.from(document.querySelectorAll('[data-mud-popover-provider-id]'))
+            .find(provider => provider.getAttribute('data-mud-popover-provider-id') === providerId)
+            ?? Array.from(document.body.getElementsByClassName(containerClass))
+                .find(provider => !provider.hasAttribute('data-mud-popover-provider-id'))
+            ?? null;
+    }
+
+    /**
+     * Finds popover content inside the provider that owns it.
+     */
+    #findPopoverContent(providerId: string, id: string) {
+        const provider = this.#providers.get(providerId)?.element;
+        return (provider?.querySelector(`[id="popovercontent-${id}"]`)
+            ?? document.getElementById('popovercontent-' + id)) as PopoverContentNode | null;
+    }
+
+    /**
+     * Removes render scopes whose provider element has left the document without disposing cleanly.
+     */
+    #disposeDisconnectedProviders() {
+        for (const [providerId, provider] of Array.from(this.#providers)) {
+            if (provider.element?.isConnected) {
+                continue;
+            }
+
+            provider.observer?.disconnect();
+            provider.element = null;
+            provider.observer = null;
+            if (providerId === defaultProviderId) {
+                this.currentMainProvider = null;
+                this.contentObserver = null;
+            }
+
+            if (this.#findProvider(providerId, provider.containerClass)) {
+                this.#observeMainContainer(providerId);
+            }
+
+            for (const id of Object.keys(this.map)) {
+                const entry = this.map[id]!;
+                if (entry.providerId === providerId && !entry.popoverContentNode?.isConnected) {
+                    this.disconnect(providerId, id);
+                }
+            }
+        }
+    }
+
+    /**
+     * Attaches shared viewport listeners when at least one provider is active.
+     */
+    #attachEventListeners() {
+        if (this.#listenersAttached || this.#providers.size === 0) {
+            return;
+        }
+
+        window.addEventListener('resize', this.onResize, { passive: true });
+        window.addEventListener('scroll', this.onScroll, { passive: true });
+
+        // visualViewport catches mobile/browser chrome shifts that do not always surface as a normal
+        // layout resize, but still move what the user perceives as the anchor position.
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', this.onVisualViewportResize, { passive: true });
+            window.visualViewport.addEventListener('scroll', this.onVisualViewportScroll, { passive: true });
+        }
+
+        this.#listenersAttached = true;
     }
 
     /**
@@ -1287,7 +1397,7 @@ export default class MudPopover {
         this.disposeObservers(id);
 
         const popoverNode = document.getElementById('popover-' + id);
-        const popoverContentNode = document.getElementById('popovercontent-' + id);
+        const popoverContentNode = this.#findPopoverContent(this.map[id]!.providerId, id);
         const anchorNode = popoverNode?.parentNode instanceof Element
             ? popoverNode.parentNode
             : null;
@@ -1402,7 +1512,7 @@ export default class MudPopover {
                 target.removeAttribute('data-mudpopover-flip');
 
                 this.disposeObservers(id);
-                window.mudpopoverHelper.popoverOverlayUpdates();
+                window.mudpopoverHelper.popoverOverlayUpdates(target);
             }
         }
         else if (mutation.type == 'attributes' && mutation.attributeName == 'data-ticks') {
@@ -1419,57 +1529,53 @@ export default class MudPopover {
     /**
      * Initializes the popover runtime and global observers for the provider container.
      */
-    initialize(containerClass: string, flipMargin: number, overflowPadding: number) {
-        if (Object.keys(this.map).length > 0) {
-            console.error('Popover Service already initialized, disposing to reinitialize.');
-            this.dispose();
+    initialize(providerId: string, containerClass: string, flipMargin: number, overflowPadding: number): void;
+    initialize(containerClass: string, flipMargin: number, overflowPadding: number): void;
+    // The default parameter keeps the method's arity at 3, which apiSurface.test.ts pins.
+    initialize(providerIdOrContainerClass: string, containerClassOrFlipMargin: string | number, flipMarginOrOverflowPadding: number, overflowPadding: number | undefined = undefined) {
+        const isScoped = typeof containerClassOrFlipMargin === 'string';
+        const providerId = isScoped ? providerIdOrContainerClass : defaultProviderId;
+        const containerClass = isScoped ? containerClassOrFlipMargin as string : providerIdOrContainerClass;
+        const flipMargin = isScoped ? flipMarginOrOverflowPadding : containerClassOrFlipMargin as number;
+        const resolvedOverflowPadding = isScoped ? overflowPadding! : flipMarginOrOverflowPadding;
+
+        this.#disposeDisconnectedProviders();
+
+        if (this.#providers.has(providerId)) {
+            this.dispose(providerId);
         }
 
+        // Keep the legacy helper defaults for direct helper calls and older integrations.
         window.mudpopoverHelper.mainContainerClass = containerClass;
-        window.mudpopoverHelper.overflowPadding = overflowPadding;
+        window.mudpopoverHelper.overflowPadding = resolvedOverflowPadding;
+        window.mudpopoverHelper.flipMargin = flipMargin;
 
-        if (flipMargin) {
-            window.mudpopoverHelper.flipMargin = flipMargin;
-        }
-
-        this.observeMainContainer();
-
-        window.addEventListener('resize', this.onResize, { passive: true });
-        window.addEventListener('scroll', this.onScroll, { passive: true });
-
-        // visualViewport catches mobile/browser chrome shifts that do not always surface as a normal
-        // layout resize, but still move what the user perceives as the anchor position.
-        if (window.visualViewport) {
-            window.visualViewport.addEventListener('resize', this.onVisualViewportResize, { passive: true });
-            window.visualViewport.addEventListener('scroll', this.onVisualViewportScroll, { passive: true });
-        }
+        this.#observeMainContainer(providerId, containerClass, flipMargin, resolvedOverflowPadding);
+        this.#attachEventListeners();
     }
 
     /**
-     * Ensures the main popover provider container is observed for relevant mutations.
+     * Ensures one render scope's provider container is observed for relevant mutations.
      */
-    observeMainContainer() {
+    #observeMainContainer(providerId: string, containerClass?: string, flipMargin?: number, overflowPadding?: number) {
+        const existing = this.#providers.get(providerId);
+        const resolvedContainerClass = containerClass ?? existing?.containerClass;
+        if (!resolvedContainerClass) {
+            return;
+        }
 
-        const mainContent = document.body.getElementsByClassName(window.mudpopoverHelper.mainContainerClass!);
-        const provider = mainContent[0];
-
+        const provider = this.#findProvider(providerId, resolvedContainerClass);
         if (!provider) {
-            console.error(`No Popover Container found with class ${window.mudpopoverHelper.mainContainerClass}`);
+            console.error(`No Popover Container found with class ${resolvedContainerClass}`);
             return;
         }
 
-        // Provider identity can change across layout switches/navigation. Rebind when that happens
-        // or mutations from the new provider will be missed.
-        if (this.currentMainProvider === provider) {
+        // Provider identity can change across layout switches/navigation. Rebind only this scope when that happens.
+        if (existing?.element === provider) {
             return;
         }
 
-        this.currentMainProvider = provider;
-
-        if (this.contentObserver) {
-            this.contentObserver.disconnect();
-            this.contentObserver = null;
-        }
+        existing?.observer?.disconnect();
 
         const config: MutationObserverInit = {
             attributes: true,
@@ -1480,7 +1586,7 @@ export default class MudPopover {
         const observer = new MutationObserver((mutations) => {
             for (const mutation of mutations) {
                 if (
-                    mutation.target.parentNode === this.currentMainProvider &&
+                    mutation.target.parentNode === provider &&
                     (mutation.target as Element).classList.contains('mud-popover')
                 ) {
                     // Only react to direct provider children. Nested content mutations are too noisy and
@@ -1491,8 +1597,26 @@ export default class MudPopover {
             }
         });
 
-        observer.observe(this.currentMainProvider, config);
-        this.contentObserver = observer;
+        observer.observe(provider, config);
+        this.#providers.set(providerId, {
+            containerClass: resolvedContainerClass,
+            flipMargin: flipMargin ?? existing?.flipMargin ?? 0,
+            overflowPadding: overflowPadding ?? existing?.overflowPadding ?? 24,
+            element: provider,
+            observer
+        });
+
+        if (providerId === defaultProviderId) {
+            this.currentMainProvider = provider;
+            this.contentObserver = observer;
+        }
+    }
+
+    /**
+     * Rebinds the legacy provider after a layout switch.
+     */
+    observeMainContainer() {
+        this.#observeMainContainer(defaultProviderId);
     }
 
     /**
@@ -1544,17 +1668,25 @@ export default class MudPopover {
      * Connects a popover element to the system, setting up all necessary event listeners and observers
      * @param {string} id - The ID of the popover to connect
      */
-    connect(id: string) {
+    connect(providerId: string, id: string): void;
+    connect(id: string): void;
+    // The default parameter keeps the method's arity at 1, which apiSurface.test.ts pins.
+    connect(providerIdOrId: string, scopedId: string | undefined = undefined) {
+        const providerId = scopedId ? providerIdOrId : defaultProviderId;
+        const id = scopedId ?? providerIdOrId;
+
+        this.#disposeDisconnectedProviders();
+
         if (this.map[id]) {
-            this.disconnect(id);
+            this.disconnect(this.map[id]!.providerId, id);
         }
 
         // Re-check the provider on each connect. This preserves behavior for scenarios where the app
         // swaps layouts/providers after initialization, such as the existing PopoverTwoLayoutsTest.
-        this.observeMainContainer();
+        this.#observeMainContainer(providerId);
 
         const popoverNode = document.getElementById('popover-' + id);
-        const popoverContentNode = document.getElementById('popovercontent-' + id);
+        const popoverContentNode = this.#findPopoverContent(providerId, id);
         const anchorNode = popoverNode?.parentNode instanceof Element
             ? popoverNode.parentNode
             : null;
@@ -1566,6 +1698,7 @@ export default class MudPopover {
         const startOpened = popoverContentNode.classList.contains('mud-popover-open');
 
         this.map[id] = {
+            providerId,
             popoverNode: popoverNode,
             popoverContentNode: popoverContentNode,
             anchorNode: anchorNode,
@@ -1575,6 +1708,14 @@ export default class MudPopover {
             trackUntil: 0,
             closeTimerId: null
         };
+
+        const provider = this.#providers.get(providerId);
+        if (provider) {
+            providerOptionsByPopoverId.set(id, {
+                flipMargin: provider.flipMargin,
+                overflowPadding: provider.overflowPadding
+            });
+        }
 
         if (startOpened) {
             // A popover can already be open when it reconnects after provider/layout changes. Re-running
@@ -1587,8 +1728,13 @@ export default class MudPopover {
      * Disconnects a popover element, properly cleaning up all event listeners and observers
      * @param {string} id - The ID of the popover to disconnect
      */
-    disconnect(id: string) {
-        if (!this.map[id]) {
+    disconnect(providerId: string, id: string): void;
+    disconnect(id: string): void;
+    // The default parameter keeps the method's arity at 1, which apiSurface.test.ts pins.
+    disconnect(providerIdOrId: string, scopedId: string | undefined = undefined) {
+        const providerId = scopedId ? providerIdOrId : this.map[providerIdOrId]?.providerId ?? defaultProviderId;
+        const id = scopedId ?? providerIdOrId;
+        if (!this.map[id] || this.map[id]!.providerId !== providerId) {
             return; // Nothing to disconnect
         }
 
@@ -1602,6 +1748,7 @@ export default class MudPopover {
             this.map[id]!.anchorNode = null;
 
             delete this.map[id];
+            providerOptionsByPopoverId.delete(id);
         } catch (error) {
             console.error(`Error disconnecting popover with ID ${id}:`, error);
         }
@@ -1611,11 +1758,36 @@ export default class MudPopover {
      * Disposes all resources used by this MudPopover instance
      * Should be called when the component is being unmounted
      */
-    dispose() {
+    dispose(providerId?: string): void;
+    dispose(): void;
+    // The default parameter keeps the method's arity at 0, which apiSurface.test.ts pins.
+    dispose(providerId: string | undefined = undefined) {
         try {
-            const ids = Object.keys(this.map);
+            const ids = Object.keys(this.map)
+                .filter(id => !providerId || this.map[id]?.providerId === providerId);
             for (const id of ids) {
-                this.disconnect(id);
+                this.disconnect(this.map[id]!.providerId, id);
+            }
+
+            if (providerId) {
+                this.#providers.get(providerId)?.observer?.disconnect();
+                this.#providers.delete(providerId);
+                if (providerId === defaultProviderId) {
+                    this.currentMainProvider = null;
+                    this.contentObserver = null;
+                }
+            }
+            else {
+                for (const provider of this.#providers.values()) {
+                    provider.observer?.disconnect();
+                }
+                this.#providers.clear();
+                this.currentMainProvider = null;
+                this.contentObserver = null;
+            }
+
+            if (this.#providers.size > 0) {
+                return;
             }
 
             this.map = {};
@@ -1626,12 +1798,6 @@ export default class MudPopover {
                 window.cancelAnimationFrame(this.updateFrameId);
                 this.updateFrameId = 0;
             }
-
-            if (this.contentObserver) {
-                this.contentObserver.disconnect();
-                this.contentObserver = null;
-            }
-            this.currentMainProvider = null;
 
             if (this.resizeObserver) {
                 this.resizeObserver.disconnect();
@@ -1650,6 +1816,8 @@ export default class MudPopover {
                 window.visualViewport.removeEventListener('resize', this.onVisualViewportResize);
                 window.visualViewport.removeEventListener('scroll', this.onVisualViewportScroll);
             }
+
+            this.#listenersAttached = false;
         } catch (error) {
             console.error("Error disposing MudPopover:", error);
         }
