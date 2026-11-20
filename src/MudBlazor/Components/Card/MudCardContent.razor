@@ -2,5 +2,14 @@
 @inherits MudComponentBase
 
 <div @attributes="UserAttributes" class="@Classname" style="@Style">
-    @ChildContent
+    @if (AsGrid)
+    {
+        <MudGrid>
+            @ChildContent
+        </MudGrid>
+    }
+    else
+    {
+        @ChildContent
+    }
 </div>
