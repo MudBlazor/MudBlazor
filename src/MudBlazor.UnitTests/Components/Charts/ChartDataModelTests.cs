@@ -70,6 +70,29 @@ public class ChartDataModelTests : BunitTest
         data[1].Y.Should().Be(4.0);
     }
 
+    /// <summary>
+    /// The chart point list constructor retains the supplied list and includes points flagged as missing.
+    /// </summary>
+    [Test]
+    public void ChartData_ChartPointListCtor_PreservesPoints()
+    {
+        IReadOnlyList<ChartPoint<double>> points = new List<ChartPoint<double>>
+        {
+            new(1.0, 10.0),
+            new(2.0, 20.0) { HasValue = false }
+        };
+
+        var data = new ChartData<double>(points);
+
+        data.Points.Should().BeSameAs(points);
+        data.Count.Should().Be(2);
+        data.Values.Should().Equal(10.0, 20.0);
+        data[0].X.Should().Be(1.0);
+        data[0].HasValue.Should().BeTrue();
+        data[1].X.Should().Be(2.0);
+        data[1].HasValue.Should().BeFalse();
+    }
+
     [Test]
     public void ChartData_DateTimeValueCtor_SetsXAndY()
     {
