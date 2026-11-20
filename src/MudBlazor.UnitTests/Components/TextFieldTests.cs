@@ -5,6 +5,7 @@ using AwesomeAssertions;
 using Bunit;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -381,6 +382,39 @@ namespace MudBlazor.UnitTests.Components
                 textField[0].Instance.ReadValue.Should().Be("username");
                 textField[1].Instance.ReadValue.Should().Be("password");
             });
+        }
+
+        /// <summary>
+        /// Pressing Enter submits a form without blurring the field, so the pending debounced text must be committed on Enter before the submit handler reads the model.
+        /// </summary>
+        [Test]
+        public async Task DebouncedTextField_Enter_CommitsPendingValueBeforeSubmit()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            string? search = null;
+            string? submitted = null;
+            var comp = Context.Render<EditForm>(parameters => parameters
+                .Add(p => p.Model, new object())
+                .Add(p => p.OnSubmit, () => submitted = search)
+                .Add(p => p.ChildContent, _ => builder =>
+                {
+                    builder.OpenComponent<MudTextField<string>>(0);
+                    builder.AddComponentParameter(1, nameof(MudTextField<string>.DebounceInterval), 750d);
+                    builder.AddComponentParameter(2, nameof(MudTextField<string>.Value), search);
+                    builder.AddComponentParameter(3, nameof(MudTextField<string>.ValueChanged), EventCallback.Factory.Create<string?>(this, value => search = value));
+                    builder.CloseComponent();
+                }));
+
+            var timers = timeProvider.TimersCreated;
+            await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "ab" });
+            await timeProvider.WaitForTimerAsync(timers);
+            // The browser fires submit right after the Enter keydown without waiting for its handler, so the commit must not yield first.
+            var keyDown = comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown" });
+            search.Should().Be("ab");
+            await comp.Find("form").SubmitAsync();
+            await keyDown;
+
+            submitted.Should().Be("ab");
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities.Debounce;
 
@@ -91,6 +92,28 @@ namespace MudBlazor
         }
 
         /// <inheritdoc />
+        protected override async Task InvokeKeyDownAsync(KeyboardEventArgs obj)
+        {
+            await CommitPendingValueOnEnterAsync(obj);
+            await base.InvokeKeyDownAsync(obj);
+        }
+
+        /// <summary>
+        /// Commits text still waiting on <see cref="DebounceInterval"/> when the user presses Enter.
+        /// </summary>
+        /// <remarks>
+        /// Enter submits a form without blurring the field, so the form would otherwise see the old value.
+        /// This runs before <see cref="MudBaseInput{T}.OnKeyDown"/>, so an Enter handler reads the typed value too.
+        /// </remarks>
+        private protected async Task CommitPendingValueOnEnterAsync(KeyboardEventArgs args)
+        {
+            if (args.Key == "Enter")
+            {
+                await SynchronizePendingValueForValidationAsync();
+            }
+        }
+
+        /// <inheritdoc />
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -140,17 +163,19 @@ namespace MudBlazor
             var pendingValue = ConvertGet(ReadText);
             var pendingValueChanged = !EqualityComparer<T?>.Default.Equals(ReadValue, pendingValue);
 
-            await _debouncer.CancelAsync();
+            // The pending update is cancelled as soon as CancelAsync is called, but its task only completes after the cancellation callbacks run.
+            // On WebAssembly that is after the current browser event, so awaiting it before committing would let an Enter-key submit read the old value.
+            var cancellation = _debouncer.CancelAsync();
 
-            if (!pendingValueChanged)
+            if (pendingValueChanged)
             {
-                return false;
+                // SetValueAndUpdateTextAsync already triggers FieldChanged and BeginValidateAsync,
+                // so the synced validation happens there and this call can stop.
+                await SetValueAndUpdateTextAsync(pendingValue, updateText: false);
             }
 
-            // SetValueAndUpdateTextAsync already triggers FieldChanged and BeginValidateAsync,
-            // so the synced validation happens there and this call can stop.
-            await SetValueAndUpdateTextAsync(pendingValue, updateText: false);
-            return true;
+            await cancellation;
+            return pendingValueChanged;
         }
 
         private Task OnDebouncedUpdate()
