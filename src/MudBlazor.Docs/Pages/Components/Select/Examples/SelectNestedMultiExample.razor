@@ -1,0 +1,22 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSelect T="string" MultiSelection="true" SelectAll="true" InitiallyExpanded="true" @bind-SelectedValues="_departments" Label="Departments" Variant="Variant.Outlined">
+    <MudSelectItem Value="@("Engineering")">
+        <ChildContent>Engineering</ChildContent>
+        <NestedList>
+            <MudSelectItem Value="@("Platform")">Platform</MudSelectItem>
+            <MudSelectItem Value="@("Mobile")">Mobile</MudSelectItem>
+        </NestedList>
+    </MudSelectItem>
+    <MudSelectItem Value="@("Sales")">
+        <ChildContent>Sales</ChildContent>
+        <NestedList>
+            <MudSelectItem Value="@("Enterprise")">Enterprise</MudSelectItem>
+            <MudSelectItem Value="@("Retail")">Retail</MudSelectItem>
+        </NestedList>
+    </MudSelectItem>
+</MudSelect>
+
+@code {
+    private IReadOnlyCollection<string> _departments = ["Platform"];
+}

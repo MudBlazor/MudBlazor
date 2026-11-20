@@ -120,6 +120,7 @@
                             @if (MultiSelection && SelectAll)
                             {
                                 <MudListItem Value="@("__SelectAll__")"
+                                             @attributes="GetSelectAllAttributes()"
                                              Icon="@SelectAllCheckBoxIcon"
                                              Text="@ResolvedSelectAllText()"
                                              OnClick="SelectAllClickAsync"

@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSelect T="string" @bind-Value="_value" Label="Try the arrow keys" Variant="Variant.Outlined" SelectionOnEnter="true">
+    <MudSelectItem Value="@("Europe")">
+        <ChildContent>Europe</ChildContent>
+        <NestedList>
+            <MudSelectItem Value="@("France")">
+                <ChildContent>France</ChildContent>
+                <NestedList>
+                    <MudSelectItem Value="@("Paris")">Paris</MudSelectItem>
+                    <MudSelectItem Value="@("Lyon")">Lyon</MudSelectItem>
+                </NestedList>
+            </MudSelectItem>
+            <MudSelectItem Value="@("Spain")">Spain</MudSelectItem>
+        </NestedList>
+    </MudSelectItem>
+    <MudSelectItem Value="@("Asia")">
+        <ChildContent>Asia</ChildContent>
+        <NestedList>
+            <MudSelectItem Value="@("Japan")">Japan</MudSelectItem>
+            <MudSelectItem Value="@("India")">India</MudSelectItem>
+        </NestedList>
+    </MudSelectItem>
+</MudSelect>
+<MudText Typo="Typo.caption">Open the list and press Down to highlight Europe, then Right to expand it, Right again to step into it, and Left to go back out.</MudText>
+
+@code {
+    private string _value;
+}
