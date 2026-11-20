@@ -1284,11 +1284,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.InvokeAsync(() => comp.Find("input").Click());
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(1));
             // open color collection view
-            await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").Click());
+            await comp.InvokeAsync(() => comp.Find(".mud-picker-color-dot-current").Click());
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
 
             // set valid color
-            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").Skip(1).First().Click());
+            await comp.InvokeAsync(() => comp.FindAll(".mud-picker-color-collection>.mud-picker-color-dot").Skip(1).First().Click());
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(0));
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeTrue();
@@ -1296,11 +1296,11 @@ namespace MudBlazor.UnitTests.Components
             colorPicker.GetState(x => x.Error).Should().BeFalse();
             colorPicker.GetState(x => x.ErrorText).Should().BeNullOrEmpty();
 
-            await comp.InvokeAsync(() => comp.Find("div.mud-picker-color-dot-current").Click());
+            await comp.InvokeAsync(() => comp.Find(".mud-picker-color-dot-current").Click());
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(1));
 
             // set invalid color
-            await comp.InvokeAsync(() => comp.FindAll("div.mud-picker-color-collection>div.mud-picker-color-dot").First().Click());
+            await comp.InvokeAsync(() => comp.FindAll(".mud-picker-color-collection>.mud-picker-color-dot").First().Click());
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-color-collection").Count.Should().Be(0));
             form.IsTouched.Should().BeTrue();
             form.IsValid.Should().BeFalse();
