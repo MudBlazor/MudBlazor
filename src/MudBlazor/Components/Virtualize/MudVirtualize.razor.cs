@@ -40,7 +40,7 @@ namespace MudBlazor
         /// Template for the items that have not yet been loaded in memory.
         /// </summary>
         [Parameter]
-        public RenderFragment? Placeholder { get; set; }
+        public RenderFragment<PlaceholderContext>? Placeholder { get; set; }
 
         /// <summary>
         /// The content shown when there are no rows to display.
