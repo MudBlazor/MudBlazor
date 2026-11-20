@@ -8,6 +8,7 @@ using AwesomeAssertions;
 using Bunit;
 using FluentValidation;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.Web.HtmlRendering;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -121,6 +122,39 @@ namespace MudBlazor.UnitTests.Components
             //input value has changed, DebounceInterval is 0, so Value should change in NumericField immediately
             numericField.ReadValue.Should().Be(100);
             numericField.ReadText.Should().Be("100");
+        }
+
+        /// <summary>
+        /// Pressing Enter submits a form without blurring the field, so the pending debounced number must be committed on Enter before the submit handler reads the model.
+        /// </summary>
+        [Test]
+        public async Task DebouncedNumericField_Enter_CommitsPendingValueBeforeSubmit()
+        {
+            var timeProvider = Context.AddFakeTimeProvider();
+            int? quantity = null;
+            int? submitted = null;
+            var comp = Context.Render<EditForm>(parameters => parameters
+                .Add(p => p.Model, new object())
+                .Add(p => p.OnSubmit, () => submitted = quantity)
+                .Add(p => p.ChildContent, _ => builder =>
+                {
+                    builder.OpenComponent<MudNumericField<int?>>(0);
+                    builder.AddComponentParameter(1, nameof(MudNumericField<int?>.DebounceInterval), 750d);
+                    builder.AddComponentParameter(2, nameof(MudNumericField<int?>.Value), quantity);
+                    builder.AddComponentParameter(3, nameof(MudNumericField<int?>.ValueChanged), EventCallback.Factory.Create<int?>(this, value => quantity = value));
+                    builder.CloseComponent();
+                }));
+
+            var timers = timeProvider.TimersCreated;
+            await comp.Find("input").InputAsync(new ChangeEventArgs { Value = "12" });
+            await timeProvider.WaitForTimerAsync(timers);
+            // The browser fires submit right after the Enter keydown without waiting for its handler, so the commit must not yield first.
+            var keyDown = comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Enter", Type = "keydown" });
+            quantity.Should().Be(12);
+            await comp.Find("form").SubmitAsync();
+            await keyDown;
+
+            submitted.Should().Be(12);
         }
 
         /// <summary>

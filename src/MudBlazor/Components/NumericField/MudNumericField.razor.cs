@@ -454,6 +454,7 @@ namespace MudBlazor
             // mid-typing on Blazor Server (#13266/#13002 family).
             _isFocused = true;
             await KeyInterceptorService.DispatchAsync(_elementId, KeyEventKind.Down, obj);
+            await CommitPendingValueOnEnterAsync(obj);
             await OnKeyDown.InvokeAsync(obj);
         }
 
