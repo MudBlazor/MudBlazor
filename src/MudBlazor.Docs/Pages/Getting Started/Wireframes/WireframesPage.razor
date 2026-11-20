@@ -165,10 +165,40 @@
                         </MudTooltip>
                     </div>
                 </MudItem>
+                <MudItem>
+                    <div class="wf-layout rounded" @onclick="@((e) => NavigateToWireFrame("/getting-started/wireframes/content4"))">
+                        <div class="wf-appbar wf-drawer-open-left rounded-tr">
+                            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="12px" Height="12px" Class="mr-2" />
+                            <MudSkeleton Height="12px" Width="40px" />
+                        </div>
+                        <div class="wf-drawer rounded-l mud-elevation-1"></div>
+                        <div class="wf-content" style="overflow: hidden;">
+                            <MudMatrix ExplicitColumns="ExplicitMatrix.Fit(Units.Px(50))"
+                                       ImplicitRows="ImplicitMatrix.Pattern(Units.Px(60))"
+                                       JustifyColumns="MatrixJustify.Center"
+                                       ColumnGap="2"
+                                       RowGap="2"
+                                       Style="overflow: hidden;">
+                                @for (int i = 0; i < 30; i++)
+                                {
+                                    <MudMatrixItem>
+                                        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Class="mx-1 rounded-sm" Width="100%" Height="100%" />
+                                    </MudMatrixItem>
+                                }
+                            </MudMatrix>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-center align-center mt-8 pl-12">
+                        <MudText Typo="Typo.body1" Class="mx-auto">Product Gallery</MudText>
+                        <MudTooltip Text="Show/Copy Wireframe">
+                            <MudIconButton Icon="@Icons.Material.Filled.Code" OnClick="@(e => ToggleOverlay(true, "Content4WireframeExample"))" />
+                        </MudTooltip>
+                    </div>
+                </MudItem>
             </MudGrid>
         </DocsPageSection>
     </DocsPageContent>
-    <MudOverlay Visible="visible" DarkBackground="true" ZIndex="9999" >
+    <MudOverlay Visible="visible" DarkBackground="true" ZIndex="9999">
         <MudContainer MaxWidth="MaxWidth.ExtraLarge">
             <MudPaper Class="docs-section-wireframe" Elevation="24">
                 <MudIconButton Class="close-button" Icon="@Icons.Material.Filled.Close" Color="Color.Secondary" OnClick="@(e => ToggleOverlay(false))"/>
