@@ -103,7 +103,6 @@ public enum JsKey
     MediaTrackNext,
     MediaTrackPrevious,
     MediaPlayPause,
-    MediaStop,
     Semicolon,
     Equal,
     Comma,
@@ -117,5 +116,6 @@ public enum JsKey
     Quote,
     NumpadEnter,
     NumpadEqual,
-    NumpadComma
+    NumpadComma,
+    MediaStop
 }
