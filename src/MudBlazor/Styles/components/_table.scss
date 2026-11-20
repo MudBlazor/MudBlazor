@@ -68,6 +68,14 @@
   flex-direction: inherit;
   justify-content: flex-start;
 
+  &:disabled {
+    cursor: default;
+  }
+
+  &:focus-visible {
+    background-color: var(--mud-palette-action-default-hover);
+  }
+
   &.mud-table-sort-label-full-width {
     width: 100%;
   }
