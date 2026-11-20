@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using System.Globalization;
+using System.Numerics;
 using AngleSharp.Dom;
 using AwesomeAssertions;
 using Bunit;
@@ -36,6 +37,58 @@ namespace MudBlazor.UnitTests.Components
             new object[] { (double)5 },
             new object[] { (decimal)5 }
         };
+
+        // Numeric types outside the built-in list above, which only expose their bounds and step through IMinMaxValue<T> and INumberBase<T>.
+        static object[] GenericMathTypeCases =
+        {
+            new object[] { (Int128)5 },
+            new object[] { (UInt128)5 },
+            new object[] { (Half)5 },
+            new object[] { (nint)5 },
+            new object[] { (nuint)5 }
+        };
+
+        /// <summary>
+        /// Min, Max and Step default to the IMinMaxValue and INumberBase values of the numeric type (#14086).
+        /// </summary>
+        [TestCaseSource(nameof(TypeCases))]
+        [TestCaseSource(nameof(GenericMathTypeCases))]
+        public void NumericField_DefaultsMinMaxStep_FromGenericMath<T>(T value) where T : struct, IMinMaxValue<T>, INumberBase<T>
+        {
+            var comp = Context.Render<MudNumericField<T>>();
+            comp.Instance.Min.Should().Be(T.MinValue);
+            comp.Instance.Max.Should().Be(T.MaxValue);
+            comp.Instance.Step.Should().Be(T.One);
+
+            var nullableComp = Context.Render<MudNumericField<T?>>();
+            nullableComp.Instance.Min.Should().Be(T.MinValue);
+            nullableComp.Instance.Max.Should().Be(T.MaxValue);
+            nullableComp.Instance.Step.Should().Be(T.One);
+        }
+
+        /// <summary>
+        /// A typed value of a numeric type outside the built-in list is kept instead of clamping to default bounds of zero (#14086).
+        /// </summary>
+        [TestCaseSource(nameof(GenericMathTypeCases))]
+        public async Task NumericField_GenericMathType_ShouldKeepTypedValue<T>(T value) where T : struct, INumberBase<T>
+        {
+            var comp = Context.Render<MudNumericField<T>>();
+            await comp.Find("input").ChangeAsync("5");
+            comp.Instance.ReadValue.Should().Be(value);
+        }
+
+        /// <summary>
+        /// Floating-point types default to the decimal input mode, integer types to the numeric input mode.
+        /// </summary>
+        [Test]
+        public void NumericField_DefaultInputMode_DependsOnFloatingPoint()
+        {
+            Context.Render<MudNumericField<int>>().Instance.InputMode.Should().Be(InputMode.numeric);
+            Context.Render<MudNumericField<Int128?>>().Instance.InputMode.Should().Be(InputMode.numeric);
+            Context.Render<MudNumericField<double>>().Instance.InputMode.Should().Be(InputMode.@decimal);
+            Context.Render<MudNumericField<decimal?>>().Instance.InputMode.Should().Be(InputMode.@decimal);
+            Context.Render<MudNumericField<Half>>().Instance.InputMode.Should().Be(InputMode.@decimal);
+        }
 
         /// <summary>
         /// Numeric Field id should propagate to label for attribute
@@ -1063,14 +1116,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TestCaseSource(nameof(TypeCases))]
-        public async Task NumericField_Increment_Decrement<T>(T value)
+        [TestCaseSource(nameof(GenericMathTypeCases))]
+        public async Task NumericField_Increment_Decrement<T>(T value) where T : INumberBase<T>
         {
             var comp = Context.Render<MudNumericField<T>>();
-            var max = Convert.ChangeType(10, typeof(T));
-            var min = Convert.ChangeType(0, typeof(T));
             await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Max, (T)max)
-                .Add(x => x.Min, (T)min)
+                .Add(x => x.Max, T.CreateChecked(10))
+                .Add(x => x.Min, T.Zero)
                 .Add(x => x.Step, value)
                 .Add(x => x.Value, value));
             await comp.InvokeAsync(() => comp.Instance.Increment());
@@ -1102,14 +1154,13 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TestCaseSource(nameof(TypeCases))]
-        public async Task NumericFieldNullable_Increment_Decrement<T>(T value) where T : struct
+        [TestCaseSource(nameof(GenericMathTypeCases))]
+        public async Task NumericFieldNullable_Increment_Decrement<T>(T value) where T : struct, INumberBase<T>
         {
             var comp = Context.Render<MudNumericField<T?>>();
-            var max = Convert.ChangeType(10, typeof(T));
-            var min = Convert.ChangeType(0, typeof(T));
             await comp.SetParametersAndRenderAsync(parameters => parameters
-                .Add(x => x.Max, (T?)max)
-                .Add(x => x.Min, (T?)min)
+                .Add(x => x.Max, T.CreateChecked(10))
+                .Add(x => x.Min, T.Zero)
                 .Add(x => x.Step, value)
                 .Add(x => x.Value, value));
             await comp.InvokeAsync(() => comp.Instance.Increment());
@@ -1125,7 +1176,8 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TestCaseSource(nameof(TypeCases))]
-        public async Task NumericFieldNullable_NoMinMax_Increment_Decrement<T>(T value) where T : struct
+        [TestCaseSource(nameof(GenericMathTypeCases))]
+        public async Task NumericFieldNullable_NoMinMax_Increment_Decrement<T>(T value) where T : struct, IMinMaxValue<T>, INumberBase<T>
         {
             var comp = Context.Render<MudNumericField<T?>>();
             await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Step, value));
@@ -1135,20 +1187,12 @@ namespace MudBlazor.UnitTests.Components
 
             await comp.Find("input").ChangeAsync("");
 
-            if (typeof(T) == typeof(byte) || typeof(T) == typeof(ushort) || typeof(T) == typeof(uint) || typeof(T) == typeof(ulong))
-            {
-                value = Num.To<T>(0);
-            }
-            else
-            {
-                value = (T)Convert.ChangeType(-Convert.ToDouble(value), typeof(T));
-            }
-
             await comp.InvokeAsync(() => comp.Instance.Decrement());
-            comp.Instance.ReadValue.Should().Be(value);
+            comp.Instance.ReadValue.Should().Be(T.MinValue == T.Zero ? T.Zero : -value);
         }
 
         [TestCaseSource(nameof(TypeCases))]
+        [TestCaseSource(nameof(GenericMathTypeCases))]
         public async Task NumericField_Increment_Decrement_OverflowHandled<T>(T value)
         {
             var comp = Context.Render<MudNumericField<T>>();
@@ -1166,6 +1210,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [TestCaseSource(nameof(TypeCases))]
+        [TestCaseSource(nameof(GenericMathTypeCases))]
         public async Task NumericFieldNullable_Increment_Decrement_OverflowHandled<T>(T value) where T : struct
         {
             var comp = Context.Render<MudNumericField<T?>>();
