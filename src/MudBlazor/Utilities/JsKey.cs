@@ -103,6 +103,7 @@ public enum JsKey
     MediaTrackNext,
     MediaTrackPrevious,
     MediaPlayPause,
+    MediaStop,
     Semicolon,
     Equal,
     Comma,
