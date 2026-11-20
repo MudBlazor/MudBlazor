@@ -79,12 +79,12 @@ namespace MudBlazor
         public int ClosingDelay { get; set; } = 200;
 
         /// <summary>
-        /// Closes this picker when the value is set or cleared.
+        /// Controls automatic closing after a time is selected or cleared.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>false</c>. When <c>true</c> and <c>PickerActions</c> are defined, 
-        /// the hour and the minutes can be selected and the drop-down will close without having to 
-        /// click any of the action buttons.
+        /// Defaults to <c>false</c>.
+        /// Inline and dialog pickers without <c>PickerActions</c> close after completing a clock selection regardless of this value.
+        /// Set this to <c>true</c> to close after completing a clock selection with custom actions, or when clearing the value.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
