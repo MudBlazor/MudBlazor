@@ -116,5 +116,6 @@ public enum JsKey
     Quote,
     NumpadEnter,
     NumpadEqual,
-    NumpadComma
+    NumpadComma,
+    MediaStop
 }
