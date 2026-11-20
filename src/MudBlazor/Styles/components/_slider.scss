@@ -29,7 +29,7 @@
       outline: none;
     }
 
-    &:active {
+    &:focus-visible, &:active {
       & + .mud-slider-value-label {
         opacity: 1;
       }
