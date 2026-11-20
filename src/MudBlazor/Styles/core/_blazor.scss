@@ -33,7 +33,10 @@
   }
 
   button {
-    color: var(--mud-palette-text-primary);
+    border: none;
+    cursor: pointer;
+    background-color: var(--mud-palette-primary);
+    color: var(--mud-palette-primary-text);
     padding: 8px 16px;
     font-size: .875rem;
     min-width: 64px;
@@ -48,8 +51,12 @@
 
     @media(hover: hover) and (pointer: fine) {
       &:hover {
-        background-color: var(--mud-palette-action-default-hover);
+        background-color: var(--mud-palette-primary-darken);
       }
+    }
+
+    &:focus-visible, &:active {
+      background-color: var(--mud-palette-primary-darken);
     }
   }
 }
