@@ -2097,5 +2097,33 @@ namespace MudBlazor.UnitTests.Components
             inputs.Select(i => i.GetAttribute("aria-label")).Should().Equal(expectedLabels);
             inputs.Should().OnlyContain(i => i.HasAttribute("aria-describedby"));
         }
+
+        /// <summary>
+        /// Color swatches and the preview dot are rendered as native button elements for keyboard accessibility (#13976).
+        /// </summary>
+        [Test]
+        public void ColorPicker_SwatchesAndPreview_ShouldRenderAsButtons()
+        {
+            var comp = Context.Render<SimpleColorPickerTest>(p =>
+            {
+                p.Add(x => x.ViewMode, ColorPickerView.Grid);
+                p.Add(x => x.ShowPreview, true);
+            });
+
+            var gridButtons = comp.FindAll(".mud-picker-color-grid button.mud-picker-color-dot");
+            gridButtons.Should().NotBeEmpty();
+            foreach (var btn in gridButtons)
+            {
+                btn.TagName.Should().Be("BUTTON");
+                btn.GetAttribute("type").Should().Be("button");
+                btn.GetAttribute("aria-label").Should().NotBeNullOrEmpty();
+            }
+
+            var previewButton = comp.Find("button.mud-picker-color-dot-current");
+            previewButton.Should().NotBeNull();
+            previewButton.TagName.Should().Be("BUTTON");
+            previewButton.GetAttribute("type").Should().Be("button");
+            previewButton.GetAttribute("aria-label").Should().NotBeNullOrEmpty();
+        }
     }
 }
