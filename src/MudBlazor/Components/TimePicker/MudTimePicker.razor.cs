@@ -140,9 +140,9 @@ namespace MudBlazor
         public TimeSpan? Time
         {
             get => _value;
-            // Programmatic parameter assignment; pass suppression explicitly so it cannot leak across the
-            // awaits inside SetTimeAsync into a concurrent user clock pick on Blazor Server (PR #13328 review).
-            set => SetTimeAsync(value, updateValue: true, suppressInteraction: true).CatchAndLog();
+            // A parent assignment is not user interaction, and the parent already knows the value, so TimeChanged is not raised (#10834).
+            // Both are arguments rather than instance flags so they cannot leak across the awaits into a concurrent user pick on Blazor Server.
+            set => SetTimeAsync(value, updateValue: true, suppressInteraction: true, notify: false).CatchAndLog();
         }
 
         /// <summary>
@@ -157,7 +157,8 @@ namespace MudBlazor
         /// <param name="time">The new value to set.</param>
         /// <param name="updateValue">When <c>true</c>, the <c>Text</c> will also be updated.</param>
         /// <param name="suppressInteraction">When <c>true</c>, the change is treated as programmatic and does not mark the picker touched or fire <c>FieldChanged</c>.</param>
-        protected async Task SetTimeAsync(TimeSpan? time, bool updateValue, bool suppressInteraction = false)
+        /// <param name="notify">When <c>false</c>, <c>TimeChanged</c> is not raised, as for a parameter assignment.</param>
+        protected async Task SetTimeAsync(TimeSpan? time, bool updateValue, bool suppressInteraction = false, bool notify = true)
         {
             // Text that fails to convert leaves the value null, so a null assignment looks like a no-op and the bad text would stick.
             // Run it anyway while text remains, as MudDatePicker does.
@@ -176,7 +177,10 @@ namespace MudBlazor
                 }
 
                 UpdateTimeSetFromTime();
-                await TimeChanged.InvokeAsync(_value);
+                if (notify)
+                {
+                    await TimeChanged.InvokeAsync(_value);
+                }
                 await BeginValidateAsync();
                 if (!suppressInteraction)
                 {
