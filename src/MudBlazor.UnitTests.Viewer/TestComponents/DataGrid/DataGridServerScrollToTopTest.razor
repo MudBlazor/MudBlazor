@@ -1,0 +1,31 @@
+@namespace MudBlazor.UnitTests.TestComponents.DataGrid
+
+<MudDataGrid T="Item" ServerData="LoadAsync" Height="200px" ScrollToTopOnPageChange="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Item" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    public static string __description__ = "ServerData grid with ScrollToTopOnPageChange: the rows scroll to the top once the new page is loaded";
+
+    /// <summary>
+    /// Completes the pending server load. A new gate is created for each load.
+    /// </summary>
+    public TaskCompletionSource Gate { get; private set; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    private readonly List<Item> _items = Enumerable.Range(0, 25).Select(i => new Item($"Item {i}")).ToList();
+
+    private async Task<GridData<Item>> LoadAsync(GridState<Item> state, CancellationToken token)
+    {
+        var gate = Gate;
+        await gate.Task;
+        Gate = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        return new GridData<Item> { Items = _items.Skip(state.Page * state.PageSize).Take(state.PageSize), TotalItems = _items.Count };
+    }
+
+    public record Item(string Name);
+}

@@ -44,6 +44,14 @@ export default class MudScrollManager {
     }
 
     /**
+     * Scrolls an element back to its top, keeping its horizontal position.
+     */
+    resetScrollTop(element: HTMLElement | null | undefined) {
+        if (element)
+            element.scrollTop = 0;
+    }
+
+    /**
      * Scrolls the target element into view with centered vertical alignment.
      */
     scrollIntoView(selector: string | null, behavior: ScrollBehavior) {

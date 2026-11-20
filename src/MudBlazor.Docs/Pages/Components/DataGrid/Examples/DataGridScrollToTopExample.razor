@@ -1,0 +1,20 @@
+@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid Items="@_orders" FixedHeader="true" Height="300px" RowsPerPage="25" ScrollToTopOnPageChange="true">
+    <Columns>
+        <PropertyColumn Property="x => x.Number" Title="Order" />
+        <PropertyColumn Property="x => x.Customer" />
+        <PropertyColumn Property="x => x.Total" Format="C" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Order" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    public record Order(int Number, string Customer, decimal Total);
+
+    private readonly List<Order> _orders = Enumerable.Range(1, 200)
+        .Select(i => new Order(1000 + i, $"Customer {i % 40 + 1}", 10m + (i % 37) * 2.5m))
+        .ToList();
+}
