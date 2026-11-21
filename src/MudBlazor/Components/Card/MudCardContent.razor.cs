@@ -21,6 +21,16 @@ namespace MudBlazor
         private MudCard? ParentCard { get; set; }
 
         /// <summary>
+        /// Lays out the content as a <see cref="MudGrid"/>.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. When <c>true</c>, <see cref="MudItem"/> children can be placed directly inside the card content.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Card.Behavior)]
+        public bool AsGrid { get; set; }
+
+        /// <summary>
         /// The content within this component.
         /// </summary>
         [Parameter]
