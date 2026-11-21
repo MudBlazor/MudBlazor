@@ -186,4 +186,36 @@ public class PointerEventsNoneServiceTests
         // Assert
         jsRuntimeMock.Verify(x => x.InvokeAsync<IJSVoidResult>("mudPointerEventsNone.dispose", It.IsAny<CancellationToken>(), It.IsAny<object[]>()), Times.Never);
     }
+
+    [Test]
+    public async Task InteropCalls_ShouldUseSameRenderScopeIdentifier()
+    {
+        // Arrange
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        var service = new PointerEventsNoneService(NullLogger<PointerEventsNoneService>.Instance, jsRuntimeMock.Object);
+
+        // Act
+        await service.SubscribeAsync("observer1", new());
+        await service.UnsubscribeAsync("observer1");
+        await service.DisposeAsync();
+
+        // Assert
+        var listenArguments = GetInteropArguments(jsRuntimeMock, "mudPointerEventsNone.listenForPointerEvents");
+        var cancelArguments = GetInteropArguments(jsRuntimeMock, "mudPointerEventsNone.cancelListener");
+        var disposeArguments = GetInteropArguments(jsRuntimeMock, "mudPointerEventsNone.dispose");
+
+        listenArguments.Should().HaveCount(4);
+        cancelArguments.Should().HaveCount(2);
+        disposeArguments.Should().HaveCount(1);
+        listenArguments[0].Should().BeOfType<string>().Which.Should().HaveLength(32);
+        cancelArguments[0].Should().Be(listenArguments[0]);
+        disposeArguments[0].Should().Be(listenArguments[0]);
+    }
+
+    private static object[] GetInteropArguments(Mock<IJSRuntime> jsRuntimeMock, string identifier)
+    {
+        return (object[])jsRuntimeMock.Invocations
+            .Single(invocation => (invocation.Arguments[0] as string) == identifier)
+            .Arguments[2];
+    }
 }
