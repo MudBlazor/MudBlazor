@@ -2108,6 +2108,7 @@ namespace MudBlazor.UnitTests.Components
             {
                 p.Add(x => x.ViewMode, ColorPickerView.Grid);
                 p.Add(x => x.ShowPreview, true);
+                p.Add(x => x.ColorValue, new MudColor("#FFFFFF"));
             });
 
             var gridButtons = comp.FindAll(".mud-picker-color-grid button.mud-picker-color-dot");
@@ -2117,7 +2118,12 @@ namespace MudBlazor.UnitTests.Components
                 btn.TagName.Should().Be("BUTTON");
                 btn.GetAttribute("type").Should().Be("button");
                 btn.GetAttribute("aria-label").Should().NotBeNullOrEmpty();
+                btn.HasAttribute("aria-pressed").Should().BeTrue();
             }
+
+            // Only the selected swatch reports aria-pressed="true"
+            gridButtons.Count(btn => btn.GetAttribute("aria-pressed") == "true").Should().Be(1);
+            gridButtons.Count(btn => btn.GetAttribute("aria-pressed") == "false").Should().Be(gridButtons.Count - 1);
 
             var previewButton = comp.Find("button.mud-picker-color-dot-current");
             previewButton.Should().NotBeNull();
