@@ -3,7 +3,8 @@
 <MudPaper Width="300px" Elevation="0">
     <MudStack AlignItems="AlignItems.Center">
         <MudTextField T="string" Label="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" TextChanged="OnTextChanged" Immediate="true" Clearable="true" />
-        <MudTreeView Items="@_treeItemData" @ref="_treeView" FilterFunc="MatchesName">
+        <MudSwitch @bind-Value="_filterIncludesChildren" Label="Include children of matching items" Color="Color.Primary" />
+        <MudTreeView Items="@_treeItemData" @ref="_treeView" FilterFunc="MatchesName" FilterIncludesChildren="_filterIncludesChildren">
             <ItemTemplate>
                 <MudTreeViewItem @bind-Expanded="@context.Expanded" Items="@context.Children" Value="@context.Value"
                                  Icon="@context.Icon" Text="@context.Text" Visible="@context.Visible" />
@@ -17,7 +18,9 @@
 
     private MudTreeView<string> _treeView;
 
-    private string _searchPhrase;
+    private string _searchPhrase = string.Empty;
+
+    private bool _filterIncludesChildren;
 
     public class TreeItemPresenter : TreeItemData<string>
     {
@@ -46,9 +49,9 @@
         _treeItemData.Add(new TreeItemPresenter("History", Icons.Material.Filled.Label));
     }
 
-    private async void OnTextChanged(string searchPhrase) 
+    private async Task OnTextChanged(string searchPhrase)
     {
-        _searchPhrase = searchPhrase;
+        _searchPhrase = searchPhrase ?? string.Empty;
         await _treeView.FilterAsync();
     }
 

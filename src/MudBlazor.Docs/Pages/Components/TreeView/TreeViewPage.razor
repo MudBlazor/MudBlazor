@@ -183,12 +183,14 @@
             <SectionHeader Title="Filtering">
                 <Description>
                     <p>
-                        The TreeView nodes can be filtered using the <CodeInline>Filter</CodeInline> function, which accepts a custom filter delegate.
-                        This function is applied to every item, setting its <CodeInline>Visible</CodeInline> property based on whether it matches the filter criteria.
+                        Set <CodeInline>FilterFunc</CodeInline> and call <CodeInline>FilterAsync()</CodeInline> to filter the TreeView nodes.
+                        Matching items and their ancestors remain visible and are expanded.
+                        Set <CodeInline>FilterIncludesChildren</CodeInline> to <c>true</c> to also show and expand all loaded descendants of matching items.
+                        Changing this option reapplies the current filter.
                     </p>
                     <br/>
                     <p>
-                        This example demonstrates how to implement a text-based filter that dynamically shows or hides nodes based on user input.
+                        Search for "Categories" and enable "Include children of matching items" to keep its children visible even though their names do not match.
                     </p>
                 </Description>
             </SectionHeader>
