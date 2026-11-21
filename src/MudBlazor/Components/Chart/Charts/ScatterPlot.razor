@@ -115,7 +115,7 @@
                     builder.OpenElement(seq++, "circle");
                     builder.AddAttribute(seq++, "class", "mud-chart-serie mud-chart-point mud-chart-hover-point");
                     builder.AddAttribute(seq++, "onclick", GetSeriesClickCallback(index));
-                    builder.AddAttribute(seq++, "fill", isHovered ? color : string.Empty);
+                    builder.AddAttribute(seq++, "fill", isHovered ? color : null);
                     builder.AddAttribute(seq++, "stroke", color);
                     builder.AddAttribute(seq++, "stroke-width", dataPointStroke);
                     builder.AddAttribute(seq++, "opacity", isHovered ? 1 : 0);
