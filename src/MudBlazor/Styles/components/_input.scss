@@ -8,6 +8,11 @@
   color-scheme: var(--mud-native-html-color-scheme);
   line-height: 1.1876em;
 
+  // Let the input set the baseline even when a start adornment comes first.
+  &.mud-input-adorned-start > .mud-input-root {
+    align-self: baseline;
+  }
+
   &.mud-input-full-width {
     width: 100%;
   }
