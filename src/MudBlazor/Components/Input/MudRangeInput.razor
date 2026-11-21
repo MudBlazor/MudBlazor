@@ -15,7 +15,8 @@
                            Text="@AdornmentText"
                            Placement="@Adornment.Start"
                            AdornmentClick="@OnAdornmentClick"
-                           AriaLabel="@AdornmentAriaLabel" />
+                           AriaLabel="@AdornmentAriaLabel"
+                           Disabled="@GetDisabledState()" />
     }
 
     @if (InputType == InputType.Hidden && ChildContent != null)
@@ -87,7 +88,8 @@
                            Text="@AdornmentText"
                            Placement="@Adornment.End"
                            AdornmentClick="@OnAdornmentClick"
-                           AriaLabel="@AdornmentAriaLabel" />
+                           AriaLabel="@AdornmentAriaLabel"
+                           Disabled="@GetDisabledState()" />
     }
 
     @if (Variant == Variant.Outlined)

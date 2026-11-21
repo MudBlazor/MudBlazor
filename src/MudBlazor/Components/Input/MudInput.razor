@@ -15,7 +15,8 @@
                            Text="@AdornmentText"
                            Placement="@Adornment.Start"
                            AdornmentClick="@OnAdornmentClick"
-                           AriaLabel="@AdornmentAriaLabel" />
+                           AriaLabel="@AdornmentAriaLabel"
+                           Disabled="@GetDisabledState()" />
     }
 
     @if (ShouldUseTextArea)
@@ -119,7 +120,8 @@
                            Text="@AdornmentText"
                            Placement="@Adornment.End"
                            AdornmentClick="@OnAdornmentClick"
-                           AriaLabel="@AdornmentAriaLabel" />
+                           AriaLabel="@AdornmentAriaLabel"
+                           Disabled="@GetDisabledState()" />
     }
 
     @if (Variant == Variant.Outlined)

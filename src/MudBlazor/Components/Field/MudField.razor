@@ -15,7 +15,8 @@
                                    Text="@AdornmentText"
                                    Placement="@Adornment.Start"
                                    AriaLabel="@AdornmentAriaLabel"
-                                   AdornmentClick="@OnAdornmentClick" />
+                                   AdornmentClick="@OnAdornmentClick"
+                                   Disabled="@Disabled" />
             }
             <div class="@InnerClassname">
                 @ChildContent
@@ -29,7 +30,8 @@
                                    Text="@AdornmentText"
                                    Placement="@Adornment.End"
                                    AriaLabel="@AdornmentAriaLabel"
-                                   AdornmentClick="@OnAdornmentClick" />
+                                   AdornmentClick="@OnAdornmentClick"
+                                   Disabled="@Disabled" />
             }
             @if (Variant == Variant.Outlined)
             {

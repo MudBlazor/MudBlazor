@@ -2409,6 +2409,20 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// The adornment icon button should be disabled when the autocomplete is disabled (#14266).
+        /// </summary>
+        [Test]
+        public void Autocomplete_AdornmentButton_Should_Be_Disabled_When_Disabled()
+        {
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.Disabled, true)
+                .Add(p => p.ShowProgressIndicator, false));
+
+            var button = comp.Find("button.mud-input-adornment-icon-button");
+            button.HasAttribute("disabled").Should().BeTrue();
+        }
+
+        /// <summary>
         /// ItemDisabledTemplate and ItemSelectedTemplate apply even without an ItemTemplate.
         /// </summary>
         [Test]

@@ -176,4 +176,20 @@ public class InputTests : BunitTest
         inputs[0].GetAttribute("id").Should().EndWith("-start");
         inputs[1].GetAttribute("id").Should().EndWith("-end");
     }
+
+    /// <summary>
+    /// The adornment icon button should be disabled when the input is disabled (#14266).
+    /// </summary>
+    [Test]
+    public void AdornmentIconButton_Should_Be_Disabled_When_Input_Disabled()
+    {
+        var comp = Context.Render<MudInput<string>>(parameters => parameters
+            .Add(p => p.Adornment, Adornment.End)
+            .Add(p => p.AdornmentIcon, Icons.Material.Filled.Search)
+            .Add(p => p.OnAdornmentClick, EventCallback.Factory.Create<MouseEventArgs>(this, () => { }))
+            .Add(p => p.Disabled, true));
+
+        var button = comp.Find("button.mud-input-adornment-icon-button");
+        button.HasAttribute("disabled").Should().BeTrue();
+    }
 }
