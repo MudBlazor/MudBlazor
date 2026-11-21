@@ -20,6 +20,12 @@ public partial class ChartData<T> : IEnumerable<T> where T : struct, INumber<T>,
     public ChartData() { }
 
     /// <summary>
+    /// Create a data series with multiple raw chart points.
+    /// </summary>
+    /// <param name="points">A list of data points to use for the chart series.</param>
+    public ChartData(IReadOnlyList<ChartPoint<T>> points) => Points = points ?? throw new ArgumentNullException(nameof(points));
+
+    /// <summary>
     /// Create a data series with a single Y value.
     /// </summary>
     /// <param name="value">The Y value of the chart series</param>

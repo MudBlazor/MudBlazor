@@ -46,6 +46,8 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
     /// <inheritdoc />
     public PopoverOptions PopoverOptions { get; }
 
+    internal string ProviderId { get; }
+
     /// <summary>
     /// Gets the number of items currently queued in the <see cref="_batchExecutor"/> for processing in the <see cref="OnBatchTimerElapsedAsync"/> method.
     /// </summary>
@@ -78,7 +80,8 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         _cancellationTokenSource = new CancellationTokenSource();
         // Cache the token to avoid passing the CancellationTokenSource itself because it will throw once you access it after it's disposed
         _cancellationToken = _cancellationTokenSource.Token;
-        _popoverJsInterop = new PopoverJsInterop(jsInterop);
+        ProviderId = Guid.NewGuid().ToString("N");
+        _popoverJsInterop = new PopoverJsInterop(jsInterop, ProviderId);
         _batchExecutor = new BatchPeriodicQueue<MudPopoverHolder>(this, PopoverOptions.QueueDelay, timeProvider);
         _observerManager = new ObserverManager<Guid, IPopoverObserver>(logger);
     }

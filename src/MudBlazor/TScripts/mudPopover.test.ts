@@ -412,6 +412,123 @@ describe("MudPopover lifecycle", () => {
         expect(mudpopoverHelper.countProviders()).toBe(2);
     });
 
+    test("separate render scopes coexist and dispose independently", () => {
+        document.body.innerHTML = `
+            <div class="mud-popover-provider" data-mud-popover-provider-id="server">
+                <div id="popovercontent-server-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-server-menu"></div></div>
+            <div class="mud-popover-provider" data-mud-popover-provider-id="wasm">
+                <div id="popovercontent-wasm-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-wasm-menu"></div></div>`;
+
+        popover.initialize("server", "mud-popover-provider", 0, 24);
+        popover.initialize("wasm", "mud-popover-provider", 0, 24);
+        popover.connect("server", "server-menu");
+        popover.connect("wasm", "wasm-menu");
+
+        expect(mudpopoverHelper.countProviders("server")).toBe(1);
+        expect(mudpopoverHelper.countProviders("wasm")).toBe(1);
+        expect(popover.getAllObservedContainers().sort()).toEqual(["server-menu", "wasm-menu"]);
+
+        popover.dispose("server");
+
+        expect(popover.getAllObservedContainers()).toEqual(["wasm-menu"]);
+        expect(popover.map["wasm-menu"]).toBeDefined();
+    });
+
+    test("scoped id with an attribute-less provider falls back to the container class", () => {
+        document.body.innerHTML = `
+            <div id="decorated-provider" class="mud-popover-provider">
+                <div id="popovercontent-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-menu"></div></div>`;
+
+        popover.initialize("decorated-scope", "mud-popover-provider", 0, 24);
+        popover.connect("decorated-scope", "menu");
+
+        expect(popover.getAllObservedContainers()).toEqual(["menu"]);
+        expect(popover.map["menu"]?.popoverContentNode?.parentElement?.id).toBe("decorated-provider");
+    });
+
+    test("initializing a render scope removes disconnected providers", () => {
+        document.body.innerHTML = `
+            <div id="server-provider" class="mud-popover-provider" data-mud-popover-provider-id="server">
+                <div id="popovercontent-server-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-server-menu"></div></div>`;
+
+        popover.initialize("server", "mud-popover-provider", 0, 24);
+        popover.connect("server", "server-menu");
+        document.getElementById("server-provider")!.remove();
+
+        document.body.insertAdjacentHTML("beforeend", `
+            <div class="mud-popover-provider" data-mud-popover-provider-id="wasm">
+                <div id="popovercontent-wasm-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-wasm-menu"></div></div>`);
+
+        popover.initialize("wasm", "mud-popover-provider", 0, 24);
+        popover.connect("wasm", "wasm-menu");
+
+        expect(popover.getAllObservedContainers()).toEqual(["wasm-menu"]);
+        expect(popover.map["server-menu"]).toBeUndefined();
+
+        document.body.insertAdjacentHTML("beforeend", `
+            <div class="mud-popover-provider" data-mud-popover-provider-id="server">
+                <div id="popovercontent-server-menu" class="mud-popover"></div>
+            </div>`);
+        popover.connect("server", "server-menu");
+
+        expect(popover.getAllObservedContainers().sort()).toEqual(["server-menu", "wasm-menu"]);
+    });
+
+    test("another scope's connect rebinds a replaced provider without dropping the scope", () => {
+        document.body.innerHTML = `
+            <div id="old-server" class="mud-popover-provider" data-mud-popover-provider-id="server"></div>
+            <div class="mud-popover-provider" data-mud-popover-provider-id="wasm">
+                <div id="popovercontent-wasm-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-wasm-menu"></div></div>`;
+        const observe = spyOn(MutationObserver.prototype, "observe");
+
+        popover.initialize("server", "mud-popover-provider", 0, 24);
+        popover.initialize("wasm", "mud-popover-provider", 0, 24);
+        document.getElementById("old-server")!.remove();
+        document.body.insertAdjacentHTML("afterbegin", `
+            <div id="new-server" class="mud-popover-provider" data-mud-popover-provider-id="server"></div>`);
+
+        popover.connect("wasm", "wasm-menu");
+
+        const newServer = document.getElementById("new-server")!;
+        expect(observe.mock.calls.some(call => call[0] === newServer)).toBe(true);
+        expect(popover.getAllObservedContainers()).toEqual(["wasm-menu"]);
+    });
+
+    test("connect rebinds a render scope whose provider element was replaced", () => {
+        document.body.innerHTML = `
+            <div id="old-provider" class="mud-popover-provider" data-mud-popover-provider-id="scope">
+                <div id="popovercontent-menu" class="mud-popover"></div>
+            </div>
+            <div class="mud-menu"><div id="popover-menu"></div></div>`;
+        const observe = spyOn(MutationObserver.prototype, "observe");
+
+        popover.initialize("scope", "mud-popover-provider", 0, 24);
+        popover.connect("scope", "menu");
+        document.getElementById("old-provider")!.remove();
+        document.body.insertAdjacentHTML("afterbegin", `
+            <div id="new-provider" class="mud-popover-provider" data-mud-popover-provider-id="scope">
+                <div id="popovercontent-menu" class="mud-popover"></div>
+            </div>`);
+
+        popover.connect("scope", "menu");
+
+        const newProvider = document.getElementById("new-provider")!;
+        expect(observe.mock.calls[observe.mock.calls.length - 1]?.[0]).toBe(newProvider);
+        expect(popover.map["menu"]?.popoverContentNode?.parentElement).toBe(newProvider);
+    });
+
     test("the overlay follows the z-index of the most recently opened popover", () => {
         const { content, childContent } = renderProvider(true);
         childContent.classList.add("mud-popover-open");

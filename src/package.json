@@ -4,7 +4,7 @@
     "@microsoft/dotnet-js-interop": "11.0.0",
     "@types/bun": "1.4.4",
     "@types/node": "26.6.6",
-    "oxlint": "1.93.0",
+    "oxlint": "1.94.0",
     "sass": "1.108.2",
     "typescript": "7.0.2"
   },

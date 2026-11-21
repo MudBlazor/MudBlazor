@@ -1558,6 +1558,118 @@ namespace MudBlazor.UnitTests.Components
             //if no crash occurs, we know the datagrid is properly filtering out the GetOnly property when calling set
         }
 
+        /// <summary>
+        /// Closing the form edit dialog by clicking outside it raises CanceledEditingItem and ends the edit (#12856).
+        /// </summary>
+        [Test]
+        public async Task DataGridFormEdit_BackdropClick_RaisesCanceledEditingItem()
+        {
+            var canceled = new List<DataGridFormEditTest.Model>();
+            var committed = new List<DataGridFormEditTest.Model>();
+            var provider = Context.Render<MudDialogProvider>();
+            var dataGrid = RenderFormEditGrid(canceled, committed);
+
+            await dataGrid.FindAll("tbody tr")[1].ClickAsync();
+            await provider.Find(".mud-overlay").ClickAsync();
+
+            provider.FindAll("div.mud-dialog").Should().BeEmpty();
+            // The inline dialog reports an outside close from a continuation of the dialog result, so wait for the grid's render.
+            await dataGrid.WaitForAssertionAsync(() => canceled.Select(x => x.Name).Should().Equal("Johanna"));
+            committed.Should().BeEmpty();
+            dataGrid.Instance._editingItem.Should().BeNull();
+            dataGrid.Instance._isEditFormOpen.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Closing the form edit dialog with Escape raises CanceledEditingItem (#12856).
+        /// </summary>
+        [Test]
+        public async Task DataGridFormEdit_EscapeKey_RaisesCanceledEditingItem()
+        {
+            var keyInterceptorService = Context.AddKeyInterceptorService();
+            var canceled = new List<DataGridFormEditTest.Model>();
+            var provider = Context.Render<MudDialogProvider>();
+            var dataGrid = RenderFormEditGrid(canceled, [], new DialogOptions { CloseOnEscapeKey = true });
+
+            await dataGrid.FindAll("tbody tr")[0].ClickAsync();
+            var container = provider.FindComponent<MudDialogContainer>().Instance;
+            await provider.InvokeAsync(() => keyInterceptorService.OnKeyDown(container.ElementId, new KeyboardEventArgs { Key = "Escape", Type = "keydown" }));
+
+            provider.FindAll("div.mud-dialog").Should().BeEmpty();
+            await dataGrid.WaitForAssertionAsync(() => canceled.Select(x => x.Name).Should().Equal("John"));
+        }
+
+        /// <summary>
+        /// The form edit dialog's Save and Cancel buttons raise CanceledEditingItem only for Cancel, and only once.
+        /// </summary>
+        [Test]
+        public async Task DataGridFormEdit_SaveAndCancelButtons_RaiseCanceledEditingItemOnce()
+        {
+            var canceled = new List<DataGridFormEditTest.Model>();
+            var committed = new List<DataGridFormEditTest.Model>();
+            var provider = Context.Render<MudDialogProvider>();
+            var dataGrid = RenderFormEditGrid(canceled, committed);
+
+            await dataGrid.FindAll("tbody tr")[0].ClickAsync();
+            await provider.Find(".mud-dialog-actions .mud-button-filled-primary").ClickAsync();
+
+            provider.FindAll("div.mud-dialog").Should().BeEmpty();
+            committed.Select(x => x.Name).Should().Equal("John");
+            canceled.Should().BeEmpty();
+
+            await dataGrid.FindAll("tbody tr")[1].ClickAsync();
+            await provider.Find(".mud-dialog-actions .mud-button-filled-default").ClickAsync();
+
+            provider.FindAll("div.mud-dialog").Should().BeEmpty();
+            canceled.Select(x => x.Name).Should().Equal("Johanna");
+            committed.Should().HaveCount(1);
+        }
+
+        /// <summary>
+        /// The edit dialog reporting an open, or a close after the form already closed, doesn't cancel the edit again.
+        /// </summary>
+        [Test]
+        public async Task DataGridFormEdit_DialogVisibleChanged_CancelsOnlyWhileFormOpen()
+        {
+            var canceled = new List<DataGridFormEditTest.Model>();
+            var provider = Context.Render<MudDialogProvider>();
+            var dataGrid = RenderFormEditGrid(canceled, []);
+
+            await dataGrid.FindAll("tbody tr")[0].ClickAsync();
+            var dialog = dataGrid.FindComponent<MudDialog>().Instance;
+            await dataGrid.InvokeAsync(() => dialog.VisibleChanged.InvokeAsync(true));
+
+            canceled.Should().BeEmpty();
+            dataGrid.Instance._isEditFormOpen.Should().BeTrue();
+
+            await provider.Find(".mud-dialog-actions .mud-button-filled-default").ClickAsync();
+            await dataGrid.InvokeAsync(() => dialog.VisibleChanged.InvokeAsync(false));
+
+            canceled.Select(x => x.Name).Should().Equal("John");
+            dataGrid.Instance._isEditFormOpen.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Renders a form edit grid that opens its dialog on row click and records canceled and committed items.
+        /// </summary>
+        private IRenderedComponent<MudDataGrid<DataGridFormEditTest.Model>> RenderFormEditGrid(List<DataGridFormEditTest.Model> canceled, List<DataGridFormEditTest.Model> committed, DialogOptions editDialogOptions = null)
+        {
+            return Context.Render<MudDataGrid<DataGridFormEditTest.Model>>(parameters => parameters
+                .Add(x => x.Items, [new() { Name = "John", Age = 45 }, new() { Name = "Johanna", Age = 23 }])
+                .Add(x => x.ReadOnly, false)
+                .Add(x => x.EditMode, DataGridEditMode.Form)
+                .Add(x => x.EditTrigger, DataGridEditTrigger.OnRowClick)
+                .Add(x => x.EditDialogOptions, editDialogOptions)
+                .Add(x => x.CanceledEditingItem, item => canceled.Add(item))
+                .Add(x => x.CommittedItemChanged, item => committed.Add(item))
+                .Add(x => x.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<DataGridFormEditTest.Model, string>>(0);
+                    builder.AddComponentParameter(1, nameof(PropertyColumn<DataGridFormEditTest.Model, string>.Property), (Expression<Func<DataGridFormEditTest.Model, string>>)(x => x.Name));
+                    builder.CloseComponent();
+                }));
+        }
+
         [Theory]
         [TestCase(12, true)]
         [TestCase(-12, false)]

@@ -1177,6 +1177,60 @@ namespace MudBlazor.UnitTests.Components
             mask.ReadText.Should().Be("(1)2-_)");
         }
 
+        /// <summary>
+        /// The mask attaches the JS blur fallback once, like MudInput, so a focus loss Blazor never observes still clears its focus state.
+        /// </summary>
+        [Test]
+        public void Mask_AttachesJsBlurFallbackOnFirstRender()
+        {
+            var comp = Context.Render<MudMask>();
+
+            Context.JSInterop.VerifyInvoke("mudElementRef.addOnBlurEvent", 1);
+
+            comp.Render();
+            Context.JSInterop.VerifyInvoke("mudElementRef.addOnBlurEvent", 1);
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/MudBlazor/MudBlazor/issues/13274.
+        /// After the JS blur fallback reports a lost focus, later renders must not re-apply the caret,
+        /// because that moves DOM focus back to the mask and fights other inputs for it.
+        /// </summary>
+        [Test]
+        public async Task Mask_JsBlurFallback_StopsCaretRestoreOnLaterRenders()
+        {
+            var comp = Context.Render<MudMask>(parameters => parameters
+                .Add(p => p.Mask, new PatternMask("0000")));
+            var mask = comp.Instance;
+
+            await comp.InvokeAsync(() => mask.OnFocused(new FocusEventArgs()));
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "12"));
+            var caretRestores = Context.JSInterop.Invocations["mudElementRef.selectRangeIfFocused"].Count;
+            caretRestores.Should().BeGreaterThan(0, "a focused mask re-applies the caret after render");
+
+            await comp.InvokeAsync(mask.CallOnBlurredAsync);
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Text, "123"));
+
+            Context.JSInterop.Invocations["mudElementRef.selectRangeIfFocused"].Count.Should().Be(caretRestores);
+        }
+
+        /// <summary>
+        /// The JS blur fallback does not raise a second blur when the native blur already ran.
+        /// </summary>
+        [Test]
+        public async Task Mask_JsBlurFallback_DoesNotProcessBlurTwice()
+        {
+            var blurCount = 0;
+            var comp = Context.Render<MudMask>(parameters => parameters
+                .Add(p => p.OnBlur, _ => blurCount++));
+
+            await comp.Find("input").FocusAsync(new FocusEventArgs());
+            await comp.Find("input").BlurAsync(new FocusEventArgs());
+            await comp.InvokeAsync(comp.Instance.CallOnBlurredAsync);
+
+            blurCount.Should().Be(1);
+        }
+
         [Test]
         public void AutoFocus_ShouldFocusWithoutScrolling()
         {

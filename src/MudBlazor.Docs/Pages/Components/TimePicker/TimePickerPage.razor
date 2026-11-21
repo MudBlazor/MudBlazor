@@ -26,7 +26,13 @@
                 
         <DocsPageSection>
             <SectionHeader Title="Action Buttons">
-                <Description>You can add buttons by using the <CodeInline>PickerActions</CodeInline> render fragment. If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, the hour and the minutes can be selected and the drop-down will close without having to click any of the action buttons.</Description>
+                <Description>
+                    Use <CodeInline>PickerActions</CodeInline> to add buttons such as <strong>OK</strong> and <strong>Cancel</strong>.
+                    Inline and dialog pickers without custom actions close after a clock selection even when <CodeInline>AutoClose</CodeInline> is <CodeInline>false</CodeInline>.
+                    In 12-hour mode without custom actions, choose AM or PM before selecting the minutes.
+                    With custom actions and <CodeInline>AutoClose</CodeInline> set to <CodeInline>false</CodeInline>, use a button such as <strong>OK</strong> to apply the selected time and close the picker.
+                    Set <CodeInline>AutoClose</CodeInline> to <CodeInline>true</CodeInline> to apply the selection and close the picker automatically.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(TimePickerActionButtonsExample)" ShowCode="false">
                 <TimePickerActionButtonsExample />

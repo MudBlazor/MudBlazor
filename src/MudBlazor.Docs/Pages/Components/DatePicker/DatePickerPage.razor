@@ -64,7 +64,12 @@
 
         <DocsPageSection>
             <SectionHeader Title="Action Buttons">
-                <Description>You can add buttons by using the <CodeInline>PickerActions</CodeInline> render fragment. If <CodeInline>AutoClose</CodeInline> is set to true and PickerActions are defined, selecting a day will close the MudDatePicker.</Description>
+                <Description>
+                    Use <CodeInline>PickerActions</CodeInline> to add buttons such as <strong>OK</strong>, <strong>Cancel</strong>, and <strong>Clear</strong>.
+                    Inline and dialog pickers without custom actions close after a day is selected even when <CodeInline>AutoClose</CodeInline> is <CodeInline>false</CodeInline>.
+                    With custom actions and <CodeInline>AutoClose</CodeInline> set to <CodeInline>false</CodeInline>, use a button such as <strong>OK</strong> to apply the selected day and close the picker.
+                    Set <CodeInline>AutoClose</CodeInline> to <CodeInline>true</CodeInline> to apply the selection and close the picker as soon as a day is selected, and to close it when the value is cleared.
+                </Description>
             </SectionHeader>
             <SectionContent Code="@nameof(DatePickerActionButtonsExample)" ShowCode="false">
                 <DatePickerActionButtonsExample />

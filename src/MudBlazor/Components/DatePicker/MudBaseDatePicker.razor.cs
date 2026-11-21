@@ -241,10 +241,14 @@ namespace MudBlazor
         public string TitleDateFormat { get; set; } = "ddd, dd MMM";
 
         /// <summary>
-        /// Closes this picker when a value is selected.
+        /// Controls automatic closing after a selection when <c>PickerActions</c> are defined.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>false</c>.
+        /// A selection is complete when a day is picked, or for a <see cref="MudDateRangePicker"/>, when the end of the range is picked.
+        /// Inline and dialog pickers without <c>PickerActions</c> close after a complete selection regardless of this value.
+        /// With <c>PickerActions</c>, set this to <c>true</c> to apply the selection and close the picker without an action such as OK.
+        /// Clearing the value closes a <see cref="MudDatePicker"/> only when this is <c>true</c>, while a <see cref="MudDateRangePicker"/> closes on clear regardless.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.PickerBehavior)]
