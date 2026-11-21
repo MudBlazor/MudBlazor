@@ -18,6 +18,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     private DateTime _minDateTime;
     private DateTime _maxDateTime;
     private TimeSpan _minDateLabelOffset;
+    private bool _useLocalTimeline;
     private TimeValue<T>[][]? _cachedDataPoints;
 
     private bool _generateChartLines;
@@ -143,10 +144,16 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     {
         DateTime? min = null, max = null;
 
-        foreach (var series in Series.Where(s => s.Visible && s.Data.Points != null))
+        var visibleSeries = Series.Where(s => s.Visible && s.Data.Points != null);
+        // Plot local timestamps by elapsed time across clock changes. Preserve the wall-clock
+        // coordinates of unspecified or mixed-kind series.
+        _useLocalTimeline = visibleSeries.All(series => series.Data.Points.All(p => p.X is DateTime { Kind: DateTimeKind.Local }));
+
+        foreach (var series in visibleSeries)
         {
-            foreach (var dt in series.Data.Points.Select(p => p.X).OfType<DateTime>())
+            foreach (var date in series.Data.Points.Select(p => p.X).OfType<DateTime>())
             {
+                var dt = ToAxisTime(date);
                 if (min == null || dt < min)
                 {
                     min = dt;
@@ -164,6 +171,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
     private void SetDefaultDateRange(TimeSpan spacing)
     {
+        _useLocalTimeline = false;
         var now = TimeProvider.GetLocalNow().DateTime;
         _minDateTime = now;
         if (spacing.Days > 0)
@@ -180,11 +188,17 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         }
     }
 
+    private DateTime ToAxisTime(DateTime date) => _useLocalTimeline ? date.ToUniversalTime() : date;
+
+    private DateTime ToLabelTime(DateTime date) =>
+        _useLocalTimeline ? TimeZoneInfo.ConvertTimeFromUtc(date, TimeProvider.LocalTimeZone) : date;
+
     private void ApplyLabelRounding(TimeSpan spacing)
     {
-        if (_minDateTime.Ticks % spacing.Ticks != 0)
+        var startRemainder = ToLabelTime(_minDateTime).Ticks % spacing.Ticks;
+        if (startRemainder != 0)
         {
-            var offset = new TimeSpan(_minDateTime.Ticks % spacing.Ticks);
+            var offset = TimeSpan.FromTicks(startRemainder);
 
             if (ChartOptions!.TimeLabelSpacingRoundingPadSeries)
             {
@@ -196,9 +210,10 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
             }
         }
 
-        if (ChartOptions!.TimeLabelSpacingRoundingPadSeries && _maxDateTime.Ticks % spacing.Ticks != 0)
+        var endRemainder = ToLabelTime(_maxDateTime).Ticks % spacing.Ticks;
+        if (ChartOptions!.TimeLabelSpacingRoundingPadSeries && endRemainder != 0)
         {
-            var offset = spacing - new TimeSpan(_maxDateTime.Ticks % spacing.Ticks);
+            var offset = spacing - TimeSpan.FromTicks(endRemainder);
             _maxDateTime = _maxDateTime.Add(offset);
         }
     }
@@ -299,7 +314,8 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     protected override string GetVerticalGridLineLabel(int index)
     {
         var minDateTimeWithOffset = _minDateTime.Add(_minDateLabelOffset);
-        return minDateTimeWithOffset.Add(ChartOptions!.TimeLabelSpacing * index).ToString(ChartOptions!.TimeLabelFormat);
+        var tick = minDateTimeWithOffset.Add(ChartOptions!.TimeLabelSpacing * index);
+        return ToLabelTime(tick).ToString(ChartOptions.TimeLabelFormat);
     }
 
     private TimeValue<T>[][] GetCachedDataPoints()
@@ -371,7 +387,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         var gridValue = ((double.CreateSaturating(dataPoint.Value) / double.CreateSaturating(gridYUnits)) - lowestHorizontalLine) * verticalSpace;
         var y = _boundHeight - VerticalStartSpace - double.CreateSaturating(gridValue);
 
-        var diffFromMin = dataPoint.DateTime - _minDateTime;
+        var diffFromMin = ToAxisTime(dataPoint.DateTime) - _minDateTime;
         var x = HorizontalStartSpace + (diffFromMin.TotalMilliseconds * _timeToPixelRatio);
 
         return (x, y);

@@ -62,6 +62,28 @@ namespace MudBlazor.UnitTests.Charts
             };
         }
 
+        [TestCase(3, 29, "00:30,02:00,02:30,03:00")]
+        [TestCase(10, 25, "01:30,01:00,01:30,02:00")]
+        [TestCase(2, 1, "00:30,01:00,01:30,02:00")]
+        public void LocalTimeSeriesUsesElapsedTimeForPointSpacing(int month, int day, string labels)
+        {
+            SetupBBoxInterop();
+            Context.AddFakeTimeProvider().SetLocalTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Europe/London"));
+            var start = new DateTime(2026, month, day, 0, 30, 0, DateTimeKind.Utc);
+            var points = Enumerable.Range(0, 4)
+                .Select(i => new TimeValue<double>(start.AddMinutes(30 * i).ToLocalTime(), 1000))
+                .ToList();
+
+            var chart = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, [new() { Name = "Readings", Data = points }])
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions { TimeLabelSpacing = TimeSpan.FromMinutes(30) }));
+
+            chart.Find("path.mud-chart-serie.mud-chart-line").GetAttribute("d").Should()
+                .Be("M 38 320 L 248.6667 320 L 459.3333 320 L 670 320");
+            chart.FindAll("g.mud-charts-xaxis text").Select(t => t.TextContent).Should().Equal(labels.Split(','));
+        }
+
         [Test]
         public void TimeSeriesChartBasicExample()
         {
