@@ -20,6 +20,7 @@ namespace MudBlazor
     public partial class MudPopoverProvider : IDisposable, IPopoverObserver
     {
         private bool _isConnectedToService;
+        private bool _sectionOutletReady;
 
         [Inject]
         internal IPopoverService PopoverService { get; set; } = null!;
@@ -89,6 +90,13 @@ namespace MudBlazor
                     throw new InvalidOperationException("Duplicate MudPopoverProvider detected. Please ensure there is only one provider, or disable this warning with PopoverOptions.ThrowOnDuplicateProvider.");
                 }
             }
+
+            if (Enabled && !_sectionOutletReady)
+            {
+                _sectionOutletReady = true;
+                StateHasChanged();
+            }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 
