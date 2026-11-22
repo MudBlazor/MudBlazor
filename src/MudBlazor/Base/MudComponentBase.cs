@@ -60,6 +60,8 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// This property is typically used to provide additional HTML attributes during rendering such as ARIA accessibility tags or a custom ID.
+        /// An entry named after one of this component's parameters, such as <c>Label</c>, doesn't set that parameter.
+        /// To forward parameters from a wrapper component, pass them with <c>@attributes</c> instead.
         /// </remarks>
         [Parameter(CaptureUnmatchedValues = true)]
         [Category(CategoryTypes.ComponentBase.Common)]

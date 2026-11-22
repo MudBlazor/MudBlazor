@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+@* @attributes comes last, so a value passed by the caller overrides the default Variant. *@
+<MudSelect T="string" Value="Value" ValueChanged="ValueChanged" Variant="Variant.Outlined" @attributes="AdditionalAttributes">
+    @ChildContent
+</MudSelect>
+
+@code {
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; } = new();
+}
