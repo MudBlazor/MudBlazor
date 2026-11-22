@@ -8,7 +8,16 @@
             <SectionHeader Title="Simple Form Validation">
                 <Description>
                     <CodeInline>MudForm</CodeInline> is designed to be easy and simple. You just pass your own validation functions directly into the <CodeInline>Validation</CodeInline> parameter of your input controls.
-                    But if you want to make use of the handy data annotation attributes provided by Microsoft, you can pass them into <CodeInline>Validation</CodeInline>, as well. You can even use FluentValidation as shown in one of the examples below. <br />
+                    But if you want to make use of the handy data annotation attributes provided by Microsoft, you can pass them into <CodeInline>Validation</CodeInline>, as well. You can even use FluentValidation as shown in one of the examples below. <br /><br />
+                    <CodeInline>Validation</CodeInline> accepts a <CodeInline>ValidationAttribute</CodeInline> or a function in one of these forms, where <CodeInline>T</CodeInline> is the type of the field's value:
+                    <ul>
+                        <li><span class="mr-2">&bull;</span><CodeInline>Func&lt;T, bool&gt;</CodeInline>: returns <CodeInline>false</CodeInline> to show a standard "Invalid" message.</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>Func&lt;T, string&gt;</CodeInline>: returns an error message, or <CodeInline>null</CodeInline> when the value is valid.</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>Func&lt;T, IEnumerable&lt;string&gt;&gt;</CodeInline>: returns the error messages, or none when the value is valid.</li>
+                        <li><span class="mr-2">&bull;</span><CodeInline>Func&lt;object, string, IEnumerable&lt;string&gt;&gt;</CodeInline>: receives the form's <CodeInline>Model</CodeInline> and the path of the field's <CodeInline>For</CodeInline> property, as the "Using Fluent Validation" example below does.</li>
+                    </ul>
+                    Each form can also return a <CodeInline>Task</CodeInline> for asynchronous validation.
+                    A function whose parameter type doesn't match the field's value type is ignored without an error, so a <CodeInline>Func&lt;MyModel, bool&gt;</CodeInline> on a <CodeInline>string</CodeInline> field never runs.
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mt-3">Note: for MudForm, do NOT use a button with <CodeInline>ButtonType="ButtonType.Submit"</CodeInline></MudAlert>
                 </Description>
             </SectionHeader>
