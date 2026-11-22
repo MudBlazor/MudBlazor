@@ -120,6 +120,16 @@ namespace MudBlazor
         public DefaultFocus? DefaultFocus { get; set; }
 
         /// <summary>
+        /// The CSS z-index of dialogs by default.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which uses the theme's dialog z-index.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.Dialog.Appearance)]
+        public int? ZIndex { get; set; }
+
+        /// <summary>
         /// Reverses the button order in all <see cref="MudMessageBox"/> instances.
         /// </summary>
         /// <remarks>
@@ -146,7 +156,8 @@ namespace MudBlazor
                 FullWidth = FullWidth,
                 MaxWidth = MaxWidth,
                 BackgroundClass = BackgroundClass,
-                DefaultFocus = DefaultFocus
+                DefaultFocus = DefaultFocus,
+                ZIndex = ZIndex
             };
 
             _globalDialogOptions = newOptions;

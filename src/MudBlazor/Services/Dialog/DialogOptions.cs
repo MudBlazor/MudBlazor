@@ -107,5 +107,13 @@ namespace MudBlazor
         /// Defaults to <c>null</c>.
         /// </remarks>
         public DefaultFocus? DefaultFocus { get; init; }
+
+        /// <summary>
+        /// The CSS z-index of the dialog.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>null</c>, which uses the theme's dialog z-index.
+        /// </remarks>
+        public int? ZIndex { get; init; }
     }
 }
