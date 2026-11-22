@@ -1,0 +1,29 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudPaper Class="pa-4" Style="max-width: 400px;">
+    <MudForm @ref="_form">
+        <MudTextField T="string" @bind-Value="_name" Label="Name" Required="true" RequiredError="Name is required" />
+        <MudDatePicker @bind-Date="_startDate" Label="Start date" Required="true" RequiredError="Start date is required" />
+    </MudForm>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-4" OnClick="SubmitAsync">Submit</MudButton>
+    <MudText Class="mt-2">@_status</MudText>
+</MudPaper>
+
+@code {
+    private MudForm _form;
+    private string _name;
+    private DateTime? _startDate;
+    private string _status;
+
+    private async Task SubmitAsync()
+    {
+        await _form.ValidateAsync();
+        if (!_form.IsValid)
+        {
+            _status = "Fix the errors above before submitting.";
+            return;
+        }
+
+        _status = $"Submitted for {_name}, starting {_startDate:d}.";
+    }
+}

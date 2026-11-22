@@ -76,6 +76,20 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Validate before submitting">
+                <Description>
+                    A field shows its errors only after it has been validated, which happens when the user changes it or, for text inputs, leaves it.
+                    A required field the user never touched shows no error, even though <CodeInline>IsValid</CodeInline> is already <CodeInline>false</CodeInline> because the field is empty.
+                    Call <CodeInline>ValidateAsync()</CodeInline> before checking <CodeInline>IsValid</CodeInline> to validate every field and show all of their errors.
+                    Click <b>Submit</b> without filling in the fields to see both required errors.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(FormValidateOnSubmitExample)">
+                <FormValidateOnSubmitExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Automatically set Labels">
                 <Description>
                     A form field <CodeInline>Label</CodeInline> can be set automatically by adding a <CodeInline>[Label]</CodeInline> attribute to the relevant property on the model class. The <CodeInline>For</CodeInline> property must also be set. An automatic label can be overridden by setting the <CodeInline>Label</CodeInline> property manually on the component.
