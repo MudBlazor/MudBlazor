@@ -1,0 +1,20 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudThemeProvider Theme="_highContrastTheme" IsDarkMode="true" />
+
+@code {
+    private readonly MudTheme _highContrastTheme = new()
+    {
+        PaletteDark = new PaletteDark()
+        {
+            Success = "#00DD00",
+            SuccessContrastText = "#000000",
+            Warning = "#FFB700",
+            WarningContrastText = "#000000",
+            Error = "#FF4444",
+            ErrorContrastText = "#000000",
+            Info = "#00DDFF",
+            InfoContrastText = "#000000"
+        }
+    };
+}

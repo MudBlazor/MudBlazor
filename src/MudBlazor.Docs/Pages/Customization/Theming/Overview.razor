@@ -70,6 +70,17 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Contrast Text Colors">
+                <Description>
+                    Filled components such as buttons, chips and alerts draw their text and icons in the palette's contrast text color for that color, for example <CodeInline>SuccessContrastText</CodeInline> on a <CodeInline>Success</CodeInline> background.
+                    These colors default to white and aren't chosen from the background's brightness, so set them when you use light background colors, as in this high-contrast dark theme.
+                    <CodeInline>PrimaryContrastText</CodeInline>, <CodeInline>SecondaryContrastText</CodeInline>, <CodeInline>TertiaryContrastText</CodeInline> and <CodeInline>DarkContrastText</CodeInline> work the same way.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(OverviewThemesContrastTextExample)" />
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="CSS Isolation Limitation">
                 <Description>
                     <MudText>
