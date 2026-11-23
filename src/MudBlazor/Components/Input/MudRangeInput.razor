@@ -14,6 +14,7 @@
                            Size="@IconSize"
                            Text="@AdornmentText"
                            Placement="@Adornment.Start"
+                           Disabled="@GetDisabledState()"
                            AdornmentClick="@OnAdornmentClick"
                            AriaLabel="@AdornmentAriaLabel" />
     }
@@ -86,6 +87,7 @@
                            Size="@IconSize"
                            Text="@AdornmentText"
                            Placement="@Adornment.End"
+                           Disabled="@GetDisabledState()"
                            AdornmentClick="@OnAdornmentClick"
                            AriaLabel="@AdornmentAriaLabel" />
     }

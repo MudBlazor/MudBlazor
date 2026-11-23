@@ -18,6 +18,46 @@ namespace MudBlazor.UnitTests.Components
     public class AutocompleteTests : BunitTest
     {
         /// <summary>
+        /// Only disabled fields render a disabled adornment button (#14266).
+        /// </summary>
+        [TestCase(false, false)]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        public async Task Autocomplete_AdornmentButton_RespectsInputState(bool disabled, bool readOnly)
+        {
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.Disabled, disabled)
+                .Add(p => p.ReadOnly, readOnly)
+                .Add(p => p.SearchFunc, (_, _) => Task.FromResult<IEnumerable<string>>(["New York"])));
+
+            var button = comp.Find("button.mud-input-adornment-icon-button");
+            button.HasAttribute("disabled").Should().Be(disabled);
+
+            if (!disabled)
+            {
+                await button.ClickAsync();
+                comp.Instance.Open.Should().Be(!readOnly);
+            }
+        }
+
+        /// <summary>
+        /// Read-only autocomplete fields still run custom adornment actions (#14266).
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_ReadOnlyAdornment_InvokesCustomAction()
+        {
+            var clicks = 0;
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.ReadOnly, true)
+                .Add(p => p.OnAdornmentClick, () => { clicks++; }));
+
+            await comp.Find("button.mud-input-adornment-icon-button").ClickAsync();
+
+            clicks.Should().Be(1);
+            comp.Instance.Open.Should().BeFalse();
+        }
+
+        /// <summary>
         /// Autocomplete owns result keyboard navigation without installing an interceptor for every result.
         /// </summary>
         [Test]
