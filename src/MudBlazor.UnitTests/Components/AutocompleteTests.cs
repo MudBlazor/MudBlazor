@@ -1648,8 +1648,9 @@ namespace MudBlazor.UnitTests.Components
             provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple");
         }
 
-        [Test]
-        public async Task Autocomplete_BlurDuringSearch_PreservesTextAndKeepsMenuClosed()
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task Autocomplete_BlurDuringSearch_PreservesTextAndKeepsMenuClosed(bool pressTab)
         {
             var returnedCount = 0;
             var clock = Context.AddFakeTimeProvider();
@@ -1664,6 +1665,11 @@ namespace MudBlazor.UnitTests.Components
             await comp.Find("input").InputAsync("New York");
             clock.Advance(TimeSpan.FromMilliseconds(100));
             await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+            if (pressTab)
+            {
+                await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Tab" });
+            }
 
             await comp.Find("input").BlurAsync();
             var textOnBlur = comp.Find("input").GetAttribute("value");

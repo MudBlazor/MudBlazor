@@ -981,7 +981,11 @@ namespace MudBlazor
                         if (SelectValueOnTab)
                             await OnEnterKeyAsync();
                     }
-                    await CloseMenuAsync();
+                    // Let blur preserve the query when a search is running with the menu closed.
+                    if (Open || !_opening)
+                    {
+                        await CloseMenuAsync();
+                    }
                     break;
                 case "ArrowDown":
                     if (Open)
