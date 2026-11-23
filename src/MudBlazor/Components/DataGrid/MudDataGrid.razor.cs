@@ -909,6 +909,17 @@ namespace MudBlazor
         public bool SelectOnRowClick { get; set; } = true;
 
         /// <summary>
+        /// Selects the row when focus enters an editor in cell edit mode.
+        /// </summary>
+        /// <remarks>
+        /// Defaults to <c>false</c>. Applies only to single selection with <see cref="SelectOnRowClick"/> enabled.
+        /// Clicking an editable cell selects its row without toggling it off.
+        /// </remarks>
+        [Parameter]
+        [Category(CategoryTypes.DataGrid.Selecting)]
+        public bool SelectOnCellEditFocus { get; set; }
+
+        /// <summary>
         /// Allows the selection to be changed by the user.
         /// </summary>
         /// <remarks>
@@ -2671,7 +2682,7 @@ namespace MudBlazor
         /// Both <see cref="OnRowClickedAsync"/> and <see cref="OnCellClickedAsync"/> delegate here
         /// so that new row-click behaviors only need to be added in one place.
         /// </summary>
-        private async Task ActivateRowBehaviorsAsync(T item)
+        private async Task ActivateRowBehaviorsAsync(T item, bool selectOnly = false)
         {
             if (EditTrigger == DataGridEditTrigger.OnRowClick)
             {
@@ -2681,7 +2692,10 @@ namespace MudBlazor
                     await SetEditingItemAsync(item);
             }
 
-            await SetSelectedItemAsync(item);
+            if (selectOnly)
+                await SelectCellEditRowAsync(item);
+            else
+                await SetSelectedItemAsync(item);
         }
 
         internal Task OnCellContextMenuClickedAsync(MouseEventArgs args, T item, int rowIndex, int columnIndex, Column<T> column)
@@ -2691,10 +2705,29 @@ namespace MudBlazor
 
         // The lambdas live in their own methods because the compiler allocates a closure on entry to whichever method
         // declares one, even when the branch that needs it is never taken.
-        private EventCallback<MouseEventArgs> GetCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
-            => CellClick.HasDelegate
-                ? CreateCellClickCallback(item, rowIndex, colIndex, column)
-                : default;
+        private EventCallback<MouseEventArgs> GetCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column, bool selectOnFocus)
+            => selectOnFocus
+                ? CreateCellEditClickCallback(item, rowIndex, colIndex, column)
+                : CellClick.HasDelegate
+                    ? CreateCellClickCallback(item, rowIndex, colIndex, column)
+                    : default;
+
+        private EventCallback<FocusEventArgs> CreateCellEditFocusCallback(T item)
+            => EventCallback.Factory.Create<FocusEventArgs>(this, _ => SelectCellEditRowAsync(item));
+
+        private Task SelectCellEditRowAsync(T item)
+            => Selection.Contains(item) ? Task.CompletedTask : SetSelectedItemAsync(true, item);
+
+        private EventCallback<MouseEventArgs> CreateCellEditClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
+            => EventCallback.Factory.Create<MouseEventArgs>(this, async args =>
+            {
+                if (CellClick.HasDelegate)
+                    await CellClick.InvokeAsync(new DataGridCellClickEventArgs<T>(args, item, rowIndex, colIndex, column));
+                else
+                    await RowClick.InvokeAsync(new DataGridRowClickEventArgs<T>(args, item, rowIndex));
+
+                await ActivateRowBehaviorsAsync(item, selectOnly: true);
+            });
 
         private EventCallback<MouseEventArgs> CreateCellClickCallback(T item, int rowIndex, int colIndex, Column<T> column)
             => EventCallback.Factory.Create<MouseEventArgs>(this, args => OnCellClickedAsync(args, item, rowIndex, colIndex, column));

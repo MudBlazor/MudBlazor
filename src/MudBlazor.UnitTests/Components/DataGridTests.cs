@@ -2238,6 +2238,47 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RowContextMenuClicked.Should().BeTrue("without a CellContextMenuClick delegate the right-click bubbles to the tr @oncontextmenu");
         }
 
+        [TestCase(true, false, true, true)]
+        [TestCase(false, false, true, false)]
+        [TestCase(true, true, true, false)]
+        [TestCase(true, false, false, false)]
+        public async Task DataGridCellEditorFocus_SelectsRowWhenEnabled(bool selectOnFocus, bool multiSelection, bool selectOnRowClick, bool selectsRow)
+        {
+            var first = new TestModel1("A", null);
+            var second = new TestModel1("B", null);
+            var selected = first;
+            var comp = Context.Render<MudDataGrid<TestModel1>>(parameters => parameters
+                .Add(p => p.Items, new[] { first, second })
+                .Add(p => p.SelectedItem, first)
+                .Add(p => p.SelectedItemChanged, item => selected = item)
+                .Add(p => p.ReadOnly, false)
+                .Add(p => p.EditMode, DataGridEditMode.Cell)
+                .Add(p => p.MultiSelection, multiSelection)
+                .Add(p => p.SelectOnRowClick, selectOnRowClick)
+                .Add(p => p.SelectOnCellEditFocus, selectOnFocus)
+                .Add(p => p.Columns, builder =>
+                {
+                    builder.OpenComponent<PropertyColumn<TestModel1, string>>(0);
+                    builder.AddAttribute(1, nameof(PropertyColumn<TestModel1, string>.Property), (Expression<Func<TestModel1, string>>)(item => item.Name));
+                    builder.CloseComponent();
+                }));
+
+            var editor = comp.FindAll("tbody td input")[1];
+            if (selectsRow)
+            {
+                await editor.TriggerEventAsync("onfocusin", new FocusEventArgs());
+                selected.Should().Be(second);
+                await editor.ClickAsync();
+                selected.Should().Be(second);
+            }
+            else
+            {
+                var focus = async () => await editor.TriggerEventAsync("onfocusin", new FocusEventArgs());
+                await focus.Should().ThrowAsync<MissingEventHandlerException>();
+                selected.Should().Be(first);
+            }
+        }
+
         /// <summary>
         /// Regression: when CellClick has a delegate, clicking a cell must still update
         /// the selection (SelectedItemChanged must fire).
