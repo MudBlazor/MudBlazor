@@ -63,7 +63,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         /// <summary>
-        /// Local timestamps remain ordered and evenly spaced across clock changes.
+        /// Local timestamps remain ordered and evenly spaced across clock changes (#12916).
         /// </summary>
         [NonParallelizable]
         [TestCase(3, 29, "00:30,02:00,02:30,03:00")]
@@ -86,7 +86,7 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         /// <summary>
-        /// Daily labels stay at midnight and align with their points across 23- and 25-hour days.
+        /// Daily labels stay at midnight and align with their points across 23- and 25-hour days (#12916).
         /// </summary>
         [NonParallelizable]
         [TestCase(3, 28, "03-28 00:00,03-29 00:00,03-30 00:00,03-31 00:00", "M 38 320 L 251.6338 320 L 456.3662 320 L 670 320")]
