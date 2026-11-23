@@ -5,20 +5,14 @@
      @attributes="UserAttributes"
      class="@Classname"
      style="@Style"
-     @onkeydown="OnRootKeyDown"
-     @onkeyup="OnRootKeyUp"
-     @onfocus="OnRootFocusAsync"
      tabindex="-1">
 
-    <div class="fixed pointer-events-none"
-         tabindex="@TrapTabIndex"
-         @onfocus="OnTopFocusAsync">
+    <div @ref="_top" class="fixed pointer-events-none" tabindex="@TrapTabIndex">
     </div>
 
     <div @ref="_firstBumper"
          class="fixed pointer-events-none"
-         tabindex="@TrapTabIndex"
-         @onfocus="OnBumperFocusAsync">
+         tabindex="@TrapTabIndex">
     </div>
 
     <div @ref="_fallback"
@@ -33,12 +27,9 @@
 
     <div @ref="_lastBumper"
          class="fixed pointer-events-none"
-         tabindex="@TrapTabIndex"
-         @onfocus="OnBumperFocusAsync">
+         tabindex="@TrapTabIndex">
     </div>
 
-    <div class="fixed pointer-events-none"
-         tabindex="@TrapTabIndex"
-         @onfocus="OnBottomFocusAsync">
+    <div @ref="_bottom" class="fixed pointer-events-none" tabindex="@TrapTabIndex">
     </div>
 </div>

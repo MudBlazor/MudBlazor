@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using AwesomeAssertions;
 using Bunit;
-using Microsoft.AspNetCore.Components.Web;
 using NUnit.Framework;
 
 namespace MudBlazor.UnitTests.Components;
@@ -72,60 +71,16 @@ public class FocusTrapTests : BunitTest
         GetInvocationCount("Blazor._internal.domWrapper.focus").Should().Be(0);
     }
 
+    /// <summary>Registers browser-side focus wrapping once per trap (#14007).</summary>
     [Test]
-    public async Task FocusTrap_FocusEvents_ShouldRedirectToExpectedTargets()
+    public async Task FocusTrap_RegistersBrowserHandlersOnce()
     {
         var comp = Context.Render<MudFocusTrap>(parameters => parameters.Add(x => x.DefaultFocus, DefaultFocus.None));
-        var root = comp.Find("div.mud-focus-trap");
-        var trapChildren = root.Children;
 
-        await root.FocusAsync();
-        await trapChildren[0].FocusAsync();
-        await trapChildren[5].FocusAsync();
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, true));
+        await comp.SetParametersAndRenderAsync(parameters => parameters.Add(x => x.Disabled, false));
 
-        await comp.WaitForAssertionAsync(() =>
-        {
-            Context.JSInterop.VerifyInvoke("Blazor._internal.domWrapper.focus", 1);
-            Context.JSInterop.VerifyInvoke("mudElementRef.focusFirst", 1);
-            Context.JSInterop.VerifyInvoke("mudElementRef.focusLast", 1);
-        });
-    }
-
-    [Test]
-    public async Task FocusTrap_TabHandling_ShouldSuppressRerender_AndSwitchBumperDirection()
-    {
-        var comp = Context.Render<MudFocusTrap>(parameters => parameters.Add(x => x.DefaultFocus, DefaultFocus.None));
-        var root = comp.Find("div.mud-focus-trap");
-        var trapChildren = root.Children;
-        var renderCountBeforeKeyEvent = comp.RenderCount;
-
-        await root.KeyDownAsync(new KeyboardEventArgs { Key = "Tab", ShiftKey = true });
-
-        comp.RenderCount.Should().Be(renderCountBeforeKeyEvent);
-
-        await trapChildren[1].FocusAsync();
-
-        await comp.WaitForAssertionAsync(() => Context.JSInterop.VerifyInvoke("mudElementRef.focusLast", 1));
-
-        renderCountBeforeKeyEvent = comp.RenderCount;
-
-        await root.KeyUpAsync(new KeyboardEventArgs { Key = "Tab" });
-
-        comp.RenderCount.Should().Be(renderCountBeforeKeyEvent);
-
-        await trapChildren[4].FocusAsync();
-
-        await comp.WaitForAssertionAsync(() => Context.JSInterop.VerifyInvoke("mudElementRef.focusFirst", 1));
-
-        renderCountBeforeKeyEvent = comp.RenderCount;
-
-        await root.KeyDownAsync(new KeyboardEventArgs { Key = "ArrowDown" });
-
-        comp.RenderCount.Should().Be(renderCountBeforeKeyEvent);
-
-        await trapChildren[1].FocusAsync();
-
-        await comp.WaitForAssertionAsync(() => Context.JSInterop.VerifyInvoke("mudElementRef.focusFirst", 2));
+        Context.JSInterop.VerifyInvoke("mudElementRef.registerFocusTrap", 1);
     }
 
     [Test]

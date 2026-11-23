@@ -59,6 +59,37 @@ test("focusFirst and focusLast fall back to the container with too few tabbables
     expect(document.activeElement).toBe(form);
 });
 
+test("focus trap wraps immediately at either boundary and respects disabled sentinels (#14007)", () => {
+    document.body.innerHTML = `
+        <div id="trap" tabindex="-1">
+            <div tabindex="0"></div>
+            <div tabindex="0"></div>
+            <div tabindex="-1"></div>
+            <button id="first">First</button>
+            <button id="last">Last</button>
+            <div tabindex="0"></div>
+            <div tabindex="0"></div>
+        </div>`;
+    const trap = document.getElementById("trap")!;
+    const [top, firstBumper, fallback, first, last, lastBumper, bottom] = Array.from(trap.children) as
+        [HTMLElement, HTMLElement, HTMLElement, HTMLElement, HTMLElement, HTMLElement, HTMLElement];
+    elementRef.registerFocusTrap(trap, top, firstBumper, fallback, lastBumper, bottom);
+
+    trap.focus();
+    expect(document.activeElement).toBe(fallback);
+
+    last.focus();
+    lastBumper.focus();
+    expect(document.activeElement).toBe(first);
+
+    firstBumper.focus();
+    expect(document.activeElement).toBe(last);
+
+    lastBumper.tabIndex = -1;
+    lastBumper.focus();
+    expect(document.activeElement).toBe(lastBumper);
+});
+
 test("saveFocus and restoreFocus return focus to the element that had it", () => {
     const byId = renderForm();
     byId("notes").focus();
