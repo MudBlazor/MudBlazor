@@ -2239,7 +2239,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Editor focus selects the row only when enabled and does not render again for an already selected row.
+        /// Editor focus selects the row only when enabled and does not render again for an already selected row (#11895).
         /// </summary>
         [TestCase(true, false, true, true)]
         [TestCase(false, false, true, false)]
