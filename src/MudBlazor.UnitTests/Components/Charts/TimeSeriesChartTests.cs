@@ -62,26 +62,85 @@ namespace MudBlazor.UnitTests.Charts
             };
         }
 
+        /// <summary>
+        /// Local timestamps remain ordered and evenly spaced across clock changes.
+        /// </summary>
+        [NonParallelizable]
         [TestCase(3, 29, "00:30,02:00,02:30,03:00")]
         [TestCase(10, 25, "01:30,01:00,01:30,02:00")]
         [TestCase(2, 1, "00:30,01:00,01:30,02:00")]
         public void LocalTimeSeriesUsesElapsedTimeForPointSpacing(int month, int day, string labels)
         {
+            InLondonTimeZone(() =>
+            {
+                var start = new DateTime(2026, month, day, 0, 30, 0, DateTimeKind.Utc);
+                var dates = Enumerable.Range(0, 4).Select(i => start.AddMinutes(30 * i).ToLocalTime());
+                // A different provider zone must not affect DateTimeKind.Local samples or labels.
+                Context.AddFakeTimeProvider().SetLocalTimeZone(TimeZoneInfo.Utc);
+                var chart = RenderLocalTimeSeries(dates, TimeSpan.FromMinutes(30), "HH:mm");
+
+                chart.Find("path.mud-chart-serie.mud-chart-line").GetAttribute("d").Should()
+                    .Be("M 38 320 L 248.6667 320 L 459.3333 320 L 670 320");
+                chart.FindAll("g.mud-charts-xaxis text").Select(t => t.TextContent).Should().Equal(labels.Split(','));
+            });
+        }
+
+        /// <summary>
+        /// Daily labels stay at midnight and align with their points across 23- and 25-hour days.
+        /// </summary>
+        [NonParallelizable]
+        [TestCase(3, 28, "03-28 00:00,03-29 00:00,03-30 00:00,03-31 00:00", "M 38 320 L 251.6338 320 L 456.3662 320 L 670 320")]
+        [TestCase(10, 24, "10-24 00:00,10-25 00:00,10-26 00:00,10-27 00:00", "M 38 320 L 245.7808 320 L 462.2192 320 L 670 320")]
+        public void LocalTimeSeriesDailyTicksFollowTheCalendar(int month, int day, string labels, string path)
+        {
+            InLondonTimeZone(() =>
+            {
+                var start = new DateTime(2026, month, day, 0, 0, 0, DateTimeKind.Local);
+                var dates = Enumerable.Range(0, 4).Select(i => start.AddDays(i));
+                var chart = RenderLocalTimeSeries(dates, TimeSpan.FromDays(1), "MM-dd HH:mm");
+
+                chart.Find("path.mud-chart-serie.mud-chart-line").GetAttribute("d").Should().Be(path);
+                var ticks = chart.FindAll("g.mud-charts-xaxis text");
+                ticks.Select(t => t.TextContent).Should().Equal(labels.Split(','));
+                ticks.Select(t => t.GetAttribute("x")).Should().Equal(path.Split(' ').Where((_, i) => i % 3 == 1));
+            });
+        }
+
+        private IRenderedComponent<MudChart<double>> RenderLocalTimeSeries(IEnumerable<DateTime> dates, TimeSpan spacing, string format)
+        {
             SetupBBoxInterop();
-            Context.AddFakeTimeProvider().SetLocalTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Europe/London"));
-            var start = new DateTime(2026, month, day, 0, 30, 0, DateTimeKind.Utc);
-            var points = Enumerable.Range(0, 4)
-                .Select(i => new TimeValue<double>(start.AddMinutes(30 * i).ToLocalTime(), 1000))
-                .ToList();
-
-            var chart = Context.Render<MudChart<double>>(parameters => parameters
+            return Context.Render<MudChart<double>>(parameters => parameters
                 .Add(p => p.ChartType, ChartType.Timeseries)
-                .Add(p => p.ChartSeries, [new() { Name = "Readings", Data = points }])
-                .Add(p => p.ChartOptions, new TimeSeriesChartOptions { TimeLabelSpacing = TimeSpan.FromMinutes(30) }));
+                .Add(p => p.ChartSeries, [new() { Name = "Readings", Data = dates.Select(date => new TimeValue<double>(date, 1000)).ToList() }])
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions { TimeLabelSpacing = spacing, TimeLabelFormat = format }));
+        }
 
-            chart.Find("path.mud-chart-serie.mud-chart-line").GetAttribute("d").Should()
-                .Be("M 38 320 L 248.6667 320 L 459.3333 320 L 670 320");
-            chart.FindAll("g.mud-charts-xaxis text").Select(t => t.TextContent).Should().Equal(labels.Split(','));
+        private static void InLondonTimeZone(Action test)
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                // Windows does not honor the process TZ override used by Unix.
+                if (!TimeZoneInfo.Local.HasSameRules(TimeZoneInfo.FindSystemTimeZoneById("Europe/London")))
+                {
+                    Assert.Ignore("This test requires London local time on Windows.");
+                }
+
+                test();
+                return;
+            }
+
+            var original = Environment.GetEnvironmentVariable("TZ");
+            try
+            {
+                Environment.SetEnvironmentVariable("TZ", "Europe/London");
+                TimeZoneInfo.ClearCachedData();
+                test();
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("TZ", original);
+                TimeZoneInfo.ClearCachedData();
+            }
         }
 
         [Test]
