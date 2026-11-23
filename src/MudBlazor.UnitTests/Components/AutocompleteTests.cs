@@ -1702,7 +1702,7 @@ namespace MudBlazor.UnitTests.Components
             var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters.Add(x => x.SearchFunc, searchFunc));
 
             var mouseDown = comp.Find(".mud-input-control").MouseDownAsync();
-            await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            await started.Task.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
             await comp.Find("input").FocusAsync();
             await comp.Find("input").BlurAsync();
             completion.SetResult(["New York"]);

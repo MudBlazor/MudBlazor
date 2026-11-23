@@ -676,6 +676,7 @@ namespace MudBlazor
 
         private void CancelDebounce()
         {
+            // Disposing the timer doesn't stop a callback that already fired and is waiting for the dispatcher, so the version tells that callback it was cancelled.
             _debounceVersion++;
             _debounceTimer?.Dispose();
             _debounceTimer = null;
@@ -1323,6 +1324,7 @@ namespace MudBlazor
                 return;
             }
 
+            // A genuine leave with the menu closed (such as after a search returned nothing) can't rely on the overlay close to revert the text, so coerce it here.
             await CoerceTextToValueAsync();
 
             await base.OnBlurredAsync(args);
