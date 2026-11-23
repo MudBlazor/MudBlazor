@@ -5,6 +5,7 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Extensions;
+using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents.DatePicker;
 using MudBlazor.UnitTests.Utilities;
 using NUnit.Framework;
@@ -2809,6 +2810,23 @@ namespace MudBlazor.UnitTests.Components
             popup.GetAttribute("role").Should().Be("dialog");
             popup.GetAttribute("aria-label").Should().Be("Start date");
             popup.HasAttribute("aria-modal").Should().BeFalse();
+        }
+
+        /// <summary>
+        /// An editable picker lets Space reach the input so a date such as "Feb 2, 2026" can be typed (#10131).
+        /// </summary>
+        [Test]
+        public void Editable_DoesNotPreventSpace()
+        {
+            var comp = Context.Render<MudDatePicker>(parameters => parameters
+                .Add(x => x.Editable, true)
+                .Add(x => x.DateFormat, "MMM d, yyyy"));
+
+            var options = (KeyInterceptorOptions)Context.JSInterop.Invocations["mudKeyInterceptor.connect"]
+                .Single(x => Equals(x.Arguments[1], comp.Instance.ElementId))
+                .Arguments[2]!;
+
+            options.Keys.Single(x => x.Key == " ").PreventDown.Should().Be("none");
         }
     }
 }

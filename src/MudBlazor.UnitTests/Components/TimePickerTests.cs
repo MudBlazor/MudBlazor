@@ -3,6 +3,7 @@ using AwesomeAssertions;
 using Bunit;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.UnitTests.TestComponents.TimePicker;
 using NUnit.Framework;
 
@@ -752,6 +753,63 @@ namespace MudBlazor.UnitTests.Components
 
             picker.Time.Should().BeNull();
             await comp.WaitForAssertionAsync(() => comp.FindAll("div.mud-picker-open").Count.Should().Be(0));
+        }
+
+        /// <summary>
+        /// An editable picker lets Space reach the input so a value such as "10:00 AM" can be typed (#10131).
+        /// </summary>
+        [Test]
+        public void Editable_DoesNotPreventSpace()
+        {
+            var comp = Context.Render<MudTimePicker>(parameters => parameters
+                .Add(p => p.Editable, true)
+                .Add(p => p.AmPm, true));
+
+            GetConnectedSpaceKeyOption(comp.Instance.ElementId).PreventDown.Should().Be("none");
+        }
+
+        /// <summary>
+        /// A non-editable picker keeps preventing Space, which opens the picker instead (#10131).
+        /// </summary>
+        [Test]
+        public void NotEditable_PreventsSpace()
+        {
+            var comp = Context.Render<MudTimePicker>();
+
+            GetConnectedSpaceKeyOption(comp.Instance.ElementId).PreventDown.Should().Be("key+none");
+        }
+
+        /// <summary>
+        /// Changing Editable after the first render updates whether Space is prevented (#10131).
+        /// </summary>
+        [Test]
+        public async Task EditableChanged_UpdatesSpaceKeyOption()
+        {
+            var comp = Context.Render<MudTimePicker>();
+            var elementId = comp.Instance.ElementId;
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Editable, true));
+            GetUpdatedSpaceKeyOptions(elementId).Select(x => x.PreventDown).Should().Equal("none");
+
+            await comp.SetParametersAndRenderAsync(parameters => parameters.Add(p => p.Editable, false));
+            GetUpdatedSpaceKeyOptions(elementId).Select(x => x.PreventDown).Should().Equal("none", "key+none");
+        }
+
+        private KeyOptions GetConnectedSpaceKeyOption(string elementId)
+        {
+            var options = (KeyInterceptorOptions)Context.JSInterop.Invocations["mudKeyInterceptor.connect"]
+                .Single(x => Equals(x.Arguments[1], elementId))
+                .Arguments[2];
+
+            return options.Keys.Single(x => x.Key == " ");
+        }
+
+        private IEnumerable<KeyOptions> GetUpdatedSpaceKeyOptions(string elementId)
+        {
+            return Context.JSInterop.Invocations["mudKeyInterceptor.updatekey"]
+                .Where(x => Equals(x.Arguments[0], elementId))
+                .Select(x => (KeyOptions)x.Arguments[1])
+                .Where(x => x.Key == " ");
         }
     }
 }
