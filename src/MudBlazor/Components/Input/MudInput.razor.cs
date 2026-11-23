@@ -122,13 +122,6 @@ namespace MudBlazor
         public bool Clearable { get; set; } = false;
 
         /// <summary>
-        /// Disables the adornment button.
-        /// </summary>
-        [Parameter]
-        [Category(CategoryTypes.FormComponent.Behavior)]
-        public bool AdornmentDisabled { get; set; }
-
-        /// <summary>
         /// Occurs when the clear button is clicked.
         /// </summary>
         /// <remarks>
