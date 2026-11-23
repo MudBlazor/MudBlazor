@@ -1648,38 +1648,96 @@ namespace MudBlazor.UnitTests.Components
             provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple");
         }
 
-        [TestCase(false)]
-        [TestCase(true)]
-        public async Task Autocomplete_BlurDuringSearch_PreservesTextAndKeepsMenuClosed(bool pressTab)
+        /// <summary>
+        /// Leaving during a search discards late results and restores the committed text.
+        /// </summary>
+        [TestCase(false, false)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public async Task Autocomplete_LeavingDuringSearch_RestoresCommittedText(bool pressTab, bool openOnFocus)
         {
-            var returnedCount = 0;
             var clock = Context.AddFakeTimeProvider();
-            var (started, completion, searchFunc) = CreateControlledSearch();
+            var search = new TaskCompletionSource<IEnumerable<string>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var token = CancellationToken.None;
             var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.Value, "Alabama")
                 .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.OpenOnFocus, openOnFocus)
+                .Add(x => x.ShowProgressIndicator, true)
+                .Add(x => x.SearchFunc, (text, cancellationToken) =>
+                {
+                    if (text != "New York")
+                        return Task.FromResult<IEnumerable<string>>(["Alabama"]);
+
+                    token = cancellationToken;
+                    return search.Task;
+                }));
+
+            await comp.Find("input").FocusAsync();
+            comp.Instance.Open.Should().Be(openOnFocus);
+            await comp.Find("input").InputAsync("New York");
+            clock.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.WaitForAssertionAsync(() => comp.FindAll(".progress-indicator-circular").Should().ContainSingle());
+
+            if (pressTab)
+                await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Tab" });
+
+            await comp.Find("input").BlurAsync();
+            token.IsCancellationRequested.Should().BeTrue();
+            search.SetResult(["New York"]);
+            await comp.InvokeAsync(() => search.Task);
+
+            comp.Instance.ReadText.Should().Be("Alabama");
+            comp.Instance.ReadValue.Should().Be("Alabama");
+            comp.Instance.Open.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// A pointer search that starts before focus cannot open the menu after blur.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_BlurAfterPointerSearchStarts_DiscardsResults()
+        {
+            var (started, completion, searchFunc) = CreateControlledSearch();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters.Add(x => x.SearchFunc, searchFunc));
+
+            var mouseDown = comp.Find(".mud-input-control").MouseDownAsync();
+            await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            await comp.Find("input").FocusAsync();
+            await comp.Find("input").BlurAsync();
+            completion.SetResult(["New York"]);
+            await mouseDown;
+
+            comp.Instance.Open.Should().BeFalse();
+        }
+
+        /// <summary>
+        /// Blurring cancels queued searches even when text coercion is disabled.
+        /// </summary>
+        [Test]
+        public async Task Autocomplete_BlurBeforeDebounce_CancelsQueuedSearch()
+        {
+            var clock = Context.AddFakeTimeProvider();
+            var searches = 0;
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
                 .Add(x => x.OpenOnFocus, false)
-                .Add(x => x.ReturnedItemsCountChanged, count => returnedCount = count)
-                .Add(x => x.SearchFunc, searchFunc));
+                .Add(x => x.CoerceText, false)
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.SearchFunc, (_, _) =>
+                {
+                    searches++;
+                    return Task.FromResult<IEnumerable<string>>(["New York"]);
+                }));
 
             await comp.Find("input").FocusAsync();
             await comp.Find("input").InputAsync("New York");
-            clock.Advance(TimeSpan.FromMilliseconds(100));
-            await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
-
-            if (pressTab)
-            {
-                await comp.Find("input").KeyDownAsync(new KeyboardEventArgs { Key = "Tab" });
-            }
-
             await comp.Find("input").BlurAsync();
-            var textOnBlur = comp.Find("input").GetAttribute("value");
-            completion.SetResult(["New York"]);
-            await comp.WaitForAssertionAsync(() => returnedCount.Should().Be(1));
+            clock.Advance(TimeSpan.FromMilliseconds(100));
+            await comp.InvokeAsync(() => { });
 
-            textOnBlur.Should().Be("New York");
-            comp.Find("input").GetAttribute("value").Should().Be("New York");
+            searches.Should().Be(0);
+            comp.Instance.ReadText.Should().Be("New York");
             comp.Instance.Open.Should().BeFalse();
-            comp.Instance.ReadValue.Should().BeNull();
         }
 
         /// <summary>
