@@ -18,7 +18,7 @@ namespace MudBlazor.UnitTests.Components
     public class AutocompleteTests : BunitTest
     {
         /// <summary>
-        /// Only disabled fields render a disabled adornment button.
+        /// Only disabled fields render a disabled adornment button (#14266).
         /// </summary>
         [TestCase(false, false)]
         [TestCase(true, false)]
@@ -41,7 +41,7 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
-        /// Read-only autocomplete fields still run custom adornment actions.
+        /// Read-only autocomplete fields still run custom adornment actions (#14266).
         /// </summary>
         [Test]
         public async Task Autocomplete_ReadOnlyAdornment_InvokesCustomAction()
