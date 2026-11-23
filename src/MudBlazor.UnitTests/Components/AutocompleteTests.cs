@@ -17,6 +17,26 @@ namespace MudBlazor.UnitTests.Components
     [TestFixture]
     public class AutocompleteTests : BunitTest
     {
+        [TestCase(false, false)]
+        [TestCase(true, false)]
+        [TestCase(false, true)]
+        public async Task Autocomplete_AdornmentButton_RespectsInputState(bool disabled, bool readOnly)
+        {
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(p => p.Disabled, disabled)
+                .Add(p => p.ReadOnly, readOnly)
+                .Add(p => p.SearchFunc, (_, _) => Task.FromResult<IEnumerable<string>>(["New York"])));
+
+            var button = comp.Find("button.mud-input-adornment-icon-button");
+            button.HasAttribute("disabled").Should().Be(disabled || readOnly);
+
+            if (!disabled && !readOnly)
+            {
+                await button.ClickAsync();
+                comp.Instance.Open.Should().BeTrue();
+            }
+        }
+
         /// <summary>
         /// Autocomplete owns result keyboard navigation without installing an interceptor for every result.
         /// </summary>

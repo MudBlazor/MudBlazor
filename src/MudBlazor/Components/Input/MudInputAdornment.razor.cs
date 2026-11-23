@@ -80,4 +80,10 @@ public partial class MudInputAdornment
     /// </summary>
     [Parameter]
     public EventCallback<MouseEventArgs> AdornmentClick { get; set; }
+
+    /// <summary>
+    /// Disables the adornment button.
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
 }

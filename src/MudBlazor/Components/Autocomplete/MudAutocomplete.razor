@@ -35,6 +35,7 @@
                           HelperId="@GetHelperId()"
                           HelperText="@HelperText"
                           AdornmentIcon="@CurrentIcon" Adornment="@Adornment" AdornmentColor="@AdornmentColor" IconSize="@IconSize" AdornmentText="@AdornmentText"
+                          AdornmentDisabled="@(GetDisabledState() || GetReadOnlyState())"
                           OnAdornmentClick="@AdornmentClickHandlerAsync"
                           AdornmentAriaLabel="@AdornmentAriaLabel"
                           Clearable="@(Clearable && !GetReadOnlyState())"
