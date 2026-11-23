@@ -1648,6 +1648,34 @@ namespace MudBlazor.UnitTests.Components
             provider.FindAll("div.mud-list-item").Select(x => x.TextContent.Trim()).Should().Equal("Apple");
         }
 
+        [Test]
+        public async Task Autocomplete_BlurDuringSearch_PreservesTextAndKeepsMenuClosed()
+        {
+            var returnedCount = 0;
+            var clock = Context.AddFakeTimeProvider();
+            var (started, completion, searchFunc) = CreateControlledSearch();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 100)
+                .Add(x => x.OpenOnFocus, false)
+                .Add(x => x.ReturnedItemsCountChanged, count => returnedCount = count)
+                .Add(x => x.SearchFunc, searchFunc));
+
+            await comp.Find("input").FocusAsync();
+            await comp.Find("input").InputAsync("New York");
+            clock.Advance(TimeSpan.FromMilliseconds(100));
+            await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+            await comp.Find("input").BlurAsync();
+            var textOnBlur = comp.Find("input").GetAttribute("value");
+            completion.SetResult(["New York"]);
+            await comp.WaitForAssertionAsync(() => returnedCount.Should().Be(1));
+
+            textOnBlur.Should().Be("New York");
+            comp.Find("input").GetAttribute("value").Should().Be("New York");
+            comp.Instance.Open.Should().BeFalse();
+            comp.Instance.ReadValue.Should().BeNull();
+        }
+
         /// <summary>
         /// Escape removes the progress indicator of the search it abandons.
         /// </summary>

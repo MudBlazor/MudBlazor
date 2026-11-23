@@ -1308,8 +1308,12 @@ namespace MudBlazor
                 return;
             }
 
-            // A genuine leave with the menu closed (such as after a search returned nothing) can't rely on the overlay close to revert the text, so coerce it here.
-            await CoerceTextToValueAsync();
+            // Keep the user's query while its search is still running. A completed search
+            // with no open menu still uses the normal text coercion on blur.
+            if (!_opening)
+            {
+                await CoerceTextToValueAsync();
+            }
 
             await base.OnBlurredAsync(args);
         }
