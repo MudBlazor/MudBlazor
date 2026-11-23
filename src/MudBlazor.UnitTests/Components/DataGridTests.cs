@@ -2238,6 +2238,9 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.RowContextMenuClicked.Should().BeTrue("without a CellContextMenuClick delegate the right-click bubbles to the tr @oncontextmenu");
         }
 
+        /// <summary>
+        /// Editor focus selects the row only when enabled and does not render again for an already selected row.
+        /// </summary>
         [TestCase(true, false, true, true)]
         [TestCase(false, false, true, false)]
         [TestCase(true, true, true, false)]
@@ -2268,7 +2271,10 @@ namespace MudBlazor.UnitTests.Components
             {
                 await editor.TriggerEventAsync("onfocusin", new FocusEventArgs());
                 selected.Should().Be(second);
-                await editor.ClickAsync();
+                var renderCount = comp.RenderCount;
+                await comp.FindAll("tbody td input")[1].TriggerEventAsync("onfocusin", new FocusEventArgs());
+                comp.RenderCount.Should().Be(renderCount);
+                await comp.FindAll("tbody td input")[1].ClickAsync();
                 selected.Should().Be(second);
             }
             else

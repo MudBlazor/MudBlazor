@@ -2713,7 +2713,7 @@ namespace MudBlazor
                     : default;
 
         private EventCallback<FocusEventArgs> CreateCellEditFocusCallback(T item)
-            => EventCallback.Factory.Create<FocusEventArgs>(this, _ => SelectCellEditRowAsync(item));
+            => EventCallback.Factory.Create<FocusEventArgs>(this, this.AsNonRenderingEventHandler<FocusEventArgs>(_ => SelectCellEditRowAsync(item)));
 
         private Task SelectCellEditRowAsync(T item)
             => Selection.Contains(item) ? Task.CompletedTask : SetSelectedItemAsync(true, item);
