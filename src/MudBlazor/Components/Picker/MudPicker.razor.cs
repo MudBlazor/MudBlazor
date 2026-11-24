@@ -5,6 +5,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
+using MudBlazor.State;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -25,6 +26,14 @@ namespace MudBlazor
         private bool _keyInterceptorObserving;
 
         internal string ElementId { get; } = Identifier.Create("picker");
+
+        protected MudPicker()
+        {
+            using var registerScope = CreateRegisterScope();
+            registerScope.RegisterParameter<bool>(nameof(Editable))
+                .WithParameter(() => Editable)
+                .WithChangeHandler(OnEditableChangedAsync);
+        }
 
         /// <summary>
         /// The element that names the popup: an explicit <see cref="PopupAriaLabelledBy"/>, else nothing.
@@ -327,7 +336,7 @@ namespace MudBlazor
         /// <remarks>
         /// Defaults to <c>false</c>.
         /// </remarks>
-        [Parameter]
+        [Parameter, ParameterState(ParameterUsage = ParameterUsageOptions.None)]
         [Category(CategoryTypes.FormComponent.Behavior)]
         public bool Editable { get; set; }
 
@@ -716,7 +725,7 @@ namespace MudBlazor
             var options = new KeyInterceptorOptions(
                 "mud-input-slot",
                 [
-                    new(" ", preventDown: "key+none"),
+                    GetSpaceKeyOptions(),
                     new("ArrowUp", preventDown: "key+none"),
                     new("ArrowDown", preventDown: "key+none"),
                     new("Enter", preventDown: "key+none"),
@@ -730,6 +739,16 @@ namespace MudBlazor
                     .OnKeyDownLiteral("Backspace", HandleBackspaceAsync)
                     .OnKeyDownLiteral("Escape", () => CloseAsync(false))
                     .OnKeyDownLiteral("Tab", () => CloseAsync(Open && PickerActions == null))));
+        }
+
+        private KeyOptions GetSpaceKeyOptions() => new(" ", preventDown: Editable ? "none" : "key+none");
+
+        private async Task OnEditableChangedAsync()
+        {
+            if (_keyInterceptorObserving)
+            {
+                await KeyInterceptorService.UpdateKeyAsync(ElementId, GetSpaceKeyOptions());
+            }
         }
 
         private bool CanHandleKeys() => !GetDisabledState() && !GetReadOnlyState();

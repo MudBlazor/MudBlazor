@@ -1,0 +1,13 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<SelectWrapperExample_FruitSelect @bind-Value="_fruit" Label="Fruit" Margin="@Margin.Dense" HelperText="Label, Margin and HelperText reach MudSelect as parameters">
+    <MudSelectItem T="string" Value="@("Apple")" />
+    <MudSelectItem T="string" Value="@("Banana")" />
+    <MudSelectItem T="string" Value="@("Cherry")" />
+</SelectWrapperExample_FruitSelect>
+
+<MudText Class="mt-4">Selected fruit: @(_fruit ?? "none")</MudText>
+
+@code {
+    private string _fruit;
+}

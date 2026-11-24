@@ -555,6 +555,43 @@ namespace MudBlazor.UnitTests.Charts
         }
 
         /// <summary>
+        /// A hover point has a fill only while it is hovered, set to its series color.
+        /// </summary>
+        [Test]
+        public async Task TimeSeriesChartHoverFillsOnlyTheHoveredPoint()
+        {
+            SetupBBoxInterop();
+            var time = new DateTime(2000, 1, 1);
+            var palette = new[] { "#2979FF" };
+
+            var comp = Context.Render<MudChart<double>>(parameters => parameters
+                .Add(p => p.ChartType, ChartType.Timeseries)
+                .Add(p => p.ChartSeries, BuildSeries(time, count: 4))
+                .Add(p => p.ChartOptions, new TimeSeriesChartOptions
+                {
+                    TimeLabelSpacing = TimeSpan.FromHours(1),
+                    ChartPalette = palette,
+                    ShowToolTips = true,
+                }));
+
+            // Browsers parse SVG presentation attributes as CSS, and Firefox logs every empty fill as a parse error in the console.
+            // Leaving the attribute out keeps the same default fill, which "none" would not: the circle's inside would stop catching the mouse.
+            comp.FindAll("circle.mud-chart-hover-point").Should().HaveCount(4)
+                .And.OnlyContain(x => !x.HasAttribute("fill"), "no point is hovered yet");
+
+            await comp.FindAll("circle.mud-chart-hover-point")[1].MouseOverAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            var points = comp.FindAll("circle.mud-chart-hover-point");
+            points[1].GetAttribute("fill").Should().Be(palette[0], "the hovered point is filled with its series color");
+            points.Where((_, i) => i != 1).Should().OnlyContain(x => !x.HasAttribute("fill"), "only the hovered point gets a fill");
+
+            await points[1].MouseOutAsync(new Microsoft.AspNetCore.Components.Web.MouseEventArgs());
+
+            comp.FindAll("circle.mud-chart-hover-point").Should()
+                .OnlyContain(x => !x.HasAttribute("fill"), "mousing out takes the fill off again rather than leaving it empty");
+        }
+
+        /// <summary>
         /// YAxisTicks = 0 picks a round step that fits the values.
         /// </summary>
         [Test]

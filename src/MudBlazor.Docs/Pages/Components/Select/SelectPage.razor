@@ -168,6 +168,20 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Wrapping Select in your own component">
+                <Description>
+                    To forward parameters such as <CodeInline>Label</CodeInline> or <CodeInline>Margin</CodeInline> from your own component, capture them with <CodeInline>CaptureUnmatchedValues</CodeInline> and pass them on with <CodeInline>@("@attributes")</CodeInline>.
+                    Blazor then sets the matching <CodeInline>MudSelect</CodeInline> parameters and puts the rest into <CodeInline>UserAttributes</CodeInline>.
+                    Passing the dictionary as <CodeInline>UserAttributes</CodeInline> instead doesn't work, because <CodeInline>UserAttributes</CodeInline> is for HTML attributes, so a <CodeInline>Label</CodeInline> entry doesn't set the label.
+                    Pass enum values as expressions, such as <CodeInline>Margin="@("@Margin.Dense")"</CodeInline>, because an attribute your component doesn't declare is otherwise passed as a string.
+                </Description>
+            </SectionHeader>
+            <SectionContent Codes="@(new[] { new CodeFile("Page.razor", nameof(SelectWrapperExample)), new CodeFile("FruitSelect.razor", nameof(SelectWrapperExample_FruitSelect)) })">
+                <SelectWrapperExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Keyboard Navigation">
                 <Description>
                     <MudText>MudSelect supports keyboard navigation.</MudText>

@@ -414,12 +414,15 @@
                  var showEditMode = column.Editable && !ReadOnly &&
                                     (EditMode == DataGridEditMode.Cell || isInlineEditing) &&
                                     hasEditableContent;
-                 var cellClickCallback = GetCellClickCallback(item, rowIndex, colIndex, column);
+                 var selectOnFocus = showEditMode && EditMode == DataGridEditMode.Cell && SelectOnCellEditFocus && SelectOnRowClick && !MultiSelection;
+                 var cellClickCallback = GetCellClickCallback(item, rowIndex, colIndex, column, selectOnFocus);
+                 var cellFocusCallback = selectOnFocus ? CreateCellEditFocusCallback(item) : default;
                  var cellContextMenuClickCallback = GetCellContextMenuClickCallback(item, rowIndex, colIndex, column);
              }
              <td data-label="@column.Title" class="@cell.ComputedClass" style="@cell.ComputedStyle"
                  @onclick="cellClickCallback"
-                 @onclick:stopPropagation="@CellClick.HasDelegate"
+                 @onclick:stopPropagation="@(CellClick.HasDelegate || selectOnFocus)"
+                 @onfocusin="cellFocusCallback"
                  @oncontextmenu="cellContextMenuClickCallback"
                  @oncontextmenu:stopPropagation="@CellContextMenuClick.HasDelegate"
                  @oncontextmenu:preventDefault="@CellContextMenuClick.HasDelegate">

@@ -159,12 +159,19 @@ namespace MudBlazor.Docs.Components
 
                 ((IMudStateHasChanged)_contentNavigation).StateHasChanged();
 
-                if (_anchor != null)
+                if (_anchor != null && sectionLinkInfo.Id == _anchor)
                 {
-                    if (sectionLinkInfo.Id == _anchor)
+                    _anchor = null;
+                    var uri = new Uri(NavigationManager.Uri);
+
+                    // Nested sections join the render queue after later top-level sections, so sections above the anchor can still render and push it down.
+                    // Scrolling before the queue drains leaves the anchor far below the viewport.
+                    await RenderQueue.WaitUntilEmpty();
+
+                    // Clearing the queue on navigation also completes the wait, so skip the scroll if the user has left the page.
+                    if (new Uri(NavigationManager.Uri).AbsolutePath == uri.AbsolutePath)
                     {
-                        await _contentNavigation.ScrollToSection(new Uri(NavigationManager.Uri));
-                        _anchor = null;
+                        await _contentNavigation.ScrollToSection(uri);
                     }
                 }
             }
