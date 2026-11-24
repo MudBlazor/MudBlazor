@@ -71,6 +71,14 @@
       text-overflow: ellipsis;
     }
 
+    // Item content is a div, so the string is that flex item's min-content size and a flex parent grows to fit it.
+    // An input's min-content size ignores its value, which is why the same text only overflows on the content path.
+    // A zero basis and width drop the text from the min-content size, and flex-grow gives the ellipsis above a width to clip.
+    & div.mud-input-slot {
+      flex: 1 1 0;
+      width: 0;
+    }
+
     & .mud-input-adornment-end {
       margin-left: 0;
     }
