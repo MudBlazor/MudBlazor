@@ -3600,6 +3600,52 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A virtualized grouped table keeps rendering repeated items within the same group
+        /// when the rows move, without duplicating items across groups.
+        /// </summary>
+        [Test]
+        public async Task TableVirtualize_GroupedTableRendersRepeatedItems()
+        {
+            RenderFragment<string> rowTemplate = item => builder =>
+            {
+                builder.OpenComponent<MudTd>(0);
+                builder.AddComponentParameter(
+                    1,
+                    nameof(MudTd.ChildContent),
+                    (RenderFragment)(cell => cell.AddContent(0, item)));
+                builder.CloseComponent();
+            };
+
+            var groupBy = new TableGroupDefinition<string>
+            {
+                GroupName = "First letter",
+                Selector = item => item[0],
+                Expandable = true,
+                IsInitiallyExpanded = true
+            };
+
+            var comp = Context.Render<MudTable<string>>(p => p
+                .Add(x => x.Items, new List<string> { "Lisbon", "Oslo", "Lisbon" })
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.GroupBy, groupBy)
+                .Add(x => x.RowTemplate, rowTemplate));
+
+            comp.FindAll("tbody tr.mud-table-row")
+                .Select(row => row.TextContent.Trim())
+                .Should()
+                .BeEquivalentTo(["Lisbon", "Lisbon", "Oslo"]);
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(
+                x => x.Items,
+                new List<string> { "Lyon", "Lisbon", "Oslo", "Lisbon" }));
+
+            comp.FindAll("tbody tr.mud-table-row")
+                .Select(row => row.TextContent.Trim())
+                .Should()
+                .BeEquivalentTo(["Lyon", "Lisbon", "Lisbon", "Oslo"]);
+        }
+
+        /// <summary>
         /// Using a virtualized table with multiselection must preserve checked items
         /// </summary>
         [Test]
