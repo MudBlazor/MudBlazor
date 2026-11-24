@@ -42,6 +42,20 @@ function styleOf(element: Element) {
     return (element as HTMLElement).style as unknown as Record<string, string>;
 }
 
+// Returns the element whose padding box an absolutely positioned popover's left and top resolve against, or null for the initial containing block.
+// The body is reported as offsetParent when no ancestor is positioned, and treating that fallback as the containing block would apply the page scroll twice.
+// Ancestors that form a containing block through transform, filter or contain are not reported by offsetParent and are not handled.
+function getContainingBlock(node: HTMLElement): Element | null {
+    const offsetParent = node.offsetParent;
+    if (!offsetParent) {
+        return null;
+    }
+    if (offsetParent === document.body && window.getComputedStyle(offsetParent).position === 'static') {
+        return null;
+    }
+    return offsetParent;
+}
+
 // The default parameter keeps the function's arity at 0, which apiSurface.test.ts pins.
 function countProviders(providerId: string | undefined = undefined): number {
     if (providerId) {
@@ -726,15 +740,29 @@ export const mudpopoverHelper = {
             if (isPositionFixed) {
                 styleOf(popoverContentNode)['position'] = 'fixed';
             }
-            let scrollX = 0;
-            let scrollY = 0;
+            // Placement works in viewport coordinates, so only this final write converts them to the containing block's.
+            // The viewport part is scaled by the body zoom, while the block's border and scroll are already in its own CSS pixels.
+            let originX = 0;
+            let originY = 0;
+            let blockX = 0;
+            let blockY = 0;
             if (!isPositionFixed && !classList.contains('mud-popover-fixed')) {
-                scrollX = window.scrollX;
-                scrollY = window.scrollY;
+                const containingBlock = getContainingBlock(popoverContentNode);
+                if (containingBlock) {
+                    const containingRect = containingBlock.getBoundingClientRect();
+                    originX = containingRect.left;
+                    originY = containingRect.top;
+                    blockX = containingBlock.scrollLeft - containingBlock.clientLeft;
+                    blockY = containingBlock.scrollTop - containingBlock.clientTop;
+                }
+                else {
+                    originX = -window.scrollX;
+                    originY = -window.scrollY;
+                }
             }
 
-            styleOf(popoverContentNode)['left'] = ((left + offsetX + scrollX) / bodyZoom) + 'px';
-            styleOf(popoverContentNode)['top'] = ((top + offsetY + scrollY) / bodyZoom) + 'px';
+            styleOf(popoverContentNode)['left'] = ((left + offsetX - originX) / bodyZoom + blockX) + 'px';
+            styleOf(popoverContentNode)['top'] = ((top + offsetY - originY) / bodyZoom + blockY) + 'px';
 
             // update z-index by sending the calling popover to update z-index,
             // and the parentnode of the calling popover (not content parent)
