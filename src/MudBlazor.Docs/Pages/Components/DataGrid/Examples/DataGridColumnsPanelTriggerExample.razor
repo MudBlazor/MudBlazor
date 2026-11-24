@@ -1,0 +1,25 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudDataGrid T="Employee" @ref="_grid" Items="@_employees" Hideable="true" ColumnsPanelReordering="true">
+    <ToolBarContent>
+        <MudButton StartIcon="@Icons.Material.Filled.ViewColumn" Variant="Variant.Outlined" OnClick="@(args => _grid.ShowColumnsPanel(args))">Columns</MudButton>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Position" />
+        <PropertyColumn Property="x => x.YearsEmployed" Title="Years Employed" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    public record Employee(string Name, string Position, int YearsEmployed);
+
+    private MudDataGrid<Employee> _grid;
+
+    private readonly List<Employee> _employees = new()
+    {
+        new Employee("Sam", "CPA", 23),
+        new Employee("Alicia", "Product Manager", 11),
+        new Employee("Ira", "Developer", 4),
+    };
+}

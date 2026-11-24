@@ -558,6 +558,19 @@
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnsPanelExample)" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridColumnsPanelExample />
             </SectionContent>
+
+            <DocsPageSection>
+                <SectionHeader Title="Custom Trigger">
+                    <Description>
+                        <CodeInline>ShowMenuIcon="true"</CodeInline> adds a settings menu to the toolbar, with a Columns item that opens the panel.
+                        To open the panel from your own control instead, such as a button at the start of the toolbar, leave <CodeInline>ShowMenuIcon</CodeInline> off and call <CodeInline>ShowColumnsPanel</CodeInline>.
+                        Pass it the click's <CodeInline>MouseEventArgs</CodeInline> to open the panel where the user clicked.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridColumnsPanelTriggerExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridColumnsPanelTriggerExample />
+                </SectionContent>
+            </DocsPageSection>
         </DocsPageSection>
 
         <DocsPageSection>
