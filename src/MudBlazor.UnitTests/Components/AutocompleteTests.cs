@@ -1741,6 +1741,44 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Clicking the footer of an open autocomplete keeps its pending search (#11993).
+        /// </summary>
+        [Test]
+        [CancelAfter(5000)]
+        public async Task Autocomplete_ClickAfterItemsDuringSearch_KeepsSearch()
+        {
+            var (started, completion, searchFunc) = CreateControlledSearch();
+            var footerClicked = false;
+            var provider = Context.Render<MudPopoverProvider>();
+            var comp = Context.Render<MudAutocomplete<string>>(parameters => parameters
+                .Add(x => x.DebounceInterval, 0)
+                .Add(x => x.SearchFunc, (text, token) => text == "New Y"
+                    ? searchFunc(text, token)
+                    : Task.FromResult<IEnumerable<string>>(["New Jersey", "New York"]))
+                .Add(x => x.AfterItemsTemplate, builder =>
+                {
+                    builder.OpenComponent<MudButton>(0);
+                    builder.AddComponentParameter(1, nameof(MudButton.OnClick), EventCallback.Factory.Create<MouseEventArgs>(this, () => footerClicked = true));
+                    builder.CloseComponent();
+                }));
+
+            await comp.Find("input").FocusAsync();
+            comp.Instance.Open.Should().BeTrue();
+
+            var input = comp.Find("input").InputAsync("New Y");
+            await started.Task.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            // Clicking the footer blurs the input before the click reaches the button.
+            await comp.Find("input").BlurAsync();
+            await provider.Find(".mud-autocomplete-after-items button").ClickAsync();
+            completion.SetResult(["New York"]);
+            await input;
+
+            footerClicked.Should().BeTrue();
+            provider.FindAll(".mud-list-item").Select(item => item.TextContent.Trim()).Should().Equal("New York");
+            comp.Instance.Open.Should().BeTrue();
+        }
+
+        /// <summary>
         /// Escape removes the progress indicator of the search it abandons.
         /// </summary>
         [Test]

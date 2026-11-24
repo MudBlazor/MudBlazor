@@ -1304,9 +1304,15 @@ namespace MudBlazor
         {
             _isFocused = false;
             _handleNextFocus = false;
-            CancelDebounce();
-            if (_opening)
-                AbandonSearch();
+
+            // A pointer search can start before focus and open the menu after the user leaves.
+            // With an open menu, focus can move into the popover; the overlay or Tab handles leaving it.
+            if (!Open)
+            {
+                CancelDebounce();
+                if (_opening)
+                    AbandonSearch();
+            }
 
             // When Immediate is enabled, then the CoerceValue is set by TextChanged.
             // So only coerce the value on blur when Immediate is disabled, then fall through to the same validation path.
