@@ -63,5 +63,18 @@
             </SectionContent>
         </DocsPageSection>
 
+        <DocsPageSection>
+            <SectionHeader Title="Layout">
+                <Description>
+                    The tooltip wraps its child content in an <CodeInline>inline-block</CodeInline> element, so content such as a paper in a <MudLink Href="/components/grid">Grid</MudLink> item shrinks to its own width.
+                    Set <CodeInline>Inline="false"</CodeInline> to make the wrapper a block element that fills the space it is given, as the second item does.
+                    <CodeInline>RootClass</CodeInline> and <CodeInline>RootStyle</CodeInline> style that wrapper, while <CodeInline>Class</CodeInline> and <CodeInline>Style</CodeInline> style the tooltip popup.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TooltipLayoutExample)" FullWidth="true">
+                <TooltipLayoutExample />
+            </SectionContent>
+        </DocsPageSection>
+
     </DocsPageContent>
 </DocsPage>
