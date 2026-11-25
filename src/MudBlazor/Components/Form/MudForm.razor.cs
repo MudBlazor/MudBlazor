@@ -51,6 +51,8 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// Defaults to <c>true</c>.  When this value changes, <see cref="IsValidChanged"/> occurs.
+        /// A required input without a value makes this <c>false</c> before the input shows an error.
+        /// Call <see cref="ValidateAsync"/> before submitting to validate every input and show all errors.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Form.ValidationResult)]
