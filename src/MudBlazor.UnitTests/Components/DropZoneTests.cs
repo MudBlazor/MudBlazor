@@ -1069,6 +1069,36 @@ namespace MudBlazor.UnitTests.Components
             comp.Instance.IndexHistory.Distinct().Should().ContainSingle().And.Contain(1);
         }
 
+        /// <summary>Repeated hover events at the same drop position leave the zone and item render counts unchanged (#14293).</summary>
+        [Test]
+        public async Task DropZone_Reorder_SamePositionSkipsHoverRenders()
+        {
+            var comp = Context.Render<DropZoneReorderTest>();
+            var firstZone = comp.Find(".dropzone-1");
+            await firstZone.Children[2].DragStartAsync(new DragEventArgs());
+
+            var secondZone = comp.Find(".dropzone-2");
+            var target = secondZone.Children[3];
+            await secondZone.DragEnterAsync(new DragEventArgs());
+            await target.DragEnterAsync(new DragEventArgs());
+            var zone = comp.FindComponents<MudDropZone<DropZoneReorderTest.DropItem>>()
+                .Single(x => x.Instance.Identifier == "2");
+            var item = zone.FindComponents<MudDynamicDropItem<DropZoneReorderTest.DropItem>>()
+                .Single(x => x.Instance.Item?.Name == "Item 6");
+            var zoneRenders = zone.RenderCount;
+            var itemRenders = item.RenderCount;
+
+            for (var hover = 0; hover < 10; hover++)
+            {
+                await secondZone.DragEnterAsync(new DragEventArgs());
+                await target.DragEnterAsync(new DragEventArgs());
+                await secondZone.DragLeaveAsync(new DragEventArgs());
+            }
+
+            (zone.RenderCount - zoneRenders, item.RenderCount - itemRenders).Should().Be((0, 0));
+            secondZone.Children[3].ClassList.Should().Contain("mud-dropitem-placeholder").And.NotContain("d-none");
+        }
+
         [Test]
         public async Task DropZone_Reorder_MoveBetweenZones()
         {
