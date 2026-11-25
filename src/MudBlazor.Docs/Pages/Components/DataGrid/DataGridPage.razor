@@ -440,6 +440,9 @@
                     The <CodeInline>&lt;MudDataGrid></CodeInline> allows you to make a column stick to the left or right. Setting the <CodeInline>StickyLeft</CodeInline> or <CodeInline>StickyRight</CodeInline> properties
                     to <CodeInline>true</CodeInline> will make those columns "sticky". You must turn on <CodeInline>HorizontalScrollbar</CodeInline> to see the columns stick to either side.
                     <br><br>
+                    <CodeInline>PropertyColumn</CodeInline>, <CodeInline>TemplateColumn</CodeInline> and <CodeInline>SelectColumn</CodeInline> all support these properties.
+                    For example, <CodeInline>&lt;SelectColumn StickyLeft="true" /></CodeInline> keeps the selection checkboxes visible while the grid scrolls.
+                    <br><br>
                     There are a couple of things to keep in mind with sticky columns. First, if there are not enough columns and data to force the data grid to scroll, you will not see
                     the columns stick, and that is by design and simply how sticky works in CSS. Secondly, there is nothing stopping you from making multiple columns sticky, but it will
                     not have the effect you presumably intend. Instead, each column will be sticky when it reached the left or right side of the data grid and will overlap the sticky column
