@@ -18,6 +18,7 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-input-input-control")
                 .AddClass($"mud-input-sizing-{Sizing.ToStringFast(true)}")
+                .AddClass("mud-input-control-width-auto", !FullWidth)
                 .AddClass(Class)
                 .Build();
 
