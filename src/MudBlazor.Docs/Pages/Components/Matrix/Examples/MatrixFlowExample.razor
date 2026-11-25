@@ -1,0 +1,47 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudSlider @bind-Value="_itemCount" Min="1" Max="30" Color="Color.Primary" Class="mb-4">Item Count: @_itemCount</MudSlider>
+
+<MudToggleGroup Class="mud-width-full mb-3" T="bool" @bind-Value="_horizantalFlow" Color="Color.Primary" CheckMark="true" SelectionMode="SelectionMode.SingleSelection">
+    <MudToggleItem Value="false" Text="Vertical Flow" />
+    <MudToggleItem Value="true" Text="Horizantal Flow" />
+</MudToggleGroup>
+
+<MudMatrix ExplicitColumns="@(_horizantalFlow ? new() : _explicitMatrix)"
+           ImplicitColumns="@(_horizantalFlow ? _implicitMatrix : new())"
+           ExplicitRows="@(_horizantalFlow ? _explicitMatrix : new())"
+           ImplicitRows="@(_horizantalFlow ? new() : _implicitMatrix)"
+           HorizontalFlow="_horizantalFlow"
+           Class="overflow-auto"
+           Style="height: 500px;">
+
+    @for (int i = 0; i < _itemCount; i++)
+    {
+        int index = i + 1;
+        <MudMatrixItem>
+            <MudPaper Outlined="true" Class="mud-width-full mud-height-full d-flex align-center justify-center">
+                <MudText Typo="Typo.caption">@index</MudText>
+            </MudPaper>
+        </MudMatrixItem>
+    }
+</MudMatrix>
+
+    @code {
+    int _itemCount = 9;
+
+    bool _horizantalFlow = false;
+
+    @* 
+        TIP: if Gap is the gap between items on the axis you want to scroll in pixels
+        and N is the amount of rows or columns to appear on the screen before scrolling:
+
+        ExplicitMatrix="ExplicitMatrix.Pattern(N, Units.Fr())"
+        ImplicitMatrix="ImplicitMatrix.Pattern(Units.Pct(100.0 / N) - Units.Px((int)Math.Ceiling((Gap * (N - 1.0)) / N)))"
+
+        In this case, I would like 4 columns or rows to appear before scrolling. and the default gap is 24px.
+        N = 4, Gap = 24:
+    *@
+
+    ExplicitMatrix _explicitMatrix = ExplicitMatrix.Pattern(4, Units.Fr());
+    ImplicitMatrix _implicitMatrix = ImplicitMatrix.Pattern(Units.Pct(100.0 / 4) - Units.Px((int)Math.Ceiling((24 * (4 - 1.0)) / 4)));
+}
