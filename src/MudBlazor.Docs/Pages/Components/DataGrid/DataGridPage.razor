@@ -31,6 +31,9 @@
                     You would use TemplateColumns when you want to display a column without linking it directly to a property in the data source. For example, if you
                     wanted to show a column that has action buttons. TemplateColumn cannot infer things such as Title and SortBy like the PropertyColumn.
                     <br><br>
+                    A TemplateColumn has no property to sort or filter by, so its <CodeInline>Sortable</CodeInline> and <CodeInline>Filterable</CodeInline> default to <CodeInline>false</CodeInline> and it shows no filter UI, including its <CodeInline>FilterTemplate</CodeInline>.
+                    To show custom markup for a value that should stay sortable and filterable, use a PropertyColumn with a <CodeInline>CellTemplate</CodeInline> instead.
+                    <br><br>
                     You can pass a format string in the <CodeInline>Format</CodeInline> parameter on PropertyColumn to format the value for the cells.
                 </Description>
             </SectionHeader>
