@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
-using MudBlazor.Utilities;
 using static System.String;
 
 namespace MudBlazor

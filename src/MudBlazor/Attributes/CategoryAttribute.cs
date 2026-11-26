@@ -1,7 +1,5 @@
-﻿using MudBlazor.Charts;
-namespace MudBlazor
+﻿namespace MudBlazor
 {
-
     /// <summary>
     /// Groups a MudBlazor component parameter under a named category on its API documentation page.
     /// </summary>

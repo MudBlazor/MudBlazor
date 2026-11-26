@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace MudBlazor
+﻿namespace MudBlazor
 {
     /// <summary>
     /// Base class for chart shapes rendered as SVG paths, such as <see cref="SvgCircle" />, <see cref="SvgPetal" />, and <see cref="SvgPathPoint" />.

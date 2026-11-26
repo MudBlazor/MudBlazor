@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace MudBlazor.Interfaces
+﻿namespace MudBlazor.Interfaces
 {
     /// <summary>
     /// Coordinates a group of form fields and runs validation across them.

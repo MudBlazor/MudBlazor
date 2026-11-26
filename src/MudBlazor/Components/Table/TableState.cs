@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-
-namespace MudBlazor
+﻿namespace MudBlazor
 {
-
     /// <summary>
     /// The state of a <see cref="MudTable{T}"/> when requesting data via <see cref="MudTable{T}.ServerData"/>.
     /// </summary>

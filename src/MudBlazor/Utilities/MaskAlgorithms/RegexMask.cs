@@ -302,7 +302,7 @@ public class RegexMask : BaseMask
         const string HexPair = "[0-9A-Fa-f]{0,2}";
         var delimiters = separator.ToString();
         // The separator comes from the caller, so it has to be escaped before it goes into the pattern.
-        var escapedSeparator = System.Text.RegularExpressions.Regex.Escape(delimiters);
+        var escapedSeparator = Regex.Escape(delimiters);
         var regex = $"^{HexPair}(?:{escapedSeparator}{HexPair}){{0,5}}{WhiteSpaceFilter}$";
         var mask = string.Join(delimiters, Enumerable.Repeat(new string(maskChar, 2), 6));
         var regexMask = new RegexMask(regex, mask) { DelimiterCharacters = delimiters };

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MudBlazor.Extensions
+﻿namespace MudBlazor.Extensions
 {
     public static class KeepInRangeExtensions
     {

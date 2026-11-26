@@ -2,7 +2,6 @@
 // Copyright (c) 2020 - Adaptations by Jonny Larsson and Meinrad Recheis
 
 using System.Collections;
-using System.Collections.Generic;
 
 namespace MudBlazor
 {

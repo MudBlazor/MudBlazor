@@ -1,8 +1,6 @@
-﻿using System;
-using Microsoft.AspNetCore.Components.Web;
+﻿using Microsoft.AspNetCore.Components.Web;
 
 namespace MudBlazor;
-
 
 /// <summary>
 /// The information passed during a <see cref="MudTable{T}"/> row click event.
