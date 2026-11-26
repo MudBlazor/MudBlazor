@@ -1388,6 +1388,44 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Changes an awaiting ItemDropped handler makes after its await, including to an item in an uninvolved third zone, are shown in every zone (#14293).
+        /// </summary>
+        [Test]
+        public async Task DropZone_Drop_ShowsAwaitedItemDroppedChangesInAllZones()
+        {
+            var resetItem = Context.JSInterop.SetupVoid("mudDragAndDrop.resetItem", _ => true);
+            var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var items = new List<RenamedDropItem> { new() { Name = "Draft", Zone = "a" }, new() { Name = "Kept", Zone = "a" }, new() { Name = "Other", Zone = "b" }, new() { Name = "Third", Zone = "c" } };
+
+            var comp = Context.Render<MudDropContainer<RenamedDropItem>>(p => p
+                .Add(x => x.Items, items)
+                .Add(x => x.ItemsSelector, (item, zone) => item.Zone == zone)
+                .Add(x => x.ItemRenderer, item => $"<span class=\"name\">{item.Name}</span>")
+                .Add(x => x.ItemDropped, async info =>
+                {
+                    await gate.Task;
+                    info.Item.Zone = info.DropzoneIdentifier;
+                    info.Item.Name += " (moved)";
+                    items[1].Name += " (origin)";
+                    items[3].Name += " (uninvolved)";
+                })
+                .AddChildContent<MudDropZone<RenamedDropItem>>(z => z.Add(x => x.Identifier, "a").Add(x => x.Class, "zone-a"))
+                .AddChildContent<MudDropZone<RenamedDropItem>>(z => z.Add(x => x.Identifier, "b").Add(x => x.Class, "zone-b"))
+                .AddChildContent<MudDropZone<RenamedDropItem>>(z => z.Add(x => x.Identifier, "c").Add(x => x.Class, "zone-c")));
+
+            await comp.Find(".zone-a .mud-drop-item").DragStartAsync(new DragEventArgs());
+            await comp.Find(".zone-b").DragEnterAsync(new DragEventArgs());
+            var drop = comp.Find(".zone-b").DropAsync(new DragEventArgs());
+            await comp.InvokeAsync(resetItem.SetVoidResult);
+            await comp.InvokeAsync(() => gate.SetResult());
+            await drop;
+
+            comp.FindAll(".zone-a .name").Select(x => x.TextContent).Should().Equal("Kept (origin)");
+            comp.FindAll(".zone-b .name").Select(x => x.TextContent).Should().Equal("Draft (moved)", "Other");
+            comp.FindAll(".zone-c .name").Select(x => x.TextContent).Should().Equal("Third (uninvolved)");
+        }
+
+        /// <summary>
         /// Reordering within a zone places the item correctly in both directions when JS interop completes asynchronously (#14293).
         /// </summary>
         [TestCase(1, 2)]
