@@ -14,55 +14,5 @@ namespace MudBlazor.Docs.Models
                 return null;
             return (string)field.GetValue(null);
         }
-
-        // used for webapi examples
-        public const string Element = @"using System.Collections.Generic;
-using System.Text.Json.Serialization;
-
-namespace MudBlazor.Examples.Data.Models
-{
-    public class Element
-    {
-        public string Group { get; set; }
-        public int Position { get; set; }
-        public string Name { get; set; }
-        public int Number { get; set; }
-
-        [JsonPropertyName(""small"")]
-        public string Sign { get; set; }
-        public double Molar { get; set; }
-        public IList<int> Electrons { get; set; }
-
-        public override string ToString()
-        {
-            return $""{Sign} - {Name}"";
-        }
-    }
-}";
-
-        public const string Server = @"using System;
-
-namespace MudBlazor.Examples.Data.Models
-{
-    public class Server
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Location { get; set; }
-        public string IpAddress { get; set; }
-    }
-}";
-
-        public const string Company = @"namespace MudBlazor.Examples.Data.Models
-{
-    public class Company
-    {
-        public string Department { get; set; }
-        public string Team { get; set; }
-        public string Role { get; set; }
-        public string Name { get; set; }
-        public int Score { get; set; }
-    }
-}";
     }
 }

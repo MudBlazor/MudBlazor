@@ -102,7 +102,7 @@
                     Set <CodeInline>Editable</CodeInline> to <CodeInline>false</CodeInline> to disable editing for a column. Set <CodeInline>Required</CodeInline> to <CodeInline>false</CodeInline> to make a field optional.
                     <br /><br />
 
-                    Editable cells use a matching input by default. Use an <CodeInline Tag>EditTemplate</CodeInline> for custom editors. In cell mode, standard columns commit automatically, but controls inside an <CodeInline Tag>EditTemplate</CodeInline> must handle commits in their value-changed callback.
+                    Editable cells use a matching input by default. Use an <CodeInline Tag>EditTemplate</CodeInline> for custom editors. In cell mode, standard columns commit automatically, but controls inside an <CodeInline Tag>EditTemplate</CodeInline> must handle commits in their value-changed callback, as the Position select in this example does.
                     <br /><br />
 
                     To add and edit a new row programmatically, call <CodeInline>SetEditingItemAsync</CodeInline> with a new <CodeInline>T</CodeInline> instance in form mode. In cell mode, add the new item directly to <CodeInline>Items</CodeInline>.
