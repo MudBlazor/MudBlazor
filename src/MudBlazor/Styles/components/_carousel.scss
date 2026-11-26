@@ -24,6 +24,15 @@
   }
 }
 
+.mud-carousel-control {
+  z-index: 3;
+  opacity: 0.75;
+}
+
+.mud-carousel-controls {
+  z-index: 3;
+}
+
 .mud-carousel-item {
   position: absolute;
   left: 0px;

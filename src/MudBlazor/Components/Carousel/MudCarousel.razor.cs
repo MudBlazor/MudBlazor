@@ -35,11 +35,21 @@ namespace MudBlazor
             .AddClass(BulletsClass)
             .Build();
 
+        protected string NavigationButtonControlClassName => new CssBuilder(NavigationButtonsClassName)
+            .AddClass("mud-carousel-control")
+            .Build();
+
+        protected string BulletButtonControlClassName => new CssBuilder(BulletsButtonsClassName)
+            .AddClass("mud-carousel-control")
+            .Build();
+
         protected string CustomNavigationButtonsClassName => new CssBuilder("mud-carousel-custom-button")
+            .AddClass("mud-carousel-controls")
             .AddClass(NavigationButtonsClassName)
             .Build();
 
         protected string CustomBulletsButtonsClassName => new CssBuilder("mud-carousel-custom-button")
+            .AddClass("mud-carousel-controls")
             .AddClass(BulletsButtonsClassName)
             .Build();
 

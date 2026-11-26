@@ -177,7 +177,29 @@ namespace MudBlazor.UnitTests.Components
                 control.HasAttribute("tabindex").Should().BeFalse();
                 control.GetAttribute("aria-label").Should().NotBeNullOrEmpty();
                 control.ClassList.Should().Contain("mud-carousel-custom-button");
+                control.ClassList.Should().Contain("mud-carousel-controls");
+                control.GetAttribute("style").Should().BeNull();
             }
+        }
+
+        /// <summary>
+        /// Carousel controls are styled with CSS classes instead of inline styles, so a strict Content Security Policy can be used (#4529).
+        /// </summary>
+        [Test]
+        public void CarouselControlsUseCssClassesInsteadOfInlineStyles()
+        {
+            var comp = Context.Render<CarouselTest>();
+
+            var buttons = comp.FindAll("button.mud-icon-button");
+            buttons.Count.Should().Be(5); // left + right + 3 bullets
+            foreach (var button in buttons)
+            {
+                button.ClassList.Should().Contain("mud-carousel-control");
+                button.GetAttribute("style").Should().BeNull();
+            }
+
+            var controls = comp.Find("div.mud-carousel-controls");
+            controls.GetAttribute("style").Should().BeNull();
         }
 
         /// <summary>
