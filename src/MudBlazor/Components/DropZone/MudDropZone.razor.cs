@@ -34,6 +34,10 @@ namespace MudBlazor
 
         private readonly Dictionary<T, int> _indices = new();
 
+        // The handlers are cached because AsNonRenderingEventHandler allocates a receiver on every call.
+        private Func<Task>? _dropHandler;
+        private Action? _dragEndedHandler;
+
         [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
 
         [CascadingParameter]
@@ -207,6 +211,13 @@ namespace MudBlazor
             var items = Container?.Items.Where(predicate).OrderBy(GetItemIndex).ToArray() ?? Array.Empty<T>();
             return items;
         }
+
+        // Every drop ends in TransactionEnded, which renders all zones, so the drop handler's own renders at each await only repeat that work.
+        private Func<Task> DropHandler => _dropHandler ??= this.AsNonRenderingEventHandler(HandleDrop);
+
+        // An item reports the end of its drag from the commit or cancel callback, before TransactionEnded renders every zone.
+        // The dragend that follows a drop finds the dragging class already cleared, so it has nothing to render.
+        private EventCallback<T> DragEndedCallback => EventCallback.Factory.Create<T>(this, _dragEndedHandler ??= this.AsNonRenderingEventHandler(FinishedDragOperation));
 
         private RenderFragment<T>? GetItemTemplate() => ItemRenderer ?? Container?.ItemRenderer;
 
@@ -463,6 +474,9 @@ namespace MudBlazor
         }
 
         private void FinishedDragOperation() => _dragInProgress = false;
+
+        // This stays a rendering callback because a touch drag starts its transaction after a JS interop await.
+        // That TransactionStarted render has already run by then, so this render is what applies the dragging class.
         private void DragOperationStarted() => _dragInProgress = true;
 
         #endregion

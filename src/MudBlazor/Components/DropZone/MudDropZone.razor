@@ -6,7 +6,7 @@
 <div class="@Classname" style="@Style"
      id="@_id"
      identifier="@Identifier"
-     @ondrop="HandleDrop"
+     @ondrop="DropHandler"
      @ondragenter="HandleDragEnter"
      @ondragleave="HandleDragLeave"
      @ondragover:preventDefault
@@ -54,7 +54,7 @@
             <MudDynamicDropItem @key="@(item.GetHashCode())" T="T" DraggingClass="@GetItemDraggingClass()"
                         Item="item"
                         OnDragStarted="DragOperationStarted"
-                        OnDragEnded="FinishedDragOperation"
+                        OnDragEnded="DragEndedCallback"
                         ZoneIdentifier="@Identifier"
                         Disabled="@GetItemDisabledStatus(item)"
                         Index="indexCopy"
