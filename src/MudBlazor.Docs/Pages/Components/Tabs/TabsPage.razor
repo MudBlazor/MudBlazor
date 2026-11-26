@@ -95,6 +95,20 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Tab Text Color">
+                <Description>
+                    By default, the active tab's text uses the primary color and the other tabs inherit the surrounding text color.
+                    To recolor the active tab, pass a <MudLink Href="/features/colors#theme-palette-colors">palette color class</MudLink> such as <CodeInline>mud-secondary-text</CodeInline> to <CodeInline>ActiveTabClass</CodeInline>, and set <CodeInline>SliderColor</CodeInline> to match.
+                    To recolor the other tabs, pass a class that sets <CodeInline>color</CodeInline> to <CodeInline>TabButtonsClass</CodeInline>; the active and disabled tabs keep their own color.
+                    The <CodeInline>Color</CodeInline> property instead fills the header with a palette color and gives every tab that color's contrast text.
+                </Description>
+            </SectionHeader>
+            <SectionContent Code="@nameof(TabsTextColorExample)" ShowCode="true" Block="true">
+                <TabsTextColorExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Tooltips">
                 <Description>
                     Tooltips can be added which will activate when the user hovers over the tab.
