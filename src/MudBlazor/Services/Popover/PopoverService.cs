@@ -126,7 +126,7 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
             _logger.LogError(MissingProviderMessage);
         }
 
-        var holder = new MudPopoverHolder(popover.Id, _timeProvider)
+        var holder = new MudPopoverHolder(popover.Id, _timeProvider) { Owner = this }
             .SetFragment(popover.ChildContent)
             .SetClass(popover.PopoverClass)
             .SetStyle(popover.PopoverStyles)
@@ -313,14 +313,35 @@ internal class PopoverService : IPopoverService, IBatchTimerHandler<MudPopoverHo
         }
     }
 
-    private async Task InitializePopoverIfNeededAsync(MudPopoverHolder holder)
+    internal async Task ReconnectPopoverAsync(MudPopoverHolder holder)
     {
-        if (_disposed || holder.IsConnected || holder.IsDetached)
+        await InitializeServiceIfNeededAsync();
+        await ConnectPopoverAsync(holder);
+    }
+
+    private Task InitializePopoverIfNeededAsync(MudPopoverHolder holder)
+        => holder.IsConnected ? Task.CompletedTask : ConnectPopoverAsync(holder);
+
+    private async Task ConnectPopoverAsync(MudPopoverHolder holder)
+    {
+        if (_disposed || holder.IsDetached)
         {
             return;
         }
 
-        holder.IsConnected = await _popoverJsInterop.Connect(holder.Id, _cancellationToken);
+        var connected = await _popoverJsInterop.Connect(holder.Id, _cancellationToken);
+        // A holder can be destroyed while the browser is responding to the connect call.
+        if (holder.IsDetached)
+        {
+            if (connected && !holder.IsConnected && !_disposed)
+            {
+                await _popoverJsInterop.Disconnect(holder.Id, _cancellationToken);
+            }
+
+            return;
+        }
+
+        holder.IsConnected = connected;
     }
 
     private async Task InitializeServiceIfNeededAsync()

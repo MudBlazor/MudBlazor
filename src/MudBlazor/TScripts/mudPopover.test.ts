@@ -226,7 +226,7 @@ describe("MudPopover lifecycle", () => {
     test("connecting an already open popover places it on the next frame", () => {
         renderProvider(true);
 
-        popover.connect("menu");
+        expect(popover.connect("menu")).toBe(true);
         expect(placePopover).not.toHaveBeenCalled();
         runFrames();
 
@@ -236,7 +236,7 @@ describe("MudPopover lifecycle", () => {
     test("connect ignores ids without rendered popover elements", () => {
         renderProvider();
 
-        popover.connect("missing");
+        expect(popover.connect("missing")).toBe(false);
 
         expect(popover.getAllObservedContainers()).toEqual([]);
     });
@@ -519,14 +519,19 @@ describe("MudPopover lifecycle", () => {
         document.getElementById("old-provider")!.remove();
         document.body.insertAdjacentHTML("afterbegin", `
             <div id="new-provider" class="mud-popover-provider" data-mud-popover-provider-id="scope">
-                <div id="popovercontent-menu" class="mud-popover"></div>
+                <div id="popovercontent-menu" class="mud-popover mud-popover-open"></div>
             </div>`);
 
-        popover.connect("scope", "menu");
+        expect(popover.connect("scope", "menu")).toBe(true);
+        const reboundEntry = popover.map["menu"];
+        expect(popover.connect("scope", "menu")).toBe(true);
+        expect(popover.map["menu"]).toBe(reboundEntry);
+        runFrames();
 
         const newProvider = document.getElementById("new-provider")!;
         expect(observe.mock.calls[observe.mock.calls.length - 1]?.[0]).toBe(newProvider);
         expect(popover.map["menu"]?.popoverContentNode?.parentElement).toBe(newProvider);
+        expect(placePopover.mock.calls[0]?.[0]).toBe(document.getElementById("popover-menu"));
     });
 
     test("the overlay follows the z-index of the most recently opened popover", () => {

@@ -542,10 +542,12 @@ public class PopoverServiceTests
     public async Task MudPopoverState_ShouldIsConnected()
     {
         // Arrange
-        var jsRuntimeMock = Mock.Of<IJSRuntime>();
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        jsRuntimeMock.Setup(x => x.InvokeAsync<bool>("mudPopover.connect", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .ReturnsAsync(true);
         var popover = new PopoverMock();
         var options = new PopoverOptions { CheckForPopoverProvider = false };
-        var service = CreateService(jsRuntimeMock, options);
+        var service = CreateService(jsRuntimeMock.Object, options);
 
         // Act
         await service.CreatePopoverAsync(popover);
@@ -563,6 +565,28 @@ public class PopoverServiceTests
         isUpdated.Should().BeTrue();
         updatedState.IsConnected.Should().BeTrue();
         updatedState.IsDetached.Should().BeFalse();
+    }
+
+    /// <summary>
+    /// The next update retries a connection when JavaScript could not find the rendered nodes (#14273).
+    /// </summary>
+    [Test]
+    public async Task UpdatePopover_RetriesMissingBrowserRegistration()
+    {
+        var jsRuntimeMock = new Mock<IJSRuntime>();
+        jsRuntimeMock.SetupSequence(x => x.InvokeAsync<bool>("mudPopover.connect", It.IsAny<CancellationToken>(), It.IsAny<object[]>()))
+            .ReturnsAsync(false)
+            .ReturnsAsync(true);
+        await using var service = CreateService(jsRuntimeMock.Object, new PopoverOptions { CheckForPopoverProvider = false });
+        var popover = new PopoverMock();
+        await service.CreatePopoverAsync(popover);
+        var holder = service.ActivePopovers.Single();
+
+        await service.UpdatePopoverAsync(popover);
+        holder.IsConnected.Should().BeFalse();
+
+        await service.UpdatePopoverAsync(popover);
+        holder.IsConnected.Should().BeTrue();
     }
 
     [Test]
@@ -618,9 +642,9 @@ public class PopoverServiceTests
             .ReturnsAsync(Mock.Of<IJSVoidResult>())
             .Verifiable();
 
-        jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.connect", It.IsAny<CancellationToken>(),
+        jsRuntimeMock.Setup(x => x.InvokeAsync<bool>("mudPopover.connect", It.IsAny<CancellationToken>(),
                 It.Is<object[]>(y => y.Length == 2 && y[0] is string && (Guid)y[1] == popover.Id)))
-            .ReturnsAsync(Mock.Of<IJSVoidResult>())
+            .ReturnsAsync(true)
             .Verifiable();
 
         jsRuntimeMock.Setup(x => x.InvokeAsync<IJSVoidResult>("mudPopover.disconnect", It.IsAny<CancellationToken>(),

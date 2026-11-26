@@ -1696,18 +1696,14 @@ export default class MudPopover {
      * Connects a popover element to the system, setting up all necessary event listeners and observers
      * @param {string} id - The ID of the popover to connect
      */
-    connect(providerId: string, id: string): void;
-    connect(id: string): void;
+    connect(providerId: string, id: string): boolean;
+    connect(id: string): boolean;
     // The default parameter keeps the method's arity at 1, which apiSurface.test.ts pins.
     connect(providerIdOrId: string, scopedId: string | undefined = undefined) {
         const providerId = scopedId ? providerIdOrId : defaultProviderId;
         const id = scopedId ?? providerIdOrId;
 
         this.#disposeDisconnectedProviders();
-
-        if (this.map[id]) {
-            this.disconnect(this.map[id]!.providerId, id);
-        }
 
         // Re-check the provider on each connect. This preserves behavior for scenarios where the app
         // swaps layouts/providers after initialization, such as the existing PopoverTwoLayoutsTest.
@@ -1719,8 +1715,18 @@ export default class MudPopover {
             ? popoverNode.parentNode
             : null;
 
+        const existing = this.map[id];
+        if (existing) {
+            if (popoverNode && popoverContentNode && existing.providerId === providerId && existing.popoverNode === popoverNode &&
+                existing.popoverContentNode === popoverContentNode && existing.anchorNode === anchorNode) {
+                return true;
+            }
+
+            this.disconnect(existing.providerId, id);
+        }
+
         if (!popoverNode || !popoverContentNode) {
-            return;
+            return false;
         }
 
         const startOpened = popoverContentNode.classList.contains('mud-popover-open');
@@ -1750,6 +1756,8 @@ export default class MudPopover {
             // the open path preserves attachment across scenarios covered by PopoverTwoLayoutsTest.
             this.openPopover(popoverContentNode, id);
         }
+
+        return true;
     }
 
     /**

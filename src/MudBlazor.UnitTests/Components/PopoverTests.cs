@@ -379,6 +379,39 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// Restoring a provider reconnects the surviving popover in its scope and skips a popover destroyed during the gap (#14273).
+        /// </summary>
+        [TestCase(false)]
+        [TestCase(true)]
+        public async Task MudPopoverProvider_ReconnectsSurvivingPopovers(bool removeProvider)
+        {
+            Context.JSInterop.Setup<bool>("mudPopover.connect", _ => true).SetResult(true);
+            var comp = Context.Render<PopoverProviderTest>(p => p.Add(x => x.ShowSecondPopover, true));
+            var contentId = comp.Find("#my-content").ParentElement!.Id;
+            var scope = comp.Find(".mud-popover-provider").GetAttribute("data-mud-popover-provider-id");
+
+            if (removeProvider)
+            {
+                await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowProvider, false));
+            }
+            else
+            {
+                await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ProviderEnabled, false));
+            }
+
+            comp.FindAll("#my-content").Should().BeEmpty();
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowSecondPopover, false));
+            var previousCalls = Context.JSInterop.Invocations["mudPopover.connect"].Count;
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.ShowProvider, true).Add(x => x.ProviderEnabled, true));
+
+            comp.Find("#my-content").ParentElement!.Id.Should().Be(contentId);
+            comp.Markup.Should().NotContain("Second popover");
+            var reconnect = Context.JSInterop.Invocations["mudPopover.connect"].Skip(previousCalls).Should().ContainSingle().Subject;
+            reconnect.Arguments.Should().Equal(scope, Guid.Parse(contentId["popovercontent-".Length..]));
+        }
+
+        /// <summary>
         /// A provider identifies the scoped popover service in both its markup and duplicate-provider check.
         /// </summary>
         [Test]

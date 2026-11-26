@@ -1,5 +1,8 @@
 ﻿<CascadingValue Value="ProviderEnabled" Name="UsePopoverProvider">
-    <MudPopoverProvider />
+    @if (ShowProvider)
+    {
+        <MudPopoverProvider />
+    }
 </CascadingValue>
 
 <div class="popoverparent">
@@ -8,7 +11,20 @@
     </MudPopover>
 </div>
 
+@if (ShowSecondPopover)
+{
+    <div class="popoverparent">
+        <MudPopover Open="true">Second popover</MudPopover>
+    </div>
+}
+
 @code {
     [Parameter]
     public bool ProviderEnabled { get; set; } = true;
+
+    [Parameter]
+    public bool ShowProvider { get; set; } = true;
+
+    [Parameter]
+    public bool ShowSecondPopover { get; set; }
 }
