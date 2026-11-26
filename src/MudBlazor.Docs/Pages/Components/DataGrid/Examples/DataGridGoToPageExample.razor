@@ -1,0 +1,39 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient HttpClient
+
+<MudDataGrid T="Element" Items="@_elements" @bind-CurrentPage="_currentPage">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Periodic Elements</MudText>
+        <MudSpacer />
+        <MudNumericField T="int" @bind-Value="PageNumber" Label="Go to page" Min="1" Variant="Variant.Outlined" Margin="Margin.Dense" Style="max-width: 140px;" />
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="x => x.Number" Title="Nr" />
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+#nullable enable
+    private List<Element> _elements = [];
+    private int _currentPage;
+
+    // CurrentPage is zero-based, while the field shows page numbers counted from 1.
+    private int PageNumber
+    {
+        get => _currentPage + 1;
+        set => _currentPage = value - 1;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _elements = await HttpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable") ?? [];
+    }
+}

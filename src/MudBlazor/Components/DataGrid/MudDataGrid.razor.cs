@@ -809,6 +809,8 @@ namespace MudBlazor
         /// </summary>
         /// <remarks>
         /// When using a <see cref="FilterMode"/> of <see cref="DataGridFilterMode.Simple"/>, this property is managed automatically.
+        /// Unless <see cref="ServerData"/> or <see cref="VirtualizeServerData"/> is set, an item is shown only when it matches every definition.
+        /// To match any of several values in one column, set a <see cref="FilterDefinition{T}.FilterFunction"/> that checks them all.
         /// </remarks>
         [Parameter]
         public List<IFilterDefinition<T>> FilterDefinitions { get; set; } = new List<IFilterDefinition<T>>();
@@ -1364,7 +1366,7 @@ namespace MudBlazor
         /// The number of rows displayed for each page.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>10</c>.  Applies when the <see cref="PagerContent"/> section contains a <see cref="MudTablePager"/>.  When this property changes, the <see cref="RowsPerPageChanged"/> event occurs.
+        /// Defaults to <c>10</c>.  Applies when the <see cref="PagerContent"/> section contains a <see cref="MudDataGridPager{T}"/>.  When this property changes, the <see cref="RowsPerPageChanged"/> event occurs.
         /// </remarks>
         [Parameter]
         public int RowsPerPage
@@ -1384,10 +1386,12 @@ namespace MudBlazor
         public EventCallback<int> RowsPerPageChanged { get; set; }
 
         /// <summary>
-        /// The current page being displayed.
+        /// The zero-based index of the page being displayed.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>0</c>.  Applies when the <see cref="PagerContent"/> section contains a <see cref="MudTablePager"/>.
+        /// Defaults to <c>0</c>, the first page.  Applies when the <see cref="PagerContent"/> section contains a <see cref="MudDataGridPager{T}"/>.
+        /// Can be bound (<c>@bind-CurrentPage</c>) to change the page from code.
+        /// With <see cref="ServerData"/>, a change loads the new page.
         /// </remarks>
         [Parameter]
         public int CurrentPage
@@ -3565,11 +3569,19 @@ namespace MudBlazor
         }
 
         /// <summary>
-        /// Toggles the expanded or collapsed state of the specified group by column name and key.
+        /// Expands or collapses a single group.
         /// </summary>
-        /// <param name="columnName">The name of the grouped column.</param>
-        /// <param name="key">The group key identifying the specific group to expand or collapse.</param>
+        /// <param name="columnName">The <see cref="Column{T}.Title"/> of the grouped column, which for a <see cref="PropertyColumn{T, TProperty}"/> defaults to the property name.</param>
+        /// <param name="key">
+        /// A <see cref="GroupKeyPath"/> with the group's key at each grouping level, from the top level down to this group, matching <see cref="GroupDefinition{T}.KeyPath"/>.
+        /// For example, <c>new GroupKeyPath(["Engineering", "Platform"])</c> identifies the Platform group within the Engineering group.
+        /// A group key passed on its own, such as <c>"Platform"</c>, matches no group.
+        /// </param>
         /// <param name="expanded">Whether the group should be expanded (true) or collapsed (false).</param>
+        /// <remarks>
+        /// A nested group is only visible while its parent groups are expanded.
+        /// <see cref="ExpandAllGroupsAsync"/> and <see cref="CollapseAllGroupsAsync"/> replace the state set by this method.
+        /// </remarks>
         public void ToggleGroupExpand(string? columnName, object? key, bool expanded)
         {
             SetGroupExpanded(columnName, key, expanded);

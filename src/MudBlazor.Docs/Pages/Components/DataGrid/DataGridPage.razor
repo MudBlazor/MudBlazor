@@ -32,6 +32,8 @@
                     wanted to show a column that has action buttons. TemplateColumn cannot infer things such as Title and SortBy like the PropertyColumn.
                     <br><br>
                     A TemplateColumn has no property to sort or filter by, so its <CodeInline>Sortable</CodeInline> and <CodeInline>Filterable</CodeInline> default to <CodeInline>false</CodeInline> and it shows no filter UI, including its <CodeInline>FilterTemplate</CodeInline>.
+                    Its <CodeInline>ShowColumnOptions</CodeInline> also defaults to <CodeInline>false</CodeInline>, so its header has no column options menu even when <CodeInline>Sortable</CodeInline>, <CodeInline>Groupable</CodeInline> or <CodeInline>Hideable</CodeInline> is set.
+                    Set <CodeInline>ShowColumnOptions="true"</CodeInline> on the TemplateColumn to show the menu, and give it a <CodeInline>SortBy</CodeInline> or <CodeInline>GroupBy</CodeInline> function so sorting or grouping has a value to use.
                     To show custom markup for a value that should stay sortable and filterable, use a PropertyColumn with a <CodeInline>CellTemplate</CodeInline> instead.
                     <br><br>
                     You can pass a format string in the <CodeInline>Format</CodeInline> parameter on PropertyColumn to format the value for the cells.
@@ -198,6 +200,24 @@
                     <DataGridGroupingCustomizationExample />
                 </SectionContent>
             </DocsPageSection>
+
+            <DocsPageSection>
+                <SectionHeader Title="Expand a Single Group">
+                    <Description>
+                        Call <CodeInline>ToggleGroupExpand</CodeInline> to expand or collapse one group from code.
+                        Its first argument is the <CodeInline>Title</CodeInline> of the grouped column, which for a <CodeInline>PropertyColumn</CodeInline> defaults to the property name.
+                        Its second argument is a <CodeInline>GroupKeyPath</CodeInline> with the group's key at every level from the top down, the same value as the group's <CodeInline>KeyPath</CodeInline>, so the Platform team in the Engineering department is <CodeInline>new GroupKeyPath(["Engineering", "Platform"])</CodeInline>.
+                        Each key is the value the column groups by, which is what its <CodeInline>GroupBy</CodeInline> function returns when one is set.
+                        Passing a key on its own, such as <CodeInline>"Platform"</CodeInline>, matches no group.
+                        <br /><br />
+                        A nested group only shows while its parent groups are expanded, so this example expands the department before the team.
+                        <CodeInline>ExpandAllGroupsAsync</CodeInline> and <CodeInline>CollapseAllGroupsAsync</CodeInline> replace any state set this way.
+                    </Description>
+                </SectionHeader>
+                <SectionContent DarkenBackground="true" Code="@nameof(DataGridGroupExpandExample)" ShowCode="false" Block="true" FullWidth="true">
+                    <DataGridGroupExpandExample />
+                </SectionContent>
+            </DocsPageSection>
         </DocsPageSection>
         <DocsPageSection>
             <SectionHeader Title="Sorting">
@@ -257,6 +277,10 @@
                     <br><br>
                     String filtering case sensitivity can be configured globally with <CodeInline>FilterCaseSensitivity</CodeInline>.
                     <br><br>
+                    Filters combine with AND: a row is shown only when it matches every filter and the <CodeInline>QuickFilter</CodeInline>, so two filters on the same column narrow the results instead of widening them.
+                    To match any of several values in one column, give the column a <CodeInline>FilterTemplate</CodeInline> that sets a custom <CodeInline>FilterFunction</CodeInline> on its filter definition, as the Category column does in <MudLink Href="/components/datagrid#filtering-simple-filtertemplate">Simple FilterTemplate</MudLink>.
+                    With <CodeInline>ServerData</CodeInline> or <CodeInline>VirtualizeServerData</CodeInline>, your function receives the filter definitions and decides how to combine them.
+                    <br><br>
                     For backend data scenarios, see <MudLink Href="/components/datagrid#server-side-filtering-sorting-and-pagination">Server Side Filtering, Sorting and Pagination</MudLink>.
                     <br /><br/>
                     QuickFilter is shown in <MudLink Href="/components/datagrid#advanced-data-grid">Advanced Data Grid</MudLink>.
@@ -307,6 +331,23 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Pagination">
+                <Description>
+                    Add a <CodeInline>MudDataGridPager</CodeInline> to <CodeInline>PagerContent</CodeInline> to split the rows into pages.
+                    To open a specific page, bind <CodeInline>CurrentPage</CodeInline> with <CodeInline>@@bind-CurrentPage</CodeInline> and set it from code, as the page field in this example does.
+                    <CodeInline>CurrentPage</CodeInline> is zero-based, so the first page is <CodeInline>0</CodeInline>.
+                    The pager's buttons update the bound value, and <CodeInline>NavigateTo</CodeInline> moves to the first, previous, next or last page.
+                    <br /><br />
+                    With <CodeInline>Items</CodeInline>, a page past the end shows the last page.
+                    With <CodeInline>ServerData</CodeInline>, a new <CodeInline>CurrentPage</CodeInline> loads that page, and a page past the end goes back to the first page.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridGoToPageExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridGoToPageExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Row Selection">
                 <Description>
                     The <CodeInline>&lt;MudDataGrid></CodeInline> component supports both single and multi-row selection.<br><br>
@@ -334,6 +375,23 @@
             </SectionHeader>
             <SectionContent DarkenBackground="true" Code="@nameof(DataGridSelectionExample)" ShowCode="false" Block="true" FullWidth="true">
                 <DataGridSelectionExample />
+            </SectionContent>
+        </DocsPageSection>
+
+        <DocsPageSection>
+            <SectionHeader Title="Row Clicks and Highlighting">
+                <Description>
+                    <CodeInline>RowClick</CodeInline> is raised for every click on a row, and <CodeInline>DataGridRowClickEventArgs.MouseEventArgs.Detail</CodeInline> counts consecutive clicks, so a double click raises it a second time with a <CodeInline>Detail</CodeInline> of <CodeInline>2</CodeInline>.
+                    The first click of a double click still arrives as a single click, so this example selects a row on the first click and opens it on the second.
+                    While <CodeInline>CellClick</CodeInline> is set, a click on a cell raises <CodeInline>CellClick</CodeInline> instead of <CodeInline>RowClick</CodeInline>, with the same <CodeInline>MouseEventArgs</CodeInline>.
+                    <br /><br />
+                    To highlight the selected row, compare each item with the selection in <CodeInline>RowStyleFunc</CodeInline> or <CodeInline>RowClassFunc</CodeInline>.
+                    A row click toggles the selection when <CodeInline>SelectOnRowClick</CodeInline> is enabled, so the second click of a double click would clear it again.
+                    This example sets <CodeInline>SelectOnRowClick="false"</CodeInline> and keeps the selected row itself.
+                </Description>
+            </SectionHeader>
+            <SectionContent DarkenBackground="true" Code="@nameof(DataGridRowClickHighlightExample)" ShowCode="false" Block="true" FullWidth="true">
+                <DataGridRowClickHighlightExample />
             </SectionContent>
         </DocsPageSection>
 

@@ -1,0 +1,39 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient HttpClient
+
+<MudDataGrid @ref="_dataGrid" T="Company" Items="_org" Groupable Dense>
+    <Columns>
+        <PropertyColumn Property="x => x.Department" Grouping />
+        <PropertyColumn Property="x => x.Team" Grouping GroupByOrder="1" />
+        <PropertyColumn Property="x => x.Name" Groupable="false" />
+        <PropertyColumn Property="x => x.Role" Groupable="false" />
+    </Columns>
+</MudDataGrid>
+
+<div class="d-flex gap-2 mt-4">
+    <MudButton OnClick="@ShowPlatformTeam" Color="Color.Primary">Show Platform team</MudButton>
+    <MudButton OnClick="@CollapseAllGroupsAsync" Color="Color.Primary">Collapse all</MudButton>
+</div>
+
+@code {
+#nullable enable
+    private MudDataGrid<Company> _dataGrid = null!;
+    private List<Company> _org = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _org = await HttpClient.GetFromJsonAsync<List<Company>>("webapi/company") ?? [];
+    }
+
+    private void ShowPlatformTeam()
+    {
+        // The column name is the grouped column's Title, which defaults to the property name.
+        // A team only shows inside an expanded department, so both levels are expanded.
+        _dataGrid.ToggleGroupExpand("Department", new GroupKeyPath(["Engineering"]), true);
+        _dataGrid.ToggleGroupExpand("Team", new GroupKeyPath(["Engineering", "Platform"]), true);
+    }
+
+    private Task CollapseAllGroupsAsync() => _dataGrid.CollapseAllGroupsAsync();
+}
