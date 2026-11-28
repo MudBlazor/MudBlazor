@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Numerics;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -17,9 +18,16 @@ namespace MudBlazor
         private readonly ParameterState<T> _valueState;
         private readonly ParameterState<T?> _nullableValueState;
         private readonly string _labelId = Identifier.Create("slider-label");
+        private readonly Action<PointerEventArgs> _pointerDownHandler;
+        private readonly Action _pointerReleaseHandler;
+        private bool _pressed;
 
         public MudSlider()
         {
+            // These only render when a touch or pen press starts or ends, so mouse use adds no renders.
+            _pointerDownHandler = this.AsNonRenderingEventHandler<PointerEventArgs>(OnPointerDown);
+            _pointerReleaseHandler = this.AsNonRenderingEventHandler(OnPointerRelease);
+
             using var registerScope = CreateRegisterScope();
             _valueState = registerScope.RegisterParameter<T>(nameof(Value))
                 .WithParameter(() => Value)
@@ -41,6 +49,7 @@ namespace MudBlazor
                 .AddClass($"mud-slider-{Size.ToStringFast(true)}")
                 .AddClass($"mud-slider-{Color.ToStringFast(true)}")
                 .AddClass("mud-slider-vertical", Vertical)
+                .AddClass("mud-slider-pressed", _pressed)
                 .AddClass(Class)
                 .Build();
 
@@ -268,6 +277,29 @@ namespace MudBlazor
         }
 
         private string GetValueText => _valueState.Value.ToString(null, CultureInfo.InvariantCulture);
+
+        // The value label is shown through :active, which doesn't match while a range input is dragged by touch.
+        // A mouse press is skipped because :active already covers it and its release can land outside the input.
+        private void OnPointerDown(PointerEventArgs args)
+        {
+            if (args.PointerType != "mouse")
+            {
+                SetPressed(true);
+            }
+        }
+
+        private void OnPointerRelease() => SetPressed(false);
+
+        private void SetPressed(bool pressed)
+        {
+            if (_pressed == pressed)
+            {
+                return;
+            }
+
+            _pressed = pressed;
+            StateHasChanged();
+        }
 
         // Blazor names MudSlider<T> only as a type argument, so Mono full AOT on iOS runs it as shared generic code, which can't call T.TryParse.
         // A range input's value is a JavaScript number, so a double holds anything the browser sends.

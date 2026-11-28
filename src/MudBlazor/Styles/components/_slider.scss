@@ -199,6 +199,10 @@
     transform: translateX(50%) translateY(-125%);
   }
 
+  &.mud-slider-pressed .mud-slider-value-label {
+    opacity: 1;
+  }
+
   .mud-slider-tickmarks {
     display: flex;
     justify-content: space-between;
