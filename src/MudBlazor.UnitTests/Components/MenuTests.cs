@@ -1620,6 +1620,48 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// AutoClose hides the menu while an action awaits a dialog without removing its content (#13571).
+        /// </summary>
+        [TestCase(true)]
+        [TestCase(false)]
+        [CancelAfter(5000)]
+        public async Task MenuItem_DialogAction_RespectsAutoClose(bool autoClose)
+        {
+            var popovers = Context.Render<MudPopoverProvider>();
+            var dialogs = Context.Render<MudDialogProvider>();
+            var dialogService = Context.Services.GetRequiredService<IDialogService>();
+            var menu = Context.Render<MudMenu>(parameters => parameters
+                .Add(p => p.Label, "Actions")
+                .Add(p => p.ChildContent, builder =>
+                {
+                    builder.OpenComponent<MudMenuItem>(0);
+                    builder.AddComponentParameter(1, nameof(MudMenuItem.Label), "Open dialog");
+                    builder.AddComponentParameter(2, nameof(MudMenuItem.AutoClose), autoClose);
+                    builder.AddComponentParameter(3, nameof(MudMenuItem.OnClick), EventCallback.Factory.Create<MouseEventArgs>(this, async () =>
+                    {
+                        await dialogService.ShowMessageBoxAsync("Confirm", "Continue?", cancelText: "Cancel");
+                    }));
+                    builder.CloseComponent();
+                }));
+
+            await menu.Find(".mud-menu-button-activator").ClickAsync();
+            var click = popovers.Find(".mud-menu-item").ClickAsync();
+            try
+            {
+                await dialogs.WaitForAssertionAsync(() => dialogs.Find(".mud-dialog").Should().NotBeNull());
+                popovers.Find(".mud-popover-open").ClassList.Contains("d-none").Should().Be(autoClose);
+                popovers.Find(".mud-menu-item").TextContent.Should().Contain("Open dialog");
+            }
+            finally
+            {
+                await dialogs.FindAll(".mud-dialog button").Single(button => button.TextContent.Trim() == "Cancel").ClickAsync();
+                await click.WaitAsync(NUnit.Framework.TestContext.CurrentContext.CancellationToken);
+            }
+
+            popovers.FindAll(".mud-popover-open").Should().HaveCount(autoClose ? 0 : 1);
+        }
+
+        /// <summary>
         /// A custom activator spells out aria-expanded as an explicit true or false token.
         /// </summary>
         [Test]

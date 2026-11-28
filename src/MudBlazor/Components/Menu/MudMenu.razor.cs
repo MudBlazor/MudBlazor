@@ -30,6 +30,7 @@ namespace MudBlazor
         private CancellationTokenSource? _leaveCts;
         private int _focusedIndex = -1;
         private bool _disposed;
+        private bool _itemClickPending;
         private MudButton? _buttonActivator;
         private MudMenuItem? _menuItemActivator;
         private MudIconButton? _iconButtonActivator;
@@ -77,7 +78,11 @@ namespace MudBlazor
                 .AddClass(PopoverClass)
                 .AddClass("mud-popover-nested", ParentMenu is not null)
                 .AddClass("mud-popover-position-override", PositionAtCursor)
+                .AddClass("d-none", IsItemClickPending)
                 .Build();
+
+        private bool IsItemClickPending => _itemClickPending || ParentMenu?.IsItemClickPending == true;
+        private bool IsExpanded => _openState.Value && !IsItemClickPending;
 
         /// <summary>
         /// The CSS class for the list containing menu items.
@@ -549,23 +554,41 @@ namespace MudBlazor
         /// </remarks>
         public async Task CloseAllMenusAsync()
         {
-            // Traverse up the menu hierarchy to find the top-most parent.
-            var top = this;
-            while (true)
-            {
-                if (top.ParentMenu is null)
-                {
-                    break;
-                }
-
-                top = top.ParentMenu;
-            }
+            var top = GetRootMenu();
 
             // Close the top-most menu, which will cascade down to close all its children.
             await top.CloseMenuAsync();
 
             // Return focus to the menu
             await top.FocusActivatorAsync();
+        }
+
+        internal MudMenu GetRootMenu() => ParentMenu?.GetRootMenu() ?? this;
+
+        internal bool TryBeginItemClick()
+        {
+            if (_itemClickPending)
+                return false;
+
+            _itemClickPending = true;
+            RenderItemClickVisibility();
+            return true;
+        }
+
+        internal void EndItemClick()
+        {
+            _itemClickPending = false;
+            if (!_disposed && _openState.Value)
+                RenderItemClickVisibility();
+        }
+
+        private void RenderItemClickVisibility()
+        {
+            CancelPendingActions();
+            foreach (var child in _subMenus.Where(menu => menu._openState.Value).ToArray())
+                child.RenderItemClickVisibility();
+
+            StateHasChanged();
         }
 
         /// <summary>
@@ -649,7 +672,7 @@ namespace MudBlazor
         /// </param>
         public Task ToggleMenuAsync(EventArgs args)
         {
-            if (Disabled)
+            if (Disabled || IsItemClickPending)
             {
                 return Task.CompletedTask;
             }
@@ -717,7 +740,7 @@ namespace MudBlazor
             // Prevent conflicting actions.
             CancelPendingActions();
 
-            if (!IsHoverable(args))
+            if (IsItemClickPending || !IsHoverable(args))
             {
                 return;
             }
@@ -757,7 +780,7 @@ namespace MudBlazor
             CancelPendingActions();
 
             // Only close if the menu is transient (e.g. hover-activated) and is hoverable.
-            if (!_isTransient || !IsHoverable(args))
+            if (IsItemClickPending || !_isTransient || !IsHoverable(args))
             {
                 return;
             }
@@ -859,6 +882,9 @@ namespace MudBlazor
         /// </summary>
         private async Task HandleKeyDownAsync(KeyboardEventArgs e)
         {
+            if (IsItemClickPending)
+                return;
+
             if (e.Key == "ArrowDown" || e.Key == "ArrowUp" || e.Key == "ArrowRight" || e.Key == "ArrowLeft")
             {
                 await HandleNavigationKeyAsync(e);
@@ -1054,7 +1080,7 @@ namespace MudBlazor
             if (_disposed)
                 return;
 
-            if (_openState.Value && _focusedIndex == -1)
+            if (IsExpanded && _focusedIndex == -1)
             {
                 // Focus the container first. This makes the menu "listen" for keys.
                 // The element can be detached between this render and the focus interop call
