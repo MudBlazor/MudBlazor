@@ -1,0 +1,14 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<style>
+    .tabs-text-color-inactive {
+        color: var(--mud-palette-text-secondary);
+    }
+</style>
+
+<MudTabs Elevation="1" Rounded="true" TabPanelsClass="pa-6" SliderColor="Color.Secondary"
+         ActiveTabClass="mud-secondary-text" TabButtonsClass="tabs-text-color-inactive">
+    <MudTabPanel Text="Overview"><MudText>Project summary and recent activity.</MudText></MudTabPanel>
+    <MudTabPanel Text="Tasks"><MudText>Open tasks assigned to the team.</MudText></MudTabPanel>
+    <MudTabPanel Text="Files"><MudText>Documents shared with the team.</MudText></MudTabPanel>
+</MudTabs>
