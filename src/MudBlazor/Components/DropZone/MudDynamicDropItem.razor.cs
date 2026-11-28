@@ -18,6 +18,7 @@ namespace MudBlazor;
 public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
 {
     private bool _dragOperationIsInProgress = false;
+    private Action? _dragEnterHandler;
     private readonly string _id = Identifier.Create();
 
     // The id actually rendered on the item div: a consumer-supplied id (splatted after the explicit id, so it wins)
@@ -316,16 +317,14 @@ public partial class MudDynamicDropItem<T> : MudComponentBase where T : notnull
         return (item, result);
     }
 
+    private Action DragEnterHandler => _dragEnterHandler ??= this.AsNonRenderingEventHandler(HandleDragEnter);
+
     private void HandleDragEnter()
     {
         if (Container is not null && Container.TransactionInProgress())
         {
             Container.UpdateTransactionIndex(Index);
         }
-    }
-
-    private void HandleDragLeave()
-    {
     }
 
     #endregion

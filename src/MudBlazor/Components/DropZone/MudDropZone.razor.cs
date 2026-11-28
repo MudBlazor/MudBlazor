@@ -25,6 +25,8 @@ namespace MudBlazor
         private bool _canDrop = false;
         private bool _dragInProgress = false;
         private bool _disposedValue = false;
+        private Action? _dragEnterHandler;
+        private Action? _dragLeaveHandler;
         private readonly string _id = MudBlazor.Identifier.Create();
 
         // The id actually rendered on the drop-zone div: a consumer-supplied id (splatted after the explicit id, so it
@@ -263,8 +265,7 @@ namespace MudBlazor
         protected string Classname =>
             new CssBuilder("mud-drop-zone")
                 //.AddClass("mud-drop-zone-drag-block", Container?.TransactionInProgress() == true && Container.GetTransactionOrignZoneIdentiifer() != Identifier)
-                .AddClass(CanDropClass ?? Container?.CanDropClass, Container is not null && Container.TransactionInProgress() && Container.GetTransactionOriginZoneIdentifier() != Identifier && _canDrop && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted()))
-                .AddClass(NoDropClass ?? Container?.NoDropClass, Container is not null && Container.TransactionInProgress() && Container.GetTransactionOriginZoneIdentifier() != Identifier && !_canDrop && (_dragCounter > 0 || GetApplyDropClassesOnDragStarted()))
+                .AddClass(DropStatusClass)
                 .AddClass(GetDraggingClass(), _dragInProgress)
                 .AddClass(Class)
                 .Build();
@@ -367,9 +368,19 @@ namespace MudBlazor
         #region handling event callbacks
 
         private int _dragCounter = 0;
+        private Action DragEnterHandler => _dragEnterHandler ??= this.AsNonRenderingEventHandler(HandleDragEnter);
+        private Action DragLeaveHandler => _dragLeaveHandler ??= this.AsNonRenderingEventHandler(HandleDragLeave);
+
+        private string? DropStatusClass =>
+            Container is not null && Container.TransactionInProgress() &&
+            Container.GetTransactionOriginZoneIdentifier() != Identifier &&
+            (_dragCounter > 0 || GetApplyDropClassesOnDragStarted())
+                ? (_canDrop ? CanDropClass ?? Container.CanDropClass : NoDropClass ?? Container.NoDropClass)
+                : null;
 
         private void HandleDragEnter()
         {
+            var previousClass = DropStatusClass;
             _dragCounter++;
 
             var (context, isValidZone) = ItemCanBeDropped();
@@ -380,14 +391,27 @@ namespace MudBlazor
 
             _canDrop = isValidZone;
 
-            Container?.UpdateTransactionZone(Identifier);
+            // Changing zones already invalidates both zones through TransactionIndexChanged.
+            if (Container?.GetTransactionCurrentZoneIdentifier() != Identifier)
+            {
+                Container?.UpdateTransactionZone(Identifier);
+            }
+            else if (previousClass != DropStatusClass)
+            {
+                StateHasChanged();
+            }
         }
 
         private void HandleDragLeave()
         {
+            var previousClass = DropStatusClass;
             _dragCounter--;
 
             _ = ItemCanBeDropped();
+            if (previousClass != DropStatusClass)
+            {
+                StateHasChanged();
+            }
         }
 
         internal async Task HandleDrop()
