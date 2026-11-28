@@ -1,4 +1,4 @@
-﻿@namespace MudBlazor
+@namespace MudBlazor
 @inherits MudComponentBase
 
 <div id="@FieldId"
@@ -26,7 +26,7 @@
                  tabindex="0"
                  role="button"
                  aria-haspopup="menu"
-                 aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
+                 aria-expanded="@IsExpanded.ToString().ToLowerInvariant()"
                  aria-controls="@GetAriaControls()">
                 @ActivatorContent(_menuContext)
             </div>
@@ -40,7 +40,7 @@
                          AutoClose="false"
                          HideSubMenuArrow="true"
                          aria-haspopup="menu"
-                         aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
+                         aria-expanded="@IsExpanded.ToString().ToLowerInvariant()"
                          aria-controls="@GetAriaControls()"
                          aria-label="@AriaLabel">
                 @ActivatorContent(_menuContext)
@@ -64,7 +64,7 @@
                        DropShadow="@DropShadow"
                        OnClick="@ToggleMenuAsync"
                        aria-haspopup="menu"
-                       aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
+                       aria-expanded="@IsExpanded.ToString().ToLowerInvariant()"
                        aria-controls="@GetAriaControls()"
                        aria-label="@AriaLabel">
                 @Label
@@ -81,7 +81,7 @@
                          AutoClose="false"
                          Label="@Label"
                          aria-haspopup="menu"
-                         aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
+                         aria-expanded="@IsExpanded.ToString().ToLowerInvariant()"
                          aria-controls="@GetAriaControls()"
                          aria-label="@AriaLabel">
                 @Label
@@ -101,7 +101,7 @@
                        DropShadow="@DropShadow"
                        OnClick="@ToggleMenuAsync"
                        aria-haspopup="menu"
-                       aria-expanded="@_openState.Value.ToString().ToLowerInvariant()"
+                       aria-expanded="@IsExpanded.ToString().ToLowerInvariant()"
                        aria-controls="@GetAriaControls()"
                        aria-label="@AriaLabel" />
     }
@@ -137,7 +137,7 @@
     </MudPopover>
     @if (ParentMenu is null)
     {
-        <MudOverlay Visible="_openState.Value && !_isTransient"
+        <MudOverlay Visible="IsExpanded && !_isTransient"
                     AutoClose
                     data-modeless-ignore-element-id="@FieldId"
                     OnClosed="CloseMenuAsync"

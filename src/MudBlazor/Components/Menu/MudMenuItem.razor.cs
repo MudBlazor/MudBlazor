@@ -184,21 +184,35 @@ namespace MudBlazor
                 return;
             }
 
-            // Invoke the user's handler first, before navigating or closing the menu.
-            if (OnClick.HasDelegate)
-            {
-                await OnClick.InvokeAsync(ev);
-            }
+            var pendingMenu = AutoClose && OnClick.HasDelegate ? ParentMenu?.GetRootMenu() : null;
+            if (pendingMenu is not null && !pendingMenu.TryBeginItemClick())
+                return;
 
-            // Manual navigation is only required when the target is empty and a forced reload is necessary; all other scenarios are managed by the HTML anchor.
-            if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
+            try
             {
-                UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
-            }
+                if (OnClick.HasDelegate)
+                {
+                    // Render the hidden menu before invoking the action, but keep its content mounted until the action completes (#6349).
+                    if (pendingMenu is not null)
+                        await Task.Yield();
 
-            if (AutoClose && ParentMenu is not null)
+                    await OnClick.InvokeAsync(ev);
+                }
+
+                // Manual navigation is only required when the target is empty and a forced reload is necessary; all other scenarios are managed by the HTML anchor.
+                if (ForceLoad && !string.IsNullOrEmpty(Href) && string.IsNullOrEmpty(Target))
+                {
+                    UriHelper.NavigateTo(Href, forceLoad: ForceLoad);
+                }
+
+                if (AutoClose && ParentMenu is not null)
+                {
+                    await ParentMenu.CloseAllMenusAsync();
+                }
+            }
+            finally
             {
-                await ParentMenu.CloseAllMenusAsync();
+                pendingMenu?.EndItemClick();
             }
         }
 
