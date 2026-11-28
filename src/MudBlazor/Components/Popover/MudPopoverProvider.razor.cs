@@ -20,6 +20,7 @@ namespace MudBlazor
     public partial class MudPopoverProvider : IDisposable, IPopoverObserver
     {
         private bool _isConnectedToService;
+        private bool _providerRendered;
 
         [Inject]
         internal IPopoverService PopoverService { get; set; } = null!;
@@ -43,6 +44,7 @@ namespace MudBlazor
         /// </summary>
         public void Dispose()
         {
+            _providerRendered = false;
             PopoverService.Unsubscribe(this);
         }
 
@@ -82,6 +84,9 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            var providerAppeared = Enabled && !_providerRendered;
+            _providerRendered = Enabled;
+
             if (firstRender && Enabled && PopoverService.PopoverOptions.ThrowOnDuplicateProvider)
             {
                 if (await PopoverService.GetProviderCountAsync() > 1)
@@ -89,6 +94,25 @@ namespace MudBlazor
                     throw new InvalidOperationException("Duplicate MudPopoverProvider detected. Please ensure there is only one provider, or disable this warning with PopoverOptions.ThrowOnDuplicateProvider.");
                 }
             }
+
+            if (providerAppeared && _providerRendered)
+            {
+                // A replacement container renders new content nodes even when the popover components survived.
+                // Use the holders' owning services so decorators that forward ActivePopovers work too.
+                foreach (var holder in PopoverService.ActivePopovers.OfType<MudPopoverHolder>().ToArray())
+                {
+                    if (!_providerRendered)
+                    {
+                        break;
+                    }
+
+                    if (holder.Owner is { } owner)
+                    {
+                        await owner.ReconnectPopoverAsync(holder);
+                    }
+                }
+            }
+
             await base.OnAfterRenderAsync(firstRender);
         }
 

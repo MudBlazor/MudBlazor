@@ -28,6 +28,8 @@ internal class MudPopoverHolder : IMudPopoverHolder
     /// <inheritdoc />
     public bool IsDetached { get; internal set; }
 
+    internal PopoverService? Owner { get; init; }
+
     /// <inheritdoc />
     public string? Class { get; private set; }
 
