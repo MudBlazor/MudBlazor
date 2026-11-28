@@ -1,0 +1,53 @@
+﻿@using System.Net.Http.Json
+@using MudBlazor.Examples.Data.Models
+@namespace MudBlazor.Docs.Examples
+@inject HttpClient HttpClient
+
+<MudDataGrid T="Element" Items="@_elements" Hover="true" SelectOnRowClick="false" RowClick="@OnRowClick"
+             RowStyle="cursor: pointer;" RowStyleFunc="@HighlightSelectedRow">
+    <Columns>
+        <PropertyColumn Property="x => x.Number" Title="Nr" />
+        <PropertyColumn Property="x => x.Sign" />
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Molar" Title="Molar mass" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Element" />
+    </PagerContent>
+</MudDataGrid>
+
+<MudText Class="mt-4">@_message</MudText>
+
+@code {
+#nullable enable
+    private List<Element> _elements = [];
+    private Element? _selectedElement;
+    private string _message = "Click a row to select it, or double-click it to open it.";
+
+    protected override async Task OnInitializedAsync()
+    {
+        _elements = await HttpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable") ?? [];
+    }
+
+    private void OnRowClick(DataGridRowClickEventArgs<Element> args)
+    {
+        if (args.MouseEventArgs.Detail == 2)
+        {
+            _message = $"Opened {args.Item.Name}.";
+            return;
+        }
+
+        _selectedElement = args.Item;
+        _message = $"Selected {args.Item.Name}.";
+    }
+
+    private string HighlightSelectedRow(Element element, int rowIndex)
+    {
+        if (element == _selectedElement)
+        {
+            return "background-color: var(--mud-palette-primary-hover);";
+        }
+
+        return string.Empty;
+    }
+}
