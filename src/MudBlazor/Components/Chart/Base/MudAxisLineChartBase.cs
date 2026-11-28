@@ -132,6 +132,14 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
     /// <param name="startOffset">The starting offset.</param>
     /// <param name="horizontalSpace">The horizontal space between lines.</param>
     protected void GenerateVerticalGridLines(int numVerticalLines, double startOffset, double horizontalSpace)
+        => GenerateVerticalGridLines(numVerticalLines, index => startOffset + HorizontalStartSpace + (index * horizontalSpace));
+
+    /// <summary>
+    /// Generates vertical grid lines at their individual horizontal coordinates.
+    /// </summary>
+    /// <param name="numVerticalLines">The number of vertical lines.</param>
+    /// <param name="getPosition">Returns the horizontal coordinate for each line.</param>
+    protected void GenerateVerticalGridLines(int numVerticalLines, Func<int, double> getPosition)
     {
         VerticalLines.Clear();
         VerticalValues.Clear();
@@ -143,7 +151,7 @@ public abstract class MudAxisLineChartBase<T, TOptions> : MudAxisChartBase<T, TO
 
         for (var i = 0; i < numVerticalLines; i++)
         {
-            var x = startOffset + HorizontalStartSpace + (i * horizontalSpace);
+            var x = getPosition(i);
 
             if (x > _boundWidth - HorizontalEndSpace)
             {

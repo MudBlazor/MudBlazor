@@ -18,12 +18,17 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     private DateTime _minDateTime;
     private DateTime _maxDateTime;
     private TimeSpan _minDateLabelOffset;
+    private bool _useLocalTimeline;
     private TimeValue<T>[][]? _cachedDataPoints;
 
     private bool _generateChartLines;
     private double _timeToPixelRatio;
 
     protected override bool ShouldInterpolate => false;
+
+    private bool UsesCalendarTicks => _useLocalTimeline
+        && ChartOptions!.TimeLabelSpacing >= TimeSpan.FromDays(1)
+        && ChartOptions.TimeLabelSpacing.Ticks % TimeSpan.TicksPerDay == 0;
 
     protected override void OnInitialized()
     {
@@ -111,7 +116,20 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         }
 
         GenerateHorizontalGridLines(numHorizontalLines, lowestHorizontalLine, gridYUnits, verticalSpace);
-        GenerateVerticalGridLines(numVerticalLines, startOffset, horizontalSpace);
+        if (UsesCalendarTicks)
+        {
+            GenerateVerticalGridLines(numVerticalLines, index =>
+            {
+                var tick = CalendarTickToUtc(GetCalendarTick(index));
+                return tick == _maxDateTime && tick != _minDateTime
+                    ? _boundWidth - HorizontalEndSpace
+                    : GetAxisPosition(tick);
+            });
+        }
+        else
+        {
+            GenerateVerticalGridLines(numVerticalLines, startOffset, horizontalSpace);
+        }
     }
 
     private void ComputeMinAndMaxDateTimes()
@@ -143,10 +161,16 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     {
         DateTime? min = null, max = null;
 
-        foreach (var series in Series.Where(s => s.Visible && s.Data.Points != null))
+        var visibleSeries = Series.Where(s => s.Visible && s.Data.Points != null);
+        // Plot local timestamps by elapsed time across clock changes. Preserve the wall-clock
+        // coordinates of unspecified or mixed-kind series.
+        _useLocalTimeline = visibleSeries.All(series => series.Data.Points.All(p => p.X is DateTime { Kind: DateTimeKind.Local }));
+
+        foreach (var series in visibleSeries)
         {
-            foreach (var dt in series.Data.Points.Select(p => p.X).OfType<DateTime>())
+            foreach (var date in series.Data.Points.Select(p => p.X).OfType<DateTime>())
             {
+                var dt = ToAxisTime(date);
                 if (min == null || dt < min)
                 {
                     min = dt;
@@ -164,6 +188,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
 
     private void SetDefaultDateRange(TimeSpan spacing)
     {
+        _useLocalTimeline = false;
         var now = TimeProvider.GetLocalNow().DateTime;
         _minDateTime = now;
         if (spacing.Days > 0)
@@ -180,15 +205,32 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         }
     }
 
+    private DateTime ToAxisTime(DateTime date) => _useLocalTimeline ? date.ToUniversalTime() : date;
+
+    private DateTime ToLabelTime(DateTime date) =>
+        _useLocalTimeline ? date.ToLocalTime() : date;
+
+    private static DateTime CalendarTickToUtc(DateTime localTime) =>
+        DateTime.SpecifyKind(localTime, DateTimeKind.Local).ToUniversalTime();
+
+    private DateTime GetCalendarTick(int index) =>
+        _minDateTime.ToLocalTime().Add(_minDateLabelOffset).Add(ChartOptions!.TimeLabelSpacing * index);
+
+    private double GetAxisPosition(DateTime axisTime) =>
+        HorizontalStartSpace + ((axisTime - _minDateTime).TotalMilliseconds * _timeToPixelRatio);
+
     private void ApplyLabelRounding(TimeSpan spacing)
     {
-        if (_minDateTime.Ticks % spacing.Ticks != 0)
+        var startRemainder = ToLabelTime(_minDateTime).Ticks % spacing.Ticks;
+        if (startRemainder != 0)
         {
-            var offset = new TimeSpan(_minDateTime.Ticks % spacing.Ticks);
+            var offset = TimeSpan.FromTicks(startRemainder);
 
             if (ChartOptions!.TimeLabelSpacingRoundingPadSeries)
             {
-                _minDateTime = _minDateTime.Subtract(offset);
+                _minDateTime = UsesCalendarTicks
+                    ? CalendarTickToUtc(ToLabelTime(_minDateTime).Subtract(offset))
+                    : _minDateTime.Subtract(offset);
             }
             else
             {
@@ -196,10 +238,13 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
             }
         }
 
-        if (ChartOptions!.TimeLabelSpacingRoundingPadSeries && _maxDateTime.Ticks % spacing.Ticks != 0)
+        var endRemainder = ToLabelTime(_maxDateTime).Ticks % spacing.Ticks;
+        if (ChartOptions!.TimeLabelSpacingRoundingPadSeries && endRemainder != 0)
         {
-            var offset = spacing - new TimeSpan(_maxDateTime.Ticks % spacing.Ticks);
-            _maxDateTime = _maxDateTime.Add(offset);
+            var offset = spacing - TimeSpan.FromTicks(endRemainder);
+            _maxDateTime = UsesCalendarTicks
+                ? CalendarTickToUtc(ToLabelTime(_maxDateTime).Add(offset))
+                : _maxDateTime.Add(offset);
         }
     }
 
@@ -293,13 +338,22 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
     private int CalculateVerticalLines()
     {
         var spacing = ChartOptions!.TimeLabelSpacing;
-        return (int)Math.Ceiling((_maxDateTime - _minDateTime) / spacing) + 1;
+        var range = UsesCalendarTicks
+            ? _maxDateTime.ToLocalTime() - _minDateTime.ToLocalTime()
+            : _maxDateTime - _minDateTime;
+        return (int)Math.Ceiling(range / spacing) + 1;
     }
 
     protected override string GetVerticalGridLineLabel(int index)
     {
+        if (UsesCalendarTicks)
+        {
+            return GetCalendarTick(index).ToString(ChartOptions!.TimeLabelFormat);
+        }
+
         var minDateTimeWithOffset = _minDateTime.Add(_minDateLabelOffset);
-        return minDateTimeWithOffset.Add(ChartOptions!.TimeLabelSpacing * index).ToString(ChartOptions!.TimeLabelFormat);
+        var tick = minDateTimeWithOffset.Add(ChartOptions!.TimeLabelSpacing * index);
+        return ToLabelTime(tick).ToString(ChartOptions.TimeLabelFormat);
     }
 
     private TimeValue<T>[][] GetCachedDataPoints()
@@ -371,8 +425,7 @@ partial class TimeSeries<T> : MudAxisLineChartBase<T, TimeSeriesChartOptions> wh
         var gridValue = ((double.CreateSaturating(dataPoint.Value) / double.CreateSaturating(gridYUnits)) - lowestHorizontalLine) * verticalSpace;
         var y = _boundHeight - VerticalStartSpace - double.CreateSaturating(gridValue);
 
-        var diffFromMin = dataPoint.DateTime - _minDateTime;
-        var x = HorizontalStartSpace + (diffFromMin.TotalMilliseconds * _timeToPixelRatio);
+        var x = GetAxisPosition(ToAxisTime(dataPoint.DateTime));
 
         return (x, y);
     }
