@@ -63,6 +63,39 @@ test("reports every registered element stacked under the pointer", () => {
     ]);
 });
 
+test("routes matching elements to their own render scope", () => {
+    const serverInvoke = mock(async (_method: string, _ids: string[]) => { });
+    const wasmInvoke = mock(async (_method: string, _ids: string[]) => { });
+    const serverDotnet = { invokeMethodAsync: serverInvoke } as unknown as DotNet.DotNetObject;
+    const wasmDotnet = { invokeMethodAsync: wasmInvoke } as unknown as DotNet.DotNetObject;
+    pointerEventsNone.listenForPointerEvents("server", serverDotnet, "overlay-top", both);
+    pointerEventsNone.listenForPointerEvents("wasm", wasmDotnet, "overlay-bottom", both);
+    stubElementsFromPoint("overlay-top", "overlay-bottom", "page");
+
+    pointer("pointerdown");
+
+    expect(serverInvoke.mock.calls).toEqual([["RaiseOnPointerDown", ["overlay-top"]]]);
+    expect(wasmInvoke.mock.calls).toEqual([["RaiseOnPointerDown", ["overlay-bottom"]]]);
+});
+
+test("disposing one render scope leaves the other scope active", () => {
+    const serverInvoke = mock(async (_method: string, _ids: string[]) => { });
+    const wasmInvoke = mock(async (_method: string, _ids: string[]) => { });
+    const serverDotnet = { invokeMethodAsync: serverInvoke } as unknown as DotNet.DotNetObject;
+    const wasmDotnet = { invokeMethodAsync: wasmInvoke } as unknown as DotNet.DotNetObject;
+    pointerEventsNone.listenForPointerEvents("server", serverDotnet, "overlay-top", both);
+    pointerEventsNone.listenForPointerEvents("wasm", wasmDotnet, "overlay-bottom", both);
+
+    pointerEventsNone.dispose("server");
+    stubElementsFromPoint("overlay-bottom", "page");
+    pointer("pointerdown");
+
+    expect(serverInvoke).not.toHaveBeenCalled();
+    expect(wasmInvoke.mock.calls).toEqual([["RaiseOnPointerDown", ["overlay-bottom"]]]);
+    expect(pointerEventsNone.pointerDownMap.has("overlay-bottom")).toBeTrue();
+    expect(pointerEventsNone.pointerDownHandlerRef).not.toBeNull();
+});
+
 test("enables pointer events only while hit testing", () => {
     pointerEventsNone.listenForPointerEvents(dotnet, "overlay-top", both);
     pointerEventsNone.listenForPointerEvents(dotnet, "overlay-bottom", both);
@@ -140,6 +173,16 @@ test("cancelling the last element removes the global listeners", () => {
     expect(removeEventListener.mock.calls.map(([type]) => type)).toEqual(["pointerdown", "pointerup"]);
     expect(pointerEventsNone.pointerDownHandlerRef).toBeNull();
     expect(pointerEventsNone.pointerUpHandlerRef).toBeNull();
+});
+
+test("only the owning render scope can cancel a registration", () => {
+    pointerEventsNone.listenForPointerEvents("server", dotnet, "overlay-top", both);
+
+    pointerEventsNone.cancelListener("wasm", "overlay-top");
+    expect(pointerEventsNone.pointerDownMap.has("overlay-top")).toBeTrue();
+
+    pointerEventsNone.cancelListener("server", "overlay-top");
+    expect(pointerEventsNone.pointerDownMap.has("overlay-top")).toBeFalse();
 });
 
 test("dispose clears every subscription and the .NET reference", () => {

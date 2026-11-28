@@ -45,7 +45,7 @@ internal sealed class PointerEventsNoneService : IPointerEventsNoneService
     {
         _cancellationTokenSource = new();
         _cancellationToken = _cancellationTokenSource.Token;
-        _pointerEventsNoneInterop = new(jSRuntime);
+        _pointerEventsNoneInterop = new(jSRuntime, Guid.NewGuid().ToString("N"));
         _observerManager = new(logger);
         _dotNetObjectReference = new(() => DotNetObjectReference.Create(this));
     }
@@ -148,9 +148,9 @@ internal sealed class PointerEventsNoneService : IPointerEventsNoneService
             // InvalidOperationException and cannot leak, since nothing was registered on the JS side.
             if (_dotNetObjectReference.IsValueCreated)
             {
-                _dotNetObjectReference.Value.Dispose();
-
                 await _pointerEventsNoneInterop.DisposeAsync(CancellationToken.None);
+
+                _dotNetObjectReference.Value.Dispose();
             }
 
             _cancellationTokenSource.Dispose();
