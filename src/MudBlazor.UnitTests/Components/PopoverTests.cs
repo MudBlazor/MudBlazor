@@ -394,6 +394,19 @@ namespace MudBlazor.UnitTests.Components
             invocation.Arguments.Should().ContainSingle().Which.Should().Be(providerId);
         }
 
+        /// <summary>
+        /// Static prerendering allows providers from different interactive render modes to share the response.
+        /// </summary>
+        [Test]
+        public void MudPopoverProvider_AllowsMultipleProvidersDuringPrerendering()
+        {
+            var first = Context.Render<PrerenderedPopoverProvider>();
+            var second = Context.Render<PrerenderedPopoverProvider>();
+
+            first.Find(".mud-popover-provider").Should().NotBeNull();
+            second.Find(".mud-popover-provider").Should().NotBeNull();
+        }
+
         //[TestCase(false)] always blocks duplicate provider with latest change
         [TestCase(true)]
         public async Task MudPopoverProvider_ThrowOnDuplicate(bool throwOnDuplicateProvider)
@@ -474,6 +487,11 @@ namespace MudBlazor.UnitTests.Components
         private sealed class UnrenderedPopover : MudPopover
         {
             public UnrenderedPopover(IPopoverService popoverService) => PopoverService = popoverService;
+        }
+
+        private sealed class PrerenderedPopoverProvider : MudPopoverProvider
+        {
+            protected override Task OnAfterRenderAsync(bool firstRender) => Task.CompletedTask;
         }
     }
 }

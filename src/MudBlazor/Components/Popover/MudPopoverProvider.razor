@@ -3,7 +3,10 @@
 @if (Enabled)
 {
     <div class="@PopoverService.PopoverOptions.ContainerClass" data-mud-popover-provider-id="@ProviderId">
-        <SectionOutlet SectionName="mud-overlay-to-popover-provider" />
+        @if (_sectionOutletReady)
+        {
+            <SectionOutlet SectionName="mud-overlay-to-popover-provider" />
+        }
         @foreach (var handler in PopoverService.ActivePopovers)
         {
             <MudRender @ref="handler.ElementReference" @key="handler.Id">
