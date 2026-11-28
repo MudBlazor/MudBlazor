@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Components.Web;
+﻿using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor

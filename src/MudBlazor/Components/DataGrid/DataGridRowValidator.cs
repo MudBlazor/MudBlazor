@@ -2,9 +2,7 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using MudBlazor.Interfaces;
 
 namespace MudBlazor
@@ -43,7 +41,7 @@ namespace MudBlazor
         /// The data to validate for this row.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        public virtual object? Model { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        public virtual object? Model { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 #nullable disable
 
         protected HashSet<string> _errors = new HashSet<string>();
