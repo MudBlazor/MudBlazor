@@ -32,6 +32,7 @@ namespace MudBlazor
         private Task? _currentSearchTask;
         private int _searchVersion;
         private ITimer? _debounceTimer;
+        private int _debounceVersion;
         private T[]? _items;
         private bool[] _itemDisabled = [];
         private List<int> _enabledItemIndices = [];
@@ -580,7 +581,7 @@ namespace MudBlazor
                 // A search still running for the typed text must not reopen the menu after the selection.
                 AbandonSearch();
                 // A pending debounce must stop before ValueChanged is awaited, because it can fire while an async handler runs.
-                _debounceTimer?.Dispose();
+                CancelDebounce();
 
                 // #1 needs to close before SetValueAndUpdateTextAsync so that whatever the user puts in ValueChanged can run without the popover being in front of it
                 // #2 Use "Open" field instead of property to prevent raising multiple OpenChanged events while selecting item.
@@ -599,7 +600,7 @@ namespace MudBlazor
                 if (!_isCleared)
                     await SetTextAndUpdateValueAsync(optionText, false);
 
-                _debounceTimer?.Dispose();
+                CancelDebounce();
 
                 await BeginValidateAsync();
 
@@ -657,7 +658,7 @@ namespace MudBlazor
 
         protected override async Task UpdateValuePropertyAsync(bool updateText)
         {
-            _debounceTimer?.Dispose();
+            CancelDebounce();
 
             if (ResetValueOnEmptyText && string.IsNullOrWhiteSpace(ReadText))
                 await SetValueAndUpdateTextAsync(default(T), updateText);
@@ -670,14 +671,26 @@ namespace MudBlazor
             if (DebounceInterval <= 0)
                 await OpenMenuAsync();
             else
-                _debounceTimer = TimeProvider.CreateTimer(OnDebounceComplete, null, TimeSpan.FromMilliseconds(DebounceInterval), Timeout.InfiniteTimeSpan);
+                _debounceTimer = TimeProvider.CreateTimer(OnDebounceComplete, _debounceVersion, TimeSpan.FromMilliseconds(DebounceInterval), Timeout.InfiniteTimeSpan);
+        }
+
+        private void CancelDebounce()
+        {
+            // Disposing the timer doesn't stop a callback that already fired and is waiting for the dispatcher, so the version tells that callback it was cancelled.
+            _debounceVersion++;
+            _debounceTimer?.Dispose();
+            _debounceTimer = null;
         }
 
         private void OnDebounceComplete(object? stateInfo)
             => InvokeAsync(async () =>
             {
+                if (stateInfo is not int version || version != _debounceVersion)
+                    return;
+
                 await OnDebounceIntervalElapsed.InvokeAsync(ReadText);
-                await OpenMenuAsync();
+                if (version == _debounceVersion)
+                    await OpenMenuAsync();
             });
 
         private void CancelToken()
@@ -741,7 +754,7 @@ namespace MudBlazor
         public async Task CloseMenuAsync()
         {
             AbandonSearch();
-            _debounceTimer?.Dispose();
+            CancelDebounce();
             Open = false; // Before restoring position and triggering changes, make sure that we close the popover
             StateHasChanged();
             await RestoreScrollPositionAsync();
@@ -929,7 +942,7 @@ namespace MudBlazor
                 _isCleared = true;
                 AbandonSearch();
                 // A pending debounce must stop before the awaits below, or it can search the cleared text and reopen the menu.
-                _debounceTimer?.Dispose();
+                CancelDebounce();
                 Open = false;
 
                 await SetTextAndUpdateValueAsync(string.Empty, updateValue: false);
@@ -937,7 +950,7 @@ namespace MudBlazor
 
                 await _elementReference.ResetAsync();
 
-                _debounceTimer?.Dispose();
+                CancelDebounce();
                 StateHasChanged();
             }
             finally
@@ -1252,7 +1265,7 @@ namespace MudBlazor
             _skipNextEnterKeyUp = true;
 
             // These lines prevent the menu from opening when OpenOnFocus is true, which is the default.
-            _debounceTimer?.Dispose();
+            CancelDebounce();
             if (!Open)
             {
                 // An open menu searches again below.
@@ -1291,6 +1304,15 @@ namespace MudBlazor
         {
             _isFocused = false;
             _handleNextFocus = false;
+
+            // A pointer search can start before focus and open the menu after the user leaves.
+            // With an open menu, focus can move into the popover; the overlay or Tab handles leaving it.
+            if (!Open)
+            {
+                CancelDebounce();
+                if (_opening)
+                    AbandonSearch();
+            }
 
             // When Immediate is enabled, then the CoerceValue is set by TextChanged.
             // So only coerce the value on blur when Immediate is disabled, then fall through to the same validation path.
@@ -1332,7 +1354,7 @@ namespace MudBlazor
             if (ResetValueOnEmptyText && string.IsNullOrEmpty(ReadText))
                 return Task.CompletedTask;
 
-            _debounceTimer?.Dispose();
+            CancelDebounce();
 
             var text = ReadValue == null ? null : GetItemString(ReadValue);
 
@@ -1348,7 +1370,7 @@ namespace MudBlazor
             if (!CoerceValue)
                 return;
 
-            _debounceTimer?.Dispose();
+            CancelDebounce();
 
             var value = ConvertGet(ReadText);
             await SetValueAndUpdateTextAsync(value, updateText: false);
@@ -1372,6 +1394,7 @@ namespace MudBlazor
         /// <inheritdoc />
         protected override async ValueTask DisposeAsyncCore()
         {
+            _debounceVersion++;
             if (_debounceTimer is not null)
             {
                 await _debounceTimer.DisposeAsync();
