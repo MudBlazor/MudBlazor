@@ -1,0 +1,52 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" md="4">
+        <MudSelect T="string" Label="All (default)" Variant="Variant.Outlined" MultiSelection="true" InitiallyExpanded="true"
+                   @bind-SelectedValues="_all" CheckedStrategy="CheckedStrategy.All">
+            <MudSelectItem Value="@("Fruit")">
+                <ChildContent>Fruit</ChildContent>
+                <NestedList>
+                    <MudSelectItem Value="@("Apples")">Apples</MudSelectItem>
+                    <MudSelectItem Value="@("Bananas")">Bananas</MudSelectItem>
+                </NestedList>
+            </MudSelectItem>
+            <MudSelectItem Value="@("Dairy")">Dairy</MudSelectItem>
+        </MudSelect>
+        <MudText Typo="Typo.caption">Value: @string.Join(", ", _all)</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudSelect T="string" Label="Child" Variant="Variant.Outlined" MultiSelection="true" InitiallyExpanded="true"
+                   @bind-SelectedValues="_child" CheckedStrategy="CheckedStrategy.Child">
+            <MudSelectItem Value="@("Fruit")">
+                <ChildContent>Fruit</ChildContent>
+                <NestedList>
+                    <MudSelectItem Value="@("Apples")">Apples</MudSelectItem>
+                    <MudSelectItem Value="@("Bananas")">Bananas</MudSelectItem>
+                </NestedList>
+            </MudSelectItem>
+            <MudSelectItem Value="@("Dairy")">Dairy</MudSelectItem>
+        </MudSelect>
+        <MudText Typo="Typo.caption">Value: @string.Join(", ", _child)</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudSelect T="string" Label="Parent" Variant="Variant.Outlined" MultiSelection="true" InitiallyExpanded="true"
+                   @bind-SelectedValues="_parent" CheckedStrategy="CheckedStrategy.Parent">
+            <MudSelectItem Value="@("Fruit")">
+                <ChildContent>Fruit</ChildContent>
+                <NestedList>
+                    <MudSelectItem Value="@("Apples")">Apples</MudSelectItem>
+                    <MudSelectItem Value="@("Bananas")">Bananas</MudSelectItem>
+                </NestedList>
+            </MudSelectItem>
+            <MudSelectItem Value="@("Dairy")">Dairy</MudSelectItem>
+        </MudSelect>
+        <MudText Typo="Typo.caption">Value: @string.Join(", ", _parent)</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private IReadOnlyCollection<string> _all = new HashSet<string>();
+    private IReadOnlyCollection<string> _child = new HashSet<string>();
+    private IReadOnlyCollection<string> _parent = new HashSet<string>();
+}

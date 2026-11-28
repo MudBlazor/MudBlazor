@@ -1,0 +1,38 @@
+﻿@namespace MudBlazor.Docs.Examples
+
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <MudSelect T="string" @bind-Value="_startValue" Label="Chevron at the end" Variant="Variant.Outlined" ExpandIconPlacement="ExpandIconPlacement.End">
+            <MudSelectItem Value="@("Fruit")">
+                <ChildContent>Fruit</ChildContent>
+                <NestedList>
+                    <MudSelectItem Value="@("Apples")">Apples</MudSelectItem>
+                    <MudSelectItem Value="@("Bananas")">Bananas</MudSelectItem>
+                </NestedList>
+            </MudSelectItem>
+            <MudSelectItem Value="@("Vegetables")">
+                <ChildContent>Vegetables</ChildContent>
+                <NestedList>
+                    <MudSelectItem Value="@("Carrots")">Carrots</MudSelectItem>
+                </NestedList>
+            </MudSelectItem>
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSelect T="string" @bind-Value="_plainValue" Label="No tree lines" Variant="Variant.Outlined" TreeLines="false">
+            <MudSelectItem Value="@("Archive")" Disabled="true">
+                <ChildContent>Archive (only its items can be chosen)</ChildContent>
+                <NestedList>
+                    <MudSelectItem Value="@("Reports")">Reports</MudSelectItem>
+                    <MudSelectItem Value="@("Invoices")">Invoices</MudSelectItem>
+                </NestedList>
+            </MudSelectItem>
+            <MudSelectItem Value="@("Current")">Current</MudSelectItem>
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _startValue = "Apples";
+    private string _plainValue = "Current";
+}

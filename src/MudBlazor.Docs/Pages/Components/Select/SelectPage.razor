@@ -156,6 +156,89 @@
         </DocsPageSection>
 
         <DocsPageSection>
+            <SectionHeader Title="Nested items">
+                <Description>
+                    Put child items in the <CodeInline>NestedList</CodeInline> of a <CodeInline>MudSelectItem</CodeInline> to show a tree.
+                    A parent is selectable like any other item, and its chevron only expands or collapses it.
+                    When a <CodeInline>NestedList</CodeInline> is set, wrap the item's own content in <CodeInline>ChildContent</CodeInline>.
+                </Description>
+            </SectionHeader>
+            <SectionContent ShowCode="false" Code="@nameof(SelectNestedExample)">
+                <SelectNestedExample />
+            </SectionContent>
+            <SectionSubGroups>
+                <DocsPageSection>
+                    <SectionHeader Title="Multi-selection">
+                        <Description>
+                            Items are selected independently by default, so selecting a parent does not select its children. See Checked strategy below to change this.
+                            <CodeInline>SelectAll</CodeInline> covers every enabled item, including those in collapsed branches.
+                            Set <CodeInline>InitiallyExpanded</CodeInline> to open every branch the first time the list is shown, or bind <CodeInline>Expanded</CodeInline> on an item to control it.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(SelectNestedMultiExample)">
+                        <SelectNestedMultiExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Expand on click">
+                        <Description>
+                            By default only the chevron expands an item.
+                            Set <CodeInline>ExpandOnClick</CodeInline> to also expand and collapse it when its row is clicked.
+                            With single selection a click on a parent only expands or collapses it, so only items without children can be chosen, and Enter on a highlighted parent does the same.
+                            With <CodeInline>MultiSelection</CodeInline> a click on a parent toggles its checkbox and expands it, and only the chevron collapses it.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(SelectNestedExpandOnClickExample)">
+                        <SelectNestedExpandOnClickExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Checked strategy">
+                        <Description>
+                            <CodeInline>CheckedStrategy</CodeInline> decides which checked items are reported in <CodeInline>SelectedValues</CodeInline> with <CodeInline>MultiSelection</CodeInline>.
+                            <CodeInline>All</CodeInline> is the default and keeps every item independent, so checking a parent checks nothing else.
+                            <CodeInline>Child</CodeInline> and <CodeInline>Parent</CodeInline> make checking a parent check its enabled descendants, and a parent shows as indeterminate while only some of them are checked.
+                            <CodeInline>Child</CodeInline> reports only items without children.
+                            <CodeInline>Parent</CodeInline> reports the topmost parents whose enabled descendants are all checked, so checking every fruit reports <CodeInline>Fruit</CodeInline> instead of each one.
+                            Disabled items are never checked by a parent, and either form is accepted when you supply <CodeInline>SelectedValues</CodeInline>.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(SelectNestedCheckedStrategyExample)">
+                        <SelectNestedCheckedStrategyExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Appearance and disabled items">
+                        <Description>
+                            The chevron comes before the text by default.
+                            Set <CodeInline>ExpandIconPlacement</CodeInline> to <CodeInline>End</CodeInline> to move it to the end of the row.
+                            <CodeInline>TreeLines</CodeInline> draws connectors between items and their parents and is on by default, so set it to <CodeInline>false</CodeInline> for a plainer list.
+                            A disabled item cannot be selected, but if it has a <CodeInline>NestedList</CodeInline> it still expands and collapses so its children can be chosen.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(SelectNestedAppearanceExample)">
+                        <SelectNestedAppearanceExample />
+                    </SectionContent>
+                </DocsPageSection>
+                <DocsPageSection>
+                    <SectionHeader Title="Keyboard">
+                        <Description>
+                            The list follows the WAI-ARIA tree pattern, and the keys act on the highlighted item, so press <CodeInline>Down arrow</CodeInline> to highlight one first when nothing is selected.
+                            <CodeInline>Right arrow</CodeInline> expands a collapsed item, or moves to its first child when it is already expanded.
+                            <CodeInline>Left arrow</CodeInline> collapses an expanded item, or moves to its parent.
+                            The keys swap in right-to-left layouts.
+                            <CodeInline>Up arrow</CodeInline>, <CodeInline>Down arrow</CodeInline>, <CodeInline>Home</CodeInline> and <CodeInline>End</CodeInline> move through the visible items.
+                            This example sets <CodeInline>SelectionOnEnter</CodeInline>, so moving the highlight does not change the value until Enter is pressed.
+                        </Description>
+                    </SectionHeader>
+                    <SectionContent ShowCode="false" Code="@nameof(SelectNestedKeyboardExample)">
+                        <SelectNestedKeyboardExample />
+                    </SectionContent>
+                </DocsPageSection>
+            </SectionSubGroups>
+        </DocsPageSection>
+
+        <DocsPageSection>
             <SectionHeader Title="Placement">
                 <Description>
                     The component uses <MudLink Href="/components/popover">MudPopover</MudLink> to place its list of items. It can be controlled with <CodeInline>AnchorOrigin</CodeInline> and <CodeInline>TransformOrigin</CodeInline>.
