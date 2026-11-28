@@ -201,6 +201,8 @@
         <Description>
             If you set the <CodeInline>Mask</CodeInline> property, the text field will apply formatting rules or input restrictions on-the-fly
             while the user is typing.
+            The <CodeInline>Pattern</CodeInline> property does not restrict typing: it is only rendered as the HTML <CodeInline>pattern</CodeInline> attribute for the browser's own validation, and <CodeInline>MudForm</CodeInline> validation ignores it.
+            To restrict input with a regular expression, use a <MudLink Href="/features/masking#regexmask">RegexMask</MudLink>.
 
             <MudAlert  Class="my-3" Severity="Severity.Info">
                 Check out the <MudLink Href="features/masking">Masking</MudLink> page for more info and examples.

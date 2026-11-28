@@ -324,10 +324,16 @@ namespace MudBlazor
         public virtual InputMode InputMode { get; set; } = InputMode.text;
 
         /// <summary>
-        /// The regular expression used to validate the <see cref="Value"/> property.
+        /// The regular expression rendered as the HTML <c>pattern</c> attribute of the input element.
         /// </summary>
         /// <remarks>
-        /// Defaults to <c>null</c>.  This property is used to validate the input against a regular expression.  Not supported if <see cref="Lines"/> is <c>2</c> or greater.  Must be a valid JavaScript regular expression.
+        /// Defaults to <c>null</c>.
+        /// The browser matches it against the whole text for its own constraint validation, such as the <c>:invalid</c> CSS state and the check it runs before submitting an HTML form.
+        /// MudBlazor does not evaluate it: it does not restrict typing, does not change <see cref="Value"/>, and is not part of <see cref="MudFormComponent{T, U}.Validation"/> or <see cref="MudForm"/> validation.
+        /// To restrict input as it is typed, set <see cref="MudTextField{T}.Mask"/>, for example to a <see cref="RegexMask"/>.
+        /// To show a validation error, use <see cref="MudFormComponent{T, U}.Validation"/>.
+        /// Not rendered when the input is a <c>textarea</c>, such as when <see cref="Lines"/> is <c>2</c> or greater, or when <see cref="MudTextField{T}.Mask"/> is set.
+        /// Must be a valid JavaScript regular expression.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.FormComponent.Validation)]
