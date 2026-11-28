@@ -138,20 +138,22 @@ namespace MudBlazor
         public bool Inline { get; set; } = true;
 
         /// <summary>
-        /// Any CSS styles applied to the tooltip.
+        /// The CSS styles applied to the element that wraps the child content.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
+        /// Use <see cref="MudComponentBase.Style"/> to style the tooltip popup.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
         public string? RootStyle { get; set; }
 
         /// <summary>
-        /// Any CSS classes applied to the tooltip.
+        /// The CSS classes applied to the element that wraps the child content.
         /// </summary>
         /// <remarks>
         /// Defaults to <c>null</c>.
+        /// Use <see cref="MudComponentBase.Class"/> to style the tooltip popup.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Tooltip.Appearance)]
