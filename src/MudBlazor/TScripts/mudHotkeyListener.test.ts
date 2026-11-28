@@ -29,7 +29,7 @@ afterEach(() => {
 test("invokes the registered .NET method when the key and modifiers match exactly", () => {
     const listener = createListener();
     const { reference, invokeMethodAsync } = createDotNetReference();
-    listener.registerOrUpdateHotkey(reference, "OnHotkey", "save", "KeyS", ["ControlLeft"], true);
+    listener.registerOrUpdateHotkey(reference, "OnHotkey", "save", "KeyS", ["Control"], true);
 
     const event = press({ code: "KeyS", key: "s", ctrlKey: true });
 
@@ -40,7 +40,7 @@ test("invokes the registered .NET method when the key and modifiers match exactl
 test("requires every registered modifier and rejects extra ones", () => {
     const listener = createListener();
     const { reference, invokeMethodAsync } = createDotNetReference();
-    listener.registerOrUpdateHotkey(reference, "OnHotkey", "save", "KeyS", ["ControlLeft", "ShiftLeft"], false);
+    listener.registerOrUpdateHotkey(reference, "OnHotkey", "save", "KeyS", ["Control", "Shift"], false);
 
     press({ code: "KeyS", ctrlKey: true });
     press({ code: "KeyS", ctrlKey: true, shiftKey: true, altKey: true });
@@ -72,10 +72,10 @@ test("falls back to the key value when the event has no code", () => {
     expect(invokeMethodAsync).toHaveBeenCalledTimes(1);
 });
 
-test("tells right-hand modifiers apart when the modifier key itself is pressed", () => {
+test("keeps the primary key side-specific while modifiers are side-agnostic", () => {
     const listener = createListener();
     const { reference, invokeMethodAsync } = createDotNetReference();
-    listener.registerOrUpdateHotkey(reference, "OnHotkey", "right-ctrl", "ControlRight", ["ControlRight"], false);
+    listener.registerOrUpdateHotkey(reference, "OnHotkey", "right-ctrl", "ControlRight", ["Control"], false);
 
     press({ code: "ControlLeft", ctrlKey: true });
     expect(invokeMethodAsync).not.toHaveBeenCalled();
@@ -144,4 +144,30 @@ test("dispose stops listening to the document", () => {
     press({ code: "KeyS" });
 
     expect(invokeMethodAsync).not.toHaveBeenCalled();
+});
+
+for (const [modifier, flag] of [["Control", "ctrlKey"], ["Shift", "shiftKey"], ["Alt", "altKey"], ["Meta", "metaKey"]] as const) {
+    for (const location of [0, KeyboardEvent.DOM_KEY_LOCATION_RIGHT]) {
+        test(`matches ${modifier} flags independently of the main key location ${location}`, () => {
+            const listener = createListener();
+            const { reference, invokeMethodAsync } = createDotNetReference();
+            listener.registerOrUpdateHotkey(reference, "OnHotkey", "shortcut", "KeyA", [modifier], false);
+
+            press({ code: "KeyA", location });
+            expect(invokeMethodAsync).not.toHaveBeenCalled();
+            press({ code: "KeyA", location, [flag]: true });
+            expect(invokeMethodAsync).toHaveBeenCalledTimes(1);
+        });
+    }
+}
+
+test("matches all modifier flags even when the primary key is a right modifier", () => {
+    const listener = createListener();
+    const { reference, invokeMethodAsync } = createDotNetReference();
+    listener.registerOrUpdateHotkey(reference, "OnHotkey", "all", "ControlRight", ["Control", "Shift", "Alt", "Meta"], false);
+
+    press({ code: "ControlRight", location: KeyboardEvent.DOM_KEY_LOCATION_RIGHT, ctrlKey: true, shiftKey: true, altKey: true });
+    expect(invokeMethodAsync).not.toHaveBeenCalled();
+    press({ code: "ControlRight", location: KeyboardEvent.DOM_KEY_LOCATION_RIGHT, ctrlKey: true, shiftKey: true, altKey: true, metaKey: true });
+    expect(invokeMethodAsync).toHaveBeenCalledTimes(1);
 });

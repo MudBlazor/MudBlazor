@@ -1,16 +1,12 @@
 ﻿namespace MudBlazor.Utilities;
 
 /// <summary>
-/// Contains all Javascript modifier key code strings (using e.code standard).
+/// Contains the JavaScript modifier key names used by <see cref="MudHotkey"/>.
 /// </summary>
 public enum JsKeyModifier
 {
-    ShiftLeft,
-    ShiftRight,
-    ControlLeft,
-    ControlRight,
-    AltLeft,
-    AltRight,
-    MetaLeft,
-    MetaRight
+    Shift,
+    Control,
+    Alt,
+    Meta
 }

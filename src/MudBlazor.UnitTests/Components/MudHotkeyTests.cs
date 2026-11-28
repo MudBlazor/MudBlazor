@@ -18,6 +18,15 @@ namespace MudBlazor.UnitTests.Components;
 [TestFixture]
 public class MudHotkeyTests : BunitTest
 {
+    /// <summary>
+    /// Modifier names are side-agnostic for issue #13390.
+    /// </summary>
+    [Test]
+    public void Hotkey_ModifiersShouldBeSideAgnostic()
+    {
+        Enum.GetNames<JsKeyModifier>().Should().Equal("Shift", "Control", "Alt", "Meta");
+    }
+
     [Test]
     public async Task Hotkey_ShouldShowChildContent()
     {
@@ -63,16 +72,16 @@ public class MudHotkeyTests : BunitTest
         comp.Instance.LastArgs!.KeyModifiers.Should().BeEmpty();
         comp.Instance.LastArgs!.Sender.Should().BeSameAs(hotkeys[0].Instance);
 
-        // The second hotkey: KeyB + ShiftLeft.
+        // The second hotkey: KeyB + Shift.
         await comp.InvokeAsync(hotkeys[1].Instance.MudHotkeyProviderJsCallback);
         comp.Instance.LastArgs!.Key.Should().Be(JsKey.KeyB);
-        comp.Instance.LastArgs!.KeyModifiers.Should().ContainSingle().Which.Should().Be(JsKeyModifier.ShiftLeft);
+        comp.Instance.LastArgs!.KeyModifiers.Should().ContainSingle().Which.Should().Be(JsKeyModifier.Shift);
         comp.Instance.LastArgs!.Sender.Should().BeSameAs(hotkeys[1].Instance);
 
         // The third hotkey: SAME Key as the second, distinguished only by its (multiple) modifiers.
         await comp.InvokeAsync(hotkeys[2].Instance.MudHotkeyProviderJsCallback);
         comp.Instance.LastArgs!.Key.Should().Be(JsKey.KeyB);
-        comp.Instance.LastArgs!.KeyModifiers.Should().BeEquivalentTo([JsKeyModifier.ControlLeft, JsKeyModifier.ShiftLeft]);
+        comp.Instance.LastArgs!.KeyModifiers.Should().BeEquivalentTo([JsKeyModifier.Control, JsKeyModifier.Shift]);
         comp.Instance.LastArgs!.Sender.Should().BeSameAs(hotkeys[2].Instance);
 
         comp.Instance.PressedCount.Should().Be(3);
@@ -111,7 +120,7 @@ public class MudHotkeyTests : BunitTest
 
         await comp.SetParametersAndRenderAsync(p => p
             .Add(x => x.Key, JsKey.KeyB)
-            .Add(x => x.KeyModifiers, [JsKeyModifier.ShiftLeft])
+            .Add(x => x.KeyModifiers, [JsKeyModifier.Shift])
             .Add(x => x.PreventEventPropagation, false));
 
         // Shared handler, so only one update called
