@@ -3,6 +3,17 @@
   flex-grow: 1;
   position: relative;
 
+  // Selected item content is a div, so its text is a minimum content size and a flex parent grows to the whole string.
+  // A zero width on that div also drops the field's preferred width, and a shrink-to-fit select collapses to the adornment.
+  // One grid track with a zero minimum can shrink inside a constrained flex row, and the track's max content stays the text.
+  // FitContent sizes with minimum content, so it keeps the block layout.
+  // The input control shares this class and stays a flex column. A value is shown in the input, with this slot hidden, so that field stays a block too.
+  &:not(.mud-input-control):not(.mud-width-content):has(div.mud-input-slot:not([style*="display:none"]):not([style*="display: none"])) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+  }
+
   &.mud-autocomplete {
     display: block;
 
