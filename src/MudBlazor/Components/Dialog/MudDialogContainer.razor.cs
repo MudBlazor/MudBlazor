@@ -219,6 +219,11 @@ namespace MudBlazor
             return GetHideHeader() && !string.IsNullOrWhiteSpace(_titleState.Value) ? _titleState.Value : null;
         }
 
+        private string? ContainerStyle =>
+            (GetDialogOptionsOrDefault.ZIndex ?? GlobalDialogOptions.ZIndex) is { } zIndex
+                ? $"z-index: {zIndex}"
+                : null;
+
         private bool GetHideHeader()
         {
             if (GetDialogOptionsOrDefault.NoHeader.HasValue)

@@ -1105,6 +1105,32 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
+        public async Task ZIndexOption_ShouldBeAppliedToTheDialogContainer()
+        {
+            var provider = Context.Render<MudDialogProvider>(parameters => parameters.Add(x => x.ZIndex, 2000));
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await provider.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>("Global"));
+            await provider.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>("Own", new DialogOptions { ZIndex = 3000 }));
+
+            var containers = provider.FindAll("div.mud-dialog-container");
+            containers.Should().HaveCount(2);
+            containers[0].GetAttribute("style").Should().Be("z-index: 2000");
+            containers[1].GetAttribute("style").Should().Be("z-index: 3000");
+        }
+
+        [Test]
+        public async Task DialogContainer_ShouldNotHaveZIndexStyle_WhenNoZIndexIsSet()
+        {
+            var provider = Context.Render<MudDialogProvider>();
+            var service = Context.Services.GetRequiredService<IDialogService>();
+
+            await provider.InvokeAsync(async () => await service.ShowAsync<DialogOkCancel>("Default"));
+
+            provider.Find("div.mud-dialog-container").HasAttribute("style").Should().BeFalse();
+        }
+
+        [Test]
         public async Task ShowGeneric_ShouldProvideCorrectOptions_WhenOverloadIsCalled()
         {
             // Arrange
