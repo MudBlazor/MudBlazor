@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Utilities;
 
 namespace MudBlazor
@@ -15,11 +14,9 @@ namespace MudBlazor
     /// </remarks>
     public partial class MudFocusTrap : IDisposable
     {
-        private bool _shiftDown;
         private bool _disabled;
         private bool _disposed;
         private bool _initialized;
-        private bool _shouldRender = true;
 
         protected string Classname =>
             new CssBuilder("mud-focus-trap")
@@ -31,6 +28,8 @@ namespace MudBlazor
         protected ElementReference _lastBumper;
         protected ElementReference _fallback;
         protected ElementReference _root;
+        private ElementReference _top;
+        private ElementReference _bottom;
 
         /// <summary>
         /// The content within this focus trap.
@@ -81,6 +80,8 @@ namespace MudBlazor
             if (firstRender)
             {
                 await SaveFocusAsync();
+                if (_disposed) return;
+                await RegisterFocusTrapAsync();
             }
 
             // need to check _disposed again because it could have changed during the above await
@@ -92,35 +93,9 @@ namespace MudBlazor
             }
         }
 
-        private Task OnBottomFocusAsync()
-        {
-            return FocusLastAsync();
-        }
-
-        private Task OnBumperFocusAsync()
-        {
-            return _shiftDown ? FocusLastAsync() : FocusFirstAsync();
-        }
-
-        private Task OnRootFocusAsync()
-        {
-            return FocusFallbackAsync();
-        }
-
-        private void OnRootKeyDown(KeyboardEventArgs args)
-        {
-            HandleKeyEvent(args);
-        }
-
-        private void OnRootKeyUp(KeyboardEventArgs args)
-        {
-            HandleKeyEvent(args);
-        }
-
-        private Task OnTopFocusAsync()
-        {
-            return FocusFirstAsync();
-        }
+        private ValueTask RegisterFocusTrapAsync() =>
+            _root.GetJSRuntime()?.InvokeVoidAsyncIgnoreErrors(
+                "mudElementRef.registerFocusTrap", _root, _top, _firstBumper, _fallback, _lastBumper, _bottom) ?? ValueTask.CompletedTask;
 
         private Task InitializeFocusAsync()
         {
@@ -153,15 +128,6 @@ namespace MudBlazor
             return _root.MudFocusLastAsync(2, 4).AsTask();
         }
 
-        private void HandleKeyEvent(KeyboardEventArgs args)
-        {
-            _shouldRender = false;
-            if (args.Key == "Tab")
-            {
-                _shiftDown = args.ShiftKey;
-            }
-        }
-
         private Task RestoreFocusAsync()
         {
             return _root.MudRestoreFocusAsync().AsTask();
@@ -170,18 +136,6 @@ namespace MudBlazor
         private Task SaveFocusAsync()
         {
             return _root.MudSaveFocusAsync().AsTask();
-        }
-
-        protected override bool ShouldRender()
-        {
-            if (_shouldRender)
-            {
-                return true;
-            }
-
-            _shouldRender = true; // auto-reset _shouldRender to true
-
-            return false;
         }
 
         /// <summary>

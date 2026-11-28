@@ -177,6 +177,30 @@ export default class MudElementReference {
         }
     }
 
+    registerFocusTrap(root: HTMLElement, top: HTMLElement, firstBumper: HTMLElement, fallback: HTMLElement, lastBumper: HTMLElement, bottom: HTMLElement) {
+        const focusBoundary = (bumper: HTMLElement, backwards: (event: FocusEvent) => boolean) => {
+            bumper.addEventListener("focus", event => {
+                if (bumper.tabIndex < 0) return;
+
+                // Focus events must wrap in the browser before another Tab can leave the trap.
+                if (backwards(event)) {
+                    this.focusLast(root, 2, 4);
+                } else {
+                    this.focusFirst(root, 2, 4);
+                }
+            });
+        };
+
+        const cameFromInside = (event: FocusEvent) =>
+            event.relatedTarget instanceof Node && root.contains(event.relatedTarget);
+
+        focusBoundary(top, () => false);
+        focusBoundary(firstBumper, cameFromInside);
+        focusBoundary(lastBumper, event => !cameFromInside(event));
+        focusBoundary(bottom, () => true);
+        root.addEventListener("focus", () => fallback.focus());
+    }
+
     /**
      * Stores the currently active element on the container for later restoration.
      */
