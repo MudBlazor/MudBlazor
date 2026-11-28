@@ -855,6 +855,10 @@ namespace MudBlazor
             return token;
         }
 
+        // Virtualized rows render as siblings, so the position in the key keeps keys unique when items compare equal.
+        private static List<IndexBag<T>>? ToIndexBags(IEnumerable<T>? source)
+            => source?.Select((item, index) => new IndexBag<T>(index, item)).ToList();
+
         internal override async Task InvokeServerLoadFunc()
         {
             if (!HasServerData)

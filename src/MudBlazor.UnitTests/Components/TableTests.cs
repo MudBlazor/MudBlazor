@@ -191,7 +191,7 @@ namespace MudBlazor.UnitTests.Components
         public void TableRowHref_DisabledRow_RendersNoLink()
         {
             var comp = Context.Render<TableRowHrefTest>(parameters => parameters
-                .Add(p => p.RowDisabledFunc, (Func<TableRowHrefTest.Person, bool>)(person => person.Id == 1)));
+                .Add(p => p.RowDisabledFunc, person => person.Id == 1));
             var rows = comp.FindAll("tbody tr");
 
             rows[0].QuerySelector("a.mud-table-row-link-anchor").Should().BeNull();
@@ -3578,6 +3578,74 @@ namespace MudBlazor.UnitTests.Components
         }
 
         /// <summary>
+        /// A virtualized table keeps rendering repeated items when the rows move.
+        /// </summary>
+        [Test]
+        public async Task TableVirtualize_RendersRepeatedItems()
+        {
+            RenderFragment<string> rowTemplate = item => builder =>
+            {
+                builder.OpenComponent<MudTd>(0);
+                builder.AddComponentParameter(1, nameof(MudTd.ChildContent), (RenderFragment)(cell => cell.AddContent(0, item)));
+                builder.CloseComponent();
+            };
+            var comp = Context.Render<MudTable<string>>(p => p
+                .Add(x => x.Items, new List<string> { "Lisbon", "Oslo", "Lisbon" })
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.RowTemplate, rowTemplate));
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(x => x.Items, new List<string> { "Pune", "Lisbon", "Oslo", "Lisbon" }));
+
+            comp.FindAll("tbody tr.mud-table-row").Select(row => row.TextContent.Trim()).Should().Equal("Pune", "Lisbon", "Oslo", "Lisbon");
+        }
+
+        /// <summary>
+        /// A virtualized grouped table keeps rendering repeated items within the same group
+        /// when the rows move, without duplicating items across groups.
+        /// </summary>
+        [Test]
+        public async Task TableVirtualize_GroupedTableRendersRepeatedItems()
+        {
+            RenderFragment<string> rowTemplate = item => builder =>
+            {
+                builder.OpenComponent<MudTd>(0);
+                builder.AddComponentParameter(
+                    1,
+                    nameof(MudTd.ChildContent),
+                    (RenderFragment)(cell => cell.AddContent(0, item)));
+                builder.CloseComponent();
+            };
+
+            var groupBy = new TableGroupDefinition<string>
+            {
+                GroupName = "First letter",
+                Selector = item => item[0],
+                Expandable = true,
+                IsInitiallyExpanded = true
+            };
+
+            var comp = Context.Render<MudTable<string>>(p => p
+                .Add(x => x.Items, new List<string> { "Lisbon", "Oslo", "Lisbon" })
+                .Add(x => x.Virtualize, true)
+                .Add(x => x.GroupBy, groupBy)
+                .Add(x => x.RowTemplate, rowTemplate));
+
+            comp.FindAll("tbody tr.mud-table-row")
+                .Select(row => row.TextContent.Trim())
+                .Should()
+                .BeEquivalentTo(["Lisbon", "Lisbon", "Oslo"]);
+
+            await comp.SetParametersAndRenderAsync(p => p.Add(
+                x => x.Items,
+                new List<string> { "Lyon", "Lisbon", "Oslo", "Lisbon" }));
+
+            comp.FindAll("tbody tr.mud-table-row")
+                .Select(row => row.TextContent.Trim())
+                .Should()
+                .BeEquivalentTo(["Lyon", "Lisbon", "Lisbon", "Oslo"]);
+        }
+
+        /// <summary>
         /// Using a virtualized table with multiselection must preserve checked items
         /// </summary>
         [Test]
@@ -3585,7 +3653,7 @@ namespace MudBlazor.UnitTests.Components
         {
             var comp = Context.Render<TableMultiSelectionVirtualizedTest>();
             var table = comp.FindComponent<MudTable<TableMultiSelectionVirtualizedTest.TestItem>>();
-            var virtualized = comp.FindComponent<Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize<TableMultiSelectionVirtualizedTest.TestItem>>();
+            var virtualized = comp.FindComponent<Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize<IndexBag<TableMultiSelectionVirtualizedTest.TestItem>>>();
             // find first checkbox item and check it
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(false);
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_0");
@@ -3595,14 +3663,14 @@ namespace MudBlazor.UnitTests.Components
             // scroll down
             await virtualized.SetParametersAndRenderAsync(parameters => parameters.Add(
                 v => v.Items,
-                table.Instance.Items.ToList().GetRange(1000, 100)));
+                table.Instance.Items.ToList().GetRange(1000, 100).Select((item, index) => new IndexBag<TableMultiSelectionVirtualizedTest.TestItem>(1000 + index, item)).ToList()));
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_1000");
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(false);
 
             // scroll up
             await virtualized.SetParametersAndRenderAsync(parameters => parameters.Add(
                 v => v.Items,
-                table.Instance.Items.ToList().GetRange(0, 100)));
+                table.Instance.Items.ToList().GetRange(0, 100).Select((item, index) => new IndexBag<TableMultiSelectionVirtualizedTest.TestItem>(index, item)).ToList()));
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell")[1].TextContent.Should().Be("Value_0");
             comp.FindAll(".mud-table-body .mud-table-row .mud-table-cell .mud-checkbox-input")[0].IsChecked().Should().Be(true);
         }
@@ -3829,7 +3897,7 @@ namespace MudBlazor.UnitTests.Components
         private List<TestItem> GetTestItems(int count)
         {
             var items = new List<TestItem>();
-            for (int i = 1; i <= count; i++)
+            for (var i = 1; i <= count; i++)
             {
                 items.Add(new TestItem { Id = i, Name = $"Item {i}" });
             }

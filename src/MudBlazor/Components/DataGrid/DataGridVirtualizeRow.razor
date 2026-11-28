@@ -41,7 +41,7 @@
                 .Build();
             var rowStyle = new StyleBuilder().AddStyle(DataGrid.RowStyle).AddStyle(DataGrid.RowStyleFunc?.Invoke(itemBag.Item, itemBag.Index)).Build();
         }
-        <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="itemBag.Item"
+        <tr class="mud-table-row @rowClass" Style="@rowStyle" @key="(itemBag.Index, itemBag.Item)"
             @attributes="GetRowAttributes(itemBag.Item)"
             @onclick="this.AsNonRenderingEventHandler<MouseEventArgs>(args => RowClick.InvokeAsync((args, itemBag.Item, itemBag.Index)))"
             @oncontextmenu="@GetContextMenuCallback(itemBag)"
