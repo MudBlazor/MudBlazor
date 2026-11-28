@@ -212,8 +212,18 @@ namespace MudBlazor
 
                 async Task ApplyRangeTextAsync(Range<string>? rangeText, int edit)
                 {
+                    // Emptying both inputs skips ParseDateRangeValue, so the error recorded for the earlier text would otherwise stay through the validation below.
+                    if (rangeText is null)
+                    {
+                        ResetConverterErrors();
+                    }
+
+                    var range = rangeText is null ? null : ParseDateRangeValue(rangeText.Start, rangeText.End);
+                    // A first edit that fails to convert leaves the range null as it was and Text still empty, so SetDateRangeAsync applies nothing and skips validation.
+                    var validateConversionError = ConversionError && _dateRange is null && string.IsNullOrEmpty(Text);
+
                     // The range goes first so it lands before any consumer callback can yield, as it did before Text was written here at all.
-                    await SetDateRangeAsync(rangeText is null ? null : ParseDateRangeValue(rangeText.Start, rangeText.End), false);
+                    await SetDateRangeAsync(range, false);
 
                     // A handler on that callback can yield long enough for a newer edit to overtake this one.
                     // Writing Text now would leave it describing an edit the range no longer reflects.
@@ -223,6 +233,11 @@ namespace MudBlazor
                     }
 
                     await SetTextAsync(rangeText is null ? null : RangeUtility.Join(rangeText.Start, rangeText.End), callback: false);
+
+                    if (validateConversionError)
+                    {
+                        await BeginValidateAsync();
+                    }
 
                     if (_dateRange is null && DateRangeChanged.HasDelegate)
                     {
@@ -396,12 +411,20 @@ namespace MudBlazor
 
         private DateRange? ParseDateRangeValue(string? value)
         {
-            return DateRange.TryParse(value, GetConverter(), out var dateRange) ? dateRange : null;
+            return RangeUtility.Split(value, out var start, out var end) ? ParseDateRangeValue(start, end) : null;
         }
 
         private DateRange? ParseDateRangeValue(string? start, string? end)
         {
-            return DateRange.TryParse(start, end, GetConverter(), out var dateRange) ? dateRange : null;
+            // ConvertGet records the conversion error, so text that is not a date shows the converter's error as MudDatePicker does.
+            var startDate = ConvertGet(start);
+            if (ConversionError)
+            {
+                return null;
+            }
+
+            var endDate = ConvertGet(end);
+            return ConversionError ? null : new DateRange(startDate, endDate);
         }
 
         protected override Task OnPickerClosedAsync()
