@@ -1305,6 +1305,228 @@ namespace MudBlazor.UnitTests.Components
             secondDropItemText.Should().Be("Second Item");
         }
 
+        /// <summary>
+        /// A drop between zones renders the origin and destination zones once each when JS interop completes asynchronously (#14293).
+        /// </summary>
+        [Test]
+        public async Task DropZone_Drop_RendersEachZoneOnce()
+        {
+            var resetItem = Context.JSInterop.SetupVoid("mudDragAndDrop.resetItem", _ => true);
+            var renders = new ZoneRenders();
+            var comp = RenderTwoZones(renders);
+
+            await comp.Find(".zone-a .mud-drop-item").DragStartAsync(new DragEventArgs());
+            await comp.Find(".zone-b").DragEnterAsync(new DragEventArgs());
+            renders.Counts.Clear();
+
+            await RunWithPendingResetItem(comp, resetItem, () => comp.Find(".zone-b").DropAsync(new DragEventArgs()));
+            await comp.Find(".zone-b .mud-drop-item").DragEndAsync(new DragEventArgs());
+
+            renders.Counts.Should().BeEquivalentTo(new Dictionary<string, int> { ["a"] = 1, ["b"] = 1 });
+            comp.FindAll(".zone-a .name").Select(x => x.TextContent).Should().Equal("Kept");
+            comp.FindAll(".zone-b .name").Select(x => x.TextContent).Should().Equal("Draft", "Other");
+            comp.Find(".zone-a").ClassList.Should().NotContain("zone-dragging");
+        }
+
+        /// <summary>
+        /// A drag that starts and ends without a drop renders its zone once at each step (#14293).
+        /// </summary>
+        [Test]
+        public async Task DropZone_DragStartAndEnd_RendersOriginZoneOncePerStep()
+        {
+            var resetItem = Context.JSInterop.SetupVoid("mudDragAndDrop.resetItem", _ => true);
+            var renders = new ZoneRenders();
+            var comp = RenderTwoZones(renders);
+            renders.Counts.Clear();
+
+            await comp.Find(".zone-a .mud-drop-item").DragStartAsync(new DragEventArgs());
+            renders.Counts["a"].Should().Be(1);
+            comp.Find(".zone-a").ClassList.Should().Contain("zone-dragging");
+            renders.Counts.Clear();
+
+            await RunWithPendingResetItem(comp, resetItem, () => comp.Find(".zone-a .mud-drop-item").DragEndAsync(new DragEventArgs()));
+            renders.Counts["a"].Should().Be(1);
+            comp.Find(".zone-a").ClassList.Should().NotContain("zone-dragging");
+            comp.Find(".zone-a .mud-drop-item").ClassList.Should().NotContain("item-dragging");
+        }
+
+        /// <summary>
+        /// A touch drag applies the zone dragging class even though its transaction starts after a JS interop await (#14293).
+        /// </summary>
+        [Test]
+        public async Task DropZone_TouchStart_AppliesDraggingClass()
+        {
+            var notRelative = Context.JSInterop.SetupVoid("mudDragAndDrop.makeDropZonesNotRelative", _ => true);
+            var comp = RenderTwoZones(new ZoneRenders());
+
+            var step = comp.Find(".zone-a .mud-drop-item").TouchStartAsync(new TouchEventArgs { ChangedTouches = [new TouchPoint { ClientX = 0, ClientY = 0 }] });
+            await comp.InvokeAsync(notRelative.SetVoidResult);
+            await step;
+
+            comp.Find(".zone-a").ClassList.Should().Contain("zone-dragging");
+        }
+
+        /// <summary>
+        /// An ItemDropped handler that moves and renames the item is shown in both zones after the drop (#14293).
+        /// </summary>
+        [Test]
+        public async Task DropZone_Drop_ShowsItemDroppedChangesInBothZones()
+        {
+            var resetItem = Context.JSInterop.SetupVoid("mudDragAndDrop.resetItem", _ => true);
+            var comp = RenderTwoZones(new ZoneRenders(), info =>
+            {
+                info.Item.Zone = info.DropzoneIdentifier;
+                info.Item.Name += " (moved)";
+            });
+
+            await comp.Find(".zone-a .mud-drop-item").DragStartAsync(new DragEventArgs());
+            await comp.Find(".zone-b").DragEnterAsync(new DragEventArgs());
+            await RunWithPendingResetItem(comp, resetItem, () => comp.Find(".zone-b").DropAsync(new DragEventArgs()));
+
+            comp.FindAll(".zone-a .name").Select(x => x.TextContent).Should().Equal("Kept");
+            comp.FindAll(".zone-b .name").Select(x => x.TextContent).Should().Equal("Draft (moved)", "Other");
+        }
+
+        /// <summary>
+        /// Changes an awaiting ItemDropped handler makes after its await, including to an item in an uninvolved third zone, are shown in every zone (#14293).
+        /// </summary>
+        [Test]
+        public async Task DropZone_Drop_ShowsAwaitedItemDroppedChangesInAllZones()
+        {
+            var resetItem = Context.JSInterop.SetupVoid("mudDragAndDrop.resetItem", _ => true);
+            var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            var items = new List<RenamedDropItem> { new() { Name = "Draft", Zone = "a" }, new() { Name = "Kept", Zone = "a" }, new() { Name = "Other", Zone = "b" }, new() { Name = "Third", Zone = "c" } };
+
+            var comp = Context.Render<MudDropContainer<RenamedDropItem>>(p => p
+                .Add(x => x.Items, items)
+                .Add(x => x.ItemsSelector, (item, zone) => item.Zone == zone)
+                .Add(x => x.ItemRenderer, item => $"<span class=\"name\">{item.Name}</span>")
+                .Add(x => x.ItemDropped, async info =>
+                {
+                    await gate.Task;
+                    info.Item.Zone = info.DropzoneIdentifier;
+                    info.Item.Name += " (moved)";
+                    items[1].Name += " (origin)";
+                    items[3].Name += " (uninvolved)";
+                })
+                .AddChildContent<MudDropZone<RenamedDropItem>>(z => z.Add(x => x.Identifier, "a").Add(x => x.Class, "zone-a"))
+                .AddChildContent<MudDropZone<RenamedDropItem>>(z => z.Add(x => x.Identifier, "b").Add(x => x.Class, "zone-b"))
+                .AddChildContent<MudDropZone<RenamedDropItem>>(z => z.Add(x => x.Identifier, "c").Add(x => x.Class, "zone-c")));
+
+            await comp.Find(".zone-a .mud-drop-item").DragStartAsync(new DragEventArgs());
+            await comp.Find(".zone-b").DragEnterAsync(new DragEventArgs());
+            var drop = comp.Find(".zone-b").DropAsync(new DragEventArgs());
+            await comp.InvokeAsync(resetItem.SetVoidResult);
+            await comp.InvokeAsync(() => gate.SetResult());
+            await drop;
+
+            comp.FindAll(".zone-a .name").Select(x => x.TextContent).Should().Equal("Kept (origin)");
+            comp.FindAll(".zone-b .name").Select(x => x.TextContent).Should().Equal("Draft (moved)", "Other");
+            comp.FindAll(".zone-c .name").Select(x => x.TextContent).Should().Equal("Third (uninvolved)");
+        }
+
+        /// <summary>
+        /// Reordering within a zone places the item correctly in both directions when JS interop completes asynchronously (#14293).
+        /// </summary>
+        [TestCase(1, 2)]
+        [TestCase(2, 0)]
+        public async Task DropZone_Reorder_WithinZone_PendingInterop(int dragged, int target)
+        {
+            var resetItem = Context.JSInterop.SetupVoid("mudDragAndDrop.resetItem", _ => true);
+            var comp = Context.Render<DropZoneReorderTest>();
+
+            await comp.FindAll(".dropzone-1 .mud-drop-item:not(.mud-drop-item-preview-start)")[dragged].DragStartAsync(new DragEventArgs());
+            await comp.FindAll(".dropzone-1 .mud-drop-item:not(.mud-drop-item-preview-start)")[target].DragEnterAsync(new DragEventArgs());
+            await RunWithPendingResetItem(comp, resetItem, () => comp.Find(".dropzone-1").DropAsync(new DragEventArgs()));
+
+            comp.FindAll(".dropzone-1 .mud-drop-item:not(.mud-drop-item-preview-start)").Select(x => x.TextContent.Trim()).Should().Equal("Item 1", "Item 3", "Item 2", "Item 4");
+            comp.FindAll(".dropzone-1 .mud-dropitem-placeholder:not(.d-none)").Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// A reorder drag that ends without a drop keeps the original order (#14293).
+        /// </summary>
+        [Test]
+        public async Task DropZone_Reorder_Cancel_RestoresOrder()
+        {
+            var resetItem = Context.JSInterop.SetupVoid("mudDragAndDrop.resetItem", _ => true);
+            var comp = Context.Render<DropZoneReorderTest>();
+
+            await comp.FindAll(".dropzone-1 .mud-drop-item:not(.mud-drop-item-preview-start)")[1].DragStartAsync(new DragEventArgs());
+            await comp.FindAll(".dropzone-1 .mud-drop-item:not(.mud-drop-item-preview-start)")[3].DragEnterAsync(new DragEventArgs());
+            comp.FindAll(".dropzone-1 .mud-dropitem-placeholder:not(.d-none)").Should().ContainSingle();
+            await RunWithPendingResetItem(comp, resetItem, () => comp.FindAll(".dropzone-1 .mud-drop-item:not(.mud-drop-item-preview-start)")[1].DragEndAsync(new DragEventArgs()));
+
+            comp.FindAll(".dropzone-1 .mud-drop-item:not(.mud-drop-item-preview-start)").Select(x => x.TextContent.Trim()).Should().Equal("Item 1", "Item 2", "Item 3", "Item 4");
+            comp.FindAll(".dropzone-1 .mud-dropitem-placeholder:not(.d-none)").Should().BeEmpty();
+            comp.Instance.IndexHistory.Should().BeEmpty();
+        }
+
+        /// <summary>
+        /// Runs a drag step while mudDragAndDrop.resetItem is pending, then completes it, as browser JS interop yields mid-drop.
+        /// </summary>
+        private static async Task RunWithPendingResetItem<TComponent>(IRenderedComponent<TComponent> comp, JSRuntimeInvocationHandler resetItem, Func<Task> dragStep)
+            where TComponent : Microsoft.AspNetCore.Components.IComponent
+        {
+            var step = dragStep();
+            await comp.InvokeAsync(resetItem.SetVoidResult);
+            await step;
+        }
+
+        /// <summary>
+        /// Renders zones "a" and "b" whose child content records each zone render, with "Draft" and "Kept" in "a" and "Other" in "b".
+        /// </summary>
+        private IRenderedComponent<MudDropContainer<RenamedDropItem>> RenderTwoZones(ZoneRenders renders, Action<MudItemDropInfo<RenamedDropItem>> itemDropped = null)
+        {
+            var items = new List<RenamedDropItem> { new() { Name = "Draft", Zone = "a" }, new() { Name = "Kept", Zone = "a" }, new() { Name = "Other", Zone = "b" } };
+
+            return Context.Render<MudDropContainer<RenamedDropItem>>(p => p
+                .Add(x => x.Items, items)
+                .Add(x => x.ItemsSelector, (item, zone) => item.Zone == zone)
+                .Add(x => x.DraggingClass, "zone-dragging")
+                .Add(x => x.ItemDraggingClass, "item-dragging")
+                .Add(x => x.ItemRenderer, item => $"<span class=\"name\">{item.Name}</span>")
+                .Add(x => x.ItemDropped, itemDropped ?? (info => info.Item.Zone = info.DropzoneIdentifier))
+                .AddChildContent<MudDropZone<RenamedDropItem>>(z => z
+                    .Add(x => x.Identifier, "a")
+                    .Add(x => x.Class, "zone-a")
+                    .AddChildContent<ZoneRenderProbe>(probe => probe.Add(x => x.Zone, "a").Add(x => x.Renders, renders)))
+                .AddChildContent<MudDropZone<RenamedDropItem>>(z => z
+                    .Add(x => x.Identifier, "b")
+                    .Add(x => x.Class, "zone-b")
+                    .AddChildContent<ZoneRenderProbe>(probe => probe.Add(x => x.Zone, "b").Add(x => x.Renders, renders))));
+        }
+
+        private sealed class RenamedDropItem
+        {
+            public required string Name { get; set; }
+
+            public required string Zone { get; set; }
+        }
+
+        private sealed class ZoneRenders
+        {
+            public Dictionary<string, int> Counts { get; } = new();
+        }
+
+        /// <summary>
+        /// Counts the renders of the zone whose child content holds it.
+        /// </summary>
+        /// <remarks>
+        /// Its <see cref="Renders"/> parameter is a mutable reference, so Blazor re-renders the probe every time the zone renders and at no other time.
+        /// </remarks>
+        private sealed class ZoneRenderProbe : Microsoft.AspNetCore.Components.ComponentBase
+        {
+            [Microsoft.AspNetCore.Components.Parameter]
+            public string Zone { get; set; } = string.Empty;
+
+            [Microsoft.AspNetCore.Components.Parameter]
+            public ZoneRenders Renders { get; set; }
+
+            protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder)
+                => Renders.Counts[Zone] = Renders.Counts.GetValueOrDefault(Zone) + 1;
+        }
+
         [Test]
         public async Task DropZone_IsOrigin()
         {
