@@ -22,7 +22,8 @@
         <PropertyColumn Property="x => x.Name" />
         <PropertyColumn Property="x => x.Position">
             <EditTemplate>
-                <MudSelect @bind-Value="context.Item.Position" Required RequiredError="You must select a Position!!!" Margin="@Margin.Dense">
+                <MudSelect T="int" Value="context.Item.Position" ValueChanged="@(position => PositionChangedAsync(context.Item, position))"
+                           Required RequiredError="You must select a Position!!!" Margin="@Margin.Dense">
                     <MudSelectItem Value="0">zero</MudSelectItem>
                     <MudSelectItem Value="1">one</MudSelectItem>
                     <MudSelectItem Value="17">seventeen</MudSelectItem>
@@ -112,6 +113,17 @@
     private void DeleteItem(Element item)
     {
         _elements.Remove(item);
+    }
+
+    private async Task PositionChangedAsync(Element item, int position)
+    {
+        item.Position = position;
+
+        // In cell mode the grid only commits its built-in editors, so an EditTemplate control commits its own change.
+        if (_isCellEditMode)
+        {
+            await CommittedItemChanges(item);
+        }
     }
 
     // events

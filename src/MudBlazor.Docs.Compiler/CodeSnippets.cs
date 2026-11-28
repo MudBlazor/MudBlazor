@@ -10,18 +10,22 @@ namespace MudBlazor.Docs.Compiler
             var success = true;
             try
             {
-                // Early exit: if the generated file exists and our stamp is newer than all example files, skip generation.
+                // Early exit: if the generated file exists and our stamp is newer than all inputs, skip generation.
                 if (File.Exists(Paths.SnippetsFilePath) && File.Exists(Paths.SnippetsStampFilePath))
                 {
                     var stampLastWrite = File.GetLastWriteTimeUtc(Paths.SnippetsStampFilePath);
                     var exampleFiles = Directory.EnumerateFiles(Paths.DocsDirPath, "*.razor", SearchOption.AllDirectories)
                         .Where(f => Path.GetFileNameWithoutExtension(f).Contains(Paths.ExampleDiscriminator));
-                    var newestExampleTime = exampleFiles
+                    // The generator's own assembly is an input too, so a change to what it emits regenerates the file.
+                    var inputFiles = exampleFiles
+                        .Concat(GetModelFiles())
+                        .Append(typeof(CodeSnippets).Assembly.Location);
+                    var newestInputTime = inputFiles
                         .Select(f => File.GetLastWriteTimeUtc(f))
                         .DefaultIfEmpty(DateTime.MinValue)
                         .Max();
 
-                    if (stampLastWrite > newestExampleTime)
+                    if (stampLastWrite > newestInputTime)
                     {
                         Console.WriteLine("CodeSnippets: Snippets.generated.cs is up-to-date, skipping generation.");
                         return true;
@@ -52,6 +56,14 @@ namespace MudBlazor.Docs.Compiler
                     if (!componentName.Contains(Paths.ExampleDiscriminator))
                         continue;
                     cb.AddLine($"public const string {componentName} = @\"{EscapeComponentSource(entry)}\";\n");
+                }
+
+                // TryMud receives the data models alongside the examples that use them.
+                // Emitting them from the real model files keeps TryMud running the same model as the docs app.
+                foreach (var entry in GetModelFiles())
+                {
+                    var modelName = Path.GetFileNameWithoutExtension(entry);
+                    cb.AddLine($"public const string {modelName} = @\"{EscapeModelSource(entry)}\";\n");
                 }
 
                 cb.IndentLevel--;
@@ -85,6 +97,18 @@ namespace MudBlazor.Docs.Compiler
         {
             var source = File.ReadAllText(path, Encoding.UTF8);
             source = NamespaceLayoutOrPageRegularExpression().Replace(source, string.Empty);
+            return source.Replace("\"", "\"\"").Trim();
+        }
+
+        private static IEnumerable<string> GetModelFiles()
+        {
+            return Directory.EnumerateFiles(Paths.ExamplesDataModelsDirPath, "*.cs")
+                .OrderBy(e => e.Replace("\\", "/"), StringComparer.Ordinal);
+        }
+
+        private static string EscapeModelSource(string path)
+        {
+            var source = File.ReadAllText(path, Encoding.UTF8);
             return source.Replace("\"", "\"\"").Trim();
         }
 

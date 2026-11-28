@@ -28,6 +28,8 @@ public static class Paths
 
     public static string DocsStringSnippetsDirPath => Path.Join(DocsDirPath, "Models");
 
+    public static string ExamplesDataModelsDirPath => Path.Join(SrcDirPath, "MudBlazor.Examples.Data", "Models");
+
     public static string SnippetsFilePath => Path.Join(DocsStringSnippetsDirPath, SnippetsFile);
 
     public static string NewFilesToBuildPath => Path.Join(DocsDirPath, NewFilesToBuild);
